@@ -7,41 +7,32 @@
 Nó là nguồn sự thật \(Source of Truth\) cho:
 
 - Product Architecture
-
 - Product Design
-
 - UI Architecture
-
 - Design System boundary
-
 - Technical Architecture
 
 Mọi tài liệu phía dưới đều phải tuân theo kiến trúc này\.
-
 Nếu có xung đột, tài liệu cấp dưới phải sửa theo tài liệu này\.
 
 ---
-
 # **Macro Architecture — Entity-centric (Knowledge Graph)**
 
 iFlux tổ chức theo **Entity-centric Architecture**, KHÔNG phải Page-centric\.
 
 Nguyên tắc cốt lõi:
-
 - Mỗi **Entity** tồn tại **một lần duy nhất** với **một URL top-level** duy nhất\.
-
-- **Page chỉ là điểm truy cập (entry point)** tới Entity — Page KHÔNG "sở hữu" Entity\.
-
-- Thị trường, Cộng đồng, Dashboard, Search, AI, Alert, Notification… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
-
+- **Page chỉ là điểm truy cập (entry point)** tới Entity 
+— Page KHÔNG "sở hữu" Entity\.
+- Thị trường, Cộng đồng, Nhà, Search, AI, Alert, Notification, Insight Widget, Report… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
 - Quan hệ giữa các Entity là **Relationship** (không có cha–con), tạo thành **Knowledge Graph**\.
 
 ```Plain Text
-                         Chủ đề
+                      Chủ đề (Topic)
                             │
-         Sector ─────  Community ───── Stock
+  (sector) Ngành ─────  Platform ───── Cổ phiếu (Stock)
                             │
-                        Ecosystem
+                      Hệ sinh thái (Ecosystem)
 ```
 
 Hệ thống chia làm **ba tầng**:
