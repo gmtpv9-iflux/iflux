@@ -63,7 +63,73 @@
     return { sym: sym, name: name, type: type, source: source || 'L2', ref: ref || '' };
   }
 
-  /* Net theo chủ thể — 4 entity dùng chung khung */
+  /* Net theo chủ thể — Definition V2, outputs map theo 5 slot của TMP-NET-SUBJECT:
+     tab chủ thể · nhãn trái · giá trị trái · nhãn phải · giá trị phải. */
+  function netSubjectV2(id, entityName, scope) {
+    var entityDemo = {
+      stock: { buy: 'VCB | HPG | SSI | MWG | FPT', sell: 'VIC | NVL | PDR | DXG | HSG' },
+      sector: { buy: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | CNTT', sell: 'BĐS | Xây dựng | Dầu khí | Điện | Dược' },
+      family: { buy: 'Họ ngân hàng | Họ thép | Họ bán lẻ | Họ chứng khoán | Họ CNTT', sell: 'Họ BĐS | Họ xây dựng | Họ dầu khí | Họ điện | Họ dược' }
+    };
+    var demo = entityDemo[scope] || entityDemo.stock;
+    var netInputs = [
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'buy_value' },
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'sell_value' }
+    ];
+    return {
+      schemaVersion: 2,
+      id: id,
+      iconKey: 'arrows-left-right',
+      title: 'Thống kê mua/bán ròng theo ' + entityName,
+      description: 'Đối chiếu ' + entityName + ' được MUA RÒNG nhiều nhất (cột trái) và BÁN RÒNG nhiều nhất (cột phải) theo từng chủ thể (Cá nhân · Tổ chức · Tự doanh · Khối ngoại).',
+      templateRef: 'TMP-NET-SUBJECT',
+      outputs: [
+        {
+          symbol: 'subject', name: 'Chủ thể (tab)', type: 'enum',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Cá nhân | Tổ chức | Tự doanh | Khối ngoại'
+        },
+        {
+          symbol: 'buy_entity', name: 'Mua ròng — ' + entityName, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.buy
+        },
+        {
+          symbol: 'buy_net', name: 'Giá trị mua ròng', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '320 | 240 | 180 | 120 | 80',
+          formulaSpec: 'Giá trị mua ròng = Giá trị mua − Giá trị bán của chủ thể theo ' + entityName + ' (lấy phần dương, xếp giảm dần Top N)'
+        },
+        {
+          symbol: 'sell_entity', name: 'Bán ròng — ' + entityName, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.sell
+        },
+        {
+          symbol: 'sell_net', name: 'Giá trị bán ròng', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '300 | 210 | 160 | 110 | 70',
+          formulaSpec: 'Giá trị bán ròng = Giá trị bán − Giá trị mua của chủ thể theo ' + entityName + ' (lấy phần dương, xếp giảm dần Top N)'
+        }
+      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            subject: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'subject' },
+            buy_entity: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' },
+            sell_entity: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' }
+          },
+          calculatedInputs: {
+            buy_net: netInputs,
+            sell_net: netInputs
+          }
+        }
+      }
+    };
+  }
+
+  /* Net theo chủ thể — khung legacy (còn dùng cho widget chưa audit V2) */
   function netSubject(id, entityName, scope) {
     return {
       id: id, domain: 'Dòng tiền',
@@ -521,9 +587,9 @@
       algorithmSpec: 'Tỉ lệ mua = Giá trị mua ÷ (Giá trị mua + Giá trị bán)\n' +
         'Giá trị ròng = Giá trị mua − Giá trị bán'
     },
-    netSubject('WGT-FLW-SUBJ-STOCK', 'cổ phiếu', 'stock'),
-    netSubject('WGT-FLW-SUBJ-SECTOR', 'ngành', 'sector'),
-    netSubject('WGT-FLW-SUBJ-HST', 'hệ sinh thái', 'family'),
+    netSubjectV2('WGT-FLW-SUBJ-STOCK', 'cổ phiếu', 'stock'),
+    netSubjectV2('WGT-FLW-SUBJ-SECTOR', 'ngành', 'sector'),
+    netSubjectV2('WGT-FLW-SUBJ-HST', 'hệ sinh thái', 'family'),
     netSubject('WGT-FLW-SUBJ-CHUDE', 'chủ đề', 'chu-de'),
     flowDuo('WGT-FLW-STAT_STOCK', 'Cổ phiếu'),
     flowDuo('WGT-FLW-STAT_SECTOR', 'Ngành'),

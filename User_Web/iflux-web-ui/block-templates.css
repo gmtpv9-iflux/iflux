@@ -621,7 +621,8 @@
 
 .ifx-flow-split__head {
   display: grid;
-  grid-template-columns: 1fr minmax(52px, 88px) minmax(52px, 88px) 1fr;
+  /* Lưới 12 cột: giá trị 4/12 · nhãn 2/12 · nhãn 2/12 · giá trị 4/12 */
+  grid-template-columns: 4fr 2fr 2fr 4fr;
   gap: var(--ifx-space-8);
   margin-bottom: 10px;
   font-size: var(--ifx-font-size-10);
@@ -647,7 +648,8 @@
 
 .ifx-flow-split__row {
   display: grid;
-  grid-template-columns: 1fr minmax(52px, 88px) minmax(52px, 88px) 1fr;
+  /* Lưới 12 cột: giá trị 4/12 · nhãn 2/12 · nhãn 2/12 · giá trị 4/12 */
+  grid-template-columns: 4fr 2fr 2fr 4fr;
   gap: var(--ifx-space-8);
   align-items: center;
   min-height: 34px;
@@ -699,9 +701,8 @@
   font-weight: var(--ifx-font-weight-semibold);
   color: var(--ix-text-primary);
   text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Nhãn hẹp (2/12) — cho phép xuống dòng thay vì cắt ellipsis */
+  overflow-wrap: break-word;
 }
 .ifx-flow-split__ticker--buy { text-align: right; padding-right: 2px; }
 .ifx-flow-split__ticker--sell { text-align: left; padding-left: 2px; }

@@ -732,11 +732,6 @@
   .ifx-flow-layout {
     grid-template-columns: 1fr;
   }
-  .ifx-flow-split__head,
-  .ifx-flow-split__row {
-    grid-template-columns: 1fr 44px 44px 1fr;
-    gap: var(--ifx-inline-sm);
-  }
   .ifx-mcmp__body,
   .ifx-mcmp--duo .ifx-mcmp__body {
     grid-template-columns: 1fr;
