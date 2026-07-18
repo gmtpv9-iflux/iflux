@@ -486,20 +486,45 @@
     rankPerf('WGT-TOP-002', 'Hệ sinh thái'),
     rankPerf('WGT-TOP-003', 'Chủ đề'),
     {
-      id: 'WGT-SEC-001', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-SEC-001',
+      iconKey: 'trending-up',
       title: 'Động lượng ngành',
       description: 'Xếp hạng ngành theo PG (price growth).',
+      templateRef: 'TMP-RANK-PERF',
       outputs: [
-        o('name', 'Tên ngành', 'text', 'entity'),
-        o('pg', 'PG (động lượng)', '%', 'perf'),
-        o('rank', 'Xếp hạng', 'số', 'rank')
+        {
+          symbol: 'name', name: 'Tên ngành', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Ngân hàng | Thép | Chứng khoán | Bất động sản | Bán lẻ'
+        },
+        {
+          symbol: 'pg', name: 'PG (động lượng)', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '2.4 | 2.1 | 1.8 | 1.2 | 0.7'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: 'Xếp hạng = Vị trí sau khi xếp ngành theo PG (động lượng) giảm dần'
+        }
       ],
-      template: 'TMP-RANK-PERF',
-      inputs: [
-        i('sector_name', 'Tên ngành', 'text', 'L2', 'NORM-HEATMAP'),
-        i('pg', 'PG — động lượng giá ngành', '%', 'L2', 'NORM-MARKET-AGG')
-      ],
-      algorithmSpec: 'Xếp hạng = Vị trí sau khi xếp ngành theo PG (động lượng) giảm dần'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            name: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'name' },
+            pg: { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'pg' }
+          },
+          calculatedInputs: {
+            rank: [
+              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'name' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'pg' }
+            ]
+          }
+        }
+      }
     },
 
     /* ===================== DÒNG TIỀN ===================== */
