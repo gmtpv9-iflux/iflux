@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="refresh" content="0; url=/" />
+  <title>iFlux</title>
+</head>
+<body>
+  <p><a href="hub.html">iFlux User Web</a></p>
+  <script src="iflux-web-ui/iflux-platform-boot.js?v=20260707"></script>
+<script src="iflux-web-ui/iflux-api-bundle.js?v=20260707"></script>
+<script src="iflux-web-ui/auth.js"></script>
+<script src="iflux-web-ui/iflux-user-data-sync.js"></script>
+  <script>
+    if (window.IfluxAuth && IfluxAuth.isLoggedIn()) {
+      window.location.replace('home/index.html');
+    } else {
+      window.location.replace('/');
+    }
+  </script>
+</body>
+</html>

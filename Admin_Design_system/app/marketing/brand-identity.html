@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-MAR-001 — Nhận diện thương hiệu · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .bi-layout { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr); gap:20px; align-items:start; }
+    @media (max-width:1024px) { .bi-layout { grid-template-columns:1fr; } .bi-preview-card { order:-1; } }
+    .bi-section { margin-bottom:24px; }
+    .bi-section-title { font-size:15px;font-weight:600;margin:0 0 4px;display:flex;align-items:center;gap:8px; }
+    .bi-section-sub { font-size:12px;color:var(--ix-text-muted);margin:0 0 16px; }
+    .bi-field { margin-bottom:14px; }
+    .bi-field label { display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:var(--ix-text-secondary); }
+    .bi-field-row { display:flex;gap:8px;flex-wrap:wrap; }
+    .bi-field-row .ix-input { flex:1;min-width:180px; }
+    .bi-upload-hint { font-size:11px;color:var(--ix-text-muted);margin-top:6px; }
+    .bi-preview-card { position:sticky; top:0; padding:18px; }
+    .bi-preview-tab { display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--ix-border);border-radius:8px 8px 0 0;background:rgba(255,255,255,.03);font-size:12px;max-width:280px; }
+    .bi-preview-browser { border:1px solid var(--ix-border);border-radius:0 8px 8px 8px;overflow:hidden; }
+    .bi-preview-nav { display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(105,108,255,.08);border-bottom:1px solid var(--ix-border);min-height:44px; }
+    .bi-preview-body { padding:24px 16px;text-align:center;color:var(--ix-text-muted);font-size:12px; }
+    .bi-asset-preview { margin-top:10px;padding:12px;border:1px dashed var(--ix-border);border-radius:var(--ix-radius);min-height:56px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.02); }
+    .bi-asset-preview img { max-height:48px;max-width:100%;object-fit:contain; }
+    .bi-meta { font-size:11px;color:var(--ix-text-muted);margin-top:16px; }
+  </style>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+<nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar">MK</div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Nhận diện thương hiệu</h1>
+            <div class="ix-breadcrumb"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Marketing</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-MAR-001</span></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="bi-btn-reset"><i class="ti ti-refresh"></i> Khôi phục mặc định</button>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="bi-btn-save"><i class="ti ti-device-floppy"></i> Lưu thay đổi</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 24px">Thiết lập <strong>Logo</strong> và <strong>Favicon</strong> hiển thị trên Admin và User Web. Team Marketing quản lý tại đây — lưu local (sandbox) cho đến khi nối API.</p>
+
+        <div class="bi-layout">
+          <div>
+            <div class="ix-card" style="padding:20px;margin-bottom:20px">
+              <div class="bi-section">
+                <h2 class="bi-section-title"><i class="ti ti-letter-case" style="color:var(--ix-primary)"></i> Tên thương hiệu</h2>
+                <p class="bi-section-sub">Dùng khi chưa có logo hoặc làm fallback (title tab, alt text).</p>
+                <div class="bi-field">
+                  <label for="bi-field-siteName">Tên hiển thị</label>
+                  <input type="text" class="ix-input" id="bi-field-siteName" placeholder="iFlux" />
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card" style="padding:20px;margin-bottom:20px">
+              <div class="bi-section" style="margin-bottom:0">
+                <h2 class="bi-section-title"><i class="ti ti-photo" style="color:var(--ix-primary)"></i> Logo</h2>
+                <p class="bi-section-sub">PNG/SVG nền trong suốt. Logo chính dùng trên header; bản sáng cho nền tối; biểu tượng rút gọn (mark).</p>
+
+                <div class="bi-field">
+                  <label for="bi-field-logoUrl">Logo chính (header)</label>
+                  <div class="bi-field-row">
+                    <input type="url" class="ix-input" id="bi-field-logoUrl" placeholder="https://… hoặc tải file" />
+                    <label class="ix-btn ix-btn-outline ix-btn-sm" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Tải lên<input type="file" accept="image/*,.svg" data-bi-upload="logoUrl" hidden /></label>
+                  </div>
+                  <div class="bi-asset-preview" id="bi-asset-logoUrl"><span style="font-size:12px;color:var(--ix-text-muted)">Chưa có logo</span></div>
+                </div>
+
+                <div class="bi-field">
+                  <label for="bi-field-logoLightUrl">Logo nền tối (light variant)</label>
+                  <div class="bi-field-row">
+                    <input type="url" class="ix-input" id="bi-field-logoLightUrl" placeholder="https://…" />
+                    <label class="ix-btn ix-btn-outline ix-btn-sm" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Tải lên<input type="file" accept="image/*,.svg" data-bi-upload="logoLightUrl" hidden /></label>
+                  </div>
+                  <div class="bi-asset-preview" id="bi-asset-logoLightUrl" style="background:#1a1d2e"><span style="font-size:12px;color:#8b8fa8">Chưa có logo light</span></div>
+                </div>
+
+                <div class="bi-field">
+                  <label for="bi-field-logoMarkUrl">Biểu tượng (mark / icon)</label>
+                  <div class="bi-field-row">
+                    <input type="url" class="ix-input" id="bi-field-logoMarkUrl" placeholder="https://…" />
+                    <label class="ix-btn ix-btn-outline ix-btn-sm" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Tải lên<input type="file" accept="image/*,.svg" data-bi-upload="logoMarkUrl" hidden /></label>
+                  </div>
+                  <div class="bi-asset-preview" id="bi-asset-logoMarkUrl"><span style="font-size:12px;color:var(--ix-text-muted)">Chưa có mark</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card" style="padding:20px">
+              <div class="bi-section" style="margin-bottom:0">
+                <h2 class="bi-section-title"><i class="ti ti-app-window" style="color:var(--ix-primary)"></i> Favicon</h2>
+                <p class="bi-section-sub">Icon tab trình duyệt (khuyến nghị 32×32 hoặc 48×48 PNG/ICO) và Apple Touch Icon (180×180).</p>
+
+                <div class="bi-field">
+                  <label for="bi-field-faviconUrl">Favicon</label>
+                  <div class="bi-field-row">
+                    <input type="url" class="ix-input" id="bi-field-faviconUrl" placeholder="https://… hoặc .ico / .png" />
+                    <label class="ix-btn ix-btn-outline ix-btn-sm" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Tải lên<input type="file" accept="image/*,.ico" data-bi-upload="faviconUrl" hidden /></label>
+                  </div>
+                  <div class="bi-asset-preview" id="bi-asset-faviconUrl"><span style="font-size:12px;color:var(--ix-text-muted)">Chưa có favicon</span></div>
+                  <p class="bi-upload-hint">Hỗ trợ URL công khai hoặc tải file (lưu dạng base64 trong localStorage).</p>
+                </div>
+
+                <div class="bi-field">
+                  <label for="bi-field-appleTouchUrl">Apple Touch Icon</label>
+                  <div class="bi-field-row">
+                    <input type="url" class="ix-input" id="bi-field-appleTouchUrl" placeholder="https://… (180×180)" />
+                    <label class="ix-btn ix-btn-outline ix-btn-sm" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Tải lên<input type="file" accept="image/*" data-bi-upload="appleTouchUrl" hidden /></label>
+                  </div>
+                  <div class="bi-asset-preview" id="bi-asset-appleTouchUrl"><span style="font-size:12px;color:var(--ix-text-muted)">Chưa có touch icon</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="ix-card bi-preview-card">
+              <div style="font-size:13px;font-weight:600;margin-bottom:12px"><i class="ti ti-eye"></i> Xem trước</div>
+              <div class="bi-preview-tab"><span id="bi-preview-favicon"></span><span id="bi-preview-tab-title">iFlux · Admin</span></div>
+              <div class="bi-preview-browser">
+                <div class="bi-preview-nav"><span id="bi-preview-logo"></span></div>
+                <div class="bi-preview-body">Header preview — logo / tên thương hiệu</div>
+              </div>
+              <p class="bi-meta" id="bi-updated-at">Chưa lưu cấu hình.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="brand-identity-store.js"></script>
+<script src="brand-identity-page.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+</body>
+</html>

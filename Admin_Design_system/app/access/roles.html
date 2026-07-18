@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-ACC-001 — Customer Role · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Vai trò</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Vai trò &amp; Quyền</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-ACC-001</span></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Vai trò bổ sung cho <strong>khách hàng</strong> — gán thêm quyền ngoài gói (Miễn phí / Premium / Elite).</p>
+
+        <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-bar-title">Bộ lọc</div>
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="filter-role-status"><option value="">Tất cả</option><option value="active">Hoạt động</option><option value="gd2">GĐ2</option><option value="hidden">Ẩn</option></select></div>
+            </div>
+          </div>
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="roles-search" placeholder="Tìm role..." /></div>
+            <div class="ix-table-actions">
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-add-role"><i class="ti ti-plus" style="font-size:13px"></i> Thêm vai trò</button>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead><tr>
+                <th>Vai trò</th><th>Mã</th><th>Gói cho phép</th><th>Quyền</th><th>Số KH</th><th>Trạng thái</th><th>Thao tác</th>
+              </tr></thead>
+              <tbody id="roles-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+
+<div id="role-modal" class="ix-modal-overlay" style="display:none" data-edit-key="new">
+  <div class="ix-modal" style="width:640px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+    <div class="ix-modal-header">
+      <span class="ix-modal-title" id="role-modal-title">Thêm vai trò</span>
+      <button type="button" class="ix-btn ix-btn-icon" data-ix-dismiss="modal"><i class="ti ti-x" style="font-size:16px"></i></button>
+    </div>
+    <div class="ix-modal-body" style="overflow-y:auto">
+      <div class="ix-form-group"><label class="ix-label">Tên vai trò <span style="color:var(--ix-danger)">*</span></label><input type="text" class="ix-input" id="role-field-name" placeholder="VD: Sáng tạo" /></div>
+      <div class="ix-form-group"><label class="ix-label">Mã <span style="color:var(--ix-danger)">*</span></label><input type="text" class="ix-input" id="role-field-code" placeholder="VD: creator" /></div>
+      <div class="ix-form-group"><label class="ix-label">Mô tả</label><input type="text" class="ix-input" id="role-field-desc" placeholder="Mô tả ngắn" /></div>
+      <div class="ix-form-group"><label class="ix-label">Package cho phép</label>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+          <label><input type="checkbox" class="ix-checkbox" id="role-pkg-free" /> Miễn phí</label>
+          <label><input type="checkbox" class="ix-checkbox" id="role-pkg-premium" /> Premium</label>
+          <label><input type="checkbox" class="ix-checkbox" id="role-pkg-elite" /> Elite</label>
+        </div>
+      </div>
+      <div class="ix-form-group"><label class="ix-label">Trạng thái</label><select class="ix-select" id="role-field-status"><option value="active">Hoạt động</option><option value="gd2">GĐ2</option><option value="hidden">Ẩn</option></select></div>
+      <div class="ix-form-group"><label class="ix-label">Số khách hàng (mock)</label><input type="number" class="ix-input" id="role-field-users" min="0" value="0" /></div>
+      <div style="margin-top:16px"><div style="font-size:14px;font-weight:600;margin-bottom:10px">Quyền gán</div><div id="role-perm-list"></div></div>
+    </div>
+    <div class="ix-modal-footer">
+      <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
+      <button type="button" class="ix-btn ix-btn-primary" id="btn-save-role"><i class="ti ti-check"></i> Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script src="access-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+(function () {
+  AccessStore.refreshRolesPage();
+
+  document.getElementById('filter-role-status').addEventListener('change', function () {
+    AccessStore.refreshRolesPage();
+  });
+
+  var searchInput = document.getElementById('roles-search');
+  searchInput.addEventListener('input', function () {
+    AccessStore.refreshRolesPage();
+  });
+
+  function openRoleModal(key) {
+    var role = AccessStore.getRole(key);
+    if (!role) {
+      ixToast('Không tìm thấy vai trò', 'danger');
+      return;
+    }
+    AccessStore.fillRoleModal(role);
+    ixOpenModal('role-modal');
+  }
+
+  document.getElementById('btn-add-role').addEventListener('click', function () {
+    openRoleModal('new');
+  });
+
+  document.getElementById('btn-save-role').addEventListener('click', function () {
+    var modal = document.getElementById('role-modal');
+    var editKey = modal.dataset.editKey || 'new';
+    var result = AccessStore.saveRole(editKey, AccessStore.collectRoleForm());
+    if (!result.ok) {
+      ixToast(result.error, 'danger');
+      return;
+    }
+    ixCloseModal('role-modal');
+    AccessStore.refreshRolesPage();
+    ixToast('Đã lưu vai trò', 'success');
+  });
+
+  document.addEventListener('click', function (e) {
+    var editBtn = e.target.closest('[data-edit-role]');
+    if (editBtn) {
+      e.preventDefault();
+      openRoleModal(editBtn.getAttribute('data-edit-role'));
+      return;
+    }
+    var delBtn = e.target.closest('[data-delete-role]');
+    if (!delBtn) return;
+    e.preventDefault();
+    var roleId = delBtn.getAttribute('data-delete-role');
+    if (!confirm('Xoá role "' + roleId + '"?')) return;
+    var result = AccessStore.deleteRole(roleId);
+    if (!result.ok) {
+      ixToast(result.error, 'danger');
+      return;
+    }
+    AccessStore.refreshRolesPage();
+    ixToast('Đã xoá vai trò', 'success');
+  });
+})();
+</script>
+</body>
+</html>

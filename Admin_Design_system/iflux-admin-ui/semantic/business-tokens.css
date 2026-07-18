@@ -1,0 +1,40 @@
+/**
+ * iFlux — Business Design Tokens (Layer 2b)
+ * Domain semantics: market, signal, portfolio, heatmap.
+ * Tham chiếu Semantic (--color-*) để theme dark/light đổi đồng bộ.
+ */
+:root,
+[data-theme="dark"] {
+  --biz-money-flow-strong-in: var(--color-flow-in);
+  --biz-money-flow-strong-out: var(--color-flow-out);
+
+  --biz-signal-confirmed: var(--color-success);
+  --biz-signal-pending: var(--color-warning);
+  --biz-signal-invalid: var(--color-danger);
+
+  --biz-portfolio-profit: var(--color-market-up);
+  --biz-portfolio-loss: var(--color-market-down);
+
+  --biz-heatmap-1: var(--ifx-color-chart-1);
+  --biz-heatmap-2: var(--ifx-color-chart-2);
+  --biz-heatmap-3: var(--ifx-color-chart-3);
+  --biz-heatmap-4: var(--ifx-color-chart-4);
+  --biz-heatmap-5: var(--ifx-color-chart-5);
+  --biz-heatmap-6: var(--ifx-color-chart-6);
+  --biz-heatmap-7: var(--ifx-color-chart-7);
+  --biz-heatmap-8: var(--ifx-color-chart-8);
+  --biz-heatmap-9: var(--ifx-color-chart-9);
+  --biz-heatmap-10: var(--ifx-color-chart-10);
+}
+
+[data-theme="light"] {
+  --biz-money-flow-strong-in: var(--color-flow-in);
+  --biz-money-flow-strong-out: var(--color-flow-out);
+
+  --biz-signal-confirmed: var(--color-success);
+  --biz-signal-pending: var(--color-warning);
+  --biz-signal-invalid: var(--color-danger);
+
+  --biz-portfolio-profit: var(--color-market-up);
+  --biz-portfolio-loss: var(--color-market-down);
+}

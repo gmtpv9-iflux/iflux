@@ -1,0 +1,13 @@
+{
+  "note": "SoT mirror — logic thật trong iflux-routes.js. Đổi URL: sửa JS + nginx cùng lúc. /guest legacy → redirect / (Market).",
+  "routes": {
+    "home": { "public": "/nha-cua-toi", "file": "/User_Web/home/index.html", "zone": "app", "auth": true },
+    "market": { "public": "/thi-truong", "file": "/User_Web/market/index.html", "zone": "app", "landing": true },
+    "flow": { "public": "/dong-tien", "file": "/User_Web/flow/index.html", "zone": "app" },
+    "community": { "public": "/cong-dong", "file": "/User_Web/community/index.html", "zone": "app" },
+    "auth.login": { "public": "/dang-nhap", "file": "/User_Web/auth/login.html", "zone": "auth" }
+  },
+  "legacyRedirects": {
+    "/guest": "/"
+  }
+}

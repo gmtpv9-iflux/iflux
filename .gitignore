@@ -1,0 +1,60 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Cursor — giữ rules/skills trong repo; bỏ cache/agent tạm
+.cursor/*
+!.cursor/rules/
+!.cursor/skills/
+
+# Secrets & env — KHÔNG bao giờ commit
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+infra/staging/staging.env
+**/staging.env
+*.pem
+*.key
+*credentials*
+*secret*
+
+# Python / backend
+**/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+**/node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / runtime / logs
+dist/
+build/
+coverage/
+*.log
+tmp/
+temp/
+storage/
+
+# Large vendor mirrors (không phải SoT sản phẩm)
+tabler-icons-3.44.0/
+
+# Local scratch / binary dumps
+*.zip
+*.tar.gz
+*.dmg
+29a5ebde-*.jpeg
+Generated Image*.png
+iflux-insight-*.png

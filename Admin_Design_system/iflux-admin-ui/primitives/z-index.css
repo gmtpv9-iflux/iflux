@@ -1,0 +1,15 @@
+/**
+ * iFlux Foundation — Z-index scale
+ */
+:root {
+  --ifx-z-base: 0;
+  --ifx-z-raised: 1;
+  --ifx-z-dropdown: 100;
+  --ifx-z-sticky: 200;
+  --ifx-z-topnav: 220;
+  --ifx-z-drawer: 230;
+  --ifx-z-overlay: 240;
+  --ifx-z-modal: 300;
+  --ifx-z-toast: 400;
+  --ifx-z-onboarding: 500;
+}

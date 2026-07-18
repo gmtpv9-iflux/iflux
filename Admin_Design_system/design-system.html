@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iFlux Admin — Design System</title>
+
+  <!-- Google Fonts: Be Vietnam Pro + JetBrains Mono -->
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+
+  <!-- Tabler Icons (giống Vuexy gốc) -->
+<!-- Design System CSS -->
+  <link rel="stylesheet" href="iflux-admin-ui/iflux-admin-ui.css" />
+
+  <style>
+    /* Modal transition */
+    .ix-modal-overlay { display: none; transition: opacity .2s; }
+    .ix-modal-overlay.ix-modal-visible { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="ix-root">
+  <div class="ix-layout">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="ix-sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo">
+          <!-- Logo SVG giống Vuexy -->
+          <svg width="18" height="18" viewBox="0 0 32 22" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/>
+          </svg>
+        </div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+
+      <nav class="ix-menu">
+        <a href="hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist spec</span></a>
+        <a href="app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="app/users/list.html" class="ix-menu-item"><i class="ti ti-users ix-menu-icon"></i><span class="ix-menu-label">User List</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="patterns/table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="patterns/form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form</span></a>
+        <a href="patterns/charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <div class="ix-menu-header">Components</div>
+        <a href="app/system/ds-studio.html" class="ix-menu-item"><i class="ti ti-book-2 ix-menu-icon"></i><span class="ix-menu-label">DS SoT</span></a>
+        <a href="design-sandbox.html" class="ix-menu-item"><i class="ti ti-box ix-menu-icon"></i><span class="ix-menu-label">Design Sandbox</span></a>
+        <a href="design-system.html" class="ix-menu-item active"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Elements</span></a>
+      </nav>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="ix-main">
+
+      <!-- NAVBAR -->
+      <header class="ix-navbar">
+        <!-- Mobile hamburger -->
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Toggle menu">
+          <i class="ti ti-menu-2"></i>
+        </button>
+
+        <!-- Search -->
+        <div class="ix-search">
+          <i class="ti ti-search"></i>
+          <input type="text" placeholder="Search (Ctrl+K)..." />
+        </div>
+
+        <!-- Right actions -->
+        <div class="ix-nav-actions">
+          <!-- Language -->
+          <button class="ix-nav-btn" aria-label="Language">
+            <i class="ti ti-language"></i>
+          </button>
+
+          <!-- Theme toggle -->
+          <button class="ix-nav-btn" aria-label="Toggle theme">
+            <i class="ti ti-sun"></i>
+          </button>
+
+          <!-- Notifications -->
+          <div class="ix-dropdown">
+            <button class="ix-nav-btn" data-ix-toggle="dropdown" aria-label="Notifications">
+              <i class="ti ti-bell"></i>
+              <span class="ix-nav-dot"></span>
+            </button>
+            <div class="ix-dropdown-menu" style="min-width:280px">
+              <div style="padding:12px 16px;border-bottom:1px solid var(--ix-border)">
+                <span style="font-weight:600;font-size:14px;color:var(--ix-text-primary)">Notifications</span>
+                <span class="ix-badge ix-badge-primary" style="float:right">8 New</span>
+              </div>
+              <a href="#" class="ix-dropdown-item">
+                <div style="display:flex;gap:10px;align-items:flex-start">
+                  <div class="ix-avatar-sm ix-avatar-accent"><i class="ti ti-user" style="font-size:13px"></i></div>
+                  <div>
+                    <div style="font-size:13px;color:var(--ix-text-primary)">New user registered</div>
+                    <div style="font-size:11px;color:var(--ix-text-muted)">1h ago</div>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="ix-dropdown-item">
+                <div style="display:flex;gap:10px;align-items:flex-start">
+                  <div class="ix-avatar-sm ix-avatar-success"><i class="ti ti-check" style="font-size:13px"></i></div>
+                  <div>
+                    <div style="font-size:13px;color:var(--ix-text-primary)">Order #1234 confirmed</div>
+                    <div style="font-size:11px;color:var(--ix-text-muted)">3h ago</div>
+                  </div>
+                </div>
+              </a>
+              <div class="ix-dropdown-divider"></div>
+              <a href="#" class="ix-dropdown-item" style="text-align:center;color:var(--ix-accent)">
+                View all notifications
+              </a>
+            </div>
+          </div>
+
+          <!-- User dropdown -->
+          <div class="ix-dropdown">
+            <div class="ix-avatar ix-avatar-online" data-ix-toggle="dropdown" style="cursor:pointer">JD</div>
+            <div class="ix-dropdown-menu">
+              <div style="padding:10px 16px 8px;border-bottom:1px solid var(--ix-border)">
+                <div style="font-weight:600;font-size:14px;color:var(--ix-text-primary)">John Doe</div>
+                <div style="font-size:12px;color:var(--ix-text-muted)">Admin</div>
+              </div>
+              <a href="#" class="ix-dropdown-item"><i class="ti ti-user" style="margin-right:8px"></i>My Profile</a>
+              <a href="#" class="ix-dropdown-item"><i class="ti ti-settings" style="margin-right:8px"></i>Settings</a>
+              <a href="#" class="ix-dropdown-item"><i class="ti ti-file-dollar" style="margin-right:8px"></i>Billing</a>
+              <div class="ix-dropdown-divider"></div>
+              <a href="#" class="ix-dropdown-item" style="color:var(--ix-danger)"><i class="ti ti-logout" style="margin-right:8px"></i>Logout</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="ix-content">
+        <h1 class="ix-page-title">Analytics Dashboard</h1>
+        <div class="ix-breadcrumb">
+          <a href="#">Home</a>
+          <i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Dashboard</span>
+          <i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Analytics</span>
+        </div>
+
+        <!-- Stat cards row -->
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon accent"><i class="ti ti-shopping-cart"></i></div>
+            <div>
+              <div class="ix-stat-label">Orders</div>
+              <div class="ix-stat-value">2,856</div>
+              <div class="ix-stat-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +18.2%</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon success"><i class="ti ti-currency-dollar"></i></div>
+            <div>
+              <div class="ix-stat-label">Revenue</div>
+              <div class="ix-stat-value">$42.5k</div>
+              <div class="ix-stat-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +24.6%</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon warning"><i class="ti ti-users"></i></div>
+            <div>
+              <div class="ix-stat-label">Customers</div>
+              <div class="ix-stat-value">8,142</div>
+              <div class="ix-stat-trend down"><i class="ti ti-trending-down" style="font-size:11px"></i> -3.8%</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon danger"><i class="ti ti-chart-bar"></i></div>
+            <div>
+              <div class="ix-stat-label">Conversion</div>
+              <div class="ix-stat-value">28.5%</div>
+              <div class="ix-stat-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +6.1%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards row -->
+        <div class="ix-grid ix-grid-2 ix-mb-24">
+
+          <!-- Alerts showcase -->
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Alerts &amp; Status</div>
+                <div class="ix-card-subtitle">Semantic feedback components</div>
+              </div>
+            </div>
+            <div class="ix-card-body">
+              <div class="ix-alert ix-alert-primary">
+                <i class="ti ti-info-circle" style="font-size:18px;flex-shrink:0"></i>
+                <div>
+                  <div class="ix-alert-title">Info alert</div>
+                  <div class="ix-alert-text">This is an informational message.</div>
+                </div>
+              </div>
+              <div class="ix-alert ix-alert-success">
+                <i class="ti ti-circle-check" style="font-size:18px;flex-shrink:0"></i>
+                <div>
+                  <div class="ix-alert-title">Success alert</div>
+                  <div class="ix-alert-text">Operation completed successfully.</div>
+                </div>
+              </div>
+              <div class="ix-alert ix-alert-warning">
+                <i class="ti ti-alert-triangle" style="font-size:18px;flex-shrink:0"></i>
+                <div>
+                  <div class="ix-alert-title">Warning alert</div>
+                  <div class="ix-alert-text">Please review before proceeding.</div>
+                </div>
+              </div>
+              <div class="ix-alert ix-alert-danger">
+                <i class="ti ti-alert-circle" style="font-size:18px;flex-shrink:0"></i>
+                <div>
+                  <div class="ix-alert-title">Danger alert</div>
+                  <div class="ix-alert-text">This action cannot be undone.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons + Chips showcase -->
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Buttons &amp; Chips</div>
+                <div class="ix-card-subtitle">Interactive elements</div>
+              </div>
+            </div>
+            <div class="ix-card-body">
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+                <button class="ix-btn ix-btn-primary">Primary</button>
+                <button class="ix-btn ix-btn-success">Success</button>
+                <button class="ix-btn ix-btn-danger">Danger</button>
+                <button class="ix-btn ix-btn-warning">Warning</button>
+                <button class="ix-btn ix-btn-outline">Outline</button>
+                <button class="ix-btn ix-btn-ghost">Ghost</button>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+                <button class="ix-btn ix-btn-primary ix-btn-sm"><i class="ti ti-plus"></i> New</button>
+                <button class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-filter"></i> Filter</button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-edit"></i></button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-trash"></i></button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-dots-vertical"></i></button>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+                <span class="ix-chip ix-chip-primary">Primary</span>
+                <span class="ix-chip ix-chip-success">Active</span>
+                <span class="ix-chip ix-chip-warning">Pending</span>
+                <span class="ix-chip ix-chip-danger">Cancelled</span>
+                <span class="ix-chip ix-chip-info">Processing</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="ix-badge ix-badge-primary">5</span>
+                <span class="ix-badge ix-badge-success">New</span>
+                <span class="ix-badge ix-badge-warning">Hold</span>
+                <span class="ix-badge ix-badge-danger">Error</span>
+                <span class="ix-badge ix-badge-info">Beta</span>
+              </div>
+
+              <!-- Toast demo -->
+              <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--ix-border)">
+                <div style="font-size:12px;color:var(--ix-text-muted);margin-bottom:8px">Toast notifications</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  <button class="ix-btn ix-btn-outline ix-btn-sm" onclick="ixToast('Saved successfully!','success')">Success</button>
+                  <button class="ix-btn ix-btn-outline ix-btn-sm" onclick="ixToast('Something went wrong.','danger')">Danger</button>
+                  <button class="ix-btn ix-btn-outline ix-btn-sm" onclick="ixToast('Check your input.','warning')">Warning</button>
+                  <button class="ix-btn ix-btn-outline ix-btn-sm" onclick="ixToast('Update available.','info')">Info</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form + Progress -->
+        <div class="ix-grid ix-grid-2 ix-mb-24">
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Form Elements</div>
+                <div class="ix-card-subtitle">Input components</div>
+              </div>
+            </div>
+            <div class="ix-card-body">
+              <div class="ix-form-group">
+                <label class="ix-label">Full name</label>
+                <input type="text" class="ix-input" placeholder="Enter your full name" />
+              </div>
+              <div class="ix-form-group">
+                <label class="ix-label">Email address</label>
+                <input type="email" class="ix-input" placeholder="name@example.com" />
+              </div>
+              <div class="ix-form-group">
+                <label class="ix-label">Role</label>
+                <select class="ix-select">
+                  <option>Admin</option>
+                  <option>Editor</option>
+                  <option>Viewer</option>
+                </select>
+              </div>
+              <div class="ix-form-group">
+                <label class="ix-label">Notes</label>
+                <textarea class="ix-textarea" placeholder="Add a note..."></textarea>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="ix-btn ix-btn-primary">Save changes</button>
+                <button class="ix-btn ix-btn-outline">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Progress &amp; Skills</div>
+                <div class="ix-card-subtitle">Progress indicators</div>
+              </div>
+            </div>
+            <div class="ix-card-body">
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">Video khám</span>
+                  <span style="font-size:13px;color:var(--ix-accent)">72%</span>
+                </div>
+                <div class="ix-progress"><div class="ix-progress-bar" data-ix-progress="72"></div></div>
+              </div>
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">Chat BS</span>
+                  <span style="font-size:13px;color:var(--ix-success)">58%</span>
+                </div>
+                <div class="ix-progress ix-progress-success"><div class="ix-progress-bar" data-ix-progress="58"></div></div>
+              </div>
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">Q&amp;A Board</span>
+                  <span style="font-size:13px;color:var(--ix-warning)">23%</span>
+                </div>
+                <div class="ix-progress ix-progress-warning"><div class="ix-progress-bar" data-ix-progress="23"></div></div>
+              </div>
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">Subscriptions</span>
+                  <span style="font-size:13px;color:var(--ix-info)">41%</span>
+                </div>
+                <div class="ix-progress ix-progress-info"><div class="ix-progress-bar" data-ix-progress="41"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">SLA violations</span>
+                  <span style="font-size:13px;color:var(--ix-danger)">8%</span>
+                </div>
+                <div class="ix-progress ix-progress-danger"><div class="ix-progress-bar" data-ix-progress="8"></div></div>
+              </div>
+
+              <!-- Modal trigger -->
+              <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--ix-border)">
+                <button class="ix-btn ix-btn-primary" data-ix-modal="demo-modal">
+                  <i class="ti ti-external-link"></i> Open modal demo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="ix-card ix-mb-24">
+          <div class="ix-card-header" style="padding-bottom:12px">
+            <div>
+              <div class="ix-card-title">Project Status</div>
+              <div class="ix-card-subtitle">Telemed V2 sprint tracking</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-filter" style="font-size:12px"></i> Filter</button>
+              <button class="ix-btn ix-btn-primary ix-btn-sm"><i class="ti ti-plus" style="font-size:12px"></i> Add task</button>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th data-ix-sort="0">Module</th>
+                  <th data-ix-sort="1">Owner</th>
+                  <th data-ix-sort="2">Sprint</th>
+                  <th data-ix-sort="3">Status</th>
+                  <th>Progress</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <div class="ix-stat-icon accent" style="width:32px;height:32px;font-size:14px;border-radius:6px"><i class="ti ti-video"></i></div>
+                      <div>
+                        <div style="color:var(--ix-text-primary);font-weight:500">Online Status</div>
+                        <div style="font-size:11px;color:var(--ix-text-muted)">T7-E1 · Video</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <div class="ix-avatar-sm ix-avatar-accent">TL</div>
+                      <span>Tech Lead</span>
+                    </div>
+                  </td>
+                  <td>S1 — Tuần 1</td>
+                  <td><span class="ix-chip ix-chip-warning">In progress</span></td>
+                  <td style="width:160px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="ix-progress" style="flex:1"><div class="ix-progress-bar ix-progress-warning" data-ix-progress="60" style="background:var(--ix-warning)"></div></div>
+                      <span style="font-size:11px;color:var(--ix-text-muted)">60%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:4px">
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <div class="ix-stat-icon success" style="width:32px;height:32px;font-size:14px;border-radius:6px"><i class="ti ti-messages"></i></div>
+                      <div>
+                        <div style="color:var(--ix-text-primary);font-weight:500">Chat Realtime</div>
+                        <div style="font-size:11px;color:var(--ix-text-muted)">T7-E10 · Chat</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <div class="ix-avatar-sm ix-avatar-success">D1</div>
+                      <span>Dev 1</span>
+                    </div>
+                  </td>
+                  <td>S2 — Tuần 2</td>
+                  <td><span class="ix-chip ix-chip-primary">Planned</span></td>
+                  <td style="width:160px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="ix-progress" style="flex:1"><div class="ix-progress-bar" data-ix-progress="10"></div></div>
+                      <span style="font-size:11px;color:var(--ix-text-muted)">10%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:4px">
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <div class="ix-stat-icon info" style="width:32px;height:32px;font-size:14px;border-radius:6px"><i class="ti ti-message-question"></i></div>
+                      <div>
+                        <div style="color:var(--ix-text-primary);font-weight:500">Q&amp;A SEO</div>
+                        <div style="font-size:11px;color:var(--ix-text-muted)">T7-E12 · Q&amp;A</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <div class="ix-avatar-sm ix-avatar-info">D2</div>
+                      <span>Dev 2</span>
+                    </div>
+                  </td>
+                  <td>S2 — Tuần 2</td>
+                  <td><span class="ix-chip ix-chip-success">Done</span></td>
+                  <td style="width:160px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="ix-progress" style="flex:1"><div class="ix-progress-bar" data-ix-progress="100" style="background:var(--ix-success)"></div></div>
+                      <span style="font-size:11px;color:var(--ix-text-muted)">100%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:4px">
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button>
+                      <button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /ix-content -->
+    </main><!-- /ix-main -->
+  </div><!-- /ix-layout -->
+</div><!-- /ix-root -->
+
+<!-- ===================== MODAL ===================== -->
+<div id="demo-modal" class="ix-modal-overlay" role="dialog" aria-modal="true">
+  <div class="ix-modal">
+    <div class="ix-modal-header">
+      <span class="ix-modal-title">Add new task</span>
+      <button class="ix-btn ix-btn-icon" data-ix-dismiss="modal" aria-label="Close">
+        <i class="ti ti-x" style="font-size:16px"></i>
+      </button>
+    </div>
+    <div class="ix-modal-body">
+      <div class="ix-form-group">
+        <label class="ix-label">Task name</label>
+        <input type="text" class="ix-input" placeholder="Enter task name" />
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label">Assignee</label>
+        <select class="ix-select">
+          <option>Tech Lead</option>
+          <option>Dev 1</option>
+          <option>Dev 2</option>
+          <option>QA</option>
+        </select>
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label">Sprint</label>
+        <select class="ix-select">
+          <option>S1 — Tuần 1</option>
+          <option>S2 — Tuần 2</option>
+          <option>S3 — Tuần 3</option>
+          <option>S4 — Tuần 4</option>
+        </select>
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label">Notes</label>
+        <textarea class="ix-textarea" placeholder="Additional notes..."></textarea>
+      </div>
+    </div>
+    <div class="ix-modal-footer">
+      <button class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Cancel</button>
+      <button class="ix-btn ix-btn-primary" onclick="ixToast('Task created!','success');ixCloseModal('demo-modal')">
+        <i class="ti ti-plus"></i> Create task
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay for mobile sidebar -->
+<div id="ix-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99"></div>
+
+<!-- Design System JS -->
+<script src="iflux-admin-ui/iflux-admin-ui.js"></script>
+</body>
+</html>

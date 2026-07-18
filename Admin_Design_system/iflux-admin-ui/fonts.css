@@ -1,0 +1,34 @@
+/**
+ * iFlux fonts — Be Vietnam Pro (self-host, no Google Fonts)
+ * Chỉ 4 weight dùng thật: 200 / 400 / 600 / 800.
+ * Đã subset Latin + Latin-Ext + tiếng Việt → woff2 (~30KB/file).
+ * Mono/numeric: dùng font hệ thống (khai báo trong typography.css).
+ */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url('./fonts/BeVietnamPro-200.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/BeVietnamPro-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./fonts/BeVietnamPro-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('./fonts/BeVietnamPro-800.woff2') format('woff2');
+}

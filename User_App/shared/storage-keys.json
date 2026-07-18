@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "iFlux cross-platform storage keys (sandbox GĐ1)",
+  "description": "Keys mirror User_Web localStorage — Admin reads same keys in sandbox.",
+  "keys": {
+    "session": "iflux_user_session",
+    "activeSession": "iflux_active_session",
+    "profiles": "iflux_user_profiles_v1",
+    "credentials": "iflux_credentials_v1",
+    "featureSuggestions": "iflux_feature_suggestions_v1",
+    "community": "iflux_community_v1",
+    "checkoutOrders": "iflux_checkout_orders_v1",
+    "stockComments": "iflux_stock_comments_v6",
+    "dashboardLayout": "iflux_dashboard_layout_v1"
+  },
+  "demo": {
+    "email": "minh@iflux.vn",
+    "phone": "0912345678",
+    "password": "Demo@1234",
+    "otp": "123456"
+  }
+}

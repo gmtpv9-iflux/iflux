@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-05",
+  "note": "Staging User Web — chỉ bật module có Admin Full/Sandbox (hub.html ix-hub-ok)",
+  "enabled": {
+    "auth": { "admin": "ADM-AUTH", "label": "Đăng nhập / Đăng ký" },
+    "home": { "admin": "ADM-DASH + widget-library + core-setup + onboarding", "label": "Nhà của tôi" },
+    "market": { "admin": "ADM-MKT-000..006", "label": "Thị trường" },
+    "flow": { "admin": "ADM-MKT-005/006", "label": "Dòng tiền" },
+    "watchlist": { "admin": "watchlist-taxonomy", "label": "Watchlist" },
+    "alerts": { "admin": "sandbox + ADM-NOTIF pattern", "label": "Cảnh báo" },
+    "search": { "admin": "ADM-DASH search", "label": "Tìm kiếm" },
+    "pricing": { "admin": "ADM-SUB-001", "label": "Gói cước" },
+    "checkout": { "admin": "ADM-SUB-003 pattern", "label": "Thanh toán" },
+    "loyalty": { "admin": "ADM-SUB membership", "label": "Membership" },
+    "community": { "admin": "ADM-FEAT + community-store", "label": "Cộng đồng" },
+    "story": { "admin": "ADM-STR-*", "label": "Chủ đề" },
+    "stock": { "admin": "ADM-MKT-000", "label": "Chi tiết CP" },
+    "sector": { "admin": "ADM-MKT-003", "label": "Ngành" },
+    "family": { "admin": "ADM-MKT-001/002", "label": "Họ CP" },
+    "feature-suggestions": { "admin": "ADM-FEAT-001", "label": "Đề xuất tính năng" }
+  },
+  "disabled": {
+    "faq": { "reason": "Chưa có trang quản trị FAQ trên Admin" },
+    "share": { "reason": "Insight Share — Admin mới partial (design-sandbox)" }
+  },
+  "pathRules": [
+    { "match": "/User_Web/auth/", "module": "auth" },
+    { "match": "/User_Web/home/", "module": "home" },
+    { "match": "/User_Web/account/", "module": "home" },
+    { "match": "/User_Web/market/", "module": "market" },
+    { "match": "/User_Web/flow/", "module": "flow" },
+    { "match": "/User_Web/watchlist/", "module": "watchlist" },
+    { "match": "/User_Web/alerts/", "module": "alerts" },
+    { "match": "/User_Web/search/", "module": "search" },
+    { "match": "/User_Web/pricing/", "module": "pricing" },
+    { "match": "/User_Web/loyalty/", "module": "loyalty" },
+    { "match": "/User_Web/community/", "module": "community" },
+    { "match": "/User_Web/story/", "module": "story" },
+    { "match": "/User_Web/stock/", "module": "stock" },
+    { "match": "/User_Web/sector/", "module": "sector" },
+    { "match": "/User_Web/family/", "module": "family" },
+    { "match": "/User_Web/faq/", "module": "faq" },
+    { "match": "/User_Web/share/", "module": "share" }
+  ],
+  "navHrefMap": {
+    "../home/index.html": "home",
+    "../market/index.html": "market",
+    "../community/index.html": "community",
+    "../pricing/index.html": "pricing",
+    "../loyalty/index.html": "loyalty",
+    "../watchlist/index.html": "watchlist",
+    "../alerts/index.html": "alerts",
+    "../search/index.html": "search",
+    "../flow/index.html": "flow",
+    "../faq/index.html": "faq"
+  }
+}

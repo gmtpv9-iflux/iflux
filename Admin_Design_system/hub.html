@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iFlux Admin — Hub &amp; Checklist</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu">
+        <a href="hub.html" class="ix-menu-item active"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist spec</span></a>
+        <a href="app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="app/users/list.html" class="ix-menu-item"><i class="ti ti-users ix-menu-icon"></i><span class="ix-menu-label">User List</span></a>
+        <a href="app/system/roles.html" class="ix-menu-item"><i class="ti ti-shield ix-menu-icon"></i><span class="ix-menu-label">Roles</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="patterns/table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="patterns/form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="patterns/charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+        <a href="app/system/ds-studio.html" class="ix-menu-item"><i class="ti ti-book-2 ix-menu-icon"></i><span class="ix-menu-label">DS SoT</span></a>
+        <a href="design-sandbox.html" class="ix-menu-item"><i class="ti ti-box ix-menu-icon"></i><span class="ix-menu-label">Design Sandbox</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm mã màn (VD: ADM-MKT)..." id="hub-search" /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Local</span><div class="ix-avatar">OP</div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Admin Design System — Hub</h1>
+        <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">Đối chiếu <strong>10_ADMIN_ARCHITECTURE_SPEC.md</strong> · GĐ1: <strong>37/37 Full</strong> · GĐ2 checklist: <strong>16/16 Full</strong> (mock UI + iflux-admin-ui).</p>
+
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-card" style="padding:16px"><div class="ix-stat-row-label">GĐ1 Full</div><div class="ix-stat-row-value ix-hub-ok">37</div></div>
+          <div class="ix-card" style="padding:16px"><div class="ix-stat-row-label">GĐ2 Full</div><div class="ix-stat-row-value ix-hub-ok">16</div></div>
+          <div class="ix-card" style="padding:16px"><div class="ix-stat-row-label">Sandbox (STR/FEAT)</div><div class="ix-stat-row-value ix-hub-gd2">5+</div></div>
+          <div class="ix-card" style="padding:16px"><div class="ix-stat-row-label">Bundle CSS</div><div class="ix-stat-row-value" style="font-size:14px">iflux-admin-ui</div></div>
+        </div>
+
+        <div class="ix-card ix-mb-24" style="padding:0;overflow:hidden">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--ix-border)"><strong>Cấu trúc thư mục</strong></div>
+          <pre style="padding:16px 20px;font-size:12px;color:var(--ix-text-secondary);line-height:1.7;overflow:auto">Admin_Design_system/
+├── iflux-admin-ui/     ← style guideline (tokens + components + bundle)
+├── app/                ← màn admin production (theo module)
+├── patterns/           ← mẫu table / form / charts / wizard / chat / auth…
+├── auth/               ← ADM-AUTH (login, forgot, register)
+├── design-system.html  ← UI components
+├── app/system/ds-studio.html ← Design System Studio (trong shell admin)
+├── design-sandbox.html ← audit DS taxonomy §560+ / §15
+└── hub.html            ← checklist này</pre>
+        </div>
+
+        <div class="ix-card" style="padding:0;overflow:auto">
+          <table class="ix-hub-table" id="hub-table">
+            <thead>
+              <tr><th>Mã</th><th>Module</th><th>Tên màn</th><th>GĐ</th><th>Trạng thái DS</th><th>Link / Ghi chú</th></tr>
+            </thead>
+            <tbody>
+              <tr id="ADM-DASH"><td>ADM-DASH</td><td>Dashboard</td><td>Tổng quan</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/dashboard/index.html">app/dashboard/</a></td></tr>
+
+              <tr id="ADM-USR-001"><td>ADM-USR-001</td><td>Users</td><td>User List</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/users/list.html">app/users/list.html</a></td></tr>
+              <tr id="ADM-USR-002"><td>ADM-USR-002</td><td>Users</td><td>User Detail</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/users/detail.html">app/users/detail.html</a></td></tr>
+              <tr><td>ADM-USR-003</td><td>Users</td><td>Subscription Actions</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/users/subscription.html">subscription actions</a></td></tr>
+              <tr><td>ADM-USR-004</td><td>Users</td><td>Data Export</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/users/export.html">GDPR export form</a></td></tr>
+
+              <tr><td>ADM-MKT-000</td><td>Thị trường</td><td>Mã cổ phiếu</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/stocks.html">ADM-MKT-000</a> · ticker HPG, VNM…</td></tr>
+              <tr><td>ADM-MKT-001</td><td>Thị trường</td><td>Họ cổ phiếu</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/ecosystems/index.html">ADM-MKT-001</a> · Ecosystem CMS</td></tr>
+              <tr><td>ADM-MKT-002</td><td>Thị trường</td><td>Chi tiết họ CP</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/ecosystems/detail.html?id=vin">members + preview Ig</a></td></tr>
+              <tr><td>ADM-MKT-003</td><td>Thị trường</td><td>Quản lý ngành</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/sectors/index.html">table-list + form-add</a></td></tr>
+              <tr><td>ADM-MKT-004</td><td>Thị trường</td><td>Ngưỡng lô</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/lot-threshold.html">table-list editable</a></td></tr>
+              <tr><td>ADM-MKT-005</td><td>Thị trường</td><td>Cấu hình xếp hạng</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/ranking.html">form-add</a></td></tr>
+              <tr><td>ADM-MKT-006</td><td>Thị trường</td><td>Công thức</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market/formulas.html">table-list + detail version</a></td></tr>
+
+              <tr id="ADM-MDO-001"><td>ADM-MDO-001</td><td>Market Data Ops</td><td>Feed Health</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market-ops/feed-health.html">cards + charts gallery</a></td></tr>
+              <tr><td>ADM-MDO-002</td><td>Market Data Ops</td><td>Market Sessions</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market-ops/sessions.html">table-list</a></td></tr>
+              <tr><td>ADM-MDO-003</td><td>Market Data Ops</td><td>Missing Tick Monitor</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market-ops/missing-ticks.html">monitor</a></td></tr>
+              <tr><td>ADM-MDO-004</td><td>Market Data Ops</td><td>Manual Correction</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/market-ops/corrections.html">form + confirm</a></td></tr>
+
+              <tr><td>ADM-DATA-001</td><td>Data Governance</td><td>Data Sources</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/sources.html">providers</a></td></tr>
+              <tr><td>ADM-DATA-002</td><td>Data Governance</td><td>ETL Jobs</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/etl-jobs.html">jobs</a></td></tr>
+              <tr><td>ADM-DATA-003</td><td>Data Governance</td><td>Pipeline Monitor</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/pipeline.html">pipeline</a></td></tr>
+              <tr><td>ADM-DATA-004</td><td>Data Governance</td><td>Data Quality</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/quality.html">sections</a></td></tr>
+              <tr><td>ADM-DATA-005</td><td>Data Governance</td><td>Data Dictionary</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/dictionary.html">dictionary</a></td></tr>
+              <tr><td>ADM-DATA-006</td><td>Data Governance</td><td>Reconciliation Center</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/data/reconciliation.html">reconciliation</a></td></tr>
+
+              <tr id="ADM-SUB-001"><td>ADM-SUB-001</td><td>Subscription</td><td>Plan Registry</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/subscription/plans.html">plans</a> + <a href="app/subscription/plan-edit.html?plan=premium">plan-edit</a></td></tr>
+              <tr><td>ADM-SUB-002</td><td>Subscription</td><td>Active Subscribers</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/subscription/subscribers.html">subscribers</a></td></tr>
+              <tr><td>ADM-SUB-003</td><td>Subscription</td><td>Danh sách đơn hàng</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/subscription/transactions.html">transactions</a></td></tr>
+
+              <tr><td>ADM-SYS-001</td><td>System</td><td>SLA Dashboard</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/sla.html">sla</a></td></tr>
+              <tr><td>ADM-SYS-002</td><td>System</td><td>Feature Flags</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/feature-flags.html">flags</a></td></tr>
+              <tr><td>ADM-SYS-003</td><td>System</td><td>Announcements</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/announcements.html">templates</a></td></tr>
+              <tr><td>ADM-SYS-004</td><td>System</td><td>Maintenance Mode</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/maintenance.html">maintenance</a></td></tr>
+              <tr id="ADM-SYS-005"><td>ADM-SYS-005</td><td>System</td><td>Role Management</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/roles.html">app/system/roles.html</a></td></tr>
+              <tr><td>ADM-SYS-006</td><td>System</td><td>Audit Log</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/audit.html">audit</a></td></tr>
+              <tr><td>ADM-SYS-007</td><td>System</td><td>Admin User Management</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/admin-users.html">admin users</a></td></tr>
+              <tr><td>ADM-SYS-009</td><td>System</td><td>Tầng 4 · Widget (cũ: Thư viện)</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/platform-layers.html#layer-4">platform layers · L4</a></td></tr>
+              <tr><td>ADM-SYS-010</td><td>System</td><td>Thiết lập core</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/core-setup.html">core setup</a></td></tr>
+              <tr><td>ADM-SYS-011</td><td>System</td><td>Cài đặt Trang</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/system/page-settings.html">page settings</a></td></tr>
+
+              <tr><td>ADM-NOTIF-001</td><td>Notification</td><td>Push Notifications</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/notifications/push.html">push</a></td></tr>
+              <tr><td>ADM-NOTIF-002</td><td>Notification</td><td>In-App Notifications</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/notifications/in-app.html">in-app</a></td></tr>
+              <tr><td>ADM-NOTIF-003</td><td>Notification</td><td>Email Campaigns</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/notifications/email.html">email campaigns</a></td></tr>
+              <tr><td>ADM-NOTIF-004</td><td>Notification</td><td>Broadcast History</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/notifications/history.html">history</a></td></tr>
+
+              <tr><td>ADM-META-002</td><td>Metadata</td><td>Sector Types</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/metadata/sector-types.html">sector types</a></td></tr>
+              <tr><td>ADM-META-004</td><td>Metadata</td><td>Enum Management</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="app/metadata/enums.html">enums</a></td></tr>
+              <tr><td>ADM-META-001</td><td>Metadata</td><td>Theme Registry</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/metadata/themes.html">themes</a></td></tr>
+              <tr><td>ADM-META-003</td><td>Metadata</td><td>Story Lifecycle Config</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/metadata/story-lifecycle.html">lifecycle</a></td></tr>
+
+              <tr><td>ADM-COM-001</td><td>Cộng đồng</td><td>Kiểm duyệt story</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/community/stories.html">moderation</a></td></tr>
+              <tr><td>ADM-COM-002</td><td>Cộng đồng</td><td>Kiểm duyệt bình luận</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/community/comments.html">moderation</a></td></tr>
+              <tr><td>ADM-COM-003</td><td>Cộng đồng</td><td>Trung tâm báo cáo</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/community/reports.html">queue</a></td></tr>
+              <tr><td>ADM-COM-004</td><td>Cộng đồng</td><td>Quản lý chuyên gia</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/community/experts.html">experts</a></td></tr>
+              <tr><td>ADM-FEAT-001</td><td>Sản phẩm</td><td>Đề xuất tính năng từ user</td><td>1</td><td class="ix-hub-ok">Sandbox</td><td><a href="app/product/feature-suggestions.html">Mở</a></td></tr>
+              <tr><td>ADM-STR-*</td><td>Story Intelligence</td><td>Registry / Detail / Mapping / Analytics (4 màn)</td><td>4</td><td class="ix-hub-ok">Sandbox</td><td><a href="app/chu-de/registry.html">Mở</a></td></tr>
+              <tr><td>ADM-AI-001</td><td>AI Center</td><td>Prompt Registry</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/ai/prompts.html">prompts</a></td></tr>
+              <tr><td>ADM-AI-002</td><td>AI Center</td><td>Prompt Detail</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/ai/prompt-detail.html">detail</a></td></tr>
+              <tr><td>ADM-AI-003</td><td>AI Center</td><td>AI Logs</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/ai/logs.html">logs</a></td></tr>
+              <tr><td>ADM-AI-004</td><td>AI Center</td><td>AI Cost Dashboard</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/ai/cost.html">cost</a></td></tr>
+              <tr><td>ADM-AI-005</td><td>AI Center</td><td>Quality Review</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/ai/quality.html">quality</a></td></tr>
+              <tr><td>ADM-ANL-001</td><td>Analytics</td><td>User Analytics</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/analytics/users.html">DAU/retention</a></td></tr>
+              <tr><td>ADM-ANL-002</td><td>Analytics</td><td>Story Analytics</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/analytics/stories.html">engagement</a></td></tr>
+              <tr><td>ADM-ANL-003</td><td>Analytics</td><td>Revenue Analytics</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/analytics/revenue.html">MRR/LTV</a></td></tr>
+              <tr><td>ADM-ANL-004</td><td>Analytics</td><td>Conversion Funnel</td><td>2</td><td class="ix-hub-ok">Full</td><td><a href="app/analytics/funnel.html">funnel</a></td></tr>
+
+              <tr id="ADM-AUTH"><td>ADM-AUTH</td><td>Auth</td><td>Login + 2FA + Forgot + Register</td><td>1</td><td class="ix-hub-ok">Full</td><td><a href="auth/login.html">login</a> · <a href="auth/verify-2fa.html">2FA</a> · <a href="auth/forgot.html">forgot</a> · <a href="auth/register.html">register</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ix-card ix-mt-24" style="padding:20px">
+          <h2 style="font-size:15px;margin-bottom:12px">Patterns mới (từ files 3)</h2>
+          <div class="ix-grid ix-grid-3" style="gap:12px;font-size:13px">
+            <a href="patterns/order-list.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>List + stats strip</strong><div style="color:var(--ix-text-muted);margin-top:4px">ADM-SUB-003, bảng + widget separator</div></a>
+            <a href="patterns/order-detail.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>Chi tiết + timeline</strong><div style="color:var(--ix-text-muted);margin-top:4px">2 cột + shipping activity</div></a>
+            <a href="patterns/wizard.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>Wizard nhiều bước</strong><div style="color:var(--ix-text-muted);margin-top:4px">Form phức tạp / onboarding</div></a>
+            <a href="patterns/chat.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>Chat split-pane</strong><div style="color:var(--ix-text-muted);margin-top:4px">Support / moderation</div></a>
+            <a href="patterns/referrals.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>Referrals</strong><div style="color:var(--ix-text-muted);margin-top:4px">Stats + invite + table</div></a>
+            <a href="patterns/user-profile.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>User profile</strong><div style="color:var(--ix-text-muted);margin-top:4px">ADM-USR-002 · plan + affiliate + security</div></a>
+            <a href="auth/login.html" class="ix-card" style="padding:14px;text-decoration:none;color:inherit"><strong>Auth</strong><div style="color:var(--ix-text-muted);margin-top:4px">Login · Quên MK · Đăng ký</div></a>
+          </div>
+        </div>
+
+        <div class="ix-card ix-mt-24" style="padding:20px">
+          <h2 style="font-size:15px;margin-bottom:12px">Việc tiếp theo</h2>
+          <ol style="font-size:13px;color:var(--ix-text-secondary);padding-left:20px;line-height:1.8">
+            <li>Nối API thật cho GĐ1/GĐ2 (hiện mock qua <code>admin-screens-gd1.js</code> + <code>admin-screens-gd2.js</code>)</li>
+            <li>Story Intelligence (ADM-STR) — sandbox riêng, đã có UI tại <code>app/chu-de/</code></li>
+            <li>Tokenize inline styles còn lại (VD: <code>sla.html</code>)</li>
+            <li>Ant Design Pro: migrate sang React khi backend sẵn sàng</li>
+          </ol>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+document.getElementById('hub-search').addEventListener('input', function () {
+  var q = this.value.toLowerCase();
+  document.querySelectorAll('#hub-table tbody tr').forEach(function (row) {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>

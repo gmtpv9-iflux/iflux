@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pattern — Chat — iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand"><div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div><span class="ix-brand-name">iFlux Admin</span></div>
+                  <nav class="ix-menu">
+        <a href="../app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="../hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">List + stats strip</span></a>
+        <a href="order-detail.html" class="ix-menu-item"><i class="ti ti-file-description ix-menu-icon"></i><span class="ix-menu-label">Chi tiết + timeline</span></a>
+        <a href="user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="wizard.html" class="ix-menu-item"><i class="ti ti-stairs-up ix-menu-icon"></i><span class="ix-menu-label">Wizard</span></a>
+        <a href="chat.html" class="ix-menu-item active"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+        <a href="referrals.html" class="ix-menu-item"><i class="ti ti-users-group ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></a>
+        <a href="charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="../auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="../design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions"><button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button><div class="ix-avatar">JD</div></div>
+      </header>
+      <div class="ix-content">
+        <!-- Chat split-pane -->
+        <div class="ix-chat-layout" data-ix-chat>
+          <!-- Left: Contacts -->
+          <div class="ix-chat-sidebar">
+            <div class="ix-chat-sidebar-header">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <div class="ix-avatar" style="width:32px;height:32px;font-size:12px">JD</div>
+                <span style="font-size:13px;font-weight:600;color:var(--ix-text-primary)">John Doe</span>
+              </div>
+              <div style="position:relative">
+                <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ix-text-muted);font-size:13px"></i>
+                <input type="text" style="width:100%;padding:7px 10px 7px 32px;background:var(--ix-bg-input);border:1px solid var(--ix-border);border-radius:var(--ix-radius);font-size:13px;color:var(--ix-text-primary);font-family:var(--ix-font);outline:none" placeholder="Search..." />
+              </div>
+            </div>
+            <div class="ix-chat-list">
+              <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;color:var(--ix-accent);text-transform:uppercase;letter-spacing:.5px">Chats</div>
+              <div class="ix-chat-item active" data-chat-name="Felecia Rower" data-chat-role="NextJS Developer">
+                <div class="ix-avatar-sm ix-avatar-success" style="position:relative;flex-shrink:0">FR
+                  <span style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:var(--ix-success);border:2px solid var(--ix-bg-card)"></span>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="ix-chat-item-name">Felecia Rower</div>
+                    <div class="ix-chat-item-time">5 min</div>
+                  </div>
+                  <div class="ix-chat-item-preview">I will purchase it for sure 👍</div>
+                </div>
+              </div>
+              <div class="ix-chat-item" data-chat-name="Waldemar Mannering" data-chat-role="AWS Support">
+                <div class="ix-avatar-sm ix-avatar-accent" style="position:relative;flex-shrink:0">WM
+                  <span style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:var(--ix-success);border:2px solid var(--ix-bg-card)"></span>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="ix-chat-item-name">Waldemar Mannering</div>
+                    <div class="ix-chat-item-time">30 min</div>
+                  </div>
+                  <div class="ix-chat-item-preview">Refer friends. Get rewards.</div>
+                </div>
+              </div>
+              <div class="ix-chat-item" data-chat-name="Calvin Moore" data-chat-role="UX Engineer">
+                <div class="ix-avatar-sm ix-avatar-info" style="flex-shrink:0">CM</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="ix-chat-item-name">Calvin Moore</div>
+                    <div class="ix-chat-item-time">1 day</div>
+                  </div>
+                  <div class="ix-chat-item-preview">If it takes long, mail inbox</div>
+                </div>
+              </div>
+              <div style="padding:8px 16px 4px;font-size:11px;font-weight:600;color:var(--ix-accent);text-transform:uppercase;letter-spacing:.5px;margin-top:8px">Contacts</div>
+              <div class="ix-chat-item" data-chat-name="Natalie Maxwell" data-chat-role="UI/UX Designer">
+                <div class="ix-avatar-sm ix-avatar-danger" style="flex-shrink:0">NM</div>
+                <div style="flex:1;min-width:0"><div class="ix-chat-item-name">Natalie Maxwell</div><div class="ix-chat-item-preview">UI/UX Designer</div></div>
+              </div>
+              <div class="ix-chat-item" data-chat-name="Jess Cook" data-chat-role="Business Analyst">
+                <div class="ix-avatar-sm ix-avatar-warning" style="flex-shrink:0">JC</div>
+                <div style="flex:1;min-width:0"><div class="ix-chat-item-name">Jess Cook</div><div class="ix-chat-item-preview">Business Analyst</div></div>
+              </div>
+              <div class="ix-chat-item" data-chat-name="Stacy Garrison" data-chat-role="Marketing Ninja">
+                <div class="ix-avatar-sm ix-avatar-success" style="flex-shrink:0">SG</div>
+                <div style="flex:1;min-width:0"><div class="ix-chat-item-name">Stacy Garrison</div><div class="ix-chat-item-preview">Marketing Ninja</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main chat -->
+          <div class="ix-chat-main">
+            <div class="ix-chat-header">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="ix-avatar-sm ix-avatar-success" id="chat-active-avatar" style="font-size:12px">FR</div>
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)" id="chat-active-name">Felecia Rower</div>
+                  <div style="font-size:12px;color:var(--ix-text-muted)" id="chat-active-role">NextJS Developer</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:4px">
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-phone" style="font-size:16px"></i></button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-video" style="font-size:16px"></i></button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-search" style="font-size:16px"></i></button>
+                <button class="ix-btn ix-btn-icon"><i class="ti ti-dots-vertical" style="font-size:16px"></i></button>
+              </div>
+            </div>
+            <div class="ix-chat-body" id="chat-messages">
+              <div class="ix-chat-msg sent">
+                <div class="ix-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">JD</div>
+                <div><div class="ix-chat-bubble">How can we help? We're here for you! 😄</div><div class="ix-chat-time" style="text-align:right"><i class="ti ti-checks" style="color:var(--ix-success);font-size:12px"></i> 10:00 AM</div></div>
+              </div>
+              <div class="ix-chat-msg">
+                <div class="ix-avatar-sm ix-avatar-success" style="flex-shrink:0;font-size:11px">FR</div>
+                <div><div class="ix-chat-bubble">Hey John, I am looking for the best admin template.</div><div class="ix-chat-bubble" style="margin-top:6px">Could you please help me to find it out? 🤔</div><div class="ix-chat-time">10:02 AM</div></div>
+              </div>
+              <div class="ix-chat-msg sent">
+                <div class="ix-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">JD</div>
+                <div><div class="ix-chat-bubble">iFlux Admin has all the components you'll ever need in an app.</div><div class="ix-chat-time" style="text-align:right"><i class="ti ti-checks" style="color:var(--ix-success);font-size:12px"></i> 10:03 AM</div></div>
+              </div>
+              <div class="ix-chat-msg">
+                <div class="ix-avatar-sm ix-avatar-success" style="flex-shrink:0;font-size:11px">FR</div>
+                <div><div class="ix-chat-bubble">Looks clean and fresh UI 😃. It's perfect for my next project.</div><div class="ix-chat-time">10:05 AM</div></div>
+              </div>
+              <div class="ix-chat-msg sent">
+                <div class="ix-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">JD</div>
+                <div><div class="ix-chat-bubble">Great, feel free to get in touch anytime!</div><div class="ix-chat-time" style="text-align:right"><i class="ti ti-checks" style="color:var(--ix-success);font-size:12px"></i> 10:06 AM</div></div>
+              </div>
+              <div class="ix-chat-msg">
+                <div class="ix-avatar-sm ix-avatar-success" style="flex-shrink:0;font-size:11px">FR</div>
+                <div><div class="ix-chat-bubble">I will purchase it for sure. 👍</div><div class="ix-chat-time">10:08 AM</div></div>
+              </div>
+            </div>
+            <div class="ix-chat-footer">
+              <input class="ix-chat-input" id="chat-input" placeholder="Type your message here..." />
+              <button class="ix-btn ix-btn-icon"><i class="ti ti-microphone" style="font-size:16px"></i></button>
+              <button class="ix-btn ix-btn-icon"><i class="ti ti-paperclip" style="font-size:16px"></i></button>
+              <button class="ix-btn ix-btn-primary" data-ix-chat-send><span>Send</span> <i class="ti ti-send" style="font-size:14px"></i></button>
+            </div>
+          </div>
+
+          <!-- Right sidebar: contact info -->
+          <div class="ix-chat-profile">
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px">
+              <div class="ix-avatar-sm ix-avatar-success" id="right-avatar" style="width:56px;height:56px;font-size:20px">FR</div>
+              <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)" id="right-name">Felecia Rower</div>
+              <div style="font-size:12px;color:var(--ix-text-muted)" id="right-role">NextJS Developer</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ix-text-muted);margin-bottom:10px">Personal Info</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ix-text-secondary)">
+                <div style="display:flex;align-items:center;gap:6px"><i class="ti ti-mail" style="color:var(--ix-accent)"></i>josephGreen@email.com</div>
+                <div style="display:flex;align-items:center;gap:6px"><i class="ti ti-phone-call" style="color:var(--ix-accent)"></i>+1 (123) 456-7890</div>
+                <div style="display:flex;align-items:center;gap:6px"><i class="ti ti-clock" style="color:var(--ix-accent)"></i>Mon-Fri 10AM-8PM</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ix-text-muted);margin-bottom:10px">Options</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ix-text-secondary)">
+                <div style="display:flex;align-items:center;gap:6px;cursor:pointer"><i class="ti ti-star"></i>Important Contact</div>
+                <div style="display:flex;align-items:center;gap:6px;cursor:pointer"><i class="ti ti-photo"></i>Shared Media</div>
+                <div style="display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--ix-danger)"><i class="ti ti-ban"></i>Block Contact</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="../iflux-admin-ui/pattern-chat.js"></script>
+<script>PatternChat.init();</script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

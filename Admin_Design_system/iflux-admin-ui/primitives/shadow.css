@@ -1,0 +1,15 @@
+/**
+ * iFlux Foundation — Shadow Primitives + Semantic
+ */
+:root {
+  --ifx-shadow-xs: 0 1px 2px var(--ifx-alpha-black-8);
+  --ifx-shadow-sm: 0 2px 6px var(--ifx-alpha-black-8);
+  --ifx-shadow-md: 0 4px 16px var(--ifx-alpha-black-12);
+  --ifx-shadow-lg: 0 8px 24px var(--ifx-alpha-black-16);
+  --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
+
+  --shadow-card: var(--ifx-shadow-sm);
+  --shadow-dropdown: var(--ifx-shadow-lg);
+  --shadow-modal: var(--ifx-shadow-xl);
+  --shadow-topnav: var(--ifx-shadow-md);
+}

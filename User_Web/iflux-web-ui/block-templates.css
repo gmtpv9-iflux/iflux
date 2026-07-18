@@ -1,0 +1,882 @@
+/**
+ * iFlux Block Templates — SoT giao diện block (map Design Sandbox §15).
+ * Chỉ dùng design tokens (--ix-*, --color-*, --ifx-*). Không hardcode hex/rgba.
+ */
+
+/* ── TPL-SHELL-CARD / TPL-SHELL-SIDEBAR — canonical shell ── */
+.ifx-block,
+.ifx-mkt-card,
+.ifx-flow-card,
+.ifx-mkt-sidebar-widget,
+.ifx-mkt-liq-block,
+.ifx-com-overview,
+.ifx-com-breadth-sidebar {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ifx-mkt-sidebar-widget,
+.ifx-com-breadth-sidebar,
+.ifx-mkt-card,
+.ifx-flow-card,
+.ifx-mkt-liq-block {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Widget Header Block do widget-shell.css sở hữu. */
+.ifx-com-breadth-sidebar > .ifx-widget__subtitle {
+  padding: 0 var(--ifx-inset-widget);
+  margin: 0;
+  border-bottom: 1px solid var(--ix-border);
+}
+.ifx-com-breadth-sidebar > .ifx-mkt-sidebar-widget__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ifx-block__body,
+.ifx-mkt-card__body,
+.ifx-flow-card__body,
+.ifx-mkt-sidebar-widget__body,
+.ifx-com-overview__body,
+.ifx-mkt-liq-block__body {
+  padding: var(--ifx-inset-widget);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ifx-block__foot,
+.ifx-mkt-card__foot,
+.ifx-flow-card__foot {
+  padding: var(--ifx-inset-widget);
+  border-top: 1px solid var(--ix-border);
+}
+
+.ifx-flow-card__sub,
+.ifx-mkt-section__sub {
+  margin: 0;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  line-height: 1.5;
+}
+
+/* ── TPL-BREADTH / TMP-BREADTH — CSS owner duy nhất (tabs + 6-stat + ratio) ──
+ * Mật độ mặc định = giao diện sidebar Thị trường (3 cột × 2 hàng).
+ * Page placement (community.css) chỉ được override mật độ hẹp — không copy core.
+ */
+.ifx-breadth-block { min-width: 0; }
+
+.ifx-breadth-exchange {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-4);
+  margin-bottom: var(--ifx-space-12);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.ifx-breadth-exchange .ix-tab {
+  font-size: var(--ifx-font-size-10);
+  padding: 5px 10px;
+}
+
+.ifx-breadth-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ifx-space-16);
+}
+.ifx-breadth-visual--6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ifx-space-8);
+}
+
+.ifx-breadth-stat {
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: var(--ix-radius);
+  border: 1px solid var(--ix-border);
+}
+.ifx-breadth-stat.is-total { background: var(--ifx-alpha-white-4); }
+.ifx-breadth-stat.is-up { background: var(--ix-success-soft); }
+.ifx-breadth-stat.is-down { background: var(--ix-danger-soft); }
+.ifx-breadth-stat.is-ref { background: var(--ix-warning-soft); }
+.ifx-breadth-stat.is-ceiling { background: var(--ifx-market-ceiling-soft); }
+.ifx-breadth-stat.is-floor { background: var(--ifx-market-floor-soft); }
+
+.ifx-breadth-stat__num {
+  font-size: var(--ifx-font-size-24);
+  font-weight: 800;
+  font-family: var(--ifx-font-mono);
+  line-height: 1.1;
+}
+
+.ifx-breadth-stat__label {
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+  margin-top: 6px;
+  line-height: 1.25;
+}
+
+.ifx-breadth-stat.is-total .ifx-breadth-stat__num { color: var(--ix-text-primary); }
+.ifx-breadth-stat.is-up .ifx-breadth-stat__num { color: var(--ix-success); }
+.ifx-breadth-stat.is-down .ifx-breadth-stat__num { color: var(--ix-danger); }
+.ifx-breadth-stat.is-ref .ifx-breadth-stat__num { color: var(--ix-warning); }
+.ifx-breadth-stat.is-ceiling .ifx-breadth-stat__num { color: var(--ifx-market-ceiling); }
+.ifx-breadth-stat.is-floor .ifx-breadth-stat__num { color: var(--ifx-market-floor); }
+
+.ifx-breadth-ratio {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: var(--ifx-space-12);
+  background: var(--ix-bg-input);
+}
+.ifx-breadth-ratio__up { background: var(--ix-success); }
+.ifx-breadth-ratio__down { background: var(--ix-danger); }
+
+@media (max-width: 768px) {
+  .ifx-breadth-visual--6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ifx-breadth-visual--6 .ifx-breadth-stat__num { font-size: var(--ifx-font-size-20); }
+  .ifx-breadth-exchange .ix-tab {
+    font-size: var(--ifx-font-size-10);
+    padding: 4px 7px;
+  }
+}
+
+/* ── TPL-TREEMAP — heat / cap tiles ── */
+.ifx-treemap { position: relative; width: 100%; }
+
+.ifx-treemap-tile,
+.ifx-mkt-heat-tile,
+.ifx-cap-tile {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.ifx-treemap-tile__link,
+.ifx-mkt-heat-tile__link,
+.ifx-cap-tile__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--ix-radius);
+  text-decoration: none;
+  padding: 6px;
+  box-sizing: border-box;
+  text-align: center;
+  gap: var(--ifx-space-4);
+  transition: filter var(--ifx-duration-fast), transform var(--ifx-duration-fast);
+}
+.ifx-treemap-tile__link:hover,
+.ifx-mkt-heat-tile__link:hover,
+.ifx-cap-tile__link:hover {
+  filter: brightness(1.08);
+  transform: scale(1.01);
+}
+
+.ifx-treemap-tile__link.is-up,
+.ifx-mkt-heat-tile__link.is-up,
+.ifx-cap-tile__link.is-up {
+  background: var(--ifx-market-up);
+  color: var(--color-text-on-success);
+}
+.ifx-treemap-tile__link.is-down,
+.ifx-mkt-heat-tile__link.is-down,
+.ifx-cap-tile__link.is-down {
+  background: var(--ifx-market-down);
+  color: var(--color-text-on-danger);
+}
+.ifx-treemap-tile__link.is-ref,
+.ifx-mkt-heat-tile__link.is-ref,
+.ifx-cap-tile__link.is-ref {
+  background: var(--ifx-market-ref);
+  color: var(--color-text-on-warning);
+}
+.ifx-treemap-tile__link.is-ceiling,
+.ifx-cap-tile__link.is-ceiling {
+  background: var(--ifx-market-ceiling);
+  color: var(--color-text-on-primary);
+}
+.ifx-treemap-tile__link.is-floor,
+.ifx-cap-tile__link.is-floor {
+  background: var(--ifx-market-floor);
+  color: var(--color-text-on-info);
+}
+
+.ifx-treemap-tile__name,
+.ifx-mkt-heat-tile__name,
+.ifx-cap-tile__name {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ifx-treemap-tile__perf,
+.ifx-mkt-heat-tile__perf,
+.ifx-cap-tile__perf {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  font-family: var(--ifx-font-mono);
+}
+
+/* Heatmap tail — gộp phần còn lại ≤5% vốn hóa thành một ô "..." */
+.ifx-mkt-heat-tile--remainder,
+.ifx-cap-tile--remainder {
+  pointer-events: none;
+}
+.ifx-mkt-heat-tile__remainder,
+.ifx-cap-tile__remainder,
+.ifx-treemap-tile__remainder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-muted);
+  background: var(--ix-bg-muted);
+  letter-spacing: 0.12em;
+}
+.ifx-mkt-heat-tile__remainder.is-remainder,
+.ifx-cap-tile__remainder.is-remainder,
+.ifx-treemap-tile__remainder.is-remainder {
+  background: var(--ix-bg-hover);
+}
+
+/* ── TPL-WGT-HEAD — dùng .ifx-widget__header (widget-shell.css) ── */
+
+/* ── Market direction utilities (text / border only) ── */
+.is-up { color: var(--ix-success); }
+.is-down { color: var(--ix-danger); }
+.is-ref { color: var(--ix-warning); }
+.is-flat { color: var(--ix-text-muted); }
+.is-ceiling { color: var(--ifx-market-ceiling); }
+.is-floor { color: var(--ifx-market-floor); }
+
+/* ── TPL-RANK-BAR — horizontal rank list ── */
+.ifx-rank-bar__head,
+.ifx-mkt-rank-head {
+  display: grid;
+  grid-template-columns: 28px minmax(100px, 140px) minmax(0, 1fr) minmax(72px, 88px);
+  gap: var(--ifx-inline-md);
+  padding: 0 4px 8px;
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ix-text-muted);
+}
+.ifx-rank-bar__head span:nth-child(2),
+.ifx-mkt-rank-head span:nth-child(2) { grid-column: 2; }
+.ifx-rank-bar__head span:nth-child(3),
+.ifx-mkt-rank-head span:nth-child(3) { grid-column: 3 / span 2; text-align: right; }
+
+.ifx-rank-bar__list,
+.ifx-mkt-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-inline-md);
+}
+
+.ifx-rank-bar__row,
+.ifx-mkt-rank-row {
+  display: grid;
+  grid-template-columns: 28px minmax(100px, 140px) minmax(0, 1fr) minmax(72px, 88px);
+  align-items: center;
+  gap: var(--ifx-inline-md);
+}
+
+.ifx-rank-bar__idx,
+.ifx-mkt-rank-idx {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-muted);
+  text-align: center;
+}
+
+.ifx-rank-bar__name,
+.ifx-mkt-rank-name {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ifx-rank-bar__track,
+.ifx-mkt-rank-bar-track {
+  height: 10px;
+  background: var(--ix-accent-soft);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.ifx-rank-bar__fill,
+.ifx-mkt-rank-bar {
+  height: 100%;
+  border-radius: 5px;
+  min-width: 4px;
+  transition: width var(--ifx-duration-normal) ease;
+}
+.ifx-rank-bar__fill.is-up,
+.ifx-mkt-rank-bar.is-up {
+  background: linear-gradient(90deg, var(--ix-success-soft), var(--ix-success));
+}
+.ifx-rank-bar__fill.is-down,
+.ifx-mkt-rank-bar.is-down {
+  background: linear-gradient(90deg, var(--ix-danger-soft), var(--ix-danger));
+}
+.ifx-rank-bar__fill.is-flat,
+.ifx-mkt-rank-bar.is-flat { background: var(--ix-text-muted); }
+
+.ifx-rank-bar__val,
+.ifx-mkt-rank-val {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-bold);
+  font-family: var(--ifx-font-mono);
+  text-align: right;
+}
+.ifx-rank-bar__val.is-up,
+.ifx-mkt-rank-val.is-up { color: var(--ix-success); }
+.ifx-rank-bar__val.is-down,
+.ifx-mkt-rank-val.is-down { color: var(--ix-danger); }
+.ifx-rank-bar__val.is-flat,
+.ifx-mkt-rank-val.is-flat { color: var(--ix-text-muted); }
+
+/* ── TPL-DIVERGING-BARS / TMP-DIVERGING-BARS — CSS owner duy nhất ──
+ * Cột hai chiều quanh trục 0 (dương lên / âm xuống) + tabs nhóm + chú thích.
+ * HTML producer: IfluxBlockTemplates.renderDivergingBars* (block-templates.js).
+ * Trước đây hardcode ở stock.css (Giao dịch theo chủ thể) — đã dời về đây.
+ */
+.ifx-stock-flow-chart {
+  margin-top: var(--ifx-space-4);
+}
+
+.ifx-stock-flow-tabs {
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.ifx-stock-flow-tabs .ix-tab {
+  font-size: var(--ifx-font-size-12);
+  padding: 6px 10px;
+}
+
+.ifx-stock-flow-hint {
+  margin: 0 0 12px;
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+}
+
+.ifx-stock-flow-chart__inner {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: var(--ifx-inline-sm);
+  align-items: start;
+}
+
+.ifx-stock-flow-chart__yaxis {
+  position: relative;
+  height: 200px;
+  font-size: 9px;
+  color: var(--ix-text-muted);
+}
+
+.ifx-stock-flow-chart__ytick {
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0.25;
+  line-height: 1;
+}
+
+.ifx-stock-flow-chart__plot {
+  position: relative;
+  min-width: 0;
+}
+
+.ifx-stock-flow-chart__bars-wrap {
+  position: relative;
+  height: 200px;
+}
+
+.ifx-stock-flow-chart__bars {
+  display: flex;
+  gap: var(--ifx-space-4);
+  height: 100%;
+  align-items: stretch;
+}
+
+.ifx-stock-flow-chart__zero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ix-text-muted);
+  opacity: 0.25;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ifx-stock-flow-chart__col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ifx-stock-flow-chart__half {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.ifx-stock-flow-chart__half.is-top {
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ifx-stock-flow-chart__half.is-bottom {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.ifx-stock-flow-chart__bar {
+  width: 72%;
+  max-width: 28px;
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+}
+
+.ifx-stock-flow-chart__bar.is-pos {
+  background: var(--ix-success);
+  border-radius: 3px 3px 0 0;
+}
+
+.ifx-stock-flow-chart__bar.is-neg {
+  background: var(--ix-danger);
+  border-radius: 0 0 3px 3px;
+}
+
+.ifx-stock-flow-chart__xlabels {
+  display: flex;
+  gap: var(--ifx-space-4);
+  margin-top: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+}
+
+.ifx-stock-flow-chart__xlabels span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── TPL-ZONE-POSITION / TMP-ZONE-POSITION — CSS owner duy nhất ──
+ * Mỗi dòng = 1 giai đoạn: nhãn · thanh vị trí (trái/phải + marker) · vùng + giá giữa.
+ * HTML producer: IfluxBlockTemplates.renderZonePosition*
+ * Màu: trái = success (hỗ trợ) · phải = danger (kháng cự) — token DS.
+ */
+.ifx-zone-pos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+  min-width: 0;
+}
+
+.ifx-zone-pos__row {
+  min-width: 0;
+}
+
+.ifx-zone-pos__period {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  margin-bottom: var(--ifx-space-8);
+}
+
+.ifx-zone-pos__track-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--ifx-space-8);
+  align-items: center;
+}
+
+.ifx-zone-pos__side-label {
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+  white-space: nowrap;
+}
+.ifx-zone-pos__side-label.is-left { color: var(--ix-success); }
+.ifx-zone-pos__side-label.is-right { color: var(--ix-danger); }
+
+.ifx-zone-pos__bar {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  height: 22px;
+  border-radius: var(--ix-radius);
+  overflow: hidden;
+  background: var(--ix-bg-input);
+  min-width: 0;
+}
+
+.ifx-zone-pos__seg {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.ifx-zone-pos__seg.is-left {
+  justify-content: center;
+  background: var(--ix-success-soft);
+}
+.ifx-zone-pos__seg.is-right {
+  justify-content: center;
+  background: var(--ix-danger-soft);
+}
+
+.ifx-zone-pos__pct {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  font-family: var(--ifx-font-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+.ifx-zone-pos__seg.is-left .ifx-zone-pos__pct { color: var(--ix-success); }
+.ifx-zone-pos__seg.is-right .ifx-zone-pos__pct { color: var(--ix-danger); }
+
+.ifx-zone-pos__marker {
+  flex: 0 0 2px;
+  width: 2px;
+  align-self: stretch;
+  background: var(--ix-text-primary);
+  z-index: 1;
+  box-shadow: 0 0 0 1px var(--ix-bg-card);
+}
+
+.ifx-zone-pos__values {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--ifx-space-8);
+  margin-top: var(--ifx-space-4);
+  font-size: var(--ifx-font-size-10);
+  font-family: var(--ifx-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ix-text-muted);
+}
+
+.ifx-zone-pos__range.is-left { text-align: left; }
+.ifx-zone-pos__range.is-right { text-align: right; }
+
+.ifx-zone-pos__center {
+  text-align: center;
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  font-size: var(--ifx-font-size-12);
+}
+
+@media (max-width: 480px) {
+  .ifx-zone-pos__track-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ifx-space-4);
+  }
+  .ifx-zone-pos__side-label {
+    display: none;
+  }
+  .ifx-zone-pos__values {
+    font-size: 9px;
+  }
+}
+
+/* ── TPL-FLOW-SPLIT — symmetric net-flow ── */
+.ifx-flow-split-block { min-width: 0; }
+
+.ifx-flow-split__head {
+  display: grid;
+  grid-template-columns: 1fr minmax(52px, 88px) minmax(52px, 88px) 1fr;
+  gap: var(--ifx-space-8);
+  margin-bottom: 10px;
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ix-text-muted);
+}
+.ifx-flow-split__col-h--buy { text-align: right; }
+.ifx-flow-split__col-h--tick-buy { text-align: right; }
+.ifx-flow-split__col-h--tick-sell { text-align: left; }
+.ifx-flow-split__col-h--sell { text-align: left; }
+.ifx-flow-split__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.ifx-flow-split__dot.is-buy { background: var(--ifx-flow-in); }
+.ifx-flow-split__dot.is-sell { background: var(--ifx-flow-out); }
+
+.ifx-flow-split__row {
+  display: grid;
+  grid-template-columns: 1fr minmax(52px, 88px) minmax(52px, 88px) 1fr;
+  gap: var(--ifx-space-8);
+  align-items: center;
+  min-height: 34px;
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-flow-split__row:hover {
+  background: var(--ix-accent-soft);
+  border-radius: var(--ix-radius);
+}
+
+.ifx-flow-split__buy,
+.ifx-flow-split__sell {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+.ifx-flow-split__buy { justify-content: flex-end; }
+.ifx-flow-split__sell { justify-content: flex-start; }
+
+.ifx-flow-split__bar {
+  position: relative;
+  height: 22px;
+  min-width: 36px;
+  max-width: 100%;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.ifx-flow-split__bar--buy {
+  background: var(--ifx-market-up-soft);
+  justify-content: flex-end;
+}
+.ifx-flow-split__bar--sell {
+  background: var(--ifx-market-down-soft);
+  justify-content: flex-start;
+}
+.ifx-flow-split__val {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  padding: 0 6px;
+  white-space: nowrap;
+}
+.ifx-flow-split__bar--buy .ifx-flow-split__val { color: var(--ifx-flow-in); }
+.ifx-flow-split__bar--sell .ifx-flow-split__val { color: var(--ifx-flow-out); }
+
+.ifx-flow-split__ticker {
+  display: block;
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ifx-flow-split__ticker--buy { text-align: right; padding-right: 2px; }
+.ifx-flow-split__ticker--sell { text-align: left; padding-left: 2px; }
+.ifx-flow-split__ticker:hover { color: var(--ix-accent); }
+.ifx-flow-split__ticker--empty {
+  color: var(--ix-text-muted);
+  font-weight: var(--ifx-font-weight-regular);
+}
+
+/* ── TPL-INDEX-GRID — exchange mini cards ── */
+.ifx-index-grid,
+.ifx-com-ex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--ifx-inline-md);
+}
+
+.ifx-index-card,
+.ifx-com-ex-card {
+  background: var(--ix-bg-body);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: var(--ifx-space-12) 14px;
+}
+
+.ifx-index-card__name,
+.ifx-com-ex-card__name {
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--ifx-space-4);
+}
+
+.ifx-index-card__val,
+.ifx-com-ex-card__val {
+  font-size: var(--ifx-font-size-18);
+  font-weight: var(--ifx-font-weight-bold);
+  font-family: var(--ifx-font-mono);
+  color: var(--ix-text-primary);
+  line-height: 1.2;
+}
+
+.ifx-index-card__chg,
+.ifx-com-ex-card__chg {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  margin-top: var(--ifx-space-4);
+  font-family: var(--ifx-font-mono);
+}
+.ifx-index-card__chg.is-up,
+.ifx-com-ex-card__chg.is-up { color: var(--ix-success); }
+.ifx-index-card__chg.is-down,
+.ifx-com-ex-card__chg.is-down { color: var(--ix-danger); }
+
+/* Chart series stroke — dùng trong SVG Top 10 */
+.ix-top10-market__line[data-series="1"] { stroke: var(--ifx-color-chart-1); }
+.ix-top10-market__line[data-series="2"] { stroke: var(--ifx-color-chart-2); }
+.ix-top10-market__line[data-series="3"] { stroke: var(--ifx-color-chart-3); }
+.ix-top10-market__line[data-series="4"] { stroke: var(--ifx-color-chart-4); }
+.ix-top10-market__line[data-series="5"] { stroke: var(--ifx-color-chart-5); }
+.ix-top10-market__line[data-series="6"] { stroke: var(--ifx-color-chart-6); }
+.ix-top10-market__line[data-series="7"] { stroke: var(--ifx-color-chart-7); }
+.ix-top10-market__line[data-series="8"] { stroke: var(--ifx-color-chart-8); }
+.ix-top10-market__line[data-series="9"] { stroke: var(--ifx-color-chart-9); }
+.ix-top10-market__line[data-series="10"] { stroke: var(--ifx-color-chart-10); }
+
+.ix-top10-market__legend-dot[data-series="1"] { background: var(--ifx-color-chart-1); }
+.ix-top10-market__legend-dot[data-series="2"] { background: var(--ifx-color-chart-2); }
+.ix-top10-market__legend-dot[data-series="3"] { background: var(--ifx-color-chart-3); }
+.ix-top10-market__legend-dot[data-series="4"] { background: var(--ifx-color-chart-4); }
+.ix-top10-market__legend-dot[data-series="5"] { background: var(--ifx-color-chart-5); }
+.ix-top10-market__legend-dot[data-series="6"] { background: var(--ifx-color-chart-6); }
+.ix-top10-market__legend-dot[data-series="7"] { background: var(--ifx-color-chart-7); }
+.ix-top10-market__legend-dot[data-series="8"] { background: var(--ifx-color-chart-8); }
+.ix-top10-market__legend-dot[data-series="9"] { background: var(--ifx-color-chart-9); }
+.ix-top10-market__legend-dot[data-series="10"] { background: var(--ifx-color-chart-10); }
+
+/* ── TPL-LIST-ROW — stock / entity row ── */
+.ifx-list-row,
+.ifx-stock-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(0, auto) 72px 64px 64px;
+  align-items: center;
+  gap: var(--ifx-inline-sm) 8px;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+}
+.ifx-stock-row__ticker {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+}
+.ifx-stock-row__name {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ifx-stock-row__price,
+.ifx-stock-row__chg,
+.ifx-stock-row__vol {
+  font-family: var(--ifx-font-mono);
+  text-align: right;
+}
+.ifx-stock-row__price { font-size: var(--ifx-font-size-16); font-weight: var(--ifx-font-weight-bold); }
+.ifx-stock-row__chg { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-semibold); }
+.ifx-stock-row__vol { font-size: var(--ifx-font-size-12); color: var(--ix-text-muted); }
+.ifx-stock-row.is-up .ifx-stock-row__price,
+.ifx-stock-row.is-up .ifx-stock-row__chg { color: var(--ix-success); }
+.ifx-stock-row.is-down .ifx-stock-row__price,
+.ifx-stock-row.is-down .ifx-stock-row__chg { color: var(--ix-danger); }
+
+/* ── TPL-FEED-CARD — community post ── */
+.ifx-feed-card,
+.ifx-com-post {
+  display: flex;
+  flex-direction: column;
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  overflow: hidden;
+  transition: transform var(--ifx-duration-fast), box-shadow var(--ifx-duration-fast), border-color var(--ifx-duration-fast);
+}
+.ifx-feed-card:hover,
+.ifx-com-post:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ifx-shadow-topnav);
+  border-color: var(--ix-accent);
+}
+.ifx-com-card {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: var(--ifx-space-16) 18px;
+  transition: border-color var(--ifx-duration-fast), box-shadow var(--ifx-duration-fast);
+}
+.ifx-com-card:hover {
+  border-color: var(--ix-accent);
+  box-shadow: var(--ifx-shadow-topnav);
+}
+.ifx-com-card__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ix-accent-soft);
+  color: var(--ix-accent);
+  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ifx-com-post__thumb {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--ix-bg-hover);
+  overflow: hidden;
+  position: relative;
+}
+.ifx-com-post__thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--ix-accent-soft), var(--ix-info-soft));
+}
+.ifx-com-post__thumb-fallback i {
+  font-size: 42px;
+  color: var(--ix-text-muted);
+  opacity: 0.35;
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pattern — Bảng danh sách · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand"><div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div><span class="ix-brand-name">iFlux Admin</span></div>
+                  <nav class="ix-menu">
+        <a href="../app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="../hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="table-list.html" class="ix-menu-item active"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">List + stats strip</span></a>
+        <a href="order-detail.html" class="ix-menu-item"><i class="ti ti-file-description ix-menu-icon"></i><span class="ix-menu-label">Chi tiết + timeline</span></a>
+        <a href="user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="wizard.html" class="ix-menu-item"><i class="ti ti-stairs-up ix-menu-icon"></i><span class="ix-menu-label">Wizard</span></a>
+        <a href="chat.html" class="ix-menu-item"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+        <a href="referrals.html" class="ix-menu-item"><i class="ti ti-users-group ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></a>
+        <a href="charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="../auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="../design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions">
+          <button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button>
+          <div class="ix-avatar">JD</div>
+        </div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Products</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="#">Home</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>eCommerce</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Product List</span></div>
+
+        <!-- Widget separator -->
+        <div class="ix-card ix-mb-24" style="padding:0">
+          <div class="ix-widget-separator">
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">In-store Sales</div>
+                <div class="ix-widget-sep-value">$5,345</div>
+                <div class="ix-widget-sep-sub">5k orders <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">+5.7%</span></div>
+              </div>
+              <div class="ix-stat-icon accent" style="width:44px;height:44px;font-size:20px"><i class="ti ti-smart-home"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Website Sales</div>
+                <div class="ix-widget-sep-value">$674k</div>
+                <div class="ix-widget-sep-sub">21k orders <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">+12.4%</span></div>
+              </div>
+              <div class="ix-stat-icon success" style="width:44px;height:44px;font-size:20px"><i class="ti ti-device-laptop"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Discount</div>
+                <div class="ix-widget-sep-value">$14,235</div>
+                <div class="ix-widget-sep-sub">6k orders</div>
+              </div>
+              <div class="ix-stat-icon warning" style="width:44px;height:44px;font-size:20px"><i class="ti ti-gift"></i></div>
+            </div>
+            <div class="ix-widget-separator-item" style="border-right:none">
+              <div>
+                <div class="ix-widget-sep-label">Affiliate</div>
+                <div class="ix-widget-sep-value">$8,345</div>
+                <div class="ix-widget-sep-sub">150 orders <span class="ix-chip ix-chip-danger" style="padding:2px 6px;font-size:11px">-3.5%</span></div>
+              </div>
+              <div class="ix-stat-icon danger" style="width:44px;height:44px;font-size:20px"><i class="ti ti-wallet"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products table -->
+        <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-bar-title">Filter</div>
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Status</label><select class="ix-select"><option value="">All</option><option>Published</option><option>Inactive</option><option>Scheduled</option></select></div>
+              <div><label class="ix-label">Category</label><select class="ix-select"><option value="">All</option><option>Electronics</option><option>Clothing</option><option>Household</option></select></div>
+              <div><label class="ix-label">Stock</label><select class="ix-select"><option value="">All</option><option>In Stock</option><option>Out of Stock</option></select></div>
+            </div>
+          </div>
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" placeholder="Search product..." data-ix-search="products-table" /></div>
+            <div class="ix-table-actions">
+              <button class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
+              <a href="product-add.html" class="ix-btn ix-btn-primary ix-btn-sm"><i class="ti ti-plus" style="font-size:13px"></i> Add product</a>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="products-table">
+              <thead><tr>
+                <th><input type="checkbox" class="ix-checkbox" /></th>
+                <th data-ix-sort="0">Product</th>
+                <th data-ix-sort="1">Category</th>
+                <th data-ix-sort="2">Stock</th>
+                <th data-ix-sort="3">SKU</th>
+                <th data-ix-sort="4">Price</th>
+                <th data-ix-sort="5">Qty</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr></thead>
+              <tbody>
+                <tr><td><input type="checkbox" class="ix-checkbox" /></td>
+                  <td><div style="display:flex;align-items:center;gap:10px"><div class="ix-stat-icon accent" style="width:36px;height:36px;font-size:16px;border-radius:6px"><i class="ti ti-device-mobile"></i></div><div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">iPhone 13</div><div style="font-size:11px;color:var(--ix-text-muted)">Apple</div></div></div></td>
+                  <td>Electronics</td><td>In Stock</td><td>FXZ-4567</td><td style="color:var(--ix-text-primary);font-weight:500">$999</td><td>48</td>
+                  <td><span class="ix-chip ix-chip-success">Published</span></td>
+                  <td><div style="display:flex;gap:4px"><button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button></div></td></tr>
+                <tr><td><input type="checkbox" class="ix-checkbox" /></td>
+                  <td><div style="display:flex;align-items:center;gap:10px"><div class="ix-stat-icon success" style="width:36px;height:36px;font-size:16px;border-radius:6px"><i class="ti ti-headphones"></i></div><div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Beats Studio 2</div><div style="font-size:11px;color:var(--ix-text-muted)">Beats</div></div></div></td>
+                  <td>Electronics</td><td>In Stock</td><td>FXZ-9485</td><td style="color:var(--ix-text-primary);font-weight:500">$99</td><td>125</td>
+                  <td><span class="ix-chip ix-chip-success">Published</span></td>
+                  <td><div style="display:flex;gap:4px"><button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button></div></td></tr>
+                <tr><td><input type="checkbox" class="ix-checkbox" /></td>
+                  <td><div style="display:flex;align-items:center;gap:10px"><div class="ix-stat-icon warning" style="width:36px;height:36px;font-size:16px;border-radius:6px"><i class="ti ti-watch"></i></div><div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Apple Watch S7</div><div style="font-size:11px;color:var(--ix-text-muted)">Apple</div></div></div></td>
+                  <td>Electronics</td><td>Out of Stock</td><td>FXZ-2345</td><td style="color:var(--ix-text-primary);font-weight:500">$249</td><td>0</td>
+                  <td><span class="ix-chip ix-chip-warning">Inactive</span></td>
+                  <td><div style="display:flex;gap:4px"><button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button></div></td></tr>
+                <tr><td><input type="checkbox" class="ix-checkbox" /></td>
+                  <td><div style="display:flex;align-items:center;gap:10px"><div class="ix-stat-icon danger" style="width:36px;height:36px;font-size:16px;border-radius:6px"><i class="ti ti-shirt"></i></div><div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Nike Dry-Fit Shirt</div><div style="font-size:11px;color:var(--ix-text-muted)">Nike</div></div></div></td>
+                  <td>Clothing</td><td>In Stock</td><td>FXZ-1122</td><td style="color:var(--ix-text-primary);font-weight:500">$38</td><td>320</td>
+                  <td><span class="ix-chip ix-chip-success">Published</span></td>
+                  <td><div style="display:flex;gap:4px"><button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button></div></td></tr>
+                <tr><td><input type="checkbox" class="ix-checkbox" /></td>
+                  <td><div style="display:flex;align-items:center;gap:10px"><div class="ix-stat-icon info" style="width:36px;height:36px;font-size:16px;border-radius:6px"><i class="ti ti-device-laptop"></i></div><div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">MacBook Air M2</div><div style="font-size:11px;color:var(--ix-text-muted)">Apple</div></div></div></td>
+                  <td>Electronics</td><td>In Stock</td><td>FXZ-8890</td><td style="color:var(--ix-text-primary);font-weight:500">$1,299</td><td>22</td>
+                  <td><span class="ix-chip ix-chip-primary">Scheduled</span></td>
+                  <td><div style="display:flex;gap:4px"><button class="ix-btn ix-btn-icon"><i class="ti ti-eye" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-edit" style="font-size:14px"></i></button><button class="ix-btn ix-btn-icon"><i class="ti ti-trash" style="font-size:14px"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div data-ix-paginate="products-table" data-per-page="5"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+</body></html>

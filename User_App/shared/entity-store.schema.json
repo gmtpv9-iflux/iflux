@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "iFlux Entity Store (09 §2.1 mirror)",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "properties": {
+        "connection": { "enum": ["connected", "reconnecting", "disconnected"] },
+        "degraded": { "type": "boolean" },
+        "data_as_of": { "type": ["string", "null"] }
+      }
+    },
+    "entities": {
+      "type": "object",
+      "properties": {
+        "stocks": { "type": "object", "additionalProperties": { "$ref": "#/$defs/stock" } },
+        "sectors": { "type": "object", "additionalProperties": { "$ref": "#/$defs/sector" } },
+        "ecosystems": { "type": "object", "additionalProperties": { "$ref": "#/$defs/sector" } },
+        "market": { "$ref": "#/$defs/market" },
+        "flow": { "type": "object" }
+      }
+    },
+    "watchlist": { "type": "object" },
+    "alerts": { "type": "array" }
+  },
+  "$defs": {
+    "stock": {
+      "type": "object",
+      "properties": {
+        "ticker": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": ["number", "null"] },
+        "change_pct": { "type": ["number", "null"] },
+        "volume": { "type": ["string", "number", "null"] },
+        "ts": { "type": "string" }
+      }
+    },
+    "sector": {
+      "type": "object",
+      "properties": {
+        "ig": { "type": "number" },
+        "pg": { "type": "number" },
+        "breadth_up": { "type": "number" },
+        "breadth_down": { "type": "number" },
+        "name": { "type": "string" },
+        "ts": { "type": "string" }
+      }
+    },
+    "market": {
+      "type": "object",
+      "properties": {
+        "ig": { "type": "number" },
+        "pg": { "type": "number" },
+        "breadth_up": { "type": "number" },
+        "breadth_down": { "type": "number" }
+      }
+    }
+  }
+}

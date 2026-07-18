@@ -1,0 +1,144 @@
+.ifx-hub-greet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-16);
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.ifx-hub-greet-row .ix-page-title {
+  margin: 0;
+}
+
+.ifx-feat-modal .ix-modal-box {
+  max-width: 640px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+.ifx-feat-modal__body {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  margin-top: 12px;
+}
+.ifx-feat-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-inline-md);
+}
+.ifx-feat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ifx-space-12);
+  padding: 14px;
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  background: var(--ix-bg-card, #fff);
+}
+.ifx-feat-item__main {
+  flex: 1;
+  min-width: 0;
+}
+.ifx-feat-item__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ifx-inline-md);
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.ifx-feat-item__title {
+  margin: 0;
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  line-height: 1.35;
+}
+.ifx-feat-item__desc {
+  margin: 0;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-secondary);
+  line-height: 1.5;
+}
+.ifx-feat-item__meta {
+  margin-top: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+}
+.ifx-feat-chip {
+  font-size: var(--ifx-font-size-10) !important;
+  white-space: nowrap;
+}
+.ifx-feat-vote {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 52px;
+  padding: var(--ifx-space-8) 10px;
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  background: var(--ix-bg-input, #f8f8fc);
+  color: var(--ix-text-secondary);
+  cursor: pointer;
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.ifx-feat-vote i {
+  font-size: var(--ifx-font-size-16);
+}
+.ifx-feat-vote:hover {
+  border-color: var(--ix-accent);
+  color: var(--ix-accent);
+}
+.ifx-feat-vote.is-active {
+  border-color: var(--ix-accent);
+  background: rgba(105, 108, 255, 0.08);
+  color: var(--ix-accent);
+}
+.ifx-feat-empty {
+  text-align: center;
+  padding: 32px 16px;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  margin: 0;
+}
+.ifx-feat-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ix-border);
+}
+.ifx-feat-form__title {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  margin: 0 0 12px;
+}
+/* Overlay báo lỗi/đề xuất: ẩn mặc định, chỉ hiện khi .open — không phụ thuộc widget-shell.css */
+.ix-modal-overlay[data-ifx-modal] {
+  display: none;
+}
+.ix-modal-overlay[data-ifx-modal].open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ifx-feat-modal.open {
+  display: flex;
+}
+.ifx-req-tabs {
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-req-tabs .ix-tab-content {
+  display: none;
+}
+.ifx-req-tabs + .ifx-feat-modal__body .ix-tab-content {
+  display: none;
+}
+.ifx-feat-modal__body .ix-tab-content.active {
+  display: block;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publish Widget · iFlux Admin</title>
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-accent">Phase 3</span></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Publish Widget &amp; Trang</h1>
+        <p class="ix-text-muted">Tạo Widget Draft (chọn Template) → Publish → thêm Placement Community → Publish Page. Runtime chỉ đọc Published Artifact.</p>
+
+        <div class="ix-card" style="margin-top:16px;padding:16px">
+          <h2 class="ix-section-title">1. Tạo &amp; Publish Widget</h2>
+          <div class="ix-form-grid" style="display:grid;gap:12px;max-width:520px">
+            <label class="ix-label">Mã widget
+              <input class="ix-input" id="wp-id" placeholder="WGT-COM-PILOT-NEW" />
+            </label>
+            <label class="ix-label">Tiêu đề
+              <input class="ix-input" id="wp-title" placeholder="Widget demo Platform" />
+            </label>
+            <label class="ix-label">Mô tả
+              <textarea class="ix-input" id="wp-desc" rows="2" placeholder="Mô tả ngắn"></textarea>
+            </label>
+            <label class="ix-label">Template
+              <select class="ix-select" id="wp-template"></select>
+            </label>
+            <label class="ix-label">Section (Community)
+              <select class="ix-select" id="wp-section">
+                <option value="main">main</option>
+                <option value="sidebar-right">sidebar-right</option>
+              </select>
+            </label>
+            <label class="ix-label">Span (1–12)
+              <input class="ix-input" id="wp-span" type="number" min="1" max="12" value="6" />
+            </label>
+            <label class="ix-label">Position
+              <input class="ix-input" id="wp-pos" type="number" min="0" value="10" />
+            </label>
+            <button type="button" class="ix-btn ix-btn-primary" id="wp-pub-widget"><i class="ti ti-send"></i> Publish Widget</button>
+          </div>
+          <p class="ix-text-muted" id="wp-widget-status" style="margin-top:8px"></p>
+        </div>
+
+        <div class="ix-card" style="margin-top:16px;padding:16px">
+          <h2 class="ix-section-title">2. Publish Page Community (kèm placements đã thêm)</h2>
+          <p class="ix-text-muted">Giữ 4 widget hiện có + mọi pilot đã publish trong session.</p>
+          <button type="button" class="ix-btn ix-btn-primary" id="wp-pub-page"><i class="ti ti-layout"></i> Publish Page Community</button>
+          <p class="ix-text-muted" id="wp-page-status" style="margin-top:8px"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-shell.js"></script>
+<script src="widget-publish-client.js?v=phase3Com20260716"></script>
+<script src="widget-publish-page.js?v=phase3Com20260716"></script>
+</body>
+</html>

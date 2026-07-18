@@ -1,0 +1,28 @@
+.adm-loyalty-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.adm-loyalty-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--ix-radius-lg);
+  border: 1px solid var(--ix-border);
+  background: var(--ix-bg-card);
+  color: var(--ix-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.adm-loyalty-tab:hover { border-color: var(--ix-accent); color: var(--ix-text-primary); }
+.adm-loyalty-tab.active {
+  background: rgba(105, 108, 255, 0.12);
+  border-color: var(--ix-accent);
+  color: var(--ix-accent);
+}
+.adm-loyalty-panel { display: none; }
+.adm-loyalty-panel.active { display: block; }

@@ -1,0 +1,368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		104A4AB740BF4C5B99F76FF6 /* iFluxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A42C180A0264EBEB7958BE4 /* iFluxApp.swift */; };
+		77F446A3A6F64826BBCD1414 /* IfxTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBEB624B0BE4FCFA7856274 /* IfxTokens.swift */; };
+		EC01F0C2180B4016A847D358 /* IfxComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D94D1F63BDC4ADBBEDDAE25 /* IfxComponents.swift */; };
+		20363232391849D9BDA18B0E /* EntityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A87D18DB57A4F8A938475BA /* EntityStore.swift */; };
+		B4DA14A333F1490FB6774F42 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DACD85BA5B4B068A84949E /* AuthService.swift */; };
+		24B71F10B9C745A096507620 /* MockMarketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC28A39971641F7872BF4D3 /* MockMarketService.swift */; };
+		C1A2B3C4D5E6478990ABCDEF /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D268D227094AA4A14DBC8E /* LoginView.swift */; };
+		D2B3C4D5E6F74890A1BCDEF0 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF74FC2177347A9A5207727 /* MainTabView.swift */; };
+		FDAE1599A5674BF0B3845049 /* AppScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416D8829DDD94A27A6EF6386 /* AppScreens.swift */; };
+		A1B2C3D4E5F6478990112233 /* IfxAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7489901223344 /* IfxAppConfig.swift */; };
+		C3D4E5F6A7B8499012233445 /* IfxWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9401223344556 /* IfxWebView.swift */; };
+		971BF21AB60D423BA2B454F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC3BFC60D81645F2B5A89A93 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		78C7E58C661D4347B7AE1D8A /* iFlux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFlux.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A42C180A0264EBEB7958BE4 /* iFluxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iFluxApp.swift; sourceTree = "<group>"; };
+		9BBEB624B0BE4FCFA7856274 /* IfxTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfxTokens.swift; sourceTree = "<group>"; };
+		4D94D1F63BDC4ADBBEDDAE25 /* IfxComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfxComponents.swift; sourceTree = "<group>"; };
+		1A87D18DB57A4F8A938475BA /* EntityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityStore.swift; sourceTree = "<group>"; };
+		F1DACD85BA5B4B068A84949E /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		BAC28A39971641F7872BF4D3 /* MockMarketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMarketService.swift; sourceTree = "<group>"; };
+		65D268D227094AA4A14DBC8E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		BBF74FC2177347A9A5207727 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		416D8829DDD94A27A6EF6386 /* AppScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScreens.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6A7489901223344 /* IfxAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfxAppConfig.swift; sourceTree = "<group>"; };
+		D4E5F6A7B8C9401223344556 /* IfxWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfxWebView.swift; sourceTree = "<group>"; };
+		FDCF6F01A25346C89DBE184C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DC3BFC60D81645F2B5A89A93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F1A6E4B6B6C04EB2B3334E23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		683F1183872246C6A4C5B1D0 = {
+			isa = PBXGroup;
+			children = (
+				255C923ECA534F54A197BFC2 /* iFlux */,
+				89B1E939E36C4A1B832E61CC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		89B1E939E36C4A1B832E61CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				78C7E58C661D4347B7AE1D8A /* iFlux.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		255C923ECA534F54A197BFC2 /* iFlux */ = {
+			isa = PBXGroup;
+			children = (
+				193EB0D73F974A1C9FC69F91 /* App */,
+				A53A9CD466C94E9F974E8314 /* Design */,
+				0D9F39786F774519BFE7F7B7 /* Core */,
+				903548309700464F8562BD33 /* Features */,
+				DC3BFC60D81645F2B5A89A93 /* Assets.xcassets */,
+				FDCF6F01A25346C89DBE184C /* Info.plist */,
+			);
+			path = iFlux;
+			sourceTree = "<group>";
+		};
+		193EB0D73F974A1C9FC69F91 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				7A42C180A0264EBEB7958BE4 /* iFluxApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A53A9CD466C94E9F974E8314 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				9BBEB624B0BE4FCFA7856274 /* IfxTokens.swift */,
+				4D94D1F63BDC4ADBBEDDAE25 /* IfxComponents.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		0D9F39786F774519BFE7F7B7 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				E5F6A7B8C9D0412334455667 /* Config */,
+				E3F4A5B6C7D8490A1B2C3D4E /* Models */,
+				F4A5B6C7D8E9401B2C3D4E5F /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		E5F6A7B8C9D0412334455667 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B2C3D4E5F6A7489901223344 /* IfxAppConfig.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		E3F4A5B6C7D8490A1B2C3D4E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1A87D18DB57A4F8A938475BA /* EntityStore.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F4A5B6C7D8E9401B2C3D4E5F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F1DACD85BA5B4B068A84949E /* AuthService.swift */,
+				BAC28A39971641F7872BF4D3 /* MockMarketService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		903548309700464F8562BD33 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				F6A7B8C9D0E1423344556677 /* Web */,
+				A5B6C7D8E9F0412C3D4E5F60 /* Auth */,
+				B6C7D8E9F0A1423D4E5F6071 /* Main */,
+				C7D8E9F0A1B2434E5F607182 /* Screens */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		F6A7B8C9D0E1423344556677 /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				D4E5F6A7B8C9401223344556 /* IfxWebView.swift */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
+		A5B6C7D8E9F0412C3D4E5F60 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				65D268D227094AA4A14DBC8E /* LoginView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		B6C7D8E9F0A1423D4E5F6071 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				BBF74FC2177347A9A5207727 /* MainTabView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		C7D8E9F0A1B2434E5F607182 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				416D8829DDD94A27A6EF6386 /* AppScreens.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		78C7E58C661D4347B7AE1D8B /* iFlux */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78C7E58C661D4347B7AE1D8C /* Build configuration list for PBXNativeTarget "iFlux" */;
+			buildPhases = (
+				78C7E58C661D4347B7AE1D8D /* Sources */,
+				F1A6E4B6B6C04EB2B3334E23 /* Frameworks */,
+				78C7E58C661D4347B7AE1D8E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iFlux;
+			productName = iFlux;
+			productReference = 78C7E58C661D4347B7AE1D8A /* iFlux.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		683F1183872246C6A4C5B1D1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					78C7E58C661D4347B7AE1D8B = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 683F1183872246C6A4C5B1D2 /* Build configuration list for PBXProject "iFlux" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = vi;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				vi,
+				Base,
+			);
+			mainGroup = 683F1183872246C6A4C5B1D0;
+			productRefGroup = 89B1E939E36C4A1B832E61CC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				78C7E58C661D4347B7AE1D8B /* iFlux */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		78C7E58C661D4347B7AE1D8E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				971BF21AB60D423BA2B454F4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		78C7E58C661D4347B7AE1D8D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				104A4AB740BF4C5B99F76FF6 /* iFluxApp.swift in Sources */,
+				77F446A3A6F64826BBCD1414 /* IfxTokens.swift in Sources */,
+				EC01F0C2180B4016A847D358 /* IfxComponents.swift in Sources */,
+				20363232391849D9BDA18B0E /* EntityStore.swift in Sources */,
+				B4DA14A333F1490FB6774F42 /* AuthService.swift in Sources */,
+				24B71F10B9C745A096507620 /* MockMarketService.swift in Sources */,
+				C1A2B3C4D5E6478990ABCDEF /* LoginView.swift in Sources */,
+				D2B3C4D5E6F74890A1BCDEF0 /* MainTabView.swift in Sources */,
+				FDAE1599A5674BF0B3845049 /* AppScreens.swift in Sources */,
+				A1B2C3D4E5F6478990112233 /* IfxAppConfig.swift in Sources */,
+				C3D4E5F6A7B8499012233445 /* IfxWebView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		683F1183872246C6A4C5B1D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		683F1183872246C6A4C5B1D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		78C7E58C661D4347B7AE1D8F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = iFlux/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.iflux.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		78C7E58C661D4347B7AE1D8G /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = iFlux/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.iflux.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		683F1183872246C6A4C5B1D2 /* Build configuration list for PBXProject "iFlux" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				683F1183872246C6A4C5B1D3 /* Debug */,
+				683F1183872246C6A4C5B1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		78C7E58C661D4347B7AE1D8C /* Build configuration list for PBXNativeTarget "iFlux" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78C7E58C661D4347B7AE1D8F /* Debug */,
+				78C7E58C661D4347B7AE1D8G /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 683F1183872246C6A4C5B1D1 /* Project object */;
+}

@@ -1,0 +1,33 @@
+{
+  "name": "iflux-api",
+  "version": "0.2.0",
+  "private": true,
+  "description": "iFlux Backend Foundation — Bootstrap Phase",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:legacy": "node src/index.js",
+    "start:python": ".venv/bin/python scripts/server.py",
+    "dev": "node --watch src/server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test tests/**/*.test.js",
+    "test:integration": "node --test tests/integration/health.test.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.10.1",
+    "pg": "^8.13.0",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^3.24.1"
+  }
+}

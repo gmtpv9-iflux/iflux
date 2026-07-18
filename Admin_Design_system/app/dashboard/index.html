@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-DASH — Dashboard · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Tổng quan</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-DASH</span></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Tổng quan vận hành iFlux — người dùng, gói đăng ký, feed và hệ thống.</p>
+
+        <!-- KPI stat cards (Analytics style) -->
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon accent"><i class="ti ti-users"></i></div>
+            <div>
+              <div class="ix-stat-label">Người dùng active</div>
+              <div class="ix-stat-value" id="dash-kpi-dau">—</div>
+              <div class="ix-stat-trend up" id="dash-kpi-dau-trend">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon success"><i class="ti ti-currency-dong"></i></div>
+            <div>
+              <div class="ix-stat-label">MRR (ước tính)</div>
+              <div class="ix-stat-value" id="dash-kpi-mrr">—</div>
+              <div class="ix-stat-trend up" id="dash-kpi-mrr-trend">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon warning"><i class="ti ti-crown"></i></div>
+            <div>
+              <div class="ix-stat-label">Subscribers trả phí</div>
+              <div class="ix-stat-value" id="dash-kpi-paid">—</div>
+              <div class="ix-stat-trend up" id="dash-kpi-paid-trend">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon info"><i class="ti ti-users-group"></i></div>
+            <div>
+              <div class="ix-stat-label">Tổng khách hàng</div>
+              <div class="ix-stat-value" id="dash-kpi-total">—</div>
+              <div class="ix-stat-trend up"><i class="ti ti-database" style="font-size:11px"></i> Đồng bộ User Web</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ifx-dash-orders ix-mb-24">
+          <div class="ix-card">
+            <div class="ix-table-toolbar">
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Đơn hàng mới nhất</div>
+                <div style="font-size:12px;color:var(--ix-text-muted)">20 đơn gần nhất · <span id="dash-orders-pending-count">0</span> chờ duyệt CK</div>
+              </div>
+              <a href="../subscription/transactions.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-receipt"></i> Xem tất cả</a>
+            </div>
+            <div class="ix-table-responsive ifx-dash-orders-scroll">
+              <table class="ix-table" id="dash-orders-table">
+                <thead><tr>
+                  <th>Thời gian</th><th>Mã đơn</th><th>Khách hàng</th><th>Gói</th><th>Số tiền</th><th>Thanh toán</th><th>Trạng thái</th><th>Thao tác</th>
+                </tr></thead>
+                <tbody id="dash-orders-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="ifx-dash-stats ix-grid ix-grid-3" aria-label="Biểu đồ tổng quan">
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Người dùng active</div>
+                <div class="ix-card-subtitle">12 ngày gần nhất · từ kho KH</div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="dashDauChart"></div></div>
+          </div>
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Phân bổ gói</div>
+                <div class="ix-card-subtitle">Thực tế từ danh sách KH</div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="dashPlanDonut"></div></div>
+          </div>
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">MRR</div>
+                <div class="ix-card-subtitle">7 tháng · đơn đã duyệt/TT</div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="dashMrrChart"></div></div>
+          </div>
+          <div class="ix-card">
+            <div class="ix-card-header">
+              <div>
+                <div class="ix-card-title">Feed latency</div>
+                <div class="ix-card-subtitle">Phiên hôm nay</div>
+              </div>
+              <a href="../market-ops/feed-health.html" class="ix-btn ix-btn-ghost ix-btn-sm">Chi tiết</a>
+            </div>
+            <div class="ix-card-body"><div id="dashFeedArea"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../../iflux-admin-ui/iflux-admin-notifications.js"></script>
+<script src="../../iflux-admin-ui/admin-charts.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="../subscription/plans-store.js"></script>
+<script src="../../../User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
+<script src="../../../User_Web/iflux-web-ui/subscription-orders-store.js"></script>
+<script src="../../../User_Web/iflux-web-ui/loyalty-affiliate-store.js"></script>
+<script src="../../../User_Web/iflux-web-ui/inapp-notifications.js"></script>
+<script src="../../iflux-admin-ui/iflux-customers-store.js"></script>
+<script src="dashboard-stats.js"></script>
+<script src="dashboard-page.js"></script>
+</body></html>

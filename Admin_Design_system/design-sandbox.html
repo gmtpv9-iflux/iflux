@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iFlux — Design Sandbox</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/market-components.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/app-shell.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/flow.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/stock.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/alerts.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/widget-shell.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/hub.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/onboarding.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/market.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/community.css" />
+  <link rel="stylesheet" href="../User_Web/iflux-web-ui/block-templates.css" />
+  <link rel="stylesheet" href="design-sandbox.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo">
+          <svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg>
+        </div>
+        <span class="ix-brand-name">iFlux DS</span>
+      </div>
+      <nav class="ix-menu">
+        <a href="hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Hub checklist</span></a>
+        <a href="app/system/ds-studio.html" class="ix-menu-item"><i class="ti ti-book-2 ix-menu-icon"></i><span class="ix-menu-label">DS SoT</span></a>
+        <a href="design-sandbox.html" class="ix-menu-item active"><i class="ti ti-box ix-menu-icon"></i><span class="ix-menu-label">Design Sandbox</span></a>
+        <a href="design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Elements</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="patterns/table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="patterns/user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="patterns/chat.html" class="ix-menu-item"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+      </nav>
+    </aside>
+
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search" style="flex:1;max-width:480px">
+          <i class="ti ti-search"></i>
+          <input type="search" id="ds-sandbox-search" placeholder="Tìm component, class, WGT-…" autocomplete="off" />
+        </div>
+        <div class="ix-nav-actions">
+          <span class="ix-chip ix-chip-info">Runtime map · Spec 06 + code</span>
+          <div class="ix-avatar ix-avatar-accent">DS</div>
+        </div>
+      </header>
+
+      <div class="ix-content">
+        <h1 class="ix-page-title">Design Sandbox</h1>
+        <p style="color:var(--ix-text-muted);font-size:13px;margin:-8px 0 20px;line-height:1.55">
+          Kiểm tra bộ Design System theo taxonomy <strong>§560+</strong> · map code <strong>§15</strong> ·
+          Legend: <span class="ds-status ds-status--ok">✅ Có</span>
+          <span class="ds-status ds-status--partial">⚠️ Một phần</span>
+          <span class="ds-status ds-status--miss">❌ Thiếu</span>
+          — bấm từng mục để xem chi tiết + preview.
+        </p>
+
+        <div class="ds-sandbox-stats">
+          <div class="ds-sandbox-stat"><div class="ds-sandbox-stat__label">Tổng mục</div><div class="ds-sandbox-stat__val" id="ds-stat-total">—</div></div>
+          <div class="ds-sandbox-stat ds-sandbox-stat--ok"><div class="ds-sandbox-stat__label">Có (✅)</div><div class="ds-sandbox-stat__val" id="ds-stat-ok">—</div></div>
+          <div class="ds-sandbox-stat ds-sandbox-stat--partial"><div class="ds-sandbox-stat__label">Một phần (⚠️)</div><div class="ds-sandbox-stat__val" id="ds-stat-partial">—</div></div>
+          <div class="ds-sandbox-stat ds-sandbox-stat--miss"><div class="ds-sandbox-stat__label">Thiếu (❌)</div><div class="ds-sandbox-stat__val" id="ds-stat-miss">—</div></div>
+        </div>
+
+        <div class="ix-alert ix-alert-warning ix-mb-24">
+          <i class="ti ti-alert-triangle" style="font-size:18px;flex-shrink:0"></i>
+          <div>
+            <div class="ix-alert-title">Gaps ưu tiên (§15.16 — defer)</div>
+            <ul class="ds-gap-list">
+              <li>Token file user đầy đủ scale GĐ1 (--fs-*, --space-*)</li>
+              <li>Tooltip · Bottom Nav · Radio/DatePicker form suite</li>
+              <li>Order Book · Signal Card · Candlestick/Volume chart</li>
+              <li>StickerBadge class riêng · Pulse layer CSS · Light theme</li>
+              <li>~33 WGT-* trong registry · Admin Widget Library catalog rộng hơn spec §14</li>
+              <li>Block wrapper theo trang (<code>ifx-mkt-card</code>, <code>ifx-flow-card</code>…) — chưa gom 1 shell global</li>
+              <li>Tree view · Code block · Ticker strip</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ds-sandbox-toolbar">
+          <div class="ds-sandbox-filters">
+            <button type="button" class="ds-sandbox-filter is-active" data-ds-filter="all">Tất cả</button>
+            <button type="button" class="ds-sandbox-filter" data-ds-filter="ok">✅ Có</button>
+            <button type="button" class="ds-sandbox-filter" data-ds-filter="partial">⚠️ Một phần</button>
+            <button type="button" class="ds-sandbox-filter" data-ds-filter="miss">❌ Thiếu</button>
+          </div>
+        </div>
+
+        <div class="ds-sandbox-layout">
+          <nav class="ds-sandbox-nav" id="ds-sandbox-nav" aria-label="Danh mục taxonomy"></nav>
+          <div class="ds-sandbox-main" id="ds-sandbox-sections"></div>
+        </div>
+
+        <div class="ix-card ix-mb-24" style="margin-top:28px">
+          <div class="ix-card-header">
+            <div>
+              <div class="ix-card-title">Code roots</div>
+              <div class="ix-card-subtitle">§15.0 — nơi implement Design System</div>
+            </div>
+          </div>
+          <div class="ix-card-body" style="font-size:13px;line-height:1.7;color:var(--ix-text-secondary)">
+            <p style="margin:0 0 10px"><strong>Admin:</strong> <code>Admin_Design_system/iflux-admin-ui/</code> — prefix <code>ix-*</code></p>
+            <p style="margin:0 0 10px"><strong>User Web:</strong> <code>User_Web/iflux-web-ui/</code> — prefix <code>ifx-*</code> + kế thừa <code>ix-*</code></p>
+            <p style="margin:0 0 10px"><strong>Widget catalog:</strong> <code>widget-registry.js</code> · <code>Admin_Design_system/app/system/widget-library-catalog.js</code></p>
+            <p style="margin:0"><strong>Spec SoT:</strong> <code>Documentation/System_Specification/6. iFlux — Design System Specification.md</code> · Sandbox map theo <strong>code runtime</strong>, không chỉ spec §13 cũ</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="ds-sot-catalog.js?v=stripTabTopN20260718"></script>
+<script src="design-sandbox.js"></script>
+</body>
+</html>

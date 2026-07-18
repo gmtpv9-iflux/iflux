@@ -1,0 +1,21 @@
+/**
+ * iFlux Foundation — Radius Primitives + Semantic
+ */
+:root {
+  --ifx-radius-none: 0;
+  --ifx-radius-xs: 2px;
+  --ifx-radius-sm: 4px;
+  --ifx-radius-md: 6px;
+  --ifx-radius-lg: 8px;
+  --ifx-radius-xl: 12px;
+  --ifx-radius-2xl: 16px;
+  --ifx-radius-full: 9999px;
+
+  --radius-button: var(--ifx-radius-md);
+  --radius-input: var(--ifx-radius-md);
+  --radius-card: var(--ifx-radius-lg);
+  --radius-badge: var(--ifx-radius-full);
+  --radius-chip: var(--ifx-radius-full);
+  --radius-modal: var(--ifx-radius-lg);
+  --radius-dropdown: var(--ifx-radius-lg);
+}

@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "connection": "connected",
+    "degraded": false,
+    "data_as_of": "2026-07-04T07:00:00.000Z"
+  },
+  "entities": {
+    "market": {
+      "index_name": "VNINDEX",
+      "ig": 1245.32,
+      "pg": 0.68,
+      "breadth_up": 312,
+      "breadth_down": 198,
+      "status": "Đang giao dịch"
+    },
+    "exchanges": {
+      "vnindex": { "name": "VN-Index", "value": 1245.32, "change_pct": 0.68 },
+      "hose": { "name": "HOSE", "value": 1289.45, "change_pct": 0.72 },
+      "hnx": { "name": "HNX", "value": 248.31, "change_pct": -0.15 },
+      "upcom": { "name": "UPCOM", "value": 92.18, "change_pct": 0.21 }
+    },
+    "breadth": {
+      "vnindex": { "total": 562, "up": 312, "down": 198, "ref": 52, "ceiling_purple": 14, "floor_green": 11 },
+      "hose": { "total": 331, "up": 186, "down": 114, "ref": 31, "ceiling_purple": 9, "floor_green": 7 },
+      "hnx": { "total": 130, "up": 68, "down": 44, "ref": 18, "ceiling_purple": 4, "floor_green": 3 },
+      "upcom": { "total": 110, "up": 58, "down": 40, "ref": 12, "ceiling_purple": 3, "floor_green": 2 }
+    },
+    "flow": {
+      "foreign": { "label": "Khối ngoại", "buy_pct": 54, "sell_pct": 46, "net_label": "+128.5 tỷ" },
+      "institutional": { "label": "Tổ chức", "buy_pct": 52, "sell_pct": 48, "net_label": "+86.2 tỷ" },
+      "proprietary": { "label": "Tự doanh", "buy_pct": 48, "sell_pct": 52, "net_label": "-42.1 tỷ" },
+      "retail": { "label": "Cá nhân", "buy_pct": 51, "sell_pct": 49, "net_label": "+18.6 tỷ" }
+    }
+  },
+  "movers": {
+    "gainers": ["HPG", "VCB", "FPT", "MWG", "VHM"],
+    "losers": ["SSI", "HCM", "STB", "VND", "VIC"]
+  }
+}

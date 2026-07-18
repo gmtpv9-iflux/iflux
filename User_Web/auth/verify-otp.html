@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xác thực email · iFlux</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../iflux-web-ui/iflux-web-ui.css" />
+  </head>
+<body class="ifx-auth-page">
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Xác thực lần đầu ✉️</div>
+    <div class="ix-auth-sub" id="verify-msg">Nhập mã OTP 6 số để hoàn tất đăng ký</div>
+    <p class="ifx-auth-hint" id="verify-email-display" style="margin-bottom:16px"></p>
+    <p class="ifx-auth-hint" id="verify-demo-hint" hidden></p>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Mã xác thực (6 số)</label>
+      <div id="otp-input-row" aria-label="Nhập mã OTP 6 số"></div>
+    </div>
+
+    <button type="button" class="ix-btn ix-btn-ghost" style="width:100%;margin-bottom:12px" id="btn-open-mail" hidden>
+      <i class="ti ti-mail"></i> Mở ứng dụng Gmail
+    </button>
+
+    <button type="button" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:8px" id="btn-verify">Xác thực &amp; hoàn tất</button>
+    <button type="button" class="ix-btn ix-btn-ghost" style="width:100%;margin-bottom:8px" id="btn-resend" disabled>Gửi lại mã (60s)</button>
+
+    <div class="ix-auth-footer">
+      <a href="register.html" id="btn-back-register">← Quay lại đăng ký</a>
+    </div>
+    <a href="/" class="ix-auth-back"><i class="ti ti-chevron-left" style="font-size:13px"></i> Về trang chủ</a>
+  </div>
+</div>
+<script src="../../Admin_Design_system/iflux-admin-ui/iflux-customers-store.js"></script>
+<script src="../../Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js?v=20260706"></script>
+<script src="../iflux-web-ui/loyalty-affiliate-store.js"></script>
+<script src="../iflux-web-ui/iflux-platform-boot.js?v=routes20260709"></script>
+<script src="../iflux-web-ui/iflux-api-bundle.js?v=authfix20260715"></script>
+<script src="../iflux-web-ui/auth.js?v=20260708social"></script>
+<script src="../iflux-web-ui/iflux-otp-input.js?v=20260708otp"></script>
+<script src="../iflux-web-ui/iflux-mail-deeplink.js?v=20260708otp"></script>
+<script src="../iflux-web-ui/iflux-user-data-sync.js"></script>
+<script src="../../Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="../iflux-web-ui/iflux-web-ui.js"></script>
+<script>
+if (window.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn()) {
+  location.replace('../home/index.html');
+}
+
+var pending = IfluxAuth.loadPendingVerification();
+var resendCooldownTimer = null;
+
+if (!pending || !pending.email) {
+  var draft = IfluxAuth.loadRegistrationDraft();
+  if (draft && (draft.email || draft.phone)) {
+    pending = {
+      email: draft.email || draft.phone,
+      message: 'Nhập mã OTP 6 số để hoàn tất đăng ký',
+      verificationMode: 'demo',
+      demoCode: '123456',
+      pendingProfile: {
+        display_name: draft.display_name || '',
+        phone: draft.phone || ''
+      },
+      registrationDraft: draft
+    };
+  } else {
+    location.replace('register.html');
+  }
+}
+
+var pendingEmail = pending.email;
+var pendingProfile = pending.pendingProfile || {};
+var verificationMode = pending.verificationMode || 'email';
+var demoCode = pending.demoCode || '123456';
+
+document.getElementById('verify-msg').textContent = pending.message || ('Nhập mã OTP 6 số để hoàn tất đăng ký');
+var targetLabel = /@/.test(String(pendingEmail)) ? 'Email' : 'Số điện thoại';
+document.getElementById('verify-email-display').innerHTML = targetLabel + ': <strong>' + pendingEmail + '</strong>';
+
+var demoHint = document.getElementById('verify-demo-hint');
+var resendBtn = document.getElementById('btn-resend');
+var otpWidget = IfluxOtpInput.create(document.getElementById('otp-input-row'), {
+  hiddenId: 'verify-code',
+  onEnter: function () { submitVerify(); },
+  onComplete: function (code) {
+    if (verificationMode === 'demo' && code === demoCode) {
+      submitVerify();
+    }
+  }
+});
+
+if (verificationMode === 'demo') {
+  demoHint.hidden = false;
+  demoHint.innerHTML = 'Môi trường local (chưa có email provider): mã OTP demo là <strong>' + demoCode + '</strong>';
+  otpWidget.setCode('');
+  resendBtn.style.display = 'none';
+  document.getElementById('btn-open-mail').hidden = true;
+} else if (IfluxMailDeepLink) {
+  IfluxMailDeepLink.bindButton(document.getElementById('btn-open-mail'), pendingEmail);
+}
+
+function startResendCooldown(seconds) {
+  if (!resendBtn || resendBtn.style.display === 'none') return;
+  var left = seconds || 60;
+  resendBtn.disabled = true;
+  resendBtn.textContent = 'Gửi lại mã (' + left + 's)';
+  if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+  resendCooldownTimer = setInterval(function () {
+    left -= 1;
+    if (left <= 0) {
+      clearInterval(resendCooldownTimer);
+      resendBtn.disabled = false;
+      resendBtn.textContent = 'Gửi lại mã xác thực';
+      return;
+    }
+    resendBtn.textContent = 'Gửi lại mã (' + left + 's)';
+  }, 1000);
+}
+
+startResendCooldown(60);
+
+document.getElementById('btn-resend').addEventListener('click', function () {
+  IfluxAuth.resendVerificationEmail(pendingEmail)
+    .then(function (res) {
+      ixToast(res.message || 'Đã gửi lại mã xác thực', 'success');
+      startResendCooldown(60);
+      otpWidget.focus();
+    })
+    .catch(function (e) {
+      ixToast(e.message, 'danger');
+    });
+});
+
+function submitVerify() {
+  var code = otpWidget.getCode().trim();
+  if (code.length !== 6) {
+    ixToast('Nhập mã OTP 6 số.', 'warning');
+    otpWidget.focus();
+    return;
+  }
+  var profileSource = pending.registrationDraft || pending.pendingProfile || {};
+  var btn = document.getElementById('btn-verify');
+  if (btn) btn.disabled = true;
+  IfluxAuth.verifyEmailAndRegister(pendingEmail, code, {
+    display_name: profileSource.display_name || '',
+    phone: profileSource.phone || ''
+  })
+    .then(function () {
+      ixToast('Xác thực thành công!', 'success');
+      location.replace('../home/index.html');
+    })
+    .catch(function (e) {
+      if (btn) btn.disabled = false;
+      ixToast((e && e.message) || 'Không xác thực được. Thử lại.', 'danger');
+      otpWidget.focus();
+    });
+}
+
+document.getElementById('btn-verify').addEventListener('click', submitVerify);
+</script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pattern — Wizard — iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand"><div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div><span class="ix-brand-name">iFlux Admin</span></div>
+                  <nav class="ix-menu">
+        <a href="../app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="../hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">List + stats strip</span></a>
+        <a href="order-detail.html" class="ix-menu-item"><i class="ti ti-file-description ix-menu-icon"></i><span class="ix-menu-label">Chi tiết + timeline</span></a>
+        <a href="user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="wizard.html" class="ix-menu-item active"><i class="ti ti-stairs-up ix-menu-icon"></i><span class="ix-menu-label">Wizard</span></a>
+        <a href="chat.html" class="ix-menu-item"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+        <a href="referrals.html" class="ix-menu-item"><i class="ti ti-users-group ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></a>
+        <a href="charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="../auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="../design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions"><button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button><div class="ix-avatar">JD</div></div>
+      </header>
+      <div class="ix-content">
+        <h1>Property Listing Wizard</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="#">Home</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Wizard Examples</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Property Listing</span></div>
+
+        <div class="ix-wizard-wrap" data-ix-wizard>
+          <!-- Steps sidebar -->
+          <div class="ix-wizard-steps" id="wizard-steps">
+            <div class="ix-wizard-step-item active" data-step="0">
+              <div class="ix-wstep-circle"><i class="ti ti-users"></i></div>
+              <div><div class="ix-wstep-title">Personal Details</div><div class="ix-wstep-sub">Your Name/Email</div></div>
+            </div>
+            <div class="ix-wizard-step-item" data-step="1">
+              <div class="ix-wstep-circle"><i class="ti ti-home"></i></div>
+              <div><div class="ix-wstep-title">Property Details</div><div class="ix-wstep-sub">Property Type</div></div>
+            </div>
+            <div class="ix-wizard-step-item" data-step="2">
+              <div class="ix-wstep-circle"><i class="ti ti-bookmarks"></i></div>
+              <div><div class="ix-wstep-title">Property Features</div><div class="ix-wstep-sub">Bedrooms/Floor No</div></div>
+            </div>
+            <div class="ix-wizard-step-item" data-step="3">
+              <div class="ix-wstep-circle"><i class="ti ti-map-pin"></i></div>
+              <div><div class="ix-wstep-title">Property Area</div><div class="ix-wstep-sub">Covered Area</div></div>
+            </div>
+            <div class="ix-wizard-step-item" data-step="4">
+              <div class="ix-wstep-circle"><i class="ti ti-currency-dollar"></i></div>
+              <div><div class="ix-wstep-title">Price Details</div><div class="ix-wstep-sub">Expected Price</div></div>
+            </div>
+          </div>
+
+          <!-- Content panels -->
+          <div class="ix-wizard-body">
+            <!-- Step 0: Personal Details -->
+            <div class="ix-wizard-panel active" id="panel-0">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Personal Details</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Please fill in your personal information.</div>
+              <div class="ix-radio-cards" style="grid-template-columns:1fr 1fr 1fr">
+                <div class="ix-radio-card selected">
+                  <div class="ix-radio-card-icon"><i class="ti ti-building"></i></div>
+                  <div class="ix-radio-card-title">I am the Builder</div>
+                  <div class="ix-radio-card-sub">List property as Builder</div>
+                </div>
+                <div class="ix-radio-card">
+                  <div class="ix-radio-card-icon"><i class="ti ti-home"></i></div>
+                  <div class="ix-radio-card-title">I am the Owner</div>
+                  <div class="ix-radio-card-sub">Submit as Individual</div>
+                </div>
+                <div class="ix-radio-card">
+                  <div class="ix-radio-card-icon"><i class="ti ti-briefcase"></i></div>
+                  <div class="ix-radio-card-title">I am a Broker</div>
+                  <div class="ix-radio-card-sub">Earn highest commission</div>
+                </div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">First Name</label><input type="text" class="ix-input" placeholder="John" /></div>
+                <div class="ix-form-group"><label class="ix-label">Last Name</label><input type="text" class="ix-input" placeholder="Doe" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Username</label><input type="text" class="ix-input" placeholder="john.doe" /></div>
+                <div class="ix-form-group"><label class="ix-label">Password</label><input type="password" class="ix-input" placeholder="············" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Email</label><input type="email" class="ix-input" placeholder="john.doe@example.com" /></div>
+                <div class="ix-form-group"><label class="ix-label">Contact</label><input type="text" class="ix-input" placeholder="+1 202 555 0111" /></div>
+              </div>
+              <div class="ix-wizard-nav"><button class="ix-btn ix-btn-outline" disabled>Previous</button><button class="ix-btn ix-btn-primary" data-ix-wizard-next>Next <i class="ti ti-arrow-right" style="font-size:13px"></i></button></div>
+            </div>
+
+            <!-- Step 1: Property Details -->
+            <div class="ix-wizard-panel" id="panel-1">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Property Details</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Tell us about the property.</div>
+              <div class="ix-radio-cards" style="grid-template-columns:1fr 1fr;margin-bottom:20px">
+                <div class="ix-radio-card selected">
+                  <div class="ix-radio-card-icon"><i class="ti ti-tag"></i></div>
+                  <div class="ix-radio-card-title">Sale the property</div>
+                  <div class="ix-radio-card-sub">Unlimited free listing</div>
+                </div>
+                <div class="ix-radio-card">
+                  <div class="ix-radio-card-icon"><i class="ti ti-key"></i></div>
+                  <div class="ix-radio-card-title">Rent the property</div>
+                  <div class="ix-radio-card-sub">Unlimited free listing</div>
+                </div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Property Type</label>
+                  <select class="ix-input" style="cursor:pointer"><option>Flat / Apartment</option><option>Residential House</option><option>Villa</option><option>Penthouse</option></select>
+                </div>
+                <div class="ix-form-group"><label class="ix-label">Zip Code</label><input type="text" class="ix-input" placeholder="99950" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Country</label><input type="text" class="ix-input" placeholder="United States" /></div>
+                <div class="ix-form-group"><label class="ix-label">State</label><input type="text" class="ix-input" placeholder="California" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">City</label><input type="text" class="ix-input" placeholder="Los Angeles" /></div>
+                <div class="ix-form-group"><label class="ix-label">Landmark</label><input type="text" class="ix-input" placeholder="Nr. Hard Rock Cafe" /></div>
+              </div>
+              <div class="ix-wizard-nav"><button class="ix-btn ix-btn-outline" data-ix-wizard-prev><i class="ti ti-arrow-left" style="font-size:13px"></i> Previous</button><button class="ix-btn ix-btn-primary" data-ix-wizard-next>Next <i class="ti ti-arrow-right" style="font-size:13px"></i></button></div>
+            </div>
+
+            <!-- Step 2: Property Features -->
+            <div class="ix-wizard-panel" id="panel-2">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Property Features</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Provide features of the property.</div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Bedrooms</label><input type="number" class="ix-input" placeholder="3" /></div>
+                <div class="ix-form-group"><label class="ix-label">Floor No</label><input type="number" class="ix-input" placeholder="12" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Bathrooms</label><input type="number" class="ix-input" placeholder="4" /></div>
+                <div class="ix-form-group"><label class="ix-label">Furnished Status</label>
+                  <select class="ix-input" style="cursor:pointer"><option>Fully furnished</option><option>Furnished</option><option>Semi furnished</option><option>Unfurnished</option></select>
+                </div>
+              </div>
+              <div class="ix-form-group" style="margin-bottom:16px"><label class="ix-label">Furnishing Details</label><input type="text" class="ix-input" value="Fridge, AC, TV, WiFi" /></div>
+              <div class="ix-form-row">
+                <div class="ix-form-group">
+                  <label class="ix-label" style="margin-bottom:8px">Common Area?</label>
+                  <div style="display:flex;gap:16px;font-size:13px;color:var(--ix-text-secondary)">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="common" checked style="accent-color:var(--ix-accent)"> Yes</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="common" style="accent-color:var(--ix-accent)"> No</label>
+                  </div>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label" style="margin-bottom:8px">Attached Balcony?</label>
+                  <div style="display:flex;gap:16px;font-size:13px;color:var(--ix-text-secondary)">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="balcony" checked style="accent-color:var(--ix-accent)"> Yes</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="balcony" style="accent-color:var(--ix-accent)"> No</label>
+                  </div>
+                </div>
+              </div>
+              <div class="ix-wizard-nav"><button class="ix-btn ix-btn-outline" data-ix-wizard-prev><i class="ti ti-arrow-left" style="font-size:13px"></i> Previous</button><button class="ix-btn ix-btn-primary" data-ix-wizard-next>Next <i class="ti ti-arrow-right" style="font-size:13px"></i></button></div>
+            </div>
+
+            <!-- Step 3: Property Area -->
+            <div class="ix-wizard-panel" id="panel-3">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Property Area</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Provide area details of the property.</div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Total Area (sq-ft)</label><input type="number" class="ix-input" placeholder="1000" /></div>
+                <div class="ix-form-group"><label class="ix-label">Carpet Area (sq-ft)</label><input type="number" class="ix-input" placeholder="800" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Plot Area (sq-yd)</label><input type="number" class="ix-input" placeholder="800" /></div>
+                <div class="ix-form-group"><label class="ix-label">Available From</label><input type="date" class="ix-input" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group">
+                  <label class="ix-label" style="margin-bottom:8px">Possession Status</label>
+                  <div style="display:flex;gap:16px;font-size:13px;color:var(--ix-text-secondary)">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="pos" checked style="accent-color:var(--ix-accent)"> Under Construction</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="pos" style="accent-color:var(--ix-accent)"> Ready to Move</label>
+                  </div>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label" style="margin-bottom:8px">Transaction Type</label>
+                  <div style="display:flex;gap:16px;font-size:13px;color:var(--ix-text-secondary)">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="tx" checked style="accent-color:var(--ix-accent)"> New Property</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="tx" style="accent-color:var(--ix-accent)"> Resale</label>
+                  </div>
+                </div>
+              </div>
+              <div class="ix-wizard-nav"><button class="ix-btn ix-btn-outline" data-ix-wizard-prev><i class="ti ti-arrow-left" style="font-size:13px"></i> Previous</button><button class="ix-btn ix-btn-primary" data-ix-wizard-next>Next <i class="ti ti-arrow-right" style="font-size:13px"></i></button></div>
+            </div>
+
+            <!-- Step 4: Price Details -->
+            <div class="ix-wizard-panel" id="panel-4">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Price Details</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Enter the expected price details.</div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Expected Price ($)</label><input type="number" class="ix-input" placeholder="25,000" /></div>
+                <div class="ix-form-group"><label class="ix-label">Price per Sqft ($)</label><input type="number" class="ix-input" placeholder="500" /></div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Maintenance Charge ($)</label><input type="number" class="ix-input" placeholder="50" /></div>
+                <div class="ix-form-group"><label class="ix-label">Maintenance Period</label>
+                  <select class="ix-input" style="cursor:pointer"><option>Monthly</option><option>Quarterly</option><option>Yearly</option></select>
+                </div>
+              </div>
+              <div class="ix-form-row">
+                <div class="ix-form-group"><label class="ix-label">Booking Amount ($)</label><input type="number" class="ix-input" placeholder="250" /></div>
+                <div class="ix-form-group"><label class="ix-label">Other Amount ($)</label><input type="number" class="ix-input" placeholder="500" /></div>
+              </div>
+              <div class="ix-form-group" style="margin-bottom:16px">
+                <label class="ix-auth-check"><input type="checkbox" class="ix-checkbox" /> Stamp Duty &amp; Registration charges excluded.</label>
+              </div>
+              <div class="ix-wizard-nav"><button class="ix-btn ix-btn-outline" data-ix-wizard-prev><i class="ti ti-arrow-left" style="font-size:13px"></i> Previous</button><button class="ix-btn ix-btn-success" data-ix-wizard-submit><i class="ti ti-check"></i> Submit</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="../iflux-admin-ui/pattern-wizard.js"></script>
+<script>PatternWizard.init();</script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

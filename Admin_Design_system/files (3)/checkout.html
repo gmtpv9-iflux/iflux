@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thanh toán — iFlux Premium</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="iflux-admin-ui.css" />
+  <link rel="stylesheet" href="supplement.css" />
+  <style>
+    /* ── Stepper (from Academy accordion / Vuexy checkout) ─── */
+    .ix-checkout-stepper {
+      display: flex; align-items: center;
+      gap: 0; margin-bottom: 32px;
+      overflow-x: auto;
+    }
+    .ix-checkout-step {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .ix-checkout-step-circle {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--ix-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      color: var(--ix-text-muted);
+      background: var(--ix-bg-card);
+      transition: all .2s; flex-shrink: 0;
+    }
+    .ix-checkout-step.active .ix-checkout-step-circle {
+      border-color: var(--ix-accent);
+      background: var(--ix-accent); color: #fff;
+    }
+    .ix-checkout-step.done .ix-checkout-step-circle {
+      border-color: var(--ix-success);
+      background: var(--ix-success); color: #fff;
+    }
+    .ix-checkout-step-label {
+      font-size: 12px; line-height: 1.3;
+    }
+    .ix-checkout-step-title {
+      font-weight: 600; color: var(--ix-text-primary);
+      font-size: 13px;
+    }
+    .ix-checkout-step-sub { color: var(--ix-text-muted); font-size: 11px; }
+    .ix-checkout-step.active .ix-checkout-step-title { color: var(--ix-accent); }
+    .ix-checkout-connector {
+      flex: 1; height: 2px;
+      background: var(--ix-border);
+      margin: 0 8px; min-width: 24px;
+      transition: background .2s;
+    }
+    .ix-checkout-connector.done { background: var(--ix-success); }
+
+    /* ── Panel ─── */
+    .ix-checkout-panel { display: none; }
+    .ix-checkout-panel.active { display: block; }
+
+    /* ── Order summary sidebar ─── */
+    .ix-order-summary {
+      background: var(--ix-bg-card);
+      border: 1px solid var(--ix-border);
+      border-radius: var(--ix-radius-lg);
+      overflow: hidden; position: sticky; top: 80px;
+    }
+    .ix-order-summary-header {
+      background: var(--ix-accent-soft);
+      padding: 16px 20px;
+      font-size: 14px; font-weight: 700;
+      color: var(--ix-accent);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ix-order-summary-body { padding: 20px; }
+    .ix-order-row {
+      display: flex; justify-content: space-between;
+      font-size: 13px; padding: 7px 0;
+      border-bottom: 1px solid var(--ix-border);
+      color: var(--ix-text-secondary);
+    }
+    .ix-order-row:last-of-type { border-bottom: none; }
+    .ix-order-total {
+      display: flex; justify-content: space-between;
+      font-size: 16px; font-weight: 700;
+      color: var(--ix-text-primary);
+      padding: 14px 0 0; margin-top: 4px;
+      border-top: 2px solid var(--ix-border);
+    }
+
+    /* ── Payment method selector ─── */
+    .ix-pay-method {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin-bottom: 20px;
+    }
+    .ix-pay-opt {
+      border: 1px solid var(--ix-border);
+      border-radius: var(--ix-radius);
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: all .12s;
+      font-size: 13px; font-weight: 500;
+      color: var(--ix-text-secondary);
+    }
+    .ix-pay-opt:hover { border-color: var(--ix-accent); }
+    .ix-pay-opt.selected { border-color: var(--ix-accent); background: var(--ix-accent-soft); color: var(--ix-accent); }
+    .ix-pay-opt i { font-size: 20px; }
+
+    /* ── Success screen ─── */
+    .ix-checkout-success {
+      text-align: center; padding: 48px 24px;
+    }
+    .ix-success-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--ix-success-soft);
+      color: var(--ix-success);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+
+    /* ── Card input styles ─── */
+    .ix-card-number-wrap { position: relative; }
+    .ix-card-type-badge {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px; font-weight: 700;
+      background: var(--ix-bg-hover); color: var(--ix-text-muted);
+      padding: 2px 6px; border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .ix-pay-method { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="ix-root">
+<div class="ix-layout">
+  <!-- Sidebar -->
+  <aside class="ix-sidebar">
+    <div class="ix-brand">
+      <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+      <span class="ix-brand-name">iFlux</span>
+    </div>
+    <nav class="ix-menu">
+      <a href="index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+      <div class="ix-menu-header">Tài khoản</div>
+      <a href="pricing.html" class="ix-menu-item"><i class="ti ti-crown ix-menu-icon"></i><span class="ix-menu-label">Nâng cấp gói</span></a>
+      <div class="ix-menu-item active"><i class="ti ti-credit-card ix-menu-icon"></i><span class="ix-menu-label">Thanh toán</span></div>
+    </nav>
+  </aside>
+
+  <main class="ix-main">
+    <header class="ix-navbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="pricing.html" class="ix-btn ix-btn-ghost ix-btn-sm"><i class="ti ti-arrow-left" style="font-size:14px"></i> Quay lại</a>
+        <span style="color:var(--ix-text-muted);font-size:13px">Chọn gói</span>
+      </div>
+      <div class="ix-nav-actions">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ix-success)"><i class="ti ti-shield-check" style="font-size:16px"></i> Thanh toán bảo mật SSL</div>
+      </div>
+    </header>
+
+    <div class="ix-content">
+
+      <!-- Checkout stepper -->
+      <div class="ix-checkout-stepper" id="checkout-stepper">
+        <div class="ix-checkout-step active" onclick="goStep(0)">
+          <div class="ix-checkout-step-circle" id="circle-0">1</div>
+          <div class="ix-checkout-step-label"><div class="ix-checkout-step-title">Gói & Chu kỳ</div><div class="ix-checkout-step-sub">Chọn gói phù hợp</div></div>
+        </div>
+        <div class="ix-checkout-connector" id="conn-0"></div>
+        <div class="ix-checkout-step" onclick="goStep(1)">
+          <div class="ix-checkout-step-circle" id="circle-1">2</div>
+          <div class="ix-checkout-step-label"><div class="ix-checkout-step-title">Thanh toán</div><div class="ix-checkout-step-sub">Chọn phương thức</div></div>
+        </div>
+        <div class="ix-checkout-connector" id="conn-1"></div>
+        <div class="ix-checkout-step" onclick="goStep(2)">
+          <div class="ix-checkout-step-circle" id="circle-2">3</div>
+          <div class="ix-checkout-step-label"><div class="ix-checkout-step-title">Xác nhận</div><div class="ix-checkout-step-sub">Hoàn tất đăng ký</div></div>
+        </div>
+        <div class="ix-checkout-connector" id="conn-2"></div>
+        <div class="ix-checkout-step" onclick="goStep(3)">
+          <div class="ix-checkout-step-circle" id="circle-3">✓</div>
+          <div class="ix-checkout-step-label"><div class="ix-checkout-step-title">Hoàn thành</div><div class="ix-checkout-step-sub">Kích hoạt ngay</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:flex-start">
+
+        <!-- LEFT panels -->
+        <div>
+
+          <!-- Step 0: Chọn gói -->
+          <div class="ix-checkout-panel active" id="panel-0">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Chọn gói & chu kỳ thanh toán</div></div>
+              <div class="ix-card-body">
+                <!-- Plan selector -->
+                <div class="ix-section-label ix-mb-3">Gói dịch vụ</div>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+                  <div class="ix-radio-card" onclick="selectPlan('premium',this)">
+                    <div class="ix-radio-card-icon"><i class="ti ti-trending-up"></i></div>
+                    <div class="ix-radio-card-title">Premium <span class="ix-badge ix-badge-primary" style="margin-left:8px;font-size:10px">Phổ biến</span></div>
+                    <div class="ix-radio-card-sub">Real-time data · Tín hiệu · Viết bài · Affiliate</div>
+                  </div>
+                  <div class="ix-radio-card selected" onclick="selectPlan('elite',this)" style="border-color:var(--iflux-orange)">
+                    <div class="ix-radio-card-icon" style="color:var(--iflux-orange)"><i class="ti ti-diamond"></i></div>
+                    <div class="ix-radio-card-title">Elite</div>
+                    <div class="ix-radio-card-sub">Tất cả Premium + API · Xuất dữ liệu · Hoa hồng 1.5x</div>
+                  </div>
+                </div>
+
+                <!-- Cycle -->
+                <div class="ix-section-label ix-mb-3">Chu kỳ thanh toán</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+                  <div class="ix-radio-card" onclick="selectCycle('monthly',this)">
+                    <div class="ix-radio-card-title">Hàng tháng</div>
+                    <div class="ix-radio-card-sub" id="price-monthly-label">₫599,000/tháng</div>
+                  </div>
+                  <div class="ix-radio-card selected" onclick="selectCycle('annual',this)">
+                    <div class="ix-radio-card-title">Hàng năm <span class="ix-badge ix-badge-success" style="font-size:10px">-20%</span></div>
+                    <div class="ix-radio-card-sub" id="price-annual-label">₫479,000/tháng · ₫5.75M/năm</div>
+                  </div>
+                </div>
+
+                <!-- Coupon -->
+                <div class="ix-section-label ix-mb-3">Mã giảm giá (tùy chọn)</div>
+                <div style="display:flex;gap:8px;margin-bottom:8px">
+                  <input type="text" class="ix-input" id="coupon-input" placeholder="Nhập mã affiliate hoặc coupon..." style="flex:1" />
+                  <button class="ix-btn ix-btn-outline" onclick="applyCoupon()">Áp dụng</button>
+                </div>
+                <div class="ix-caption" id="coupon-msg"></div>
+
+                <div style="margin-top:24px">
+                  <button class="ix-btn ix-btn-primary" style="width:100%" onclick="nextStep()">Tiếp theo: Chọn thanh toán →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Thanh toán -->
+          <div class="ix-checkout-panel" id="panel-1">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Phương thức thanh toán</div></div>
+              <div class="ix-card-body">
+                <div class="ix-pay-method">
+                  <div class="ix-pay-opt selected" onclick="selectPayMethod('card',this)"><i class="ti ti-credit-card"></i> Thẻ Visa/Mastercard</div>
+                  <div class="ix-pay-opt" onclick="selectPayMethod('momo',this)"><i class="ti ti-device-mobile"></i> MoMo</div>
+                  <div class="ix-pay-opt" onclick="selectPayMethod('vnpay',this)"><i class="ti ti-building-bank"></i> VNPay / Bank</div>
+                  <div class="ix-pay-opt" onclick="selectPayMethod('transfer',this)"><i class="ti ti-transfer"></i> Chuyển khoản</div>
+                </div>
+
+                <!-- Card form -->
+                <div id="pay-card-form">
+                  <div class="ix-form-group">
+                    <label class="ix-label">Số thẻ</label>
+                    <div class="ix-card-number-wrap">
+                      <input type="text" class="ix-input" placeholder="1234  5678  9012  3456" maxlength="19"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+                      <span class="ix-card-type-badge" id="card-type-badge">VISA</span>
+                    </div>
+                  </div>
+                  <div class="ix-form-group">
+                    <label class="ix-label">Tên chủ thẻ</label>
+                    <input type="text" class="ix-input" placeholder="NGUYEN VAN A" style="text-transform:uppercase" />
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                    <div class="ix-form-group">
+                      <label class="ix-label">Ngày hết hạn</label>
+                      <input type="text" class="ix-input" placeholder="MM/YY" maxlength="5"
+                        oninput="var v=this.value.replace(/[^0-9]/g,'');if(v.length>=2)v=v.slice(0,2)+'/'+v.slice(2);this.value=v" />
+                    </div>
+                    <div class="ix-form-group">
+                      <label class="ix-label">CVV <i class="ti ti-help-circle" style="font-size:14px;color:var(--ix-text-muted)" data-ix-tooltip="3 chữ số sau thẻ"></i></label>
+                      <input type="password" class="ix-input" placeholder="•••" maxlength="3" />
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:13px;color:var(--ix-text-muted)">
+                    <i class="ti ti-shield-check" style="font-size:16px;color:var(--ix-success)"></i>
+                    Thông tin thẻ được mã hóa theo chuẩn PCI-DSS. iFlux không lưu số thẻ của bạn.
+                  </div>
+                </div>
+
+                <!-- MoMo form -->
+                <div id="pay-momo-form" style="display:none">
+                  <div class="ix-alert ix-alert-info" style="margin-bottom:16px">
+                    <i class="ti ti-info-circle ix-alert-icon"></i>
+                    <div class="ix-alert-body">Sau khi xác nhận, bạn sẽ được chuyển đến ứng dụng MoMo để hoàn tất thanh toán.</div>
+                  </div>
+                  <div class="ix-form-group">
+                    <label class="ix-label">Số điện thoại MoMo</label>
+                    <input type="tel" class="ix-input" placeholder="09x xxxx xxxx" />
+                  </div>
+                </div>
+
+                <!-- VNPay form -->
+                <div id="pay-vnpay-form" style="display:none">
+                  <div class="ix-alert ix-alert-info" style="margin-bottom:16px">
+                    <i class="ti ti-info-circle ix-alert-icon"></i>
+                    <div class="ix-alert-body">Hỗ trợ tất cả ngân hàng nội địa Việt Nam qua cổng VNPay. Thanh toán an toàn và tức thì.</div>
+                  </div>
+                  <div class="ix-form-group">
+                    <label class="ix-label">Chọn ngân hàng</label>
+                    <select class="ix-input ix-select">
+                      <option>Vietcombank</option>
+                      <option>Techcombank</option>
+                      <option>VPBank</option>
+                      <option>MB Bank</option>
+                      <option>BIDV</option>
+                      <option>ACB</option>
+                      <option>Agribank</option>
+                      <option>TPBank</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Transfer form -->
+                <div id="pay-transfer-form" style="display:none">
+                  <div class="ix-card" style="background:var(--ix-bg-hover);border:1px dashed var(--ix-border);margin-bottom:16px">
+                    <div class="ix-card-body">
+                      <div class="ix-section-label ix-mb-3">Thông tin chuyển khoản</div>
+                      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                        <div style="display:flex;justify-content:space-between"><span style="color:var(--ix-text-muted)">Ngân hàng</span><strong>Techcombank</strong></div>
+                        <div style="display:flex;justify-content:space-between"><span style="color:var(--ix-text-muted)">Số tài khoản</span><strong>1901 4856 7892</strong></div>
+                        <div style="display:flex;justify-content:space-between"><span style="color:var(--ix-text-muted)">Tên TK</span><strong>CONG TY CP IFLUX</strong></div>
+                        <div style="display:flex;justify-content:space-between"><span style="color:var(--ix-text-muted)">Nội dung CK</span><strong id="transfer-ref">IFLUX-VM-2024</strong></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ix-alert ix-alert-warning">
+                    <i class="ti ti-alert-triangle ix-alert-icon"></i>
+                    <div class="ix-alert-body">Tài khoản sẽ được kích hoạt thủ công trong vòng 2-4 giờ làm việc sau khi nhận được tiền.</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:8px">
+                  <button class="ix-btn ix-btn-outline" onclick="prevStep()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Quay lại</button>
+                  <button class="ix-btn ix-btn-primary" style="flex:1" onclick="nextStep()">Xác nhận thanh toán →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Review -->
+          <div class="ix-checkout-panel" id="panel-2">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Xác nhận đơn hàng</div></div>
+              <div class="ix-card-body">
+                <!-- Order items -->
+                <div style="border:1px solid var(--ix-border);border-radius:var(--ix-radius);overflow:hidden;margin-bottom:20px">
+                  <div style="padding:14px 16px;border-bottom:1px solid var(--ix-border);display:flex;align-items:center;gap:14px">
+                    <div style="width:48px;height:48px;border-radius:var(--ix-radius);background:var(--ix-accent-soft);color:var(--ix-accent);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0"><i class="ti ti-diamond"></i></div>
+                    <div style="flex:1">
+                      <div style="font-weight:700;color:var(--ix-text-primary);margin-bottom:2px">iFlux Elite — Hàng năm</div>
+                      <div style="font-size:12px;color:var(--ix-text-muted)">Kích hoạt ngay · Gia hạn 15/07/2027</div>
+                    </div>
+                    <div style="font-weight:700;color:var(--ix-text-primary)">₫5,750,000</div>
+                  </div>
+                  <div style="padding:12px 16px;font-size:12px;color:var(--ix-text-muted)">
+                    Bao gồm: Real-time data · Tín hiệu mua/bán · API 10K req/ngày · Xuất Excel · Hỗ trợ 24/7 · Hoa hồng affiliate ×1.5
+                  </div>
+                </div>
+
+                <!-- Info rows -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+                  <div style="background:var(--ix-bg-hover);border-radius:var(--ix-radius);padding:14px">
+                    <div class="ix-caption ix-mb-2">Phương thức thanh toán</div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ix-text-primary)">
+                      <i class="ti ti-credit-card" style="font-size:18px;color:var(--ix-accent)"></i> Visa •••• 3456
+                    </div>
+                  </div>
+                  <div style="background:var(--ix-bg-hover);border-radius:var(--ix-radius);padding:14px">
+                    <div class="ix-caption ix-mb-2">Tài khoản</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--ix-text-primary)">vuminh@iflux.vn</div>
+                    <div class="ix-caption">ID: #VM-14892</div>
+                  </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="ix-alert ix-alert-info ix-mb-4">
+                  <i class="ti ti-info-circle ix-alert-icon"></i>
+                  <div class="ix-alert-body">
+                    Bằng cách thanh toán, bạn đồng ý với <a class="ix-link" href="#">Điều khoản dịch vụ</a> và <a class="ix-link" href="#">Chính sách bảo mật</a> của iFlux. Gói sẽ tự động gia hạn trừ khi bạn hủy trước 24h.
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:12px">
+                  <button class="ix-btn ix-btn-outline" onclick="prevStep()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Quay lại</button>
+                  <button class="ix-btn ix-btn-primary" style="flex:1;font-size:15px;padding:12px" onclick="completeCheckout()">
+                    <i class="ti ti-lock" style="font-size:14px"></i> Thanh toán ₫5,750,000 ngay
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Success -->
+          <div class="ix-checkout-panel" id="panel-3">
+            <div class="ix-card">
+              <div class="ix-card-body">
+                <div class="ix-checkout-success">
+                  <div class="ix-success-icon"><i class="ti ti-check"></i></div>
+                  <h2 style="font-size:24px;font-weight:800;color:var(--ix-text-primary);margin-bottom:8px">Thanh toán thành công! 🎉</h2>
+                  <p style="font-size:14px;color:var(--ix-text-muted);margin-bottom:4px">Đơn hàng <strong style="color:var(--ix-text-primary)">#IFX-2024-07-15-003</strong> đã được xác nhận.</p>
+                  <p style="font-size:13px;color:var(--ix-text-muted);margin-bottom:24px">Email xác nhận gửi đến <strong>vuminh@iflux.vn</strong></p>
+
+                  <!-- Receipt -->
+                  <div style="background:var(--ix-bg-hover);border-radius:var(--ix-radius-lg);padding:20px;text-align:left;max-width:400px;margin:0 auto 28px">
+                    <div class="ix-section-label ix-mb-3">Chi tiết giao dịch</div>
+                    <div class="ix-order-row"><span>Gói đã mua</span><span style="font-weight:600;color:var(--ix-text-primary)">Elite Hàng năm</span></div>
+                    <div class="ix-order-row"><span>Ngày kích hoạt</span><span>15/07/2024</span></div>
+                    <div class="ix-order-row"><span>Ngày hết hạn</span><span>15/07/2025</span></div>
+                    <div class="ix-order-row"><span>Số tiền</span><span style="font-weight:600;color:var(--ix-success)">₫5,750,000</span></div>
+                    <div class="ix-order-row"><span>Phương thức</span><span>Visa •••• 3456</span></div>
+                  </div>
+
+                  <!-- What's unlocked -->
+                  <div style="margin-bottom:28px">
+                    <div class="ix-section-label ix-mb-3" style="text-align:center">Tính năng vừa mở khóa</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:480px;margin:0 auto">
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> Real-time data</div>
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> Tín hiệu mua/bán</div>
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> API 10K req/ngày</div>
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> Xuất Excel / CSV</div>
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> Hoa hồng ×1.5</div>
+                      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-success)"><i class="ti ti-check-circle" style="font-size:18px"></i> Hỗ trợ 24/7</div>
+                    </div>
+                  </div>
+
+                  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                    <a href="index.html" class="ix-btn ix-btn-primary ix-btn-lg">Về Dashboard →</a>
+                    <a href="referrals.html" class="ix-btn ix-btn-outline ix-btn-lg"><i class="ti ti-gift" style="font-size:14px"></i> Giới thiệu & nhận hoa hồng</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /left -->
+
+        <!-- RIGHT: Order summary -->
+        <div>
+          <div class="ix-order-summary">
+            <div class="ix-order-summary-header"><i class="ti ti-receipt-2" style="font-size:16px"></i> Tóm tắt đơn hàng</div>
+            <div class="ix-order-summary-body">
+              <div style="display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--ix-border);margin-bottom:12px">
+                <div style="width:40px;height:40px;border-radius:var(--ix-radius);background:rgba(242,101,34,.12);color:var(--iflux-orange);display:flex;align-items:center;justify-content:center;font-size:20px"><i class="ti ti-diamond"></i></div>
+                <div>
+                  <div style="font-weight:700;font-size:14px;color:var(--ix-text-primary)" id="summary-plan">Elite</div>
+                  <div class="ix-caption" id="summary-cycle">Hàng năm</div>
+                </div>
+                <a href="pricing.html" class="ix-btn ix-btn-ghost ix-btn-sm" style="margin-left:auto;font-size:11px">Đổi</a>
+              </div>
+
+              <div class="ix-order-row"><span>Giá gốc</span><span id="price-original">₫7,188,000</span></div>
+              <div class="ix-order-row" style="color:var(--ix-success)"><span>Giảm giá hàng năm</span><span id="price-discount">-₫1,438,000</span></div>
+              <div class="ix-order-row" id="coupon-row" style="display:none;color:var(--ix-success)"><span>Mã giảm giá</span><span id="coupon-discount">-₫0</span></div>
+              <div class="ix-order-row"><span>VAT (10%)</span><span id="price-vat">₫522,727</span></div>
+              <div class="ix-order-total"><span>Tổng cộng</span><span id="price-total">₫5,750,000</span></div>
+
+              <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--ix-border)">
+                <div class="ix-caption ix-mb-2">Gia hạn tự động vào</div>
+                <div style="font-size:13px;font-weight:600;color:var(--ix-text-primary)">15/07/2025 · ₫5,750,000</div>
+                <div class="ix-caption" style="margin-top:2px">Hủy bất kỳ lúc nào trước 24h</div>
+              </div>
+
+              <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--ix-border)">
+                <div class="ix-caption ix-mb-2">Bảo đảm</div>
+                <div style="display:flex;gap:6px;align-items:flex-start;font-size:12px;color:var(--ix-text-secondary)">
+                  <i class="ti ti-shield-check" style="font-size:16px;color:var(--ix-success);flex-shrink:0;margin-top:1px"></i>
+                  Hoàn tiền 100% trong 7 ngày nếu không hài lòng
+                </div>
+              </div>
+
+              <!-- Accepted payments -->
+              <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--ix-border)">
+                <div class="ix-caption ix-mb-2">Chấp nhận thanh toán</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                  <span style="font-size:11px;background:var(--ix-bg-hover);padding:3px 8px;border-radius:4px;color:var(--ix-text-secondary);font-weight:600">VISA</span>
+                  <span style="font-size:11px;background:var(--ix-bg-hover);padding:3px 8px;border-radius:4px;color:var(--ix-text-secondary);font-weight:600">MC</span>
+                  <span style="font-size:11px;background:rgba(209,43,113,.12);padding:3px 8px;border-radius:4px;color:#d12b71;font-weight:600">MoMo</span>
+                  <span style="font-size:11px;background:rgba(0,95,185,.12);padding:3px 8px;border-radius:4px;color:#005fb9;font-weight:600">VNPay</span>
+                  <i class="ti ti-lock" style="font-size:14px;color:var(--ix-text-muted);margin-left:auto" data-ix-tooltip="Mã hóa SSL 256-bit"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+    </div><!-- /content -->
+  </main>
+</div>
+</div>
+
+<script src="iflux-admin-ui.js"></script>
+<script src="supplement.js"></script>
+<script>
+var currentStep = 0;
+var selectedPlan = 'elite';
+var selectedCycle = 'annual';
+var selectedPayMethod = 'card';
+var hasCoupon = false;
+
+function updateStepper() {
+  for (var i = 0; i <= 3; i++) {
+    var circle = document.getElementById('circle-' + i);
+    var step = circle.closest('.ix-checkout-step');
+    step.classList.remove('active', 'done');
+    if (i === currentStep) step.classList.add('active');
+    else if (i < currentStep) {
+      step.classList.add('done');
+      circle.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i>';
+    } else {
+      circle.textContent = (i + 1 === 4) ? '✓' : (i + 1);
+    }
+    if (i < 3) {
+      var conn = document.getElementById('conn-' + i);
+      conn.classList.toggle('done', i < currentStep);
+    }
+  }
+  document.querySelectorAll('.ix-checkout-panel').forEach(function(p, i) {
+    p.classList.toggle('active', i === currentStep);
+  });
+}
+
+function nextStep() {
+  if (currentStep < 3) { currentStep++; updateStepper(); window.scrollTo(0,0); }
+}
+function prevStep() {
+  if (currentStep > 0) { currentStep--; updateStepper(); window.scrollTo(0,0); }
+}
+function goStep(n) {
+  if (n <= currentStep) { currentStep = n; updateStepper(); }
+}
+
+function selectPlan(plan, el) {
+  selectedPlan = plan;
+  document.querySelectorAll('#panel-0 .ix-radio-card').forEach(function(c) {
+    c.classList.remove('selected');
+    c.style.borderColor = '';
+  });
+  el.classList.add('selected');
+  if (plan === 'elite') el.style.borderColor = 'var(--iflux-orange)';
+  updatePriceLabels();
+}
+function selectCycle(cycle, el) {
+  selectedCycle = cycle;
+  document.querySelectorAll('#panel-0 .ix-radio-cards .ix-radio-card, #panel-0 .ix-checkout-panel div.ix-radio-card').forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+  updatePriceLabels();
+}
+function updatePriceLabels() {
+  // simplified; real impl would update full price
+}
+
+function selectPayMethod(method, el) {
+  selectedPayMethod = method;
+  document.querySelectorAll('.ix-pay-opt').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+  ['card','momo','vnpay','transfer'].forEach(function(m) {
+    var f = document.getElementById('pay-' + m + '-form');
+    if (f) f.style.display = (m === method) ? 'block' : 'none';
+  });
+}
+
+function applyCoupon() {
+  var code = document.getElementById('coupon-input').value.trim().toUpperCase();
+  var msg = document.getElementById('coupon-msg');
+  if (code === 'IFLUX20' || code === 'WELCOME') {
+    msg.style.color = 'var(--ix-success)';
+    msg.textContent = '✓ Mã hợp lệ! Giảm thêm 10% — đã áp dụng';
+    document.getElementById('coupon-row').style.display = 'flex';
+    document.getElementById('coupon-discount').textContent = '-₫575,000';
+    ixToast('Áp dụng mã giảm giá thành công!', 'success');
+  } else {
+    msg.style.color = 'var(--ix-danger)';
+    msg.textContent = '✗ Mã không hợp lệ hoặc đã hết hạn';
+  }
+}
+
+function completeCheckout() {
+  var btn = event.target;
+  btn.textContent = 'Đang xử lý...';
+  btn.disabled = true;
+  setTimeout(function() { nextStep(); }, 1800);
+}
+</script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

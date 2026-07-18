@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pattern — Biểu đồ · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+                  <nav class="ix-menu">
+        <a href="../app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="../hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="form-add.html" class="ix-menu-item"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">List + stats strip</span></a>
+        <a href="order-detail.html" class="ix-menu-item"><i class="ti ti-file-description ix-menu-icon"></i><span class="ix-menu-label">Chi tiết + timeline</span></a>
+        <a href="user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="wizard.html" class="ix-menu-item"><i class="ti ti-stairs-up ix-menu-icon"></i><span class="ix-menu-label">Wizard</span></a>
+        <a href="chat.html" class="ix-menu-item"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+        <a href="referrals.html" class="ix-menu-item"><i class="ti ti-users-group ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></a>
+        <a href="charts.html" class="ix-menu-item active"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="../auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="../design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions">
+          <button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button>
+          <div class="ix-avatar">JD</div>
+        </div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Apex Charts</h1>
+        <div class="ix-breadcrumb ix-mb-24">
+          <a href="#">Home</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Charts</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Apex</span>
+        </div>
+
+        <div class="ix-grid ix-grid-1 ix-mb-24" style="gap:24px">
+
+          <!-- Block Top 10 mạnh nhất thị trường -->
+          <div class="ix-card" data-ix-top10-card>
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div>
+                <div class="ix-card-title">Block Top 10 mạnh nhất thị trường</div>
+                <div class="ix-card-subtitle" data-ix-top10-subtitle>Ngành · cường độ hiệu suất theo ngày (%)</div>
+              </div>
+              <div class="ix-tabs" data-ix-top10-range>
+                <button type="button" class="ix-tab active" data-days="7">1 tuần</button>
+                <button type="button" class="ix-tab" data-days="30">1 tháng</button>
+                <button type="button" class="ix-tab" data-days="90">3 tháng</button>
+                <button type="button" class="ix-tab" data-days="180">6 tháng</button>
+              </div>
+            </div>
+            <div class="ix-card-body" style="padding-top:12px">
+              <div class="ix-tabs ix-mb-24" data-ix-top10-entity>
+                <button type="button" class="ix-tab active" data-type="sector">Ngành</button>
+                <button type="button" class="ix-tab" data-type="ecosystem">Họ CP</button>
+                <button type="button" class="ix-tab" data-type="story">Chủ đề</button>
+              </div>
+              <div class="ix-top10-market" data-ix-top10-market></div>
+            </div>
+          </div>
+
+          <!-- Line Area -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div>
+                <div class="ix-card-title">Last updates</div>
+                <div class="ix-card-subtitle">Commercial networks</div>
+              </div>
+              <div class="ix-dropdown">
+                <button class="ix-btn ix-btn-ghost ix-btn-sm" data-ix-toggle="dropdown"><i class="ti ti-calendar"></i></button>
+                <div class="ix-dropdown-menu">
+                  <a class="ix-dropdown-item" href="#">Last 7 Days</a>
+                  <a class="ix-dropdown-item" href="#">Last 30 Days</a>
+                  <a class="ix-dropdown-item" href="#">Current Month</a>
+                </div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="lineAreaChart"></div></div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div class="ix-card-title">Data Science</div>
+              <div class="ix-dropdown">
+                <button class="ix-btn ix-btn-ghost ix-btn-sm" data-ix-toggle="dropdown"><i class="ti ti-calendar"></i></button>
+                <div class="ix-dropdown-menu"><a class="ix-dropdown-item" href="#">Last Month</a><a class="ix-dropdown-item" href="#">Last Year</a></div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="barChart"></div></div>
+          </div>
+
+        </div>
+
+        <div class="ix-grid ix-grid-2 ix-mb-24">
+          <!-- Donut -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div><div class="ix-card-title">Expense Ratio</div><div class="ix-card-subtitle">Spending on various categories</div></div>
+            </div>
+            <div class="ix-card-body"><div id="donutChart"></div></div>
+          </div>
+          <!-- Radial -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div class="ix-card-title">Statistics</div>
+            </div>
+            <div class="ix-card-body"><div id="radialChart"></div></div>
+          </div>
+        </div>
+
+        <div class="ix-grid ix-grid-2">
+          <!-- Scatter -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div class="ix-card-title">New Technologies Data</div>
+              <div style="display:flex;gap:4px">
+                <button class="ix-btn ix-btn-outline ix-btn-sm">Daily</button>
+                <button class="ix-btn ix-btn-ghost ix-btn-sm">Monthly</button>
+                <button class="ix-btn ix-btn-ghost ix-btn-sm">Yearly</button>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="scatterChart"></div></div>
+          </div>
+          <!-- Heatmap -->
+          <div class="ix-card">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div class="ix-card-title">Daily Sales States</div>
+            </div>
+            <div class="ix-card-body"><div id="heatmapChart"></div></div>
+          </div>
+        </div>
+
+        <div class="ix-card" style="margin-top:24px">
+          <div class="ix-card-header" style="padding-bottom:0">
+            <div>
+              <div class="ix-card-title">Stock — Candlestick + Volume</div>
+              <div class="ix-card-subtitle">Mẫu biểu đồ cổ phiếu · xem full gallery tại <a href="../app/market-ops/feed-health.html">ADM-MDO-001 Feed Health</a></div>
+            </div>
+          </div>
+          <div class="ix-card-body" style="padding-bottom:8px">
+            <div id="candlestickChart"></div>
+            <div id="stockVolumeChart"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../iflux-admin-ui/top10-market-block.js"></script>
+<script src="../iflux-admin-ui/admin-charts.js"></script>
+<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+  Top10MarketBlock.init();
+  AdminCharts.init();
+</script>
+</body></html>

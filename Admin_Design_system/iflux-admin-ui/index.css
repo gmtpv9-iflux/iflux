@@ -1,0 +1,6 @@
+/**
+ * iFlux Admin UI — index.css
+ * Import ONE file trong app:
+ *   <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+ */
+@import url('./iflux-admin-ui.css');

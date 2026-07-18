@@ -1,0 +1,20 @@
+/**
+ * iFlux Admin UI — production bundle
+ * Foundation: primitives → semantic → typography → spacing → components
+ */
+@import url('vendor/tabler-icons/tabler-icons.min.css');
+@import url('./fonts.css');
+@import url('./primitives/color.css');
+@import url('./primitives/radius.css');
+@import url('./primitives/shadow.css');
+@import url('./primitives/motion.css');
+@import url('./primitives/z-index.css');
+@import url('./primitives/layout.css');
+@import url('./semantic/theme.css');
+@import url('./semantic/business-tokens.css');
+@import url('./semantic/aliases.css');
+@import url('./typography.css');
+@import url('./spacing.css');
+@import url('./components.css');
+@import url('./atoms-extensions.css');
+@import url('./utilities.css');

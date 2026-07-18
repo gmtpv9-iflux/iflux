@@ -1,0 +1,243 @@
+/* Trang Thị trường */
+.ifx-main.ifx-main--market {
+  max-width: 1320px;
+}
+/* Trang danh sách (Cổ phiếu / Ngành / Họ CP / Chủ đề) — tràn toàn bộ chiều ngang */
+.ifx-main.ifx-main--list {
+  max-width: 100%;
+}
+.ifx-mkt-intro {
+  color: var(--ix-text-muted);
+  margin: 0 0 28px;
+  font-size: var(--ifx-font-size-14);
+  line-height: 1.5;
+}
+
+/* Layout — sidebar trái giống Trang chủ, nội dung chính bên phải */
+.ifx-mkt-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 3fr);
+  gap: var(--ifx-space-20);
+  align-items: start;
+  min-width: 0;
+  max-width: 100%;
+}
+.ifx-mkt-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+  min-width: 0;
+  max-width: 100%;
+}
+.ifx-mkt-sidebar-widget {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  overflow: hidden;
+}
+.ifx-mkt-sidebar-widget__head {
+  padding: var(--ifx-inset-widget);
+  border-bottom: 1px solid var(--ix-border);
+}
+.ifx-mkt-sidebar-widget__body {
+  padding: 14px 16px 16px;
+}
+.ifx-mkt-main {
+  min-width: 0;
+}
+
+/* Tổng quan sidebar — 2x2 chỉ số sàn, không ép 4 cột */
+.ifx-com-overview--market-sidebar {
+  padding: var(--ifx-space-16);
+  margin-bottom: 0;
+}
+.ifx-com-overview--market-sidebar .ifx-widget__header {
+  flex-wrap: wrap;
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-com-overview--market-sidebar .ifx-com-ex-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--ifx-inline-md);
+}
+.ifx-com-overview--market-sidebar .ifx-com-ex-card {
+  padding: 10px 12px;
+}
+.ifx-com-overview--market-sidebar .ifx-com-ex-card__val {
+  font-size: var(--ifx-font-size-16);
+}
+
+/* Độ rộng thị trường — CSS core thuộc TMP-BREADTH (block-templates.css). */
+
+.ifx-mkt-section { margin-bottom: 32px; }
+.ifx-mkt-section__title {
+  font-size: var(--ifx-font-size-18);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+}
+.ifx-mkt-section__sub {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+.ifx-mkt-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--ifx-space-16);
+}
+.ifx-mkt-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ifx-space-16);
+}
+@media (max-width: 1100px) {
+  .ifx-mkt-grid-3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .ifx-mkt-grid-2 { grid-template-columns: 1fr; }
+}
+.ifx-mkt-card {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  overflow: hidden;
+}
+.ifx-mkt-card__body { padding: var(--ifx-space-12) var(--ifx-space-16); }
+.ifx-mkt-heatmap {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  min-height: 200px;
+}
+.ifx-mkt-heat-tile {
+  position: absolute;
+  box-sizing: border-box;
+}
+.ifx-mkt-heat-tile__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  text-decoration: none;
+  padding: 6px;
+  box-sizing: border-box;
+  text-align: center;
+  gap: var(--ifx-space-4);
+  transition: filter .15s, transform .15s;
+}
+.ifx-mkt-heat-tile__link:hover { filter: brightness(1.08); transform: scale(1.01); }
+/* Tile colors → block-templates.css (TPL-TREEMAP) */
+.ifx-mkt-heat-tile__name {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.ifx-mkt-heat-tile__perf {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  font-family: var(--ifx-font-mono);
+}
+.ifx-mkt-heat-tile--tiny .ifx-mkt-heat-tile__name { font-size: var(--ifx-font-size-10); -webkit-line-clamp: 1; }
+.ifx-mkt-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--ix-text-muted);
+  font-size: var(--ifx-font-size-14);
+}
+.ifx-mkt-liq-block {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 0;
+}
+.ifx-mkt-heatmap-wrap .ifx-mkt-heatmap {
+  min-height: 220px;
+}
+.ifx-mkt-live-chip.is-closed .ifx-mkt-live-dot {
+  animation: none;
+  background: var(--ix-text-muted);
+}
+.ifx-mkt-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-inline-sm);
+  font-size: var(--ifx-font-size-10) !important;
+}
+.ifx-mkt-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ix-success);
+  animation: ifx-mkt-pulse 1.5s ease-in-out infinite;
+}
+@keyframes ifx-mkt-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.ifx-mkt-liq-filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  flex-wrap: nowrap;
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-mkt-liq-sessions {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: none;
+  flex-wrap: nowrap;
+}
+.ifx-mkt-liq-sessions .ix-tab {
+  padding: 5px 10px;
+  font-size: var(--ifx-font-size-12);
+  white-space: nowrap;
+}
+.ifx-mkt-liq-exchange {
+  flex: 0 0 auto;
+  margin-left: auto;
+  width: auto;
+  min-width: 108px;
+  max-width: none;
+  padding: 5px 24px 5px 10px !important;
+  font-size: var(--ifx-font-size-12) !important;
+  line-height: 1.2 !important;
+  height: 32px !important;
+}
+.ifx-mkt-liq-chart { min-height: 240px; }
+/* Biểu đồ thanh khoản — tĩnh, không phản hồi hover */
+.ifx-mkt-liq-chart .apexcharts-canvas,
+.ifx-mkt-liq-chart .apexcharts-svg {
+  pointer-events: none;
+}
+.ifx-mkt-liq-chart .apexcharts-tooltip,
+.ifx-mkt-liq-chart .apexcharts-xcrosshairs,
+.ifx-mkt-liq-chart .apexcharts-ycrosshairs,
+.ifx-mkt-liq-chart .apexcharts-active {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 960px) {
+  .ifx-mkt-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .ifx-com-overview--market-sidebar .ifx-com-ex-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

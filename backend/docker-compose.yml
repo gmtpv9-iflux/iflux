@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: iflux-postgres
+    environment:
+      POSTGRES_USER: iflux
+      POSTGRES_PASSWORD: iflux_local
+      POSTGRES_DB: iflux_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - iflux_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iflux -d iflux_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: iflux-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - iflux_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  iflux_pg_data:
+  iflux_redis_data:

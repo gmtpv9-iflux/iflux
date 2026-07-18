@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "name": "iFlux Design Tokens",
+  "description": "SoT 5 tầng: Primitive → Semantic → Component → Business → Theme",
+  "layers": ["L1", "L2", "L3", "L4", "L5"],
+  "foundationModules": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08", "F09", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20"],
+  "catalogSource": "ds-sot-foundation-token-catalog.js",
+  "studioOverrides": "data/ds-sot-overrides.json",
+  "cssRoots": {
+    "primitives": "iflux-admin-ui/primitives/",
+    "semantic": "iflux-admin-ui/semantic/theme.css",
+    "typography": "iflux-admin-ui/typography.css",
+    "spacing": "iflux-admin-ui/spacing.css"
+  },
+  "rules": {
+    "noHardcodeColor": true,
+    "noHardcodeFontSize": true,
+    "businessTokensRequiredForCharts": true,
+    "componentUsesSemanticNotPrimitive": true
+  },
+  "updatedAt": "2026-07-10T00:00:00.000Z"
+}

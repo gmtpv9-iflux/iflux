@@ -1,0 +1,8 @@
+/**
+ * iFlux User Web — bundle entry
+ * SoT components: Admin_Design_system/iflux-admin-ui
+ */
+@import url('../../Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css');
+@import url('./app-shell.css');
+@import url('./market-components.css');
+@import url('./onboarding.css');

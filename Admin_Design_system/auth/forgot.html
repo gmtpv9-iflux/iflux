@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-AUTH — Quên mật khẩu · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Quên mật khẩu? 🔒</div>
+    <div class="ix-auth-sub">Nhập email để nhận hướng dẫn đặt lại mật khẩu</div>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Email</label>
+      <input type="email" class="ix-input" placeholder="admin@iflux.vn" autofocus />
+    </div>
+    <button type="button" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:8px" onclick="ixToast('Đã gửi link đặt lại mật khẩu','success')">
+      <i class="ti ti-send"></i> Gửi link đặt lại
+    </button>
+
+    <a href="login.html" class="ix-auth-back">
+      <i class="ti ti-chevron-left" style="font-size:13px"></i>
+      Quay lại đăng nhập
+    </a>
+  </div>
+</div>
+<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+</body>
+</html>

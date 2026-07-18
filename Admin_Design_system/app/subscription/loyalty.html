@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SUB-004 — Affiliate · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="loyalty.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Affiliate</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="plans.html">Gói đăng ký</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Membership</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Affiliate</span></div>
+        <p style="color:var(--ix-text-muted);margin:-8px 0 20px;font-size:14px">Quản lý chương trình Affiliate &amp; mã giảm giá gói cước</p>
+
+        <div class="adm-loyalty-tabs">
+          <button type="button" class="adm-loyalty-tab active" data-adm-loyalty-tab="tab-adm-affiliate"><i class="ti ti-affiliate"></i> Affiliate</button>
+          <button type="button" class="adm-loyalty-tab" data-adm-loyalty-tab="tab-adm-coupons"><i class="ti ti-ticket"></i> Mã giảm giá</button>
+        </div>
+
+        <!-- AFFILIATE -->
+        <div id="tab-adm-affiliate" class="adm-loyalty-panel active">
+          <div class="ix-grid ix-grid-4 ix-mb-24">
+            <div class="ix-card ix-card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div id="adm-aff-stat-total" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Tổng hoa hồng</div></div>
+                <div class="ix-stat-icon accent" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-currency-dong"></i></div>
+              </div>
+            </div>
+            <div class="ix-card ix-card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div id="adm-aff-stat-unpaid" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Chờ thanh toán</div></div>
+                <div class="ix-stat-icon success" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-gift"></i></div>
+              </div>
+            </div>
+            <div class="ix-card ix-card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div id="adm-aff-stat-signups" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Lượt giới thiệu</div></div>
+                <div class="ix-stat-icon danger" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-users"></i></div>
+              </div>
+            </div>
+            <div class="ix-card ix-card-body">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div><div id="adm-aff-stat-conv" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Tỷ lệ chuyển đổi</div></div>
+                <div class="ix-stat-icon info" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-infinity"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ix-grid ix-grid-2 ix-mb-24" style="grid-template-columns:1.2fr 1fr">
+            <div class="ix-card ix-card-body">
+              <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Cấu hình hoa hồng</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:20px">Tỷ lệ F0/F1/F2 áp dụng cho toàn hệ thống.</div>
+              <div id="adm-aff-steps" class="ix-referral-steps ix-mb-24"></div>
+              <div class="ix-grid ix-grid-2" style="gap:12px">
+                <div><label class="ix-label">F0 (%)</label><input type="number" class="ix-input" id="cfg-f0" min="0" max="100" step="0.5" /></div>
+                <div><label class="ix-label">F1 (%)</label><input type="number" class="ix-input" id="cfg-f1" min="0" max="100" step="0.5" /></div>
+                <div><label class="ix-label">F2 (%)</label><input type="number" class="ix-input" id="cfg-f2" min="0" max="100" step="0.5" /></div>
+                <div><label class="ix-label">Ngưỡng rút tối thiểu (₫)</label><input type="number" class="ix-input" id="cfg-min-payout" min="0" step="10000" /></div>
+                <div><label class="ix-label">Cookie tracking (ngày)</label><input type="number" class="ix-input" id="cfg-cookie-days" min="1" max="365" /></div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:4px">
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                    <input type="checkbox" class="ix-checkbox" id="cfg-enabled" /> Bật chương trình Affiliate
+                  </label>
+                </div>
+              </div>
+              <button type="button" class="ix-btn ix-btn-primary ix-mt-16" id="adm-aff-save-config"><i class="ti ti-device-floppy"></i> Lưu cấu hình</button>
+            </div>
+            <div class="ix-card ix-card-body">
+              <div style="font-size:15px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Hướng dẫn vận hành</div>
+              <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--ix-text-muted);line-height:1.7">
+                <li>Người dùng chia sẻ link/mã ref từ tab Affiliate trên User Web (Hồ sơ hoặc Membership).</li>
+                <li>Hoa hồng tính theo % gói cước khi đơn thanh toán thành công.</li>
+                <li>Đánh dấu <strong>Đã trả</strong> sau khi chuyển khoản hoa hồng.</li>
+                <li>Mã giảm giá quản lý ở tab <strong>Mã giảm giá</strong> — đồng bộ checkout User Web.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="ix-card">
+            <div class="ix-filter-bar">
+              <div class="ix-filter-bar-title">Bộ lọc giới thiệu</div>
+              <div class="ix-filter-row">
+                <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-aff-filter-status"><option value="">Tất cả</option><option value="active">Active</option><option value="pending">Chờ xử lý</option><option value="cancelled">Đã hủy</option></select></div>
+                <div><label class="ix-label">Cấp</label><select class="ix-select" id="adm-aff-filter-level"><option value="">Tất cả</option><option value="F0">F0</option><option value="F1">F1</option><option value="F2">F2</option></select></div>
+              </div>
+            </div>
+            <div class="ix-table-toolbar">
+              <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="adm-aff-search" placeholder="Tìm người giới thiệu / được giới thiệu..." /></div>
+            </div>
+            <div class="ix-table-responsive">
+              <table class="ix-table" id="adm-aff-table">
+                <thead><tr>
+                  <th>Người giới thiệu</th><th>Người mua</th><th>Sản phẩm</th><th>ID mua</th><th>Cấp</th><th>Trạng thái</th><th>Giá trị đơn</th><th>Hoa hồng</th><th>Thanh toán</th>
+                </tr></thead>
+                <tbody id="adm-aff-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- MÃ GIẢM GIÁ -->
+        <div id="tab-adm-coupons" class="adm-loyalty-panel">
+          <div class="ix-card">
+            <div class="ix-table-toolbar">
+              <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="adm-coupon-search" placeholder="Tìm mã, mô tả..." /></div>
+              <div class="ix-table-actions">
+                <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="adm-coupon-add"><i class="ti ti-plus" style="font-size:13px"></i> Thêm mã</button>
+              </div>
+            </div>
+            <div class="ix-table-responsive">
+              <table class="ix-table" id="adm-coupon-table">
+                <thead><tr>
+                  <th>Mã</th><th>Mô tả</th><th>Giảm</th><th>Phạm vi</th><th>Hết hạn</th><th>Trạng thái</th><th>Thao tác</th>
+                </tr></thead>
+                <tbody id="adm-coupon-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal thêm/sửa coupon -->
+<div class="ix-modal-overlay" id="adm-coupon-modal" style="display:none;align-items:center;justify-content:center">
+  <div class="ix-modal" style="width:min(520px,94vw)">
+    <div class="ix-modal-header">
+      <div class="ix-modal-title" id="adm-coupon-modal-title">Thêm mã giảm giá</div>
+      <button type="button" class="ix-btn ix-btn-icon" id="adm-coupon-modal-close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="ix-modal-body">
+      <input type="hidden" id="cp-original-code" />
+      <div class="ix-mb-16"><label class="ix-label">Mã coupon *</label><input type="text" class="ix-input" id="cp-code" placeholder="VD: IFLUX20" style="text-transform:uppercase;font-weight:700;letter-spacing:1px" /></div>
+      <div class="ix-mb-16"><label class="ix-label">Mô tả *</label><input type="text" class="ix-input" id="cp-label" placeholder="Giảm 10% gói Premium" /></div>
+      <div class="ix-grid ix-grid-2 ix-mb-16" style="gap:12px">
+        <div><label class="ix-label">Giảm (%)</label><input type="number" class="ix-input" id="cp-discount-pct" min="0" max="100" placeholder="10" /></div>
+        <div><label class="ix-label">Giảm cố định (₫)</label><input type="number" class="ix-input" id="cp-discount-fixed" min="0" step="1000" placeholder="50000" /></div>
+      </div>
+      <div class="ix-grid ix-grid-2 ix-mb-16" style="gap:12px">
+        <div><label class="ix-label">ĐH tối thiểu (₫)</label><input type="number" class="ix-input" id="cp-min-order" min="0" value="0" /></div>
+        <div><label class="ix-label">Hết hạn</label><input type="date" class="ix-input" id="cp-expires" /></div>
+      </div>
+      <div class="ix-mb-16"><label class="ix-label">Phạm vi</label><select class="ix-select" id="cp-scope"><option>Gói cước</option><option>Elite</option><option>Gói năm</option><option>Premium</option></select></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" class="ix-checkbox" id="cp-active" checked /> Đang bán (active)</label>
+    </div>
+    <div class="ix-modal-footer">
+      <button type="button" class="ix-btn ix-btn-outline" id="adm-coupon-modal-cancel">Huỷ</button>
+      <button type="button" class="ix-btn ix-btn-primary" id="adm-coupon-modal-save"><i class="ti ti-device-floppy"></i> Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="loyalty-coupon-catalog-store.js"></script>
+<script src="loyalty-affiliate-store.js"></script>
+<script src="loyalty-page.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>AdmLoyaltyPage.init();</script>
+</body>
+</html>

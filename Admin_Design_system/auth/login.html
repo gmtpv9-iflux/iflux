@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập Admin · iFlux</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux Admin</span>
+    </div>
+
+    <div class="ix-auth-title">Đăng nhập quản trị</div>
+    <div class="ix-auth-sub">Chỉ tài khoản được cấp quyền mới truy cập được khu vực Admin.</div>
+
+    <div class="ix-alert ix-alert-danger" id="ix-admin-login-error" role="alert" style="display:none"></div>
+
+    <div class="ix-tabs" id="ix-admin-login-tabs" style="margin:12px auto 20px">
+      <button type="button" class="ix-tab active" data-ix-tab="ix-tab-gmail" id="ix-admin-tab-gmail">Bằng Gmail</button>
+      <button type="button" class="ix-tab" data-ix-tab="ix-tab-password" id="ix-admin-tab-password">Bằng mật khẩu</button>
+    </div>
+
+    <div id="ix-tab-gmail" class="ix-tab-panel">
+      <div id="ix-admin-google-section">
+        <div id="ix-admin-google-btn" style="display:flex;justify-content:center"></div>
+        <button type="button" class="ix-btn ix-btn-outline" id="ix-admin-google-login" style="width:100%;display:none">
+          <i class="ti ti-brand-google-filled"></i>
+          Đăng nhập bằng Gmail
+        </button>
+        <div class="ix-alert ix-alert-warning" id="ix-admin-google-unavailable" role="alert" style="margin-top:12px;display:none">
+          Trình duyệt/địa chỉ này không mở được đăng nhập Google. Hãy chuyển sang tab “Bằng mật khẩu”.
+        </div>
+      </div>
+    </div>
+
+    <div id="ix-tab-password" class="ix-tab-panel" style="display:none">
+      <form id="ix-admin-login-form" autocomplete="on">
+        <div class="ix-form-group">
+          <label class="ix-label" for="ix-admin-email">Email</label>
+          <input type="email" class="ix-input" id="ix-admin-email" name="email" autocomplete="username" placeholder="admin@iflux.vn" required />
+        </div>
+        <div class="ix-form-group">
+          <label class="ix-label" for="ix-admin-password">Mật khẩu</label>
+          <input type="password" class="ix-input" id="ix-admin-password" name="password" autocomplete="current-password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="ix-btn ix-btn-primary" id="ix-admin-login-submit" style="width:100%;margin-top:8px">
+          <i class="ti ti-login"></i>
+          Đăng nhập
+        </button>
+      </form>
+    </div>
+
+    <div class="ix-auth-remember" style="margin-top:18px">
+      <label class="ix-auth-check">
+        <input type="checkbox" class="ix-checkbox" id="ix-admin-remember" checked />
+        Ghi nhớ đăng nhập trên máy này
+      </label>
+    </div>
+
+    <p class="ix-auth-sub" style="margin-top:var(--ifx-space-16);text-align:center">
+      Phiên ghi nhớ giữ đăng nhập để lần sau không cần xác thực lại trên trình duyệt này.
+    </p>
+  </div>
+</div>
+<script src="../iflux-admin-ui/admin-auth.js?v=20260712e"></script>
+<script>
+  if (window.IfluxAdminAuth) IfluxAdminAuth.initLoginPage();
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-MDO-001 — Feed Health · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Sức khỏe feed</h1>
+        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Market Data Ops</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-MDO-001</span></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Theo dõi sức khoẻ feed thị trường — pattern <strong>cards + charts</strong> (mẫu cho Pipeline, SLA, Analytics).</p>
+
+        <!-- Overview cards -->
+        <div class="ix-card ix-mb-24" style="padding:0">
+          <div class="ix-widget-separator">
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Latency TB</div>
+                <div class="ix-widget-sep-value">24 ms</div>
+                <div class="ix-widget-sep-sub">WSS HOSE <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">OK</span></div>
+              </div>
+              <div class="ix-stat-icon accent" style="width:44px;height:44px;font-size:20px"><i class="ti ti-bolt"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Tick rate</div>
+                <div class="ix-widget-sep-value">18.4K/min</div>
+                <div class="ix-widget-sep-sub">3 sàn · phiên sáng</div>
+              </div>
+              <div class="ix-stat-icon success" style="width:44px;height:44px;font-size:20px"><i class="ti ti-activity"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Missing ticks</div>
+                <div class="ix-widget-sep-value">7</div>
+                <div class="ix-widget-sep-sub">15 phút qua <span class="ix-chip ix-chip-warning" style="padding:2px 6px;font-size:11px">+2</span></div>
+              </div>
+              <div class="ix-stat-icon warning" style="width:44px;height:44px;font-size:20px"><i class="ti ti-alert-triangle"></i></div>
+            </div>
+            <div class="ix-widget-separator-item" style="border-right:none">
+              <div>
+                <div class="ix-widget-sep-label">Uptime 24h</div>
+                <div class="ix-widget-sep-value">99.2%</div>
+                <div class="ix-widget-sep-sub">SLA ≥ 99% <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">Pass</span></div>
+              </div>
+              <div class="ix-stat-icon info" style="width:44px;height:44px;font-size:20px"><i class="ti ti-heartbeat"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed sources status -->
+        <div class="ix-card ix-mb-24">
+          <div class="ix-card-header">
+            <div><div class="ix-card-title">Nguồn feed</div><div class="ix-card-subtitle">Trạng thái realtime (mock)</div></div>
+            <span class="ix-chip ix-chip-success">Live</span>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead><tr><th>Nguồn</th><th>Loại</th><th>Latency</th><th>Last tick</th><th>Trạng thái</th></tr></thead>
+              <tbody>
+                <tr><td><strong>HOSE WSS Primary</strong></td><td>WebSocket</td><td>18 ms</td><td>09:45:12.340</td><td><span class="ix-chip ix-chip-success">Ổn định</span></td></tr>
+                <tr><td><strong>HOSE WSS Backup</strong></td><td>WebSocket</td><td>22 ms</td><td>09:45:12.338</td><td><span class="ix-chip ix-chip-success">Ổn định</span></td></tr>
+                <tr><td><strong>HNX REST Poll</strong></td><td>REST</td><td>84 ms</td><td>09:45:11.900</td><td><span class="ix-chip ix-chip-success">Ổn định</span></td></tr>
+                <tr><td><strong>UPCoM Derived</strong></td><td>Derived</td><td>—</td><td>09:45:10.120</td><td><span class="ix-chip ix-chip-warning">Lag 2s</span></td></tr>
+                <tr><td><strong>Money Flow Engine</strong></td><td>Internal</td><td>31 ms</td><td>09:45:12.335</td><td><span class="ix-chip ix-chip-success">Ổn định</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Chart gallery — all patterns in one zone -->
+        <div class="ix-card">
+          <div class="ix-card-header" style="padding-bottom:12px">
+            <div>
+              <div class="ix-card-title">Biểu đồ theo dõi (Chart Gallery)</div>
+              <div class="ix-card-subtitle">Gom toàn bộ mẫu ApexCharts — dùng làm template cho Feed Health, Pipeline Monitor, SLA Dashboard</div>
+            </div>
+            <a href="../../patterns/charts.html" class="ix-btn ix-btn-outline ix-btn-sm">Pattern gốc</a>
+          </div>
+          <div class="ix-card-body" style="padding-top:0">
+
+            <div class="ix-grid ix-grid-1 ix-mb-24" style="gap:24px">
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div><div class="ix-card-title">Latency theo phiên</div><div class="ix-card-subtitle">Area · WSS HOSE</div></div>
+                </div>
+                <div class="ix-card-body"><div id="lineAreaChart"></div></div>
+              </div>
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div class="ix-card-title">Tick rate vs expected</div>
+                </div>
+                <div class="ix-card-body"><div id="barChart"></div></div>
+              </div>
+            </div>
+
+            <div class="ix-grid ix-grid-2 ix-mb-24" style="gap:24px">
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div><div class="ix-card-title">Phân bổ feed</div><div class="ix-card-subtitle">Donut</div></div>
+                </div>
+                <div class="ix-card-body"><div id="donutChart"></div></div>
+              </div>
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div class="ix-card-title">Uptime &amp; SLA</div>
+                </div>
+                <div class="ix-card-body"><div id="radialChart"></div></div>
+              </div>
+            </div>
+
+            <div class="ix-grid ix-grid-2 ix-mb-24" style="gap:24px">
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div class="ix-card-title">Lag vs gap</div>
+                </div>
+                <div class="ix-card-body"><div id="scatterChart"></div></div>
+              </div>
+              <div class="ix-card" style="margin:0">
+                <div class="ix-card-header" style="padding-bottom:0">
+                  <div class="ix-card-title">Missing ticks theo khung giờ</div>
+                </div>
+                <div class="ix-card-body"><div id="heatmapChart"></div></div>
+              </div>
+            </div>
+
+            <div class="ix-card" style="margin:0">
+              <div class="ix-card-header" style="padding-bottom:0">
+                <div>
+                  <div class="ix-card-title">Stock chart — VNM (mock)</div>
+                  <div class="ix-card-subtitle">Candlestick + Volume · mẫu biểu đồ cổ phiếu admin</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <span class="ix-chip ix-chip-primary">VNM</span>
+                  <span style="font-size:13px;font-weight:600;color:var(--ix-text-primary)">87,400</span>
+                  <span class="ix-text-success" style="font-size:12px">+1.2%</span>
+                </div>
+              </div>
+              <div class="ix-card-body" style="padding-bottom:8px">
+                <div id="candlestickChart"></div>
+                <div id="stockVolumeChart"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="../../iflux-admin-ui/admin-charts.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>AdminCharts.init();</script>
+</body>
+</html>

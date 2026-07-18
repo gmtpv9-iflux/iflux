@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SUB-001 — Sửa Plan · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+
+        <div class="ix-breadcrumb ix-mb-16"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><a href="plans.html">Plan Registry</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span id="plan-breadcrumb">Premium</span></div>
+
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:2px" id="plan-page-title">Sửa plan Premium</h1>
+            <p style="font-size:13px;color:var(--ix-text-muted)">Cấu hình giá, IAP SKU và quyền sử dụng theo Contract Spec §4.5</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="plans.html" class="ix-btn ix-btn-outline">Huỷ</a>
+            <button class="ix-btn ix-btn-outline">Lưu nháp</button>
+            <button class="ix-btn ix-btn-primary" id="btn-save-plan"><i class="ti ti-device-floppy"></i> Lưu plan</button>
+          </div>
+        </div>
+
+        <div class="ix-layout-main">
+          <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:24px">
+
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Thông tin plan</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Tên hiển thị</label>
+                  <input type="text" class="ix-input" id="field-name" placeholder="Premium" />
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                  <div class="ix-form-group" style="margin:0">
+                    <label class="ix-label">Tier code</label>
+                    <input type="text" class="ix-input" id="field-tier" placeholder="vd: pro_plus" />
+                  </div>
+                  <div class="ix-form-group" style="margin:0">
+                    <label class="ix-label">Thứ tự paywall</label>
+                    <input type="number" class="ix-input" id="field-sort" placeholder="4" min="1" />
+                  </div>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Mô tả (paywall)</label>
+                  <textarea class="ix-textarea" id="field-desc" placeholder="Mô tả quyền lợi gói..." style="min-height:100px"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card" id="plan-iap-card">
+              <div class="ix-card-header"><div class="ix-card-title">IAP &amp; thanh toán web</div></div>
+              <div class="ix-card-body" style="display:flex;flex-direction:column;gap:20px">
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:var(--ix-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Gói tháng</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Apple IAP</label><input type="text" class="ix-input" id="field-apple" placeholder="com.iflux.premium.monthly" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Google Play</label><input type="text" class="ix-input" id="field-google" placeholder="com.iflux.premium.monthly" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Web price ID</label><input type="text" class="ix-input" id="field-web" placeholder="price_premium_monthly_vnd" /></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:var(--ix-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Gói năm</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Apple IAP</label><input type="text" class="ix-input" id="field-apple-yearly" placeholder="com.iflux.premium.yearly" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Google Play</label><input type="text" class="ix-input" id="field-google-yearly" placeholder="com.iflux.premium.yearly" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Web price ID</label><input type="text" class="ix-input" id="field-web-yearly" placeholder="price_premium_yearly_vnd" /></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:var(--ix-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Trọn đời (Lifetime)</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Apple IAP</label><input type="text" class="ix-input" id="field-apple-lifetime" placeholder="com.iflux.premium.lifetime" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Google Play</label><input type="text" class="ix-input" id="field-google-lifetime" placeholder="com.iflux.premium.lifetime" /></div>
+                    <div class="ix-form-group" style="margin:0"><label class="ix-label">Web price ID</label><input type="text" class="ix-input" id="field-web-lifetime" placeholder="price_premium_lifetime_vnd" /></div>
+                  </div>
+                  <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-text-secondary);cursor:pointer">
+                    <input type="checkbox" class="ix-checkbox" id="field-lifetime-enabled" checked /> Bán gói trọn đời cho plan này
+                  </label>
+                </div>
+                <div class="ix-form-group ix-mb-0" style="max-width:200px">
+                  <label class="ix-label">Trial (ngày) — gói tháng/năm</label>
+                  <input type="number" class="ix-input" id="field-trial" placeholder="0" min="0" />
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card">
+              <div class="ix-card-header">
+                <div class="ix-card-title">Quyền sử dụng</div>
+              </div>
+              <div class="ix-card-body">
+                <p style="font-size:13px;color:var(--ix-text-muted);line-height:1.55;margin:0 0 14px">
+                  Phân quyền theo gói được cấu hình tập trung tại <strong>Ma trận quyền</strong> (Truy cập · Thao tác · Giới hạn × Vãng lai / Free / Premium / Elite).
+                </p>
+                <a href="entitlements.html" class="ix-btn ix-btn-primary"><i class="ti ti-grid-dots"></i> Mở phân quyền sử dụng</a>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="ix-layout-side-col" style="display:flex;flex-direction:column;gap:24px">
+
+            <div class="ix-card" id="plan-price-card">
+              <div class="ix-card-header"><div class="ix-card-title">Giá</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Giá tháng (VND)</label>
+                  <input type="number" class="ix-input" id="field-price-month" placeholder="199000" />
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Giá năm (VND)</label>
+                  <input type="number" class="ix-input" id="field-price-year" placeholder="1990000" />
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Giá trọn đời (VND)</label>
+                  <input type="number" class="ix-input" id="field-price-lifetime" placeholder="4990000" />
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Khuyến mãi (%)</label>
+                  <input type="number" class="ix-input" id="field-promo-pct" placeholder="0" min="0" max="100" step="1" />
+                  <p class="ix-caption" style="margin-top:6px">Cùng một % giảm áp dụng cho giá tháng, năm và trọn đời. 0 = không khuyến mãi.</p>
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-text-secondary);cursor:pointer;margin-bottom:12px">
+                  <input type="checkbox" class="ix-checkbox" id="field-vat" checked /> Áp dụng VAT
+                </label>
+                <hr class="ix-divider" />
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">Cho phép mua</span>
+                  <label class="ix-switch">
+                    <input type="checkbox" id="field-purchasable" checked />
+                    <span class="ix-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Hiển thị</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Icon plan</label>
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div id="icon-preview" class="ix-stat-icon accent" style="width:44px;height:44px;font-size:20px;border-radius:8px;flex-shrink:0"><i class="ti ti-package"></i></div>
+                    <select class="ix-select" id="field-icon" style="flex:1;min-width:120px"></select>
+                    <select class="ix-select" id="field-icon-class" style="flex:1;min-width:100px"></select>
+                  </div>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Trạng thái</label>
+                  <select class="ix-select" id="field-status">
+                    <option value="published">Đang bán</option>
+                    <option value="hidden">Ẩn</option>
+                    <option value="scheduled">Lên lịch</option>
+                  </select>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Badge paywall</label>
+                  <select class="ix-select" id="field-badge">
+                    <option value="">Không</option>
+                    <option value="popular">Phổ biến nhất</option>
+                    <option value="best">Giá trị tốt nhất</option>
+                  </select>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Tags nội bộ</label>
+                  <input type="text" class="ix-input" id="field-tags" placeholder="subscription, gd1" />
+                </div>
+              </div>
+            </div>
+
+            <div class="ix-card" id="plan-stats-card">
+              <div class="ix-card-header"><div class="ix-card-title">Thống kê</div></div>
+              <div class="ix-card-body" style="font-size:13px;color:var(--ix-text-secondary);display:flex;flex-direction:column;gap:6px">
+                <span>Subscribers: <strong style="color:var(--ix-text-primary)" id="stat-subs">—</strong></span>
+                <span>MRR đóng góp: <strong style="color:var(--ix-text-primary)" id="stat-mrr">—</strong></span>
+                <span>Cập nhật lần cuối: <strong style="color:var(--ix-text-primary)">12/06/2026</strong></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="../../iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="../system/platform-layers-widgets.js?v=stripTabTopN20260718"></script>
+<script src="entitlement-catalog.js?v=l4sot20260714b"></script>
+<script src="plans-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+(function () {
+  if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
+    EntitlementCatalog.refreshBlocksCatalog();
+  }
+  var params = new URLSearchParams(location.search);
+  var planKey = (params.get('plan') || 'premium').toLowerCase();
+  var isNew = planKey === 'new';
+  var p = PlansStore.getPlan(planKey);
+
+  if (!p && !isNew) {
+    planKey = 'premium';
+    p = PlansStore.getPlan('premium');
+  }
+  if (isNew) p = PlansStore.getPlan('new');
+
+  var tierField = document.getElementById('field-tier');
+  var statsCard = document.getElementById('plan-stats-card');
+  var iapCard = document.getElementById('plan-iap-card');
+  var priceCard = document.getElementById('plan-price-card');
+  var isGuest = planKey === 'guest';
+
+  if (isNew) {
+    document.title = 'ADM-SUB-001 — Thêm plan mới · iFlux Admin';
+    document.getElementById('plan-breadcrumb').textContent = 'Thêm mới';
+    document.getElementById('plan-page-title').textContent = 'Thêm plan mới';
+    tierField.removeAttribute('readonly');
+    statsCard.style.display = 'none';
+  } else {
+    document.title = 'ADM-SUB-001 — Sửa ' + p.name + ' · iFlux Admin';
+    document.getElementById('plan-breadcrumb').textContent = p.name;
+    document.getElementById('plan-page-title').textContent = 'Sửa plan ' + p.name;
+    if (p.builtin) {
+      tierField.setAttribute('readonly', 'readonly');
+      tierField.style.background = 'var(--ix-bg-subtle)';
+    }
+  }
+
+  PlansStore.initIconPicker();
+  PlansStore.hydrate().then(function () {
+    PlansStore.fillForm(PlansStore.getPlan(planKey));
+  }).catch(function () {
+    PlansStore.fillForm(p);
+  });
+
+  function disablePricingFields() {
+    ['field-apple', 'field-google', 'field-web',
+     'field-apple-yearly', 'field-google-yearly', 'field-web-yearly',
+     'field-apple-lifetime', 'field-google-lifetime', 'field-web-lifetime',
+     'field-price-month', 'field-price-year', 'field-price-lifetime', 'field-promo-pct',
+     'field-lifetime-enabled', 'field-trial', 'field-purchasable'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.disabled = true;
+      if (el.type === 'checkbox') el.checked = false;
+    });
+  }
+
+  if (planKey === 'guest') {
+    if (iapCard) iapCard.style.display = 'none';
+    if (priceCard) priceCard.style.display = 'none';
+    if (statsCard) statsCard.style.display = 'none';
+    disablePricingFields();
+    document.getElementById('field-purchasable').checked = false;
+    document.getElementById('field-status').value = 'published';
+  } else if (planKey === 'free') {
+    disablePricingFields();
+  }
+
+  document.getElementById('btn-save-plan').addEventListener('click', function () {
+    var data = PlansStore.collectForm();
+    var saveKey = isNew ? 'new' : (p.builtin ? p.tier : (p.id || p.tier));
+    var result = PlansStore.savePlan(saveKey, data);
+    if (!result.ok) {
+      ixToast(result.error, 'danger');
+      return;
+    }
+    ixToast('Đã lưu · quyền đã ghi sang website (tải lại trang guest)', 'success');
+    setTimeout(function () {
+      location.href = 'plans.html?saved=1';
+    }, 500);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-001 — Bảng SLA · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+  <style>
+    .sla-banner { display:flex; align-items:center; gap:16px; padding:16px 20px; border-radius:var(--ix-radius-lg); margin-bottom:24px; border:1px solid transparent; }
+    .sla-banner__icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .sla-banner__title { font-size:16px; font-weight:700; color:var(--ix-text-primary); margin-bottom:4px; }
+    .sla-banner__sub { font-size:13px; color:var(--ix-text-muted); line-height:1.5; max-width:640px; }
+    .sla-banner__meta { margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+    .sla-banner--green { background:rgba(113,221,55,.08); border-color:rgba(113,221,55,.25); }
+    .sla-banner--green .sla-banner__icon { background:rgba(113,221,55,.15); color:#71dd37; }
+    .sla-banner--yellow { background:rgba(255,171,0,.08); border-color:rgba(255,171,0,.25); }
+    .sla-banner--yellow .sla-banner__icon { background:rgba(255,171,0,.15); color:#ffab00; }
+    .sla-banner--red { background:rgba(255,62,29,.08); border-color:rgba(255,62,29,.25); }
+    .sla-banner--red .sla-banner__icon { background:rgba(255,62,29,.15); color:#ff3e1d; }
+    @media (max-width:900px) { .sla-banner { flex-wrap:wrap; } .sla-banner__meta { margin-left:0; align-items:flex-start; } }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Bảng SLA</h1>
+            <div class="ix-breadcrumb"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Hệ thống</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-SYS-001</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <a href="../market-ops/feed-health.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-heartbeat"></i> Sức khỏe feed</a>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="sla-btn-refresh"><i class="ti ti-refresh"></i> Làm mới</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 20px">Lớp <strong>L2 · Product SLA</strong> — trạng thái real-time các cam kết chất lượng (BRD Ch.21 · GL-11). Dữ liệu mock cho môi trường local.</p>
+
+        <div id="sla-overall-banner" class="sla-banner sla-banner--green"></div>
+
+        <div class="ix-card ix-mb-24" style="padding:0">
+          <div class="ix-widget-separator">
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">SLA đạt</div>
+                <div class="ix-widget-sep-value" id="sla-sum-pass">—</div>
+                <div class="ix-widget-sep-sub">Pass / tổng chỉ số</div>
+              </div>
+              <div class="ix-stat-icon success" style="width:44px;height:44px;font-size:20px"><i class="ti ti-circle-check"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Cảnh báo</div>
+                <div class="ix-widget-sep-value" id="sla-sum-warn">0</div>
+                <div class="ix-widget-sep-sub">Sắp chạm ngưỡng</div>
+              </div>
+              <div class="ix-stat-icon warning" style="width:44px;height:44px;font-size:20px"><i class="ti ti-alert-triangle"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Vi phạm</div>
+                <div class="ix-widget-sep-value" id="sla-sum-fail">0</div>
+                <div class="ix-widget-sep-sub">Deploy gate</div>
+              </div>
+              <div class="ix-stat-icon danger" style="width:44px;height:44px;font-size:20px"><i class="ti ti-alert-circle"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Uptime 24h</div>
+                <div class="ix-widget-sep-value" id="sla-sum-uptime">—</div>
+                <div class="ix-widget-sep-sub">Target ≥ 99.5%</div>
+              </div>
+              <div class="ix-stat-icon info" style="width:44px;height:44px;font-size:20px"><i class="ti ti-server"></i></div>
+            </div>
+            <div class="ix-widget-separator-item" style="border-right:none">
+              <div>
+                <div class="ix-widget-sep-label">WS đang kết nối</div>
+                <div class="ix-widget-sep-value" id="sla-sum-ws">—</div>
+                <div class="ix-widget-sep-sub">Concurrent users</div>
+              </div>
+              <div class="ix-stat-icon accent" style="width:44px;height:44px;font-size:20px"><i class="ti ti-users"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ix-card ix-mb-24">
+          <div class="ix-card-header">
+            <div>
+              <div class="ix-card-title">Ma trận cam kết SLA</div>
+              <div class="ix-card-subtitle">Green / Yellow / Red · timestamp vi phạm gần nhất</div>
+            </div>
+            <span class="ix-chip ix-chip-success">Live mock</span>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th>Mã / Tên</th>
+                  <th>Metric</th>
+                  <th>Target</th>
+                  <th>Hiện tại</th>
+                  <th>Trạng thái</th>
+                  <th>Vi phạm gần nhất</th>
+                  <th>Nguồn đo</th>
+                </tr>
+              </thead>
+              <tbody id="sla-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ix-grid ix-grid-2 ix-mb-24" style="gap:24px">
+          <div class="ix-card" style="margin:0">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div>
+                <div class="ix-card-title">Real-time latency (NFR-P01)</div>
+                <div class="ix-card-subtitle">p95 · 24 giờ qua</div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="sla-chart-latency"></div></div>
+          </div>
+          <div class="ix-card" style="margin:0">
+            <div class="ix-card-header" style="padding-bottom:0">
+              <div>
+                <div class="ix-card-title">System uptime (NFR-A01)</div>
+                <div class="ix-card-subtitle">7 ngày qua</div>
+              </div>
+            </div>
+            <div class="ix-card-body"><div id="sla-chart-uptime"></div></div>
+          </div>
+        </div>
+
+        <div class="ix-card">
+          <div class="ix-card-header">
+            <div>
+              <div class="ix-card-title">Lịch sử vi phạm gần đây</div>
+              <div class="ix-card-subtitle">P1 → PagerDuty · P2 → Slack #engineering-alerts (BRD §21.5)</div>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th>Thời điểm</th>
+                  <th>SLA</th>
+                  <th>Mức</th>
+                  <th>Chi tiết</th>
+                  <th>Đã xử lý</th>
+                </tr>
+              </thead>
+              <tbody id="sla-violations-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="sla-page.js"></script>
+<script>SlaPage.init();</script>
+</body>
+</html>
