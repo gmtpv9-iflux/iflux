@@ -15,6 +15,6 @@
 @import url('./semantic/aliases.css');
 @import url('./typography.css');
 @import url('./spacing.css');
-@import url('./components.css');
+@import url('./components.css?v=viewportSoT20260718');
 @import url('./atoms-extensions.css');
 @import url('./utilities.css');

@@ -6,14 +6,14 @@
   <title>ADM-SYS-007 — Kiến trúc 4 tầng · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css?v=viewportSoT20260718" />
   <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/market.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/market-components.css" />
+  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/market-components.css?v=breakpointSoT20260718" />
   <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/flow.css" />
   <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/community.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/watchlist.css" />
+  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/watchlist.css?v=breakpointSoT20260718" />
   <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/widget-shell.css?v=tmpDivBars20260718" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/block-templates.css?v=tmpDivBars20260718" />
+  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/block-templates.css?v=breakpointSoT20260718" />
   <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/insight-share.css?v=tmpDivBars20260718" />
   <style>
     .pl-flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:20px; padding:14px 16px; background:rgba(105,108,255,.06); border:1px solid rgba(105,108,255,.15); border-radius:var(--ix-radius-lg); font-size:12px; color:var(--ix-text-muted); }
@@ -95,9 +95,8 @@
     .l4-out-scroll { overflow-x:auto; }
     .l4-out-scroll .l4-table { min-width:560px; }
     .l4-out-scroll .l4-table .ix-input { min-width:110px; }
-    /* Khung preview: bề rộng cố định cỡ viewport mobile, cuộn dọc khi nội dung dài;
-       cuộn ngang khi Widget hiển thị ở kích thước thật rộng hơn khung */
-    .l4-preview-frame { width:390px; max-width:100%; margin:0 auto; max-height:70vh; overflow-y:auto; overflow-x:auto; border:1px solid var(--ix-border); border-radius:12px; padding:12px; background:rgba(0,0,0,.2); container-type:inline-size; }
+    /* Khung Preview chỉ quản lý vùng nhìn/cuộn; canvas nhận width từ Viewport Registry. */
+    .l4-preview-frame { width:100%; max-width:100%; margin:0 auto; max-height:70vh; overflow:auto; border:1px solid var(--ix-border); border-radius:12px; padding:12px; background:rgba(0,0,0,.2); }
     @media (max-width: 1100px) { .l4-authoring { flex-direction:column; } .l4-authoring__preview { position:static; width:100%; } }
     .l4-formula-list { font-size:12px; line-height:1.7; color:var(--ix-text-secondary); background:rgba(0,0,0,.2); border-radius:8px; padding:10px 12px 10px 24px; margin:0; list-style:disc; }
     .l4-formula-list li { margin:4px 0; }
@@ -195,6 +194,7 @@
 <script src="../../iflux-admin-ui/watchlist-taxonomy.js"></script>
 <script src="../../iflux-admin-ui/mock-market.js"></script>
 <script src="../../ds-sot-icons-catalog.js?v=tmpDivBars20260718"></script>
+<script src="../../ds-sot-viewport-registry.js?v=viewportSoT20260718"></script>
 <script src="platform-layers-catalog.js?v=storyTop20260714"></script>
 <script src="platform-layers-resolver.js?v=storyTop20260714"></script>
 <!-- Preview dùng nguyên renderer hiện có của trang Mẫu giao diện; không tạo renderer Widget riêng. -->
@@ -236,7 +236,7 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="platform-layers-page.js?v=tmpDivBars20260718"></script>
+<script src="platform-layers-page.js?v=viewportSoT20260718"></script>
 <script>PlatformLayersPage.init();</script>
 </body>
 </html>
