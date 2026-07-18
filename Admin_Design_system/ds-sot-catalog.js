@@ -348,7 +348,7 @@
     'mkt-liq': '<div class="ifx-mkt-liq-block" style="max-width:360px">' +
       '<div class="ifx-mkt-liq-block__head"><div class="ifx-mkt-liq-block__title">Khối lượng giao dịch (KLGD)</div>' +
       '<span class="ix-chip ix-chip-success ifx-mkt-live-chip"><span class="ifx-mkt-live-dot"></span> Real-time</span></div>' +
-      '<div class="ifx-mkt-liq-filters"><div class="ix-tabs ifx-mkt-liq-sessions"><button class="ix-tab active">1 phiên</button><button class="ix-tab">5 phiên</button></div>' +
+      '<div class="ifx-mkt-liq-filters"><div class="ix-segmented"><button type="button" class="ix-segment is-active">1 phiên</button><button type="button" class="ix-segment">5 phiên</button></div>' +
       '<select class="ix-input ifx-mkt-liq-exchange"><option>VNINDEX</option></select></div>' +
       '<div class="ifx-mkt-liq-chart" style="height:80px;background:rgba(0,0,0,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ix-text-muted)">Chart mount</div></div>',
     'com-overview': '<div class="ifx-com-overview ifx-com-overview--sidebar" style="max-width:280px;padding:10px;border:1px solid var(--ix-border);border-radius:12px">' +

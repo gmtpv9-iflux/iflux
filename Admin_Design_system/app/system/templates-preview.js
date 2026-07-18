@@ -68,6 +68,20 @@
       }
     });
   }
+  /** Preview chỉ consume atom; helper này chỉ đổi trạng thái, không sở hữu style. */
+  function bindPreviewSegments(host, selector, boundKey) {
+    if (!host || host[boundKey]) return;
+    host[boundKey] = true;
+    host.addEventListener('click', function (e) {
+      var btn = e.target.closest(selector);
+      if (!btn || !host.contains(btn)) return;
+      var strip = btn.closest('.ix-segmented');
+      if (!strip) return;
+      strip.querySelectorAll('.ix-segment').forEach(function (segment) {
+        segment.classList.toggle('is-active', segment === btn);
+      });
+    });
+  }
   function num(v) {
     var n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''));
     return isNaN(n) ? 0 : n;
@@ -256,7 +270,8 @@
     if (!periodTabs.length) periodTabs = ['Ngày', 'Tuần', 'Tháng'];
     var activeTab = periodTabs[0];
     var tabs = periodTabs.map(function (lb) {
-      return '<button type="button" class="ix-tab' + (lb === activeTab ? ' active' : '') + '">' + esc(lb) + '</button>';
+      return '<button type="button" class="ix-segment' + (lb === activeTab ? ' is-active' : '') +
+        '" data-ifx-preview-story-period>' + esc(lb) + '</button>';
     }).join('');
     var rows = names.slice(0, g.max).map(function (name, i) {
       name = name || '—';
@@ -285,12 +300,13 @@
       );
     }).join('');
     var body =
-      '<div class="ix-tabs" role="tablist" aria-label="Khung thời gian">' + tabs + '</div>' +
+      '<div class="ix-segmented" role="tablist" aria-label="Khung thời gian">' + tabs + '</div>' +
       '<div class="ifx-com-story-rank-list">' +
         (rows || '<div class="ifx-com-trending-empty">Chưa có dữ liệu.</div>') +
       '</div>';
     host.innerHTML = withWidgetHead(body, head);
     markMissing(host, '.ifx-com-story-rank', g.flags);
+    bindPreviewSegments(host, '[data-ifx-preview-story-period]', '_ifxStoryPreviewBound');
   };
 
   /* ---------- Metric icon registry (SVG outline — tabler-icons-3.44.0) ----------
@@ -409,7 +425,8 @@
       sellers.push(sTk[i] ? { label: sTk[i], pct: Math.round((sKl[i] / maxSell) * 100), value_label: String(sKl[i]), href: '#' } : null);
     }
     var tabs = subj.map(function (s, idx) {
-      return '<button type="button" class="ix-tab' + (idx === 0 ? ' active' : '') + '">' + esc(s) + '</button>';
+      return '<button type="button" class="ix-segment' + (idx === 0 ? ' is-active' : '') +
+        '" data-ifx-preview-flow-subject>' + esc(s) + '</button>';
     }).join('');
     var headers = (currentOverrides && currentOverrides.headers)
       ? currentOverrides.headers
@@ -426,12 +443,13 @@
       bodyHtml: T().renderFlowSplitBody({ rows: n, buyers: buyers, sellers: sellers })
     });
     host.innerHTML = withWidgetHead(
-      (tabs ? '<div class="ix-tabs ifx-flow-toolbar ifx-flow-toolbar--subjects">' + tabs + '</div>' : '') + block,
+      (tabs ? '<div class="ix-segmented">' + tabs + '</div>' : '') + block,
       head
     );
     var rowFlags = [];
     for (var ri = 0; ri < n; ri++) rowFlags.push(!!(gL.flags[ri] || gR.flags[ri]));
     markMissing(host, '.ifx-flow-split__row', rowFlags);
+    bindPreviewSegments(host, '[data-ifx-preview-flow-subject]', '_ifxNetSubjectPreviewBound');
   };
 
   /* Heatmap → treemap thật (IfluxSquarifiedTreemap.layout + class heat của DS)
@@ -661,7 +679,8 @@
     var activeTab = tabs[0] || '';
 
     var sessBtns = tabs.map(function (t) {
-      return '<button type="button" class="ix-tab' + (t === activeTab ? ' active' : '') + '">' + esc(t) + '</button>';
+      return '<button type="button" class="ix-segment' + (t === activeTab ? ' is-active' : '') +
+        '" data-ifx-preview-trend-period>' + esc(t) + '</button>';
     }).join('');
     var exOpts = exs.map(function (x) {
       return '<option' + (x === activeEx ? ' selected' : '') + '>' + esc(x) + '</option>';
@@ -670,7 +689,7 @@
     host.innerHTML = withWidgetHead(
       '<div class="ifx-mkt-liq-block"><div class="ifx-mkt-liq-block__body">' +
         '<div class="ifx-mkt-liq-filters">' +
-          '<div class="ix-tabs ifx-mkt-liq-sessions">' + sessBtns + '</div>' +
+          '<div class="ix-segmented">' + sessBtns + '</div>' +
           '<select class="ix-input ifx-mkt-liq-exchange" aria-label="Bộ lọc">' + exOpts + '</select>' +
         '</div>' +
         '<div class="ifx-mkt-liq-chart" data-tpl-liq></div>' +
@@ -708,6 +727,7 @@
     });
     el._ifxChart = chart;
     renderApexWhenVisible(el, chart);
+    bindPreviewSegments(host, '[data-ifx-preview-trend-period]', '_ifxTrendPreviewBound');
   };
 
   /* ==================================================================== */

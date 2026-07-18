@@ -52,7 +52,7 @@
       var btn = e.target.closest('[data-ifx-flow-subject]');
       if (!btn) return;
       tabs.querySelectorAll('[data-ifx-flow-subject]').forEach(function (b) {
-        b.classList.toggle('active', b === btn);
+        b.classList.toggle('is-active', b === btn);
       });
       setFilters(root, { subject: btn.getAttribute('data-ifx-flow-subject') });
     });

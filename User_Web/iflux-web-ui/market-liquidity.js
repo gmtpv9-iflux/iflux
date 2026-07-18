@@ -70,7 +70,7 @@
 
   function filtersHtml(metric, state) {
     var sessBtns = SESSION_OPTS.map(function (o) {
-      return '<button type="button" class="ix-tab' + (state.sessions === o.key ? ' active' : '') +
+      return '<button type="button" class="ix-segment' + (state.sessions === o.key ? ' is-active' : '') +
         '" data-ifx-liq-sessions="' + o.key + '">' + o.label + '</button>';
     }).join('');
 
@@ -79,7 +79,7 @@
     }).join('');
 
     return '<div class="ifx-mkt-liq-filters">' +
-      '<div class="ix-tabs ifx-mkt-liq-sessions" data-ifx-liq-sessions-wrap>' + sessBtns + '</div>' +
+      '<div class="ix-segmented" data-ifx-liq-sessions-wrap>' + sessBtns + '</div>' +
       '<select class="ix-input ifx-mkt-liq-exchange" data-ifx-liq-exchange aria-label="Sàn">' + exOpts + '</select>' +
     '</div>';
   }
@@ -248,7 +248,7 @@
       if (!btn) return;
       state.sessions = parseInt(btn.getAttribute('data-ifx-liq-sessions'), 10) || 1;
       root.querySelectorAll('[data-ifx-liq-sessions]').forEach(function (b) {
-        b.classList.toggle('active', b === btn);
+        b.classList.toggle('is-active', b === btn);
       });
       refresh();
     });

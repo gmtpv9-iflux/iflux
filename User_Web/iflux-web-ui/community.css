@@ -735,10 +735,6 @@
   flex: 1 0 100%;
   order: 3;
 }
-.ifx-com-breadth-sidebar .ifx-breadth-exchange .ix-tab {
-  font-size: var(--ifx-font-size-10);
-  padding: 5px 8px;
-}
 .ifx-com-breadth-sidebar .ifx-breadth-visual--6 {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -756,10 +752,6 @@
 }
 .ifx-com-overview--sidebar .ifx-com-ex-card__chg {
   font-size: var(--ifx-font-size-10);
-}
-.ifx-com-overview--sidebar .ifx-breadth-exchange .ix-tab {
-  font-size: var(--ifx-font-size-10);
-  padding: 5px 8px;
 }
 .ifx-com-overview--sidebar .ifx-breadth-visual--6 {
   grid-template-columns: repeat(2, 1fr);
@@ -959,7 +951,6 @@
 }
 .ifx-com-ex-card__chg.is-up { color: var(--ix-success); }
 .ifx-com-ex-card__chg.is-down { color: var(--ix-danger); }
-.ifx-com-overview__breadth .ifx-breadth-exchange { margin-bottom: 10px; }
 .ifx-com-overview__breadth .ifx-breadth-visual--6 { gap: var(--ifx-inline-sm); }
 .ifx-com-overview__breadth .ifx-breadth-stat { padding: var(--ifx-space-8) 6px; }
 .ifx-com-overview__breadth .ifx-breadth-stat__num { font-size: var(--ifx-font-size-18); }

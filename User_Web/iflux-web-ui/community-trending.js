@@ -322,8 +322,8 @@
       month: { label: 'Tháng' }
     };
     return Object.keys(periods).map(function (key) {
-      var active = key === periodKey ? ' active' : '';
-      return '<button type="button" class="ix-tab' + active + '" role="tab" aria-selected="' +
+      var active = key === periodKey ? ' is-active' : '';
+      return '<button type="button" class="ix-segment' + active + '" role="tab" aria-selected="' +
         (key === periodKey ? 'true' : 'false') + '" data-ifx-story-period="' + key + '">' +
         periods[key].label + '</button>';
     }).join('');
@@ -354,7 +354,7 @@
     return (
       '<div class="ifx-wgt-block ifx-com-trending-panel ifx-com-trending-panel--stories" data-ifx-trending-stories data-ifx-wgt="WGT-COM-CHUDE-TOP">' +
         wgtHeadHtml(meta) +
-        '<div class="ix-tabs" role="tablist" aria-label="Khung thời gian">' + periodTabsHtml(periodKey) + '</div>' +
+        '<div class="ix-segmented" role="tablist" aria-label="Khung thời gian">' + periodTabsHtml(periodKey) + '</div>' +
         '<div class="ifx-com-story-rank-list">' + storiesListHtml(stories) + '</div>' +
       '</div>'
     );
