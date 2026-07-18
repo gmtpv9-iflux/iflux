@@ -744,12 +744,35 @@
   .ifx-mcmp__chart {
     border-right: none;
     border-bottom: 1px solid var(--ix-border);
+  }
+  /* Giới hạn đặt trên mount (không phải grid item) để item vẫn full-width,
+     tránh sập về 0 vì width:100% của mount phụ thuộc ngược vào cha. */
+  .ifx-mcmp__chart-mount {
     max-width: 320px;
     margin: 0 auto;
   }
-  .ifx-mcmp--duo .ifx-mcmp__chart {
+  .ifx-mcmp--duo .ifx-mcmp__chart-mount {
     max-width: none;
-    width: 100%;
+  }
+}
+
+/* Preview/host có container context (Viewport SoT): áp cùng contract mobile
+   theo bề rộng shell — biểu đồ xếp trên danh sách như media query 900px. */
+@container (max-width: 900px) {
+  .ifx-mcmp__body,
+  .ifx-mcmp--duo .ifx-mcmp__body {
+    grid-template-columns: 1fr;
+  }
+  .ifx-mcmp__chart {
+    border-right: none;
+    border-bottom: 1px solid var(--ix-border);
+  }
+  .ifx-mcmp__chart-mount {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .ifx-mcmp--duo .ifx-mcmp__chart-mount {
+    max-width: none;
   }
 }
 
@@ -763,6 +786,11 @@
 .ifx-insight-capture-bundle .ifx-mcmp__chart {
   border-right: 1px solid var(--ix-border) !important;
   border-bottom: none !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+[data-ifx-insight-capture="1"] .ifx-mcmp__chart-mount,
+.ifx-insight-capture-bundle .ifx-mcmp__chart-mount {
   max-width: none !important;
   margin: 0 !important;
 }

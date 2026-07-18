@@ -332,7 +332,7 @@
         var key = btn.getAttribute('data-ifx-flow-subject');
         chartRoot.querySelectorAll('[data-ifx-flow-subject]').forEach(function (b) {
           var on = b === btn;
-          b.classList.toggle('active', on);
+          b.classList.toggle('is-active', on);
           b.setAttribute('aria-selected', on ? 'true' : 'false');
         });
         var subject = findFlowSubject(flow, key);

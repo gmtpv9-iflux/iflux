@@ -194,17 +194,6 @@
   flex-wrap: nowrap;
   margin-bottom: var(--ifx-space-8);
 }
-.ifx-mkt-liq-sessions {
-  flex: 0 0 auto;
-  width: fit-content;
-  max-width: none;
-  flex-wrap: nowrap;
-}
-.ifx-mkt-liq-sessions .ix-tab {
-  padding: 5px 10px;
-  font-size: var(--ifx-font-size-12);
-  white-space: nowrap;
-}
 .ifx-mkt-liq-exchange {
   flex: 0 0 auto;
   margin-left: auto;

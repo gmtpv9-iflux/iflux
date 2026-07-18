@@ -241,7 +241,7 @@
     exchanges = exchanges && exchanges.length ? exchanges : BREADTH_EXCHANGES;
     return exchanges.map(function (ex) {
       return (
-        '<button type="button" class="ix-tab' + (ex.key === active ? ' active' : '') +
+        '<button type="button" class="ix-segment' + (ex.key === active ? ' is-active' : '') +
         '" ' + attrName + '="' + esc(ex.key) + '">' + esc(ex.label) + '</button>'
       );
     }).join('');
@@ -274,7 +274,7 @@
     var upPct = Math.round((up / ratioTotal) * 100);
 
     return (
-      '<div class="ix-tabs ifx-breadth-exchange" data-ifx-breadth-exchange-tabs>' +
+      '<div class="ix-segmented" data-ifx-breadth-exchange-tabs>' +
         exchangeTabsHtml(exchange, null, exchanges) +
       '</div>' +
       '<div class="ifx-breadth-visual ifx-breadth-visual--6">' +
@@ -562,13 +562,13 @@
     var tabAttr = opts.tabAttr || 'data-ifx-flow-subject';
     var tabsHtml = tabs.map(function (t) {
       var on = t.key === opts.activeKey;
-      return '<button type="button" class="ix-tab' + (on ? ' active' : '') +
+      return '<button type="button" class="ix-segment' + (on ? ' is-active' : '') +
         '" role="tab" aria-selected="' + (on ? 'true' : 'false') + '" ' + tabAttr + '="' + esc(t.key) + '">' +
         esc(t.label) + '</button>';
     }).join('');
     return (
       '<div class="ifx-stock-flow-chart" data-ifx-stock-flow-chart>' +
-        (tabsHtml ? '<div class="ix-tabs ifx-stock-flow-tabs" role="tablist">' + tabsHtml + '</div>' : '') +
+        (tabsHtml ? '<div class="ix-segmented" role="tablist">' + tabsHtml + '</div>' : '') +
         (opts.hint ? '<p class="ifx-stock-flow-hint">' + esc(opts.hint) + '</p>' : '') +
         '<div data-ifx-stock-flow-plot>' + renderDivergingBarsPlot(opts) + '</div>' +
       '</div>'
@@ -719,10 +719,10 @@
   function renderFlowSubjectTabs(active) {
     return (
       '<div class="ifx-flow-toolbar ifx-flow-toolbar--subjects">' +
-        '<div class="ix-tabs" data-ifx-flow-subject-tabs">' +
+        '<div class="ix-segmented" data-ifx-flow-subject-tabs>' +
           FLOW_SUBJECT_TABS.map(function (t) {
             return (
-              '<button type="button" class="ix-tab' + (t.key === active ? ' active' : '') +
+              '<button type="button" class="ix-segment' + (t.key === active ? ' is-active' : '') +
               '" data-ifx-flow-subject="' + t.key + '">' + esc(t.label) + '</button>'
             );
           }).join('') +

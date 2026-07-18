@@ -251,7 +251,7 @@
       return '<label class="' + AC.esc(cls) + '"><input type="checkbox" checked disabled><span class="ix-switch-slider"></span></label>';
     }
     if (pt === 'segmented') {
-      return '<div class="' + AC.esc(cls) + '"><span class="ix-segment is-active">A</span><span class="ix-segment">B</span></div>';
+      return '<div class="' + AC.esc(cls) + '"><button type="button" class="ix-segment is-active">A</button><button type="button" class="ix-segment">B</button></div>';
     }
     if (pt === 'label') {
       return '<span class="' + AC.esc(cls) + '">' + label + '</span>';

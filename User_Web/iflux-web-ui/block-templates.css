@@ -67,24 +67,11 @@
   line-height: 1.5;
 }
 
-/* ── TPL-BREADTH / TMP-BREADTH — CSS owner duy nhất (tabs + 6-stat + ratio) ──
+/* ── TPL-BREADTH / TMP-BREADTH — CSS owner duy nhất (6-stat + ratio) ──
  * Mật độ mặc định = giao diện sidebar Thị trường (3 cột × 2 hàng).
  * Page placement (community.css) chỉ được override mật độ hẹp — không copy core.
  */
 .ifx-breadth-block { min-width: 0; }
-
-.ifx-breadth-exchange {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-space-4);
-  margin-bottom: var(--ifx-space-12);
-  max-width: 100%;
-  box-sizing: border-box;
-}
-.ifx-breadth-exchange .ix-tab {
-  font-size: var(--ifx-font-size-10);
-  padding: 5px 10px;
-}
 
 .ifx-breadth-visual {
   display: grid;
@@ -146,10 +133,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .ifx-breadth-visual--6 .ifx-breadth-stat__num { font-size: var(--ifx-font-size-20); }
-  .ifx-breadth-exchange .ix-tab {
-    font-size: var(--ifx-font-size-10);
-    padding: 4px 7px;
-  }
 }
 
 /* ── TPL-TREEMAP — heat / cap tiles ── */
@@ -364,22 +347,12 @@
 .ifx-mkt-rank-val.is-flat { color: var(--ix-text-muted); }
 
 /* ── TPL-DIVERGING-BARS / TMP-DIVERGING-BARS — CSS owner duy nhất ──
- * Cột hai chiều quanh trục 0 (dương lên / âm xuống) + tabs nhóm + chú thích.
+ * Cột hai chiều quanh trục 0 (dương lên / âm xuống) + chú thích.
  * HTML producer: IfluxBlockTemplates.renderDivergingBars* (block-templates.js).
  * Trước đây hardcode ở stock.css (Giao dịch theo chủ thể) — đã dời về đây.
  */
 .ifx-stock-flow-chart {
   margin-top: var(--ifx-space-4);
-}
-
-.ifx-stock-flow-tabs {
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
-.ifx-stock-flow-tabs .ix-tab {
-  font-size: var(--ifx-font-size-12);
-  padding: 6px 10px;
 }
 
 .ifx-stock-flow-hint {
