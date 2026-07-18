@@ -2,7 +2,14 @@
 (function (global) {
   'use strict';
 
-  var state = { tab: 'display', q: '', editing: null, creating: false, dnseLoaded: false };
+  var state = {
+    tab: 'display',
+    q: '',
+    editing: null,
+    creating: false,
+    dnseLoaded: false,
+    previewViewportId: null
+  };
 
   function adminToken() {
     var auth = global.IfluxAdminAuth;
@@ -62,6 +69,48 @@
   }
 
   function wlib() { return global.PlatformLayersWidgets; }
+
+  function viewportRegistry() {
+    return global.IfluxViewportRegistry;
+  }
+
+  function currentViewport() {
+    var registry = viewportRegistry();
+    if (!registry) return null;
+    return registry.byId(state.previewViewportId || registry.DEFAULT_ID) || registry.getDefault();
+  }
+
+  function viewportOptions() {
+    var registry = viewportRegistry();
+    if (!registry) return '<option value="">Chưa có Viewport Registry</option>';
+    var selected = currentViewport();
+    return registry.all().map(function (viewport) {
+      return '<option value="' + esc(viewport.id) + '"' +
+        (selected && selected.id === viewport.id ? ' selected' : '') + '>' +
+        esc(viewport.name) + ' · ' + esc(viewport.width) + ' px</option>';
+    }).join('');
+  }
+
+  function viewportControlHtml() {
+    return '<label class="l4-lb"><i class="ti ti-device-desktop"></i> Kích thước khung xem trước</label>' +
+      '<select class="ix-input" data-l4-viewport aria-label="Kích thước khung xem trước">' +
+        viewportOptions() +
+      '</select>';
+  }
+
+  function applyPreviewViewport(card, frame) {
+    var registry = viewportRegistry();
+    var select = card && card.querySelector('[data-l4-viewport]');
+    if (!registry || !frame || !select) return null;
+    var viewport = registry.byId(select.value) || registry.getDefault();
+    if (!viewport) return null;
+    state.previewViewportId = viewport.id;
+    select.value = viewport.id;
+    select.title = viewport.description;
+    frame.setAttribute('data-viewport-id', viewport.id);
+    frame.style.setProperty('--ifx-preview-viewport-width', viewport.width + 'px');
+    return viewport;
+  }
 
   function widgetMatches(w) {
     if (state.q) {
@@ -339,11 +388,13 @@
 
   function renderCardPreview(card) {
     if (!card || !global.TemplatesCatalog || !global.TemplatesPreview) return;
-    var mount = card.querySelector('[data-l4-preview]');
+    var frame = card.querySelector('[data-l4-preview]');
+    var mount = card.querySelector('[data-l4-preview-canvas]');
     var select = card.querySelector('[data-l4-f="template"]');
-    if (!mount || !select) return;
+    if (!frame || !mount || !select) return;
     var template = global.TemplatesCatalog.byId(select.value);
     if (!template) return;
+    applyPreviewViewport(card, frame);
     var outputs = collectOutputs(card);
     var demo = ['', ''].concat(outputs.map(function (out) { return out.demo; }));
     global.TemplatesPreview.render(mount, template, demo, null);
@@ -397,7 +448,10 @@
         '</div>' +
         '<div class="l4-authoring__preview">' +
           '<label class="l4-lb"><i class="ti ti-eye"></i> Preview</label>' +
-          '<div class="l4-preview-frame" data-l4-preview></div>' +
+          viewportControlHtml() +
+          '<div class="l4-preview-frame" data-l4-preview>' +
+            '<div class="ix-preview-viewport__canvas" data-l4-preview-canvas></div>' +
+          '</div>' +
         '</div>' +
       '</div></div>';
   }
@@ -434,7 +488,10 @@
         '</div>' +
         '<div class="l4-authoring__preview">' +
           '<label class="l4-lb"><i class="ti ti-eye"></i> Preview</label>' +
-          '<div class="l4-preview-frame" data-l4-preview></div>' +
+          viewportControlHtml() +
+          '<div class="l4-preview-frame" data-l4-preview>' +
+            '<div class="ix-preview-viewport__canvas" data-l4-preview-canvas></div>' +
+          '</div>' +
         '</div>' +
     '</div>';
   }
@@ -719,6 +776,12 @@
     });
 
     document.getElementById('pl-display-root').addEventListener('change', function (e) {
+      var viewportSelect = e.target.closest('[data-l4-viewport]');
+      if (viewportSelect) {
+        state.previewViewportId = viewportSelect.value;
+        renderCardPreview(viewportSelect.closest('[data-l4]'));
+        return;
+      }
       var tplSel = e.target.closest('[data-l4-f="template"]');
       if (tplSel) {
         var cardTpl = tplSel.closest('[data-l4]');

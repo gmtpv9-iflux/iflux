@@ -2146,3 +2146,10 @@ body {
 .ix-hub-partial { color: var(--ix-warning); }
 .ix-hub-miss { color: var(--ix-danger); }
 .ix-hub-gd2 { color: var(--ix-text-muted); }
+
+/* Preview Environment — canvas nhận bề rộng duy nhất từ IfluxViewportRegistry. */
+.ix-preview-viewport__canvas {
+  width: var(--ifx-preview-viewport-width);
+  max-width: none;
+  container-type: inline-size;
+}
