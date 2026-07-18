@@ -78,7 +78,8 @@
     .l4-lb { font-size:12px; font-weight:600; color:var(--ix-text-secondary); margin-top:6px; }
     .l4-hint { font-weight:400; color:var(--ix-text-muted); font-size:11px; }
     .l4-mono { font-family:ui-monospace,monospace; font-size:12px; }
-    .l4-edit textarea.ix-input, .l4-edit input.ix-input, .l4-edit select.ix-input { width:100%; max-width:none; }
+    /* Chỉ áp cho ô nhập ở cột cấu hình — không leak vào canvas Preview (DS tự quản width). */
+    .l4-authoring__config textarea.ix-input, .l4-authoring__config input.ix-input, .l4-authoring__config select.ix-input { width:100%; max-width:none; }
     .l4-edit__actions { display:flex; gap:8px; margin-top:12px; }
     .l4-section-tag { font-size:11px; font-weight:600; color:var(--ix-text-muted); text-transform:uppercase; letter-spacing:.04em; }
     .l4-widget-meta { display:flex; flex-direction:column; gap:8px; margin:8px 0 4px; }
