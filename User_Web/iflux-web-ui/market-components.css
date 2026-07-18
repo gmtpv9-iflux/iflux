@@ -234,8 +234,10 @@
 }
 .ifx-degraded-banner.is-visible { display: flex; }
 
-@media (max-width: 960px) {
-  .ifx-sector-grid { grid-template-columns: 1fr; }
+/* StockRow responsive — mirror Breakpoint SoT:
+   dưới bp-lg (1024): bỏ Volume; dưới bp-md (768): bỏ thêm Name.
+   CSS media conditions không đọc được custom property nên dùng biên px tương ứng. */
+@media (max-width: 1023.98px) {
   .ifx-stock-row {
     grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
   }
@@ -248,5 +250,17 @@
     padding: 2px 6px;
   }
   .ifx-stock-row__vol { display: none; }
+}
+
+@media (max-width: 767.98px) {
+  .ifx-stock-row {
+    grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
+  }
+  .ifx-stock-row__name,
+  .ifx-stock-row__vol { display: none; }
+}
+
+@media (max-width: 960px) {
+  .ifx-sector-grid { grid-template-columns: 1fr; }
   .ifx-market-header__breadth { margin-left: 0; width: 100%; }
 }

@@ -288,8 +288,9 @@
 .ifx-dash-toolbar .ix-btn:disabled { opacity: 0.55;
  cursor: not-allowed;
  pointer-events: none; }
-@media (max-width: 720px) { .ifx-stock-row-wrap .ifx-stock-row {
- grid-template-columns: 48px minmax(0, 1fr) minmax(56px, auto) minmax(52px, auto);
+/* WatchlistRow compact dưới bp-md (768) của Breakpoint SoT. */
+@media (max-width: 767.98px) { .ifx-stock-row-wrap .ifx-stock-row {
+ grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
  gap: var(--ifx-space-4) 6px;
  padding: var(--ifx-space-8) 10px; }
 .ifx-stock-row-wrap .ifx-stock-row__name,
