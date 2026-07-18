@@ -819,6 +819,39 @@
 .ifx-stock-row.is-down .ifx-stock-row__price,
 .ifx-stock-row.is-down .ifx-stock-row__chg { color: var(--ix-danger); }
 
+/* TPL-LIST-ROW responsive — cùng biên Breakpoint SoT với StockRow component. */
+@media (max-width: 1023.98px) {
+  .ifx-list-row.ifx-stock-row {
+    grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
+  }
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
+}
+
+@media (max-width: 767.98px) {
+  .ifx-list-row.ifx-stock-row {
+    grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
+  }
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__name,
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
+}
+
+/* Preview/Widget host có container context: phản hồi theo không gian được cấp,
+   dùng cùng biên bp-md/bp-lg thay vì viewport thật của trang Authoring. */
+@container (max-width: 1023.98px) {
+  .ifx-list-row.ifx-stock-row {
+    grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
+  }
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
+}
+
+@container (max-width: 767.98px) {
+  .ifx-list-row.ifx-stock-row {
+    grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
+  }
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__name,
+  .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
+}
+
 /* ── TPL-FEED-CARD — community post ── */
 .ifx-feed-card,
 .ifx-com-post {

@@ -38,6 +38,7 @@
         { name: 'Elevation / z-index GĐ1', status: 'ok', surface: 'Shared', cls: '--ifx-z-*', file: 'primitives/z-index.css' },
         { name: 'Grid / Layout', status: 'ok', surface: 'Shared', cls: '.ix-grid-*, .ifx-dash-grid, .ifx-hub-grid', file: 'utilities.css, hub.css' },
         { name: 'Breakpoints', status: 'ok', surface: 'Shared', cls: '--ifx-bp-*', file: 'primitives/layout.css' },
+        { name: 'Viewport Preview Registry', status: 'ok', surface: 'Shared', cls: 'IfluxViewportRegistry', file: 'ds-sot-viewport-registry.js', note: 'Preview/QA SoT độc lập CSS breakpoint' },
         { name: 'Iconography (Tabler)', status: 'ok', surface: 'Shared', cls: '.ti' },
         { name: 'Illustration / empty art', status: 'partial', surface: 'User', cls: '.ifx-dash-empty, .ifx-com-empty' },
         { name: 'Motion / Pulse GĐ1', status: 'ok', surface: 'Shared', cls: '--ifx-duration-*, --transition-*', file: 'primitives/motion.css' },

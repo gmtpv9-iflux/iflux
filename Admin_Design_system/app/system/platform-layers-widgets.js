@@ -339,48 +339,150 @@
     heatmapGroup('WGT-MKT-005', 'Họ cổ phiếu', 'family'),
     heatmapGroup('WGT-MKT-006', 'Chủ đề', 'chu-de'),
     {
-      id: 'WGT-MKT-007', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-MKT-007',
+      iconKey: 'chart-area-line',
       title: 'Khối lượng giao dịch (KLGD)',
       description: 'KLGD lũy kế hiện tại so với trung bình n phiên cùng thời điểm.',
+      templateRef: 'TMP-TREND-LINE',
       outputs: [
-        o('slot', 'Mốc thời gian trong phiên', 'datetime', 'time'),
-        o('cum_today', 'KLGD lũy kế hôm nay', 'số', 'series'),
-        o('avg_1', 'TB 1 phiên cùng giờ', 'số', 'series'),
-        o('avg_5', 'TB 5 phiên cùng giờ', 'số', 'series'),
-        o('avg_10', 'TB 10 phiên cùng giờ', 'số', 'series')
+        {
+          symbol: 'slot', name: 'Mốc thời gian trong phiên', type: 'datetime',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '9:15 | 10:00 | 11:00 | 13:30 | 14:30'
+        },
+        {
+          symbol: 'cum_today', name: 'KLGD lũy kế hôm nay', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '120 | 340 | 560 | 720 | 910'
+        },
+        {
+          symbol: 'avg_1', name: 'TB 1 phiên cùng giờ', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '110 | 320 | 540 | 700 | 880',
+          formulaSpec: 'TB 1 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 1 phiên gần nhất'
+        },
+        {
+          symbol: 'avg_5', name: 'TB 5 phiên cùng giờ', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '100 | 300 | 520 | 680 | 860',
+          formulaSpec: 'TB 5 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 5 phiên gần nhất'
+        },
+        {
+          symbol: 'avg_10', name: 'TB 10 phiên cùng giờ', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '95 | 290 | 500 | 660 | 840',
+          formulaSpec: 'TB 10 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 10 phiên gần nhất'
+        }
       ],
-      template: 'TMP-TREND-LINE',
-      inputs: [
-        i('slot', 'Mốc thời gian trong phiên', 'datetime', 'L2', 'NORM-LIQUIDITY'),
-        i('cum_volume_today', 'KLGD lũy kế hôm nay đến slot', 'số', 'L2', 'NORM-LIQUIDITY'),
-        i('cum_volume_prev', 'KLGD lũy kế cùng slot các phiên trước (mảng)', 'số', 'L2', 'NORM-LIQUIDITY')
-      ],
-      algorithmSpec: 'TB 1 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 1 phiên gần nhất\n' +
-        'TB 5 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 5 phiên gần nhất\n' +
-        'TB 10 phiên cùng giờ = Trung bình KLGD lũy kế cùng mốc thời gian của 10 phiên gần nhất'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            slot: { layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'slot' },
+            cum_today: { layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_volume_today' }
+          },
+          calculatedInputs: {
+            avg_1: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_volume_prev' }],
+            avg_5: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_volume_prev' }],
+            avg_10: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_volume_prev' }]
+          }
+        }
+      }
     },
     {
-      id: 'WGT-MKT-008', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-MKT-008',
+      iconKey: 'chart-area',
       title: 'Giá trị giao dịch (GTGD)',
       description: 'GTGD lũy kế hiện tại so với trung bình n phiên cùng thời điểm.',
+      templateRef: 'TMP-TREND-LINE',
       outputs: [
-        o('slot', 'Mốc thời gian trong phiên', 'datetime', 'time'),
-        o('cum_today', 'GTGD lũy kế hôm nay', 'tiền', 'series'),
-        o('avg_1', 'TB 1 phiên cùng giờ', 'tiền', 'series'),
-        o('avg_5', 'TB 5 phiên cùng giờ', 'tiền', 'series'),
-        o('avg_10', 'TB 10 phiên cùng giờ', 'tiền', 'series')
+        {
+          symbol: 'slot', name: 'Mốc thời gian trong phiên', type: 'datetime',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '9:15 | 10:00 | 11:00 | 13:30 | 14:30'
+        },
+        {
+          symbol: 'cum_today', name: 'GTGD lũy kế hôm nay', type: 'tiền',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '1.2 | 3.4 | 5.6 | 7.2 | 9.1'
+        },
+        {
+          symbol: 'avg_1', name: 'TB 1 phiên cùng giờ', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '1.1 | 3.2 | 5.4 | 7.0 | 8.8',
+          formulaSpec: 'TB 1 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 1 phiên gần nhất'
+        },
+        {
+          symbol: 'avg_5', name: 'TB 5 phiên cùng giờ', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '1.0 | 3.0 | 5.2 | 6.8 | 8.6',
+          formulaSpec: 'TB 5 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 5 phiên gần nhất'
+        },
+        {
+          symbol: 'avg_10', name: 'TB 10 phiên cùng giờ', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '0.9 | 2.9 | 5.0 | 6.6 | 8.4',
+          formulaSpec: 'TB 10 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 10 phiên gần nhất'
+        }
       ],
-      template: 'TMP-TREND-LINE',
-      inputs: [
-        i('slot', 'Mốc thời gian trong phiên', 'datetime', 'L2', 'NORM-LIQUIDITY'),
-        i('cum_value_today', 'GTGD lũy kế hôm nay đến slot', 'tiền', 'L2', 'NORM-LIQUIDITY'),
-        i('cum_value_prev', 'GTGD lũy kế cùng slot các phiên trước (mảng)', 'tiền', 'L2', 'NORM-LIQUIDITY')
-      ],
-      algorithmSpec: 'TB 1 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 1 phiên gần nhất\n' +
-        'TB 5 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 5 phiên gần nhất\n' +
-        'TB 10 phiên cùng giờ = Trung bình GTGD lũy kế cùng mốc thời gian của 10 phiên gần nhất'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            slot: { layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'slot' },
+            cum_today: { layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_value_today' }
+          },
+          calculatedInputs: {
+            avg_1: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_value_prev' }],
+            avg_5: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_value_prev' }],
+            avg_10: [{ layer: 'L2', ref: 'NORM-LIQUIDITY', field: 'cum_value_prev' }]
+          }
+        }
+      }
     },
-    rankPerf('WGT-TOP-001', 'Ngành'),
+    {
+      schemaVersion: 2,
+      id: 'WGT-TOP-001',
+      iconKey: 'chart-bar',
+      title: 'Top 10 Ngành có hiệu suất cao nhất',
+      description: 'Bảng xếp hạng Top 10 Ngành theo hiệu suất (bình quân gia quyền vốn hóa) trong phiên.',
+      templateRef: 'TMP-RANK-PERF',
+      outputs: [
+        {
+          symbol: 'name', name: 'Tên ngành', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | Dầu khí'
+        },
+        {
+          symbol: 'perf', name: 'Hiệu suất', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '3.2 | 2.8 | 2.1 | 1.6 | 0.9'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: 'Xếp hạng = Vị trí sau khi sắp ngành theo Hiệu suất giảm dần (Top 10)'
+        }
+      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            name: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_name' },
+            perf: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_perf' }
+          },
+          calculatedInputs: {
+            rank: [
+              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_name' },
+              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_perf' }
+            ]
+          }
+        }
+      }
+    },
     rankPerf('WGT-TOP-002', 'Hệ sinh thái'),
     rankPerf('WGT-TOP-003', 'Chủ đề'),
     {
