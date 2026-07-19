@@ -237,7 +237,7 @@
       tabsBar({ entityType: isStock ? 'stock' : (ctx.kind || '_default'), commentCount: ctx.commentCount }) +
       panel('news', true, feedHtml) +
       panel('info', false, infoHtml) +
-      panel('trading', false, '') +
+      panel('trading', false, '<div data-ifx-section="trading" data-section="trading" data-layout="grid-12"></div>') +
       (isStock ? panel('events', false, eventsPanel(ctx.ticker)) : '') +
       panel('comments', false, ctx.commentsSectionHtml || '');
     return '<div class="ifx-stock-col ifx-stock-col--center ifx-stock-col--wide">' + html + '</div>';

@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Chi tiết hệ sinh thái (/ho-co-phieu/:id)
  */
-var VER = '?v=tmpDivBars20260718';
+var VER = '?v=w2Host20260720';
 
 export default {
   pageKey: 'family',

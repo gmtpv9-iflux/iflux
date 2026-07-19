@@ -12,7 +12,7 @@
 import { bootPage } from './page-runtime.js?v=phase4Pub20260716b';
 import { bootShell } from './shell-boot.js?v=bpPhaseD20260716b';
 
-var VER = '?v=bpPhaseD20260716';
+var VER = '?v=w2Host20260720';
 var P4 = '?v=phase4Pub20260716b';
 
 var MANIFEST_MAP = {

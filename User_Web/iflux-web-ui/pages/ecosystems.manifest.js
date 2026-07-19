@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Danh sách hệ sinh thái (/ho-co-phieu)
  */
-var VER = '?v=bpPhaseD20260716';
+var VER = '?v=w2Host20260720';
 
 export default {
   pageKey: 'ecosystems',
