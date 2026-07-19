@@ -52,13 +52,13 @@
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <a href="platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
-            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-disable-all-shared" title="Tắt toàn bộ Widget tùy chỉnh trên mọi trang"><i class="ti ti-toggle-left"></i> Tắt hết Widget tùy chỉnh</button>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-disable-all-widgets" title="Tắt toàn bộ Widget trên mọi trang"><i class="ti ti-toggle-left"></i> Tắt hết Widget</button>
             <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-reset"><i class="ti ti-restore"></i> Khôi phục mặc định</button>
-            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-save-shared"><i class="ti ti-device-floppy"></i> Lưu nháp</button>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-save-widgets"><i class="ti ti-device-floppy"></i> Lưu nháp</button>
             <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="ps-publish" title="Ghi PagePublished — User Web đọc từ đây"><i class="ti ti-rocket"></i> Publish lên User Web</button>
           </div>
         </div>
-        <p class="ps-hint"><strong>Lưu nháp</strong> = page-composition. <strong>Publish</strong> = PagePublished (User Web). Quản lý Page Architecture: sitemap, App Shell / Section, widget đặc thù và tùy chỉnh. Định nghĩa widget tại <a href="platform-layers.html#layer-4">Core 4 tầng · Tầng 4</a>.</p>
+        <p class="ps-hint"><strong>Lưu nháp</strong> = page-composition. <strong>Publish</strong> = PagePublished (User Web). Quản lý Page Architecture: sitemap, App Shell / Section và Widget. Định nghĩa Widget tại <a href="platform-layers.html#layer-4">Core 4 tầng · Tầng 4</a> — danh mục Widget tại đây tự đồng bộ theo Tầng 4.</p>
 
         <div id="ps-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
         <div id="ps-updated" class="ps-updated"></div>
@@ -66,8 +66,7 @@
         <div class="ix-tabs" style="margin-bottom:20px">
           <button type="button" class="ix-tab active" data-ps-tab="sitemap"><i class="ti ti-sitemap" style="margin-right:4px"></i> Sitemap</button>
           <button type="button" class="ix-tab" data-ps-tab="layout"><i class="ti ti-layout" style="margin-right:4px"></i> Bố cục trang</button>
-          <button type="button" class="ix-tab" data-ps-tab="dedicated"><i class="ti ti-pin" style="margin-right:4px"></i> Widget đặc thù</button>
-          <button type="button" class="ix-tab" data-ps-tab="shared"><i class="ti ti-layout-grid" style="margin-right:4px"></i> Widget tùy chỉnh</button>
+          <button type="button" class="ix-tab" data-ps-tab="widgets"><i class="ti ti-layout-grid" style="margin-right:4px"></i> Widget</button>
         </div>
 
         <div class="ix-tab-content active" data-ps-panel="sitemap">
@@ -86,20 +85,12 @@
           <div id="ps-layout"></div>
         </div>
 
-        <div class="ix-tab-content" data-ps-panel="dedicated">
+        <div class="ix-tab-content" data-ps-panel="widgets">
           <div class="ps-page-bar">
             <label class="ix-label" style="margin:0">Chọn trang</label>
-            <select class="ix-input" id="ps-page-dedicated" style="width:auto;min-width:220px;padding:6px 10px;font-size:13px"></select>
+            <select class="ix-input" id="ps-page-widgets" style="width:auto;min-width:220px;padding:6px 10px;font-size:13px"></select>
           </div>
-          <div id="ps-dedicated"></div>
-        </div>
-
-        <div class="ix-tab-content" data-ps-panel="shared">
-          <div class="ps-page-bar">
-            <label class="ix-label" style="margin:0">Chọn trang</label>
-            <select class="ix-input" id="ps-page-shared" style="width:auto;min-width:220px;padding:6px 10px;font-size:13px"></select>
-          </div>
-          <div id="ps-shared"></div>
+          <div id="ps-widgets"></div>
         </div>
       </div>
     </main>
@@ -107,9 +98,9 @@
 </div>
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
 <script src="../../../User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
-<script src="platform-layers-widgets.js?v=stripTabTopN20260718"></script>
+<script src="platform-layers-widgets.js?v=migrateFlagV2-20260719"></script>
 <script src="widget-library-catalog.js?v=l4sot20260714b"></script>
-<script src="page-settings-catalog.js?v=widgetPageAgnostic20260717"></script>
+<script src="page-settings-catalog.js?v=knowledgeSidebar20260719"></script>
 <script src="page-settings-store.js?v=layoutMgr20260712"></script>
 <script src="page-runtime-manifest.js?v=shellSec20260713"></script>
 <script src="page-composition-client.js?v=phase41Pub20260716"></script>
@@ -121,7 +112,7 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="page-settings-page.js?v=phase41Pub20260716"></script>
+<script src="page-settings-page.js?v=pageWidgetUnify20260719b"></script>
 <script>PageSettingsPage.init();</script>
 </body>
 </html>

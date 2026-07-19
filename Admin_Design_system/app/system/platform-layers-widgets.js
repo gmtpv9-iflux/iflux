@@ -63,54 +63,211 @@
     return { sym: sym, name: name, type: type, source: source || 'L2', ref: ref || '' };
   }
 
-  /* Net theo chủ thể — 4 entity dùng chung khung */
-  function netSubject(id, entityName, scope) {
+  /* Net theo chủ thể — Definition V2, outputs map theo 5 slot của TMP-NET-SUBJECT:
+     tab chủ thể · nhãn trái · giá trị trái · nhãn phải · giá trị phải. */
+  function netSubjectV2(id, entityName, scope) {
+    var entityDemo = {
+      stock: { buy: 'VCB | HPG | SSI | MWG | FPT', sell: 'VIC | NVL | PDR | DXG | HSG' },
+      sector: { buy: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | CNTT', sell: 'BĐS | Xây dựng | Dầu khí | Điện | Dược' },
+      family: { buy: 'Họ ngân hàng | Họ thép | Họ bán lẻ | Họ chứng khoán | Họ CNTT', sell: 'Họ BĐS | Họ xây dựng | Họ dầu khí | Họ điện | Họ dược' },
+      'chu-de': { buy: 'AI | Xuất khẩu | Digi bank | Năng lượng | Đầu tư công', sell: 'Bất động sản | Thép | Logistics | Dược | Xây dựng' }
+    };
+    var demo = entityDemo[scope] || entityDemo.stock;
+    var netInputs = [
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'buy_value' },
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'sell_value' }
+    ];
     return {
-      id: id, domain: 'Dòng tiền',
+      schemaVersion: 2,
+      id: id,
+      iconKey: 'arrows-left-right',
       title: 'Thống kê mua/bán ròng theo ' + entityName,
-      description: 'Đối chiếu ' + entityName + ' được MUA RÒNG nhiều nhất (cột trái) và BÁN RÒNG nhiều nhất (cột phải) theo từng chủ thể (Cá nhân · Tổ chức · Tự doanh · Khối ngoại), nhiều phiên.',
+      description: 'Đối chiếu ' + entityName + ' được MUA RÒNG nhiều nhất (cột trái) và BÁN RÒNG nhiều nhất (cột phải) theo từng chủ thể (Cá nhân · Tổ chức · Tự doanh · Khối ngoại).',
+      templateRef: 'TMP-NET-SUBJECT',
       outputs: [
-        o('subject', 'Chủ thể (tab)', 'enum', 'subject', 'Cá nhân | Tổ chức | Tự doanh | Khối ngoại', 'L2'),
-        o('session', 'Phiên', 'datetime', 'session', '10/07 | 11/07 | 12/07 | 14/07', 'L2'),
-        o('net', 'Net +/- theo phiên', 'tiền', 'net', '320 | -120 | 210 | -80', 'calc')
+        {
+          symbol: 'subject', name: 'Chủ thể (tab)', type: 'enum',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Cá nhân | Tổ chức | Tự doanh | Khối ngoại'
+        },
+        {
+          symbol: 'buy_entity', name: 'Mua ròng — ' + entityName, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.buy
+        },
+        {
+          symbol: 'buy_net', name: 'Giá trị mua ròng', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '320 | 240 | 180 | 120 | 80',
+          formulaSpec: 'Giá trị mua ròng = Giá trị mua − Giá trị bán của chủ thể theo ' + entityName + ' (lấy phần dương, xếp giảm dần Top N)'
+        },
+        {
+          symbol: 'sell_entity', name: 'Bán ròng — ' + entityName, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.sell
+        },
+        {
+          symbol: 'sell_net', name: 'Giá trị bán ròng', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '300 | 210 | 160 | 110 | 70',
+          formulaSpec: 'Giá trị bán ròng = Giá trị bán − Giá trị mua của chủ thể theo ' + entityName + ' (lấy phần dương, xếp giảm dần Top N)'
+        }
       ],
-      template: 'TMP-NET-SUBJECT',
-      inputs: [
-        i('subject', 'Chủ thể giao dịch (Cá nhân/Tổ chức/Tự doanh/Khối ngoại)', 'enum', 'L2', 'NORM-FLOW-NET'),
-        i('entity_code', 'Mã ' + entityName, 'text', 'L2', 'NORM-FLOW-NET'),
-        i('buy_value', 'Giá trị mua của chủ thể', 'tiền', 'L2', 'NORM-FLOW-NET'),
-        i('sell_value', 'Giá trị bán của chủ thể', 'tiền', 'L2', 'NORM-FLOW-NET'),
-        i('session', 'Phiên giao dịch', 'datetime', 'L2', 'NORM-FLOW-NET')
-      ],
-      algorithmSpec: 'Net +/- theo phiên = Giá trị mua − Giá trị bán (theo Chủ thể × ' + entityName + ' × Phiên)'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            subject: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'subject' },
+            buy_entity: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' },
+            sell_entity: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' }
+          },
+          calculatedInputs: {
+            buy_net: netInputs,
+            sell_net: netInputs
+          }
+        }
+      }
     };
   }
 
-  /* Duo vào/ra — 4 entity */
-  function flowDuo(id, entityName) {
+  /* Duo vào/ra — Definition V2, outputs map đúng 4 slot của TMP-FLOW-RANK-DUO. */
+  function flowDuoV2(id, entityName, entityType) {
+    var entityDemo = {
+      stock: {
+        incoming: 'FPT | VCB | HPG | MWG | SSI',
+        outgoing: 'VIC | NVL | PDR | DXG | HSG'
+      },
+      sector: {
+        incoming: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | CNTT',
+        outgoing: 'Bất động sản | Xây dựng | Dầu khí | Điện | Dược'
+      },
+      family: {
+        incoming: 'Họ ngân hàng | Họ thép | Họ bán lẻ | Họ chứng khoán | Họ CNTT',
+        outgoing: 'Họ BĐS | Họ xây dựng | Họ dầu khí | Họ điện | Họ dược'
+      },
+      'chu-de': {
+        incoming: 'AI | Xuất khẩu | Digi bank | Năng lượng | Đầu tư công',
+        outgoing: 'Bất động sản | Thép | Logistics | Dược | Xây dựng'
+      }
+    };
+    var demo = entityDemo[entityType] || entityDemo.stock;
+    var incomingInputs = [
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'active_buy_value' }
+    ];
+    var outgoingInputs = [
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'active_sell_value' }
+    ];
     return {
-      id: id, domain: 'Dòng tiền',
+      schemaVersion: 2,
+      id: id,
+      iconKey: 'arrows-exchange',
       title: 'TOP 10 ' + entityName + ' — dòng tiền vào / ra mạnh nhất',
       description: 'Đối chiếu Top 10 ' + entityName + ' có dòng tiền chủ động VÀO mạnh nhất và RA mạnh nhất trong phiên — radar 20 điểm + list 2 cột.',
+      templateRef: 'TMP-FLOW-RANK-DUO',
       outputs: [
-        o('entity', entityName, 'text', 'entity', 'VCB | HPG | SSI | MWG | FPT | GAS', 'L2'),
-        o('score_in', 'Điểm vào (in) 0–100', 'số', 'in', '92 | 85 | 78 | 0 | 0 | 0', 'calc'),
-        o('score_out', 'Điểm ra (out) 0–100', 'số', 'out', '0 | 0 | 0 | 74 | 68 | 55', 'calc'),
-        o('rank', 'Xếp hạng', 'số', 'rank', '1 | 2 | 3 | 1 | 2 | 3', 'calc')
+        {
+          symbol: 'entity_in', name: entityName + ' — chiều vào', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.incoming
+        },
+        {
+          symbol: 'score_in', name: 'Điểm vào 0–100', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '92 | 85 | 78 | 64 | 51',
+          formulaSpec: 'Điểm vào = Chuẩn hóa Giá trị mua chủ động của ' + entityName.toLowerCase() + ' về thang 0–100, xếp giảm dần Top 10'
+        },
+        {
+          symbol: 'entity_out', name: entityName + ' — chiều ra', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: demo.outgoing
+        },
+        {
+          symbol: 'score_out', name: 'Điểm ra 0–100', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '90 | 82 | 74 | 63 | 55',
+          formulaSpec: 'Điểm ra = Chuẩn hóa Giá trị bán chủ động của ' + entityName.toLowerCase() + ' về thang 0–100, xếp giảm dần Top 10'
+        }
       ],
-      template: 'TMP-FLOW-RANK-DUO',
-      inputs: [
-        i('entity_code', 'Mã ' + entityName, 'text', 'L2', 'NORM-FLOW-NET'),
-        i('active_buy_value', 'Giá trị mua chủ động (lệnh đẩy giá lên)', 'tiền', 'L2', 'NORM-FLOW-NET'),
-        i('active_sell_value', 'Giá trị bán chủ động (lệnh đạp giá xuống)', 'tiền', 'L2', 'NORM-FLOW-NET')
-      ],
-      algorithmSpec: 'Điểm vào = Chuẩn hóa Giá trị mua chủ động về thang 0–100\n' +
-        'Điểm ra = Chuẩn hóa Giá trị bán chủ động về thang 0–100\n' +
-        'Xếp hạng = Vị trí trong Top 10 (cột vào / cột ra)'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            entity_in: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' },
+            entity_out: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' }
+          },
+          calculatedInputs: {
+            score_in: incomingInputs,
+            score_out: outgoingInputs
+          }
+        }
+      }
     };
   }
 
-  /* Dòng tiền thông minh vào/ra — 4 entity × 2 chiều */
+  /* Dòng tiền thông minh — Definition V2, map đúng 4 slot của TMP-FLOW-RANK-SIGNAL:
+     đối tượng · tín hiệu · điểm · chỉ báo rủi ro. */
+  function flowSignalV2(id, entityName, entityType, dir) {
+    var into = dir === 'in';
+    var entityDemo = {
+      stock: 'VCB | HPG | SSI | MWG | FPT',
+      sector: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | CNTT',
+      family: 'Họ ngân hàng | Họ thép | Họ bán lẻ | Họ chứng khoán | Họ CNTT',
+      'chu-de': 'AI | Xuất khẩu | Digi bank | Năng lượng | Đầu tư công'
+    };
+    var smartMoneyField = into ? 'active_buy_value' : 'active_sell_value';
+    var smartMoneyInput = [
+      { layer: 'L2', ref: 'NORM-FLOW-NET', field: smartMoneyField }
+    ];
+    return {
+      schemaVersion: 2,
+      id: id,
+      iconKey: 'activity',
+      title: 'TOP 10 ' + entityName + ' có dòng tiền thông minh ' + (into ? 'vào' : 'ra') + ' mạnh nhất',
+      description: 'Xếp hạng ' + entityName + ' theo dòng tiền thông minh (lệnh lô lớn chủ động) ' + (into ? 'vào — Tích cực' : 'ra — Tiêu cực') + ', kèm cảnh báo rủi ro FOMO. Tín hiệu Cơ hội / Rủi ro — KHÔNG phải khuyến nghị mua/bán.',
+      templateRef: 'TMP-FLOW-RANK-SIGNAL',
+      outputs: [
+        {
+          symbol: 'entity', name: entityName, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: entityDemo[entityType] || entityDemo.stock
+        },
+        {
+          symbol: 'sentiment', name: 'Tích cực / Tiêu cực', type: 'enum',
+          source: { kind: 'calculated' },
+          demo: into
+            ? 'Tích cực | Tích cực | Tích cực | Tích cực | Tích cực'
+            : 'Tiêu cực | Tiêu cực | Tiêu cực | Tiêu cực | Tiêu cực',
+          formulaSpec: 'Tín hiệu = ' + (into ? 'Tích cực khi dòng tiền thông minh chủ động vào' : 'Tiêu cực khi dòng tiền thông minh chủ động ra')
+        },
+        {
+          symbol: 'score', name: 'Điểm dòng tiền thông minh 0–100', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '92 | 85 | 78 | 64 | 51',
+          formulaSpec: 'Điểm dòng tiền thông minh = Chuẩn hóa cường độ dòng tiền lô lớn chủ động ' + (into ? 'mua' : 'bán') + ' về thang 0–100, xếp giảm dần Top 10'
+        },
+        {
+          symbol: 'fomo_risk', name: 'Chỉ báo rủi ro 0–100', type: 'số',
+          source: { kind: 'system', layer: 'L3' },
+          demo: '35 | 62 | 48 | 20 | 55'
+        }
+      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            entity: { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'entity_code' },
+            fomo_risk: { layer: 'L3', ref: 'ALG-FLW-STATS', field: 'fomo_risk' }
+          },
+          calculatedInputs: {
+            sentiment: smartMoneyInput,
+            score: smartMoneyInput
+          }
+        }
+      }
+    };
+  }
+
+  /* Dòng tiền thông minh vào/ra — legacy cho các widget chưa audit V2. */
   function flowSignal(id, entityName, dir) {
     var into = dir === 'in';
     return {
@@ -199,22 +356,49 @@
     };
   }
 
-  function rankPerf(id, entityName, srcNote) {
+  function rankPerf(id, entityName) {
+    var entityLabel = entityName.toLowerCase();
+    var formulaSpec = 'Xếp hạng = Vị trí sau khi sắp ' + entityLabel + ' theo Hiệu suất giảm dần (Top 10)';
     return {
-      id: id, domain: 'Thị trường',
+      schemaVersion: 2,
+      id: id,
+      iconKey: 'chart-bar',
       title: 'Top 10 ' + entityName + ' có hiệu suất cao nhất',
       description: 'Bảng xếp hạng Top 10 ' + entityName + ' theo hiệu suất (bình quân gia quyền vốn hóa) trong phiên.',
+      templateRef: 'TMP-RANK-PERF',
       outputs: [
-        o('name', 'Tên ' + entityName.toLowerCase(), 'text', 'entity', 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | Dầu khí', 'L2'),
-        o('perf', 'Hiệu suất', '%', 'perf', '3.2 | 2.8 | 2.1 | 1.6 | 0.9', 'L2'),
-        o('rank', 'Xếp hạng', 'số', 'rank', '1 | 2 | 3 | 4 | 5', 'calc')
+        {
+          symbol: 'name', name: 'Tên ' + entityLabel, type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | Dầu khí'
+        },
+        {
+          symbol: 'perf', name: 'Hiệu suất', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '3.2 | 2.8 | 2.1 | 1.6 | 0.9'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: formulaSpec
+        }
       ],
-      template: 'TMP-RANK-PERF',
-      inputs: [
-        i('group_name', 'Tên ' + entityName.toLowerCase(), 'text', 'L2', 'NORM-HEATMAP'),
-        i('group_perf', 'Hiệu suất nhóm (bình quân gia quyền vốn hóa)', '%', 'L2', 'NORM-HEATMAP')
-      ],
-      algorithmSpec: 'Xếp hạng = Vị trí sau khi sắp ' + entityName.toLowerCase() + ' theo Hiệu suất giảm dần (Top 10)'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            name: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'name' },
+            perf: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'perf' }
+          },
+          calculatedInputs: {
+            rank: [
+              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'name' },
+              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'perf' }
+            ]
+          }
+        }
+      }
     };
   }
 
@@ -274,64 +458,148 @@
       }
     },
     {
-      id: 'WGT-MKT-002', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-MKT-002',
+      iconKey: 'layout-grid',
       title: 'Độ rộng thị trường',
       description: 'Số mã tăng / giảm / tham chiếu / trần / sàn theo từng sàn giao dịch.',
+      templateRef: 'TMP-BREADTH',
       outputs: [
-        o('exchange', 'Sàn', 'text', 'label'),
-        o('up', 'Số mã tăng', 'số', 'value'),
-        o('down', 'Số mã giảm', 'số', 'value'),
-        o('ref', 'Số mã tham chiếu', 'số', 'value'),
-        o('ceiling', 'Số mã trần', 'số', 'value'),
-        o('floor', 'Số mã sàn', 'số', 'value'),
-        o('breadth_state', 'Trạng thái độ rộng', 'enum', 'state')
+        {
+          symbol: 'exchange', name: 'Tab sàn', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'HOSE | HNX | UPCOM'
+        },
+        {
+          symbol: 'stat_labels', name: 'Nhãn ô thống kê', type: 'text',
+          source: { kind: 'calculated' },
+          demo: 'Toàn bộ | Mã tăng | Mã giảm | Mã tham chiếu | Mã tím trần | Mã sàn xanh',
+          formulaSpec: 'Nhãn ô thống kê = Toàn bộ | Mã tăng | Mã giảm | Mã tham chiếu | Mã tím trần | Mã sàn xanh'
+        },
+        {
+          symbol: 'stat_values', name: 'Giá trị ô', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '385 | 142 | 98 | 120 | 15 | 10',
+          formulaSpec: 'Giá trị ô = Toàn bộ | Số mã tăng | Số mã giảm | Số mã tham chiếu | Số mã trần | Số mã sàn'
+        }
       ],
-      template: 'TMP-SUMMARY',
-      inputs: [
-        i('exchange', 'Sàn giao dịch (HOSE/HNX/UPCOM)', 'text', 'L2', 'NORM-BREADTH'),
-        i('adv_count', 'Số mã tăng giá', 'số', 'L2', 'NORM-BREADTH'),
-        i('dec_count', 'Số mã giảm giá', 'số', 'L2', 'NORM-BREADTH'),
-        i('unch_count', 'Số mã tham chiếu', 'số', 'L2', 'NORM-BREADTH'),
-        i('ceiling_count', 'Số mã trần', 'số', 'L2', 'NORM-BREADTH'),
-        i('floor_count', 'Số mã sàn', 'số', 'L2', 'NORM-BREADTH')
-      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            exchange: { layer: 'L2', ref: 'NORM-BREADTH', field: 'exchange' }
+          },
+          calculatedInputs: {
+            stat_labels: [],
+            stat_values: [
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'adv_count' },
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'dec_count' },
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'unch_count' },
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'ceiling_count' },
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'floor_count' }
+            ]
+          }
+        }
+      },
       algorithmSpec: 'Trạng thái độ rộng = Tích cực khi Số mã tăng > Số mã giảm; Tiêu cực khi Số mã tăng < Số mã giảm; Trung tính khi bằng nhau'
     },
+    /* Definition V2 — outputs map 3 slot của TMP-SUMMARY (Nhãn · Giá trị · Trạng thái);
+       signal_text = dải tín hiệu / cảnh báo bên dưới cụm (theo spec Template). */
     {
-      id: 'WGT-MKT-RISK', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-MKT-RISK',
+      iconKey: 'alert-triangle',
       title: 'Rủi ro & Tín hiệu',
       description: 'Cảnh báo tự động từ độ rộng · dòng tiền · vùng giá thị trường.',
+      templateRef: 'TMP-SUMMARY',
       outputs: [
-        o('signal_label', 'Tên tín hiệu', 'text', 'label'),
-        o('score', 'Điểm rủi ro', 'số', 'value'),
-        o('severity', 'Mức độ (thấp/cao)', 'enum', 'state'),
-        o('signal_text', 'Nội dung cảnh báo', 'text', 'signal')
+        {
+          symbol: 'signal_label', name: 'Tên tín hiệu', type: 'text',
+          source: { kind: 'calculated' },
+          demo: 'Độ rộng yếu | Bán ròng mạnh',
+          formulaSpec: 'Tên tín hiệu = Tên điều kiện rủi ro được kích hoạt'
+        },
+        {
+          symbol: 'score', name: 'Điểm rủi ro', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '2',
+          formulaSpec: 'Điểm rủi ro = Tổng trọng số các điều kiện: độ rộng yếu · bán ròng mạnh · chỉ số giảm · giá gần biên'
+        },
+        {
+          symbol: 'severity', name: 'Mức độ (thấp/cao)', type: 'enum',
+          source: { kind: 'calculated' },
+          demo: 'cao',
+          formulaSpec: 'Mức độ = Cao khi có từ 2 điều kiện trở lên; ngược lại Thấp'
+        },
+        {
+          symbol: 'signal_text', name: 'Nội dung cảnh báo', type: 'text',
+          source: { kind: 'calculated' },
+          demo: 'Dòng tiền rút khỏi nhóm vốn hóa lớn — thận trọng',
+          formulaSpec: 'Nội dung cảnh báo = Mô tả điều kiện rủi ro đang kích hoạt'
+        }
       ],
-      template: 'TMP-SUMMARY',
-      inputs: [
-        i('adv_dec_ratio', 'Tỉ lệ mã tăng / mã giảm', 'số', 'L2', 'NORM-BREADTH'),
-        i('market_net_value', 'Dòng tiền ròng toàn thị trường', 'tiền', 'L2', 'NORM-FLOW-NET'),
-        i('index_change_pct', '% thay đổi chỉ số chính', '%', 'L2', 'NORM-MARKET-AGG'),
-        i('index_range_pos', 'Vị trí giá trong biên độ ngày (0–1)', 'số', 'L2', 'NORM-MARKET-AGG')
-      ],
-      algorithmSpec: 'Tên tín hiệu = Tên điều kiện rủi ro được kích hoạt\n' +
-        'Điểm rủi ro = Tổng trọng số các điều kiện: độ rộng yếu · bán ròng mạnh · chỉ số giảm · giá gần biên\n' +
-        'Mức độ = Cao khi có từ 2 điều kiện trở lên; ngược lại Thấp\n' +
-        'Nội dung cảnh báo = Mô tả điều kiện rủi ro đang kích hoạt'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {},
+          calculatedInputs: {
+            signal_label: [
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'adv_dec_ratio' },
+              { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'market_net_value' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_change_pct' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_range_pos' }
+            ],
+            score: [
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'adv_dec_ratio' },
+              { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'market_net_value' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_change_pct' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_range_pos' }
+            ],
+            severity: [
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'adv_dec_ratio' },
+              { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'market_net_value' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_change_pct' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_range_pos' }
+            ],
+            signal_text: [
+              { layer: 'L2', ref: 'NORM-BREADTH', field: 'adv_dec_ratio' },
+              { layer: 'L2', ref: 'NORM-FLOW-NET', field: 'market_net_value' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_change_pct' },
+              { layer: 'L2', ref: 'NORM-MARKET-AGG', field: 'index_range_pos' }
+            ]
+          }
+        }
+      }
     },
     {
-      id: 'WGT-MKT-003', domain: 'Thị trường',
+      schemaVersion: 2,
+      id: 'WGT-MKT-003',
+      iconKey: 'trending-up',
       title: 'Top biến động',
       description: 'Danh sách mã tăng / giảm mạnh nhất phiên.',
+      templateRef: 'TMP-RANK-PERF',
       outputs: [
-        o('ticker', 'Mã cổ phiếu', 'text', ''),
-        o('change_pct', '% thay đổi', '%', '')
+        {
+          symbol: 'ticker', name: 'Mã cổ phiếu', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'HPG | SSI | MWG | VCB | FPT'
+        },
+        {
+          symbol: 'change_pct', name: '% thay đổi', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '6.8 | 5.2 | 4.1 | 3.3 | 2.0'
+        }
       ],
-      template: 'TMP-RANK-PERF',
-      inputs: [
-        i('ticker', 'Mã cổ phiếu', 'text', 'L2', 'NORM-STOCK-SNAP'),
-        i('change_pct', '% thay đổi giá trong phiên', '%', 'L2', 'NORM-STOCK-SNAP')
-      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            ticker: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'ticker' },
+            change_pct: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'change_pct' }
+          },
+          calculatedInputs: {}
+        }
+      },
       algorithmSpec: 'Sắp theo % thay đổi giảm dần cho Top tăng mạnh hoặc tăng dần cho Top giảm mạnh.\n' +
         'Thứ hạng hiển thị được suy ra từ vị trí phần tử sau khi sắp xếp, không lưu thành output.'
     },
@@ -442,47 +710,7 @@
         }
       }
     },
-    {
-      schemaVersion: 2,
-      id: 'WGT-TOP-001',
-      iconKey: 'chart-bar',
-      title: 'Top 10 Ngành có hiệu suất cao nhất',
-      description: 'Bảng xếp hạng Top 10 Ngành theo hiệu suất (bình quân gia quyền vốn hóa) trong phiên.',
-      templateRef: 'TMP-RANK-PERF',
-      outputs: [
-        {
-          symbol: 'name', name: 'Tên ngành', type: 'text',
-          source: { kind: 'system', layer: 'L2' },
-          demo: 'Ngân hàng | Thép | Chứng khoán | Bán lẻ | Dầu khí'
-        },
-        {
-          symbol: 'perf', name: 'Hiệu suất', type: '%',
-          source: { kind: 'system', layer: 'L2' },
-          demo: '3.2 | 2.8 | 2.1 | 1.6 | 0.9'
-        },
-        {
-          symbol: 'rank', name: 'Xếp hạng', type: 'số',
-          source: { kind: 'calculated' },
-          demo: '1 | 2 | 3 | 4 | 5',
-          formulaSpec: 'Xếp hạng = Vị trí sau khi sắp ngành theo Hiệu suất giảm dần (Top 10)'
-        }
-      ],
-      capabilities: {},
-      metadata: {
-        dataContract: {
-          systemRefs: {
-            name: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_name' },
-            perf: { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_perf' }
-          },
-          calculatedInputs: {
-            rank: [
-              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_name' },
-              { layer: 'L2', ref: 'NORM-HEATMAP', field: 'group_perf' }
-            ]
-          }
-        }
-      }
-    },
+    rankPerf('WGT-TOP-001', 'Ngành'),
     rankPerf('WGT-TOP-002', 'Hệ sinh thái'),
     rankPerf('WGT-TOP-003', 'Chủ đề'),
     {
@@ -529,120 +757,293 @@
 
     /* ===================== DÒNG TIỀN ===================== */
     {
-      id: 'WGT-FLW-001', domain: 'Dòng tiền',
+      schemaVersion: 2,
+      id: 'WGT-FLW-001',
+      iconKey: 'arrows-exchange',
       title: 'Dòng tiền thông minh (tóm tắt)',
       description: 'Tỉ lệ mua/bán và net ròng theo chủ thể NN · Tổ chức · Tự doanh · Cá nhân.',
+      templateRef: 'TMP-FLOW-SUMMARY',
       outputs: [
-        o('subject', 'Chủ thể', 'enum', 'subject'),
-        o('buy_ratio', 'Tỉ lệ mua', '%', 'buy'),
-        o('net', 'Giá trị ròng', 'tiền', 'net')
+        {
+          symbol: 'subject', name: 'Chủ thể', type: 'enum',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Khối ngoại | Tổ chức | Tự doanh | Cá nhân'
+        },
+        {
+          symbol: 'buy_ratio', name: 'Tỉ lệ mua', type: '%',
+          source: { kind: 'calculated' },
+          demo: '54 | 48 | 51 | 47',
+          formulaSpec: 'Tỉ lệ mua = Giá trị mua ÷ (Giá trị mua + Giá trị bán)'
+        },
+        {
+          symbol: 'net', name: 'Giá trị ròng', type: 'tiền',
+          source: { kind: 'calculated' },
+          demo: '320 | -120 | 60 | -260',
+          formulaSpec: 'Giá trị ròng = Giá trị mua − Giá trị bán'
+        }
       ],
-      template: 'TMP-FLOW-SUMMARY',
-      inputs: [
-        i('subject', 'Chủ thể (NN/Tổ chức/Tự doanh/Cá nhân)', 'enum', 'L2', 'NORM-FLOW-SUMMARY'),
-        i('buy_value', 'Giá trị mua trong phiên', 'tiền', 'L2', 'NORM-FLOW-SUMMARY'),
-        i('sell_value', 'Giá trị bán trong phiên', 'tiền', 'L2', 'NORM-FLOW-SUMMARY')
-      ],
-      algorithmSpec: 'Tỉ lệ mua = Giá trị mua ÷ (Giá trị mua + Giá trị bán)\n' +
-        'Giá trị ròng = Giá trị mua − Giá trị bán'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            subject: { layer: 'L2', ref: 'NORM-FLOW-SUMMARY', field: 'subject' }
+          },
+          calculatedInputs: {
+            buy_ratio: [
+              { layer: 'L2', ref: 'NORM-FLOW-SUMMARY', field: 'buy_value' },
+              { layer: 'L2', ref: 'NORM-FLOW-SUMMARY', field: 'sell_value' }
+            ],
+            net: [
+              { layer: 'L2', ref: 'NORM-FLOW-SUMMARY', field: 'buy_value' },
+              { layer: 'L2', ref: 'NORM-FLOW-SUMMARY', field: 'sell_value' }
+            ]
+          }
+        }
+      }
     },
-    netSubject('WGT-FLW-SUBJ-STOCK', 'cổ phiếu', 'stock'),
-    netSubject('WGT-FLW-SUBJ-SECTOR', 'ngành', 'sector'),
-    netSubject('WGT-FLW-SUBJ-HST', 'hệ sinh thái', 'family'),
-    netSubject('WGT-FLW-SUBJ-CHUDE', 'chủ đề', 'chu-de'),
-    flowDuo('WGT-FLW-STAT_STOCK', 'Cổ phiếu'),
-    flowDuo('WGT-FLW-STAT_SECTOR', 'Ngành'),
-    flowDuo('WGT-FLW-STAT_HST', 'Hệ sinh thái'),
-    flowDuo('WGT-FLW-STAT_STORY', 'Chủ đề'),
-    flowSignal('WGT-FLW-EX_TM_IN', 'Cổ phiếu', 'in'),
-    flowSignal('WGT-FLW-EX_TM_SECTOR_IN', 'Ngành', 'in'),
-    flowSignal('WGT-FLW-EX_TM_HST_IN', 'Hệ sinh thái', 'in'),
-    flowSignal('WGT-FLW-EX_TM_STORY_IN', 'Chủ đề', 'in'),
-    flowSignal('WGT-FLW-EX_TM_OUT', 'Cổ phiếu', 'out'),
-    flowSignal('WGT-FLW-EX_TM_SECTOR_OUT', 'Ngành', 'out'),
-    flowSignal('WGT-FLW-EX_TM_HST_OUT', 'Hệ sinh thái', 'out'),
-    flowSignal('WGT-FLW-EX_TM_STORY_OUT', 'Chủ đề', 'out'),
+    netSubjectV2('WGT-FLW-SUBJ-STOCK', 'cổ phiếu', 'stock'),
+    netSubjectV2('WGT-FLW-SUBJ-SECTOR', 'ngành', 'sector'),
+    netSubjectV2('WGT-FLW-SUBJ-HST', 'hệ sinh thái', 'family'),
+    netSubjectV2('WGT-FLW-SUBJ-CHUDE', 'chủ đề', 'chu-de'),
+    flowDuoV2('WGT-FLW-STAT_STOCK', 'Cổ phiếu', 'stock'),
+    flowDuoV2('WGT-FLW-STAT_SECTOR', 'Ngành', 'sector'),
+    flowDuoV2('WGT-FLW-STAT_HST', 'Hệ sinh thái', 'family'),
+    flowDuoV2('WGT-FLW-STAT_STORY', 'Chủ đề', 'chu-de'),
+    flowSignalV2('WGT-FLW-EX_TM_IN', 'Cổ phiếu', 'stock', 'in'),
+    flowSignalV2('WGT-FLW-EX_TM_SECTOR_IN', 'Ngành', 'sector', 'in'),
+    flowSignalV2('WGT-FLW-EX_TM_HST_IN', 'Hệ sinh thái', 'family', 'in'),
+    flowSignalV2('WGT-FLW-EX_TM_STORY_IN', 'Chủ đề', 'chu-de', 'in'),
+    flowSignalV2('WGT-FLW-EX_TM_OUT', 'Cổ phiếu', 'stock', 'out'),
+    flowSignalV2('WGT-FLW-EX_TM_SECTOR_OUT', 'Ngành', 'sector', 'out'),
+    flowSignalV2('WGT-FLW-EX_TM_HST_OUT', 'Hệ sinh thái', 'family', 'out'),
+    flowSignalV2('WGT-FLW-EX_TM_STORY_OUT', 'Chủ đề', 'chu-de', 'out'),
 
     /* ===================== CỘNG ĐỒNG ===================== */
     {
-      id: 'WGT-COM-001', domain: 'Cộng đồng',
+      schemaVersion: 2,
+      id: 'WGT-COM-001',
+      iconKey: 'message-circle',
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.',
+      templateRef: 'TMP-HEATMAP',
       outputs: [
-        o('ticker', 'Mã cổ phiếu', 'text', 'element'),
-        o('mentions', 'Lượt quan tâm (kích thước)', 'số', 'size'),
-        o('perf', 'Hiệu suất hôm nay', '%', 'color')
+        {
+          symbol: 'ticker', name: 'Mã cổ phiếu', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'VIN | VIC | VHM | VCB | HPG | SSI'
+        },
+        {
+          symbol: 'mentions', name: 'Lượt quan tâm (kích thước)', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '639 | 629 | 569 | 426 | 156 | 180'
+        },
+        {
+          symbol: 'perf', name: 'Hiệu suất hôm nay', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '1.2 | -0.8 | 2.1 | 0.4 | 3.1 | -0.5'
+        }
       ],
-      template: 'TMP-HEATMAP',
-      inputs: [
-        i('ticker', 'Mã cổ phiếu', 'text', 'L2', 'NORM-COMMUNITY'),
-        i('mention_count', 'Số lượt nhắc/quan tâm trong cửa sổ', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('stock_perf', '% thay đổi giá của mã', '%', 'L2', 'NORM-STOCK-SNAP')
-      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            ticker: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'ticker' },
+            mentions: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'mention_count' },
+            perf: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'stock_perf' }
+          },
+          calculatedInputs: {}
+        }
+      },
       algorithmSpec: 'Chỉ Top 10 mã theo mức độ quan tâm cộng đồng (giảm dần)'
     },
+    /* Definition V2 — outputs map đúng 4 slot của TMP-COMMUNITY-LIST
+       (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
-      id: 'WGT-COM-002', domain: 'Cộng đồng',
+      schemaVersion: 2,
+      id: 'WGT-COM-002',
+      iconKey: 'users',
       title: 'Thành viên tích cực',
       description: 'Xếp hạng Tích cực − Tiêu cực trên bình luận cổ phiếu.',
+      templateRef: 'TMP-COMMUNITY-LIST',
       outputs: [
-        o('member', 'Thành viên', 'text', 'object'),
-        o('score', 'Điểm Tích cực − Tiêu cực', 'số', 'metric'),
-        o('rank', 'Xếp hạng', 'số', 'rank')
+        {
+          symbol: 'member', name: 'Thành viên', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Minh Trader | Anh Phố | Cô Ba CK | Long Vốn | Hà FA'
+        },
+        {
+          symbol: 'member_note', name: 'Chú thích phụ (Tích cực · Tiêu cực)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: 'Tích cực 150 · Tiêu cực 22 | Tích cực 118 · Tiêu cực 22 | Tích cực 92 · Tiêu cực 18 | Tích cực 74 · Tiêu cực 14 | Tích cực 52 · Tiêu cực 11',
+          formulaSpec: 'Chú thích phụ = Ghép "Tích cực" + Số bình luận đánh giá Tích cực + "· Tiêu cực" + Số bình luận đánh giá Tiêu cực (trình bày lại 2 input V1 có sẵn, không thêm dữ liệu mới)'
+        },
+        {
+          symbol: 'avatar_url', name: 'Avatar (URL ảnh — trống = chữ cái)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: ' |  |  |  | ',
+          formulaSpec: 'Avatar = trống — Template TMP-COMMUNITY-LIST tự hiển thị chữ cái đầu của Tên thành viên (spec: Avatar ảnh tròn nếu có URL, chữ cái đầu tên nếu trống)'
+        },
+        {
+          symbol: 'score', name: 'Điểm Tích cực − Tiêu cực', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '128 | 96 | 74 | 60 | 41',
+          formulaSpec: 'Điểm Tích cực − Tiêu cực = Số bình luận Tích cực − Số bình luận Tiêu cực'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: 'Xếp hạng = Vị trí sau khi xếp Điểm giảm dần'
+        }
       ],
-      template: 'TMP-COMMUNITY-LIST',
-      inputs: [
-        i('member_name', 'Tên thành viên', 'text', 'L2', 'NORM-COMMUNITY'),
-        i('positive_count', 'Số bình luận đánh giá Tích cực', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('negative_count', 'Số bình luận đánh giá Tiêu cực', 'số', 'L2', 'NORM-COMMUNITY')
-      ],
-      algorithmSpec: 'Điểm Tích cực − Tiêu cực = Số bình luận Tích cực − Số bình luận Tiêu cực\n' +
-        'Xếp hạng = Vị trí sau khi xếp Điểm giảm dần'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            member: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'member_name' }
+          },
+          calculatedInputs: {
+            member_note: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+            ],
+            avatar_url: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'member_name' }
+            ],
+            score: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+            ],
+            rank: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+            ]
+          }
+        }
+      }
     },
+    /* Definition V2 — outputs map đúng 4 slot của TMP-COMMUNITY-LIST
+       (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
-      id: 'WGT-COM-003', domain: 'Cộng đồng',
+      schemaVersion: 2,
+      id: 'WGT-COM-003',
+      iconKey: 'user-star',
       title: 'Chuyên gia nổi bật',
       description: 'Top chuyên gia theo tổng lượt thích bài viết.',
+      templateRef: 'TMP-COMMUNITY-LIST',
       outputs: [
-        o('expert', 'Chuyên gia', 'text', 'object'),
-        o('total_likes', 'Tổng lượt thích', 'số', 'metric'),
-        o('rank', 'Xếp hạng', 'số', 'rank')
+        {
+          symbol: 'expert', name: 'Chuyên gia', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Nguyễn Văn Minh | Trần Thị B | Lê C | Phạm D | Vũ E'
+        },
+        {
+          symbol: 'expert_note', name: 'Chú thích phụ (số bài viết trong cửa sổ)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: '24 bài viết | 18 bài viết | 15 bài viết | 12 bài viết | 9 bài viết',
+          formulaSpec: 'Chú thích phụ = Số bài viết trong cửa sổ + "bài viết" (trình bày lại input V1 post_count có sẵn, không thêm dữ liệu mới)'
+        },
+        {
+          symbol: 'avatar_url', name: 'Avatar (URL ảnh — trống = chữ cái)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: ' |  |  |  | ',
+          formulaSpec: 'Avatar = trống — Template TMP-COMMUNITY-LIST tự hiển thị chữ cái đầu của Tên chuyên gia (spec: Avatar ảnh tròn nếu có URL, chữ cái đầu tên nếu trống)'
+        },
+        {
+          symbol: 'total_likes', name: 'Tổng lượt thích', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '1280 | 864 | 720 | 540 | 410'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: 'Xếp hạng = Vị trí sau khi xếp Tổng lượt thích giảm dần'
+        }
       ],
-      template: 'TMP-COMMUNITY-LIST',
-      inputs: [
-        i('expert_name', 'Tên chuyên gia', 'text', 'L2', 'NORM-COMMUNITY'),
-        i('total_likes', 'Tổng lượt thích các bài viết', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('post_count', 'Số bài viết trong cửa sổ', 'số', 'L2', 'NORM-COMMUNITY')
-      ],
-      algorithmSpec: 'Xếp hạng = Vị trí sau khi xếp Tổng lượt thích giảm dần'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            expert: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'expert_name' },
+            total_likes: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'total_likes' }
+          },
+          calculatedInputs: {
+            expert_note: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'post_count' }
+            ],
+            avatar_url: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'expert_name' }
+            ],
+            rank: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'total_likes' }
+            ]
+          }
+        }
+      }
     },
     {
-      id: 'WGT-COM-CHUDE-TOP', domain: 'Cộng đồng',
+      schemaVersion: 2,
+      id: 'WGT-COM-CHUDE-TOP',
+      iconKey: 'flame',
       title: 'Chủ đề tích cực hàng đầu',
       description: 'Top N Topic/Story theo điểm Interest trong cửa sổ Ngày|Tuần|Tháng.',
+      templateRef: 'TMP-COMMUNITY-STORY-TOP',
       outputs: [
-        o('chu-de', 'Chủ đề', 'text', 'chu-de'),
-        o('story', 'Chủ đề (alias)', 'text', 'chu-de'),
-        o('score', 'Điểm Interest', 'số', 'score'),
-        o('views', 'Tổng lượt xem trong cửa sổ', 'số', 'metric'),
-        o('searches', 'Tổng lượt tìm kiếm trong cửa sổ', 'số', 'metric'),
-        o('likes', 'Tổng lượt thích trong cửa sổ', 'số', 'metric'),
-        o('comments', 'Tổng bình luận trong cửa sổ', 'số', 'metric'),
-        o('shares', 'Tổng chia sẻ trong cửa sổ', 'số', 'metric'),
-        o('favorites', 'Tổng yêu thích trong cửa sổ', 'số', 'metric'),
-        o('rank', 'Xếp hạng trong Top N', 'số', 'rank')
+        {
+          symbol: 'story', name: 'Chủ đề', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'EV xe điện | Căn hộ TP.HCM | Tăng vốn NH | AI Việt Nam | Xuất khẩu thép | Đầu tư công | NIM ngân hàng | Bán lẻ hồi phục | Dầu khí | Thép HRC'
+        },
+        {
+          symbol: 'score', name: 'Điểm Interest', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '9039 | 5790 | 5341 | 3901 | 3120 | 2880 | 2440 | 2100 | 1860 | 1540',
+          formulaSpec: 'score = views×1 + searches×3 + likes×5 + favorites×8 + shares×8 + comments×10'
+        },
+        {
+          symbol: 'views', name: 'Tổng lượt xem trong cửa sổ', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '3850 | 2450 | 2620 | 2206 | 1840 | 1600 | 1420 | 1280 | 1100 | 980'
+        },
+        {
+          symbol: 'comments', name: 'Tổng bình luận trong cửa sổ', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '94 | 63 | 43 | 17 | 14 | 31 | 22 | 18 | 12 | 9'
+        },
+        {
+          symbol: 'favorites', name: 'Tổng yêu thích trong cửa sổ', type: 'số',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '146 | 74 | 64 | 44 | 31 | 60 | 40 | 32 | 24 | 18'
+        },
+        {
+          symbol: 'period', name: 'Khung thời gian (tab)', type: 'enum',
+          source: { kind: 'system', layer: 'L3' },
+          demo: 'Ngày | Tuần | Tháng'
+        }
       ],
-      template: 'TMP-COMMUNITY-STORY-TOP',
-      inputs: [
-        i('story_name', 'Tên Story / Topic', 'text', 'L2', 'NORM-CONTENT-TOPIC'),
-        i('views', 'Lượt xem trong cửa sổ', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('searches', 'Lượt tìm kiếm Topic/Story', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('likes', 'Lượt thích', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('comments', 'Lượt bình luận', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('shares', 'Lượt chia sẻ', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('favorites', 'Lượt yêu thích / bookmark', 'số', 'L2', 'NORM-COMMUNITY'),
-        i('period', 'Cửa sổ Ngày|Tuần|Tháng', 'enum', 'L3', 'ALG-TOPIC-TREND')
-      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            story: { layer: 'L2', ref: 'NORM-CONTENT-TOPIC', field: 'story_name' },
+            views: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'views' },
+            comments: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'comments' },
+            favorites: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'favorites' },
+            period: { layer: 'L3', ref: 'ALG-TOPIC-TREND', field: 'period' }
+          },
+          calculatedInputs: {
+            score: [
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'views' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'searches' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'likes' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'favorites' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'shares' },
+              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'comments' }
+            ]
+          }
+        }
+      },
       algorithmSpec:
         'views = Tổng lượt xem gắn Topic/Story trong cửa sổ period\n' +
         'searches = Tổng lượt tìm kiếm gắn Topic/Story trong cửa sổ period\n' +
@@ -654,43 +1055,114 @@
         'rank = Vị trí sau khi xếp score giảm dần\n' +
         'Tab đang chọn / Top N không phải output: tab mặc định phần tử đầu, Top N = số phần tử dữ liệu'
     },
+    /* Definition V2 — outputs map đúng 4 slot của TMP-COMMUNITY-LIST
+       (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
-      id: 'WGT-COM-004', domain: 'Cộng đồng',
+      schemaVersion: 2,
+      id: 'WGT-COM-004',
+      iconKey: 'bookmarks',
       title: 'Top Watchlist mạnh nhất',
       description: 'Watchlist cộng đồng có hiệu suất trung bình mạnh nhất (Elite).',
+      templateRef: 'TMP-COMMUNITY-LIST',
       outputs: [
-        o('watchlist', 'Watchlist', 'text', 'object'),
-        o('avg_perf', 'Hiệu suất trung bình', '%', 'metric'),
-        o('rank', 'Xếp hạng', 'số', 'rank')
+        {
+          symbol: 'watchlist', name: 'Watchlist', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Sóng ngành thép | Cổ tức đều | Ngân hàng dẫn dắt | Midcap tăng tốc | Bluechip'
+        },
+        {
+          symbol: 'watchlist_note', name: 'Chú thích phụ (số mã trong watchlist)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: '8 mã | 12 mã | 6 mã | 10 mã | 15 mã',
+          formulaSpec: 'Số mã trong watchlist = Đếm số Mã thành viên trong watchlist (đếm input V1 member_ticker có sẵn, không thêm dữ liệu mới)'
+        },
+        {
+          symbol: 'avatar_url', name: 'Avatar (URL ảnh — trống = chữ cái)', type: 'text',
+          source: { kind: 'calculated' },
+          demo: ' |  |  |  | ',
+          formulaSpec: 'Avatar = trống — Template TMP-COMMUNITY-LIST tự hiển thị chữ cái đầu của Tên watchlist (spec: Avatar ảnh tròn nếu có URL, chữ cái đầu tên nếu trống)'
+        },
+        {
+          symbol: 'avg_perf', name: 'Hiệu suất trung bình', type: '%',
+          source: { kind: 'calculated' },
+          demo: '5.2 | 4.1 | 3.6 | 3.0 | 2.4',
+          formulaSpec: 'Hiệu suất trung bình = Trung bình % thay đổi giá của các mã trong watchlist'
+        },
+        {
+          symbol: 'rank', name: 'Xếp hạng', type: 'số',
+          source: { kind: 'calculated' },
+          demo: '1 | 2 | 3 | 4 | 5',
+          formulaSpec: 'Xếp hạng = Vị trí sau khi xếp Hiệu suất trung bình giảm dần'
+        }
       ],
-      template: 'TMP-COMMUNITY-LIST',
-      inputs: [
-        i('watchlist_name', 'Tên watchlist', 'text', 'L2', 'NORM-WATCHLIST'),
-        i('member_ticker', 'Mã thành viên trong watchlist', 'text', 'L2', 'NORM-WATCHLIST'),
-        i('stock_perf', '% thay đổi giá của mã', '%', 'L2', 'NORM-STOCK-SNAP')
-      ],
-      algorithmSpec: 'Hiệu suất trung bình = Trung bình % thay đổi giá của các mã trong watchlist\n' +
-        'Xếp hạng = Vị trí sau khi xếp Hiệu suất trung bình giảm dần'
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            watchlist: { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'watchlist_name' }
+          },
+          calculatedInputs: {
+            watchlist_note: [
+              { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'member_ticker' }
+            ],
+            avatar_url: [
+              { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'watchlist_name' }
+            ],
+            avg_perf: [
+              { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'member_ticker' },
+              { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'stock_perf' }
+            ],
+            rank: [
+              { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'member_ticker' },
+              { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'stock_perf' }
+            ]
+          }
+        }
+      }
     },
 
     /* ===================== CÁ NHÂN ===================== */
     {
-      id: 'WGT-WAT-001', domain: 'Cá nhân',
+      schemaVersion: 2,
+      id: 'WGT-WAT-001',
+      iconKey: 'bookmarks',
       title: 'Watchlist',
       description: 'Danh sách mã do user chủ động theo dõi — không qua công thức hệ thống.',
+      templateRef: 'TMP-COLLECTION',
       outputs: [
-        o('ticker', 'Mã cổ phiếu', 'text', 'code'),
-        o('company_name', 'Tên công ty', 'text', 'info'),
-        o('last_price', 'Giá khớp gần nhất', 'tiền', 'info'),
-        o('change_pct', '% thay đổi', '%', 'info')
+        {
+          symbol: 'ticker', name: 'Mã cổ phiếu', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'VCB | HPG | SSI | MWG'
+        },
+        {
+          symbol: 'company_name', name: 'Tên công ty', type: 'text',
+          source: { kind: 'system', layer: 'L2' },
+          demo: 'Vietcombank | Hòa Phát | Chứng khoán SSI | Thế Giới Di Động'
+        },
+        {
+          symbol: 'last_price', name: 'Giá khớp gần nhất', type: 'tiền',
+          source: { kind: 'system', layer: 'L1' },
+          demo: '92.5 | 27.8 | 38.4 | 45.1'
+        },
+        {
+          symbol: 'change_pct', name: '% thay đổi', type: '%',
+          source: { kind: 'system', layer: 'L2' },
+          demo: '1.2 | -0.8 | 2.1 | 0.4'
+        }
       ],
-      template: 'TMP-COLLECTION',
-      inputs: [
-        i('ticker', 'Mã cổ phiếu user thêm', 'text', 'L2', 'NORM-WATCHLIST'),
-        i('company_name', 'Tên công ty', 'text', 'L2', 'NORM-STOCK-SNAP'),
-        i('last_price', 'Giá khớp gần nhất', 'tiền', 'L1', 'RAW-DNSE-TRADE-LATEST'),
-        i('change_pct', '% thay đổi so tham chiếu', '%', 'L2', 'NORM-STOCK-SNAP')
-      ],
+      capabilities: {},
+      metadata: {
+        dataContract: {
+          systemRefs: {
+            ticker: { layer: 'L2', ref: 'NORM-WATCHLIST', field: 'ticker' },
+            company_name: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'company_name' },
+            last_price: { layer: 'L1', ref: 'RAW-DNSE-TRADE-LATEST', field: 'last_price' },
+            change_pct: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'change_pct' }
+          },
+          calculatedInputs: {}
+        }
+      },
       algorithmSpec: ''
     }
   ];
@@ -1102,6 +1574,8 @@
   var STORAGE_KEY = 'iflux_l4_widgets_v2';
   var STORAGE_BACKUP_KEY = 'iflux_l4_widgets_v1_backup_phase0b';
   var migrationError = null;
+  /* Báo cáo migrate từng item: item nào migrate fail sẽ được flag ở đây (không im lặng). */
+  var migrationReport = [];
 
   function emptyStore() {
     return { schemaVersion: SCHEMA_VERSION, items: {}, custom: {}, deleted: [], updatedAt: null };
@@ -1283,27 +1757,82 @@
     }
     var legacy = parseStore(rawV1, 1);
     var next = emptyStore();
-    /* Migration tolerant theo từng item: item không migrate được (vd nguồn V1 ngoài L1/L2/L3/calc,
-       formula ambiguous) GIỮ NGUYÊN V1 — xử lý khi audit đúng Widget đó, không chặn Widget khác. */
+    var report = [];
+    /* Triết lý migrate: THÀNH CÔNG → persist V2. THẤT BẠI → flag + reason, KHÔNG im lặng,
+       KHÔNG dùng như bản hợp lệ. Item fail vẫn giữ payload V1 (để phục hồi/audit) nhưng
+       được đánh dấu _migrationRequired nên schemaVersion vẫn = 1 → downstream không coi là V2,
+       không đè lên Definition chuẩn ở source. Không chặn item khác migrate. */
     Object.keys(legacy.items).forEach(function (id) {
       try { next.items[id] = migratePatch(legacy.items[id]); }
-      catch (e) { next.items[id] = clone(legacy.items[id]); }
+      catch (e) {
+        next.items[id] = flagMigrationFailure(legacy.items[id], e.message);
+        report.push({ id: id, scope: 'items', reason: e.message });
+      }
     });
     Object.keys(legacy.custom).forEach(function (id) {
       try { next.custom[id] = migrateDefinition(legacy.custom[id]); }
-      catch (e2) { next.custom[id] = clone(legacy.custom[id]); }
+      catch (e2) {
+        next.custom[id] = flagMigrationFailure(legacy.custom[id], e2.message);
+        report.push({ id: id, scope: 'custom', reason: e2.message });
+      }
     });
     next.deleted = legacy.deleted.slice();
     next.updatedAt = legacy.updatedAt;
+    next.migrationReport = report;
     var rawV2 = JSON.stringify(next);
     try {
       localStorage.setItem(STORAGE_KEY, rawV2);
       if (localStorage.getItem(STORAGE_KEY) !== rawV2) throw new Error('Không xác minh được Store V2 sau persist');
+      migrationReport = report;
+      warnMigrationReport(report);
       return next;
     } catch (err) {
       localStorage.removeItem(STORAGE_KEY);
       throw err;
     }
+  }
+
+  /* Đánh dấu item migrate fail: giữ nguyên payload V1 để phục hồi, gắn cờ + lý do rõ ràng. */
+  function flagMigrationFailure(v1Item, reason) {
+    var flagged = clone(v1Item || {});
+    flagged.schemaVersion = 1;
+    flagged._migrationRequired = true;
+    flagged._migrationError = String(reason || 'Migration fail không rõ lý do');
+    return flagged;
+  }
+
+  function warnMigrationReport(report) {
+    if (!report || !report.length) return;
+    try {
+      var msg = 'Tầng 4 Widget — cần migrate thủ công ' + report.length + ' item (không tự dùng bản V1): ' +
+        report.map(function (r) { return r.id + ' (' + r.reason + ')'; }).join(' | ');
+      if (global.console && global.console.warn) global.console.warn('[iflux][L4-migration]', msg);
+    } catch (e) { /* ignore */ }
+  }
+
+  /* Danh sách item còn cần migrate (đọc từ store V2 + báo cáo migrate gần nhất). */
+  function migrationRequiredItems() {
+    var out = [];
+    var seen = {};
+    (migrationReport || []).forEach(function (r) {
+      if (!seen[r.id]) { seen[r.id] = true; out.push({ id: r.id, scope: r.scope, reason: r.reason }); }
+    });
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        ['items', 'custom'].forEach(function (scope) {
+          var bag = parsed[scope] || {};
+          Object.keys(bag).forEach(function (id) {
+            if (bag[id] && bag[id]._migrationRequired && !seen[id]) {
+              seen[id] = true;
+              out.push({ id: id, scope: scope, reason: bag[id]._migrationError || 'Migration Required' });
+            }
+          });
+        });
+      }
+    } catch (e) { /* ignore */ }
+    return out;
   }
 
   function readStore() {
@@ -1638,10 +2167,16 @@
   function updatedAt() { return readStore().updatedAt; }
   function storeStatus() {
     var store = readStore();
+    var required = migrationRequiredItems();
     return {
       schemaVersion: store.schemaVersion,
       migrationError: migrationError ? migrationError.message : null,
-      storageKey: store.schemaVersion === SCHEMA_VERSION ? STORAGE_KEY : STORAGE_KEY_V1
+      /* Migrate từng item: KHÔNG im lặng — item fail được flag + reason ở đây. */
+      migrationReport: (store.migrationReport || migrationReport || []).slice(),
+      migrationRequired: required,
+      hasMigrationRequired: required.length > 0,
+      storageKey: store.schemaVersion === SCHEMA_VERSION ? STORAGE_KEY : STORAGE_KEY_V1,
+      storageKeys: { v1: STORAGE_KEY_V1, v2: STORAGE_KEY, v1Backup: STORAGE_BACKUP_KEY }
     };
   }
 
@@ -1728,6 +2263,7 @@
     resetAll: resetAll,
     updatedAt: updatedAt,
     storeStatus: storeStatus,
+    migrationRequiredItems: migrationRequiredItems,
     templateName: templateName,
     allTemplateIds: allTemplateIds,
     compatibleTemplates: compatibleTemplates,
