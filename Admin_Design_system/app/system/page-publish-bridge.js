@@ -7,32 +7,6 @@
 (function (global) {
   'use strict';
 
-  /** Flow Page Feature sections — khớp Layout Engine Host Tree (không đổi Runtime). */
-  var FLOW_SECTION_BY_ID = {
-    'WGT-FLW-SUBJ-STOCK': 'sidebar',
-    'WGT-FLW-SUBJ-SECTOR': 'sidebar',
-    'WGT-FLW-STAT_STOCK': 'basic',
-    'WGT-FLW-STAT_SECTOR': 'advanced',
-    'WGT-FLW-STAT_HST': 'advanced',
-    'WGT-FLW-STAT_STORY': 'advanced',
-    'WGT-FLW-EX_TM_IN': 'exclusive',
-    'WGT-FLW-EX_TM_SECTOR_IN': 'exclusive',
-    'WGT-FLW-EX_TM_HST_IN': 'exclusive',
-    'WGT-FLW-EX_TM_STORY_IN': 'exclusive'
-  };
-
-  var FLOW_CONFIG_BY_ID = {
-    'WGT-FLW-SUBJ-STOCK': { scope: 'stock' },
-    'WGT-FLW-SUBJ-SECTOR': { scope: 'sector' }
-  };
-
-  var FLOW_SECTIONS = [
-    { key: 'sidebar', label: 'Sidebar dòng tiền', visible: true, layout: null },
-    { key: 'basic', label: 'Thống kê cơ bản', visible: true, layout: 'grid-12' },
-    { key: 'advanced', label: 'Thống kê nâng cao', visible: true, layout: 'grid-12' },
-    { key: 'exclusive', label: 'Độc quyền', visible: true, layout: 'grid-12' }
-  ];
-
   function toast(msg, kind) {
     if (global.ixToast) ixToast(msg, kind || 'success');
   }
@@ -48,37 +22,15 @@
   }
 
   /**
-   * Normalize manifest → page draft + widget drafts cho publishPageDraft.
-   * dashboard: chỉ sidebar (Phase 4 — Main = Dashboard Engine).
-   * flow: remap section → basic|advanced|exclusive.
+   * Serialize manifest → page draft + widget drafts cho publishPageDraft.
+   * Bridge KHÔNG chứa Business Rule Placement: không suy luận/remap section
+   * theo page hoặc widgetId; chỉ ghi đúng dữ liệu Admin đã chọn.
    */
   function buildPublishPayload(pageKey, manifest) {
     if (!manifest) return null;
     var key = String(pageKey || '').toLowerCase();
-    var widgets = (manifest.widgets || []).filter(function (w) {
-      return w && w.id && w.enabled !== false;
-    });
-
-    if (key === 'dashboard') {
-      widgets = widgets.filter(function (w) { return w.section === 'sidebar'; });
-    }
-
-    if (key === 'flow') {
-      widgets = widgets.map(function (w) {
-        var section = FLOW_SECTION_BY_ID[w.id] || w.section || 'main';
-        var config = Object.assign({}, w.config || {}, FLOW_CONFIG_BY_ID[w.id] || {});
-        return Object.assign({}, w, { section: section, config: config });
-      });
-    }
-
+    var widgets = (manifest.widgets || []).filter(function (w) { return w && w.id; });
     var sections = manifest.sections || [];
-    if (key === 'flow') sections = FLOW_SECTIONS.slice();
-    if (key === 'dashboard') {
-      sections = [
-        { key: 'sidebar', label: 'Thông tin cá nhân', visible: true, layout: null },
-        { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }
-      ];
-    }
 
     var placements = widgets.map(function (w) {
       return {
@@ -96,8 +48,8 @@
     var pageDraft = {
       page: key,
       path: manifest.path || null,
-      title: key === 'dashboard' ? '' : (manifest.title || ''),
-      intro: key === 'dashboard' ? '' : (manifest.intro || ''),
+      title: manifest.title || '',
+      intro: manifest.intro || '',
       documentTitle: manifest.documentTitle || '',
       sections: sections,
       placements: placements

@@ -5,7 +5,8 @@
   var state = {
     tab: 'sitemap',
     pageKey: 'dashboard',
-    q: ''
+    q: '',
+    loadingPublished: false
   };
 
   function esc(s) {
@@ -197,7 +198,7 @@
   }
 
   var WIDGET_TABLE_HEAD =
-    '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Block</th><th>Section</th>' +
+    '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Section</th>' +
     '<th>Pos</th><th>Span</th><th>Bật</th><th>User override</th>';
 
   function widgetTableOverrideCell(page, wid, row) {
@@ -210,25 +211,36 @@
       (row.userCanOverride ? ' checked' : '') + ' /></td>';
   }
 
+  function placementPagesForWidget(pages, widgetId) {
+    return pages.filter(function (p) {
+      return (p.layoutSlots || []).some(function (slot) {
+        return slot.widgetId === widgetId && slot.hasPlacement;
+      });
+    });
+  }
+
   function widgetTableRows(page) {
-    var ids = page.widgetIds || [];
+    var pages = model();
+    var ids = (page.widgetIds || []).slice().sort(function (a, b) {
+      var aPlaced = placementPagesForWidget(pages, a).length > 0;
+      var bPlaced = placementPagesForWidget(pages, b).length > 0;
+      if (aPlaced !== bPlaced) return aPlaced ? 1 : -1;
+      return String(a).localeCompare(String(b));
+    });
     var regions = catalog().pageRegions(page.key);
     return ids.map(function (wid) {
       var row = catalog().widgetRow(page, wid);
-      var pagesLabel = row.pages.map(function (k) {
-        var pg = catalog().getPageByKey(model(), k);
-        return pg ? pg.title : k;
+      var placementPages = placementPagesForWidget(pages, wid);
+      var pagesLabel = placementPages.map(function (pg) {
+        return pg.title || pg.key;
       }).join(', ');
-      var blocks = (row.blocks || []).length
-        ? row.blocks.map(function (b) { return '<code style="font-size:10px">' + esc(b) + '</code>'; }).join(' ')
-        : '—';
       var curSection = (row.slot && row.slot.section) || regions[0] || 'main';
+      if (regions.indexOf(curSection) < 0) curSection = regions[0] || 'main';
 
-      return '<tr data-ps-widget="' + esc(wid) + '">' +
+      return '<tr data-ps-widget="' + esc(wid) + '" data-ps-placement="' + (row.hasPlacement ? '1' : '0') + '">' +
         '<td><code style="font-size:11px;color:var(--ix-accent)">' + esc(wid) + '</code></td>' +
         '<td><strong>' + esc(row.title) + '</strong><div style="font-size:11px;color:var(--ix-text-muted);margin-top:2px">' + esc(row.description) + '</div></td>' +
-        '<td style="font-size:12px">' + esc(pagesLabel) + '</td>' +
-        '<td>' + blocks + '</td>' +
+        '<td style="font-size:12px">' + (pagesLabel ? esc(pagesLabel) : '<span class="ps-cell-dead">Chưa có Placement</span>') + '</td>' +
         '<td style="text-align:center">' +
         '<select class="ix-input ps-input-sm" data-ps-section="' + esc(wid) + '">' +
         regions.map(function (rk) {
@@ -255,7 +267,7 @@
       hintHtml +
       '<div class="ix-table-responsive"><table class="ix-table"><thead><tr>' +
       WIDGET_TABLE_HEAD +
-      '</tr></thead><tbody>' + (rows || '<tr><td colspan="9" style="text-align:center;color:var(--ix-text-muted)">' + esc(emptyLabel) + '</td></tr>') + '</tbody></table></div>' +
+      '</tr></thead><tbody>' + (rows || '<tr><td colspan="8" style="text-align:center;color:var(--ix-text-muted)">' + esc(emptyLabel) + '</td></tr>') + '</tbody></table></div>' +
       '<div style="margin-top:12px;text-align:right">' +
       '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="' + saveBtnId + '"><i class="ti ti-device-floppy"></i> ' + esc(saveLabel) + '</button>' +
       '</div>';
@@ -269,7 +281,7 @@
       '<p class="ps-hint">Danh mục được đồng bộ trực tiếp từ <strong>Kiến trúc 4 tầng · Tầng 4</strong>. Mỗi Widget mới tự xuất hiện tại đây với trạng thái mặc định tắt. Admin thiết lập Section · Pos · Span · Bật; User chỉ override được trên <strong>Nhà của tôi</strong>.</p>',
       'Tầng 4 chưa có Widget',
       'ps-save-widgets',
-      'Lưu cấu hình Widget'
+      'Lưu nháp Widget'
     );
   }
 
@@ -286,7 +298,7 @@
   function persistWidgetsFromDom() {
     var page = currentPage();
     persistLayoutSlotsFromDom('ps-widgets');
-    toast('Đã lưu cấu hình Widget cho ' + page.title);
+    toast('Đã lưu nháp Widget cho ' + page.title, 'primary');
     if (global.PageCompositionClient && PageCompositionClient.saveDraft) {
       PageCompositionClient.saveDraft(page.key).then(function (res) {
         if (res && res.ok) toast('Đã lưu nháp (page-composition) · chưa lên User Web', 'primary');
@@ -300,25 +312,23 @@
     var page = currentPage();
     var root = scopeRootId ? document.getElementById(scopeRootId) : document;
     if (!root) return;
-    root.querySelectorAll('[data-ps-section]').forEach(function (sel) {
-      var wid = sel.getAttribute('data-ps-section');
-      store().saveLayoutSlot(page.key, wid, { section: sel.value });
-    });
-    root.querySelectorAll('[data-ps-pos]').forEach(function (inp) {
-      var wid = inp.getAttribute('data-ps-pos');
-      store().saveLayoutSlot(page.key, wid, { position: Number(inp.value) });
-    });
-    root.querySelectorAll('[data-ps-span]').forEach(function (sel) {
-      var wid = sel.getAttribute('data-ps-span');
-      store().saveLayoutSlot(page.key, wid, { span: Number(sel.value) });
-    });
-    root.querySelectorAll('[data-ps-enabled]').forEach(function (cb) {
-      var wid = cb.getAttribute('data-ps-enabled');
-      store().saveLayoutSlot(page.key, wid, { enabled: cb.checked });
-    });
-    root.querySelectorAll('[data-ps-override]').forEach(function (cb) {
-      var wid = cb.getAttribute('data-ps-override');
-      store().saveLayoutSlot(page.key, wid, { userCanOverride: cb.checked });
+    root.querySelectorAll('[data-ps-widget]').forEach(function (row) {
+      /* Không biến 36 dòng Catalog mặc định thành Placement. Chỉ persist dòng
+         đã có Placement hoặc Admin thực sự thay đổi trong phiên này. */
+      if (row.getAttribute('data-ps-placement') !== '1' && row.getAttribute('data-ps-dirty') !== '1') return;
+      var wid = row.getAttribute('data-ps-widget');
+      var section = row.querySelector('[data-ps-section]');
+      var pos = row.querySelector('[data-ps-pos]');
+      var span = row.querySelector('[data-ps-span]');
+      var enabled = row.querySelector('[data-ps-enabled]');
+      var override = row.querySelector('[data-ps-override]');
+      store().saveLayoutSlot(page.key, wid, {
+        section: section ? section.value : 'main',
+        position: pos ? Number(pos.value) : 0,
+        span: span ? Number(span.value) : 12,
+        enabled: enabled ? enabled.checked : false,
+        userCanOverride: override ? override.checked : false
+      });
     });
   }
 
@@ -326,6 +336,8 @@
   function publishCurrentPage() {
     var page = currentPage();
     if (!page) return;
+    /* Publish luôn lấy đúng giá trị đang hiển thị trong UI. */
+    persistLayoutSlotsFromDom('ps-widgets');
     var run = global.IfluxPagePublishBridge && IfluxPagePublishBridge.publishPagePublished
       ? IfluxPagePublishBridge.publishPagePublished(page.key)
       : (global.PageCompositionClient && PageCompositionClient.publishPagePublished
@@ -334,7 +346,11 @@
     toast('Đang publish PagePublished · ' + page.key + '…', 'primary');
     run.then(function (res) {
       if (res && res.ok) {
+        if (res.page && store().hydratePublishedPage) {
+          store().hydratePublishedPage(page.key, res.page);
+        }
         toast('Đã publish PagePublished · ' + page.title + ' @v' + (res.version || '?'), 'success');
+        render();
       } else {
         toast('Publish thất bại: ' + ((res && res.error) || ''), 'danger');
       }
@@ -449,6 +465,16 @@
     });
 
     document.body.addEventListener('change', function (e) {
+      var placementRow = e.target.closest && e.target.closest('[data-ps-widget]');
+      if (placementRow && (
+        e.target.hasAttribute('data-ps-section') ||
+        e.target.hasAttribute('data-ps-pos') ||
+        e.target.hasAttribute('data-ps-span') ||
+        e.target.hasAttribute('data-ps-enabled') ||
+        e.target.hasAttribute('data-ps-override')
+      )) {
+        placementRow.setAttribute('data-ps-dirty', '1');
+      }
       var sec = e.target.getAttribute && e.target.getAttribute('data-ps-sec-visible');
       if (sec) {
         var page = currentPage();
@@ -460,9 +486,25 @@
     });
   }
 
+  function hydrateAllPublished() {
+    var client = global.IfluxWidgetPublishClient;
+    if (!client || !client.getPage || !store().hydratePublishedPage) return Promise.resolve();
+    state.loadingPublished = true;
+    var keys = model().map(function (page) { return page.key; });
+    return Promise.all(keys.map(function (key) {
+      return client.getPage(key).then(function (res) {
+        if (res && res.ok && res.data) store().hydratePublishedPage(key, res.data);
+      });
+    })).then(function () {
+      state.loadingPublished = false;
+    });
+  }
+
   function init() {
     bind();
-    setTab('sitemap');
+    hydrateAllPublished().then(function () {
+      setTab('sitemap');
+    });
   }
 
   global.PageSettingsPage = {

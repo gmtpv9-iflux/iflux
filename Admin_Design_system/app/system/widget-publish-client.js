@@ -48,6 +48,21 @@
     }).then(function (r) { return r.json(); });
   }
 
+  /** Đọc PagePublished hiện hành — dùng cho Reload Admin từ Server SoT. */
+  function getPage(pageKey) {
+    return fetch(apiBase() + '/pages/' + encodeURIComponent(String(pageKey || '').toLowerCase()) + '?embed=false', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+      cache: 'no-store'
+    }).then(function (r) {
+      if (r.status === 404) return { ok: false, notFound: true };
+      return r.json();
+    }).catch(function (err) {
+      return { ok: false, error: String(err && err.message ? err.message : err) };
+    });
+  }
+
   /** Templates Admin được chọn (SoT) — Pipeline resolve module. */
   var TEMPLATES = [
     { id: 'TMP-ARTIFACT-CARD', label: 'Artifact Card (Platform demo)' },
@@ -60,6 +75,7 @@
   global.IfluxWidgetPublishClient = {
     apiBase: apiBase,
     templates: TEMPLATES,
+    getPage: getPage,
     publishWidget: publishWidget,
     publishPage: publishPage
   };
