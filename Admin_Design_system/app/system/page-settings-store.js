@@ -87,6 +87,41 @@
     return write(data);
   }
 
+  /**
+   * Hydrate bản đã Publish từ Server SoT vào vùng draft hiện tại.
+   * Server luôn thắng khi reload; localStorage chỉ là draft/cache làm việc,
+   * không được merge ngược để ghi đè PagePublished.
+   */
+  function hydratePublishedPage(pageKey, published) {
+    if (!published || !Array.isArray(published.placements)) return readRaw();
+    var data = readRaw();
+    var bucket = pageBucket(pageKey, data);
+    bucket.layoutSlots = {};
+    published.placements.forEach(function (placement) {
+      if (!placement || !placement.widgetId) return;
+      bucket.layoutSlots[placement.widgetId] = {
+        section: placement.section,
+        position: Number(placement.position || 0),
+        span: Number(placement.span || 12),
+        enabled: placement.enabled !== false,
+        userCanOverride: !!placement.userCanOverride,
+        config: placement.config || {}
+      };
+    });
+    bucket.sections = {};
+    (published.sections || []).forEach(function (section) {
+      if (!section || !section.key) return;
+      bucket.sections[section.key] = {
+        label: section.label,
+        visible: section.visible !== false,
+        layout: section.layout || null
+      };
+    });
+    bucket.publishedVersion = published.version || null;
+    bucket.publishedAt = published.publishMeta && published.publishMeta.publishedAt || null;
+    return write(data);
+  }
+
   function resetAll() {
     localStorage.removeItem(STORAGE_KEY);
     return readRaw();
@@ -99,6 +134,7 @@
     saveLayoutSlot: saveLayoutSlot,
     removeLayoutSlot: removeLayoutSlot,
     purgeLayoutSlot: purgeLayoutSlot,
+    hydratePublishedPage: hydratePublishedPage,
     resetAll: resetAll
   };
 })(window);

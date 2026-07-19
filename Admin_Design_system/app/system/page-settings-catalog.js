@@ -30,9 +30,9 @@
   ];
 
   /**
-   * Vùng App Shell tùy chỉnh được (Widget) theo từng Page — rà soát cấu trúc
-   * thực tế của User Web. Chỉ 3 vùng: sidebar (trái) · main · sidebar-right (phải).
-   * Page nào không có vùng nào thì Admin không thêm widget vào vùng đó được.
+   * Region Catalog cho Widget Placement. Key nội bộ phải consumption đúng Host
+   * Runtime đang có; Admin chỉ hiển thị nhãn tiếng Việt, không phát minh/remap key.
+   * Page nào không có region thì Admin không được đặt Widget vào region đó.
    *   dashboard/home : .ifx-hub-sidebar (trái) + .ifx-hub-main
    *   market/flow    : <aside sidebar> trái + main (grid-12)
    *   account        : sidebar hồ sơ trái + main (tabs)
@@ -43,27 +43,32 @@
   var CUSTOMIZABLE_REGIONS = [
     { key: 'sidebar', label: 'Sidebar trái', icon: 'ti-layout-sidebar' },
     { key: 'main', label: 'Main content', icon: 'ti-layout-distribute-horizontal' },
-    { key: 'sidebar-right', label: 'Sidebar phải', icon: 'ti-layout-sidebar-right' }
+    { key: 'sidebar-right', label: 'Sidebar phải', icon: 'ti-layout-sidebar-right' },
+    { key: 'basic', label: 'Tab Thống kê cơ bản', icon: 'ti-chart-bar' },
+    { key: 'advanced', label: 'Tab Thống kê nâng cao', icon: 'ti-chart-dots' },
+    { key: 'exclusive', label: 'Tab Độc quyền', icon: 'ti-crown' },
+    { key: 'trading', label: 'Tab Thống kê', icon: 'ti-chart-bar' }
   ];
 
   var PAGE_REGIONS = {
     dashboard: ['sidebar', 'main'],
     market: ['sidebar', 'main'],
     community: ['main', 'sidebar-right'],
-    flow: ['sidebar', 'main'],
+    // Runtime Flow đã có đúng 4 host này. Main là Page Feature, không phải Widget Area.
+    flow: ['sidebar', 'basic', 'advanced', 'exclusive'],
     membership: ['main'],
     faq: ['main'],
     account: ['sidebar', 'main'],
     messages: ['sidebar', 'main'],
     // Knowledge Layer — mọi trang Danh sách/Chi tiết đều có Widget Area ở Sidebar trái
     stocks: ['sidebar', 'main'],
-    'stock-detail': ['sidebar', 'main'],
+    'stock-detail': ['sidebar', 'trading'],
     sectors: ['sidebar', 'main'],
-    'sector-detail': ['sidebar', 'main'],
+    'sector-detail': ['sidebar', 'trading'],
     ecosystems: ['sidebar', 'main'],
-    'eco-detail': ['sidebar', 'main'],
+    'eco-detail': ['sidebar', 'trading'],
     'chu-de': ['sidebar', 'main'],
-    'chu-de-detail': ['sidebar', 'main']
+    'chu-de-detail': ['sidebar', 'trading']
   };
 
   function pageRegions(pageKey) {
@@ -143,7 +148,10 @@
       description: 'Cấu hình Widget hiển thị tại Sidebar và Main content.',
       sections: cloneSections([
         { key: 'sidebar', visible: true, label: 'Sidebar dòng tiền' },
-        { key: 'main', visible: true, layout: 'grid-12' }
+        { key: 'main', visible: true, layout: 'grid-12' },
+        { key: 'basic', visible: true, label: 'Tab Thống kê cơ bản', layout: 'grid-12' },
+        { key: 'advanced', visible: true, label: 'Tab Thống kê nâng cao', layout: 'grid-12' },
+        { key: 'exclusive', visible: true, label: 'Tab Độc quyền', layout: 'grid-12' }
       ])
     },
     {
@@ -245,15 +253,19 @@
   ];
 
   function knowledgePage(id, key, title, slug, path, group, dynamic, sidebarLabel, description) {
+    var sections = [
+      { key: 'sidebar', visible: true, label: sidebarLabel || 'Sidebar tiện ích' },
+      { key: 'main', visible: true, layout: 'grid-12' }
+    ];
+    if (dynamic) {
+      sections.push({ key: 'trading', visible: true, label: 'Tab Thống kê', layout: 'grid-12' });
+    }
     return {
       id: id, key: key, title: title, slug: slug, path: path,
       order: 20 + KNOWLEDGE_PAGE_ORDER++,
       navVisible: false, status: 'active', userCustomizable: false,
       group: group, dynamic: !!dynamic, description: description || '',
-      sections: cloneSections([
-        { key: 'sidebar', visible: true, label: sidebarLabel || 'Sidebar tiện ích' },
-        { key: 'main', visible: true, layout: 'grid-12' }
-      ])
+      sections: cloneSections(sections)
     };
   }
   var KNOWLEDGE_PAGE_ORDER = 0;
@@ -318,17 +330,38 @@
   /** giữ tên export cũ để tương thích. */
   var STANDALONE_PAGES = PLATFORM_PAGES;
 
+  function cloneObject(value) {
+    return JSON.parse(JSON.stringify(value || {}));
+  }
+
   function cloneSections(overrides) {
     overrides = overrides || [];
     var byKey = {};
     overrides.forEach(function (o) { byKey[o.key] = o; });
-    return DEFAULT_SECTIONS.map(function (sec) {
+    var seen = {};
+    var result = DEFAULT_SECTIONS.map(function (sec) {
       var o = byKey[sec.key] || {};
       var out = {};
+      seen[sec.key] = true;
       Object.keys(sec).forEach(function (k) { out[k] = sec[k]; });
       Object.keys(o).forEach(function (k) { out[k] = o[k]; });
       return out;
     });
+    /* Runtime có thể có section ngoài App Shell mặc định (vd tab Flow/trading).
+       Giữ đúng key Runtime; Region Catalog không được remap hay làm mất section. */
+    overrides.forEach(function (o) {
+      if (seen[o.key]) return;
+      result.push({
+        id: 'SEC-' + String(o.key || '').toUpperCase(),
+        key: o.key,
+        label: o.label || regionLabel(o.key),
+        kind: o.kind || 'content',
+        visible: o.visible !== false,
+        locked: !!o.locked,
+        layout: o.layout || null
+      });
+    });
+    return result;
   }
 
   function widgetCatalog() {
@@ -427,7 +460,9 @@
         span: s.span != null ? Number(s.span) : slot.span,
         enabled: s.enabled != null ? !!s.enabled : slot.enabled,
         locked: false,
+        hasPlacement: !!layoutSaved[slot.widgetId] && !s.removed,
         added: false,
+        config: cloneObject(s.config || slot.config || {}),
         userCanOverride: base.userCustomizable && !slot.locked && (s.userCanOverride != null ? !!s.userCanOverride : true)
       });
     });
@@ -447,7 +482,9 @@
         span: s.span != null ? Number(s.span) : 12,
         enabled: s.enabled != null ? !!s.enabled : false,
         locked: false,
+        hasPlacement: true,
         added: true,
+        config: cloneObject(s.config || {}),
         userCanOverride: base.userCustomizable && (s.userCanOverride != null ? !!s.userCanOverride : true)
       });
     });
@@ -618,6 +655,7 @@
       pages: widgetPages(widgetId),
       blocks: dep.blocks || [],
       slot: slot,
+      hasPlacement: !!(slot && slot.hasPlacement),
       enabled: slot && slot.enabled != null ? !!slot.enabled : false,
       span: slot ? slot.span : 12,
       position: slot ? slot.position : 0,

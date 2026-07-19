@@ -95,7 +95,9 @@
   function toRuntimeManifest(page) {
     if (!page) return null;
     var widgets = (page.layoutSlots || [])
-      .filter(function (s) { return s.enabled !== false; })
+      /* Slot mặc định tắt chỉ phục vụ Catalog UI, chưa phải Placement.
+         Placement thật vẫn phải Publish dù enabled=false. */
+      .filter(function (s) { return !!s.hasPlacement || s.enabled !== false; })
       .sort(function (a, b) { return a.position - b.position; })
       .map(function (slot) {
         var rt = resolveRuntime(slot.widgetId);
