@@ -47,8 +47,7 @@
       '<span class="ix-chip">' + s.experience + ' Experience</span>' +
       '<span class="ix-chip">' + s.knowledge + ' Knowledge (entity)</span>' +
       '<span class="ix-chip">' + s.platform + ' Platform</span>' +
-      '<span class="ix-chip">' + s.dedicated + ' widget đặc thù</span>' +
-      '<span class="ix-chip ix-chip-warning">' + s.shared + ' widget dùng chung</span>';
+      '<span class="ix-chip ix-chip-warning">' + s.widgets + ' Widget Tầng 4</span>';
   }
 
   function renderUpdated() {
@@ -90,14 +89,14 @@
 
     var rows = pages.map(function (p) {
       if (p.layerHeader) {
-        return '<tr><td colspan="9" style="padding:0">' +
+        return '<tr><td colspan="8" style="padding:0">' +
           '<div style="display:flex;align-items:baseline;gap:10px;padding:14px 12px 6px;border-top:2px solid var(--ix-accent);background:rgba(255,255,255,.02)">' +
           '<strong style="font-size:13px;letter-spacing:.06em;color:var(--ix-accent)">' + esc(p.label) + '</strong>' +
           '<span style="font-size:11px;color:var(--ix-text-muted)">' + esc(p.desc) + '</span>' +
           '</div></td></tr>';
       }
       if (p.groupHead) {
-        return '<tr><td colspan="9" style="padding:8px 12px 4px 22px;background:rgba(255,255,255,.008)">' +
+        return '<tr><td colspan="8" style="padding:8px 12px 4px 22px;background:rgba(255,255,255,.008)">' +
           '<span style="display:inline-flex;align-items:center;gap:8px">' +
           '<i class="ti ' + esc(p.icon || 'ti-folder') + '" style="color:var(--ix-text-secondary)"></i>' +
           '<strong style="font-size:12px;color:var(--ix-text-secondary)">' + esc(p.title) + '</strong>' +
@@ -124,8 +123,7 @@
         '<td style="font-size:12px;color:var(--ix-text-secondary)">' + esc(p.path) + '</td>' +
         '<td style="text-align:center">' + (p.navVisible ? '<i class="ti ti-eye" style="color:var(--ix-accent)"></i>' : '—') + '</td>' +
         '<td>' + statusChip(p.status) + '</td>' +
-        '<td style="text-align:center">' + (isChild ? '—' : (p.dedicatedWidgetIds ? p.dedicatedWidgetIds.length : 0)) + '</td>' +
-        '<td style="text-align:center">' + (isChild ? '—' : (p.sharedWidgetIds ? p.sharedWidgetIds.length : 0)) + '</td>' +
+        '<td style="text-align:center">' + (isChild ? '—' : (p.widgetIds ? p.widgetIds.length : 0)) + '</td>' +
         '<td>' + actionCell + '</td>' +
         '</tr>';
     }).join('');
@@ -135,8 +133,8 @@
       '<table class="ix-table">' +
       '<thead><tr>' +
       '<th>ID</th><th>Tên trang</th><th>Key</th><th>Đường dẫn</th><th>Nav</th><th>Trạng thái</th>' +
-      '<th>Đặc thù</th><th>Chung</th><th></th>' +
-      '</tr></thead><tbody>' + (rows || '<tr><td colspan="9" style="text-align:center;color:var(--ix-text-muted)">Không có trang</td></tr>') + '</tbody></table></div>';
+      '<th>Widget</th><th></th>' +
+      '</tr></thead><tbody>' + (rows || '<tr><td colspan="8" style="text-align:center;color:var(--ix-text-muted)">Không có trang</td></tr>') + '</tbody></table></div>';
   }
 
   function renderLayout() {
@@ -202,11 +200,7 @@
     '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Block</th><th>Section</th>' +
     '<th>Pos</th><th>Span</th><th>Bật</th><th>User override</th>';
 
-  function widgetTableOverrideCell(page, wid, row, kind) {
-    if (kind === 'dedicated') {
-      return '<td style="text-align:center"><span class="ps-cell-dead" title="Widget đặc thù — user không được override/xóa">' +
-        '<input type="checkbox" class="ix-checkbox" disabled aria-label="Không áp dụng" /></span></td>';
-    }
+  function widgetTableOverrideCell(page, wid, row) {
     if (!page.userCustomizable) {
       return '<td style="text-align:center"><span class="ps-cell-dead" title="Trang không cho user tùy chỉnh">' +
         '<input type="checkbox" class="ix-checkbox" disabled aria-label="Không áp dụng" /></span></td>';
@@ -216,11 +210,11 @@
       (row.userCanOverride ? ' checked' : '') + ' /></td>';
   }
 
-  function widgetTableRows(page, kind) {
-    var ids = kind === 'dedicated' ? page.dedicatedWidgetIds : page.sharedWidgetIds;
+  function widgetTableRows(page) {
+    var ids = page.widgetIds || [];
     var regions = catalog().pageRegions(page.key);
     return ids.map(function (wid) {
-      var row = catalog().widgetRow(page, wid, kind);
+      var row = catalog().widgetRow(page, wid);
       var pagesLabel = row.pages.map(function (k) {
         var pg = catalog().getPageByKey(model(), k);
         return pg ? pg.title : k;
@@ -230,7 +224,7 @@
         : '—';
       var curSection = (row.slot && row.slot.section) || regions[0] || 'main';
 
-      return '<tr data-ps-widget="' + esc(wid) + '" data-ps-kind="' + esc(kind) + '">' +
+      return '<tr data-ps-widget="' + esc(wid) + '">' +
         '<td><code style="font-size:11px;color:var(--ix-accent)">' + esc(wid) + '</code></td>' +
         '<td><strong>' + esc(row.title) + '</strong><div style="font-size:11px;color:var(--ix-text-muted);margin-top:2px">' + esc(row.description) + '</div></td>' +
         '<td style="font-size:12px">' + esc(pagesLabel) + '</td>' +
@@ -248,15 +242,15 @@
           return '<option value="' + n + '"' + (row.span === n ? ' selected' : '') + '>' + n + '/12</option>';
         }).join('') + '</select></td>' +
         '<td style="text-align:center"><input type="checkbox" class="ix-checkbox" data-ps-enabled="' + esc(wid) + '"' + (row.enabled ? ' checked' : '') + ' /></td>' +
-        widgetTableOverrideCell(page, wid, row, kind) +
+        widgetTableOverrideCell(page, wid, row) +
         '</tr>';
     }).join('');
   }
 
-  function renderWidgetTable(rootId, page, kind, hintHtml, emptyLabel, saveBtnId, saveLabel) {
+  function renderWidgetTable(rootId, page, hintHtml, emptyLabel, saveBtnId, saveLabel) {
     var root = document.getElementById(rootId);
     if (!root) return;
-    var rows = widgetTableRows(page, kind);
+    var rows = widgetTableRows(page);
     root.innerHTML =
       hintHtml +
       '<div class="ix-table-responsive"><table class="ix-table"><thead><tr>' +
@@ -267,29 +261,15 @@
       '</div>';
   }
 
-  function renderDedicated() {
+  function renderWidgets() {
     var page = currentPage();
     renderWidgetTable(
-      'ps-dedicated',
+      'ps-widgets',
       page,
-      'dedicated',
-      '<p class="ps-hint">Widget <strong>đặc thù</strong> cố định trên trang (locked). Admin thiết lập đầy đủ Section · Pos · Span · Bật giống Widget tùy chỉnh. Khác biệt duy nhất: user <strong>không</strong> được override/xóa (cột cuối).</p>',
-      'Không có widget đặc thù',
-      'ps-save-dedicated',
-      'Lưu cấu hình widget đặc thù'
-    );
-  }
-
-  function renderShared() {
-    var page = currentPage();
-    renderWidgetTable(
-      'ps-shared',
-      page,
-      'shared',
-      '<p class="ps-hint">Widget <strong>tùy chỉnh</strong> có thể xuất hiện trên nhiều trang. Admin thiết lập mặc định Section · Pos · Span · Bật. User chỉ override được trên <strong>Nhà của tôi</strong> (cột cuối).</p>',
-      'Không có widget tùy chỉnh trên trang này',
-      'ps-save-shared',
-      'Lưu cấu hình widget tùy chỉnh'
+      '<p class="ps-hint">Danh mục được đồng bộ trực tiếp từ <strong>Kiến trúc 4 tầng · Tầng 4</strong>. Mỗi Widget mới tự xuất hiện tại đây với trạng thái mặc định tắt. Admin thiết lập Section · Pos · Span · Bật; User chỉ override được trên <strong>Nhà của tôi</strong>.</p>',
+      'Tầng 4 chưa có Widget',
+      'ps-save-widgets',
+      'Lưu cấu hình Widget'
     );
   }
 
@@ -297,18 +277,16 @@
     renderStats();
     renderUpdated();
     renderPagePicker('ps-page-layout');
-    renderPagePicker('ps-page-dedicated');
-    renderPagePicker('ps-page-shared');
+    renderPagePicker('ps-page-widgets');
     if (state.tab === 'sitemap') renderSitemap();
     if (state.tab === 'layout') renderLayout();
-    if (state.tab === 'dedicated') renderDedicated();
-    if (state.tab === 'shared') renderShared();
+    if (state.tab === 'widgets') renderWidgets();
   }
 
-  function persistSharedFromDom() {
+  function persistWidgetsFromDom() {
     var page = currentPage();
-    persistLayoutSlotsFromDom('ps-shared');
-    toast('Đã lưu cấu hình widget tùy chỉnh cho ' + page.title);
+    persistLayoutSlotsFromDom('ps-widgets');
+    toast('Đã lưu cấu hình Widget cho ' + page.title);
     if (global.PageCompositionClient && PageCompositionClient.saveDraft) {
       PageCompositionClient.saveDraft(page.key).then(function (res) {
         if (res && res.ok) toast('Đã lưu nháp (page-composition) · chưa lên User Web', 'primary');
@@ -344,20 +322,6 @@
     });
   }
 
-  /** Lưu cấu hình widget đặc thù (locked) của trang hiện tại — nháp composition. */
-  function persistDedicatedFromDom() {
-    var page = currentPage();
-    persistLayoutSlotsFromDom('ps-dedicated');
-    toast('Đã lưu cấu hình widget đặc thù cho ' + page.title);
-    if (global.PageCompositionClient && PageCompositionClient.saveDraft) {
-      PageCompositionClient.saveDraft(page.key).then(function (res) {
-        if (res && res.ok) toast('Đã lưu nháp (page-composition) · chưa lên User Web', 'primary');
-        else toast('Lưu nháp composition lỗi', 'warning');
-      });
-    }
-    render();
-  }
-
   /** Publish PagePublished cho trang đang chọn. */
   function publishCurrentPage() {
     var page = currentPage();
@@ -377,39 +341,52 @@
     });
   }
 
-  /** Tắt toàn bộ Widget tùy chỉnh (shared) trên mọi trang + publish.
-   *  Không đụng widget đặc thù (locked / dedicatedWidgetIds). */
-  function disableAllSharedWidgets() {
+  /** Tắt tạm toàn bộ Widget Tầng 4 trên mọi trang + publish PagePublished rỗng (audit hardcode User Web). */
+  function disableAllWidgets() {
     var pages = model();
-    var cat = catalog();
     pages.forEach(function (page) {
-      var dedicated = {};
-      (page.dedicatedWidgetIds || []).forEach(function (wid) { dedicated[wid] = true; });
-      if (cat && cat.defaultLayoutSlots) {
-        cat.defaultLayoutSlots(page.key).forEach(function (slot) {
-          if (slot && slot.locked && slot.widgetId) dedicated[slot.widgetId] = true;
-        });
-      }
-      (page.layoutSlots || []).forEach(function (slot) {
-        if (slot && slot.locked && slot.widgetId) dedicated[slot.widgetId] = true;
-      });
-      (page.sharedWidgetIds || []).forEach(function (wid) {
-        if (dedicated[wid]) return;
-        store().saveLayoutSlot(page.key, wid, { enabled: false });
+      (page.widgetIds || []).forEach(function (wid) {
+        store().saveLayoutSlot(page.key, wid, { enabled: false, locked: false });
       });
       (page.layoutSlots || []).forEach(function (slot) {
-        if (!slot || !slot.widgetId || dedicated[slot.widgetId]) return;
-        if (slot.locked) return;
-        store().saveLayoutSlot(page.key, slot.widgetId, { enabled: false });
+        if (!slot || !slot.widgetId) return;
+        store().saveLayoutSlot(page.key, slot.widgetId, { enabled: false, locked: false });
       });
     });
-    toast('Đã tắt toàn bộ Widget tùy chỉnh trên mọi trang');
-    if (global.PageCompositionClient && PageCompositionClient.saveAllDrafts) {
-      PageCompositionClient.saveAllDrafts().then(function () {
-        toast('Đã lưu nháp composition · chưa lên User Web', 'primary');
-      });
-    }
+    toast('Đã tắt toàn bộ Widget trên mọi trang · đang lưu nháp & publish…', 'primary');
     render();
+
+    var saveRun = global.PageCompositionClient && PageCompositionClient.saveAllDrafts
+      ? PageCompositionClient.saveAllDrafts()
+      : Promise.resolve([]);
+
+    saveRun.then(function () {
+      var publishOne = global.IfluxPagePublishBridge && IfluxPagePublishBridge.publishPagePublished
+        ? function (key) { return IfluxPagePublishBridge.publishPagePublished(key); }
+        : null;
+      if (!publishOne) {
+        toast('Đã lưu nháp · thiếu bridge Publish — User Web chưa đổi', 'danger');
+        return;
+      }
+      var keys = pages.map(function (p) { return p.key; });
+      var chain = Promise.resolve({ ok: 0, fail: 0 });
+      keys.forEach(function (key) {
+        chain = chain.then(function (acc) {
+          return publishOne(key).then(function (res) {
+            if (res && res.ok) acc.ok += 1;
+            else acc.fail += 1;
+            return acc;
+          });
+        });
+      });
+      return chain.then(function (acc) {
+        if (acc.fail) {
+          toast('Publish xong ' + acc.ok + '/' + keys.length + ' trang · lỗi ' + acc.fail, 'danger');
+        } else {
+          toast('Đã publish PagePublished rỗng · ' + acc.ok + ' trang (User Web hết Widget composition)', 'success');
+        }
+      });
+    });
   }
 
   function bind() {
@@ -427,7 +404,7 @@
       });
     }
 
-    ['ps-page-layout', 'ps-page-dedicated', 'ps-page-shared'].forEach(function (id) {
+    ['ps-page-layout', 'ps-page-widgets'].forEach(function (id) {
       var sel = document.getElementById(id);
       if (!sel) return;
       sel.addEventListener('change', function () {
@@ -452,20 +429,16 @@
         }
         return;
       }
-      if (e.target.closest('#ps-save-dedicated')) {
-        persistDedicatedFromDom();
-        return;
-      }
-      if (e.target.closest('#ps-save-shared')) {
-        persistSharedFromDom();
+      if (e.target.closest('#ps-save-widgets') || e.target.closest('#ps-save-shared')) {
+        persistWidgetsFromDom();
         return;
       }
       if (e.target.closest('#ps-publish')) {
         publishCurrentPage();
         return;
       }
-      if (e.target.closest('#ps-disable-all-shared')) {
-        disableAllSharedWidgets();
+      if (e.target.closest('#ps-disable-all-widgets') || e.target.closest('#ps-disable-all-shared')) {
+        disableAllWidgets();
         return;
       }
       if (e.target.closest('#ps-reset')) {
@@ -492,5 +465,9 @@
     setTab('sitemap');
   }
 
-  global.PageSettingsPage = { init: init, disableAllSharedWidgets: disableAllSharedWidgets };
+  global.PageSettingsPage = {
+    init: init,
+    disableAllWidgets: disableAllWidgets,
+    disableAllSharedWidgets: disableAllWidgets
+  };
 })(window);

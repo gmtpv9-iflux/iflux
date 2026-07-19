@@ -54,7 +54,16 @@
     membership: ['main'],
     faq: ['main'],
     account: ['sidebar', 'main'],
-    messages: ['sidebar', 'main']
+    messages: ['sidebar', 'main'],
+    // Knowledge Layer — mọi trang Danh sách/Chi tiết đều có Widget Area ở Sidebar trái
+    stocks: ['sidebar', 'main'],
+    'stock-detail': ['sidebar', 'main'],
+    sectors: ['sidebar', 'main'],
+    'sector-detail': ['sidebar', 'main'],
+    ecosystems: ['sidebar', 'main'],
+    'eco-detail': ['sidebar', 'main'],
+    'chu-de': ['sidebar', 'main'],
+    'chu-de-detail': ['sidebar', 'main']
   };
 
   function pageRegions(pageKey) {
@@ -71,8 +80,6 @@
     }
     return regionKey;
   }
-
-  var PAGE_SIDEBAR_WIDGETS = ['WGT-PRF-001', 'WGT-PRF-002'];
 
   var DEFAULT_PAGES = [
     {
@@ -101,7 +108,7 @@
       navVisible: true,
       status: 'active',
       userCustomizable: false,
-      description: 'Widget đặc thù cố định — Sidebar: Tổng quan + Độ rộng · Main: Heatmap Ngành + Họ CP.',
+      description: 'Cấu hình Widget hiển thị tại Sidebar và Main content.',
       sections: cloneSections([
         { key: 'sidebar', visible: true, label: 'Sidebar thị trường' },
         { key: 'main', visible: true, layout: 'grid-12' }
@@ -117,7 +124,7 @@
       navVisible: true,
       status: 'active',
       userCustomizable: false,
-      description: 'Widget đặc thù cố định — Main: Heatmap CP + Chủ đề tích cực (dưới là feed tin) · Sidebar phải: Heatmap Chủ đề + Thành viên tích cực.',
+      description: 'Cấu hình Widget hiển thị tại Main content và Sidebar phải.',
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12' },
         { key: 'sidebar-right', visible: true, label: 'Sidebar phải' }
@@ -133,7 +140,7 @@
       navVisible: true,
       status: 'active',
       userCustomizable: false,
-      description: 'Widget đặc thù cố định — Sidebar: Top mua/bán ròng CP & Ngành · Main: Thống kê cơ bản, nâng cao, Độc quyền.',
+      description: 'Cấu hình Widget hiển thị tại Sidebar và Main content.',
       sections: cloneSections([
         { key: 'sidebar', visible: true, label: 'Sidebar dòng tiền' },
         { key: 'main', visible: true, layout: 'grid-12' }
@@ -218,38 +225,69 @@
   var PAGE_LAYER = {
     dashboard: 'experience', market: 'experience', community: 'experience',
     flow: 'experience', membership: 'experience', faq: 'experience',
-    account: 'platform', messages: 'platform'
+    account: 'platform', messages: 'platform',
+    stocks: 'knowledge', 'stock-detail': 'knowledge',
+    sectors: 'knowledge', 'sector-detail': 'knowledge',
+    ecosystems: 'knowledge', 'eco-detail': 'knowledge',
+    'chu-de': 'knowledge', 'chu-de-detail': 'knowledge'
   };
 
   /**
-   * Knowledge entities — URL top-level (không còn nằm dưới /community/*).
-   * dynamic:true = trang template (URL có tham số :ticker/:slug/:id/:username).
-   * status 'planned' = đã định nghĩa IA, UI chưa dựng.
+   * Knowledge Groups — metadata nhóm entity (header cho tab Sitemap).
+   * Các trang Danh sách/Chi tiết của 4 nhóm này là Page composable (KNOWLEDGE_PAGES):
+   * đều có Widget Area ở Sidebar trái → xuất hiện trong picker Cài đặt trang.
    */
-  var KNOWLEDGE_ENTITIES = [
-    { group: 'Stocks', icon: 'ti-chart-candle', desc: 'Cổ phiếu — entity trung tâm của toàn hệ thống.', pages: [
-      { id: 'PAGE-STOCKS', key: 'stocks', title: 'Danh sách cổ phiếu', path: '/stocks', status: 'planned' },
-      { id: 'PAGE-STOCK', key: 'stock-detail', title: 'Chi tiết cổ phiếu', path: '/stocks/:ticker', dynamic: true, status: 'active' }
-    ]},
-    { group: 'Sectors', icon: 'ti-category', desc: 'Ngành — slug tên (vd /sectors/ngan-hang).', pages: [
-      { id: 'PAGE-SECTORS', key: 'sectors', title: 'Danh sách ngành', path: '/sectors', status: 'planned' },
-      { id: 'PAGE-SECTOR', key: 'sector-detail', title: 'Chi tiết ngành', path: '/sectors/:slug', dynamic: true, status: 'active' }
-    ]},
-    { group: 'Ecosystems', icon: 'ti-users-group', desc: 'Họ cổ phiếu — slug code (vd /ecosystems/vin).', pages: [
-      { id: 'PAGE-ECOS', key: 'ecosystems', title: 'Danh sách họ cổ phiếu', path: '/ecosystems', status: 'planned' },
-      { id: 'PAGE-ECO', key: 'eco-detail', title: 'Chi tiết họ cổ phiếu', path: '/ecosystems/:slug', dynamic: true, status: 'active' }
-    ]},
-    { group: 'Chủ đề', icon: 'ti-book-2', desc: 'Chủ đề / narrative thị trường (vd /chu-de/dau-tu-cong).', pages: [
-      { id: 'PAGE-CHU-DE', key: 'chu-de', title: 'Danh sách chủ đề', path: '/chu-de', status: 'planned' },
-      { id: 'PAGE-CHU-DE-DETAIL', key: 'chu-de-detail', title: 'Chi tiết chủ đề', path: '/chu-de/:slug', dynamic: true, status: 'active' }
-    ]},
-    { group: 'Community', icon: 'ti-users', desc: 'Bài viết, tác giả — thuộc Cộng đồng. Tag bài: cổ phiếu · chủ đề · ngành · hệ sinh thái.', pages: [
-      { id: 'PAGE-COM-POSTS', key: 'com-posts', title: 'Bài viết cộng đồng', path: '/community/posts', status: 'planned' },
-      { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/community/posts/:id', dynamic: true, status: 'planned' },
-      { id: 'PAGE-COM-AUTHOR', key: 'com-author', title: 'Trang tác giả', path: '/community/authors/:username', dynamic: true, status: 'planned' },
-      { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/community/write', status: 'active' }
-    ]}
+  var KNOWLEDGE_GROUPS = [
+    { group: 'Stocks', icon: 'ti-chart-candle', desc: 'Cổ phiếu — entity trung tâm của toàn hệ thống.' },
+    { group: 'Sectors', icon: 'ti-category', desc: 'Ngành — slug tên (vd /nganh/ngan-hang).' },
+    { group: 'Ecosystems', icon: 'ti-users-group', desc: 'Họ cổ phiếu — slug code (vd /ho-co-phieu/vin).' },
+    { group: 'Chủ đề', icon: 'ti-book-2', desc: 'Chủ đề / narrative thị trường (vd /chu-de/dau-tu-cong).' }
   ];
+
+  function knowledgePage(id, key, title, slug, path, group, dynamic, sidebarLabel, description) {
+    return {
+      id: id, key: key, title: title, slug: slug, path: path,
+      order: 20 + KNOWLEDGE_PAGE_ORDER++,
+      navVisible: false, status: 'active', userCustomizable: false,
+      group: group, dynamic: !!dynamic, description: description || '',
+      sections: cloneSections([
+        { key: 'sidebar', visible: true, label: sidebarLabel || 'Sidebar tiện ích' },
+        { key: 'main', visible: true, layout: 'grid-12' }
+      ])
+    };
+  }
+  var KNOWLEDGE_PAGE_ORDER = 0;
+
+  /**
+   * Knowledge Pages — Page composable Tầng Knowledge. Mỗi trang có Widget Area
+   * ở Sidebar trái; Admin đặt Widget (Tầng 4) vào Sidebar hoặc Main như mọi Page khác.
+   */
+  var KNOWLEDGE_PAGES = [
+    knowledgePage('PAGE-STOCKS', 'stocks', 'Danh sách cổ phiếu', 'co-phieu', '/co-phieu', 'Stocks', false, 'Sidebar cổ phiếu', 'Danh sách cổ phiếu — Sidebar: bộ lọc/heatmap tiện ích · Main: bảng cổ phiếu.'),
+    knowledgePage('PAGE-STOCK', 'stock-detail', 'Chi tiết cổ phiếu', 'co-phieu', '/co-phieu/:ma', 'Stocks', true, 'Sidebar cổ phiếu', 'Chi tiết cổ phiếu (template) — Sidebar: tiện ích liên quan · Main: chart & tab.'),
+    knowledgePage('PAGE-SECTORS', 'sectors', 'Danh sách ngành', 'nganh', '/nganh', 'Sectors', false, 'Sidebar ngành', 'Danh sách ngành — Sidebar: tiện ích · Main: danh sách ngành.'),
+    knowledgePage('PAGE-SECTOR', 'sector-detail', 'Chi tiết ngành', 'nganh', '/nganh/:slug', 'Sectors', true, 'Sidebar ngành', 'Chi tiết ngành (template) — Sidebar: tiện ích liên quan · Main: nội dung ngành.'),
+    knowledgePage('PAGE-ECOS', 'ecosystems', 'Danh sách họ cổ phiếu', 'ho-co-phieu', '/ho-co-phieu', 'Ecosystems', false, 'Sidebar họ cổ phiếu', 'Danh sách họ cổ phiếu — Sidebar: tiện ích · Main: danh sách.'),
+    knowledgePage('PAGE-ECO', 'eco-detail', 'Chi tiết họ cổ phiếu', 'ho-co-phieu', '/ho-co-phieu/:slug', 'Ecosystems', true, 'Sidebar họ cổ phiếu', 'Chi tiết họ cổ phiếu (template) — Sidebar: tiện ích liên quan · Main: nội dung.'),
+    knowledgePage('PAGE-CHU-DE', 'chu-de', 'Danh sách chủ đề', 'chu-de', '/chu-de', 'Chủ đề', false, 'Sidebar chủ đề', 'Danh sách chủ đề — Sidebar: tiện ích · Main: danh sách chủ đề.'),
+    knowledgePage('PAGE-CHU-DE-DETAIL', 'chu-de-detail', 'Chi tiết chủ đề', 'chu-de', '/chu-de/:slug', 'Chủ đề', true, 'Sidebar chủ đề', 'Chi tiết chủ đề / câu chuyện (template) — Sidebar: tiện ích liên quan · Main: nội dung.')
+  ];
+
+  /** Community entities — vẫn ở dạng planned utility (chưa composable). */
+  var COMMUNITY_ENTITY_PAGES = [
+    { id: 'PAGE-COM-POSTS', key: 'com-posts', title: 'Bài viết cộng đồng', path: '/community/posts', status: 'planned' },
+    { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/community/posts/:id', dynamic: true, status: 'planned' },
+    { id: 'PAGE-COM-AUTHOR', key: 'com-author', title: 'Trang tác giả', path: '/community/authors/:username', dynamic: true, status: 'planned' },
+    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/community/write', status: 'active' }
+  ];
+
+  /** Alias tương thích: shape cũ [{group,icon,desc,pages}] cho consumer ngoài. */
+  var KNOWLEDGE_ENTITIES = KNOWLEDGE_GROUPS.map(function (g) {
+    return {
+      group: g.group, icon: g.icon, desc: g.desc,
+      pages: KNOWLEDGE_PAGES.filter(function (p) { return p.group === g.group; })
+    };
+  }).concat([{ group: 'Community', icon: 'ti-users', desc: 'Bài viết, tác giả — thuộc Cộng đồng.', pages: COMMUNITY_ENTITY_PAGES }]);
 
   /** Trang con (tab) của Page composable (account/messages). */
   var CHILD_PAGES = {
@@ -298,6 +336,8 @@
   }
 
   function allWidgetIds() {
+    var l4 = global.PlatformLayersWidgets;
+    if (l4 && l4.widgetIds) return l4.widgetIds();
     var cat = widgetCatalog();
     if (cat && cat.allWidgetIdsInLibrary) return cat.allWidgetIdsInLibrary();
     return [];
@@ -313,90 +353,13 @@
     return (getPageDeploy(widgetId).pages || []).slice();
   }
 
-  function isDedicated(widgetId) {
-    var pages = widgetPages(widgetId);
-    return pages.length === 1;
-  }
-
-  function isShared(widgetId) {
-    return widgetPages(widgetId).length > 1;
-  }
-
   /**
-   * Slot đặc thù cố định theo yêu cầu Product Composition (4 trang chính).
-   * Tách khỏi defaultLayoutSlots để tránh đệ quy với dedicated/shared helpers.
+   * Cài đặt trang tiêu thụ trực tiếp Widget Catalog của Tầng 4.
+   * Widget không thuộc Page; mọi Widget canonical đều có thể được Admin đặt trên
+   * mọi Page, mặc định tắt cho tới khi Admin cấu hình placement.
    */
-  function fixedDedicatedSlots(pageKey) {
-    if (pageKey === 'dashboard') {
-      return [
-        { widgetId: 'WGT-PRF-001', scope: 'page', section: 'sidebar', position: 0, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-PRF-002', scope: 'page', section: 'sidebar', position: 1, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-WAT-001', scope: 'page', section: 'main', position: 0, span: 12, enabled: true, locked: true, userCanOverride: true }
-      ];
-    }
-    if (pageKey === 'market') {
-      return [
-        { widgetId: 'WGT-MKT-001', scope: 'page', section: 'sidebar', position: 0, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-MKT-002', scope: 'page', section: 'sidebar', position: 1, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-MKT-004', scope: 'page', section: 'main', position: 0, span: 6, enabled: true, locked: true },
-        { widgetId: 'WGT-MKT-005', scope: 'page', section: 'main', position: 1, span: 6, enabled: true, locked: true }
-      ];
-    }
-    if (pageKey === 'flow') {
-      return [
-        { widgetId: 'WGT-FLW-SUBJ-STOCK', scope: 'page', section: 'sidebar', position: 0, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-SUBJ-SECTOR', scope: 'page', section: 'sidebar', position: 1, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-STAT_STOCK', scope: 'page', section: 'main', position: 0, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-STAT_SECTOR', scope: 'page', section: 'main', position: 1, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-STAT_HST', scope: 'page', section: 'main', position: 2, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-STAT_STORY', scope: 'page', section: 'main', position: 3, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-EX_TM_IN', scope: 'page', section: 'main', position: 4, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-EX_TM_SECTOR_IN', scope: 'page', section: 'main', position: 5, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-EX_TM_HST_IN', scope: 'page', section: 'main', position: 6, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-FLW-EX_TM_STORY_IN', scope: 'page', section: 'main', position: 7, span: 12, enabled: true, locked: true }
-      ];
-    }
-    if (pageKey === 'community') {
-      return [
-        { widgetId: 'WGT-COM-001', scope: 'page', section: 'main', position: 0, span: 6, enabled: true, locked: true },
-        { widgetId: 'WGT-COM-CHUDE-TOP', scope: 'page', section: 'main', position: 1, span: 6, enabled: true, locked: true },
-        { widgetId: 'WGT-MKT-006', scope: 'page', section: 'sidebar-right', position: 0, span: 12, enabled: true, locked: true },
-        { widgetId: 'WGT-COM-002', scope: 'page', section: 'sidebar-right', position: 1, span: 12, enabled: true, locked: true }
-      ];
-    }
-    return null;
-  }
-
-  /**
-   * Widget đặc thù = slot mặc định locked trên page (SoT Product Composition),
-   * không suy từ pages.length===1 (vì nhiều WGT vẫn deploy được lên dashboard khi bật tùy chỉnh).
-   */
-  function dedicatedWidgetsForPage(pageKey) {
-    var fixed = fixedDedicatedSlots(pageKey);
-    var ids = [];
-    (fixed || []).forEach(function (slot) {
-      if (!slot || !slot.widgetId) return;
-      if (ids.indexOf(slot.widgetId) < 0) ids.push(slot.widgetId);
-    });
-    if (pageKey === 'dashboard') {
-      PAGE_SIDEBAR_WIDGETS.forEach(function (wid) {
-        if (ids.indexOf(wid) < 0) ids.unshift(wid);
-      });
-    }
-    return ids;
-  }
-
-  /**
-   * Widget có thể được Admin đặt trên bất kỳ Page nào.
-   * WGT_DEPLOY.pages chỉ còn là metadata tương thích cũ, không phải điều kiện placement.
-   * Khái niệm dedicated/shared vẫn giữ tạm và sẽ được loại ở backlog riêng.
-   */
-  function sharedWidgetsForPage(pageKey) {
-    var dedicated = dedicatedWidgetsForPage(pageKey);
-    return allWidgetIds().filter(function (wid) {
-      if (dedicated.indexOf(wid) >= 0) return false;
-      return true;
-    });
+  function widgetsForPage() {
+    return allWidgetIds();
   }
 
   function resolveWidgetCopy(widgetId) {
@@ -414,23 +377,17 @@
   }
 
   function defaultLayoutSlots(pageKey) {
-    var fixed = fixedDedicatedSlots(pageKey);
-    if (fixed) return fixed.slice();
-
-    var slots = [];
-    var pos = 0;
-    sharedWidgetsForPage(pageKey).forEach(function (wid) {
-      slots.push({
+    return widgetsForPage(pageKey).map(function (wid, idx) {
+      return {
         widgetId: wid,
         scope: 'page',
         section: 'main',
-        position: pos++,
+        position: idx,
         span: 12,
         enabled: false,
         locked: false
-      });
+      };
     });
-    return slots;
   }
 
   function mergePage(base, saved) {
@@ -469,16 +426,17 @@
         position: s.position != null ? Number(s.position) : slot.position,
         span: s.span != null ? Number(s.span) : slot.span,
         enabled: s.enabled != null ? !!s.enabled : slot.enabled,
-        locked: slot.locked || !!s.locked,
+        locked: false,
         added: false,
         userCanOverride: base.userCustomizable && !slot.locked && (s.userCanOverride != null ? !!s.userCanOverride : true)
       });
     });
-    // Widget do Admin thêm mới (không có trong default) — key phải là WGT-*.
-    // Shared/custom mặc định enabled:false (chỉ bật khi Admin tick).
+    var canonicalWidget = {};
+    widgetsForPage(base.key).forEach(function (wid) { canonicalWidget[wid] = true; });
+    // Chỉ nhận placement của Widget canonical Tầng 4; Page Component không giả làm Widget.
     Object.keys(layoutSaved).forEach(function (key) {
       if (seenWidget[key]) return;
-      if (String(key).indexOf('WGT-') !== 0) return;
+      if (!canonicalWidget[key]) return;
       var s = layoutSaved[key];
       if (!s || s.removed) return;
       mergedSlots.push({
@@ -495,29 +453,14 @@
     });
     page.layoutSlots = mergedSlots;
 
-    page.dedicatedWidgetIds = dedicatedWidgetsForPage(base.key);
-    page.sharedWidgetIds = sharedWidgetsForPage(base.key);
-    // Seed shared widgets vào layoutSlots với enabled:false nếu chưa có — để Admin UI + publish phản ánh đúng.
-    (page.sharedWidgetIds || []).forEach(function (wid, idx) {
-      if (seenWidget[wid]) return;
-      var existing = null;
-      mergedSlots.forEach(function (s) { if (s.widgetId === wid) existing = s; });
-      if (existing) return;
-      mergedSlots.push({
-        widgetId: wid,
-        scope: 'page',
-        section: 'main',
-        position: 1000 + idx,
-        span: 12,
-        enabled: false,
-        locked: false,
-        added: false,
-        userCanOverride: !!base.userCustomizable
-      });
-      seenWidget[wid] = true;
-    });
+    page.widgetIds = widgetsForPage(base.key);
+    // Alias tương thích cho consumer cũ; UI Cài đặt trang chỉ dùng widgetIds.
+    page.dedicatedWidgetIds = [];
+    page.sharedWidgetIds = page.widgetIds.slice();
     page.layoutSlots = mergedSlots;
     page.layer = PAGE_LAYER[base.key] || 'experience';
+    page.group = base.group || null;
+    page.dynamic = !!base.dynamic;
 
     return page;
   }
@@ -525,7 +468,7 @@
   function buildModel(storeData) {
     storeData = storeData || {};
     var pagesStore = storeData.pages || {};
-    return DEFAULT_PAGES.map(function (base) {
+    return DEFAULT_PAGES.concat(KNOWLEDGE_PAGES).map(function (base) {
       return mergePage(base, pagesStore[base.key] || pagesStore[base.id]);
     }).sort(function (a, b) { return a.order - b.order; });
   }
@@ -571,6 +514,7 @@
       status: base.status || 'active',
       userCustomizable: false,
       description: base.desc || '',
+      widgetIds: [],
       dedicatedWidgetIds: [],
       sharedWidgetIds: [],
       childCount: 0,
@@ -598,14 +542,20 @@
 
     // ── KNOWLEDGE ──
     rows.push({ layerHeader: true, layer: 'knowledge', label: LAYERS[1].label, desc: LAYERS[1].desc });
-    KNOWLEDGE_ENTITIES.forEach(function (ent) {
-      rows.push({ groupHead: true, layer: 'knowledge', title: ent.group, icon: ent.icon, desc: ent.desc });
-      ent.pages.forEach(function (pg) {
-        var r = utilityRow(pg, 'knowledge');
-        r.level = 1;
-        r.group = ent.group;
-        rows.push(r);
+    KNOWLEDGE_GROUPS.forEach(function (g) {
+      rows.push({ groupHead: true, layer: 'knowledge', title: g.group, icon: g.icon, desc: g.desc });
+      model.filter(function (p) { return p.layer === 'knowledge' && p.group === g.group; }).forEach(function (page) {
+        page.level = 0;
+        page.childCount = 0;
+        rows.push(page);
       });
+    });
+    rows.push({ groupHead: true, layer: 'knowledge', title: 'Community', icon: 'ti-users', desc: 'Bài viết, tác giả — thuộc Cộng đồng (planned).' });
+    COMMUNITY_ENTITY_PAGES.forEach(function (pg) {
+      var r = utilityRow(pg, 'knowledge');
+      r.level = 1;
+      r.group = 'Community';
+      rows.push(r);
     });
 
     // ── PLATFORM ──
@@ -621,34 +571,27 @@
   }
 
   function countEntityPages() {
-    var n = 0;
-    KNOWLEDGE_ENTITIES.forEach(function (e) { n += e.pages.length; });
-    return n;
+    // Knowledge composable pages đã nằm trong model; chỉ còn Community planned.
+    return COMMUNITY_ENTITY_PAGES.length;
   }
 
   function stats(model) {
-    var dedicated = 0;
-    var shared = 0;
-    allWidgetIds().forEach(function (wid) {
-      if (isDedicated(wid)) dedicated += 1;
-      else if (isShared(wid)) shared += 1;
-    });
     var childTotal = 0;
     Object.keys(CHILD_PAGES).forEach(function (k) { childTotal += CHILD_PAGES[k].length; });
     var experienceCount = model.filter(function (p) { return p.layer === 'experience'; }).length;
+    var knowledgeCount = model.filter(function (p) { return p.layer === 'knowledge'; }).length;
     var platformComposable = model.filter(function (p) { return p.layer === 'platform'; }).length;
-    var entityCount = countEntityPages();
-    var total = model.length + childTotal + entityCount + PLATFORM_PAGES.length;
+    var communityCount = countEntityPages();
+    var total = model.length + childTotal + communityCount + PLATFORM_PAGES.length;
     return {
       pages: total,
       experience: experienceCount,
-      knowledge: entityCount,
+      knowledge: knowledgeCount + communityCount,
       platform: platformComposable + PLATFORM_PAGES.length + childTotal,
       main: model.length,
-      children: childTotal + entityCount + PLATFORM_PAGES.length,
+      children: childTotal + communityCount + PLATFORM_PAGES.length,
       active: total,
-      dedicated: dedicated,
-      shared: shared,
+      widgets: allWidgetIds().length,
       customizable: model.filter(function (p) { return p.userCustomizable; }).length
     };
   }
@@ -660,28 +603,26 @@
     return null;
   }
 
-  function widgetRow(page, widgetId, kind) {
+  function widgetRow(page, widgetId) {
     var copy = resolveWidgetCopy(widgetId);
     var dep = getPageDeploy(widgetId);
     var slot = null;
     (page.layoutSlots || []).forEach(function (s) {
       if (s.widgetId === widgetId) slot = s;
     });
-    // Shared / Widget tùy chỉnh: mặc định TẮT nếu chưa có slot hoặc chưa set enabled.
-    var defaultEnabled = kind === 'dedicated';
     return {
       widgetId: widgetId,
-      kind: kind,
+      kind: 'widget',
       title: copy.title,
       description: copy.description,
       pages: widgetPages(widgetId),
       blocks: dep.blocks || [],
       slot: slot,
-      enabled: slot && slot.enabled != null ? !!slot.enabled : defaultEnabled,
+      enabled: slot && slot.enabled != null ? !!slot.enabled : false,
       span: slot ? slot.span : 12,
       position: slot ? slot.position : 0,
       userCanOverride: slot ? slot.userCanOverride : false,
-      locked: slot ? slot.locked : kind === 'dedicated'
+      locked: false
     };
   }
 
@@ -700,16 +641,17 @@
     buildSitemap: buildSitemap,
     LAYERS: LAYERS,
     KNOWLEDGE_ENTITIES: KNOWLEDGE_ENTITIES,
+    KNOWLEDGE_GROUPS: KNOWLEDGE_GROUPS,
+    KNOWLEDGE_PAGES: KNOWLEDGE_PAGES,
+    COMMUNITY_ENTITY_PAGES: COMMUNITY_ENTITY_PAGES,
     PLATFORM_PAGES: PLATFORM_PAGES,
     CHILD_PAGES: CHILD_PAGES,
     STANDALONE_PAGES: STANDALONE_PAGES,
     stats: stats,
     getPageByKey: getPageByKey,
-    dedicatedWidgetsForPage: dedicatedWidgetsForPage,
-    sharedWidgetsForPage: sharedWidgetsForPage,
+    allWidgetIds: allWidgetIds,
+    widgetsForPage: widgetsForPage,
     widgetRow: widgetRow,
-    isDedicated: isDedicated,
-    isShared: isShared,
     defaultLayoutSlots: defaultLayoutSlots
   };
 })(window);
