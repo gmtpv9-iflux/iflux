@@ -145,6 +145,16 @@
     );
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   /* ── Panel Thống kê (KLGD / GTGD) — mount lazy vì cần ApexCharts ── */
   function tradingPanel() {
     return (
@@ -155,6 +165,8 @@
       '</section>'
     );
   }
+
+  /* END DETACHED (CG-1.0) */
 
   /* ── Panel Lịch sự kiện (chỉ CP) ── */
   function eventsPanel(ticker) {
@@ -231,6 +243,16 @@
     return '<div class="ifx-stock-col ifx-stock-col--center ifx-stock-col--wide">' + html + '</div>';
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   function mountTrading(col) {
     if (col._ecTradingMounted) return;
     var lib = global.IfluxMarketLiquidity;
@@ -246,6 +268,8 @@
     if (valEl) lib.mountBlock(valEl, 'value');
     col._ecTradingMounted = true;
   }
+
+  /* END DETACHED (CG-1.0) */
 
   function mountDailyFeed(col, ctx) {
     var mount = col.querySelector('[data-ec-daily-feed]');

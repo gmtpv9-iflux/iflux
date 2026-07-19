@@ -65,6 +65,16 @@ export function applyHubLayout(root) {
   if (main) main.classList.add('ifx-hub-main');
 }
 
+/* ==========================================================================
+ * DETACHED (CG-1.0) — quarantine
+ * Ownership removed under Single Render Rule.
+ * Status: Detached from Production Runtime.
+ * Allowed: read · audit · delete (Wave 5).
+ * Forbidden: new callers · import · export · dependency · reuse ·
+ *            feature · logic edits · move/refactor.
+ * Pending: Wave 3 Orphan Register → Wave 4–5.
+ * ==========================================================================
+ */
 /**
  * Layout Dòng tiền: sidebar + main với tab Cơ bản / Nâng cao / Độc quyền.
  * Chỉ chrome App Shell — không mount Widget.
@@ -151,6 +161,8 @@ export function applyFlowLayout(root) {
 
   return { panels: panels, activateTab: activateTab };
 }
+
+/* END DETACHED (CG-1.0) */
 
 /** Panel main Dòng tiền cho từng Widget ID. */
 export function flowPanelForWidgetId(widgetId) {

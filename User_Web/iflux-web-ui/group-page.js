@@ -105,6 +105,16 @@
     );
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   /* Giao dịch theo chủ thể (gộp) — UI dùng TMP-DIVERGING-BARS
      (IfluxBlockTemplates.renderDivergingBars*); trang chỉ chuẩn hóa dữ liệu. */
   function T() { return global.IfluxBlockTemplates; }
@@ -160,6 +170,8 @@
     });
   }
 
+  /* END DETACHED (CG-1.0) */
+
   function kindIcon(kind) {
     if (kind === 'sector') return 'ti-category';
     if (kind === 'family') return 'ti-users-group';
@@ -187,6 +199,16 @@
     );
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   function renderMemberChips(tickers) {
     return '<div class="ifx-group-members">' + (tickers || []).map(function (tk) {
       var href = global.IfluxSeoUrl
@@ -195,6 +217,8 @@
       return '<a class="ix-chip ix-chip-sm" href="' + href + '">' + esc(tk) + '</a>';
     }).join('') + '</div>';
   }
+
+  /* END DETACHED (CG-1.0) */
 
   function renderLeft(detail) {
     return (

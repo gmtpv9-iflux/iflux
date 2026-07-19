@@ -147,6 +147,16 @@
     });
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   /* Giao dịch theo chủ thể — UI dùng TMP-DIVERGING-BARS
      (IfluxBlockTemplates.renderDivergingBars*); trang chỉ chuẩn hóa dữ liệu. */
   function T() { return global.IfluxBlockTemplates; }
@@ -202,6 +212,8 @@
       formatAxis: fmtFlowAxis
     });
   }
+
+  /* END DETACHED (CG-1.0) */
 
   function renderHeader(detail) {
     var heart = wlUi() ? wlUi().heartButtonHtml(detail.ticker) : '';

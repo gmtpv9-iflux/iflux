@@ -204,6 +204,16 @@
     container.innerHTML = html || '<div class="ifx-mkt-empty">Chưa có cổ phiếu</div>';
   }
 
+  /* ==========================================================================
+   * DETACHED (CG-1.0) — quarantine
+   * Ownership removed under Single Render Rule.
+   * Status: Detached from Production Runtime.
+   * Allowed: read · audit · delete (Wave 5).
+   * Forbidden: new callers · import · export · dependency · reuse ·
+   *            feature · logic edits · move/refactor.
+   * Pending: Wave 3 Orphan Register → Wave 4–5.
+   * ==========================================================================
+   */
   /* ── Sidebar: card bao quanh dùng class market-card có sẵn ── */
   function sidebarCard(mountId, icon, title) {
     return (
@@ -266,6 +276,8 @@
       IfluxMarketRankings.mount(rankEl, subject);
     }
   }
+
+  /* END DETACHED (CG-1.0) */
 
   function buildMain(main, kind) {
     if (!main) return;

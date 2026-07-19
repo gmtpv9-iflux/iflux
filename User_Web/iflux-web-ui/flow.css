@@ -169,6 +169,13 @@
 .ifx-flow-tab-panel.active {
   display: block;
 }
+/* ==========================================================================
+ * DETACHED (CG-1.0) — quarantine
+ * No active Runtime or Page consumer. Read only.
+ * Forbidden: reuse · logic edits · new dependency · rename.
+ * Pending: Wave 3 Orphan Register → Wave 4–5.
+ * ==========================================================================
+ */
 .ifx-flow-tab-panel__sub {
   margin: 0 0 16px;
   font-size: var(--ifx-font-size-14);
@@ -186,6 +193,7 @@
   margin: 0;
   flex: 1;
 }
+/* END DETACHED (CG-1.0) */
 .ifx-flow-score-grid {
   display: grid;
   grid-template-columns: 1fr;
