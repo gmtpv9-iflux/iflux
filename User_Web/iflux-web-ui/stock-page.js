@@ -233,10 +233,6 @@
           renderHeader(detail) +
           '<div class="ifx-stock-chart" data-ifx-ohlc-chart></div>' +
         '</section>' +
-        '<section class="ifx-stock-panel">' +
-          '<h2 class="ifx-stock-panel__title"><i class="ti ti-arrows-exchange"></i> Giao dịch theo chủ thể</h2>' +
-          netFlowHtml(detail.net_flow, 'retail') +
-        '</section>' +
       '</div>'
     );
   }

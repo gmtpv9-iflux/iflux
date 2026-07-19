@@ -225,7 +225,7 @@
       tabsBar({ entityType: isStock ? 'stock' : (ctx.kind || '_default'), commentCount: ctx.commentCount }) +
       panel('news', true, feedHtml) +
       panel('info', false, infoHtml) +
-      panel('trading', false, tradingPanel()) +
+      panel('trading', false, '') +
       (isStock ? panel('events', false, eventsPanel(ctx.ticker)) : '') +
       panel('comments', false, ctx.commentsSectionHtml || '');
     return '<div class="ifx-stock-col ifx-stock-col--center ifx-stock-col--wide">' + html + '</div>';
@@ -279,7 +279,6 @@
       col.querySelectorAll('[data-ec-panel]').forEach(function (p) {
         p.classList.toggle('active', p.getAttribute('data-ec-panel') === key);
       });
-      if (key === 'trading') mountTrading(col);
       if (typeof ctx.onTab === 'function') ctx.onTab(key, col);
       if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
     });
@@ -289,11 +288,6 @@
 
     if (!col._ecTickBound) {
       col._ecTickBound = true;
-      document.addEventListener('iflux-market-tick', function () {
-        if (col._ecTradingMounted && global.IfluxMarketLiquidity) {
-          global.IfluxMarketLiquidity.tickAll();
-        }
-      });
       document.addEventListener('iflux-stock-comments-change', function () {
         if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
       });

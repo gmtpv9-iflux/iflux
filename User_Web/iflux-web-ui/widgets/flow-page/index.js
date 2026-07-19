@@ -59,18 +59,12 @@ var LAYOUT_HTML =
           '<button type="button" class="ix-tab ifx-topnav-link--exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-topnav-link__stack"><span class="ifx-topnav-chip">Đột phá</span><span class="ifx-topnav-link__label">Độc quyền</span></span></button>' +
         '</div>' +
         '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
-          '<p class="ifx-flow-tab-panel__sub">Top 10 cổ phiếu — dòng tiền vào / ra mạnh nhất</p>' +
           '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
         '</div>' +
         '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-ADV">' +
-          '<p class="ifx-flow-tab-panel__sub">Top 10 ngành · hệ sinh thái · chủ đề — vào / ra</p>' +
           '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
         '</div>' +
         '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-EX">' +
-          '<div class="ifx-flow-tab-panel__head">' +
-            '<p class="ifx-flow-tab-panel__sub">Top 10 dòng tiền thông minh (TM) — radar · rủi ro FOMO · tín hiệu Cơ hội / Rủi ro</p>' +
-            '<span class="ix-chip ix-chip-warning ix-chip-sm">Elite</span>' +
-          '</div>' +
           '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
         '</div>' +
       '</div>' +

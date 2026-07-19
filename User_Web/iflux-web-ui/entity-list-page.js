@@ -361,13 +361,6 @@
   }
 
   function refreshOnTick(main, subject) {
-    document.querySelectorAll('[data-ifx-mkt-heatmap]').forEach(function (canvas) {
-      var src = canvas.getAttribute('data-ifx-mkt-heatmap');
-      if (global.IfluxMarketHeatmap && src) IfluxMarketHeatmap.paint(canvas, src);
-    });
-    if (global.IfluxMarketRankings) IfluxMarketRankings.refreshAll();
-    renderStats(document.getElementById('elp-stats'));
-
     var groups = main._elpGroups || [];
     var idx = activeIndex(main);
     var g = groups[Number(idx)];
@@ -411,7 +404,6 @@
     var main = document.querySelector('[data-elp-main]');
     if (!main) return;
 
-    buildSidebar(sidebar, kind, meta);
     buildMain(main, kind);
     bindTabs(main);
     bindLazyScroll(main);
