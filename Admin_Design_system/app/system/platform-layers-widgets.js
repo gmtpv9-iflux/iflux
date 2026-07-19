@@ -1574,6 +1574,8 @@
   var STORAGE_KEY = 'iflux_l4_widgets_v2';
   var STORAGE_BACKUP_KEY = 'iflux_l4_widgets_v1_backup_phase0b';
   var migrationError = null;
+  /* Báo cáo migrate từng item: item nào migrate fail sẽ được flag ở đây (không im lặng). */
+  var migrationReport = [];
 
   function emptyStore() {
     return { schemaVersion: SCHEMA_VERSION, items: {}, custom: {}, deleted: [], updatedAt: null };
@@ -1755,27 +1757,82 @@
     }
     var legacy = parseStore(rawV1, 1);
     var next = emptyStore();
-    /* Migration tolerant theo từng item: item không migrate được (vd nguồn V1 ngoài L1/L2/L3/calc,
-       formula ambiguous) GIỮ NGUYÊN V1 — xử lý khi audit đúng Widget đó, không chặn Widget khác. */
+    var report = [];
+    /* Triết lý migrate: THÀNH CÔNG → persist V2. THẤT BẠI → flag + reason, KHÔNG im lặng,
+       KHÔNG dùng như bản hợp lệ. Item fail vẫn giữ payload V1 (để phục hồi/audit) nhưng
+       được đánh dấu _migrationRequired nên schemaVersion vẫn = 1 → downstream không coi là V2,
+       không đè lên Definition chuẩn ở source. Không chặn item khác migrate. */
     Object.keys(legacy.items).forEach(function (id) {
       try { next.items[id] = migratePatch(legacy.items[id]); }
-      catch (e) { next.items[id] = clone(legacy.items[id]); }
+      catch (e) {
+        next.items[id] = flagMigrationFailure(legacy.items[id], e.message);
+        report.push({ id: id, scope: 'items', reason: e.message });
+      }
     });
     Object.keys(legacy.custom).forEach(function (id) {
       try { next.custom[id] = migrateDefinition(legacy.custom[id]); }
-      catch (e2) { next.custom[id] = clone(legacy.custom[id]); }
+      catch (e2) {
+        next.custom[id] = flagMigrationFailure(legacy.custom[id], e2.message);
+        report.push({ id: id, scope: 'custom', reason: e2.message });
+      }
     });
     next.deleted = legacy.deleted.slice();
     next.updatedAt = legacy.updatedAt;
+    next.migrationReport = report;
     var rawV2 = JSON.stringify(next);
     try {
       localStorage.setItem(STORAGE_KEY, rawV2);
       if (localStorage.getItem(STORAGE_KEY) !== rawV2) throw new Error('Không xác minh được Store V2 sau persist');
+      migrationReport = report;
+      warnMigrationReport(report);
       return next;
     } catch (err) {
       localStorage.removeItem(STORAGE_KEY);
       throw err;
     }
+  }
+
+  /* Đánh dấu item migrate fail: giữ nguyên payload V1 để phục hồi, gắn cờ + lý do rõ ràng. */
+  function flagMigrationFailure(v1Item, reason) {
+    var flagged = clone(v1Item || {});
+    flagged.schemaVersion = 1;
+    flagged._migrationRequired = true;
+    flagged._migrationError = String(reason || 'Migration fail không rõ lý do');
+    return flagged;
+  }
+
+  function warnMigrationReport(report) {
+    if (!report || !report.length) return;
+    try {
+      var msg = 'Tầng 4 Widget — cần migrate thủ công ' + report.length + ' item (không tự dùng bản V1): ' +
+        report.map(function (r) { return r.id + ' (' + r.reason + ')'; }).join(' | ');
+      if (global.console && global.console.warn) global.console.warn('[iflux][L4-migration]', msg);
+    } catch (e) { /* ignore */ }
+  }
+
+  /* Danh sách item còn cần migrate (đọc từ store V2 + báo cáo migrate gần nhất). */
+  function migrationRequiredItems() {
+    var out = [];
+    var seen = {};
+    (migrationReport || []).forEach(function (r) {
+      if (!seen[r.id]) { seen[r.id] = true; out.push({ id: r.id, scope: r.scope, reason: r.reason }); }
+    });
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        ['items', 'custom'].forEach(function (scope) {
+          var bag = parsed[scope] || {};
+          Object.keys(bag).forEach(function (id) {
+            if (bag[id] && bag[id]._migrationRequired && !seen[id]) {
+              seen[id] = true;
+              out.push({ id: id, scope: scope, reason: bag[id]._migrationError || 'Migration Required' });
+            }
+          });
+        });
+      }
+    } catch (e) { /* ignore */ }
+    return out;
   }
 
   function readStore() {
@@ -2110,10 +2167,16 @@
   function updatedAt() { return readStore().updatedAt; }
   function storeStatus() {
     var store = readStore();
+    var required = migrationRequiredItems();
     return {
       schemaVersion: store.schemaVersion,
       migrationError: migrationError ? migrationError.message : null,
-      storageKey: store.schemaVersion === SCHEMA_VERSION ? STORAGE_KEY : STORAGE_KEY_V1
+      /* Migrate từng item: KHÔNG im lặng — item fail được flag + reason ở đây. */
+      migrationReport: (store.migrationReport || migrationReport || []).slice(),
+      migrationRequired: required,
+      hasMigrationRequired: required.length > 0,
+      storageKey: store.schemaVersion === SCHEMA_VERSION ? STORAGE_KEY : STORAGE_KEY_V1,
+      storageKeys: { v1: STORAGE_KEY_V1, v2: STORAGE_KEY, v1Backup: STORAGE_BACKUP_KEY }
     };
   }
 
@@ -2200,6 +2263,7 @@
     resetAll: resetAll,
     updatedAt: updatedAt,
     storeStatus: storeStatus,
+    migrationRequiredItems: migrationRequiredItems,
     templateName: templateName,
     allTemplateIds: allTemplateIds,
     compatibleTemplates: compatibleTemplates,
