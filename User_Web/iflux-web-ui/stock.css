@@ -698,22 +698,3 @@ a.ifx-mention:hover {
   .ifx-stock-col--center { order: 0; }
 }
 
-/* ==========================================================================
- * DETACHED (CG-1.0) — quarantine
- * No active Runtime or Page consumer. Read only.
- * Forbidden: reuse · logic edits · new dependency · rename.
- * Pending: Wave 3 Orphan Register → Wave 4–5.
- * ==========================================================================
- */
-.ifx-group-members {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-inline-sm);
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--ix-border);
-}
-.ifx-group-members .ix-chip {
-  text-decoration: none;
-}
-/* END DETACHED (CG-1.0) */

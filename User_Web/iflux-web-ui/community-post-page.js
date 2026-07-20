@@ -190,7 +190,7 @@
 
         '<section class="ifx-com-side-card">' +
           '<h2 class="ifx-com-side-card__title"><i class="ti ti-hierarchy-2"></i> Hệ sinh thái</h2>' +
-          '<p class="ifx-com-side-card__sub">Họ cổ phiếu liên quan — bấm để mở</p>' +
+          '<p class="ifx-com-side-card__sub">Hệ sinh thái liên quan — bấm để mở</p>' +
           '<div class="ifx-com-side-list">' + ui().sidebarEcosystemRowsHtml(post) + '</div>' +
         '</section>' +
 

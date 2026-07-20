@@ -1,5 +1,5 @@
-/* Trang Danh sách Entity — Cổ phiếu / Ngành / Họ CP / Chủ đề
- * Bản chất: danh sách cổ phiếu nhóm theo tab (sàn / ngành / họ / chủ đề).
+/* Trang Danh sách Entity — Cổ phiếu / Ngành / Họ CP / Câu chuyện
+ * Bản chất: danh sách cổ phiếu nhóm theo tab (sàn / ngành / họ / câu chuyện).
  * Sidebar 1/4: Heatmap + Thống kê theo chủ thể + Top 10 hiệu suất (theo chủ thể của trang).
  * Main 3/4: tabs + danh sách cổ phiếu (heart = watchlist, bell = cảnh báo, có trạng thái).
  * Chỉ dùng class/component có sẵn trong Design System — không tự chế CSS.
@@ -13,7 +13,8 @@
     sectors: 'sector',
     ecosystems: 'family',
     stories: 'chu-de',
-    'chu-de': 'chu-de'
+    'chu-de': 'chu-de',
+    'cau-chuyen': 'chu-de'
   };
 
   var META = {
@@ -39,14 +40,15 @@
       top10Title: 'Top 10 hệ sinh thái hiệu suất'
     },
     stories: {
-      title: 'Danh sách chủ đề',
-      intro: 'Cổ phiếu nhóm theo chủ đề thị trường. Chọn tab để xem danh sách mã theo từng chủ đề.',
+      title: 'Danh sách câu chuyện',
+      intro: 'Cổ phiếu nhóm theo câu chuyện thị trường. Chọn tab để xem danh sách mã theo từng câu chuyện.',
       heatIcon: 'ti ti-layout-grid',
       top10Icon: 'ti ti-trophy',
-      top10Title: 'Top 10 chủ đề hiệu suất'
+      top10Title: 'Top 10 câu chuyện hiệu suất'
     }
   };
   META['chu-de'] = META.stories;
+  META['cau-chuyen'] = META.stories;
 
   var EXCHANGE_TABS = [
     { key: 'HSX', label: 'HOSE' },
@@ -161,8 +163,11 @@
         tickers: tax().getGroupTickers(subject, g.id)
       };
     }).filter(function (g) {
-      /* Chủ đề từ DB vẫn hiện dù chưa gắn mã / mã chưa có trong mock snapshot */
-      if (kind === 'stories' || kind === 'chu-de') return true;
+      if (kind === 'stories' || kind === 'chu-de' || kind === 'cau-chuyen') {
+        var story = tax().getGroup(subject, g.id) || {};
+        if (story.normalizedStatus && story.normalizedStatus !== 'mature') return false;
+        return true;
+      }
       return g.tickers.length > 0;
     });
   }
@@ -203,81 +208,6 @@
     var html = list.map(function (t) { return rowHtmlFor(t, stocks); }).join('');
     container.innerHTML = html || '<div class="ifx-mkt-empty">Chưa có cổ phiếu</div>';
   }
-
-  /* ==========================================================================
-   * DETACHED (CG-1.0) — quarantine
-   * Ownership removed under Single Render Rule.
-   * Status: Detached from Production Runtime.
-   * Allowed: read · audit · delete (Wave 5).
-   * Forbidden: new callers · import · export · dependency · reuse ·
-   *            feature · logic edits · move/refactor.
-   * Pending: Wave 3 Orphan Register → Wave 4–5.
-   * ==========================================================================
-   */
-  /* ── Sidebar: card bao quanh dùng class market-card có sẵn ── */
-  function sidebarCard(mountId, icon, title) {
-    return (
-      '<div class="ifx-mkt-card">' +
-        (global.IfluxBlockTemplates && IfluxBlockTemplates.renderWgtHead
-          ? IfluxBlockTemplates.renderWgtHead(title, '', icon)
-          : ('<div class="ifx-widget__header"><h3><i class="' + esc(icon) + '"></i> ' + esc(title) + '</h3></div>')) +
-        '<div class="ifx-mkt-card__body"><div id="' + esc(mountId) + '"></div></div>' +
-      '</div>'
-    );
-  }
-
-  function avgPerf(groups) {
-    if (!groups || !groups.length) return 0;
-    var sum = 0;
-    groups.forEach(function (g) { sum += (g.perf || 0); });
-    return Math.round((sum / groups.length) * 100) / 100;
-  }
-
-  /* Thống kê theo 4 chủ thể — tái dùng TPL-INDEX-GRID (ifx-index-card) */
-  function renderStats(el) {
-    if (!el || !mk() || !global.IfluxBlockTemplates) return;
-    var stocks = stocksMap();
-    var tickers = Object.keys(stocks);
-    var stockAvg = 0;
-    if (tickers.length) {
-      var s = 0;
-      tickers.forEach(function (t) { s += (stocks[t].change_pct || 0); });
-      stockAvg = Math.round((s / tickers.length) * 100) / 100;
-    }
-    var sectorG = mk().getHeatmapGroups('sector');
-    var familyG = mk().getHeatmapGroups('family');
-    var storyG = mk().getHeatmapGroups('chu-de');
-
-    var items = [
-      { name: 'Cổ phiếu', value: tickers.length, change_pct: stockAvg },
-      { name: 'Ngành', value: sectorG.length, change_pct: avgPerf(sectorG) },
-      { name: 'Họ cổ phiếu', value: familyG.length, change_pct: avgPerf(familyG) },
-      { name: 'Chủ đề', value: storyG.length, change_pct: avgPerf(storyG) }
-    ];
-    el.innerHTML = IfluxBlockTemplates.renderIndexGrid(items);
-  }
-
-  function buildSidebar(sidebar, kind, meta) {
-    if (!sidebar) return;
-    var subject = SUBJECT[kind];
-    sidebar.innerHTML =
-      sidebarCard('elp-heat', meta.heatIcon, 'Biểu đồ (heatmap)') +
-      sidebarCard('elp-stats', 'ti ti-chart-bar', 'Thống kê theo chủ thể') +
-      sidebarCard('elp-top10', meta.top10Icon, meta.top10Title);
-
-    var heatEl = document.getElementById('elp-heat');
-    if (heatEl && global.IfluxMarketHeatmap) IfluxMarketHeatmap.mount(heatEl, subject);
-
-    renderStats(document.getElementById('elp-stats'));
-
-    var rankEl = document.getElementById('elp-top10');
-    if (rankEl && global.IfluxMarketRankings) {
-      rankEl.setAttribute('data-ifx-mkt-rank', subject);
-      IfluxMarketRankings.mount(rankEl, subject);
-    }
-  }
-
-  /* END DETACHED (CG-1.0) */
 
   function buildMain(main, kind) {
     if (!main) return;
@@ -401,6 +331,12 @@
     onTick();
   }
 
+  function hydrateBeforeRender(kind) {
+    if (!(kind === 'stories' || kind === 'chu-de' || kind === 'cau-chuyen')) return Promise.resolve();
+    if (!tax() || !tax().hydrateChuDeFromApi) return Promise.resolve();
+    return tax().hydrateChuDeFromApi().then(function () {}).catch(function () {});
+  }
+
   function init(kind) {
     kind = kind || 'stocks';
     if (!SUBJECT[kind]) kind = 'stocks';
@@ -416,22 +352,27 @@
     var main = document.querySelector('[data-elp-main]');
     if (!main) return;
 
-    buildMain(main, kind);
-    bindTabs(main);
-    bindLazyScroll(main);
+    main.innerHTML = '<div class="ifx-mkt-card"><div class="ifx-mkt-card__body">Đang tải dữ liệu…</div></div>';
+    hydrateBeforeRender(kind).then(function () {
+      buildMain(main, kind);
+      bindTabs(main);
+      bindLazyScroll(main);
 
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(main);
+      if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(main);
 
-    document.addEventListener('iflux-watchlist-change', function () {
-      if (global.IfluxWatchlistUI) IfluxWatchlistUI.refreshHearts();
+      document.addEventListener('iflux-watchlist-change', function () {
+        if (global.IfluxWatchlistUI) IfluxWatchlistUI.refreshHearts();
+      });
+      document.addEventListener('iflux-alerts-change', function () {
+        if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
+      });
+
+      startRealtime(main, SUBJECT[kind]);
+      if (global.IfluxInsightShare) IfluxInsightShare.patchAll(document);
     });
-    document.addEventListener('iflux-alerts-change', function () {
-      if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
-    });
-
-    startRealtime(main, SUBJECT[kind]);
-    if (global.IfluxInsightShare) IfluxInsightShare.patchAll(document);
   }
 
-  global.IfluxEntityListPage = { init: init };
+  global.IfluxEntityListPage = {
+    init: init
+  };
 })(window);

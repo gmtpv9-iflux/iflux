@@ -247,7 +247,7 @@ Ví dụ:
 - Follow
 
 ---
-
+ 
 ### Search Score
 
 Đánh giá nhu cầu thực tế của cộng đồng. Được tính từ các chỉ số như:
@@ -419,11 +419,11 @@ Danh sách hiển thị:
 
 Để thống nhất mô hình dữ liệu:
 
-* **Topic** là thực thể (Entity) duy nhất liên quan tới bài viết.
-* "Story" chỉ là cách gọi đối với **Topic đã trưởng thành**.
+* **Topic** là duy nhất liên quan tới bài viết.
+* Story chỉ được thêm mới khi xuất hiện **Topic đã trưởng thành**. Topic đó chính là 1 Story ở trạng thái Mới hình thành
 * **Topic Score** là chỉ số đánh giá mức độ phát triển của Topic.
 * **Topic Status** phản ánh giai đoạn hiện tại trong vòng đời của Topic.
 
-Toàn bộ widget, thuật toán xếp hạng và các trang hiển thị đều sử dụng **Topic** làm dữ liệu gốc. Việc hiển thị "Story" chỉ là một cách biểu diễn dựa trên **Trạng thái của Topic**, không phải một loại dữ liệu khác.
+Toàn bộ widget, thuật toán xếp hạng và các trang hiển thị đều sử dụng **Story** làm dữ liệu gốc. 
 
 ---

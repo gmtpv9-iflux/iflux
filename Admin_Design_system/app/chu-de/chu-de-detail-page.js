@@ -31,7 +31,7 @@
   function renderNotFound() {
     var root = document.getElementById('adm-str-detail-root');
     if (!root) return;
-    root.innerHTML = '<div class="ix-card" style="padding:32px;text-align:center"><p>Không tìm thấy chủ đề.</p><a href="registry.html" class="ix-btn ix-btn-primary ix-btn-sm">Về danh mục</a></div>';
+    root.innerHTML = '<div class="ix-card" style="padding:32px;text-align:center"><p>Không tìm thấy chủ đề.</p><a href="/admin/cong-dong/danh-sach-chu-de" class="ix-btn ix-btn-primary ix-btn-sm">Về danh sách chủ đề</a></div>';
   }
 
   function renderHistory(items) {
@@ -55,7 +55,7 @@
       '<div style="display:grid;gap:12px;font-size:13px">' +
         '<div><span style="color:var(--ix-text-muted)">Cổ phiếu</span><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">' + stockHtml + '</div></div>' +
         '<div><span style="color:var(--ix-text-muted)">Ngành</span><div style="margin-top:4px">' + sectorHtml + '</div></div>' +
-        '<a href="mapping.html?id=' + encodeURIComponent(storyId) + '" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-route"></i> Quản lý ánh xạ</a>' +
+        '<a href="/admin/chu-de/mapping?id=' + encodeURIComponent(storyId) + '" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-route"></i> Quản lý ánh xạ</a>' +
       '</div>'
     );
   }
@@ -68,7 +68,7 @@
     document.title = story.name + ' · Chủ đề · iFlux Admin';
 
     root.innerHTML =
-      '<div class="ix-breadcrumb ix-mb-24"><a href="registry.html">Danh mục chủ đề</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>' + esc(story.name) + '</span></div>' +
+      '<div class="ix-breadcrumb ix-mb-24"><a href="/admin/cong-dong/danh-sach-chu-de">Danh sách chủ đề</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>' + esc(story.name) + '</span></div>' +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">' +
         '<div><h1 class="ix-page-title" style="margin:0">' + esc(story.name) + '</h1>' +
         '<p style="font-size:13px;color:var(--ix-text-muted);margin:6px 0 0">' + esc(story.slug) + '</p></div>' +

@@ -29,22 +29,13 @@ export default {
     { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }
   ],
   widgets: [
-    {
-      id: 'WGT-PRF-001',
-      title: 'Thông tin hồ sơ',
-      section: 'sidebar',
-      position: 0,
-      span: 12,
-      enabled: true,
-      locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/profile-card/index.js' + VER,
-      css: CSS_HUB
-    },
+    /* WGT-PRF-001 (Hồ sơ) — Owner: không đặc thù; không inject cứng vào Host sidebar.
+       Profile page giữ widget module riêng — không đụng widgets/profile-card. */
     {
       id: 'WGT-PRF-002',
       title: 'Gói cước',
       section: 'sidebar',
-      position: 1,
+      position: 0,
       span: 12,
       enabled: true,
       locked: true,

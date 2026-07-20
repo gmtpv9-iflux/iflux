@@ -1,13 +1,13 @@
 /**
- * Page Manifest — Chi tiết hệ sinh thái (/ho-co-phieu/:id)
+ * Page Manifest — Chi tiết hệ sinh thái (/he-sinh-thai/:id)
  */
 var VER = '?v=w2Host20260720';
 
 export default {
   pageKey: 'family',
-  path: '/ho-co-phieu',
+  path: '/he-sinh-thai',
   title: '',
-  documentTitle: 'Họ cổ phiếu · iFlux',
+  documentTitle: 'Hệ sinh thái · iFlux',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

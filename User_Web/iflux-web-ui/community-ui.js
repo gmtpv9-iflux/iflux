@@ -429,7 +429,7 @@
     }
     return groups.map(function (g) {
       var perf = getGroupPerformance('family', g.id);
-      var href = seo() ? seo().ecosystemHref(g.id) : '/ho-co-phieu/' + encodeURIComponent(g.id);
+      var href = seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id);
       return sideLinkRowHtml(href, 'ti-hierarchy-2', g.name, perf);
     }).join('');
   }

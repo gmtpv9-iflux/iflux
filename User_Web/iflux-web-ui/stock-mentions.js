@@ -213,7 +213,7 @@
       return '/nganh/' + encodeURIComponent(id);
     }
     if (entity.type === 'family') {
-      return '/ho-co-phieu/' + encodeURIComponent(id);
+      return '/he-sinh-thai/' + encodeURIComponent(id);
     }
     if (entity.type === 'story' || entity.type === 'chu-de') {
       return '/chu-de/' + encodeURIComponent(id);

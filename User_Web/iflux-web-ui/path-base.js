@@ -35,6 +35,7 @@
     '/stocks': '/User_Web/stocks/',
     '/nganh': '/User_Web/sectors/',
     '/sectors': '/User_Web/sectors/',
+    '/he-sinh-thai': '/User_Web/ecosystems/',
     '/ho-co-phieu': '/User_Web/ecosystems/',
     '/ecosystems': '/User_Web/ecosystems/',
     '/chu-de': '/User_Web/chu-de/',
@@ -130,7 +131,7 @@
 
     if (/^\/co-phieu\//i.test(path) || /^\/stocks\//i.test(path)) return '/User_Web/stock/';
     if (/^\/nganh\//i.test(path) || /^\/sectors\//i.test(path)) return '/User_Web/sector/';
-    if (/^\/ho-co-phieu\//i.test(path) || /^\/ecosystems\//i.test(path)) return '/User_Web/family/';
+    if (/^\/he-sinh-thai\//i.test(path) || /^\/ho-co-phieu\//i.test(path) || /^\/ecosystems\//i.test(path)) return '/User_Web/family/';
     if (/^\/chu-de\//i.test(path) || /^\/stories\//i.test(path)) return '/User_Web/chu-de/';
     if (/^\/cong-dong\/bai-viet\//i.test(path) || /^\/community\/posts\//i.test(path)) return '/User_Web/community/';
     if (/^\/cong-dong\//i.test(path) || /^\/community\//i.test(path)) return '/User_Web/community/';

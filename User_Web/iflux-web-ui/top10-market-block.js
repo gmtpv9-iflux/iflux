@@ -13,7 +13,7 @@
 
   var SUBTITLES = {
     sector: 'Ngành · cường độ hiệu suất theo phiên (%)',
-    ecosystem: 'Họ cổ phiếu · cường độ hiệu suất theo phiên (%)',
+    ecosystem: 'Hệ sinh thái · cường độ hiệu suất theo phiên (%)',
     story: 'Chủ đề · cường độ hiệu suất theo phiên (%)',
     'chu-de': 'Chủ đề · cường độ hiệu suất theo phiên (%)'
   };

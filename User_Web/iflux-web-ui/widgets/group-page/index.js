@@ -14,12 +14,14 @@ export const meta = { id: 'WGT-GROUP-PAGE', title: 'Chi tiết nhóm' };
 var KIND_BY_PAGE = {
   sector: 'sector',
   family: 'family',
-  chuDeDetail: 'chu-de'
+  cauChuyenDetail: 'cau-chuyen',
+  chuDeDetail: 'cau-chuyen'
 };
 
 var PUBLISH_BY_KIND = {
   sector: 'sector-detail',
   family: 'eco-detail',
+  'cau-chuyen': 'cau-chuyen-detail',
   'chu-de': 'chu-de-detail'
 };
 

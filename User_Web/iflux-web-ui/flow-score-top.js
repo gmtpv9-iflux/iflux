@@ -87,7 +87,7 @@
       return '/chu-de/' + encodeURIComponent(item.label);
     }
     if (global.IfluxSeoUrl) return IfluxSeoUrl.ecosystemHref(item.label);
-    return '/ecosystems/' + encodeURIComponent(item.label);
+    return '/he-sinh-thai/' + encodeURIComponent(item.label);
   }
 
   function radarOptions(block) {

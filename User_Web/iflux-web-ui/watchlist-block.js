@@ -316,7 +316,7 @@
         '<i class="ti ti-building-factory-2"></i><span><strong>Ngành</strong><small>Toàn bộ CP trong ngành</small></span>' +
       '</button>' +
       '<button type="button" class="ifx-wl-new-type" data-ifx-wl-new-kind="family">' +
-        '<i class="ti ti-users-group"></i><span><strong>Họ cổ phiếu</strong><small>Ví dụ: Họ VIN, Họ HPG…</small></span>' +
+        '<i class="ti ti-users-group"></i><span><strong>Hệ sinh thái</strong><small>Ví dụ: Họ VIN, Họ HPG…</small></span>' +
       '</button>' +
       '<button type="button" class="ifx-wl-new-type" data-ifx-wl-new-kind="chu-de">' +
         '<i class="ti ti-book-2"></i><span><strong>Chủ đề</strong><small>CP thuộc chủ đề đầu tư</small></span>' +

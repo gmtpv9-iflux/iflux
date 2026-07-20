@@ -1140,10 +1140,25 @@
         return (p.content_type || CONTENT_TYPE_NEWS) === filter.contentType;
       });
     }
-    if (filter.authorId) {
-      var aid = String(filter.authorId);
+    var authorKey = filter.authorId || filter.author;
+    if (authorKey) {
+      var aid = String(authorKey).toLowerCase();
       posts = posts.filter(function (p) {
-        return p.author && String(p.author.id) === aid;
+        if (!p.author) return false;
+        var id = String(p.author.id || '').toLowerCase();
+        var un = String(p.author.username || p.author.slug || '').toLowerCase();
+        var name = String(p.author.display_name || p.author.name || '').toLowerCase();
+        return id === aid || un === aid || name === aid;
+      });
+    }
+    var catKey = filter.categoryId || filter.category;
+    if (catKey) {
+      var ck = String(catKey).toLowerCase();
+      posts = posts.filter(function (p) {
+        var cid = String(p.category_id || (p.category && p.category.id) || '').toLowerCase();
+        var cslug = String(p.category_slug || (p.category && p.category.slug) || '').toLowerCase();
+        var cname = String(p.category_name || (p.category && (p.category.name || p.category.label)) || '').toLowerCase();
+        return cid === ck || cslug === ck || cname === ck;
       });
     }
     if (filter.q) {

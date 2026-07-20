@@ -604,7 +604,7 @@
         'Thứ hạng hiển thị được suy ra từ vị trí phần tử sau khi sắp xếp, không lưu thành output.'
     },
     heatmapGroup('WGT-MKT-004', 'Ngành', 'sector'),
-    heatmapGroup('WGT-MKT-005', 'Họ cổ phiếu', 'family'),
+    heatmapGroup('WGT-MKT-005', 'Hệ sinh thái', 'family'),
     heatmapGroup('WGT-MKT-006', 'Chủ đề', 'chu-de'),
     {
       schemaVersion: 2,

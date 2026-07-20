@@ -136,7 +136,7 @@
       renderAs: 'WGT-MKT-HEAT',
       group: 'market',
       groupLabel: 'Thị trường',
-      title: 'Biểu đồ Họ cổ phiếu',
+      title: 'Biểu đồ Hệ sinh thái',
       description: 'Top 10 họ cổ phiếu có GTGD cao nhất — diện tích = GTGD, màu = hiệu suất phiên.',
       tier: 'free',
       kind: 'chart',
@@ -455,9 +455,10 @@
     }
   ];
 
+  /* PRF-001 (Hồ sơ) — Owner: không đặc thù trên Nhà; không còn default inject.
+     PRF-002 (Gói cước) — Owner: đặc thù, giữ. PAGE_SIDEBAR_COMPONENTS vẫn có PRF-001 cho Profile. */
   var SIDEBAR_DEFAULT = [
-    { widget_type: 'WGT-PRF-001', scope: 'sidebar', column: 'main', position: 0, config: {} },
-    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} }
+    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 0, config: {} }
   ];
 
   var DASHBOARD_DEFAULT = [

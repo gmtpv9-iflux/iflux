@@ -46,7 +46,8 @@
     el.innerHTML =
       '<span class="ix-chip ix-chip-info">' + s.pages + ' trang</span>' +
       '<span class="ix-chip">' + s.experience + ' Experience</span>' +
-      '<span class="ix-chip">' + s.knowledge + ' Knowledge (entity)</span>' +
+      '<span class="ix-chip">' + s.knowledge + ' Knowledge</span>' +
+      '<span class="ix-chip">' + s.community + ' Community</span>' +
       '<span class="ix-chip">' + s.platform + ' Platform</span>' +
       '<span class="ix-chip ix-chip-warning">' + s.widgets + ' Widget Tầng 4</span>';
   }
@@ -65,8 +66,13 @@
     if (!sel) return;
     var html = '';
     model().forEach(function (p) {
+      var label = esc(p.title);
+      // Không hiện key English cạnh tên trang Danh sách hệ sinh thái
+      if (p.key !== 'ecosystems') {
+        label += ' (' + esc(p.key) + ')';
+      }
       html += '<option value="' + esc(p.key) + '"' + (state.pageKey === p.key ? ' selected' : '') + '>' +
-        esc(p.title) + ' (' + esc(p.key) + ')</option>';
+        label + '</option>';
     });
     sel.innerHTML = html;
   }
@@ -198,8 +204,8 @@
   }
 
   var WIDGET_TABLE_HEAD =
-    '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Section</th>' +
-    '<th>Pos</th><th>Span</th><th>Bật</th><th>User override</th>';
+    '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Widget Host</th>' +
+    '<th>Vị trí</th><th>Kích thước</th><th>Bật</th><th>User override</th>';
 
   function widgetTableOverrideCell(page, wid, row) {
     if (!page.userCustomizable) {
@@ -278,11 +284,73 @@
     renderWidgetTable(
       'ps-widgets',
       page,
-      '<p class="ps-hint">Danh mục được đồng bộ trực tiếp từ <strong>Kiến trúc 4 tầng · Tầng 4</strong>. Mỗi Widget mới tự xuất hiện tại đây với trạng thái mặc định tắt. Admin thiết lập Section · Pos · Span · Bật; User chỉ override được trên <strong>Nhà của tôi</strong>.</p>',
+      '<p class="ps-hint">Cấu hình vị trí hiển thị và kích thước cho toàn bộ các Widget đang có trong hệ thống.</p>',
       'Tầng 4 chưa có Widget',
       'ps-save-widgets',
-      'Lưu nháp Widget'
+      'Lưu nháp'
     );
+  }
+
+  /** Widget Host = Section App Shell được phép chứa Widget (PAGE_REGIONS). Không phải màn Placement. */
+  function buildWidgetHostRows() {
+    var pages = model();
+    var rows = [];
+    pages.forEach(function (page) {
+      var regionKeys = catalog().pageRegions(page.key);
+      var secByKey = {};
+      (page.sections || []).forEach(function (sec) {
+        if (sec && sec.key) secByKey[sec.key] = sec;
+      });
+      regionKeys.forEach(function (rk) {
+        var sec = secByKey[rk];
+        if (sec && sec.kind === 'shell') return;
+        var hostId = (sec && sec.id) ? sec.id : ('SEC-' + String(rk || '').toUpperCase());
+        // Tên Host theo vùng App Shell (Sidebar trái / Main — Widget grid…), không lấy nhãn nội dung trang
+        var hostName = catalog().regionLabel(rk);
+        var widgetIds = (page.layoutSlots || [])
+          .filter(function (slot) {
+            return slot.section === rk && slot.enabled && slot.hasPlacement;
+          })
+          .sort(function (a, b) { return (a.position || 0) - (b.position || 0); })
+          .map(function (slot) { return slot.widgetId; });
+        rows.push({
+          pageTitle: page.title || page.key,
+          pageId: page.id || page.key,
+          hostName: hostName,
+          hostId: hostId,
+          widgetIds: widgetIds
+        });
+      });
+    });
+    return rows;
+  }
+
+  function renderWidgetHosts() {
+    var root = document.getElementById('ps-hosts');
+    if (!root) return;
+    var rows = buildWidgetHostRows();
+    var body = rows.map(function (row) {
+      var widgetsHtml = row.widgetIds.length
+        ? row.widgetIds.map(function (wid) {
+            return '<code style="display:block;font-size:11px;line-height:1.7">' + esc(wid) + '</code>';
+          }).join('')
+        : '<span style="font-size:12px;color:var(--ix-text-muted)">—</span>';
+      return '<tr>' +
+        '<td><strong>' + esc(row.pageTitle) + '</strong></td>' +
+        '<td><code style="font-size:11px;color:var(--ix-accent)">' + esc(row.pageId) + '</code></td>' +
+        '<td>' + esc(row.hostName) + '</td>' +
+        '<td><code style="font-size:11px">' + esc(row.hostId) + '</code></td>' +
+        '<td>' + widgetsHtml + '</td>' +
+        '</tr>';
+    }).join('');
+
+    root.innerHTML =
+      '<p class="ps-hint">Đây là danh sách tất cả các vị trí có thể hiển thị Widget trên Website/App theo từng trang</p>' +
+      '<div class="ix-table-responsive"><table class="ix-table"><thead><tr>' +
+      '<th>Tiêu đề trang</th><th>Mã trang</th><th>Tên Widget Host</th><th>Mã Host</th><th>Tình trạng hiển thị</th>' +
+      '</tr></thead><tbody>' +
+      (body || '<tr><td colspan="5" style="text-align:center;color:var(--ix-text-muted)">Chưa có Widget Host</td></tr>') +
+      '</tbody></table></div>';
   }
 
   function render() {
@@ -292,6 +360,7 @@
     renderPagePicker('ps-page-widgets');
     if (state.tab === 'sitemap') renderSitemap();
     if (state.tab === 'layout') renderLayout();
+    if (state.tab === 'hosts') renderWidgetHosts();
     if (state.tab === 'widgets') renderWidgets();
   }
 

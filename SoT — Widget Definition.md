@@ -16,23 +16,25 @@ Toàn bộ nền tảng iFlux được xây dựng theo tư duy **Widget-first**
 
 ---
 
+
+
 # Triết lý kiến trúc
 
 Trong iFlux:
 
-* Widget là nội dung.
-* Template là cách trình bày.
-* Page là nơi tập hợp Widget.
-* Runtime là nơi hiển thị Widget.
+- Widget là nội dung.
+- Template là cách trình bày.
+- Page là nơi tập hợp Widget.
+- Runtime là nơi hiển thị Widget.
 
 Điều này có nghĩa:
 
-* Web App chỉ là một Runtime.
-* Mobile App chỉ là một Runtime.
-* Insight chỉ là một Runtime.
-* Link chia sẻ chỉ là một Runtime.
-* AI cũng chỉ là một Runtime.
-* API cũng chỉ là một Runtime.
+- Web App chỉ là một Runtime.
+- Mobile App chỉ là một Runtime.
+- Insight chỉ là một Runtime.
+- Link chia sẻ chỉ là một Runtime.
+- AI cũng chỉ là một Runtime.
+- API cũng chỉ là một Runtime.
 
 Widget tồn tại độc lập với tất cả các Runtime.
 
@@ -40,25 +42,29 @@ Nếu toàn bộ Web App bị thay thế, Widget vẫn giữ nguyên.
 
 ---
 
+
+
 # Widget là gì?
 
 Widget là một đơn vị nội dung hoàn chỉnh, mô tả một giá trị mà người dùng có thể xem, chia sẻ hoặc sử dụng.
 
 Ví dụ:
 
-* Top 10 Dòng tiền
-* Heatmap ngành
-* Độ rộng thị trường
-* Chủ đề nổi bật
-* Watchlist
-* Danh mục của tôi
-* Cổ phiếu được quan tâm nhiều nhất
+- Top 10 Dòng tiền
+- Heatmap ngành
+- Độ rộng thị trường
+- Chủ đề nổi bật
+- Watchlist
+- Danh mục của tôi
+- Cổ phiếu được quan tâm nhiều nhất
 
 Đây đều là Widget.
 
 Không phụ thuộc chúng đang được hiển thị ở đâu.
 
 ---
+
+
 
 # Một Widget chỉ tồn tại một lần
 
@@ -74,20 +80,22 @@ Widget này chỉ được định nghĩa một lần.
 
 Nhưng có thể được sử dụng đồng thời tại:
 
-* Trang Thị trường
-* Trang Nhà của tôi
-* Dashboard
-* Insight
-* Trang HTML chia sẻ
-* AI
-* API
-* Mobile
-* Email
-* Các Runtime trong tương lai
+- Trang Thị trường
+- Trang Nhà của tôi
+- Dashboard
+- Insight
+- Trang HTML chia sẻ
+- AI
+- API
+- Mobile
+- Email
+- Các Runtime trong tương lai
 
 Tất cả đều là cùng một Widget.
 
 ---
+
+
 
 # Widget không thuộc về Page
 
@@ -102,6 +110,8 @@ Một Page có thể chứa nhiều Widget khác nhau.
 Giữa Widget và Page là quan hệ tham chiếu, không phải quan hệ sở hữu.
 
 ---
+
+
 
 ### Page Published
 
@@ -119,15 +129,17 @@ Trong quá trình phân phối dữ liệu, Runtime có thể nhận kèm Widget
 
 ---
 
+
+
 # Widget không chứa giao diện
 
 Widget không biết:
 
-* đang nằm ở Page nào
-* đang ở vị trí nào
-* đang dùng Template nào
-* đang hiển thị trên Web hay Mobile
-* đang hiển thị dưới dạng Insight hay Share
+- đang nằm ở Page nào
+- đang ở vị trí nào
+- đang dùng Template nào
+- đang hiển thị trên Web hay Mobile
+- đang hiển thị dưới dạng Insight hay Share
 
 Widget chỉ định nghĩa nội dung.
 
@@ -135,38 +147,46 @@ Mọi quyết định về giao diện đều thuộc Template.
 
 ---
 
+
+
 # Widget không chứa Business Logic
 
 Widget không tính toán dữ liệu.
 
 Widget chỉ định nghĩa:
 
-* dữ liệu nào cần hiển thị
-* dữ liệu có ý nghĩa gì
-* cấu trúc dữ liệu cần có
+- dữ liệu nào cần hiển thị
+- dữ liệu có ý nghĩa gì
+- cấu trúc dữ liệu cần có
 
-Business Logic luôn thuộc Kiến trúc 4 tầng (Tầng tính toán).
+Business Logic luôn thuộc Kiến trúc 4 tầng (Tầng tính toán - data source).
+
+Tại tầng 4, hệ thống sẽ hiển thị danh sách Widget hiện có kèm theo dữ liệu data mẫu. Sau này các Data này sẽ được thay thế thành data thật khi tầng tính toán hoàn thiện.
 
 Sau khi Business Logic tính xong, Runtime chỉ nhận ViewModel để hiển thị.
 
 ---
 
+
+
 # Widget là Source of Truth của nội dung
 
 Widget là nơi duy nhất định nghĩa:
 
-* tiêu đề
-* mô tả
-* bài toán
-* dữ liệu cần hiển thị
-* dữ liệu mẫu
-* metadata
-* khả năng chia sẻ
-* khả năng xuất Insight
+- tiêu đề
+- mô tả
+- bài toán
+- dữ liệu cần hiển thị
+- dữ liệu mẫu
+- metadata
+- khả năng chia sẻ
+- khả năng xuất Insight
 
 Không Runtime nào được phép tự định nghĩa lại các thông tin này.
 
 ---
+
+
 
 # Bốn Source of Truth điều khiển Widget
 
@@ -175,6 +195,8 @@ Widget được điều khiển bởi đúng bốn Source of Truth.
 Không được phép tồn tại owner thứ năm.
 
 ---
+
+
 
 ## 1. Ai được xem?
 
@@ -188,14 +210,16 @@ Admin
 
 Quyết định:
 
-* User nào được xem
-* Gói nào được xem
-* Block quyền nào được xem
-* Điều kiện hiển thị
+- User nào được xem
+- Gói nào được xem
+- Block quyền nào được xem
+- Điều kiện hiển thị
 
 Widget không biết người dùng thuộc gói nào.
 
 ---
+
+
 
 ## 2. Xem ở đâu?
 
@@ -209,16 +233,18 @@ Admin
 
 Quyết định:
 
-* Page
-* Section
-* Position
-* Span
-* Widget đặc thù
-* Widget tùy chỉnh
+- Page
+- Section
+- Position
+- Span
+- Widget đặc thù
+- Widget tùy chỉnh
 
 Widget không biết mình đang ở đâu.
 
 ---
+
+
 
 ## 3. Hiển thị như thế nào?
 
@@ -232,23 +258,25 @@ Admin
 
 Template quyết định:
 
-* bố cục
-* biểu đồ
-* bảng
-* KPI
-* Ranking
-* Timeline
-* Heatmap
-* Card
-* Danh sách
-* Màu sắc
-* Typography
-* Responsive
-* Animation
+- bố cục
+- biểu đồ
+- bảng
+- KPI
+- Ranking
+- Timeline
+- Heatmap
+- Card
+- Danh sách
+- Màu sắc
+- Typography
+- Responsive
+- Animation
 
 Một Widget có thể đổi Template mà không cần đổi Widget.
 
 ---
+
+
 
 ## 4. Hiển thị nội dung gì?
 
@@ -264,20 +292,22 @@ Admin
 
 Bao gồm:
 
-* mã Widget
-* tiêu đề
-* mô tả
-* bài toán
-* Template được sử dụng
-* dữ liệu cần hiển thị
-* dữ liệu mẫu
-* metadata
-* Insight metadata
-* Share metadata
+- mã Widget
+- tiêu đề
+- mô tả
+- bài toán
+- Template được sử dụng
+- dữ liệu cần hiển thị
+- dữ liệu mẫu
+- metadata
+- Insight metadata
+- Share metadata
 
 Đây là Source of Truth duy nhất của nội dung Widget.
 
 ---
+
+
 
 # Quan hệ giữa bốn Source of Truth
 
@@ -296,6 +326,9 @@ Hiển thị như thế nào?
 
 Hiển thị nội dung gì?
 ```
+
+
+
 ## Publish Pipeline
 
 Bốn Source of Truth chỉ tồn tại trong giai đoạn Authoring.
@@ -312,10 +345,13 @@ Sau khi Publish, hệ thống sẽ resolve toàn bộ:
 
 Published Artifact là đầu vào duy nhất của Runtime.
 
-Runtime không được phép truy cập trực tiếp các Source of Truth này.
----
+## Runtime không được phép truy cập trực tiếp các Source of Truth này.
+
+
 
 # Quy trình tạo Widget
+
+
 
 ## Bước 1
 
@@ -337,22 +373,24 @@ Thêm Widget
 
 Nhập:
 
-* Tiêu đề
-* Mô tả
-* Mô tả bài toán
+- Tiêu đề
+- Mô tả
+- Mô tả bài toán
 
 Sau đó chọn Template.
 
 ---
 
+
+
 ## Sau khi chọn Template
 
 Template khai báo:
 
-* Input Schema
-* Output Schema
-* Dữ liệu bắt buộc
-* Dữ liệu tùy chọn
+- Input Schema
+- Output Schema
+- Dữ liệu bắt buộc
+- Dữ liệu tùy chọn
 
 Hệ thống tự sinh toàn bộ biểu mẫu nhập liệu.
 
@@ -362,7 +400,11 @@ Widget không cần biết Template hoạt động như thế nào.
 
 ---
 
+
+
 ## Dữ liệu
+
+
 
 ### Nếu chưa đồng bộ Business Logic (từ các tầng khác trong Kiến trúc 4 tầng)
 
@@ -372,17 +414,21 @@ Cho phép hoàn thiện nội dung trước khi có dữ liệu thật.
 
 ---
 
+
+
 ### Đã đồng bộ Business Logic
 
 Widget tự động nhận dữ liệu từ Core.
 
 Không cần sửa:
 
-* Widget
-* Template
-* Runtime
+- Widget
+- Template
+- Runtime
 
 ---
+
+
 
 # Đưa Widget lên giao diện
 
@@ -402,14 +448,16 @@ Cài đặt trang > Widget đặc thù / Widget tùy chỉnh
 
 Chọn:
 
-* Widget
-* Shell (Section)
-* Vị trí
-* Kích thước (Span)
+- Widget
+- Shell (Section)
+- Vị trí
+- Kích thước (Span)
 
 Hoàn toàn không sửa Widget.
 
 ---
+
+
 
 # Cấp quyền
 
@@ -429,15 +477,17 @@ Phân quyền sử dụng
 
 Chọn:
 
-* Free
-* Premium
-* Elite
+- Free
+- Premium
+- Elite
 
 Hoặc từng Block quyền.
 
 Widget không biết người dùng thuộc gói nào.
 
 ---
+
+
 
 # Runtime của Widget
 
@@ -468,6 +518,8 @@ ViewModel
 Runtime Render
 ```
 
+
+
 ### Runtime Principle
 
 Runtime chỉ có hai trách nhiệm:
@@ -494,6 +546,8 @@ Runtime không được phép:
 
 ---
 
+
+
 # Khả năng của Widget
 
 Sau khi được tạo, Widget có thể được sử dụng trên mọi Runtime.
@@ -504,17 +558,23 @@ Có.
 
 ---
 
+
+
 ## Mobile
 
 Có.
 
 ---
 
+
+
 ## Dashboard
 
 Có.
 
 ---
+
+
 
 ## AI
 
@@ -525,6 +585,8 @@ AI không đọc Page.
 AI đọc Widget.
 
 ---
+
+
 
 ## API
 
@@ -538,6 +600,8 @@ GET /api/widgets/WGT-MKT-001
 
 ---
 
+
+
 ## Insight
 
 Có.
@@ -548,19 +612,23 @@ Không phải một đối tượng mới.
 
 ---
 
+
+
 ## Download
 
 Có.
 
 Ví dụ:
 
-* PNG
-* PDF
-* SVG
-* Excel
-* Các định dạng khác trong tương lai
+- PNG
+- PDF
+- SVG
+- Excel
+- Các định dạng khác trong tương lai
 
 ---
+
+
 
 ## Share
 
@@ -584,6 +652,8 @@ Runtime của Share dựng Widget từ cùng một Widget Definition.
 
 ---
 
+
+
 ## Phân quyền chia sẻ
 
 Widget hỗ trợ chia sẻ theo quyền.
@@ -592,13 +662,15 @@ Người chia sẻ có thể cấp quyền xem.
 
 Khi mở liên kết:
 
-* nếu đủ quyền, Widget hiển thị đầy đủ;
-* nếu không đủ quyền, Runtime chỉ hiển thị phần được phép hoặc yêu cầu xác thực.
-* quyền được truy vấn dựa vào mã Affiliate của User có trên link.
+- nếu đủ quyền, Widget hiển thị đầy đủ;
+- nếu không đủ quyền, Runtime chỉ hiển thị phần được phép hoặc yêu cầu xác thực.
+- quyền được truy vấn dựa vào mã Affiliate của User có trên link.
 
 Không tạo thêm Widget mới.
 
 ---
+
+
 
 # Artifact Lifecycle
 
@@ -635,6 +707,8 @@ Runtime chỉ được phép tiêu thụ Artifact ở trạng thái Published.
 Quy tắc chuyển trạng thái giữa các giai đoạn sẽ được định nghĩa trong Publish Pipeline và Version Policy khi hệ thống mở rộng.
 
 ---
+
+
 
 # Các nguyên tắc bất biến
 

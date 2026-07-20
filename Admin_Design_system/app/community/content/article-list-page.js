@@ -1,4 +1,4 @@
-/* ADM-COM-CNT — Danh sách bài viết (Article API) */
+/* ADM-COM-CNT — Danh sách bài viết (Article API · Content_Entity) */
 (function () {
   'use strict';
 
@@ -43,23 +43,57 @@
     scheduled: 'Đã lên lịch'
   };
 
+  function authorLabel(a) {
+    if (!a) return '—';
+    if (typeof a === 'string') return a;
+    return a.display_name || a.name || a.email || a.id || '—';
+  }
+
+  function attachLabel(a) {
+    var parts = [];
+    var tickers = a.tickers || [];
+    var sectors = a.sectors || [];
+    var ecos = a.ecosystems || [];
+    if (tickers.length) parts.push('CP: ' + tickers.join(', '));
+    if (sectors.length) parts.push('Ngành: ' + sectors.join(', '));
+    if (ecos.length) parts.push('HST: ' + ecos.join(', '));
+    if (a.exchange) parts.push('Sàn: ' + a.exchange);
+    return parts.length ? parts.join(' · ') : '—';
+  }
+
+  function seoLabel(a) {
+    var seo = a.seo || {};
+    var bits = [];
+    if (seo.meta_title || seo.title) bits.push('title');
+    if (seo.meta_description || seo.description) bits.push('desc');
+    if (seo.slug || a.slug) bits.push('slug');
+    return bits.length ? bits.join(', ') : '—';
+  }
+
+  function editHref(id) {
+    return 'content/edit.html?id=' + encodeURIComponent(id);
+  }
+
   function render(list) {
     var tbody = document.getElementById('art-tbody');
     var count = document.getElementById('art-count');
     if (count) count.textContent = String(list.length);
     if (!tbody) return;
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ix-text-muted)">Chưa có bài viết</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ix-text-muted)">Chưa có bài viết</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function (a) {
       return '<tr>' +
         '<td><strong>' + esc(a.title) + '</strong><div class="ix-caption">' + esc(a.slug || '') + '</div></td>' +
         '<td>' + esc(a.category_name || '—') + '</td>' +
-        '<td>' + esc(a.chu_de_name || (a.chu_de && a.chu_de.name) || '—') + '</td>' +
+        '<td>' + esc(authorLabel(a.author)) + '</td>' +
+        '<td>' + esc(a.chu_de_name || (a.chu_de && (a.chu_de.name || a.chu_de.label)) || '—') + '</td>' +
+        '<td class="ix-caption">' + esc(attachLabel(a)) + '</td>' +
+        '<td class="ix-caption">' + esc(seoLabel(a)) + '</td>' +
         '<td>' + esc(STATUS_LABEL[a.status] || a.status) + '</td>' +
-        '<td class="ix-caption">' + esc((a.published_at || a.created_at || '').slice(0, 16).replace('T', ' ')) + '</td>' +
-        '<td><a class="ix-btn ix-btn-outline ix-btn-sm" href="edit.html?id=' + encodeURIComponent(a.id) + '">Sửa</a></td>' +
+        '<td class="ix-caption">' + esc(String(a.published_at || a.created_at || '').slice(0, 16).replace('T', ' ')) + '</td>' +
+        '<td><a class="ix-btn ix-btn-outline ix-btn-sm" href="' + editHref(a.id) + '">Sửa</a></td>' +
         '</tr>';
     }).join('');
   }
@@ -67,14 +101,14 @@
   function load() {
     var q = (document.getElementById('art-q') || {}).value || '';
     var st = (document.getElementById('art-status') || {}).value || '';
-    var path = '/community/admin/articles?limit=100';
+    var path = '/community/admin/articles?limit=200';
     if (q) path += '&q=' + encodeURIComponent(q);
     if (st) path += '&status=' + encodeURIComponent(st);
     request(path).then(function (data) {
       render(data.articles || []);
     }).catch(function (err) {
       var tbody = document.getElementById('art-tbody');
-      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="color:var(--ix-danger)">' + esc(err.message) + '</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="color:var(--ix-danger)">' + esc(err.message) + '</td></tr>';
     });
   }
 

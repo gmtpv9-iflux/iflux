@@ -24,7 +24,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=phase4Pub20260716b',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=hostChrome20260720',
       /* Page Feature CSS (feed sở hữu). market-components.css đã chuyển về
          Widget Manifest của WGT-MKT-006 — không nạp ở tầng Page nữa. */
       css: [

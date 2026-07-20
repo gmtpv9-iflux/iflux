@@ -145,29 +145,6 @@
     );
   }
 
-  /* ==========================================================================
-   * DETACHED (CG-1.0) — quarantine
-   * Ownership removed under Single Render Rule.
-   * Status: Detached from Production Runtime.
-   * Allowed: read · audit · delete (Wave 5).
-   * Forbidden: new callers · import · export · dependency · reuse ·
-   *            feature · logic edits · move/refactor.
-   * Pending: Wave 3 Orphan Register → Wave 4–5.
-   * ==========================================================================
-   */
-  /* ── Panel Thống kê (KLGD / GTGD) — mount lazy vì cần ApexCharts ── */
-  function tradingPanel() {
-    return (
-      '<section class="ifx-stock-panel">' +
-        '<div class="ifx-stock-news-head"><h1>Thống kê</h1></div>' +
-        '<div data-ec-liq-mount="volume"></div>' +
-        '<div data-ec-liq-mount="value" style="margin-top:var(--ifx-space-16)"></div>' +
-      '</section>'
-    );
-  }
-
-  /* END DETACHED (CG-1.0) */
-
   /* ── Panel Lịch sự kiện (chỉ CP) ── */
   function eventsPanel(ticker) {
     var events = mk() ? mk().getStockEvents(ticker) : [];
@@ -242,34 +219,6 @@
       panel('comments', false, ctx.commentsSectionHtml || '');
     return '<div class="ifx-stock-col ifx-stock-col--center ifx-stock-col--wide">' + html + '</div>';
   }
-
-  /* ==========================================================================
-   * DETACHED (CG-1.0) — quarantine
-   * Ownership removed under Single Render Rule.
-   * Status: Detached from Production Runtime.
-   * Allowed: read · audit · delete (Wave 5).
-   * Forbidden: new callers · import · export · dependency · reuse ·
-   *            feature · logic edits · move/refactor.
-   * Pending: Wave 3 Orphan Register → Wave 4–5.
-   * ==========================================================================
-   */
-  function mountTrading(col) {
-    if (col._ecTradingMounted) return;
-    var lib = global.IfluxMarketLiquidity;
-    var volEl = col.querySelector('[data-ec-liq-mount="volume"]');
-    var valEl = col.querySelector('[data-ec-liq-mount="value"]');
-    if (typeof ApexCharts === 'undefined' || !lib) {
-      var msg = '<div class="ifx-stock-empty">Không tải được biểu đồ thống kê giao dịch.</div>';
-      if (volEl) volEl.innerHTML = msg;
-      col._ecTradingMounted = true;
-      return;
-    }
-    if (volEl) lib.mountBlock(volEl, 'volume');
-    if (valEl) lib.mountBlock(valEl, 'value');
-    col._ecTradingMounted = true;
-  }
-
-  /* END DETACHED (CG-1.0) */
 
   function mountDailyFeed(col, ctx) {
     var mount = col.querySelector('[data-ec-daily-feed]');

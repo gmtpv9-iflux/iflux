@@ -1220,7 +1220,7 @@
           : (scope === 'sector'
             ? '/nganh/' + encodeURIComponent(g.id)
             : (scope === 'family'
-              ? '/ho-co-phieu/' + encodeURIComponent(g.id)
+              ? '/he-sinh-thai/' + encodeURIComponent(g.id)
               : '/chu-de/' + encodeURIComponent(g.id)));
         items.push({
           id: g.id,
