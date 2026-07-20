@@ -62,14 +62,14 @@
     return slugify(slugOrId) || String(slugOrId || '');
   }
 
-  /* ── Chủ đề ENTITY (narrative thị trường) → /chu-de/:slug ── */
+  /* ── Câu chuyện ENTITY (narrative thị trường) → /cau-chuyen/:slug ── */
 
   function chuDePath(slug) {
     slug = slugify(slug) || String(slug || '');
     if (isFileProto()) {
-      return userWebRoot() + 'chu-de/chi-tiet.html' + (slug ? '?id=' + encodeURIComponent(slug) : '');
+      return userWebRoot() + 'cau-chuyen/chi-tiet.html' + (slug ? '?id=' + encodeURIComponent(slug) : '');
     }
-    return slug ? '/chu-de/' + encodeURIComponent(slug) : '/chu-de';
+    return slug ? '/cau-chuyen/' + encodeURIComponent(slug) : '/cau-chuyen';
   }
 
   function chuDeHref(slugOrId) {
@@ -78,7 +78,7 @@
 
   function chuDeCanonical(slug, origin) {
     slug = slugify(slug) || String(slug || '');
-    return (origin || PROD_ORIGIN) + '/chu-de/' + encodeURIComponent(slug);
+    return (origin || PROD_ORIGIN) + '/cau-chuyen/' + encodeURIComponent(slug);
   }
 
   function parseChuDeSlug(loc) {
@@ -87,15 +87,36 @@
     var q = new URLSearchParams(loc.search).get('id') ||
       new URLSearchParams(loc.search).get('story') ||
       new URLSearchParams(loc.search).get('chu-de') ||
-      new URLSearchParams(loc.search).get('chude');
+      new URLSearchParams(loc.search).get('chude') ||
+      new URLSearchParams(loc.search).get('cau-chuyen');
     if (q) return q;
-    var m = (loc.pathname || '').match(/\/chu-de\/([^/?#]+)\/?$/i);
+    var m = (loc.pathname || '').match(/\/cau-chuyen\/([^/?#]+)\/?$/i);
     if (m && m[1].toLowerCase() !== 'index.html') return decodeURIComponent(m[1]);
+    m = (loc.pathname || '').match(/\/chu-de\/([^/?#]+)\/?$/i);
+    if (m && m[1].toLowerCase() !== 'index.html' && (loc.pathname || '').indexOf('/cong-dong/') < 0) {
+      return decodeURIComponent(m[1]);
+    }
     m = (loc.pathname || '').match(/\/stories\/([^/?#]+)\/?$/i);
     if (m) return decodeURIComponent(m[1]);
     m = (loc.pathname || '').match(/\/story\/([^/?#]+)\/?$/i);
     if (m && m[1].toLowerCase() !== 'index.html') return decodeURIComponent(m[1]);
     return null;
+  }
+
+  /* Community Topic collection → /cong-dong/chu-de/:slug */
+  function communityTopicHref(slug) {
+    slug = slugify(slug) || String(slug || '');
+    return slug ? '/cong-dong/chu-de/' + encodeURIComponent(slug) : '/cong-dong/chu-de';
+  }
+
+  function communityAuthorHref(username) {
+    var key = String(username || '').trim();
+    return key ? '/cong-dong/tac-gia/' + encodeURIComponent(key) : '/cong-dong/tac-gia';
+  }
+
+  function communityCategoryHref(slug) {
+    slug = slugify(slug) || String(slug || '');
+    return slug ? '/cong-dong/danh-muc/' + encodeURIComponent(slug) : '/cong-dong/danh-muc';
   }
 
   /* Aliases cũ — Story = Chủ đề */
@@ -176,7 +197,7 @@
     if (isFileProto()) {
       return userWebRoot() + 'family/index.html' + (s ? '?id=' + encodeURIComponent(s) : '');
     }
-    return s ? '/ho-co-phieu/' + encodeURIComponent(s) : '/ho-co-phieu';
+    return s ? '/he-sinh-thai/' + encodeURIComponent(s) : '/he-sinh-thai';
   }
 
   function tagPath(slugOrId) {
@@ -226,7 +247,7 @@
       return postSlugPath(slugOrPost);
     }
     var s = typeof slugOrPost === 'string' ? slugOrPost : (slugOrPost && slugOrPost.slug);
-    return '/chu-de/' + encodeURIComponent(s || '');
+    return '/cau-chuyen/' + encodeURIComponent(s || '');
   }
   function parseStorySlug(loc) { return parseStoryEntitySlug(loc); }
 
@@ -239,7 +260,7 @@
   }
 
   function ecosystemCanonical(slug, origin) {
-    return (origin || PROD_ORIGIN) + '/ho-co-phieu/' + encodeURIComponent(slugify(slug) || slug);
+    return (origin || PROD_ORIGIN) + '/he-sinh-thai/' + encodeURIComponent(slugify(slug) || slug);
   }
 
   function parseStockTicker(loc) {
@@ -275,7 +296,7 @@
     if (!loc) return null;
     var q = new URLSearchParams(loc.search).get('id');
     if (q) return q;
-    var m = (loc.pathname || '').match(/\/(?:ho-co-phieu|ecosystems)\/([^/?#]+)\/?$/i);
+    var m = (loc.pathname || '').match(/\/(?:he-sinh-thai|ho-co-phieu|ecosystems)\/([^/?#]+)\/?$/i);
     if (m) return decodeURIComponent(m[1]);
     m = (loc.pathname || '').match(/\/community\/ecosystems\/([^/?#]+)\/?$/i);
     if (m) return decodeURIComponent(m[1]);
@@ -309,11 +330,12 @@
     var path = (global.location && global.location.pathname) || '';
     if (/^\/(?:co-phieu|stocks)\//i.test(path)) return ensurePathBase('stock/');
     if (/^\/(?:nganh|sectors)\//i.test(path)) return ensurePathBase('sector/');
-    if (/^\/(?:ho-co-phieu|ecosystems)\//i.test(path)) return ensurePathBase('family/');
-    if (/^\/chu-de\//i.test(path)) return ensurePathBase('chu-de/');
-    if (/^\/stories\//i.test(path)) return ensurePathBase('chu-de/');
+    if (/^\/(?:he-sinh-thai|ho-co-phieu|ecosystems)\//i.test(path)) return ensurePathBase('family/');
+    if (/^\/cau-chuyen\//i.test(path)) return ensurePathBase('cau-chuyen/');
+    if (/^\/chu-de\//i.test(path) && path.indexOf('/cong-dong/') < 0) return ensurePathBase('cau-chuyen/');
+    if (/^\/stories\//i.test(path)) return ensurePathBase('cau-chuyen/');
     if (/^\/(?:cong-dong\/bai-viet|community\/posts)\//i.test(path)) return ensurePathBase('community/');
-    if (/^\/community\/tag\//i.test(path)) return ensurePathBase('chu-de/');
+    if (/^\/community\/tag\//i.test(path)) return ensurePathBase('cau-chuyen/');
     if (/\/community\/stocks\//i.test(path)) return ensurePathBase('stock/');
     if (/\/community\/sectors\//i.test(path)) return ensurePathBase('sector/');
     if (/\/community\/ecosystems\//i.test(path)) return ensurePathBase('family/');
@@ -447,6 +469,9 @@
     chuDePath: chuDePath,
     chuDeHref: chuDeHref,
     chuDeCanonical: chuDeCanonical,
+    communityTopicHref: communityTopicHref,
+    communityAuthorHref: communityAuthorHref,
+    communityCategoryHref: communityCategoryHref,
     parseChuDeEntitySlug: parseChuDeEntitySlug,
     parseChuDeSlug: parseChuDeSlug,
     storyEntityPath: storyEntityPath,

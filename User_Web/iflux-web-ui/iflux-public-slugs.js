@@ -13,6 +13,7 @@
     '/dong-tien': '/User_Web/flow/',
     '/co-phieu': '/User_Web/stocks/',
     '/nganh': '/User_Web/sectors/',
+    '/he-sinh-thai': '/User_Web/ecosystems/',
     '/ho-co-phieu': '/User_Web/ecosystems/',
     '/chu-de': '/User_Web/chu-de/',
     '/cong-dong': '/User_Web/community/',
@@ -40,7 +41,8 @@
     '/flow': '/dong-tien',
     '/stocks': '/co-phieu',
     '/sectors': '/nganh',
-    '/ecosystems': '/ho-co-phieu',
+    '/ecosystems': '/he-sinh-thai',
+    '/ho-co-phieu': '/he-sinh-thai',
     '/stories': '/chu-de',
     '/community': '/cong-dong',
     '/community/write': '/cong-dong/viet-bai',
@@ -64,7 +66,7 @@
   var USER_ENTITY_PREFIX = [
     { re: /^\/co-phieu\//i, base: '/User_Web/stock/', legacyRe: /^\/stocks\//i },
     { re: /^\/nganh\//i, base: '/User_Web/sector/', legacyRe: /^\/sectors\//i },
-    { re: /^\/ho-co-phieu\//i, base: '/User_Web/family/', legacyRe: /^\/ecosystems\//i },
+    { re: /^\/he-sinh-thai\//i, base: '/User_Web/family/', legacyRe: /^\/(?:ho-co-phieu|ecosystems)\//i },
     { re: /^\/chu-de\//i, base: '/User_Web/chu-de/', legacyRe: /^\/stories\//i },
     { re: /^\/cong-dong\/bai-viet\//i, base: '/User_Web/community/', legacyRe: /^\/community\/posts\//i }
   ];
@@ -144,7 +146,9 @@
     m = path.match(/^\/sectors\/([^/]+)$/i);
     if (m) return '/nganh/' + m[1];
     m = path.match(/^\/ecosystems\/([^/]+)$/i);
-    if (m) return '/ho-co-phieu/' + m[1];
+    if (m) return '/he-sinh-thai/' + m[1];
+    m = path.match(/^\/ho-co-phieu\/([^/]+)$/i);
+    if (m) return '/he-sinh-thai/' + m[1];
     m = path.match(/^\/stories\/([^/]+)$/i);
     if (m) return '/chu-de/' + m[1];
     m = path.match(/^\/community\/posts\/([^/]+)$/i);

@@ -53,7 +53,7 @@ export async function bootShell(pageKey) {
   //  8 block-paywall · 9 block-gate · 10 guest-shell (consumers — Tầng 4 SoT)
   // async=false đảm bảo #k luôn thực thi sau #1..#k-1 dù tải đồng thời.
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=cauChuyen20260720' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
     { global: 'IfluxAuth', src: ASSET + 'auth.js' },
     { global: 'PlatformLayersWidgets', src: ADMIN + 'app/system/platform-layers-widgets.js?v=comFix20260714' },
@@ -62,7 +62,7 @@ export async function bootShell(pageKey) {
     { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js' },
     { global: 'IfluxBlockPaywall', src: ASSET + 'iflux-block-paywall.js' },
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js' },
-    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=bpPhaseD20260716b' }
+    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=mktLoginFix20260720' }
   ]);
 
   // Header interactions (search / user menu) — chỉ khi đã đăng nhập.
@@ -80,8 +80,8 @@ export async function bootShell(pageKey) {
   // Trang bắt buộc đăng nhập (danh sách / chi tiết entity + Nhà).
   var AUTH_PAGES = {
     home: 1, dashboard: 1,
-    stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1,
-    stock: 1, sector: 1, family: 1, chuDeDetail: 1,
+    stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
+    stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
     watchlist: 1, messages: 1, search: 1, communityPost: 1
   };
   if (AUTH_PAGES[pageKey]) {

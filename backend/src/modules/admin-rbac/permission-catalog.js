@@ -56,7 +56,7 @@ const MODULES = [
     pages: [
       { key: 'stocks', label: 'Mã cổ phiếu', actions: ['view', 'create', 'edit', 'delete', 'import', 'export'] },
       { key: 'sectors', label: 'Quản lý ngành', actions: CRUD },
-      { key: 'ecosystems', label: 'Họ cổ phiếu', actions: CRUD },
+      { key: 'ecosystems', label: 'Hệ sinh thái', actions: CRUD },
       { key: 'formulas', label: 'Công thức', actions: ['view', 'edit'],
         business: [{ action: 'recalculate', label: 'Tính lại chỉ số' }] },
       { key: 'ranking', label: 'Cấu hình xếp hạng', actions: ['view', 'edit'] },

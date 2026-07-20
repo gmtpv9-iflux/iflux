@@ -202,7 +202,7 @@
     var root = userWebRoot();
     if (entity.type === 'ticker') return '/co-phieu/' + encodeURIComponent(String(entity.id).toUpperCase());
     if (entity.type === 'sector') return '/nganh/' + encodeURIComponent(entity.id);
-    if (entity.type === 'family') return '/ho-co-phieu/' + encodeURIComponent(entity.id);
+    if (entity.type === 'family') return '/he-sinh-thai/' + encodeURIComponent(entity.id);
     if (entity.type === 'story') return '/chu-de/' + encodeURIComponent(entity.id);
     return root + 'search';
   }

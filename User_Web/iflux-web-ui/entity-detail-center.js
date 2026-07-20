@@ -145,17 +145,6 @@
     );
   }
 
-  /* ── Panel Thống kê (KLGD / GTGD) — mount lazy vì cần ApexCharts ── */
-  function tradingPanel() {
-    return (
-      '<section class="ifx-stock-panel">' +
-        '<div class="ifx-stock-news-head"><h1>Thống kê</h1></div>' +
-        '<div data-ec-liq-mount="volume"></div>' +
-        '<div data-ec-liq-mount="value" style="margin-top:var(--ifx-space-16)"></div>' +
-      '</section>'
-    );
-  }
-
   /* ── Panel Lịch sự kiện (chỉ CP) ── */
   function eventsPanel(ticker) {
     var events = mk() ? mk().getStockEvents(ticker) : [];
@@ -225,26 +214,10 @@
       tabsBar({ entityType: isStock ? 'stock' : (ctx.kind || '_default'), commentCount: ctx.commentCount }) +
       panel('news', true, feedHtml) +
       panel('info', false, infoHtml) +
-      panel('trading', false, tradingPanel()) +
+      panel('trading', false, '<div data-ifx-section="trading" data-section="trading" data-layout="grid-12"></div>') +
       (isStock ? panel('events', false, eventsPanel(ctx.ticker)) : '') +
       panel('comments', false, ctx.commentsSectionHtml || '');
     return '<div class="ifx-stock-col ifx-stock-col--center ifx-stock-col--wide">' + html + '</div>';
-  }
-
-  function mountTrading(col) {
-    if (col._ecTradingMounted) return;
-    var lib = global.IfluxMarketLiquidity;
-    var volEl = col.querySelector('[data-ec-liq-mount="volume"]');
-    var valEl = col.querySelector('[data-ec-liq-mount="value"]');
-    if (typeof ApexCharts === 'undefined' || !lib) {
-      var msg = '<div class="ifx-stock-empty">Không tải được biểu đồ thống kê giao dịch.</div>';
-      if (volEl) volEl.innerHTML = msg;
-      col._ecTradingMounted = true;
-      return;
-    }
-    if (volEl) lib.mountBlock(volEl, 'volume');
-    if (valEl) lib.mountBlock(valEl, 'value');
-    col._ecTradingMounted = true;
   }
 
   function mountDailyFeed(col, ctx) {
@@ -279,7 +252,6 @@
       col.querySelectorAll('[data-ec-panel]').forEach(function (p) {
         p.classList.toggle('active', p.getAttribute('data-ec-panel') === key);
       });
-      if (key === 'trading') mountTrading(col);
       if (typeof ctx.onTab === 'function') ctx.onTab(key, col);
       if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
     });
@@ -289,11 +261,6 @@
 
     if (!col._ecTickBound) {
       col._ecTickBound = true;
-      document.addEventListener('iflux-market-tick', function () {
-        if (col._ecTradingMounted && global.IfluxMarketLiquidity) {
-          global.IfluxMarketLiquidity.tickAll();
-        }
-      });
       document.addEventListener('iflux-stock-comments-change', function () {
         if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
       });

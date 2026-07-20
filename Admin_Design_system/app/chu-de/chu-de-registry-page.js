@@ -44,7 +44,7 @@
     tbody.innerHTML = list.map(function (s) {
       var stockN = Store.countStocks(s.id) || s.mapping_count || 0;
       return '<tr>' +
-        '<td><a href="detail.html?id=' + encodeURIComponent(s.id) + '" style="font-weight:600;color:var(--ix-text-primary);text-decoration:none">' + esc(s.name) + '</a>' +
+        '<td><a href="/admin/chu-de/detail?id=' + encodeURIComponent(s.id) + '" style="font-weight:600;color:var(--ix-text-primary);text-decoration:none">' + esc(s.name) + '</a>' +
           '<div style="font-size:11px;color:var(--ix-text-muted);margin-top:2px">' + esc(s.slug) + '</div></td>' +
         '<td>' + chip(Store.LIFECYCLE_META, s.lifecycle) + '</td>' +
         '<td>' + chip(Store.STATUS_META, s.status) + '</td>' +
@@ -52,8 +52,8 @@
         '<td>' + esc(s.createdBy) + '</td>' +
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(s.updatedAt)) + '</td>' +
         '<td><div style="display:flex;gap:4px;flex-wrap:wrap">' +
-          '<a href="detail.html?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Chi tiết"><i class="ti ti-file-description" style="font-size:14px"></i></a>' +
-          '<a href="mapping.html?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Ánh xạ"><i class="ti ti-route" style="font-size:14px"></i></a>' +
+          '<a href="/admin/chu-de/detail?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Chi tiết"><i class="ti ti-file-description" style="font-size:14px"></i></a>' +
+          '<a href="/admin/chu-de/mapping?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Ánh xạ"><i class="ti ti-route" style="font-size:14px"></i></a>' +
           '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-edit="' + esc(s.id) + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>' +
           '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-archive="' + esc(s.id) + '" title="Lưu trữ"><i class="ti ti-archive" style="font-size:14px"></i></button>' +
         '</div></td>' +
@@ -79,7 +79,7 @@
     document.getElementById('adm-str-reg-name').value = s ? s.name : '';
     document.getElementById('adm-str-reg-desc').value = s ? s.description : '';
     fillLifecycleSelect(document.getElementById('adm-str-reg-form-lifecycle'), s ? s.lifecycle : 'emerging', false);
-    document.getElementById('adm-str-reg-form-status').value = s ? s.status : 'active';
+    document.getElementById('adm-str-reg-form-status').value = s ? s.status : 'new';
     if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-str-reg-form');
   }
 

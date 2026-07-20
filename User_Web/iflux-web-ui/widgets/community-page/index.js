@@ -43,7 +43,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'community-daily-feed.js',
-    ASSET + 'community-page.js?v=phase3Com20260716'
+    ASSET + 'community-page.js?v=hostChrome20260720'
   ]
 ];
 
@@ -52,19 +52,30 @@ async function mountFromHostTree(root) {
     if (window.console && console.warn) {
       console.warn('[WGT-COM-PAGE] thiếu Layout Engine');
     }
+    if (window.IfluxCommunityPage && IfluxCommunityPage.syncEmptyHostChrome) {
+      IfluxCommunityPage.syncEmptyHostChrome(root);
+    }
     return;
   }
   var tree = await IfluxPageLayoutEngine.buildHostTree(root, 'community');
   if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('community');
 
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-COM-PAGE] Host Tree rỗng — chưa có placements Published');
-    }
-    return;
+  if (tree && tree.length) {
+    await mountPublishedWidgets(tree, { logPrefix: '[WGT-COM-PAGE]' });
+  } else if (window.console && console.warn) {
+    console.warn('[WGT-COM-PAGE] Host Tree rỗng — chưa có placements Published');
   }
 
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-COM-PAGE]' });
+  if (window.IfluxCommunityPage && IfluxCommunityPage.syncEmptyHostChrome) {
+    IfluxCommunityPage.syncEmptyHostChrome(root);
+  }
+}
+
+function isCollectionIndexPath() {
+  var path = String((typeof location !== 'undefined' && location.pathname) || '').replace(/\/+$/, '') || '/';
+  return path === '/cong-dong/chu-de' ||
+    path === '/cong-dong/tac-gia' ||
+    path === '/cong-dong/danh-muc';
 }
 
 function applyCommunity(root) {
@@ -79,15 +90,31 @@ export async function mount(el) {
     if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
     if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
   });
+  var indexOnly = isCollectionIndexPath();
   function onPlans() {
     applyCommunity(el);
-    mountFromHostTree(el);
+    if (!indexOnly) mountFromHostTree(el);
   }
   function onRemount() {
-    mountFromHostTree(el);
+    if (!indexOnly) mountFromHostTree(el);
   }
   applyCommunity(el);
-  await mountFromHostTree(el);
+  if (!indexOnly) await mountFromHostTree(el);
+  if (indexOnly) {
+    /* page-runtime có thể ghi đè document.title sau mount */
+    setTimeout(function () {
+      var path = String(location.pathname || '').replace(/\/+$/, '');
+      var titles = {
+        '/cong-dong/chu-de': 'Danh sách chủ đề · iFlux',
+        '/cong-dong/tac-gia': 'Danh sách tác giả · iFlux',
+        '/cong-dong/danh-muc': 'Danh sách danh mục · iFlux'
+      };
+      if (titles[path]) document.title = titles[path];
+      document.querySelectorAll('.ifx-rt-page-head').forEach(function (node) {
+        if (node && node.parentNode) node.parentNode.removeChild(node);
+      });
+    }, 0);
+  }
   document.addEventListener('iflux-plans-updated', onPlans);
   document.addEventListener('iflux-community-remount-widgets', onRemount);
   return {

@@ -1,26 +1,27 @@
 /**
- * Page Manifest — Chi tiết chủ đề (/chu-de/:slug)
+ * Page Manifest — Chi tiết câu chuyện (/cau-chuyen/:slug)
+ * Giao diện tái dùng group-page (trước đây /chu-de/:slug).
  */
-var VER = '?v=tmpDivBars20260718';
+var VER = '?v=cauChuyen20260720';
 
 export default {
-  pageKey: 'chuDeDetail',
-  path: '/chu-de',
+  pageKey: 'cauChuyenDetail',
+  path: '/cau-chuyen',
   title: '',
-  documentTitle: 'Chủ đề · iFlux',
+  documentTitle: 'Câu chuyện · iFlux',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }
   ],
   widgets: [{
     id: 'WGT-GROUP-PAGE',
-    title: 'Chi tiết chủ đề',
+    title: 'Chi tiết câu chuyện',
     section: 'main',
     position: 0,
     span: 12,
     enabled: true,
     locked: true,
-    config: { kind: 'chu-de' },
+    config: { kind: 'cau-chuyen' },
     lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js' + VER,
     css: [
       '/User_Web/iflux-web-ui/market-components.css',

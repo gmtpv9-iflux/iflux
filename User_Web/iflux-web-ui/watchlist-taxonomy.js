@@ -42,7 +42,7 @@
     } catch (e) { return null; }
   }
 
-  /* ── Họ cổ phiếu THẬT từ Admin registry (ecosystems) ── */
+  /* ── Hệ sinh thái THẬT từ Admin registry (ecosystems) ── */
   function registryFamilies() {
     var reg = global.IfluxMarketRegistryStore;
     if (!reg || typeof reg.listEcosystems !== 'function') return null;
@@ -78,7 +78,7 @@
 
   var SOURCE_LABELS = {
     sector: 'Ngành',
-    family: 'Họ cổ phiếu',
+    family: 'Hệ sinh thái',
     'chu-de': 'Chủ đề',
     story: 'Chủ đề'
   };
@@ -98,6 +98,19 @@
   function getGroups(source) {
     source = normalizeSource(source);
     return (GROUPS[source] || []).slice();
+  }
+
+  function normalizeStoryStatus(raw, lifecycle) {
+    var s = String(raw || '').toLowerCase();
+    if (s === 'mature' || s === 'truong_thanh') return 'mature';
+    if (s === 'new' || s === 'moi') return 'new';
+    if (s === 'declining' || s === 'suy_yeu' || s === 'retired') return 'declining';
+    if (s === 'archived' || s === 'merged') return 'archived';
+    var lc = String(lifecycle || '').toLowerCase();
+    if (lc === 'archived') return 'archived';
+    if (lc === 'fading') return 'declining';
+    if (lc === 'peak' || lc === 'trending') return 'mature';
+    return 'new';
   }
 
   function hydrateChuDeFromApi() {
@@ -154,8 +167,12 @@
       }).map(function (s) {
         return {
           id: s.slug || s.id,
+          slug: s.slug || s.id,
           name: s.label || s.name,
-          tickers: byId[s.id] || []
+          tickers: byId[s.id] || [],
+          status: s.status || '',
+          lifecycle: s.lifecycle || '',
+          normalizedStatus: normalizeStoryStatus(s.status, s.lifecycle)
         };
       });
       GROUPS.story = GROUPS['chu-de'];

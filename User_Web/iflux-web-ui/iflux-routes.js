@@ -12,7 +12,7 @@
     flow: { public: '/dong-tien', file: '/User_Web/flow/index.html', zone: 'app' },
     stocks: { public: '/co-phieu', file: '/User_Web/stocks/index.html', zone: 'app', auth: true },
     sectors: { public: '/nganh', file: '/User_Web/sectors/index.html', zone: 'app', auth: true },
-    ecosystems: { public: '/ho-co-phieu', file: '/User_Web/ecosystems/index.html', zone: 'app', auth: true },
+    ecosystems: { public: '/he-sinh-thai', file: '/User_Web/ecosystems/index.html', zone: 'app', auth: true },
     chuDe: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
     stories: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
     community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },

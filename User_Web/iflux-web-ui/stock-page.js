@@ -29,8 +29,8 @@
     var layout = root.querySelector('.ifx-stock-layout');
     if (!layout || layout.querySelector('.ifx-stock-col--left') || !detail) return;
     layout.insertAdjacentHTML('afterbegin', renderLeft(detail));
-    if (detail.net_flow) bindFlowTabs(root, detail.net_flow);
     enrichRealtime(root, ticker);
+    document.dispatchEvent(new CustomEvent('iflux-knowledge-remount-widgets'));
   }
 
   function syncMobileLeftColumn(root, tabKey, ticker, detail) {
@@ -147,62 +147,6 @@
     });
   }
 
-  /* Giao dịch theo chủ thể — UI dùng TMP-DIVERGING-BARS
-     (IfluxBlockTemplates.renderDivergingBars*); trang chỉ chuẩn hóa dữ liệu. */
-  function T() { return global.IfluxBlockTemplates; }
-
-  function netFlowValue(pt) {
-    if (!pt) return 0;
-    if (pt.net_million != null) return pt.net_million;
-    if (pt.net_billion != null) return pt.net_billion * 1000;
-    return 0;
-  }
-
-  function fmtFlowAxis(v) {
-    if (v === 0) return '0';
-    var abs = Math.abs(v);
-    if (abs >= 1000) {
-      var b = abs / 1000;
-      var bStr = b % 1 === 0 ? String(b) : b.toFixed(1).replace(/\.0$/, '');
-      return (v < 0 ? '-' : '') + bStr + 'B';
-    }
-    return (v < 0 ? '-' : '') + abs + 'M';
-  }
-
-  function findFlowSubject(flow, key) {
-    if (!flow || !flow.subjects) return null;
-    var i;
-    for (i = 0; i < flow.subjects.length; i++) {
-      if (flow.subjects[i].key === key) return flow.subjects[i];
-    }
-    return flow.subjects[0] || null;
-  }
-
-  function flowPoints(subject) {
-    return ((subject && subject.series) || []).map(function (pt) {
-      return {
-        value: netFlowValue(pt),
-        label: pt.date_label,
-        title: pt.date_label + ': ' + pt.net_label
-      };
-    });
-  }
-
-  function netFlowHtml(flow, activeKey) {
-    if (!flow || !flow.subjects || !flow.subjects.length || !T()) {
-      return '<div class="ifx-stock-empty">Chưa có dữ liệu</div>';
-    }
-    activeKey = activeKey || flow.subjects[0].key;
-    var subject = findFlowSubject(flow, activeKey);
-    return T().renderDivergingBars({
-      tabs: flow.subjects.map(function (s) { return { key: s.key, label: s.label }; }),
-      activeKey: activeKey,
-      hint: 'Giao dịch ròng · ' + subject.label + ' · ' + flow.sessions + ' phiên',
-      points: flowPoints(subject),
-      formatAxis: fmtFlowAxis
-    });
-  }
-
   function renderHeader(detail) {
     var heart = wlUi() ? wlUi().heartButtonHtml(detail.ticker) : '';
     return (
@@ -229,13 +173,10 @@
   function renderLeft(detail) {
     return (
       '<div class="ifx-stock-col ifx-stock-col--left">' +
+        '<div data-ifx-section="sidebar" data-section="sidebar"></div>' +
         '<section class="ifx-stock-panel">' +
           renderHeader(detail) +
           '<div class="ifx-stock-chart" data-ifx-ohlc-chart></div>' +
-        '</section>' +
-        '<section class="ifx-stock-panel">' +
-          '<h2 class="ifx-stock-panel__title"><i class="ti ti-arrows-exchange"></i> Giao dịch theo chủ thể</h2>' +
-          netFlowHtml(detail.net_flow, 'retail') +
         '</section>' +
       '</div>'
     );
@@ -323,37 +264,11 @@
     );
   }
 
-  function bindFlowTabs(root, flow) {
-    if (!flow) return;
-    var chartRoot = root.querySelector('[data-ifx-stock-flow-chart]');
-    if (!chartRoot) return;
-    chartRoot.querySelectorAll('[data-ifx-flow-subject]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var key = btn.getAttribute('data-ifx-flow-subject');
-        chartRoot.querySelectorAll('[data-ifx-flow-subject]').forEach(function (b) {
-          var on = b === btn;
-          b.classList.toggle('is-active', on);
-          b.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
-        var subject = findFlowSubject(flow, key);
-        var plot = chartRoot.querySelector('[data-ifx-stock-flow-plot]');
-        var hint = chartRoot.querySelector('.ifx-stock-flow-hint');
-        if (plot && subject && T()) {
-          plot.innerHTML = T().renderDivergingBarsPlot({ points: flowPoints(subject), formatAxis: fmtFlowAxis });
-        }
-        if (hint && subject) {
-          hint.textContent = 'Giao dịch ròng · ' + subject.label + ' · ' + flow.sessions + ' phiên';
-        }
-      });
-    });
-  }
-
   function bindEvents(root, ticker, detail, newsState) {
     if (chatUi()) chatUi().bind(root, ticker);
     if (timelineFeed() && newsState) timelineFeed().bind(root, newsState);
 
     if (wlUi()) wlUi().bindHearts(root);
-    if (detail && detail.net_flow) bindFlowTabs(root, detail.net_flow);
     if (global.IfluxEntityDetailCenter) {
       IfluxEntityDetailCenter.mount(root, {
         kind: 'stock',
@@ -416,6 +331,7 @@
 
     bindEvents(root, currentTicker, detail, newsState);
     enrichRealtime(root, currentTicker);
+    document.dispatchEvent(new CustomEvent('iflux-knowledge-remount-widgets'));
     if (!global._ifxStockResizeBound) {
       global._ifxStockResizeBound = true;
       global.addEventListener('resize', function () {

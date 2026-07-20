@@ -129,7 +129,7 @@
       renderAs: 'WGT-MKT-HEAT',
       group: 'market',
       groupLabel: 'Thị trường',
-      title: 'Biểu đồ Họ cổ phiếu',
+      title: 'Biểu đồ Hệ sinh thái',
       description: 'Top 10 họ cổ phiếu có GTGD cao nhất — diện tích = GTGD, màu = hiệu suất phiên.',
       tier: 'free',
       kind: 'chart',

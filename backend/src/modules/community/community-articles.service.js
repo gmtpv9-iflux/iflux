@@ -462,6 +462,76 @@ async function createChuDeQuick(name) {
   return { id, slug, name: label, created: true, post_count: 0 };
 }
 
+async function listChuDeAdmin(filters) {
+  filters = filters || {};
+  const lim = Math.min(Math.max(Number(filters.limit) || 200, 1), 500);
+  const params = [];
+  let sql =
+    `SELECT id, slug, label, status, interest_score, meta, created_at, updated_at
+     FROM content_chu_de WHERE 1=1`;
+  if (filters.q) {
+    params.push('%' + String(filters.q).trim().toLowerCase() + '%');
+    sql += ` AND (LOWER(label) LIKE $${params.length} OR LOWER(slug) LIKE $${params.length})`;
+  }
+  if (filters.status) {
+    params.push(filters.status);
+    sql += ` AND status = $${params.length}`;
+  }
+  sql += ` ORDER BY COALESCE((meta->>'post_count')::int, 0) DESC, updated_at DESC NULLS LAST LIMIT $${params.length + 1}`;
+  params.push(lim);
+  const res = await query(sql, params);
+  return res.rows.map(function (r) {
+    const meta = r.meta || {};
+    return {
+      id: r.id,
+      slug: r.slug,
+      name: r.label,
+      label: r.label,
+      status: r.status,
+      interest_score: r.interest_score,
+      post_count: Number(meta.post_count) || 0,
+      meta: meta,
+      created_at: r.created_at,
+      updated_at: r.updated_at
+    };
+  });
+}
+
+/** Danh sách tác giả suy ra từ bài viết (Content_Entity — tác giả từ người viết). */
+async function listAuthorsAdmin(filters) {
+  filters = filters || {};
+  const lim = Math.min(Math.max(Number(filters.limit) || 200, 1), 500);
+  const res = await query(
+    `SELECT payload->'author' AS author, COUNT(*)::int AS post_count,
+            MAX(COALESCE((payload->>'published_at')::timestamptz, created_at)) AS last_published_at
+     FROM community_posts
+     WHERE payload->'author' IS NOT NULL
+     GROUP BY payload->'author'
+     ORDER BY post_count DESC
+     LIMIT $1`,
+    [lim]
+  );
+  let rows = res.rows.map(function (r) {
+    const a = r.author || {};
+    return {
+      id: a.id || a.user_id || '',
+      display_name: a.display_name || a.name || a.email || '—',
+      tier: a.tier || '',
+      tier_label: a.tier_label || '',
+      post_count: Number(r.post_count) || 0,
+      last_published_at: r.last_published_at
+    };
+  });
+  if (filters.q) {
+    const q = String(filters.q).trim().toLowerCase();
+    rows = rows.filter(function (a) {
+      return String(a.display_name || '').toLowerCase().indexOf(q) >= 0 ||
+        String(a.id || '').toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  return rows;
+}
+
 module.exports = {
   slugify,
   listArticles,
@@ -472,5 +542,7 @@ module.exports = {
   suggestChuDe,
   suggestTickersForChuDe,
   createChuDeQuick,
+  listChuDeAdmin,
+  listAuthorsAdmin,
   STATUSES
 };

@@ -319,6 +319,33 @@ function createCommunityRouter(deps) {
     }
   });
 
+  /* Public list — User Web /cong-dong/chu-de */
+  router.get('/chu-de', async (req, res, next) => {
+    try {
+      const list = await articles.listChuDeAdmin({
+        q: req.query.q,
+        status: req.query.status || undefined,
+        limit: req.query.limit ? Number(req.query.limit) : 200
+      });
+      return success(res, { chu_de: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* Public list — User Web /cong-dong/tac-gia */
+  router.get('/authors', async (req, res, next) => {
+    try {
+      const list = await articles.listAuthorsAdmin({
+        q: req.query.q,
+        limit: req.query.limit ? Number(req.query.limit) : 200
+      });
+      return success(res, { authors: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/chu-de/:idOrSlug/tickers', async (req, res, next) => {
     try {
       const list = await articles.suggestTickersForChuDe(req.params.idOrSlug, req.query.limit);
@@ -358,6 +385,31 @@ function createCommunityRouter(deps) {
         limit: req.query.limit ? Number(req.query.limit) : 100
       });
       return success(res, { articles: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/admin/chu-de', adminGuard, async (req, res, next) => {
+    try {
+      const list = await articles.listChuDeAdmin({
+        q: req.query.q,
+        status: req.query.status || undefined,
+        limit: req.query.limit ? Number(req.query.limit) : 200
+      });
+      return success(res, { chu_de: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/admin/authors', adminGuard, async (req, res, next) => {
+    try {
+      const list = await articles.listAuthorsAdmin({
+        q: req.query.q,
+        limit: req.query.limit ? Number(req.query.limit) : 200
+      });
+      return success(res, { authors: list, total: list.length });
     } catch (err) {
       next(err);
     }

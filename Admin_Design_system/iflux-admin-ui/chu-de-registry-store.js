@@ -11,15 +11,33 @@
     archived: { label: 'Lưu trữ', color: 'secondary' }
   };
 
+  /* Trạng thái chủ đề (SoT Admin): Mới | Trưởng thành | Suy yếu | Lưu trữ */
   var STATUS_META = {
-    draft: { label: 'Nháp', color: 'secondary' },
-    active: { label: 'Hoạt động', color: 'success' },
-    archived: { label: 'Lưu trữ', color: 'warning' },
-    retired: { label: 'Ngừng', color: 'secondary' },
-    merged: { label: 'Đã gộp', color: 'secondary' }
+    new: { label: 'Mới', color: 'info' },
+    mature: { label: 'Trưởng thành', color: 'success' },
+    declining: { label: 'Suy yếu', color: 'warning' },
+    archived: { label: 'Lưu trữ', color: 'secondary' }
   };
 
+  var STATUS_ORDER = ['new', 'mature', 'declining', 'archived'];
+
   var LIFECYCLE_ORDER = ['emerging', 'growing', 'trending', 'peak', 'fading', 'archived'];
+
+  function normalizeStatus(raw, lifecycle) {
+    var s = String(raw || '').toLowerCase();
+    if (STATUS_META[s]) return s;
+    if (s === 'moi') return 'new';
+    if (s === 'truong_thanh') return 'mature';
+    if (s === 'suy_yeu') return 'declining';
+    if (s === 'retired') return 'declining';
+    if (s === 'merged') return 'archived';
+    var lc = String(lifecycle || '').toLowerCase();
+    if (lc === 'archived') return 'archived';
+    if (lc === 'fading') return 'declining';
+    if (lc === 'peak' || lc === 'trending') return 'mature';
+    /* draft / active / emerging / growing → Mới */
+    return 'new';
+  }
 
   var cache = { stories: [], mappings: [], history: [], loaded: false, loading: null };
 
@@ -91,7 +109,7 @@
       slug: row.slug,
       description: row.description || meta.description || '',
       lifecycle: row.lifecycle || 'emerging',
-      status: row.status || 'active',
+      status: normalizeStatus(row.status, row.lifecycle),
       source: row.source || meta.source || null,
       createdBy: row.createdBy || row.promoted_by || meta.created_by || 'Admin',
       createdAt: row.createdAt || row.created_at,
@@ -180,7 +198,7 @@
       slug: payload.slug,
       description: payload.description || '',
       lifecycle: payload.lifecycle || 'emerging',
-      status: payload.status || 'active'
+      status: normalizeStatus(payload.status || 'new', payload.lifecycle)
     };
     if (payload.tickers) body.tickers = payload.tickers;
     var req = payload.id
@@ -278,7 +296,9 @@
   global.IfluxChuDeRegistryStore = {
     LIFECYCLE_META: LIFECYCLE_META,
     STATUS_META: STATUS_META,
+    STATUS_ORDER: STATUS_ORDER,
     LIFECYCLE_ORDER: LIFECYCLE_ORDER,
+    normalizeStatus: normalizeStatus,
     loadFromApi: loadFromApi,
     listStories: listStories,
     getStory: getStory,

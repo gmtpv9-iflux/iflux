@@ -41,7 +41,7 @@
     }
     if (source === 'stock') return '/co-phieu/' + encodeURIComponent(id);
     if (source === 'sector') return '/nganh/' + encodeURIComponent(id);
-    if (source === 'family') return '/ho-co-phieu/' + encodeURIComponent(id);
+    if (source === 'family') return '/he-sinh-thai/' + encodeURIComponent(id);
     return '/chu-de/' + encodeURIComponent(id);
   }
 
@@ -169,7 +169,7 @@
     var fallbackTitles = {
       stock: 'Biểu đồ Cổ phiếu',
       sector: 'Biểu đồ Ngành',
-      family: 'Biểu đồ Họ cổ phiếu',
+      family: 'Biểu đồ Hệ sinh thái',
       'chu-de': 'Biểu đồ Chủ đề',
       story: 'Biểu đồ Chủ đề'
     };

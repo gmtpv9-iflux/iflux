@@ -77,9 +77,33 @@ export async function bootPage(m, mountEl) {
     loaded.push(entry);
   }
 
+  /* Host trống → ẩn tiêu đề/mô tả page (App Shell chrome) đi kèm. */
+  syncEmptyPageHead(mountEl);
+
   if (m.documentTitle) {
     document.title = m.documentTitle;
   }
 
   return { manifest: m, widgets: loaded };
+}
+
+/** Khi mọi [data-ifx-section] trống — không hiện title/intro page. */
+function syncEmptyPageHead(root) {
+  if (!root) return;
+  var head = root.querySelector('.ifx-rt-page-head');
+  if (!head) return;
+  var hosts = root.querySelectorAll('[data-ifx-section]');
+  var any = false;
+  for (var i = 0; i < hosts.length; i++) {
+    var h = hosts[i];
+    if (h.querySelector('[data-widget-id], .ifx-rt-widget')) {
+      any = true;
+      break;
+    }
+    if (h.children && h.children.length) {
+      any = true;
+      break;
+    }
+  }
+  head.hidden = !any;
 }

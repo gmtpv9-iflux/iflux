@@ -169,23 +169,6 @@
 .ifx-flow-tab-panel.active {
   display: block;
 }
-.ifx-flow-tab-panel__sub {
-  margin: 0 0 16px;
-  font-size: var(--ifx-font-size-14);
-  color: var(--ix-text-muted);
-  line-height: 1.5;
-}
-.ifx-flow-tab-panel__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ifx-space-12);
-  margin-bottom: var(--ifx-space-16);
-}
-.ifx-flow-tab-panel__head .ifx-flow-tab-panel__sub {
-  margin: 0;
-  flex: 1;
-}
 .ifx-flow-score-grid {
   display: grid;
   grid-template-columns: 1fr;

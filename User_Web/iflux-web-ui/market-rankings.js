@@ -5,7 +5,7 @@
   var TITLES = {
     stock: 'Top 10 Cổ phiếu có hiệu suất cao nhất hôm nay',
     sector: 'Top 10 Ngành có hiệu suất cao nhất hôm nay',
-    family: 'Top 10 Họ cổ phiếu hiệu suất cao nhất hôm nay',
+    family: 'Top 10 Hệ sinh thái hiệu suất cao nhất hôm nay',
     story: 'Top 10 Chủ đề có hiệu suất cao nhất hôm nay'
   };
 

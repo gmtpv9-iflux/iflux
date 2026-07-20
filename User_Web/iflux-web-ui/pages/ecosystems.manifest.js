@@ -1,11 +1,11 @@
 /**
- * Page Manifest — Danh sách hệ sinh thái (/ho-co-phieu)
+ * Page Manifest — Danh sách hệ sinh thái (/he-sinh-thai)
  */
-var VER = '?v=bpPhaseD20260716';
+var VER = '?v=codeChoXoa20260720';
 
 export default {
   pageKey: 'ecosystems',
-  path: '/ho-co-phieu',
+  path: '/he-sinh-thai',
   title: '',
   documentTitle: 'Danh sách hệ sinh thái · iFlux',
   composite: true,

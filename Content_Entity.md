@@ -64,7 +64,16 @@ Danh mục **không tham gia hình thành Story**\.
 
 ---
 
-## Chủ đề \(Topic\)
+## Tác giả 
+
+Tác giả sẽ tự động được hệ thống nhận diện từ mã và thông tin của người viết bài
+Trong đó:
+- Nếu là người dùng đăng ký hoặc sub admin thì Tác giả chính là Họ Tên và mã của người viết bài
+- Nếu là do Admin viết thì Tên là Admin.
+
+---
+
+## Chủ đề (Topic)
 
 Đây là trường quan trọng nhất\.
 
@@ -74,11 +83,11 @@ Mỗi bài chỉ nên phản ánh một chủ đề chính nhằm đảm bảo d
 
 ---
 
-## Cơ chế lựa chọn Topic
+## Cơ chế lựa chọn chủ đề
 
 ### Cách 1 \- Gợi ý ngay khi nhập tiêu đề
 
-Ngay khi người viết nhập tiêu đề, hệ thống sẽ phân tích các từ khóa trong tiêu đề và tìm các Topic đã tồn tại\.
+Ngay khi người viết nhập tiêu đề, hệ thống sẽ phân tích các từ khóa trong tiêu đề và tìm các Chủ đề đã tồn tại\.
 
 Ví dụ:
 
@@ -104,9 +113,9 @@ Người viết chỉ cần chọn\.
 
 ---
 
-### Cách 2 \- Tìm kiếm Topic
+### Cách 2 \- Tìm kiếm Chủ đề
 
-Người viết có thể nhập trực tiếp vào ô Topic\.
+Người viết có thể nhập trực tiếp vào ô Chủ đề\.
 
 Ví dụ
 
@@ -134,9 +143,9 @@ Kết quả được sắp xếp theo:
 
 ---
 
-### Cách 3 \- Tạo Topic mới
+### Cách 3 \- Tạo Chủ đề mới
 
-Nếu không tìm thấy Topic phù hợp\.
+Nếu không tìm thấy Chủ đề phù hợp\.
 
 Hệ thống hiển thị
 
@@ -148,17 +157,17 @@ Chiến tranh Trung Đông
 
 Sau khi tạo
 
-- Topic được lưu vào hệ thống\.
+- Chủ đề được lưu vào hệ thống\.
 
-- Topic tự động được chọn cho bài viết\.
+- Chủ đề tự động được chọn cho bài viết\.
 
-- Topic bắt đầu với:
+- Chủ đề bắt đầu với:
 
 ```Plain Text
 Số bài viết = 1
 ```
 
-Các bài viết sau \(của cả các tác giả khác\) sẽ có thể tìm được topic này khi viết bài mới
+Các bài viết sau \(của cả các tác giả khác\) sẽ có thể tìm được Chủ đề này khi viết bài mới
 
 ---
 
@@ -175,12 +184,12 @@ Việc giới hạn nhằm đảm bảo mỗi bài viết tập trung vào một
 
 ---
 
-## **Nếu Topic hoàn toàn mới**
+## **Nếu Chủ đề hoàn toàn mới**
 
 Ví dụ
 
 ```Plain Text
-Topic
+Chủ đề
 
 Chiến tranh Trung Đông
 ```
@@ -201,17 +210,17 @@ BSR
 
 ---
 
-## Nếu Topic đã tồn tại
+## Nếu Chủ đề đã tồn tại
 
 Ví dụ
 
 ```Plain Text
-Topic
+Chủ đề
 
 Đầu tư công
 ```
 
-Hệ thống thống kê toàn bộ bài viết trước đó và đề xuất các mã cổ phiếu thường xuyên được gắn với Topic này\.
+Hệ thống thống kê toàn bộ bài viết trước đó và đề xuất các mã cổ phiếu thường xuyên được gắn với Chủ đề này\.
 
 Ví dụ
 
@@ -239,7 +248,7 @@ Người viết có thể:
 
 Sau khi bài viết được lưu, thống kê sẽ tự động cập nhật\.
 
-Nếu một mã mới xuất hiện ngày càng nhiều trong Topic này thì lần sau nó sẽ tự động được đưa vào danh sách đề xuất\.
+Nếu một mã mới xuất hiện ngày càng nhiều trong Chủ đề này thì lần sau nó sẽ tự động được đưa vào danh sách đề xuất\.
 
 Nhờ vậy dữ liệu luôn phản ánh đúng xu hướng cộng đồng\.
 
@@ -415,7 +424,7 @@ Xuất bản bài viết
 
 Sau khi bài viết được xuất bản, hệ thống không chỉ lưu nội dung mà còn cập nhật các thống kê phục vụ phân tích\.
 
-Đối với mỗi **Topic**, hệ thống sẽ ghi nhận:
+Đối với mỗi **Chủ đề**, hệ thống sẽ ghi nhận:
 
 - Tổng số bài viết
 
@@ -437,13 +446,12 @@ Sau khi bài viết được xuất bản, hệ thống không chỉ lưu nội 
 
 - Tốc độ tăng trưởng theo ngày/tuần/tháng\.
 
-Đối với **Topic ↔ Cổ phiếu**, hệ thống sẽ ghi nhận:
+Đối với **Chủ đề ↔ Cổ phiếu**, hệ thống sẽ ghi nhận:
 
-- Số lần cổ phiếu được gắn trong Topic\.
+- Số lần cổ phiếu được gắn trong Chủ đề\.
 
-- Số bài viết chứa cặp Topic–Cổ phiếu\.
+- Số bài viết chứa cặp Chủ đề–Cổ phiếu\.
 
 - Mức độ tăng trưởng theo thời gian\.
 
 ---
-

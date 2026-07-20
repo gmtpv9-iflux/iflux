@@ -8,14 +8,15 @@
 
   var ROUTES = {
     home: { public: '/nha-cua-toi', file: '/User_Web/home/index.html', zone: 'app', auth: true },
-    market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app', landing: true },
+    market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app' },
     flow: { public: '/dong-tien', file: '/User_Web/flow/index.html', zone: 'app' },
     stocks: { public: '/co-phieu', file: '/User_Web/stocks/index.html', zone: 'app', auth: true },
     sectors: { public: '/nganh', file: '/User_Web/sectors/index.html', zone: 'app', auth: true },
-    ecosystems: { public: '/ho-co-phieu', file: '/User_Web/ecosystems/index.html', zone: 'app', auth: true },
-    chuDe: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
-    stories: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
-    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },
+    ecosystems: { public: '/he-sinh-thai', file: '/User_Web/ecosystems/index.html', zone: 'app', auth: true },
+    chuDe: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
+    stories: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
+    cauChuyen: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
+    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app', landing: true },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -37,8 +38,11 @@
     login: 'auth.login',
     register: 'auth.register',
     forgot: 'auth.forgot',
-    root: 'market',
-    landing: 'market'
+    root: 'community',
+    landing: 'community',
+    'chu-de': 'cauChuyen',
+    chude: 'cauChuyen',
+    'cau-chuyen': 'cauChuyen'
   };
 
   function normalizePath(path) {
@@ -70,8 +74,8 @@
 
   function detectRoute(path) {
     path = normalizePath(path);
-    /* Legacy bookmark /guest → Thị trường (không còn trang guest riêng) */
-    if (path === '/' || path === '/guest') return ROUTES.market;
+    /* Legacy bookmark /guest → Cộng đồng (trang chủ) */
+    if (path === '/' || path === '/guest') return ROUTES.community;
     var keys = Object.keys(ROUTES);
     var i;
     for (i = 0; i < keys.length; i++) {
@@ -135,7 +139,7 @@
 
   function loginWithReturn(returnPath) {
     var ret = normalizePath(returnPath || pathname());
-    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('market', { canonical: true });
+    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('community', { canonical: true });
     return to('auth.login') + '?return=' + encodeURIComponent(ret);
   }
 
@@ -547,6 +551,7 @@
     sector:  { tabs: GROUP_TABS },
     family:  { tabs: GROUP_TABS },
     story:   { tabs: GROUP_TABS },
+    cauChuyen:   { tabs: GROUP_TABS },
     chuDe:   { tabs: GROUP_TABS },
     _default: { tabs: GROUP_TABS }
   };
@@ -705,14 +710,14 @@
   var ENTITY_ROUTES = [
     { entityType: 'stock',  re: /\/(co-phieu|stocks?)\/[^/]+\/?$/,        list: '/co-phieu' },
     { entityType: 'sector', re: /\/(nganh|sectors?)\/[^/]+\/?$/,          list: '/nganh' },
-    { entityType: 'family', re: /\/(ho-co-phieu|ecosystems?)\/[^/]+\/?$/, list: '/ho-co-phieu' },
-    { entityType: 'story',  re: /\/(chu-de|stories)\/[^/]+\/?$/,          list: '/chu-de' }
+    { entityType: 'family', re: /\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+\/?$/, list: '/he-sinh-thai' },
+    { entityType: 'story',  re: /\/(cau-chuyen|chu-de|stories)\/[^/]+\/?$/, list: '/cau-chuyen' }
   ];
   var FILE_ENTITY = [
     { entityType: 'stock',  re: /\/stock\//,          list: '/co-phieu' },
     { entityType: 'sector', re: /\/sector\//,          list: '/nganh' },
-    { entityType: 'family', re: /\/family\//,          list: '/ho-co-phieu' },
-    { entityType: 'story',  re: /\/chu-de\/chi-tiet/,  list: '/chu-de' }
+    { entityType: 'family', re: /\/family\//,          list: '/he-sinh-thai' },
+    { entityType: 'story',  re: /\/(cau-chuyen|chu-de)\/chi-tiet/,  list: '/cau-chuyen' }
   ];
   function detectContext() {
     if (_entity && _entity.entityType) return _entity;

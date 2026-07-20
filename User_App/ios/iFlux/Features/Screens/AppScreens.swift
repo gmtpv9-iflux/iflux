@@ -90,7 +90,7 @@ struct EcosystemsView: View {
     var onSelectStock: (IfxStock) -> Void
 
     var body: some View {
-        IfxScreenShell(title: "Họ cổ phiếu") {
+        IfxScreenShell(title: "Hệ sinh thái") {
             ForEach(Array(store.ecosystems.values.sorted { $0.id < $1.id })) { eco in
                 IfxSectorCard(sector: eco)
             }

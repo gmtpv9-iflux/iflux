@@ -698,14 +698,3 @@ a.ifx-mention:hover {
   .ifx-stock-col--center { order: 0; }
 }
 
-.ifx-group-members {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-inline-sm);
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--ix-border);
-}
-.ifx-group-members .ix-chip {
-  text-decoration: none;
-}

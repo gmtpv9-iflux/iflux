@@ -65,13 +65,16 @@
     "system-audit": { key: "system-audit", slug: "/admin/he-thong/audit", file: "system/audit.html" },
     "system-admin-users": { key: "system-admin-users", slug: "/admin/he-thong/admin-users", file: "system/admin-users.html" },
     "community-content-dashboard": { key: "community-content-dashboard", slug: "/admin/cong-dong/content/dashboard", file: "community/content/dashboard.html" },
-    "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/content", file: "community/content/index.html" },
+    "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/danh-sach-bai-viet", file: "community/danh-sach-bai-viet.html" },
     "community-categories": { key: "community-categories", slug: "/admin/cong-dong/categories", file: "community/categories.html" },
+    "community-chu-de-list": { key: "community-chu-de-list", slug: "/admin/cong-dong/danh-sach-chu-de", file: "community/danh-sach-chu-de.html" },
+    "community-author-list": { key: "community-author-list", slug: "/admin/cong-dong/danh-sach-tac-gia", file: "community/danh-sach-tac-gia.html" },
     "community-chu-de-moderation": { key: "community-chu-de-moderation", slug: "/admin/cong-dong/chu-de-moderation", file: "community/chu-de-moderation.html" },
     "community-comments": { key: "community-comments", slug: "/admin/cong-dong/comments", file: "community/comments.html" },
     "community-reports": { key: "community-reports", slug: "/admin/cong-dong/reports", file: "community/reports.html" },
     "community-experts": { key: "community-experts", slug: "/admin/cong-dong/experts", file: "community/experts.html" },
-    "chu-de-registry": { key: "chu-de-registry", slug: "/admin/chu-de/registry", file: "chu-de/registry.html" },
+    "cau-chuyen-list": { key: "cau-chuyen-list", slug: "/admin/cau-chuyen/danh-sach", file: "chu-de/danh-sach-cau-chuyen.html" },
+    "chu-de-registry": { key: "chu-de-registry", slug: "/admin/cong-dong/danh-sach-chu-de", file: "community/danh-sach-chu-de.html" },
     "chu-de-detail": { key: "chu-de-detail", slug: "/admin/chu-de/detail", file: "chu-de/detail.html" },
     "chu-de-mapping": { key: "chu-de-mapping", slug: "/admin/chu-de/mapping", file: "chu-de/mapping.html" },
     "chu-de-analytics": { key: "chu-de-analytics", slug: "/admin/chu-de/analytics", file: "chu-de/analytics.html" },
@@ -125,6 +128,7 @@
     'yeu-cau': 'requests',
     'trung-tam-ai': 'ai',
     'chu-de': 'chu-de',
+    'cau-chuyen': 'chu-de',
     'san-pham': 'product'
   };
 

@@ -28,13 +28,13 @@
       </header>
       <div class="ix-content">
         <h1 class="ix-page-title">Danh mục Chủ đề</h1>
-        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Chủ đề</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Danh sách</span></div>
+        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><a href="/admin/cong-dong/danh-sach-chu-de">Cộng đồng</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Danh sách chủ đề</span></div>
         <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Nguồn: database <code>content_chu_de</code> — tạo / sửa / lưu trữ đồng bộ User Web.</p>
         <div class="ix-card">
           <div class="ix-filter-bar">
             <div class="ix-filter-row">
               <div><label class="ix-label">Lifecycle</label><select class="ix-select" id="adm-str-reg-lifecycle"><option value="">Tất cả</option></select></div>
-              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-str-reg-status"><option value="">Tất cả</option><option value="draft">Nháp</option><option value="active">Hoạt động</option><option value="archived">Lưu trữ</option></select></div>
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-str-reg-status"><option value="">Tất cả</option><option value="new">Mới</option><option value="mature">Trưởng thành</option><option value="declining">Suy yếu</option><option value="archived">Lưu trữ</option></select></div>
             </div>
           </div>
           <div class="ix-table-toolbar">
@@ -64,7 +64,7 @@
     <div class="ix-form-group" style="margin-top:16px"><label class="ix-label">Tên chủ đề</label><input class="ix-input" id="adm-str-reg-name" placeholder="VD: Đầu tư công" /></div>
     <div class="ix-form-group"><label class="ix-label">Mô tả</label><textarea class="ix-input" id="adm-str-reg-desc" rows="3"></textarea></div>
     <div class="ix-form-group"><label class="ix-label">Lifecycle</label><select class="ix-select" id="adm-str-reg-form-lifecycle"></select></div>
-    <div class="ix-form-group"><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-str-reg-form-status"><option value="draft">Nháp</option><option value="active">Hoạt động</option></select></div>
+    <div class="ix-form-group"><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-str-reg-form-status"><option value="new">Mới</option><option value="mature">Trưởng thành</option><option value="declining">Suy yếu</option><option value="archived">Lưu trữ</option></select></div>
     <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
       <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
       <button type="button" class="ix-btn ix-btn-primary" id="btn-str-reg-save">Lưu</button>

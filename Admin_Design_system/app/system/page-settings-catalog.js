@@ -40,9 +40,10 @@
    *   community      : .ifx-com-feed-main (trái) + .ifx-com-feed-sidebar PHẢI (300px)
    *   membership/faq : chỉ main
    */
+  /* Tên Host = tên vùng App Shell (vị trí), không dùng nhãn nội dung theo trang. */
   var CUSTOMIZABLE_REGIONS = [
     { key: 'sidebar', label: 'Sidebar trái', icon: 'ti-layout-sidebar' },
-    { key: 'main', label: 'Main content', icon: 'ti-layout-distribute-horizontal' },
+    { key: 'main', label: 'Main — Widget grid', icon: 'ti-layout-distribute-horizontal' },
     { key: 'sidebar-right', label: 'Sidebar phải', icon: 'ti-layout-sidebar-right' },
     { key: 'basic', label: 'Tab Thống kê cơ bản', icon: 'ti-chart-bar' },
     { key: 'advanced', label: 'Tab Thống kê nâng cao', icon: 'ti-chart-dots' },
@@ -54,6 +55,10 @@
     dashboard: ['sidebar', 'main'],
     market: ['sidebar', 'main'],
     community: ['main', 'sidebar-right'],
+    // Community collection — cùng App Shell feed: Main (tin lọc) + Sidebar phải (Widget Host riêng)
+    'com-topic': ['main', 'sidebar-right'],
+    'com-cat': ['main', 'sidebar-right'],
+    'com-author': ['main', 'sidebar-right'],
     // Runtime Flow đã có đúng 4 host này. Main là Page Feature, không phải Widget Area.
     flow: ['sidebar', 'basic', 'advanced', 'exclusive'],
     membership: ['main'],
@@ -67,8 +72,8 @@
     'sector-detail': ['sidebar', 'trading'],
     ecosystems: ['sidebar', 'main'],
     'eco-detail': ['sidebar', 'trading'],
-    'chu-de': ['sidebar', 'main'],
-    'chu-de-detail': ['sidebar', 'trading']
+    'cau-chuyen': ['sidebar', 'main'],
+    'cau-chuyen-detail': ['sidebar', 'trading']
   };
 
   function pageRegions(pageKey) {
@@ -91,8 +96,8 @@
       id: 'PAGE-DASH',
       key: 'dashboard',
       title: 'Nhà của tôi',
-      slug: 'home',
-      path: '/home',
+      slug: 'nha-cua-toi',
+      path: '/nha-cua-toi',
       order: 1,
       navVisible: true,
       status: 'active',
@@ -107,8 +112,8 @@
       id: 'PAGE-MKT',
       key: 'market',
       title: 'Thị trường',
-      slug: 'market',
-      path: '/market',
+      slug: 'thi-truong',
+      path: '/thi-truong',
       order: 2,
       navVisible: true,
       status: 'active',
@@ -123,13 +128,13 @@
       id: 'PAGE-COM',
       key: 'community',
       title: 'Cộng đồng',
-      slug: 'community',
-      path: '/community',
+      slug: 'cong-dong',
+      path: '/cong-dong',
       order: 3,
       navVisible: true,
       status: 'active',
       userCustomizable: false,
-      description: 'Cấu hình Widget hiển thị tại Main content và Sidebar phải.',
+      description: 'Feed bài viết cộng đồng (entry) — Main + Sidebar phải. Không dùng list /community/posts riêng.',
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12' },
         { key: 'sidebar-right', visible: true, label: 'Sidebar phải' }
@@ -139,8 +144,8 @@
       id: 'PAGE-FLW',
       key: 'flow',
       title: 'Dòng tiền',
-      slug: 'flow',
-      path: '/flow',
+      slug: 'dong-tien',
+      path: '/dong-tien',
       order: 4,
       navVisible: true,
       status: 'active',
@@ -158,8 +163,8 @@
       id: 'PAGE-MEM',
       key: 'membership',
       title: 'Membership',
-      slug: 'membership',
-      path: '/membership',
+      slug: 'thanh-vien',
+      path: '/thanh-vien',
       order: 5,
       navVisible: true,
       status: 'active',
@@ -173,8 +178,8 @@
       id: 'PAGE-FAQ',
       key: 'faq',
       title: 'FAQ',
-      slug: 'faq',
-      path: '/faq',
+      slug: 'hoi-dap',
+      path: '/hoi-dap',
       order: 6,
       navVisible: false,
       status: 'active',
@@ -188,13 +193,13 @@
       id: 'PAGE-ACCOUNT',
       key: 'account',
       title: 'Trang cá nhân',
-      slug: 'account',
-      path: '/account',
+      slug: 'tai-khoan',
+      path: '/tai-khoan',
       order: 7,
       navVisible: false,
       status: 'active',
       userCustomizable: false,
-      description: 'Hồ sơ cá nhân ở sidebar (nút Chỉnh sửa hồ sơ). Main content mặc định là Timeline; các tab: Affiliate, Tài khoản thanh toán, Quyền riêng tư, Bảo mật. Vào từ avatar ở header. (Tin nhắn & Theo dõi đã tách sang /messages; Hoạt động gần đây bỏ vì đã có trong Thông báo.)',
+      description: 'Hồ sơ cá nhân ở sidebar (nút Chỉnh sửa hồ sơ). Main content mặc định là Timeline; các tab: Affiliate, Tài khoản thanh toán, Quyền riêng tư, Bảo mật. Vào từ avatar ở header. (Tin nhắn & Theo dõi đã tách sang /tin-nhan; Hoạt động gần đây bỏ vì đã có trong Thông báo.)',
       sections: cloneSections([
         { key: 'sidebar', visible: true, label: 'Hồ sơ cá nhân (Chỉnh sửa hồ sơ)' },
         { key: 'main', visible: true, layout: 'tabs' }
@@ -204,8 +209,8 @@
       id: 'PAGE-MESSAGES',
       key: 'messages',
       title: 'Tin nhắn',
-      slug: 'messages',
-      path: '/messages',
+      slug: 'tin-nhan',
+      path: '/tin-nhan',
       order: 8,
       navVisible: false,
       status: 'active',
@@ -218,15 +223,17 @@
   ];
 
   /**
-   * Entity-centric Architecture — 3 tầng:
+   * Entity-centric Architecture — 4 tầng:
    *  - Experience Layer: các Page trải nghiệm (điểm truy cập / entry points)
    *  - Knowledge Layer: entities dùng chung (mỗi entity tồn tại 1 lần, URL top-level)
+   *  - Community Layer: feed / bài viết / metadata cộng đồng
    *  - Platform Layer: hạ tầng tài khoản & tiện ích xuyên suốt
    * Page KHÔNG "sở hữu" entity — chỉ điều hướng tới entity (Knowledge Graph).
    */
   var LAYERS = [
     { id: 'experience', label: 'EXPERIENCE LAYER', desc: 'Trải nghiệm người dùng — các Page nghiệp vụ, là điểm truy cập (entry points) tới entity.' },
     { id: 'knowledge', label: 'KNOWLEDGE LAYER', desc: 'Entities dùng chung — mỗi entity tồn tại một lần, URL top-level. Mọi Page (Thị trường, Cộng đồng, Search, AI, Alert…) đều trỏ tới cùng entity.' },
+    { id: 'community', label: 'COMMUNITY LAYER', desc: 'Feed, bài viết và metadata cộng đồng — chủ đề, danh mục, tác giả. Không sở hữu Entity Knowledge.' },
     { id: 'platform', label: 'PLATFORM LAYER', desc: 'Hạ tầng: tài khoản, tin nhắn, tìm kiếm, watchlist, cảnh báo… dùng xuyên suốt mọi trải nghiệm.' }
   ];
 
@@ -237,7 +244,8 @@
     stocks: 'knowledge', 'stock-detail': 'knowledge',
     sectors: 'knowledge', 'sector-detail': 'knowledge',
     ecosystems: 'knowledge', 'eco-detail': 'knowledge',
-    'chu-de': 'knowledge', 'chu-de-detail': 'knowledge'
+    'cau-chuyen': 'knowledge', 'cau-chuyen-detail': 'knowledge',
+    'com-topic': 'community', 'com-cat': 'community', 'com-author': 'community'
   };
 
   /**
@@ -248,8 +256,8 @@
   var KNOWLEDGE_GROUPS = [
     { group: 'Stocks', icon: 'ti-chart-candle', desc: 'Cổ phiếu — entity trung tâm của toàn hệ thống.' },
     { group: 'Sectors', icon: 'ti-category', desc: 'Ngành — slug tên (vd /nganh/ngan-hang).' },
-    { group: 'Ecosystems', icon: 'ti-users-group', desc: 'Họ cổ phiếu — slug code (vd /ho-co-phieu/vin).' },
-    { group: 'Chủ đề', icon: 'ti-book-2', desc: 'Chủ đề / narrative thị trường (vd /chu-de/dau-tu-cong).' }
+    { group: 'Ecosystems', icon: 'ti-users-group', desc: 'Hệ sinh thái — slug code (vd /he-sinh-thai/vin).' },
+    { group: 'Câu chuyện', icon: 'ti-book-2', desc: 'Câu chuyện thị trường — entity cốt lõi (vd /cau-chuyen/dau-tu-cong).' }
   ];
 
   function knowledgePage(id, key, title, slug, path, group, dynamic, sidebarLabel, description) {
@@ -279,52 +287,88 @@
     knowledgePage('PAGE-STOCK', 'stock-detail', 'Chi tiết cổ phiếu', 'co-phieu', '/co-phieu/:ma', 'Stocks', true, 'Sidebar cổ phiếu', 'Chi tiết cổ phiếu (template) — Sidebar: tiện ích liên quan · Main: chart & tab.'),
     knowledgePage('PAGE-SECTORS', 'sectors', 'Danh sách ngành', 'nganh', '/nganh', 'Sectors', false, 'Sidebar ngành', 'Danh sách ngành — Sidebar: tiện ích · Main: danh sách ngành.'),
     knowledgePage('PAGE-SECTOR', 'sector-detail', 'Chi tiết ngành', 'nganh', '/nganh/:slug', 'Sectors', true, 'Sidebar ngành', 'Chi tiết ngành (template) — Sidebar: tiện ích liên quan · Main: nội dung ngành.'),
-    knowledgePage('PAGE-ECOS', 'ecosystems', 'Danh sách họ cổ phiếu', 'ho-co-phieu', '/ho-co-phieu', 'Ecosystems', false, 'Sidebar họ cổ phiếu', 'Danh sách họ cổ phiếu — Sidebar: tiện ích · Main: danh sách.'),
-    knowledgePage('PAGE-ECO', 'eco-detail', 'Chi tiết họ cổ phiếu', 'ho-co-phieu', '/ho-co-phieu/:slug', 'Ecosystems', true, 'Sidebar họ cổ phiếu', 'Chi tiết họ cổ phiếu (template) — Sidebar: tiện ích liên quan · Main: nội dung.'),
-    knowledgePage('PAGE-CHU-DE', 'chu-de', 'Danh sách chủ đề', 'chu-de', '/chu-de', 'Chủ đề', false, 'Sidebar chủ đề', 'Danh sách chủ đề — Sidebar: tiện ích · Main: danh sách chủ đề.'),
-    knowledgePage('PAGE-CHU-DE-DETAIL', 'chu-de-detail', 'Chi tiết chủ đề', 'chu-de', '/chu-de/:slug', 'Chủ đề', true, 'Sidebar chủ đề', 'Chi tiết chủ đề / câu chuyện (template) — Sidebar: tiện ích liên quan · Main: nội dung.')
+    knowledgePage('PAGE-ECOS', 'ecosystems', 'Danh sách hệ sinh thái', 'he-sinh-thai', '/he-sinh-thai', 'Ecosystems', false, 'Sidebar hệ sinh thái', 'Danh sách hệ sinh thái — Sidebar: tiện ích · Main: danh sách.'),
+    knowledgePage('PAGE-ECO', 'eco-detail', 'Chi tiết hệ sinh thái', 'he-sinh-thai', '/he-sinh-thai/:slug', 'Ecosystems', true, 'Sidebar hệ sinh thái', 'Chi tiết hệ sinh thái (template) — Sidebar: tiện ích liên quan · Main: nội dung.'),
+    knowledgePage('PAGE-CAU-CHUYEN', 'cau-chuyen', 'Danh sách câu chuyện', 'cau-chuyen', '/cau-chuyen', 'Câu chuyện', false, 'Sidebar câu chuyện', 'Danh sách câu chuyện trưởng thành (Knowledge) — Sidebar: widget host · Main: tab câu chuyện + danh sách cổ phiếu liên quan.'),
+    knowledgePage('PAGE-CAU-CHUYEN-DETAIL', 'cau-chuyen-detail', 'Chi tiết câu chuyện', 'cau-chuyen', '/cau-chuyen/:slug', 'Câu chuyện', true, 'Sidebar câu chuyện', 'Chi tiết câu chuyện (template) — Sidebar: tiện ích · Main: nội dung entity.')
   ];
 
-  /** Community entities — vẫn ở dạng planned utility (chưa composable). */
-  var COMMUNITY_ENTITY_PAGES = [
-    { id: 'PAGE-COM-POSTS', key: 'com-posts', title: 'Bài viết cộng đồng', path: '/community/posts', status: 'planned' },
-    { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/community/posts/:id', dynamic: true, status: 'planned' },
-    { id: 'PAGE-COM-AUTHOR', key: 'com-author', title: 'Trang tác giả', path: '/community/authors/:username', dynamic: true, status: 'planned' },
-    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/community/write', status: 'active' }
+  /**
+   * Community collection pages — KHÔNG có index /cong-dong/chu-de|danh-muc|tac-gia.
+   * Bản thân /:slug đã là trang danh sách: Main = feed tin lọc · Sidebar-right = Widget Host riêng
+   * (Admin tự thiết kế danh sách đưa lên sidebar). Khác Câu chuyện Knowledge (/cau-chuyen).
+   */
+  var COMMUNITY_PAGE_ORDER = 0;
+  function communityPage(id, key, title, slug, path, description) {
+    return {
+      id: id, key: key, title: title, slug: slug, path: path,
+      order: 40 + COMMUNITY_PAGE_ORDER++,
+      navVisible: false, status: 'active', userCustomizable: false,
+      group: 'Community', dynamic: true, description: description || '',
+      sections: cloneSections([
+        { key: 'main', visible: true, layout: 'grid-12', label: 'Main — Feed tin (lọc theo collection)' },
+        { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
+      ])
+    };
+  }
+
+  var COMMUNITY_PAGES = [
+    communityPage(
+      'PAGE-COM-TOPIC', 'com-topic', 'Chủ đề Cộng đồng', 'chu-de', '/cong-dong/chu-de/:slug',
+      'Trang danh sách theo chủ đề (vd /cong-dong/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar phải: Widget Host riêng (danh sách do Admin thiết kế).'
+    ),
+    communityPage(
+      'PAGE-COM-CAT', 'com-cat', 'Danh mục Cộng đồng', 'danh-muc', '/cong-dong/danh-muc/:slug',
+      'Trang danh sách theo danh mục. Main: feed tin thuộc danh mục · Sidebar phải: Widget Host riêng.'
+    ),
+    communityPage(
+      'PAGE-COM-AUTHOR', 'com-author', 'Tác giả Cộng đồng', 'tac-gia', '/cong-dong/tac-gia/:username',
+      'Trang danh sách theo tác giả. Main: feed tin của tác giả · Sidebar phải: Widget Host riêng.'
+    )
+  ];
+
+  /** Community utilities — không composable Bố cục (chưa Widget Host riêng). */
+  var COMMUNITY_UTILITY_PAGES = [
+    { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/cong-dong/bai-viet/:id', dynamic: true, status: 'active' },
+    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/cong-dong/viet-bai', status: 'active' }
   ];
 
   /** Alias tương thích: shape cũ [{group,icon,desc,pages}] cho consumer ngoài. */
+  var COMMUNITY_ENTITY_PAGES = COMMUNITY_PAGES.concat(COMMUNITY_UTILITY_PAGES);
   var KNOWLEDGE_ENTITIES = KNOWLEDGE_GROUPS.map(function (g) {
     return {
       group: g.group, icon: g.icon, desc: g.desc,
       pages: KNOWLEDGE_PAGES.filter(function (p) { return p.group === g.group; })
     };
-  }).concat([{ group: 'Community', icon: 'ti-users', desc: 'Bài viết, tác giả — thuộc Cộng đồng.', pages: COMMUNITY_ENTITY_PAGES }]);
+  }).concat([{ group: 'Community', icon: 'ti-users', desc: 'Feed /cong-dong · collection :slug · bài viết · viết bài.', pages: COMMUNITY_ENTITY_PAGES }]);
 
   /** Trang con (tab) của Page composable (account/messages). */
   var CHILD_PAGES = {
     account: [
-      { id: 'PAGE-ACC-TIMELINE', key: 'account-timeline', title: 'Timeline (tab mặc định)', path: '/account', navVisible: false, status: 'active' },
-      { id: 'PAGE-ACC-AFFILIATE', key: 'account-affiliate', title: 'Affiliate', path: '/account/affiliate', navVisible: false, status: 'active' },
-      { id: 'PAGE-ACC-BILLING', key: 'account-billing', title: 'Tài khoản thanh toán', path: '/account/billing', navVisible: false, status: 'active' },
-      { id: 'PAGE-ACC-PRIVACY', key: 'account-privacy', title: 'Quyền riêng tư', path: '/account/privacy', navVisible: false, status: 'active' },
-      { id: 'PAGE-ACC-SECURITY', key: 'account-security', title: 'Bảo mật', path: '/account/security', navVisible: false, status: 'active' }
+      { id: 'PAGE-ACC-TIMELINE', key: 'account-timeline', title: 'Timeline (tab mặc định)', path: '/tai-khoan', navVisible: false, status: 'active' },
+      { id: 'PAGE-ACC-AFFILIATE', key: 'account-affiliate', title: 'Affiliate', path: '/tai-khoan/affiliate', navVisible: false, status: 'active' },
+      { id: 'PAGE-ACC-BILLING', key: 'account-billing', title: 'Tài khoản thanh toán', path: '/tai-khoan/billing', navVisible: false, status: 'active' },
+      { id: 'PAGE-ACC-PRIVACY', key: 'account-privacy', title: 'Quyền riêng tư', path: '/tai-khoan/privacy', navVisible: false, status: 'active' },
+      { id: 'PAGE-ACC-SECURITY', key: 'account-security', title: 'Bảo mật', path: '/tai-khoan/security', navVisible: false, status: 'active' }
     ],
     messages: [
-      { id: 'PAGE-MSG-INBOX', key: 'messages-inbox', title: 'Tin nhắn (tab mặc định)', path: '/messages', navVisible: false, status: 'active' },
-      { id: 'PAGE-MSG-FOLLOWING', key: 'messages-following', title: 'Theo dõi', path: '/messages/following', navVisible: false, status: 'active' }
+      { id: 'PAGE-MSG-INBOX', key: 'messages-inbox', title: 'Tin nhắn (tab mặc định)', path: '/tin-nhan', navVisible: false, status: 'active' },
+      { id: 'PAGE-MSG-FOLLOWING', key: 'messages-following', title: 'Theo dõi', path: '/tin-nhan/following', navVisible: false, status: 'active' }
     ]
   };
 
   /** Platform utilities — tiện ích top-level dùng xuyên suốt. */
   var PLATFORM_PAGES = [
-    { id: 'PAGE-SEARCH', key: 'search', title: 'Tìm kiếm', path: '/search', status: 'active', desc: 'Search mở tới bất kỳ entity nào.' },
-    { id: 'PAGE-WATCHLIST', key: 'watchlist', title: 'Watchlist', path: '/watchlist', status: 'active' },
-    { id: 'PAGE-ALERTS', key: 'alerts', title: 'Cảnh báo', path: '/alerts', status: 'active' },
-    { id: 'PAGE-SHARE', key: 'share', title: 'Chia sẻ Insight', path: '/share', status: 'active' },
-    { id: 'PAGE-PRICING', key: 'pricing', title: 'Gói cước', path: '/pricing', status: 'active' },
-    { id: 'PAGE-AUTH', key: 'auth-login', title: 'Đăng nhập / Đăng ký', path: '/auth/login', status: 'active' },
-    { id: 'PAGE-WEB-ROOT', key: 'web-root', title: 'Trang chủ web (redirect)', path: '/', status: 'active', desc: 'Điểm vào — điều hướng theo trạng thái đăng nhập → Thị trường (vãng lai) / Nhà (đã đăng nhập).' }
+    { id: 'PAGE-SEARCH', key: 'search', title: 'Tìm kiếm', path: '/tim-kiem', status: 'active', desc: 'Search mở tới bất kỳ entity nào.' },
+    { id: 'PAGE-WATCHLIST', key: 'watchlist', title: 'Watchlist', path: '/theo-doi', status: 'active' },
+    { id: 'PAGE-ALERTS', key: 'alerts', title: 'Cảnh báo', path: '/canh-bao', status: 'active' },
+    { id: 'PAGE-SHARE', key: 'share', title: 'Chia sẻ Insight', path: '/chia-se', status: 'active' },
+    { id: 'PAGE-PRICING', key: 'pricing', title: 'Gói cước', path: '/goi-cuoc', status: 'active' },
+    { id: 'PAGE-AUTH', key: 'auth-login', title: 'Đăng nhập', path: '/dang-nhap', status: 'active' },
+    { id: 'PAGE-AUTH-REGISTER', key: 'auth-register', title: 'Đăng ký', path: '/dang-ky', status: 'active' },
+    { id: 'PAGE-AUTH-FORGOT', key: 'auth-forgot', title: 'Quên mật khẩu', path: '/quen-mat-khau', status: 'active' },
+    { id: 'PAGE-AUTH-OTP', key: 'auth-verify-otp', title: 'Xác minh OTP', path: '/xac-minh-otp', status: 'active' },
+    { id: 'PAGE-WEB-ROOT', key: 'web-root', title: 'Trang chủ web (redirect)', path: '/', status: 'active', desc: 'Điểm vào — điều hướng tới Cộng đồng (/cong-dong).' }
   ];
 
   /** giữ tên export cũ để tương thích. */
@@ -505,7 +549,7 @@
   function buildModel(storeData) {
     storeData = storeData || {};
     var pagesStore = storeData.pages || {};
-    return DEFAULT_PAGES.concat(KNOWLEDGE_PAGES).map(function (base) {
+    return DEFAULT_PAGES.concat(KNOWLEDGE_PAGES).concat(COMMUNITY_PAGES).map(function (base) {
       return mergePage(base, pagesStore[base.key] || pagesStore[base.id]);
     }).sort(function (a, b) { return a.order - b.order; });
   }
@@ -562,7 +606,7 @@
   }
 
   /**
-   * Flat list cho tab Sitemap, nhóm theo 3 tầng.
+   * Flat list cho tab Sitemap, nhóm theo 4 tầng.
    * Row markers: layerHeader (đầu tầng), groupHead (nhóm entity trong Knowledge).
    */
   function buildSitemap(storeData) {
@@ -587,16 +631,22 @@
         rows.push(page);
       });
     });
-    rows.push({ groupHead: true, layer: 'knowledge', title: 'Community', icon: 'ti-users', desc: 'Bài viết, tác giả — thuộc Cộng đồng (planned).' });
-    COMMUNITY_ENTITY_PAGES.forEach(function (pg) {
-      var r = utilityRow(pg, 'knowledge');
-      r.level = 1;
+    // ── COMMUNITY ──
+    rows.push({ layerHeader: true, layer: 'community', label: LAYERS[2].label, desc: LAYERS[2].desc });
+    model.filter(function (p) { return p.layer === 'community'; }).forEach(function (page) {
+      page.level = 0;
+      page.childCount = 0;
+      rows.push(page);
+    });
+    COMMUNITY_UTILITY_PAGES.forEach(function (pg) {
+      var r = utilityRow(pg, 'community');
+      r.level = 0;
       r.group = 'Community';
       rows.push(r);
     });
 
     // ── PLATFORM ──
-    rows.push({ layerHeader: true, layer: 'platform', label: LAYERS[2].label, desc: LAYERS[2].desc });
+    rows.push({ layerHeader: true, layer: 'platform', label: LAYERS[3].label, desc: LAYERS[3].desc });
     model.filter(function (p) { return p.layer === 'platform'; }).forEach(function (page) {
       pushWithChildren(rows, page, pagesStore);
     });
@@ -608,8 +658,7 @@
   }
 
   function countEntityPages() {
-    // Knowledge composable pages đã nằm trong model; chỉ còn Community planned.
-    return COMMUNITY_ENTITY_PAGES.length;
+    return COMMUNITY_PAGES.length + COMMUNITY_UTILITY_PAGES.length;
   }
 
   function stats(model) {
@@ -617,16 +666,19 @@
     Object.keys(CHILD_PAGES).forEach(function (k) { childTotal += CHILD_PAGES[k].length; });
     var experienceCount = model.filter(function (p) { return p.layer === 'experience'; }).length;
     var knowledgeCount = model.filter(function (p) { return p.layer === 'knowledge'; }).length;
+    var communityComposable = model.filter(function (p) { return p.layer === 'community'; }).length;
+    var communityUtility = COMMUNITY_UTILITY_PAGES.length;
+    var communityCount = communityComposable + communityUtility;
     var platformComposable = model.filter(function (p) { return p.layer === 'platform'; }).length;
-    var communityCount = countEntityPages();
-    var total = model.length + childTotal + communityCount + PLATFORM_PAGES.length;
+    var total = model.length + childTotal + communityUtility + PLATFORM_PAGES.length;
     return {
       pages: total,
       experience: experienceCount,
-      knowledge: knowledgeCount + communityCount,
+      knowledge: knowledgeCount,
+      community: communityCount,
       platform: platformComposable + PLATFORM_PAGES.length + childTotal,
       main: model.length,
-      children: childTotal + communityCount + PLATFORM_PAGES.length,
+      children: childTotal + communityUtility + PLATFORM_PAGES.length,
       active: total,
       widgets: allWidgetIds().length,
       customizable: model.filter(function (p) { return p.userCustomizable; }).length
@@ -681,6 +733,8 @@
     KNOWLEDGE_ENTITIES: KNOWLEDGE_ENTITIES,
     KNOWLEDGE_GROUPS: KNOWLEDGE_GROUPS,
     KNOWLEDGE_PAGES: KNOWLEDGE_PAGES,
+    COMMUNITY_PAGES: COMMUNITY_PAGES,
+    COMMUNITY_UTILITY_PAGES: COMMUNITY_UTILITY_PAGES,
     COMMUNITY_ENTITY_PAGES: COMMUNITY_ENTITY_PAGES,
     PLATFORM_PAGES: PLATFORM_PAGES,
     CHILD_PAGES: CHILD_PAGES,

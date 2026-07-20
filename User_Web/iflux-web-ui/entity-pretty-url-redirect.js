@@ -15,7 +15,7 @@
     m = path.match(/\/community\/sectors\/([^/?#]+)/i);
     if (m) return '/nganh/' + encodeURIComponent(decodeURIComponent(m[1]));
     m = path.match(/\/community\/ecosystems\/([^/?#]+)/i);
-    if (m) return '/ho-co-phieu/' + encodeURIComponent(decodeURIComponent(m[1]));
+    if (m) return '/he-sinh-thai/' + encodeURIComponent(decodeURIComponent(m[1]));
     m = path.match(/\/community\/stories\/([^/?#]+)/i);
     if (m) return '/cong-dong/bai-viet/' + encodeURIComponent(decodeURIComponent(m[1]));
     m = path.match(/\/stories\/([^/?#]+)/i);

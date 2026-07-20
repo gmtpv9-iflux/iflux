@@ -73,6 +73,10 @@
           proceed = false;
         } else {
           renderGuestNav(pageKey);
+          /* Đã login: bỏ hardcode «Đăng nhập» còn sót trong HTML (vd Outline cũ). */
+          document.querySelectorAll('[data-ifx-guest-actions] > a.ix-btn[href*="dang-nhap"], [data-ifx-guest-actions] > a.ifx-guest-auth-btn').forEach(function (el) {
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+          });
           document.querySelectorAll('[data-ifx-app-only]').forEach(function (el) {
             el.hidden = false;
             el.style.display = '';

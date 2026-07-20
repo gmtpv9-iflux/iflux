@@ -9,26 +9,28 @@
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=phase4Pub20260716b';
-import { bootShell } from './shell-boot.js?v=bpPhaseD20260716b';
+import { bootPage } from './page-runtime.js?v=hostChrome20260720';
+import { bootShell } from './shell-boot.js?v=mktLoginFix20260720';
 
-var VER = '?v=bpPhaseD20260716';
+var VER = '?v=hostChrome20260720';
 var P4 = '?v=phase4Pub20260716b';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
   flow: function () { return import('../pages/flow.manifest.js' + VER); },
-  community: function () { return import('../pages/community.manifest.js?v=phase3Com20260716'); },
+  community: function () { return import('../pages/community.manifest.js?v=hostChrome20260720'); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js' + VER); },
   sectors: function () { return import('../pages/sectors.manifest.js' + VER); },
   ecosystems: function () { return import('../pages/ecosystems.manifest.js' + VER); },
-  chuDe: function () { return import('../pages/chu-de.manifest.js' + VER); },
+  chuDe: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
+  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
   stock: function () { return import('../pages/stock.manifest.js' + VER); },
   sector: function () { return import('../pages/sector.manifest.js' + VER); },
   family: function () { return import('../pages/family.manifest.js' + VER); },
-  chuDeDetail: function () { return import('../pages/chu-de-detail.manifest.js' + VER); },
+  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + VER); },
+  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + VER); },
   faq: function () { return import('../pages/faq.manifest.js' + VER); },
   loyalty: function () { return import('../pages/loyalty.manifest.js' + VER); },
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
@@ -53,11 +55,13 @@ function detectPageKey() {
 
   if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
   if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
-  if (/\/(ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
-  if (/\/(chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/chu-de\/chi-tiet/.test(path)) return 'chuDeDetail';
+  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
+  if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
   if (/\/(cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/community\/post/.test(path)) {
     return 'communityPost';
   }
+  /* Collection Cộng đồng: chủ đề / tác giả / danh mục — cùng runtime community (filter theo path) */
+  if (/\/cong-dong\/(chu-de|tac-gia|danh-muc)\/[^/]+/.test(path)) return 'community';
 
   if (path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
@@ -72,10 +76,10 @@ function detectPageKey() {
 
   if (/\/(co-phieu|stocks)\/?$/.test(path) || /\/user_web\/stocks(\/|$)/.test(path)) return 'stocks';
   if (/\/(nganh|sectors)\/?$/.test(path) || /\/user_web\/sectors(\/|$)/.test(path)) return 'sectors';
-  if (/\/(ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
-  if (/\/(chu-de|stories)\/?$/.test(path) || /\/user_web\/chu-de\/?$/.test(path) || /\/user_web\/chu-de\/index/.test(path)) return 'chuDe';
+  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
+  if (/\/(cau-chuyen|chu-de|stories)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/index/.test(path)) return 'cauChuyen';
 
-  if (path === '/' || path === '') return 'market';
+  if (path === '/' || path === '') return 'community';
   return null;
 }
 
@@ -146,14 +150,16 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
     };
 
     if (pageKey === 'home') {
-      /* Sidebar = PagePublished; Main = Dashboard Engine shell — không serialize canvas. */
+      /* Sidebar Placement (PagePublished) + Gói cước đặc thù (PRF-002) từ static.
+         PRF-001 (Hồ sơ) không đặc thù — không inject. Main = Dashboard shell. */
       man.publishedSections = ['sidebar'];
       man.title = '';
       man.intro = '';
-      var dash = (staticManifest.widgets || []).find(function (w) {
-        return w && (w.id === 'WGT-HOME-DASH' || w.section === 'main');
-      });
-      if (dash) man.widgets = [Object.assign({}, dash)];
+      man.widgets = (staticManifest.widgets || []).filter(function (w) {
+        if (!w || w.enabled === false) return false;
+        if (w.id === 'WGT-PRF-001') return false;
+        return w.id === 'WGT-HOME-DASH' || w.id === 'WGT-PRF-002' || w.section === 'main';
+      }).map(function (w) { return Object.assign({}, w); });
       /* Đảm bảo sections có sidebar + main từ static nếu Publish chỉ sidebar. */
       if (!sections.some(function (s) { return s && s.key === 'main'; })) {
         man.sections = (staticManifest.sections || []).slice();

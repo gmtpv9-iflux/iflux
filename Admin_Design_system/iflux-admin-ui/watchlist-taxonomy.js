@@ -33,7 +33,7 @@
 
   var SOURCE_LABELS = {
     sector: 'Ngành',
-    family: 'Họ cổ phiếu',
+    family: 'Hệ sinh thái',
     story: 'Chủ đề'
   };
 

@@ -1,11 +1,14 @@
 /**
  * WGT-STOCK-PAGE — Composite chi tiết cổ phiếu
- * Page Feature: mount [data-ifx-stock-page] → deps theo tầng → IfluxStockPage.init().
+ * Page Feature: header/OHLC/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
+var P4_VER = 'phase4Pub20260716b';
+var PUBLISH_KEY = 'stock-detail';
 
 export const meta = { id: 'WGT-STOCK-PAGE', title: 'Chi tiết cổ phiếu' };
 
@@ -44,9 +47,27 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'entity-detail-center.js',
-    ASSET + 'stock-page.js'
+    ASSET + 'stock-page.js',
+    ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
   ]
 ];
+
+async function mountFromHostTree(root) {
+  if (!root || !window.IfluxPageLayoutEngine) {
+    if (window.console && console.warn) {
+      console.warn('[WGT-STOCK-PAGE] thiếu Layout Engine');
+    }
+    return;
+  }
+  var tree = await IfluxPageLayoutEngine.buildHostTree(root, PUBLISH_KEY);
+  if (!tree || !tree.length) {
+    if (window.console && console.warn) {
+      console.warn('[WGT-STOCK-PAGE] Host Tree rỗng — chưa có placements Published');
+    }
+    return;
+  }
+  await mountPublishedWidgets(tree, { logPrefix: '[WGT-STOCK-PAGE]' });
+}
 
 export async function mount(el) {
   el.innerHTML = '<div data-ifx-stock-page></div>';
@@ -57,8 +78,21 @@ export async function mount(el) {
   });
   if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
   if (window.IfluxStockPage) IfluxStockPage.init();
+  function onRemount() {
+    mountFromHostTree(el);
+  }
+  function onPlans() {
+    mountFromHostTree(el);
+  }
+  await mountFromHostTree(el);
+  document.addEventListener('iflux-knowledge-remount-widgets', onRemount);
+  document.addEventListener('iflux-plans-updated', onPlans);
   return {
-    unmount: function () { if (el) el.innerHTML = ''; }
+    unmount: function () {
+      document.removeEventListener('iflux-knowledge-remount-widgets', onRemount);
+      document.removeEventListener('iflux-plans-updated', onPlans);
+      if (el) el.innerHTML = '';
+    }
   };
 }
 
