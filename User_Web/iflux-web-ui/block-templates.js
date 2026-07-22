@@ -5,6 +5,9 @@
 (function (global) {
   'use strict';
 
+  /* Phase A: guard nạp trùng (Shell đã có → Feature CORE_TIERS không execute lại). */
+  if (global.IfluxBlockTemplates) return;
+
   var BREADTH_STATS = [
     { key: 'total', label: 'Toàn bộ', cls: 'is-total' },
     { key: 'up', label: 'Mã tăng', cls: 'is-up' },
@@ -70,6 +73,12 @@
       blocks: []
     },
     {
+      id: 'TPL-SR-HISTORY',
+      label: 'Lịch sử Hỗ trợ — Kháng cự (tab + thanh vị trí)',
+      classes: 'ifx-sr-hist',
+      blocks: []
+    },
+    {
       id: 'TPL-RANK-BAR',
       label: 'Horizontal rank / Top 10 bars',
       classes: 'ifx-rank-bar, ix-top10-market',
@@ -107,6 +116,60 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  var ENTITY_KINDS = { stock: 1, sector: 1, family: 1, 'cau-chuyen': 1 };
+
+  /**
+   * Entity Renderer — marker semantic duy nhất (CP / Ngành / HST / Câu chuyện).
+   * Widget chỉ gọi helper; Permission không gắn marker từng file.
+   * opts: { className, title, tiny }
+   */
+  function entityName(label, kind, opts) {
+    opts = opts || {};
+    kind = ENTITY_KINDS[kind] ? kind : 'stock';
+    var text = opts.tiny && label ? String(label).split(' ')[0] : String(label == null ? '' : label);
+    var cls = 'ifx-entity-name' + (opts.className ? ' ' + opts.className : '');
+    var title = opts.title != null ? opts.title : text;
+    return (
+      '<span class="' + esc(cls) + '" data-ifx-role="entity-name" data-ifx-entity-kind="' + esc(kind) + '"' +
+        (title ? ' title="' + esc(title) + '"' : '') +
+        ' data-ifx-entity-raw="' + esc(text) + '">' +
+        esc(text) +
+      '</span>'
+    );
+  }
+
+  function maskBullet(len) {
+    var n = Math.max(3, Math.min(12, Number(len) || 6));
+    var out = '';
+    var i;
+    for (i = 0; i < n; i++) out += '•';
+    return out;
+  }
+
+  function maskEntityNames(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('[data-ifx-role="entity-name"]').forEach(function (el) {
+      var raw = el.getAttribute('data-ifx-entity-raw');
+      if (raw == null) {
+        raw = el.textContent || '';
+        el.setAttribute('data-ifx-entity-raw', raw);
+      }
+      el.textContent = maskBullet(String(raw).length);
+      el.setAttribute('data-ifx-entity-masked', '1');
+      el.removeAttribute('title');
+    });
+  }
+
+  function unmaskEntityNames(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('[data-ifx-role="entity-name"][data-ifx-entity-masked]').forEach(function (el) {
+      var raw = el.getAttribute('data-ifx-entity-raw') || '';
+      el.textContent = raw;
+      el.removeAttribute('data-ifx-entity-masked');
+      if (raw) el.setAttribute('title', raw);
+    });
   }
 
   function templateForBlock(blockId) {
@@ -314,9 +377,10 @@
     var name = opts.name || '';
     var perf = opts.perf != null ? opts.perf : '';
     var href = opts.href || '#';
+    var kind = opts.entityKind || 'stock';
     var inner = opts.tiny
-      ? '<span class="ifx-treemap-tile__name">' + esc(name.split(' ')[0]) + '</span>'
-      : '<span class="ifx-treemap-tile__name">' + esc(name) + '</span>' +
+      ? entityName(name, kind, { className: 'ifx-treemap-tile__name', tiny: true })
+      : entityName(name, kind, { className: 'ifx-treemap-tile__name' }) +
         (perf !== '' ? '<span class="ifx-treemap-tile__perf">' + esc(perf) + '</span>' : '');
 
     return (
@@ -445,7 +509,9 @@
       return (
         '<div class="ifx-rank-bar__row ifx-mkt-rank-row">' +
           '<span class="ifx-rank-bar__idx ifx-mkt-rank-idx">' + (idx + 1) + '</span>' +
-          '<span class="ifx-rank-bar__name ifx-mkt-rank-name" title="' + esc(it.name) + '">' + esc(it.name) + '</span>' +
+          entityName(it.name, it.entityKind || opts.entityKind || 'stock', {
+            className: 'ifx-rank-bar__name ifx-mkt-rank-name'
+          }) +
           '<div class="ifx-rank-bar__track ifx-mkt-rank-bar-track">' +
             '<div class="ifx-rank-bar__fill ifx-mkt-rank-bar ' + cls + '" style="width:' + pct + '%"></div>' +
           '</div>' +
@@ -589,6 +655,82 @@
     var abs = Math.abs(n);
     var body = abs % 1 === 0 ? String(abs) : abs.toFixed(1).replace(/\.0$/, '');
     return sign + body + '%';
+  }
+
+  /**
+   * TPL-SR-HISTORY / TMP-SR-HISTORY — Lịch sử Hỗ trợ | Kháng cự.
+   * opts: {
+   *   tabs: string[],
+   *   activeIndex?: number,
+   *   leftRange, rightRange, center, leftPct, rightPct,
+   *   leftLabel?, centerLabel?, rightLabel?,
+   *   emptyMsg?
+   * }
+   * Tab = ix-segmented (DS). Thanh / nhãn chỉ token DS trong block-templates.css.
+   */
+  function renderSrHistory(opts) {
+    opts = opts || {};
+    var tabs = opts.tabs || [];
+    var active = Math.max(0, Math.min(tabs.length ? tabs.length - 1 : 0, Number(opts.activeIndex) || 0));
+    var leftAbs = Math.abs(parseFloat(String(opts.leftPct == null ? '' : opts.leftPct).replace(/[^0-9.\-]/g, '')) || 0);
+    var rightAbs = Math.abs(parseFloat(String(opts.rightPct == null ? '' : opts.rightPct).replace(/[^0-9.\-]/g, '')) || 0);
+    var total = leftAbs + rightAbs;
+    var leftW = total > 0 ? (leftAbs / total) * 100 : 50;
+    var rightW = 100 - leftW;
+    var leftLabel = opts.leftLabel != null ? opts.leftLabel : 'Hỗ trợ';
+    var centerLabel = opts.centerLabel != null ? opts.centerLabel : 'Hiện tại';
+    var rightLabel = opts.rightLabel != null ? opts.rightLabel : 'Kháng cự';
+    var leftPctTxt = fmtSignedPct(opts.leftPct);
+    var rightPctTxt = fmtSignedPct(opts.rightPct);
+    var leftHint = leftPctTxt !== '—' ? ('Còn ' + leftPctTxt + ' nữa') : '';
+    var rightHint = rightPctTxt !== '—' ? ('còn ' + rightPctTxt + ' nữa') : '';
+
+    if (!tabs.length && !opts.center && !opts.leftRange && !opts.rightRange) {
+      return '<div class="ifx-mkt-empty">' + esc(opts.emptyMsg || 'Chưa có dữ liệu') + '</div>';
+    }
+
+    var tabHtml = '';
+    if (tabs.length) {
+      tabHtml =
+        '<div class="ix-segmented ifx-sr-hist__tabs" role="tablist" aria-label="Khung thời gian">' +
+          tabs.map(function (lb, i) {
+            return (
+              '<button type="button" class="ix-segment' + (i === active ? ' is-active' : '') +
+                '" role="tab" aria-selected="' + (i === active ? 'true' : 'false') +
+                '" data-ifx-sr-hist-tab="' + i + '">' + esc(lb) + '</button>'
+            );
+          }).join('') +
+        '</div>';
+    }
+
+    return (
+      '<div class="ifx-sr-hist">' +
+        tabHtml +
+        '<div class="ifx-sr-hist__panel" data-ifx-sr-hist-panel>' +
+          '<div class="ifx-sr-hist__labels">' +
+            '<span class="ifx-sr-hist__label is-left">' + esc(leftLabel) + '</span>' +
+            '<span class="ifx-sr-hist__label is-center">' + esc(centerLabel) + '</span>' +
+            '<span class="ifx-sr-hist__label is-right">' + esc(rightLabel) + '</span>' +
+          '</div>' +
+          '<div class="ifx-sr-hist__bar" role="img" aria-label="' +
+            esc(leftLabel + ' · ' + (opts.center || '') + ' · ' + rightLabel) +
+          '">' +
+            '<div class="ifx-sr-hist__seg is-left" style="width:' + leftW.toFixed(1) + '%"></div>' +
+            '<span class="ifx-sr-hist__dot" aria-hidden="true"></span>' +
+            '<div class="ifx-sr-hist__seg is-right" style="width:' + rightW.toFixed(1) + '%"></div>' +
+          '</div>' +
+          '<div class="ifx-sr-hist__values">' +
+            '<span class="ifx-sr-hist__range is-left">' + esc(opts.leftRange || '—') + '</span>' +
+            '<span class="ifx-sr-hist__price">' + esc(opts.center || '—') + '</span>' +
+            '<span class="ifx-sr-hist__range is-right">' + esc(opts.rightRange || '—') + '</span>' +
+          '</div>' +
+          '<div class="ifx-sr-hist__hints">' +
+            '<span class="ifx-sr-hist__hint is-left">' + esc(leftHint) + '</span>' +
+            '<span class="ifx-sr-hist__hint is-right">' + esc(rightHint) + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
   }
 
   /**
@@ -838,8 +980,8 @@
     var extra = opts.extraClass ? ' ' + opts.extraClass : '';
     return (
       '<a class="ifx-list-row ifx-stock-row ' + cls + extra + '" href="' + esc(href) + '" data-ticker="' + esc(s.ticker) + '">' +
-        '<span class="ifx-stock-row__ticker">' + esc(s.ticker) + '</span>' +
-        '<span class="ifx-stock-row__name">' + esc(s.name || '') + '</span>' +
+        entityName(s.ticker, 'stock', { className: 'ifx-stock-row__ticker' }) +
+        entityName(s.name || '', 'stock', { className: 'ifx-stock-row__name' }) +
         '<span class="ifx-stock-row__price">' + (s.price != null ? esc(s.price) : '—') + '</span>' +
         '<span class="ifx-stock-row__chg">' + fmtPct(chg) + '</span>' +
         (opts.hideVol ? '' : '<span class="ifx-stock-row__vol">' + esc(s.volume || '—') + '</span>') +
@@ -915,6 +1057,9 @@
     CHART_SERIES_COUNT: CHART_SERIES_COUNT,
     templateForBlock: templateForBlock,
     esc: esc,
+    entityName: entityName,
+    maskEntityNames: maskEntityNames,
+    unmaskEntityNames: unmaskEntityNames,
     fmtPct: fmtPct,
     fmtPct1: fmtPct1,
     dirClass: dirClass,
@@ -933,6 +1078,7 @@
     renderDivergingBarsPlot: renderDivergingBarsPlot,
     renderZonePosition: renderZonePosition,
     renderZonePositionRow: renderZonePositionRow,
+    renderSrHistory: renderSrHistory,
     renderFlowSplitBlock: renderFlowSplitBlock,
     renderFlowSplitBody: renderFlowSplitBody,
     renderFlowSplitRow: renderFlowSplitRow,

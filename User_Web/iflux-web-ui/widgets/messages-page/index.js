@@ -1,7 +1,7 @@
 /**
  * WGT-MSG-PAGE — Composite Tin nhắn (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -9,7 +9,7 @@ var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 export const meta = { id: 'WGT-MSG-PAGE', title: 'Tin nhắn' };
 
 var CORE_TIERS = [
-  [ASSET + 'stock-store.js', ASSET + 'stock-comments-ui.js', ASSET + 'seo-url.js'],
+  [ASSET + 'stock-store.js', ASSET + 'stock-comments-ui.js'],
   [ASSET + 'community-store.js', ASSET + 'community-ui.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
   [ASSET + 'profile-follow-store.js?v=chatGate20260708', ASSET + 'profile-friend-store.js?v=chatGate20260708', ASSET + 'profile-block-store.js'],
   [ASSET + 'profile-chat-access.js?v=chatGate20260708', ASSET + 'profile-chat-store.js?v=msg20260711', ASSET + 'profile-chat-page.js?v=msg20260711'],
@@ -17,7 +17,9 @@ var CORE_TIERS = [
   [ASSET + 'profile-page.js', ASSET + 'profile-bind.js?v=planPromo20260708']
 ];
 
-var LAYOUT_HTML = `<h1 class="ix-page-title">Tin nhắn</h1>
+function renderLayout(manifest) {
+  var title = (manifest && manifest.title) || 'Tin nhắn';
+  return `<h1 class="ix-page-title">` + title + `</h1>
     <div class="ix-breadcrumb ix-mb-24">
       <a href="/nha-cua-toi">Nhà của tôi</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tin nhắn</span>
     </div>
@@ -79,14 +81,14 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Tin nhắn</h1>
         <div class="ix-card-body" id="ifx-profile-following"></div>
       </div>
     </div>`;
+}
 
-export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+export async function mount(el, ctx) {
+  ctx = ctx || {};
+  el.innerHTML = renderLayout(ctx.manifest);
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   if (window.IfluxProfileAvatar) IfluxProfileAvatar.initOwn();
   if (window.IfluxProfilePage) IfluxProfilePage.init();
   var params = new URLSearchParams(location.search || '');

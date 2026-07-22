@@ -1206,6 +1206,66 @@ body.ifx-nav-drawer-open {
   position: relative;
 }
 
+/* ── Widget Shell — Permission overlay (App Shell asset, không thuộc Flow) ──
+ * Nội dung Widget vẫn hiện; tên Entity = mask •••• (lớp chính).
+ * Blur chỉ trên khung badge (≤300×~80px), không phủ toàn bộ Widget.
+ */
+.ifx-widget-shell,
+.ifx-rt-widget {
+  position: relative;
+}
+.ifx-widget-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-16, 16px);
+  background: transparent;
+  pointer-events: none;
+}
+.ifx-widget-overlay[hidden] {
+  display: none !important;
+}
+.ifx-widget-overlay__card {
+  pointer-events: auto;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 300px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4, 4px);
+  padding: var(--ifx-space-8, 8px) var(--ifx-space-12, 12px);
+  text-align: center;
+  border-radius: var(--ix-radius, 8px);
+  background: var(--ifx-alpha-shell-55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+.ifx-widget-overlay__caption {
+  margin: 0;
+  font-size: var(--ifx-font-size-12);
+  color: var(--ix-text-secondary);
+  line-height: 1.35;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Mask text •••• là lớp chính — không blur tên Entity. */
+.ifx-widget-locked [data-ifx-role="entity-name"][data-ifx-entity-masked] {
+  letter-spacing: 0.08em;
+  color: var(--ix-text-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
 /* ─────────────────────────────────────────────────────────────
  * Market Status Bar — status thị trường toàn cục (App Shell)
  * Dải dưới header: trái Kháng cự (danger) · giữa Cân bằng (warning) ·

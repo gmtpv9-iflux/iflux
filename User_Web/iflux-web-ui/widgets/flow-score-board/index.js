@@ -2,7 +2,7 @@
  * WGT-FLW-STAT_* / WGT-FLW-EX_TM_* — Bảng Top 10 điểm dòng tiền (ESM)
  * ApexCharts chỉ nạp tại đây (cần cho radar). Không kéo seed Admin.
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -47,8 +47,7 @@ export async function mount(el, ctx) {
       global: 'ApexCharts',
       src: 'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
     },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
-    { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js' },
+    /* W4: templates + seo = Shell trên flow */
     { global: 'IfluxFlowScoreMock', src: ASSET + 'flow-score-top-mock.js' },
     { global: 'IfluxFlowScoreTop', src: ASSET + 'flow-score-top.js?v=bpPhaseD20260716' }
   ]);

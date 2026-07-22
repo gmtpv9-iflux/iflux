@@ -44,11 +44,23 @@
   function renderGuestActions() {
     var actions = document.querySelector('[data-ifx-guest-actions]');
     if (!actions) return;
-    actions.innerHTML =
+    /* Giữ slot Search (nếu có) — chỉ thay CTA auth, không innerHTML cả khối. */
+    var search = actions.querySelector('[data-ifx-header-search]');
+    var loginHtml =
       '<a href="' + loginUrl() + '" class="ix-btn ix-btn-primary ifx-guest-auth-btn" aria-label="Đăng nhập">' +
         '<i class="ti ti-login"></i>' +
         '<span class="ifx-guest-auth-btn__label">Đăng nhập</span>' +
       '</a>';
+    if (search) {
+      Array.prototype.slice.call(actions.children).forEach(function (child) {
+        if (child !== search && child.parentNode === actions) actions.removeChild(child);
+      });
+      if (!actions.querySelector('.ifx-guest-auth-btn')) {
+        actions.insertAdjacentHTML('beforeend', loginHtml);
+      }
+    } else {
+      actions.innerHTML = loginHtml;
+    }
   }
 
   function firstGuestPageUrl() {
@@ -56,6 +68,19 @@
     var menus = IfluxEntitlements.visibleMenus();
     if (!menus.length) return routeTo('market');
     return menus[0].path || routeTo('market');
+  }
+
+  function syncBrandHref() {
+    var brand = document.querySelector('a.ifx-topnav-brand');
+    if (!brand) return;
+    var href;
+    if (isLoggedIn()) {
+      href = global.IfluxRoutes ? IfluxRoutes.to('home') : '/nha-cua-toi';
+    } else {
+      href = global.IfluxRoutes ? IfluxRoutes.to('community') : '/cong-dong';
+      if (!href || href === '/') href = '/cong-dong';
+    }
+    brand.setAttribute('href', href);
   }
 
   function bootstrapPage(pageKey, initFn) {
@@ -92,6 +117,8 @@
         }
       }
 
+      syncBrandHref();
+
       if (proceed) applyEntitlements();
       /* Luôn gọi initFn — shell-boot await Promise dựa vào đây; thiếu = treo trang. */
       if (typeof initFn === 'function') initFn();
@@ -105,6 +132,7 @@
           renderGuestNav(pageKey);
           renderGuestActions();
         }
+        syncBrandHref();
         applyEntitlements();
         if (typeof initFn === 'function') initFn();
       });

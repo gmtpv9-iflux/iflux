@@ -9,17 +9,19 @@
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=hostChrome20260720';
-import { bootShell } from './shell-boot.js?v=mktLoginFix20260720';
+import { bootPage } from './page-runtime.js?v=phaseB220260721a';
+import { applyDefinitionToDocument } from './page-definition.js?v=phaseB220260721a';
+import { bootShell } from './shell-boot.js?v=phaseCW5gate20260721';
 
-var VER = '?v=hostChrome20260720';
-var P4 = '?v=phase4Pub20260716b';
+var VER = '?v=phaseCW5gate20260721';
+var P4 = '?v=phaseCW5gate20260721';
+var B2 = '?v=phaseB220260721a';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
   flow: function () { return import('../pages/flow.manifest.js' + VER); },
-  community: function () { return import('../pages/community.manifest.js?v=hostChrome20260720'); },
+  community: function () { return import('../pages/community.manifest.js' + VER); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js' + VER); },
   sectors: function () { return import('../pages/sectors.manifest.js' + VER); },
@@ -35,8 +37,13 @@ var MANIFEST_MAP = {
   loyalty: function () { return import('../pages/loyalty.manifest.js' + VER); },
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
-  messages: function () { return import('../pages/messages.manifest.js?v=msgMobile20260716'); },
-  communityPost: function () { return import('../pages/community-post.manifest.js' + VER); }
+  messages: function () { return import('../pages/messages.manifest.js' + VER); },
+  communityPost: function () { return import('../pages/community-post.manifest.js' + VER); },
+  account: function () { return import('../pages/account.manifest.js' + VER); },
+  checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
+  communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },
+  share: function () { return import('../pages/share.manifest.js' + VER); },
+  stockComment: function () { return import('../pages/stock-comment.manifest.js' + VER); }
 };
 
 /** Runtime pageKey → PagePublished key. */
@@ -53,15 +60,27 @@ var PAGE_PUBLISHED = {
 function detectPageKey() {
   var path = (location.pathname || '/').toLowerCase();
 
-  if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
-  if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
-  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
-  if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
+  /* Path cụ thể TRƯỚC nhánh rộng — học Phase A (viet-bai) + Ownership Proof (comment/checkout). */
+  if (/\/user_web\/stock\/comment/.test(path) || /\/stock\/comment\.html/.test(path)) {
+    return 'stockComment';
+  }
+  if (path.indexOf('/thanh-toan') >= 0 || /\/user_web\/account\/checkout/.test(path) || /\/account\/checkout/.test(path)) {
+    return 'checkout';
+  }
+  /* Viết bài — TRƯỚC nhánh rộng /cong-dong (tránh nhận nhầm pageKey=community → mất AuthGate). */
+  if (/\/cong-dong\/(viet|write)/.test(path) || /\/user_web\/community\/write/.test(path) || /\/community\/write/.test(path)) {
+    return 'communityWrite';
+  }
   if (/\/(cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/community\/post/.test(path)) {
     return 'communityPost';
   }
   /* Collection Cộng đồng: chủ đề / tác giả / danh mục — cùng runtime community (filter theo path) */
-  if (/\/cong-dong\/(chu-de|tac-gia|danh-muc)\/[^/]+/.test(path)) return 'community';
+  if (/\/cong-dong\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'community';
+
+  if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
+  if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
+  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
+  if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
 
   if (path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
@@ -73,6 +92,12 @@ function detectPageKey() {
   if (path.indexOf('/theo-doi') >= 0 || path.indexOf('/watchlist') >= 0) return 'watchlist';
   if (path.indexOf('/tim-kiem') >= 0 || path.indexOf('/search') >= 0) return 'search';
   if (path.indexOf('/tin-nhan') >= 0 || path.indexOf('/messages') >= 0) return 'messages';
+  if (path.indexOf('/chia-se') >= 0 || path.indexOf('/share') >= 0 || /\/user_web\/share/.test(path)) {
+    return 'share';
+  }
+  if (path.indexOf('/tai-khoan') >= 0 || path.indexOf('/account') >= 0 || /\/user_web\/account\/profile/.test(path)) {
+    return 'account';
+  }
 
   if (/\/(co-phieu|stocks)\/?$/.test(path) || /\/user_web\/stocks(\/|$)/.test(path)) return 'stocks';
   if (/\/(nganh|sectors)\/?$/.test(path) || /\/user_web\/sectors(\/|$)/.test(path)) return 'sectors';
@@ -178,12 +203,15 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
 async function resolveManifest(pageKey) {
   var staticManifest = await loadStaticManifest(pageKey);
   if (!staticManifest) return null;
-  if (staticManifest.composite) return staticManifest;
-  if (PAGE_PUBLISHED[pageKey]) {
-    return resolvePagePublishedManifest(pageKey, staticManifest);
+  var manifest = staticManifest;
+  if (!staticManifest.composite && PAGE_PUBLISHED[pageKey]) {
+    manifest = await resolvePagePublishedManifest(pageKey, staticManifest);
   }
-  /* Trang slot khác (chưa Phase 4): giữ static — không gọi composition từ bootstrap. */
-  return staticManifest;
+  /* Phase B2: enrich entity (symbol → documentTitle) trước apply / mount. */
+  if (manifest && window.IfluxEntityDefinition && IfluxEntityDefinition.enrichDefinitionWithEntity) {
+    manifest = IfluxEntityDefinition.enrichDefinitionWithEntity(manifest, pageKey);
+  }
+  return manifest;
 }
 
 export async function start(opts) {
@@ -194,8 +222,28 @@ export async function start(opts) {
     return null;
   }
 
+  /* Phase B2: title entity sớm (nếu classic script chưa chạy — vd soft nav). */
+  if (window.IfluxEntityDefinition && IfluxEntityDefinition.applyEarlyDocumentTitle) {
+    IfluxEntityDefinition.applyEarlyDocumentTitle();
+  }
+
   var shell = await bootShell(pageKey);
   if (shell === null) return null;
+
+  var manifest = await resolveManifest(pageKey);
+  if (!manifest) {
+    if (window.console && console.warn) console.warn('[Runtime] Chưa có manifest/PagePublished cho:', pageKey);
+    return null;
+  }
+
+  /* Shell-only pages (Feature tự boot sau) — dùng Definition nhưng không mount page-runtime. */
+  var SHELL_ONLY = { account: 1, checkout: 1, communityWrite: 1, share: 1, stockComment: 1 };
+  if (SHELL_ONLY[pageKey]) {
+    applyDefinitionToDocument(manifest);
+    window.__IFLUX_SHELL_READY = pageKey;
+    window.dispatchEvent(new CustomEvent('iflux-shell-ready', { detail: { pageKey: pageKey } }));
+    return { shell: shell, manifest: manifest };
+  }
 
   var mountEl = document.querySelector('[data-ifx-page-runtime]');
   if (!mountEl) {
@@ -203,11 +251,6 @@ export async function start(opts) {
     return null;
   }
 
-  var manifest = await resolveManifest(pageKey);
-  if (!manifest) {
-    if (window.console && console.warn) console.warn('[Runtime] Chưa có manifest/PagePublished cho:', pageKey);
-    return null;
-  }
   return bootPage(manifest, mountEl);
 }
 

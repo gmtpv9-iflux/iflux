@@ -38,6 +38,7 @@
   function chatUi() { return global.IfluxStockCommentsUI; }
   function stockSt() { return global.IfluxStockStore; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
+  function pageDef() { return global.IfluxPageDefinition; }
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -282,11 +283,18 @@
 
     if (!currentDetail) {
       root.innerHTML = renderNotFound(source, currentId);
-      document.title = typeLabel + ' · iFlux';
+      if (pageDef() && pageDef().applyPatch) {
+        pageDef().applyPatch({ documentTitle: typeLabel + ' · iFlux' });
+      }
       return;
     }
 
-    document.title = currentDetail.name + ' · ' + typeLabel + ' · iFlux';
+    if (pageDef() && pageDef().applyPatch) {
+      pageDef().applyPatch({
+        title: currentDetail.name,
+        documentTitle: currentDetail.name + ' · ' + typeLabel + ' · iFlux'
+      });
+    }
 
     var newsState = {
       entityName: currentDetail.name,

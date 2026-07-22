@@ -127,7 +127,7 @@
         type: 'watchlist',
         icon: 'ti-bookmark',
         iconClass: 'success',
-        title: 'Thêm mã vào Watchlist',
+        title: 'Thêm mã vào danh sách theo dõi',
         desc: 'FPT, VCB được thêm vào tab "Ngân hàng".',
         at: new Date(now - 86400000 * 6).toISOString()
       },

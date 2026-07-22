@@ -2,7 +2,7 @@
  * Widget WGT-MKT-004/005/006 — Heatmap (ESM lazy module)
  * source lấy từ slot.config.source hoặc ctx.source: sector | family | story
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -25,7 +25,7 @@ export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
+    /* W4: IfluxBlockTemplates = Shell — ensureSequence skip nếu đã có */
     { global: 'IfluxMarketHeatmap', src: ASSET + 'market-heatmap.js' }
   ]);
 

@@ -1,4 +1,4 @@
-/* Cộng đồng — Top Watchlist mạnh nhất (Elite); hub sidebar + community */
+/* Cộng đồng — Top theo dõi mạnh nhất (Elite); hub sidebar + community */
 (function (global) {
   'use strict';
 
@@ -71,7 +71,7 @@
         '<div class="ifx-com-topwl-lock__inner">' +
           '<i class="ti ti-diamond"></i>' +
           '<strong>Chỉ dành cho Elite</strong>' +
-          '<p>Xem Top Watchlist mạnh nhất và chép danh mục từ nhà đầu tư hàng đầu.</p>' +
+          '<p>Xem Top theo dõi mạnh nhất và chép danh mục từ nhà đầu tư hàng đầu.</p>' +
           '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ifx-topwl-upgrade>' +
             '<i class="ti ti-crown"></i> Nâng cấp Elite</button>' +
         '</div>' +
@@ -81,8 +81,8 @@
 
   function headHtml(opts) {
     if (!opts.withHead) return '';
-    var title = opts.title || 'Top Watchlist mạnh nhất';
-    var description = opts.description || 'Hiệu suất TB các mã từ lúc thêm vào watchlist đến hiện tại.';
+    var title = opts.title || 'Top theo dõi mạnh nhất';
+    var description = opts.description || 'Hiệu suất TB các mã từ lúc thêm vào danh sách theo dõi đến hiện tại.';
     var titleBlock = global.IfluxBlockTemplates && IfluxBlockTemplates.renderWgtHead
       ? IfluxBlockTemplates.renderWgtHead(title, description)
       : ('<div class="ifx-widget__header"><h3>' + title + '</h3>' +
@@ -125,7 +125,7 @@
     if (upgrade) {
       upgrade.addEventListener('click', function () {
         if (global.IfluxWebUI && IfluxWebUI.openPricing) {
-          IfluxWebUI.openPricing({ reason: 'elite_feature', message: 'Top Watchlist mạnh nhất — Elite' });
+          IfluxWebUI.openPricing({ reason: 'elite_feature', message: 'Top theo dõi mạnh nhất — Elite' });
         }
       });
     }

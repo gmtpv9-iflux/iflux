@@ -2,7 +2,7 @@
  * Mount path helper — Host Tree → import(display.module) → mount(host, ctx).
  * Ctx chỉ: host (el), artifact, view model (config/slot) — không pageKey/route/section/layout.
  */
-import { loadStyles } from './legacy-bridge.js?v=lazyAll20260713k';
+import { loadStyles } from './legacy-bridge.js?v=phaseCW420260721';
 
 function stylesheetHrefs(widgetArt) {
   var deps = (widgetArt && widgetArt.dependencies) || [];

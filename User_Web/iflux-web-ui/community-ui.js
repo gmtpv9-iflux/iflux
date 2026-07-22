@@ -157,7 +157,7 @@
     if (global.IfluxSeoUrl) {
       return IfluxSeoUrl.postHref(post);
     }
-    return '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug);
+    return '/cong-dong/bai-viet/' + encodeURIComponent(post.slug || post.id);
   }
 
   function postStats(post) {
@@ -284,44 +284,35 @@
     var pageUrl = location.href.split('#')[0];
     var canonical = seo.canonical_url ||
       (global.IfluxSeoUrl ? IfluxSeoUrl.postCanonical(post) : pageUrl);
-
-    document.title = seo.meta_title || post.title;
-    setMeta('description', seo.meta_description || post.excerpt);
-    setMeta('robots', seo.robots || 'index,follow');
-    setMeta('keywords', [seo.focus_keyword].concat(seo.secondary_keywords || []).concat(geo.geo_keywords || []).filter(Boolean).join(', '));
-    setMeta('geo.region', geo.country === 'VN' ? 'VN' : geo.country);
-    setMeta('geo.placename', geo.region || 'Việt Nam');
-    setMeta('language', geo.language || 'vi-VN');
-
-    setMeta('og:title', seo.og_title || post.title, 'property');
-    setMeta('og:description', seo.og_description || post.excerpt, 'property');
-    setMeta('og:type', 'article', 'property');
-    setMeta('og:locale', geo.target_locale || 'vi_VN', 'property');
-    if (seo.og_image) setMeta('og:image', seo.og_image, 'property');
-    setMeta('og:url', canonical, 'property');
-
-    setMeta('twitter:card', 'summary_large_image');
-    setMeta('twitter:title', seo.og_title || post.title);
-    setMeta('twitter:description', seo.og_description || post.excerpt);
-    if (seo.og_image) setMeta('twitter:image', seo.og_image);
-
-    var linkCanon = document.querySelector('link[rel="canonical"]');
-    if (!linkCanon) {
-      linkCanon = document.createElement('link');
-      linkCanon.rel = 'canonical';
-      document.head.appendChild(linkCanon);
+    if (global.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
+      IfluxPageDefinition.applyPatch({
+        title: post.title,
+        intro: post.excerpt || '',
+        documentTitle: seo.meta_title || post.title,
+        seo: {
+          description: seo.meta_description || post.excerpt,
+          robots: seo.robots || 'index,follow',
+          keywords: [seo.focus_keyword].concat(seo.secondary_keywords || []).concat(geo.geo_keywords || []).filter(Boolean).join(', '),
+          canonical: canonical,
+          'geo.region': geo.country === 'VN' ? 'VN' : geo.country,
+          'geo.placename': geo.region || 'Việt Nam',
+          language: geo.language || 'vi-VN',
+          'og:title': seo.og_title || post.title,
+          'og:description': seo.og_description || post.excerpt,
+          'og:type': 'article',
+          'og:locale': geo.target_locale || 'vi_VN',
+          'og:image': seo.og_image || null,
+          'og:url': canonical,
+          'twitter:card': 'summary_large_image',
+          'twitter:title': seo.og_title || post.title,
+          'twitter:description': seo.og_description || post.excerpt,
+          'twitter:image': seo.og_image || null,
+          jsonLd: [{ id: 'ifx-com-jsonld', data: store().buildJsonLd(post, canonical) }]
+        }
+      });
+      return;
     }
-    linkCanon.href = canonical;
-
-    var ld = store().buildJsonLd(post, canonical);
-    var scriptId = 'ifx-com-jsonld';
-    var old = document.getElementById(scriptId);
-    if (old) old.remove();
-    var script = document.createElement('script');
-    script.id = scriptId;
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(ld, null, 2);
-    document.head.appendChild(script);
+    /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
   }
 
   function storyOptionsHtml() {

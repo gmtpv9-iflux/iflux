@@ -3,6 +3,7 @@
   'use strict';
 
   var HIDE_TAB_IDS = ['tab-following', 'tab-activity', 'tab-messages', 'tab-affiliate', 'tab-account'];
+  function pageDef() { return global.IfluxPageDefinition; }
 
   function queryUserId() {
     try {
@@ -364,7 +365,9 @@
       return 'missing';
     }
 
-    document.title = profile.display_name + ' · iFlux';
+    if (pageDef() && pageDef().applyPatch) {
+      pageDef().applyPatch({ documentTitle: profile.display_name + ' · iFlux' });
+    }
 
     var title = document.getElementById('ifx-profile-title');
     if (title) title.textContent = 'Hồ sơ · ' + profile.display_name;

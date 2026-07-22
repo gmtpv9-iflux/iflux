@@ -4,24 +4,24 @@
  * KHÔNG nạp dashboard-engine / chat / affiliate / community.
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
+var V = 'phaseBExit20260721c';
 
-export const meta = { id: 'WGT-WAT-001', title: 'Watchlist' };
+export const meta = { id: 'WGT-WAT-001', title: 'Theo dõi' };
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
-    { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js' },
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
-    { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js' },
-    { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js' },
-    { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js' },
-    { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js' },
-    { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js' },
-    { global: 'IfluxWidgetRenderers', src: ASSET + 'widget-renderers.js' }
+    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js?v=' + V },
+    /* W1/OI-H2: IfluxBlockTemplates do Shell — skip list Feature */
+    { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + V },
+    { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=' + V },
+    { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=' + V },
+    { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=' + V },
+    { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=' + V },
+    { global: 'IfluxWidgetRenderers', src: ASSET + 'widget-renderers.js?v=' + V }
   ]);
 
   try {
@@ -33,7 +33,7 @@ export async function mount(el, ctx) {
   var cfg = (ctx.slot && ctx.slot.config) || {};
   window.IfluxWidgetRenderers.render('WGT-WAT-001', el, {
     withHead: cfg.withHead !== false,
-    title: cfg.title || 'Watchlist',
+    title: cfg.title || 'Theo dõi',
     description: cfg.description || 'Danh sách mã do user chủ động theo dõi — không qua công thức hệ thống.'
   });
 

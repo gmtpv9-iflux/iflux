@@ -1,7 +1,7 @@
 /**
  * WGT-FAQ-PAGE — Composite Câu hỏi thường gặp (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -45,11 +45,9 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
-  if (window.IfluxFaqPage) IfluxFaqPage.init();
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+if (window.IfluxFaqPage) IfluxFaqPage.init();
   if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('faq');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }

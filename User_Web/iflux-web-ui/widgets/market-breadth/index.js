@@ -1,7 +1,7 @@
 /**
  * Widget WGT-MKT-002 — Độ rộng thị trường (ESM lazy module)
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -14,7 +14,6 @@ export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
     { global: 'IfluxBreadthBlock', src: ASSET + 'breadth-block.js' }
   ]);
 

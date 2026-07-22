@@ -2,7 +2,7 @@
  * WGT-FLW-SUBJ-* — Sidebar dòng tiền mua/bán ròng (ESM)
  * Chỉ nạp dependency của khối này — không kéo seed Admin / registry thị trường.
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -21,7 +21,6 @@ export async function mount(el, ctx) {
 
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
     { global: 'IfluxFlowNetTop', src: ASSET + 'flow-net-top.js' }
   ]);
 

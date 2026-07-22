@@ -6,6 +6,7 @@ export default {
   path: '/tim-kiem',
   title: 'Tìm kiếm',
   documentTitle: 'Tìm kiếm · iFlux',
+  renderPageHead: false,
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

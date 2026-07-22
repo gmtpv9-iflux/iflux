@@ -10,7 +10,7 @@
  *   export const meta = { id, title }     // tuỳ chọn
  */
 
-import { loadStyles } from './legacy-bridge.js?v=lazyAll20260713k';
+import { loadStyles } from './legacy-bridge.js?v=phaseCW420260721';
 
 function esc(s) {
   return String(s == null ? '' : s)

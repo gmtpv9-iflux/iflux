@@ -2,7 +2,7 @@
  * WGT-PRICING-PAGE — Composite Gói cước
  * Page Feature HTML + deps theo tầng → IfluxPricingPage.init().
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -77,11 +77,9 @@ var LAYOUT_HTML =
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
-  if (window.IfluxPricingPage) IfluxPricingPage.init();
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+if (window.IfluxPricingPage) IfluxPricingPage.init();
   return {
     unmount: function () { if (el) el.innerHTML = ''; }
   };

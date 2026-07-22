@@ -1,56 +1,15 @@
 /**
  * WGT-STOCK-PAGE — Composite chi tiết cổ phiếu
- * Page Feature: header/OHLC/tabs → Layout Engine mount placements vào Host sidebar + trading.
+ * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import featureManifest from '../../features/stock.manifest.js?v=phaseCW5gate20260721';
 
-var ASSET = '/User_Web/iflux-web-ui/';
-var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var P4_VER = 'phase4Pub20260716b';
 var PUBLISH_KEY = 'stock-detail';
+var featureRt = null;
 
 export const meta = { id: 'WGT-STOCK-PAGE', title: 'Chi tiết cổ phiếu' };
-
-var CORE_TIERS = [
-  [
-    ADMIN + 'iflux-admin-ui.js',
-    ASSET + 'iflux-user-data-sync.js',
-    ADMIN + 'iflux-market-registry-store.js',
-    ASSET + 'watchlist-taxonomy.js',
-    ASSET + 'block-templates.js',
-    ASSET + 'profile-users-store.js',
-    'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
-  ],
-  [
-    ADMIN + 'iflux-market-seed-data.js',
-    ADMIN + 'iflux-market-ecosystem-seeds.js',
-    ASSET + 'seo-url.js',
-    ASSET + 'profile-links.js'
-  ],
-  [
-    ASSET + 'mock-market.js',
-    ASSET + 'iflux-market-quotes.js',
-    ASSET + 'watchlist-store.js',
-    ASSET + 'stock-store.js',
-    ASSET + 'community-store.js'
-  ],
-  [
-    ASSET + 'watchlist-ui.js',
-    ASSET + 'community-ui.js',
-    ASSET + 'stock-mentions.js',
-    ASSET + 'stock-comments-ui.js',
-    ASSET + 'stock-scroll-feed.js',
-    ASSET + 'entity-timeline-feed.js',
-    ASSET + 'community-daily-feed.js',
-    ASSET + 'market-liquidity.js'
-  ],
-  [
-    ASSET + 'entity-detail-center.js',
-    ASSET + 'stock-page.js',
-    ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
-  ]
-];
 
 async function mountFromHostTree(root) {
   if (!root || !window.IfluxPageLayoutEngine) {
@@ -71,12 +30,17 @@ async function mountFromHostTree(root) {
 
 export async function mount(el) {
   el.innerHTML = '<div data-ifx-stock-page></div>';
-  await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
+  featureRt = createFeatureRuntime(featureManifest);
+  await featureRt.boot({
+    init: function () {
+      if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+    }
   });
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
+  if (window.IfluxAuth && !IfluxAuth.requireAuth()) {
+    featureRt.dispose();
+    featureRt = null;
+    return { unmount: function () { if (el) el.innerHTML = ''; } };
+  }
   if (window.IfluxStockPage) IfluxStockPage.init();
   function onRemount() {
     mountFromHostTree(el);
@@ -91,11 +55,19 @@ export async function mount(el) {
     unmount: function () {
       document.removeEventListener('iflux-knowledge-remount-widgets', onRemount);
       document.removeEventListener('iflux-plans-updated', onPlans);
+      if (featureRt) {
+        featureRt.dispose();
+        featureRt = null;
+      }
       if (el) el.innerHTML = '';
     }
   };
 }
 
 export function unmount(el) {
+  if (featureRt) {
+    try { featureRt.dispose(); } catch (e) { /* ignore */ }
+    featureRt = null;
+  }
   if (el) el.innerHTML = '';
 }

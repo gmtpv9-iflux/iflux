@@ -98,7 +98,7 @@
     },
     watchlist: {
       id: 'watchlist',
-      label: 'Watchlist',
+      label: 'Theo dõi',
       widthMode: 'element',
       fallbackWidth: 640,
       minWidth: 480,
@@ -474,7 +474,7 @@
         return {
           entityType: 'watchlist',
           entityId: 'watchlist',
-          title: 'Watchlist',
+          title: 'Theo dõi',
           sourcePage: location.pathname.indexOf('watchlist') >= 0 ? 'watchlist' : 'dashboard'
         };
       },
@@ -1073,7 +1073,7 @@
     market: 'Thị trường',
     flow: 'Dòng tiền',
     community: 'Cộng đồng',
-    watchlist: 'Watchlist'
+    watchlist: 'Theo dõi'
   };
 
   function resolveSourcePageLabel(sourcePage) {
@@ -1083,7 +1083,7 @@
     if (/\/market\//.test(path)) return 'Thị trường';
     if (/\/flow\//.test(path)) return 'Dòng tiền';
     if (/\/community\//.test(path)) return 'Cộng đồng';
-    if (/\/watchlist\//.test(path)) return 'Watchlist';
+    if (/\/watchlist\//.test(path)) return 'Theo dõi';
     return 'iFlux';
   }
 

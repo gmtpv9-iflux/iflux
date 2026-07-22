@@ -9,9 +9,10 @@ import {
   applyMarketLayout,
   applyHubLayout,
   renderPageHeader
-} from './app-shell.js?v=phase4Pub20260716b';
+} from './app-shell.js?v=phaseB220260721a';
+import { applyDefinitionToDocument } from './page-definition.js?v=phaseB220260721a';
 import { loadWidget } from './widget-loader.js?v=bpPhaseD20260716';
-import { loadScript } from './legacy-bridge.js?v=lazyAll20260713k';
+import { loadScript } from './legacy-bridge.js?v=phaseCW420260721';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=phase4Pub20260716b';
@@ -24,10 +25,17 @@ async function ensureLayoutEngine() {
 export async function bootPage(m, mountEl) {
   if (!m || !mountEl) return { manifest: null, widgets: [] };
 
+  /* Phase B2: đảm bảo Definition đã có entity title trước apply. */
+  if (window.IfluxEntityDefinition && IfluxEntityDefinition.enrichDefinitionWithEntity) {
+    m = IfluxEntityDefinition.enrichDefinitionWithEntity(m, m.pageKey);
+  }
+
   mountEl.innerHTML = '';
   mountEl.classList.add('ifx-rt-page');
 
-  renderPageHeader(mountEl, m);
+  if (m.renderPageHead !== false) {
+    renderPageHeader(mountEl, m);
+  }
   var sectionMap = ensureSections(mountEl, m);
 
   if (m.pageKey === 'market') {
@@ -35,6 +43,9 @@ export async function bootPage(m, mountEl) {
   } else if (m.pageKey === 'home') {
     applyHubLayout(mountEl);
   }
+
+  /* Definition (đã enrich) TRƯỚC mount — không applyCurrent lại cuối boot. */
+  applyDefinitionToDocument(m);
 
   var loaded = [];
 
@@ -49,13 +60,14 @@ export async function bootPage(m, mountEl) {
     var tree = await IfluxPageLayoutEngine.buildHostTree(mountEl, pubKey, {
       sectionFilter: filter
     });
-    if (window.IfluxBlockGate && IfluxBlockGate.apply) {
-      IfluxBlockGate.apply(m.pageKey === 'home' ? 'home' : m.pageKey);
-    }
     var publishedLoaded = await mountPublishedWidgets(tree, {
       logPrefix: '[PageRuntime/' + pubKey + ']'
     });
     loaded = loaded.concat(publishedLoaded);
+    /* Permission sau mount — Entity DOM đã có để Shell mask + overlay. */
+    if (window.IfluxBlockGate && IfluxBlockGate.apply) {
+      IfluxBlockGate.apply(m.pageKey === 'home' ? 'home' : m.pageKey);
+    }
   }
 
   /* Slot còn lại (vd Home Main = WGT-HOME-DASH) — không thuộc PagePublished canvas. */
@@ -73,16 +85,12 @@ export async function bootPage(m, mountEl) {
       continue;
     }
     /* Không truyền pageKey/route vào mount — chỉ slot + config. */
-    var entry = await loadWidget(slot, sectionEl, {});
+    var entry = await loadWidget(slot, sectionEl, { manifest: m, pageDefinition: m });
     loaded.push(entry);
   }
 
   /* Host trống → ẩn tiêu đề/mô tả page (App Shell chrome) đi kèm. */
   syncEmptyPageHead(mountEl);
-
-  if (m.documentTitle) {
-    document.title = m.documentTitle;
-  }
 
   return { manifest: m, widgets: loaded };
 }

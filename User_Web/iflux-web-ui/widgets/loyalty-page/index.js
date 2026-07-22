@@ -1,7 +1,7 @@
 /**
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -202,11 +202,11 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
                 </details>
 
                 <details class="ifx-mship-detail">
-                  <summary><span class="ifx-mship-detail__ico"><i class="ti ti-brain"></i></span> Theo dõi Chủ thể · Ranking · Watchlist · Alert · Story</summary>
+                  <summary><span class="ifx-mship-detail__ico"><i class="ti ti-brain"></i></span> Theo dõi Chủ thể · Ranking · Theo dõi · Alert · Story</summary>
                   <div class="ifx-mship-detail__body">
                     <p><strong>Chủ thể:</strong> Cá nhân, Tổ chức, Tự doanh, Nước ngoài, Smart Money — biết ai mua/bán và cường độ từng nhóm.</p>
                     <p><strong>Ranking:</strong> Xếp theo giá, % tăng giảm, Money Flow, Smart Money, thanh khoản, sức mạnh, hấp thụ, momentum…</p>
-                    <p><strong>Watchlist thông minh:</strong> Theo dõi Money Flow, Smart Money, Alert, Heatmap &amp; Ranking riêng, biến động realtime.</p>
+                    <p><strong>Theo dõi thông minh:</strong> Theo dõi Money Flow, Smart Money, Alert, Heatmap &amp; Ranking riêng, biến động realtime.</p>
                     <p><strong>Alert:</strong> Smart Money xuất hiện, Money Flow đảo chiều, vượt ngưỡng, chủ thể đổi chiều, lọt Top, ngành/họ hút tiền, tín hiệu bất thường.</p>
                     <p><strong>Story Intelligence:</strong> CP kết nối tin tức, phân tích chuyên gia, bài cộng đồng, chủ đề, họ, ngành, doanh nghiệp liên quan — từ dữ liệu đến ngữ cảnh một màn hình.</p>
                     <p><strong>Portfolio Intelligence:</strong> Danh mục hút/mất dòng tiền, sức mạnh từng CP, phân bổ ngành, rủi ro tập trung, hiệu suất theo thời gian.</p>
@@ -426,11 +426,9 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
-  if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

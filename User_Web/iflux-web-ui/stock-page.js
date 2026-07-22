@@ -50,6 +50,7 @@
   function auth() { return global.IfluxAuth; }
   function chatUi() { return global.IfluxStockCommentsUI; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
+  function pageDef() { return global.IfluxPageDefinition; }
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -289,7 +290,6 @@
       : new URLSearchParams(location.search).get('ticker')) || 'VHM';
     currentTicker = String(currentTicker).toUpperCase();
     var detail = mk() ? mk().getStockDetail(currentTicker) : null;
-    document.title = currentTicker + ' · iFlux';
 
     if (!detail) {
       if (!quotes()) {
@@ -313,8 +313,13 @@
     var posts = comStore() ? comStore().getPosts({ ticker: currentTicker }) : [];
     if (global.IfluxSeoUrl) {
       IfluxSeoUrl.applyStockSeoToDocument(detail, { newsCount: posts.length });
-    } else {
-      document.title = currentTicker + ' · iFlux';
+    } else if (pageDef() && pageDef().applyPatch) {
+      var company = detail.name || detail.short_name || currentTicker;
+      var docTitle = currentTicker + ' - ' + company;
+      pageDef().applyPatch({
+        title: docTitle,
+        documentTitle: docTitle
+      });
     }
 
     var newsState = {

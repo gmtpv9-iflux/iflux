@@ -4,7 +4,7 @@
  * Chỉ nạp deps on-demand: mock-market + block-templates (không heatmap/rankings/...).
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -17,7 +17,6 @@ export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js' },
     { global: 'IfluxCommunityMarketOverview', src: ASSET + 'community-market-overview.js' }
   ]);
 

@@ -81,13 +81,13 @@ export function renderPageHeader(root, manifest) {
   var isFlow = manifest.pageKey === 'flow';
   var titleHtml = isFlow
     ? ('<div class="ifx-flow-title-row">' +
-        '<h1 class="ix-page-title" style="margin:0">' + esc(manifest.title) + '</h1>' +
+        '<h1 class="ix-page-title" data-ifx-page-def-title style="margin:0">' + esc(manifest.title) + '</h1>' +
         '<span class="ifx-flow-exclusive"><i class="ti ti-sparkles"></i> Độc quyền iFlux</span>' +
       '</div>')
-    : ('<h1 class="ix-page-title">' + esc(manifest.title) + '</h1>');
+    : ('<h1 class="ix-page-title" data-ifx-page-def-title>' + esc(manifest.title) + '</h1>');
   var html =
     titleHtml +
-    (intro ? '<p class="ifx-page-intro">' + esc(intro) + '</p>' : '');
+    '<p class="ifx-page-intro"' + (intro ? '' : ' hidden') + ' data-ifx-page-def-intro>' + esc(intro) + '</p>';
   var head = document.createElement('div');
   head.className = 'ifx-rt-page-head';
   head.style.gridColumn = '1 / -1';

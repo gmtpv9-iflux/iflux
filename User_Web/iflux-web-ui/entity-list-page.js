@@ -346,7 +346,13 @@
     if (titleEl) titleEl.textContent = meta.title;
     var introEl = document.querySelector('[data-elp-intro]');
     if (introEl) introEl.textContent = meta.intro;
-    if (document.title.indexOf('·') < 0) document.title = meta.title + ' · iFlux';
+    if (window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
+      IfluxPageDefinition.applyPatch({
+        title: meta.title,
+        intro: meta.intro,
+        documentTitle: meta.title + ' · iFlux'
+      });
+    }
 
     var sidebar = document.querySelector('[data-elp-sidebar]');
     var main = document.querySelector('[data-elp-main]');

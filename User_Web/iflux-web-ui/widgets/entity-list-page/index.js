@@ -1,7 +1,7 @@
 /**
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -18,21 +18,13 @@ var KIND_BY_PAGE = {
   chuDe: 'cau-chuyen'
 };
 
+/* W4: taxonomy/seeds/mock/registry/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
   [
     ADMIN + 'iflux-admin-ui.js',
-    ASSET + 'iflux-user-data-sync.js',
-    ADMIN + 'iflux-market-registry-store.js',
-    ASSET + 'watchlist-taxonomy.js?v=' + ELP_VER,
-    ASSET + 'block-templates.js'
+    ASSET + 'iflux-user-data-sync.js'
   ],
   [
-    ADMIN + 'iflux-market-seed-data.js',
-    ADMIN + 'iflux-market-ecosystem-seeds.js',
-    ASSET + 'seo-url.js'
-  ],
-  [
-    ASSET + 'mock-market.js',
     ASSET + 'iflux-market-quotes.js',
     ASSET + 'watchlist-store.js',
     ASSET + 'alert-store.js'
@@ -99,12 +91,9 @@ export async function mount(el, ctx) {
   var publishKey = publishKeyForKind(kind);
   el.innerHTML = LAYOUT_HTML;
   await loadScriptTiers(CORE_TIERS);
-
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
 
   if (window.IfluxAlertPage) IfluxAlertPage.init();
   if (window.IfluxEntityListPage) IfluxEntityListPage.init(kind);
