@@ -1,51 +1,16 @@
 /**
  * WGT-COM-PAGE — Composite Cộng đồng
  *
- * Phase 4: Layout Engine generic + mount(display.module).
- * Không HOST_SEL / không createElement host / không catalog.
+ * Phase C W3: Feature Manifest + Runtime (NOT_LOADED→READY→DISPOSED).
+ * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-
-var ASSET = '/User_Web/iflux-web-ui/';
-var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var P4_VER = 'phase4Pub20260716b';
+import featureManifest from '../../features/community.manifest.js?v=phaseCW5gate20260721';
 
 export const meta = { id: 'WGT-COM-PAGE', title: 'Cộng đồng' };
 
-var CORE_TIERS = [
-  [
-    ASSET + 'watchlist-taxonomy.js',
-    ASSET + 'block-templates.js',
-    ASSET + 'profile-users-store.js',
-    ADMIN + 'iflux-market-registry-store.js'
-  ],
-  [
-    ASSET + 'seo-url.js',
-    ASSET + 'profile-links.js',
-    ADMIN + 'iflux-market-seed-data.js',
-    ADMIN + 'iflux-market-ecosystem-seeds.js'
-  ],
-  [
-    ASSET + 'mock-market.js',
-    ASSET + 'watchlist-store.js'
-  ],
-  [
-    ASSET + 'watchlist-ui.js',
-    ASSET + 'community-geo-ai.js',
-    ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
-  ],
-  [
-    ASSET + 'community-store.js'
-  ],
-  [
-    ASSET + 'community-ui.js'
-  ],
-  [
-    ASSET + 'community-daily-feed.js',
-    ASSET + 'community-page.js?v=hostChrome20260720'
-  ]
-];
+var featureRt = null;
 
 async function mountFromHostTree(root) {
   if (!root || !window.IfluxPageLayoutEngine) {
@@ -85,11 +50,14 @@ function applyCommunity(root) {
 
 export async function mount(el) {
   el.innerHTML = '<div data-ifx-community-feed></div>';
-  await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
+  featureRt = createFeatureRuntime(featureManifest);
+  await featureRt.boot({
+    init: function () {
+      /* modules đã nạp — sync shell UI nếu cần */
+      if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+    }
   });
+
   var indexOnly = isCollectionIndexPath();
   function onPlans() {
     applyCommunity(el);
@@ -101,7 +69,6 @@ export async function mount(el) {
   applyCommunity(el);
   if (!indexOnly) await mountFromHostTree(el);
   if (indexOnly) {
-    /* page-runtime có thể ghi đè document.title sau mount */
     setTimeout(function () {
       var path = String(location.pathname || '').replace(/\/+$/, '');
       var titles = {
@@ -109,7 +76,9 @@ export async function mount(el) {
         '/cong-dong/tac-gia': 'Danh sách tác giả · iFlux',
         '/cong-dong/danh-muc': 'Danh sách danh mục · iFlux'
       };
-      if (titles[path]) document.title = titles[path];
+      if (titles[path] && window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
+        IfluxPageDefinition.applyPatch({ documentTitle: titles[path] });
+      }
       document.querySelectorAll('.ifx-rt-page-head').forEach(function (node) {
         if (node && node.parentNode) node.parentNode.removeChild(node);
       });
@@ -121,11 +90,19 @@ export async function mount(el) {
     unmount: function () {
       document.removeEventListener('iflux-plans-updated', onPlans);
       document.removeEventListener('iflux-community-remount-widgets', onRemount);
+      if (featureRt) {
+        featureRt.dispose();
+        featureRt = null;
+      }
       if (el) el.innerHTML = '';
     }
   };
 }
 
 export function unmount(el) {
+  if (featureRt) {
+    try { featureRt.dispose(); } catch (e) { /* ignore */ }
+    featureRt = null;
+  }
   if (el) el.innerHTML = '';
 }

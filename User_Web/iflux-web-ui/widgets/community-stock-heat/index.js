@@ -1,7 +1,7 @@
 /**
  * WGT-COM-001 — Heatmap cổ phiếu cộng đồng (ESM lazy Widget module)
  */
-import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -13,11 +13,10 @@ export const meta = {
 /** Giữ nguyên URL deps; nhóm tiers theo pattern Blueprint (community-page / flow-page). */
 var DEPS_TIERS = [
   [
-    ASSET + 'seo-url.js',
+    /* W4: seo-url = Shell trên community */
     ASSET + 'community-store.js',
     ASSET + 'watchlist-store.js',
-    ASSET + 'squarified-treemap.js',
-    ASSET + 'block-templates.js'
+    ASSET + 'squarified-treemap.js'
   ],
   [
     ASSET + 'watchlist-ui.js'

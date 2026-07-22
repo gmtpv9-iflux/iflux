@@ -140,12 +140,16 @@
     'WGT-WAT-001': function (el, config) {
       config = config || {};
       if (!global.IfluxWatchlistBlock) {
-        el.innerHTML = '<div class="ifx-wl-empty">Watchlist chưa sẵn sàng</div>';
+        el.innerHTML = '<div class="ifx-wl-empty">Danh sách theo dõi chưa sẵn sàng</div>';
         return;
       }
       if (config.withHead) {
-        var title = config.title || 'Watchlist';
+        var title = config.title || 'Theo dõi';
+        if (title === 'Watchlist') title = 'Theo dõi';
         var description = config.description || 'Danh sách mã do user chủ động theo dõi — không qua công thức hệ thống.';
+        if (/Watchlist/i.test(description) && !/theo dõi/i.test(description)) {
+          description = 'Danh sách mã do user chủ động theo dõi — không qua công thức hệ thống.';
+        }
         var headHtml = global.IfluxBlockTemplates && IfluxBlockTemplates.renderWgtHead
           ? IfluxBlockTemplates.renderWgtHead(title, description)
           : ('<div class="ifx-widget__header"><h3>' + title + '</h3>' +
@@ -328,7 +332,7 @@
 
     'WGT-COM-TOPWL': function (el, config) {
       if (!global.IfluxCommunityTopWatchlist) {
-        el.innerHTML = '<div class="ifx-wl-empty">Đang tải Top Watchlist…</div>';
+        el.innerHTML = '<div class="ifx-wl-empty">Đang tải Top theo dõi…</div>';
         return;
       }
       IfluxCommunityTopWatchlist.mount(el, config || {});

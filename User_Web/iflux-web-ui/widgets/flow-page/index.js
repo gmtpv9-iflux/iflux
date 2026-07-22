@@ -1,48 +1,15 @@
 /**
  * WGT-FLW-PAGE — Composite Dòng tiền
- *
- * Phase 4: Page Feature (title + tabs) + Layout Engine + mount(display.module).
- * Không HOST_SEL / catalog / page-composition / resolveWidgetModule.
+ * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import featureManifest from '../../features/flow.manifest.js?v=phaseCW5gate20260721';
 
-var ASSET = '/User_Web/iflux-web-ui/';
-var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var P4_VER = 'phase4Pub20260716b';
+var featureRt = null;
 
 export const meta = { id: 'WGT-FLW-PAGE', title: 'Dòng tiền' };
 
-var CORE_TIERS = [
-  [
-    ASSET + 'iflux-user-data-sync.js',
-    ADMIN + 'iflux-admin-ui.js',
-    ADMIN + 'iflux-market-registry-store.js',
-    ASSET + 'watchlist-taxonomy.js',
-    ASSET + 'block-templates.js'
-  ],
-  [
-    ADMIN + 'iflux-market-seed-data.js',
-    ADMIN + 'iflux-market-ecosystem-seeds.js',
-    ASSET + 'seo-url.js',
-    ASSET + 'stock-mentions.js'
-  ],
-  [
-    ASSET + 'mock-market.js',
-    ASSET + 'widget-registry.js',
-    ASSET + 'flow-page.js?v=bpPhaseD20260716',
-    ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
-  ],
-  [
-    ASSET + 'iflux-web-ui.js',
-    ASSET + 'iflux-header-search.js'
-  ]
-];
-
-/**
- * Page Feature shell — section hosts trống; Layout Engine đổ widgets từ placements.
- * Sections: sidebar | basic | advanced | exclusive (khớp PagePublished).
- */
 var LAYOUT_HTML =
   '<div class="ifx-flow-title-row">' +
     '<h1 class="ix-page-title" style="margin:0">Dòng tiền</h1>' +
@@ -125,8 +92,12 @@ function applyFlow(root) {
 
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
-  await loadScriptTiers(CORE_TIERS);
-  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+  featureRt = createFeatureRuntime(featureManifest);
+  await featureRt.boot({
+    init: function () {
+      if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+    }
+  });
 
   function onPlans() {
     applyFlow(el);
@@ -139,11 +110,19 @@ export async function mount(el) {
   return {
     unmount: function () {
       document.removeEventListener('iflux-plans-updated', onPlans);
+      if (featureRt) {
+        featureRt.dispose();
+        featureRt = null;
+      }
       if (el) el.innerHTML = '';
     }
   };
 }
 
 export function unmount(el) {
+  if (featureRt) {
+    try { featureRt.dispose(); } catch (e) { /* ignore */ }
+    featureRt = null;
+  }
   if (el) el.innerHTML = '';
 }

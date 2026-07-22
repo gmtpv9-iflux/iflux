@@ -1,0 +1,315 @@
+{
+  "meta": {
+    "phase": "A",
+    "scope": "Runtime Shell only (no Feature)",
+    "environment": "Production",
+    "baseUrl": "https://iflux.vn",
+    "verifiedAt": "2026-07-21T14:58:00+07:00",
+    "browserViewId": "canvas-e0421fa5bf43",
+    "probeWaitMs": 2000,
+    "summary": {
+      "total": 27,
+      "pass": 25,
+      "fail": 2,
+      "failIds": ["07", "21"]
+    }
+  },
+  "passRules": {
+    "guest": "header>=1, brand set, guestCta|guestNav, ent true, searchSlots==expectSlot, hsJs==(expectSlot?1:0), guestSearchKeep true if expectSlot else null/ok; mktLoaded|mktDom optional (R6)",
+    "gate": "finalUrl /dang-nhap?return= OR onAuth; authBoot>=1 OR onAuth → AuthGate PASS",
+    "auth": "onAuth, authBoot>=1, boot==0"
+  },
+  "curlGateHtmlChrome": {
+    "note": "Static HTML before JS auth gate; shell chrome present in source",
+    "pages": [
+      {"url": "https://iflux.vn/nha-cua-toi", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/tai-khoan", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/tin-nhan", "topnav": 5, "brand": 1, "search": 0},
+      {"url": "https://iflux.vn/co-phieu", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/nganh", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/he-sinh-thai", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/cau-chuyen", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/co-phieu/HPG", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/nganh/ngan-hang", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/he-sinh-thai/hoa-phat", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/cau-chuyen/demo", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/tim-kiem", "topnav": 5, "brand": 1, "search": 0},
+      {"url": "https://iflux.vn/theo-doi", "topnav": 5, "brand": 1, "search": 0},
+      {"url": "https://iflux.vn/cong-dong/viet-bai", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/User_Web/account/checkout.html", "topnav": 6, "brand": 1, "search": 1},
+      {"url": "https://iflux.vn/User_Web/stock/comment.html", "topnav": 4, "brand": 1, "search": 0}
+    ]
+  },
+  "results": [
+    {
+      "id": "01",
+      "label": "cong-dong",
+      "url": "https://iflux.vn/cong-dong",
+      "expectSlot": 1,
+      "expectMode": "guest",
+      "probe": {"path": "/cong-dong", "finalUrl": "/cong-dong", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 1, "hsJs": 1, "guestCta": true, "guestNav": 4, "guestSearchKeep": true, "ent": true, "mktDom": 1, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Cộng đồng · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK"
+    },
+    {
+      "id": "02",
+      "label": "thi-truong",
+      "url": "https://iflux.vn/thi-truong",
+      "expectSlot": 1,
+      "expectMode": "guest",
+      "probe": {"path": "/thi-truong", "finalUrl": "/thi-truong", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 1, "hsJs": 1, "guestCta": true, "guestNav": 4, "guestSearchKeep": true, "ent": true, "mktDom": 0, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Thị trường · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK; R6 mktLoaded without mktDom"
+    },
+    {
+      "id": "03",
+      "label": "dong-tien",
+      "url": "https://iflux.vn/dong-tien",
+      "expectSlot": 1,
+      "expectMode": "guest",
+      "probe": {"path": "/dong-tien", "finalUrl": "/dong-tien", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 1, "hsJs": 1, "guestCta": true, "guestNav": 4, "guestSearchKeep": true, "ent": true, "mktDom": 1, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Dòng tiền · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK"
+    },
+    {
+      "id": "04",
+      "label": "thanh-vien",
+      "url": "https://iflux.vn/thanh-vien",
+      "expectSlot": 0,
+      "expectMode": "guest",
+      "probe": {"path": "/thanh-vien", "finalUrl": "/thanh-vien", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 0, "hsJs": 0, "guestCta": true, "guestNav": 4, "guestSearchKeep": null, "ent": true, "mktDom": 0, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Chương trình thành viên · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK, no search slot"
+    },
+    {
+      "id": "05",
+      "label": "hoi-dap",
+      "url": "https://iflux.vn/hoi-dap",
+      "expectSlot": 0,
+      "expectMode": "guest",
+      "probe": {"path": "/hoi-dap", "finalUrl": "/hoi-dap", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 0, "hsJs": 0, "guestCta": true, "guestNav": 4, "guestSearchKeep": null, "ent": true, "mktDom": 0, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "FAQ · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK, no search slot"
+    },
+    {
+      "id": "06",
+      "label": "goi-cuoc",
+      "url": "https://iflux.vn/goi-cuoc",
+      "expectSlot": 1,
+      "expectMode": "guest",
+      "probe": {"path": "/goi-cuoc", "finalUrl": "/goi-cuoc", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 1, "hsJs": 1, "guestCta": true, "guestNav": 4, "guestSearchKeep": true, "ent": true, "mktDom": 0, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Gói cước · iFlux"},
+      "pass": true,
+      "passReason": "guest shell OK"
+    },
+    {
+      "id": "07",
+      "label": "chia-se",
+      "url": "https://iflux.vn/chia-se",
+      "expectSlot": 0,
+      "expectMode": "guest",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fnha-cua-toi", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": false,
+      "passReason": "FAIL guest: redirected to login (return=/nha-cua-toi) after 2s — no guest shell/entitlements"
+    },
+    {
+      "id": "08",
+      "label": "nha-cua-toi",
+      "url": "https://iflux.vn/nha-cua-toi",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fnha-cua-toi", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "09",
+      "label": "tai-khoan",
+      "url": "https://iflux.vn/tai-khoan",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Ftai-khoan", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "10",
+      "label": "tin-nhan",
+      "url": "https://iflux.vn/tin-nhan",
+      "expectSlot": 0,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Ftin-nhan", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "11",
+      "label": "co-phieu",
+      "url": "https://iflux.vn/co-phieu",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fco-phieu", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "12",
+      "label": "nganh",
+      "url": "https://iflux.vn/nganh",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fnganh", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "13",
+      "label": "he-sinh-thai",
+      "url": "https://iflux.vn/he-sinh-thai",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fhe-sinh-thai", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "14",
+      "label": "cau-chuyen",
+      "url": "https://iflux.vn/cau-chuyen",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fcau-chuyen", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "15",
+      "label": "co-phieu/HPG",
+      "url": "https://iflux.vn/co-phieu/HPG",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fco-phieu%2FHPG", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "16",
+      "label": "nganh/ngan-hang",
+      "url": "https://iflux.vn/nganh/ngan-hang",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fnganh%2Fngan-hang", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "17",
+      "label": "he-sinh-thai/hoa-phat",
+      "url": "https://iflux.vn/he-sinh-thai/hoa-phat",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fhe-sinh-thai%2Fhoa-phat", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "18",
+      "label": "cau-chuyen/demo",
+      "url": "https://iflux.vn/cau-chuyen/demo",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Fcau-chuyen%2Fdemo", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "19",
+      "label": "tim-kiem",
+      "url": "https://iflux.vn/tim-kiem",
+      "expectSlot": 0,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Ftim-kiem", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "20",
+      "label": "theo-doi",
+      "url": "https://iflux.vn/theo-doi",
+      "expectSlot": 0,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2Ftheo-doi", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "21",
+      "label": "cong-dong/viet-bai",
+      "url": "https://iflux.vn/cong-dong/viet-bai",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/cong-dong/viet-bai", "finalUrl": "/cong-dong/viet-bai", "onAuth": false, "header": 1, "brand": "/cong-dong", "searchSlots": 1, "hsJs": 1, "guestCta": true, "guestNav": 4, "guestSearchKeep": true, "ent": true, "mktDom": 0, "mktLoaded": true, "boot": 1, "authBoot": 0, "guestShell": 1, "loggedIn": false, "title": "Viết bài · Cộng đồng iFlux"},
+      "pass": false,
+      "passReason": "FAIL gate: stayed on guest shell — no redirect to /dang-nhap, authBoot=0"
+    },
+    {
+      "id": "22",
+      "label": "checkout",
+      "url": "https://iflux.vn/User_Web/account/checkout.html",
+      "expectSlot": 1,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2FUser_Web%2Faccount%2Fcheckout.html", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "23",
+      "label": "stock/comment",
+      "url": "https://iflux.vn/User_Web/stock/comment.html",
+      "expectSlot": 0,
+      "expectMode": "gate",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap?return=%2FUser_Web%2Fstock%2Fcomment.html", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "AuthGate PASS"
+    },
+    {
+      "id": "24",
+      "label": "dang-nhap",
+      "url": "https://iflux.vn/dang-nhap",
+      "expectSlot": 0,
+      "expectMode": "auth",
+      "probe": {"path": "/dang-nhap", "finalUrl": "/dang-nhap", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng nhập · iFlux"},
+      "pass": true,
+      "passReason": "auth shell OK"
+    },
+    {
+      "id": "25",
+      "label": "dang-ky",
+      "url": "https://iflux.vn/dang-ky",
+      "expectSlot": 0,
+      "expectMode": "auth",
+      "probe": {"path": "/dang-ky", "finalUrl": "/dang-ky", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng ký · iFlux"},
+      "pass": true,
+      "passReason": "auth shell OK"
+    },
+    {
+      "id": "26",
+      "label": "quen-mat-khau",
+      "url": "https://iflux.vn/quen-mat-khau",
+      "expectSlot": 0,
+      "expectMode": "auth",
+      "probe": {"path": "/quen-mat-khau", "finalUrl": "/quen-mat-khau", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Quên mật khẩu · iFlux"},
+      "pass": true,
+      "passReason": "auth shell OK"
+    },
+    {
+      "id": "27",
+      "label": "xac-minh-otp",
+      "url": "https://iflux.vn/xac-minh-otp",
+      "expectSlot": 0,
+      "expectMode": "auth",
+      "probe": {"path": "/dang-ky", "finalUrl": "/dang-ky", "onAuth": true, "header": 0, "brand": null, "searchSlots": 0, "hsJs": 0, "guestCta": false, "guestNav": 0, "guestSearchKeep": null, "ent": false, "mktDom": 0, "mktLoaded": true, "boot": 0, "authBoot": 1, "guestShell": 0, "loggedIn": false, "title": "Đăng ký · iFlux"},
+      "pass": true,
+      "passReason": "auth shell OK (redirect /xac-minh-otp → /dang-ky when no OTP session)"
+    }
+  ]
+}

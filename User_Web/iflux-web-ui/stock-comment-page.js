@@ -32,6 +32,10 @@
     return group ? group.name : feedKey;
   }
 
+  function pageDef() {
+    return window.IfluxPageDefinition || null;
+  }
+
   function backLinkHtml(feedKey) {
     if (String(feedKey).indexOf(':') >= 0) {
       var i = feedKey.indexOf(':');
@@ -143,7 +147,11 @@
       root.innerHTML = '<div class="ifx-stock-empty">Không tìm thấy bình luận.</div>';
       return;
     }
-    document.title = 'Bình luận · ' + pageTitleLabel(pageFeedKey) + ' · iFlux';
+    if (pageDef() && pageDef().applyPatch) {
+      pageDef().applyPatch({
+        documentTitle: 'Bình luận · ' + pageTitleLabel(pageFeedKey) + ' · iFlux'
+      });
+    }
     pageRoot = root;
 
     var uid = userId();

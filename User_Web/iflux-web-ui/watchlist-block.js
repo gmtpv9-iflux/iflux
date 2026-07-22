@@ -98,7 +98,7 @@
 
     var st = store();
     if (!st) {
-      list.innerHTML = '<div class="ifx-wl-empty">Watchlist chưa sẵn sàng</div>';
+      list.innerHTML = '<div class="ifx-wl-empty">Danh sách theo dõi chưa sẵn sàng</div>';
       return;
     }
     var uiMod = ui();
@@ -461,7 +461,7 @@
     if (!container) return null;
     var st = store();
     if (!st) {
-      container.innerHTML = '<div class="ifx-wl-empty">Watchlist chưa sẵn sàng</div>';
+      container.innerHTML = '<div class="ifx-wl-empty">Danh sách theo dõi chưa sẵn sàng</div>';
       return container;
     }
     var block = container;

@@ -131,7 +131,8 @@
   function postRef(postOrRef) {
     if (typeof postOrRef === 'string') return postOrRef;
     if (!postOrRef) return '';
-    return postOrRef.id || postOrRef.slug || '';
+    /* Ưu tiên slug SEO; id chỉ khi chưa có slug (draft/seed cũ). */
+    return postOrRef.slug || postOrRef.id || '';
   }
 
   function postPath(postOrRef) {
@@ -376,22 +377,17 @@
     document.head.appendChild(script);
   }
 
+  function pageDefinition() {
+    return global.IfluxPageDefinition || null;
+  }
+
   function applyPostSeoToDocument(post) {
     if (!post) return;
     var seo = post.seo || {};
     var canonical = postCanonical(post);
     var title = seo.meta_title || (post.title + ' | iFlux Cộng đồng');
     var desc = seo.meta_description || post.excerpt || '';
-    document.title = title;
-    setMeta('description', desc);
-    setMeta('robots', seo.robots || 'index,follow');
-    setMeta('og:title', seo.og_title || title, 'property');
-    setMeta('og:description', seo.og_description || desc, 'property');
-    setMeta('og:type', 'article', 'property');
-    setMeta('og:url', canonical, 'property');
-    if (seo.og_image) setMeta('og:image', seo.og_image, 'property');
-    setCanonical(canonical);
-    setJsonLd('ifx-story-jsonld', {
+    var jsonLd = {
       '@context': 'https://schema.org',
       '@type': seo.schema_type || 'NewsArticle',
       headline: post.title,
@@ -403,52 +399,110 @@
       about: (post.tickers || []).map(function (t) {
         return { '@type': 'Corporation', tickerSymbol: t, url: stockCanonical(t) };
       })
-    });
+    };
+    if (pageDefinition() && pageDefinition().applyPatch) {
+      pageDefinition().applyPatch({
+        title: post.title,
+        intro: post.excerpt || '',
+        documentTitle: title,
+        seo: {
+          description: desc,
+          robots: seo.robots || 'index,follow',
+          canonical: canonical,
+          'og:title': seo.og_title || title,
+          'og:description': seo.og_description || desc,
+          'og:type': 'article',
+          'og:url': canonical,
+          'og:image': seo.og_image || null,
+          jsonLd: [{ id: 'ifx-story-jsonld', data: jsonLd }]
+        }
+      });
+      return;
+    }
+    /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
   }
 
   function applyStorySeoToDocument(post) {
     applyPostSeoToDocument(post);
   }
 
+  /* Tên pháp lý — ưu tiên SoT B2 (IfluxEntityDefinition); fallback map local. */
+  var STOCK_DOC_TITLE_NAMES = {
+    SHB: 'Ngân hàng TMCP Sài Gòn - Hà Nội',
+    HPG: 'Công ty Cổ phần Tập đoàn Hòa Phát',
+    VCB: 'Ngân hàng TMCP Ngoại Thương Việt Nam',
+    FPT: 'Công ty Cổ phần FPT',
+    MWG: 'Công ty Cổ phần Đầu tư Thế Giới Di Động',
+    VHM: 'Công ty Cổ phần Vinhomes',
+    VIC: 'Tập đoàn Vingroup',
+    TCB: 'Ngân hàng TMCP Kỹ Thương Việt Nam',
+    MBB: 'Ngân hàng TMCP Quân Đội',
+    ACB: 'Ngân hàng TMCP Á Châu',
+    SSI: 'Công ty Cổ phần Chứng khoán SSI',
+    STB: 'Ngân hàng TMCP Sài Gòn Thương Tín'
+  };
+
+  function stockDocCompanyName(detail) {
+    if (!detail) return '';
+    var ticker = String(detail.ticker || '').toUpperCase();
+    if (global.IfluxEntityDefinition && IfluxEntityDefinition.companyNameForTicker) {
+      var fromSoT = IfluxEntityDefinition.companyNameForTicker(ticker);
+      if (fromSoT && fromSoT !== ticker) return fromSoT;
+    }
+    return STOCK_DOC_TITLE_NAMES[ticker] || detail.name || detail.short_name || ticker;
+  }
+
   function applyStockSeoToDocument(detail, opts) {
     if (!detail) return;
     opts = opts || {};
-    var ticker = detail.ticker;
+    var ticker = String(detail.ticker || '').toUpperCase();
+    var company = stockDocCompanyName(detail);
     var canonical = stockCanonical(ticker);
-    var title = ticker + ' · ' + (detail.name || detail.short_name) + ' — Giá, dòng tiền, tin tức | iFlux';
+    /* Tab/SEO title kiểu FireAnt: «SHB - Ngân hàng TMCP Sài Gòn - Hà Nội» */
+    var docTitle = ticker + ' - ' + company;
     var desc = 'Theo dõi ' + ticker + ' (' + (detail.exchange || 'HSX') + '): thị giá ' +
       (detail.price != null ? detail.price : '—') + ', giao dịch ròng theo chủ thể, tin tức cộng đồng và bình luận trên iFlux.';
-    var keywords = [ticker, detail.name, detail.short_name, 'cổ phiếu ' + ticker, detail.exchange, 'chứng khoán Việt Nam']
+    var keywords = [ticker, company, detail.name, detail.short_name, 'cổ phiếu ' + ticker, detail.exchange, 'chứng khoán Việt Nam']
       .filter(Boolean).join(', ');
 
-    document.title = title;
-    setMeta('description', desc);
-    setMeta('keywords', keywords);
-    setMeta('robots', 'index,follow');
-    setMeta('geo.region', 'VN');
-    setMeta('geo.placename', 'Việt Nam');
-    setMeta('language', 'vi-VN');
-    setMeta('og:title', title, 'property');
-    setMeta('og:description', desc, 'property');
-    setMeta('og:type', 'website', 'property');
-    setMeta('og:locale', 'vi_VN', 'property');
-    setMeta('og:url', canonical, 'property');
-    setCanonical(canonical);
-
-    setJsonLd('ifx-stock-jsonld', {
+    var jsonLd = {
       '@context': 'https://schema.org',
       '@type': 'FinancialProduct',
-      name: detail.name || ticker,
+      name: company,
       tickerSymbol: ticker,
       description: desc,
       url: canonical,
       inLanguage: 'vi-VN',
       provider: { '@type': 'Organization', name: 'iFlux', url: PROD_ORIGIN }
-    });
+    };
 
-    if (opts.newsCount != null) {
-      setMeta('iflux:news-count', String(opts.newsCount));
+    if (pageDefinition() && pageDefinition().applyPatch) {
+      pageDefinition().applyPatch({
+        title: docTitle,
+        intro: desc,
+        documentTitle: docTitle,
+        seo: {
+          description: desc,
+          keywords: keywords,
+          robots: 'index,follow',
+          canonical: canonical,
+          'geo.region': 'VN',
+          'geo.placename': 'Việt Nam',
+          language: 'vi-VN',
+          'og:title': docTitle,
+          'og:description': desc,
+          'og:type': 'website',
+          'og:locale': 'vi_VN',
+          'og:url': canonical,
+          jsonLd: [{ id: 'ifx-stock-jsonld', data: jsonLd }]
+        }
+      });
+      if (opts.newsCount != null) {
+        setMeta('iflux:news-count', String(opts.newsCount));
+      }
+      return;
     }
+    /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
   }
 
   function stockSlugPath(ticker) {

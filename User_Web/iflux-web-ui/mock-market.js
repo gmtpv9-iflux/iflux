@@ -2,13 +2,52 @@
 (function (global) {
   'use strict';
 
+  /* Tên ngắn — UI / chip. */
   var STOCK_NAMES = {
     HPG: 'Hòa Phát', VCB: 'Vietcombank', FPT: 'FPT', MWG: 'Thế Giới Di Động', VHM: 'Vinhomes',
     VIC: 'Vingroup', VND: 'VNDirect', STB: 'Sacombank', HCM: 'CK TP.HCM', SSI: 'SSI',
     TCB: 'Techcombank', MBB: 'MB Bank', ACB: 'ACB', NVL: 'Novaland', PDR: 'Phát Đạt', KDH: 'Khải Hoàn Land',
     CMG: 'CMC', ELC: 'ELCOM', HSG: 'Hoa Sen', NKG: 'Nam Kim', SHS: 'SHS', VCI: 'Viet Capital',
     FRT: 'FPT Retail', DGW: 'Digiworld', VRE: 'Vincom Retail', VPL: 'Vinpearl', FOX: 'FPT Telecom',
-    FTS: 'FPT Software', TCX: 'Techcom Securities', BHX: 'Bách Hóa Xanh', VCG: 'Vinaconex', REE: 'REE'
+    FTS: 'FPT Software', TCX: 'Techcom Securities', BHX: 'Bách Hóa Xanh', VCG: 'Vinaconex', REE: 'REE',
+    SHB: 'SHB'
+  };
+
+  /* Tên pháp lý / thương mại đầy đủ — document.title kiểu FireAnt. */
+  var STOCK_LEGAL_NAMES = {
+    HPG: 'Công ty Cổ phần Tập đoàn Hòa Phát',
+    SHB: 'Ngân hàng TMCP Sài Gòn - Hà Nội',
+    VCB: 'Ngân hàng TMCP Ngoại Thương Việt Nam',
+    FPT: 'Công ty Cổ phần FPT',
+    MWG: 'Công ty Cổ phần Đầu tư Thế Giới Di Động',
+    VHM: 'Công ty Cổ phần Vinhomes',
+    VIC: 'Tập đoàn Vingroup',
+    VND: 'Công ty Cổ phần Chứng khoán VNDirect',
+    STB: 'Ngân hàng TMCP Sài Gòn Thương Tín',
+    HCM: 'Công ty Cổ phần Chứng khoán TP.HCM',
+    SSI: 'Công ty Cổ phần Chứng khoán SSI',
+    TCB: 'Ngân hàng TMCP Kỹ Thương Việt Nam',
+    MBB: 'Ngân hàng TMCP Quân Đội',
+    ACB: 'Ngân hàng TMCP Á Châu',
+    NVL: 'Công ty Cổ phần Tập đoàn Đầu tư Địa ốc No Va',
+    PDR: 'Công ty Cổ phần Phát triển Bất động sản Phát Đạt',
+    KDH: 'Công ty Cổ phần Đầu tư và Kinh doanh Nhà Khang Điền',
+    CMG: 'Công ty Cổ phần Tập đoàn Công nghệ CMC',
+    ELC: 'Công ty Cổ phần Đầu tư Phát triển Công nghệ và Truyền thông',
+    HSG: 'Công ty Cổ phần Tập đoàn Hoa Sen',
+    NKG: 'Công ty Cổ phần Thép Nam Kim',
+    SHS: 'Công ty Cổ phần Chứng khoán Sài Gòn - Hà Nội',
+    VCI: 'Công ty Cổ phần Chứng khoán Vietcap',
+    FRT: 'Công ty Cổ phần Bán lẻ Kỹ thuật số FPT',
+    DGW: 'Công ty Cổ phần Thế Giới Số',
+    VRE: 'Công ty Cổ phần Vincom Retail',
+    VPL: 'Công ty Cổ phần Vinpearl',
+    FOX: 'Công ty Cổ phần Viễn thông FPT',
+    FTS: 'Công ty TNHH Phần mềm FPT',
+    TCX: 'Công ty Cổ phần Chứng khoán Techcom',
+    BHX: 'Công ty Cổ phần Bách Hóa Xanh',
+    VCG: 'Tổng Công ty Cổ phần Xuất nhập khẩu và Xây dựng Việt Nam',
+    REE: 'Công ty Cổ phần Cơ Điện Lạnh'
   };
 
   function buildStock(ticker, overrides) {
@@ -18,10 +57,11 @@
     var changePct = overrides.change_pct != null ? overrides.change_pct : Math.round(((h % 130) - 65) / 10 * 100) / 100;
     var cap = overrides.market_cap != null ? overrides.market_cap : 35000 + (h % 450000);
     var volM = (0.4 + (h % 18) * 0.35).toFixed(1);
+    var shortLabel = overrides.short_name || STOCK_NAMES[ticker] || ticker;
     return {
       ticker: ticker,
-      name: overrides.name || STOCK_NAMES[ticker] || ticker,
-      short_name: (overrides.short_name || STOCK_NAMES[ticker] || ticker).toUpperCase(),
+      name: overrides.name || STOCK_LEGAL_NAMES[ticker] || STOCK_NAMES[ticker] || ticker,
+      short_name: String(shortLabel).toUpperCase(),
       exchange: overrides.exchange || (h % 5 === 0 ? 'HNX' : 'HSX'),
       price: price,
       change_pct: changePct,

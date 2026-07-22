@@ -178,7 +178,9 @@
   if (window.IfluxAuth && IfluxAuth.isLoggedIn()) {
     if (IfluxAuth.syncSubscriptionLifecycle) IfluxAuth.syncSubscriptionLifecycle();
     refreshTierChips();
-    loadPricingModalAndPrompts({ allowTrialOffer: true });
+    ifxDeferIdle(function () {
+      loadPricingModalAndPrompts({ allowTrialOffer: true });
+    });
   }
 
   document.addEventListener('iflux-onboarding-finished', function () {
@@ -1390,6 +1392,8 @@
 
   function loadHeaderMessages() {
     if (!document.querySelector('.ifx-app')) return;
+    if (!document.querySelector('.ifx-user-menu')) return;
+    if (!window.IfluxAuth || !IfluxAuth.isLoggedIn()) return;
     var scripts = document.getElementsByTagName('script');
     var base = '../iflux-web-ui/';
     var i;
@@ -1406,46 +1410,58 @@
         syncMobileHeaderPanels();
       }
     }
-    if (window.IfluxHeaderMessagesUI) {
-      boot();
-      return;
-    }
-    var chain = ['profile-chat-store.js', 'iflux-header-messages-ui.js'];
-    var idx = 0;
-    function loadNext() {
-      if (idx >= chain.length) {
+    function startChain() {
+      if (window.IfluxHeaderMessagesUI) {
         boot();
         return;
       }
-      if (chain[idx] === 'profile-chat-store.js' && window.IfluxProfileChatStore) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      if (chain[idx] === 'iflux-header-messages-ui.js' && window.IfluxHeaderMessagesUI) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = base + chain[idx];
-      s.onload = function () {
-        idx += 1;
-        loadNext();
-      };
-      s.onerror = function () {
-        if (chain[idx] === 'profile-chat-store.js') {
+      var chain = ['profile-chat-store.js', 'iflux-header-messages-ui.js'];
+      var idx = 0;
+      function loadNext() {
+        if (idx >= chain.length) {
+          boot();
+          return;
+        }
+        if (chain[idx] === 'profile-chat-store.js' && window.IfluxProfileChatStore) {
           idx += 1;
           loadNext();
           return;
         }
-      };
-      document.body.appendChild(s);
+        if (chain[idx] === 'iflux-header-messages-ui.js' && window.IfluxHeaderMessagesUI) {
+          idx += 1;
+          loadNext();
+          return;
+        }
+        var s = document.createElement('script');
+        s.src = base + chain[idx];
+        s.onload = function () {
+          idx += 1;
+          loadNext();
+        };
+        s.onerror = function () {
+          if (chain[idx] === 'profile-chat-store.js') {
+            idx += 1;
+            loadNext();
+          }
+        };
+        document.body.appendChild(s);
+      }
+      loadNext();
     }
-    loadNext();
+    /* Lazy khi mở panel tin nhắn — không idle kéo chat-store mọi trang. */
+    var msgBtn = document.querySelector('[data-ifx-messages-btn]');
+    if (msgBtn && !msgBtn.getAttribute('data-ifx-msg-lazy')) {
+      msgBtn.setAttribute('data-ifx-msg-lazy', '1');
+      msgBtn.addEventListener('click', function onMsg() {
+        msgBtn.removeEventListener('click', onMsg);
+        startChain();
+      }, true);
+      return;
+    }
+    ifxDeferIdle(startChain);
   }
 
-  ifxDeferIdle(loadHeaderMessages);
+  loadHeaderMessages();
 
   function loadInsightShare() {
     if (!document.querySelector('.ifx-app')) return;
@@ -1501,7 +1517,7 @@
     loadNext();
   }
 
-  loadInsightShare();
+  ifxDeferIdle(loadInsightShare);
 
   /* Google One Tap — đề xuất đăng ký/đăng nhập Google cho khách khi vào web. */
   function loadGoogleOneTap() {

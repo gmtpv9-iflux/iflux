@@ -585,8 +585,118 @@
     display: none;
   }
   .ifx-zone-pos__values {
-    font-size: 9px;
+    font-size: var(--ifx-font-size-10);
   }
+}
+
+/* ── TPL-SR-HISTORY / TMP-SR-HISTORY — Lịch sử Hỗ trợ | Kháng cự ──
+ * Tabs (ix-segmented) · nhãn 3 cột · thanh trái/phải + chấm Hiện tại · vùng giá · hint %.
+ * HTML: IfluxBlockTemplates.renderSrHistory · chỉ token DS.
+ */
+.ifx-sr-hist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+  min-width: 0;
+}
+.ifx-sr-hist__tabs {
+  width: 100%;
+  flex-wrap: wrap;
+}
+.ifx-sr-hist__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+  min-width: 0;
+}
+.ifx-sr-hist__labels,
+.ifx-sr-hist__values {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--ifx-space-8);
+  align-items: end;
+}
+.ifx-sr-hist__label {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-muted);
+}
+.ifx-sr-hist__label.is-left {
+  text-align: left;
+  color: var(--ix-success);
+}
+.ifx-sr-hist__label.is-center {
+  text-align: center;
+  color: var(--ix-text-secondary);
+}
+.ifx-sr-hist__label.is-right {
+  text-align: right;
+  color: var(--ix-danger);
+}
+.ifx-sr-hist__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  min-height: 14px;
+  min-width: 0;
+}
+.ifx-sr-hist__seg {
+  height: 12px;
+  border-radius: var(--ix-radius);
+  min-width: 0;
+}
+.ifx-sr-hist__seg.is-left {
+  background: var(--ix-success);
+  opacity: 0.85;
+}
+.ifx-sr-hist__seg.is-right {
+  background: var(--ix-danger);
+  opacity: 0.85;
+}
+.ifx-sr-hist__dot {
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ix-text-primary);
+  box-shadow: 0 0 0 2px var(--ix-bg-card);
+}
+.ifx-sr-hist__range,
+.ifx-sr-hist__price {
+  font-family: var(--ifx-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--ifx-font-size-12);
+}
+.ifx-sr-hist__range.is-left {
+  text-align: left;
+  color: var(--ix-text-secondary);
+}
+.ifx-sr-hist__range.is-right {
+  text-align: right;
+  color: var(--ix-text-secondary);
+}
+.ifx-sr-hist__price {
+  text-align: center;
+  font-weight: var(--ifx-font-weight-semibold);
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-primary);
+}
+.ifx-sr-hist__hints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ifx-space-8);
+}
+.ifx-sr-hist__hint {
+  font-size: var(--ifx-font-size-12);
+  color: var(--ix-text-muted);
+}
+.ifx-sr-hist__hint.is-left {
+  text-align: left;
+  color: var(--ix-success);
+}
+.ifx-sr-hist__hint.is-right {
+  text-align: right;
+  color: var(--ix-danger);
 }
 
 /* ── TPL-FLOW-SPLIT — symmetric net-flow ── */

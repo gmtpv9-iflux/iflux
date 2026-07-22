@@ -45,7 +45,7 @@ export const WIDGET_RUNTIME_MODULES = {
     css: ['/User_Web/iflux-web-ui/hub.css', '/User_Web/iflux-web-ui/profile.css']
   },
   'WGT-WAT-001': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/watchlist/index.js',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/watchlist/index.js?v=phaseCW120260721',
     css: [
       '/User_Web/iflux-web-ui/widget-shell.css',
       '/User_Web/iflux-web-ui/watchlist.css',
@@ -53,7 +53,7 @@ export const WIDGET_RUNTIME_MODULES = {
     ]
   },
   'WGT-HOME-DASH': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/home-dashboard/index.js?v=bpPhaseD20260716',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/home-dashboard/index.js?v=phaseCW120260721',
     css: [
       '/User_Web/iflux-web-ui/widget-shell.css',
       '/User_Web/iflux-web-ui/watchlist.css',
@@ -112,7 +112,7 @@ export const WIDGET_RUNTIME_MODULES = {
     flowPanel: 'exclusive'
   },
   'WGT-COM-001': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=bpPhaseD20260716',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=phaseCW120260721',
     css: [
       '/User_Web/iflux-web-ui/community.css',
       '/User_Web/iflux-web-ui/block-templates.css',
@@ -120,7 +120,7 @@ export const WIDGET_RUNTIME_MODULES = {
     ]
   },
   'WGT-COM-CHUDE-TOP': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=bpPhaseD20260716',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=phaseCW120260721',
     css: ['/User_Web/iflux-web-ui/community.css', '/User_Web/iflux-web-ui/block-templates.css']
   },
   'WGT-COM-002': {
@@ -144,10 +144,10 @@ function dashDep(g, s) { return { global: g, src: DASH_ASSET + s }; }
 
 export const WIDGET_DASHBOARD_DEPS = {
   'WGT-WAT-001': [
-    dashDep('IfluxWatchlistStore', 'watchlist-store.js'),
+    dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=phaseBExit20260721b'),
     dashDep('IfluxWatchlistTaxonomy', 'watchlist-taxonomy.js'),
-    dashDep('IfluxWatchlistUI', 'watchlist-ui.js'),
-    dashDep('IfluxWatchlistBlock', 'watchlist-block.js')
+    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=phaseBExit20260721b'),
+    dashDep('IfluxWatchlistBlock', 'watchlist-block.js?v=phaseBExit20260721b')
   ],
   'WGT-MKT-001': [dashDep('IfluxCommunityMarketOverview', 'community-market-overview.js')],
   'WGT-MKT-002': [dashDep('IfluxBreadthBlock', 'breadth-block.js')],
@@ -177,9 +177,9 @@ export const WIDGET_DASHBOARD_DEPS = {
     dashDep('IfluxCommunityFeaturedExperts', 'community-featured-experts.js')
   ],
   'WGT-COM-TOPWL': [
-    dashDep('IfluxWatchlistStore', 'watchlist-store.js'),
-    dashDep('IfluxWatchlistUI', 'watchlist-ui.js'),
-    dashDep('IfluxCommunityTopWatchlist', 'community-top-watchlist.js')
+    dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=phaseBExit20260721b'),
+    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=phaseBExit20260721b'),
+    dashDep('IfluxCommunityTopWatchlist', 'community-top-watchlist.js?v=phaseBExit20260721b')
   ]
 };
 

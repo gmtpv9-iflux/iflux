@@ -37,7 +37,7 @@
     name: 'Miễn phí',
     tier: 'free',
     sort: 1,
-    desc: 'Bảng giá cơ bản (delay 15 phút). Watchlist tối đa 5 mã. Top10 thị trường (1 loại).',
+    desc: 'Bảng giá cơ bản (delay 15 phút). Danh sách theo dõi tối đa 5 mã. Top10 thị trường (1 loại).',
     subtitle: 'Bắt đầu khám phá thị trường',
     icon: 'ti-gift',
     iconClass: 'info',
@@ -307,7 +307,7 @@
     if (plan.limits) {
       rows.push({
         has: (plan.limits.watchlistItems || 0) > 5,
-        text: 'Watchlist tối đa ' + (plan.limits.watchlistItems || 0) + ' mã / tab'
+        text: 'Danh sách theo dõi tối đa ' + (plan.limits.watchlistItems || 0) + ' mã / tab'
       });
       rows.push({
         has: (plan.limits.apiRate || 0) > 200,
@@ -338,7 +338,7 @@
       { label: 'Cảnh báo nâng cao', type: 'ent', key: 'alerts' },
       { label: 'Widget Dashboard', type: 'ent', key: 'widgets' },
       { label: 'Max cảnh báo', type: 'limit', key: 'alerts' },
-      { label: 'Watchlist / tab', type: 'limit', key: 'watchlistItems' },
+      { label: 'Theo dõi / tab', type: 'limit', key: 'watchlistItems' },
       { label: 'API rate (req/phút)', type: 'limit', key: 'apiRate' }
     ];
   }

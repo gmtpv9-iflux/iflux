@@ -10,9 +10,24 @@
 var scriptPromises = {};
 var stylePromises = {};
 
-/** Nạp 1 <script> cổ điển (idempotent) — trả Promise resolve khi onload. */
+/** Nạp 1 <script> cổ điển (idempotent) — trả Promise resolve khi onload.
+ *  Khi src có ?v=… mà bản không version (hoặc version khác) đã nạp → gỡ rồi nạp lại. */
 export function loadScript(src) {
   if (scriptPromises[src]) return scriptPromises[src];
+  var bare = String(src || '').split('?')[0];
+  if (src && src.indexOf('?') >= 0 && bare) {
+    Object.keys(scriptPromises).forEach(function (key) {
+      if (key === bare || (key.indexOf(bare + '?') === 0 && key !== src)) {
+        delete scriptPromises[key];
+      }
+    });
+    document.querySelectorAll('script[data-rt-src]').forEach(function (node) {
+      var prev = node.getAttribute('data-rt-src') || '';
+      if (prev === bare || (prev.indexOf(bare + '?') === 0 && prev !== src)) {
+        if (node.parentNode) node.parentNode.removeChild(node);
+      }
+    });
+  }
   scriptPromises[src] = new Promise(function (resolve, reject) {
     var existing = document.querySelector('script[data-rt-src="' + src + '"]');
     if (existing && existing.getAttribute('data-rt-loaded') === '1') {
@@ -74,13 +89,35 @@ export async function ensureGlobal(name, src) {
 
 /**
  * Nạp danh sách <script> cổ điển theo đúng thứ tự (idempotent theo src).
- * Dùng cho composite page module cần nạp đúng dependency của 1 trang.
+ * W4: skip Shell platform globals đã có (giống loadScriptTiers).
  * @param {Array<string>} srcs
  */
 export async function loadScriptsSequential(srcs) {
   for (var i = 0; i < (srcs || []).length; i++) {
-    if (srcs[i]) await loadScript(srcs[i]);
+    if (!srcs[i]) continue;
+    if (shouldSkipShellPlatform(srcs[i])) continue;
+    await loadScript(srcs[i]);
   }
+}
+
+/** Bare path → window global do Shell / Platform đã nạp — bỏ request trùng (W1–W4). */
+var SHELL_PLATFORM_SKIP = [
+  { re: /\/block-templates\.js$/i, global: 'IfluxBlockTemplates' },
+  { re: /\/watchlist-taxonomy\.js$/i, global: 'IfluxWatchlistTaxonomy' },
+  { re: /\/mock-market\.js$/i, global: 'IfluxMockMarket' },
+  { re: /\/seo-url\.js$/i, global: 'IfluxSeoUrl' },
+  { re: /\/iflux-market-seed-data\.js$/i, global: 'IfluxMarketSeedData' },
+  { re: /\/iflux-market-ecosystem-seeds\.js$/i, global: 'IfluxMarketEcosystemSeeds' },
+  { re: /\/iflux-market-registry-store\.js$/i, global: 'IfluxMarketRegistryStore' }
+];
+
+function shouldSkipShellPlatform(src) {
+  var bare = String(src || '').split('?')[0];
+  for (var i = 0; i < SHELL_PLATFORM_SKIP.length; i++) {
+    var rule = SHELL_PLATFORM_SKIP[i];
+    if (rule.re.test(bare) && window[rule.global]) return true;
+  }
+  return false;
 }
 
 /**
@@ -91,7 +128,9 @@ export async function loadScriptsSequential(srcs) {
  */
 export async function loadScriptTiers(tiers) {
   for (var i = 0; i < (tiers || []).length; i++) {
-    var tier = (tiers[i] || []).filter(Boolean);
+    var tier = (tiers[i] || []).filter(Boolean).filter(function (src) {
+      return !shouldSkipShellPlatform(src);
+    });
     if (tier.length) await Promise.all(tier.map(loadScript));
   }
 }

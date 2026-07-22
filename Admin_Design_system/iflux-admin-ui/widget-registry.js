@@ -408,14 +408,14 @@
       type: 'WGT-WAT-001',
       group: 'personal',
       groupLabel: 'Cá nhân',
-      title: 'Watchlist',
+      title: 'Theo dõi',
       description: 'Danh sách mã đang theo dõi',
       tier: 'free',
       kind: 'list',
       popularity: 100,
       defaultConfig: { width: 'full' },
       footerHref: '../watchlist/index.html',
-      footerLabel: 'Mở Watchlist đầy đủ'
+      footerLabel: 'Mở danh sách theo dõi đầy đủ'
     }
   ];
 

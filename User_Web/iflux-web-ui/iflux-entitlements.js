@@ -60,6 +60,8 @@
 
   function canAccessPage(pageKey) {
     pageKey = String(pageKey || '').toLowerCase();
+    /* Chi tiết bài viết Tin tức = cùng quyền trang Cộng đồng (công khai với vãng lai). */
+    if (pageKey === 'communitypost') pageKey = 'community';
     if (pageKey === 'dashboard' && isGuest()) return false;
     if (hasPage(pageKey)) return true;
     return hasAnyBlockOnPage(pageKey);
@@ -103,6 +105,12 @@
   function canAccessWidget(meta) {
     if (!meta) return false;
     var type = meta.type || meta.widget_type;
+    /* Ngoài Tầng 4 → không thuộc Phân quyền sử dụng → luôn cho xem. */
+    if (type && global.IfluxBlockGate && IfluxBlockGate.isPermissionScopedWidget) {
+      if (!IfluxBlockGate.isPermissionScopedWidget(type)) return true;
+    } else if (type && global.EntitlementCatalog && EntitlementCatalog.isPermissionScopedWidget) {
+      if (!EntitlementCatalog.isPermissionScopedWidget(type)) return true;
+    }
     var plan = currentPlan();
 
     /* Phân quyền sử dụng (Admin matrix) là SoT cao hơn meta.tier */

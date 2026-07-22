@@ -68,7 +68,7 @@
     {
       id: 'faq-010',
       category: 'platform',
-      q: 'Watchlist có giới hạn số mã không?',
+      q: 'Danh sách theo dõi có giới hạn số mã không?',
       a: 'Gói Miễn phí: 20 mã. Premium: 100 mã. Elite: không giới hạn. Bạn quản lý watchlist tại Nhà của tôi hoặc trang chi tiết mã.'
     },
     {

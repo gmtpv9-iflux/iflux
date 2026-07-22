@@ -9,18 +9,28 @@
 
   function read() {
     var store = us();
+    var state = null;
     if (store) {
       try {
-        var state = store.readJson(STORAGE_KEY, null);
-        if (state) return normalize(state);
+        state = store.readJson(STORAGE_KEY, null);
       } catch (e) { /* ignore */ }
-      return defaultState();
+    } else {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) state = JSON.parse(raw);
+      } catch (e2) { /* ignore */ }
     }
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return normalize(JSON.parse(raw));
-    } catch (e2) { /* ignore */ }
-    return defaultState();
+    if (!state) return defaultState();
+    var before = JSON.stringify(state);
+    state = normalize(state);
+    /* Persist R6 rename Watchlist → Theo dõi */
+    if (JSON.stringify(state) !== before) {
+      try {
+        if (store) store.writeJson(STORAGE_KEY, state);
+        else localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e3) { /* ignore */ }
+    }
+    return state;
   }
 
   function write(state) {
@@ -59,7 +69,7 @@
   function defaultState() {
     return {
       folders: [
-        { id: DEFAULT_FOLDER_ID, name: 'Watchlist', locked: true, position: 0 }
+        { id: DEFAULT_FOLDER_ID, name: 'Theo dõi', locked: true, position: 0 }
       ],
       memberships: {}
     };
@@ -71,8 +81,14 @@
     }
     var hasDefault = state.folders.some(function (f) { return f.id === DEFAULT_FOLDER_ID; });
     if (!hasDefault) {
-      state.folders.unshift({ id: DEFAULT_FOLDER_ID, name: 'Watchlist', locked: true, position: 0 });
+      state.folders.unshift({ id: DEFAULT_FOLDER_ID, name: 'Theo dõi', locked: true, position: 0 });
     }
+    /* R6: thư mục mặc định cũ tên English → Việt */
+    state.folders.forEach(function (f) {
+      if (f && f.id === DEFAULT_FOLDER_ID && (f.name === 'Watchlist' || !f.name)) {
+        f.name = 'Theo dõi';
+      }
+    });
     state.folders.sort(function (a, b) { return a.position - b.position; });
     state.folders.forEach(function (f, i) { f.position = i; });
     if (!state.memberships) state.memberships = {};
@@ -129,7 +145,7 @@
   }
 
   function deleteFolder(id) {
-    if (id === DEFAULT_FOLDER_ID) throw new Error('Không thể xóa Watchlist');
+    if (id === DEFAULT_FOLDER_ID) throw new Error('Không thể xóa thư mục Theo dõi');
     var state = read();
     state.folders = state.folders.filter(function (f) { return f.id !== id; });
     Object.keys(state.memberships).forEach(function (ticker) {
@@ -299,7 +315,7 @@
   function copyPublicPortfolio(ownerName, tickers) {
     var list = (tickers || []).filter(Boolean);
     if (!list.length) throw new Error('Danh mục trống');
-    var folderName = uniqueFolderName('Watchlist của ' + String(ownerName || 'Thành viên').trim());
+    var folderName = uniqueFolderName('Danh sách theo dõi của ' + String(ownerName || 'Thành viên').trim());
     var folder = createFolder(folderName);
     var state = read();
     list.forEach(function (ticker) {

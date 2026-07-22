@@ -70,7 +70,7 @@
         : 'Bỏ ' + ticker + ' khỏi thư mục này';
     } else {
       title = ctx.folderId === store().DEFAULT_FOLDER_ID
-        ? 'Thêm ' + ticker + ' vào Watchlist'
+        ? 'Thêm ' + ticker + ' vào danh sách theo dõi'
         : 'Thêm ' + ticker + ' vào thư mục này';
     }
     return (
@@ -80,7 +80,7 @@
         '" data-ifx-watchlist-heart="' + ticker + '" ' +
         'data-ifx-wl-folder-id="' + ctx.folderId + '" ' +
         'data-ifx-wl-editable="' + (ctx.editable ? '1' : '0') + '" ' +
-        'title="' + title + '" aria-label="Watchlist">' +
+        'title="' + title + '" aria-label="Theo dõi">' +
         heartIconSvg(active) + '</button>'
     );
   }
@@ -138,7 +138,7 @@
           '</div>' +
         '</div>' +
         '<div class="ifx-wl-modal__actions">' +
-          '<button type="button" class="ix-btn ix-btn-outline" data-ifx-wl-remove hidden>Gỡ khỏi Watchlist</button>' +
+          '<button type="button" class="ix-btn ix-btn-outline" data-ifx-wl-remove hidden>Gỡ khỏi danh sách theo dõi</button>' +
           '<div style="flex:1"></div>' +
           '<button type="button" class="ix-btn ix-btn-outline" data-ifx-wl-close-btn>Huỷ</button>' +
           '<button type="button" class="ix-btn ix-btn-primary" data-ifx-wl-save>Lưu</button>' +
@@ -256,7 +256,7 @@
     closeModal();
     refreshHearts();
     dispatchChange();
-    if (global.ixToast) ixToast('Đã gỡ ' + modalTicker + ' khỏi Watchlist', 'info');
+    if (global.ixToast) ixToast('Đã gỡ ' + modalTicker + ' khỏi danh sách theo dõi', 'info');
   }
 
   function dispatchChange() {
@@ -283,7 +283,7 @@
         : 'Bỏ ' + ticker + ' khỏi thư mục này';
     } else {
       btn.title = folderId === st.DEFAULT_FOLDER_ID
-        ? 'Thêm ' + ticker + ' vào Watchlist'
+        ? 'Thêm ' + ticker + ' vào danh sách theo dõi'
         : 'Thêm ' + ticker + ' vào thư mục này';
     }
   }
@@ -295,7 +295,7 @@
       '<button type="button" class="ifx-stock-row__heart ifx-com-story-heart' +
         (active ? ' is-active' : '') +
         '" data-ifx-watchlist-story-heart="' + storyId + '" ' +
-        'title="' + (active ? 'Bỏ theo dõi — gỡ tab Watchlist' : 'Theo dõi — thêm tab Watchlist') + '" ' +
+        'title="' + (active ? 'Bỏ theo dõi — gỡ tab Theo dõi' : 'Theo dõi — thêm tab Theo dõi') + '" ' +
         'aria-label="Theo dõi chủ đề">' +
         heartIconSvg(active) +
       '</button>'
@@ -310,8 +310,8 @@
     btn.classList.toggle('is-active', active);
     btn.innerHTML = heartIconSvg(active);
     btn.title = active
-      ? 'Bỏ theo dõi — gỡ tab Watchlist'
-      : 'Theo dõi — thêm tab Watchlist';
+      ? 'Bỏ theo dõi — gỡ tab Theo dõi'
+      : 'Theo dõi — thêm tab Theo dõi';
   }
 
   function refreshStoryHearts() {
@@ -332,7 +332,7 @@
       var followed = st.toggleGroupFollow('chu-de', storyId);
       if (global.ixToast) {
         ixToast(
-          followed ? 'Đã thêm tab chủ đề vào Watchlist' : 'Đã gỡ tab chủ đề khỏi Watchlist',
+          followed ? 'Đã thêm tab chủ đề vào danh sách theo dõi' : 'Đã gỡ tab chủ đề khỏi danh sách theo dõi',
           followed ? 'success' : 'info'
         );
       }
@@ -389,7 +389,7 @@
         if (global.ixToast) {
           ixToast(
             folderId === st.DEFAULT_FOLDER_ID
-              ? 'Đã thêm ' + ticker + ' vào Watchlist'
+              ? 'Đã thêm ' + ticker + ' vào danh sách theo dõi'
               : 'Đã thêm ' + ticker + ' vào thư mục',
             'success'
           );

@@ -674,6 +674,11 @@
         : null);
     var displayTitle = copy ? copy.title : meta.title;
     var displayDescription = copy ? copy.description : (meta.description || '');
+    if (meta.type === 'WGT-WAT-001' && displayTitle === 'Watchlist') displayTitle = 'Theo dõi';
+    var footerLabel = meta.footerLabel || '';
+    if (meta.type === 'WGT-WAT-001' && /Watchlist/i.test(footerLabel)) {
+      footerLabel = 'Mở danh sách theo dõi đầy đủ';
+    }
 
     var node = document.createElement('div');
     node.className = 'ifx-widget';
@@ -710,7 +715,7 @@
       '<div class="ifx-widget__body"></div>' +
       '<div class="ifx-widget__footer">' +
         '<span data-ifx-widget-ts>Cập nhật: dữ liệu mẫu</span>' +
-        (meta.footerHref ? '<a href="' + meta.footerHref + '">' + meta.footerLabel + ' →</a>' : '') +
+        (meta.footerHref ? '<a href="' + meta.footerHref + '">' + footerLabel + ' →</a>' : '') +
       '</div>';
 
     var body = node.querySelector('.ifx-widget__body');
@@ -1230,7 +1235,7 @@
     var presetTypes = preset.map(function (p) { return p.widget_type; });
 
     var html = '<div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:12px;line-height:1.5">' +
-      'Bố cục đề xuất: <strong>Watchlist</strong> (⅓) + tiện ích thị trường (⅔ / ½) xếp linh hoạt trên một hàng.</div>';
+      'Bố cục đề xuất: <strong>Theo dõi</strong> (⅓) + tiện ích thị trường (⅔ / ½) xếp linh hoạt trên một hàng.</div>';
 
     html += items.slice(0, 6).map(function (w, i) {
       var inPreset = presetTypes.indexOf(w.type) >= 0;

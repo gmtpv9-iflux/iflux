@@ -6,6 +6,7 @@ export default {
   path: '/tin-nhan',
   title: 'Tin nhắn',
   documentTitle: 'Tin nhắn · iFlux',
+  renderPageHead: false,
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

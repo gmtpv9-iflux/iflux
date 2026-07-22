@@ -1,31 +1,39 @@
 /**
  * WGT-WL-PAGE — Composite Danh sách theo dõi (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 export const meta = { id: 'WGT-WL-PAGE', title: 'Danh sách theo dõi' };
 
+/* W4: registry/seeds/mock/taxonomy = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js', ADMIN + 'iflux-market-registry-store.js'],
-  [ADMIN + 'iflux-market-seed-data.js', ADMIN + 'iflux-market-ecosystem-seeds.js'],
-  [ASSET + 'mock-market.js', ASSET + 'watchlist-taxonomy.js', ASSET + 'stock-mentions.js', ASSET + 'block-templates.js'],
-  [ASSET + 'watchlist-store.js', ASSET + 'alert-store.js', ASSET + 'alert-ui.js', ASSET + 'watchlist-ui.js', ASSET + 'watchlist-block.js'],
-  [ASSET + 'alert-page.js', ASSET + 'watchlist-page.js']
+  [ADMIN + 'iflux-admin-ui.js'],
+  [ASSET + 'stock-mentions.js'],
+  [
+    ASSET + 'watchlist-store.js?v=phaseBExit20260721b',
+    ASSET + 'alert-store.js',
+    ASSET + 'alert-ui.js',
+    ASSET + 'watchlist-ui.js?v=phaseBExit20260721b',
+    ASSET + 'watchlist-block.js?v=phaseBExit20260721b'
+  ],
+  [ASSET + 'alert-page.js?v=phaseBExit20260721b', ASSET + 'watchlist-page.js?v=phaseBExit20260721b']
 ];
 
-var LAYOUT_HTML = `<h1 class="ix-page-title">Watchlist</h1>
-    <div class="ifx-wl-stock-panel ifx-wl-block" data-ifx-wl-page data-ifx-wl-block></div>`;
+function renderLayout(manifest) {
+  var title = (manifest && manifest.title) || 'Danh sách theo dõi';
+  return '<h1 class="ix-page-title">' + title + '</h1>' +
+    '<div class="ifx-wl-stock-panel ifx-wl-block" data-ifx-wl-page data-ifx-wl-block></div>';
+}
 
-export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+export async function mount(el, ctx) {
+  ctx = ctx || {};
+  el.innerHTML = renderLayout(ctx.manifest);
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   if (window.IfluxAlertPage) IfluxAlertPage.init();
   if (window.IfluxWatchlistPage) IfluxWatchlistPage.init();
   return { unmount: function () { if (el) el.innerHTML = ''; } };

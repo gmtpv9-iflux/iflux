@@ -143,11 +143,17 @@
 
   function renderCollectionIndex(root, kind) {
     var meta = collectionMeta(kind);
+    if (global.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
+      IfluxPageDefinition.applyPatch({
+        title: meta.title,
+        intro: meta.intro,
+        documentTitle: meta.title + ' · iFlux'
+      });
+    }
     /* Gỡ tiêu đề Page Shell (manifest Cộng đồng) — tránh 2 h1 */
     document.querySelectorAll('.ifx-rt-page-head').forEach(function (el) {
       if (el && el.parentNode) el.parentNode.removeChild(el);
     });
-    document.title = meta.title + ' · iFlux';
     root.innerHTML =
       '<div class="ifx-com-feed-layout">' +
         '<div class="ifx-com-feed-main">' +
@@ -330,7 +336,8 @@
             '<div class="ifx-dash-grid ifx-com-dedicated-grid" data-ifx-section="main"></div>' +
           '</section>' +
 
-          '<div data-ifx-com-daily-feed data-ifx-ent-block="BLK-COM-NEWS"></div>' +
+          /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
+          '<div data-ifx-com-daily-feed></div>' +
         '</div>' +
         '<aside class="ifx-com-feed-sidebar" aria-label="Cộng đồng" data-ifx-section="sidebar-right" hidden>' +
         '</aside>' +

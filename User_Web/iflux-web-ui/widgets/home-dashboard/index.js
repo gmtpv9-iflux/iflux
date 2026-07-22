@@ -11,19 +11,18 @@
  * User override lưu IfluxUserStorage (dashboard-engine).
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
-import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=bpPhaseD20260716';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=phaseBExit20260721c';
 
 var A = '/User_Web/iflux-web-ui/';
+var V = 'phaseBExit20260721c';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 
-function dep(g, s) { return { global: g, src: A + s }; }
+function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' : '?v=' + V) }; }
 
 var BASE = [
-  dep('IfluxMockMarket', 'mock-market.js'),
-  dep('IfluxBlockTemplates', 'block-templates.js'),
-  dep('IfluxSeoUrl', 'seo-url.js'),
+  /* W4: mock-market + seo-url = Shell MARKET_PLATFORM (home) */
   dep('IfluxWidgetRegistry', 'widget-registry.js'),
   dep('IfluxWidgetRenderers', 'widget-renderers.js'),
   dep('IfluxDashboardEngine', 'dashboard-engine.js')

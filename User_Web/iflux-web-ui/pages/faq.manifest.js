@@ -5,7 +5,8 @@ export default {
   pageKey: 'faq',
   path: '/hoi-dap',
   title: 'Câu hỏi thường gặp',
-  documentTitle: 'FAQ · iFlux',
+  documentTitle: 'Hỏi đáp · iFlux',
+  renderPageHead: false,
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

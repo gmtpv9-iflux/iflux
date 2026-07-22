@@ -2,7 +2,7 @@
  * WGT-GROUP-PAGE — Composite chi tiết nhóm (ngành / họ CP / chủ đề)
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=lazyAll20260713k';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -25,22 +25,14 @@ var PUBLISH_BY_KIND = {
   'chu-de': 'chu-de-detail'
 };
 
+/* W4: taxonomy/seeds/mock/registry/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
   [
     ADMIN + 'iflux-admin-ui.js',
     ASSET + 'iflux-user-data-sync.js',
-    ADMIN + 'iflux-market-registry-store.js',
-    ASSET + 'watchlist-taxonomy.js',
-    ASSET + 'block-templates.js',
     'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
   ],
   [
-    ADMIN + 'iflux-market-seed-data.js',
-    ADMIN + 'iflux-market-ecosystem-seeds.js',
-    ASSET + 'seo-url.js'
-  ],
-  [
-    ASSET + 'mock-market.js',
     ASSET + 'watchlist-store.js',
     ASSET + 'stock-store.js',
     ASSET + 'community-store.js'
@@ -95,11 +87,9 @@ export async function mount(el, ctx) {
   var publishKey = publishKeyForKind(kind);
   el.innerHTML = '<div data-ifx-group-page></div>';
   await loadScriptTiers(CORE_TIERS);
-  loadScript(ASSET + 'iflux-header-search.js').then(function () {
-    if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-    if (window.IfluxHeaderSearch && IfluxHeaderSearch.init) IfluxHeaderSearch.init();
-  });
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
+  /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
+  if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);
   function onRemount() {
     mountFromHostTree(el, publishKey);

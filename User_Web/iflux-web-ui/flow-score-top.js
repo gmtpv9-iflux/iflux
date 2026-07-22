@@ -286,11 +286,18 @@
         ? '<span class="ifx-mcmp__rec ' + recClass(item.recommendation, block.recommendationKind) + '">' + esc(item.recommendation) + '</span>'
         : '';
       var href = entityLink(block, item);
+      var kind = block.entityType === 'sector' ? 'sector'
+        : (block.entityType === 'family' || block.entityType === 'hst' ? 'family'
+          : ((block.entityType === 'story' || block.entityType === 'chu-de' || block.entityType === 'cau-chuyen')
+            ? 'cau-chuyen' : 'stock'));
+      var nameHtml = global.IfluxBlockTemplates && IfluxBlockTemplates.entityName
+        ? IfluxBlockTemplates.entityName(item.label, kind, { className: 'ifx-mcmp__name' })
+        : ('<span class="ifx-mcmp__name" title="' + esc(item.label) + '">' + esc(item.label) + '</span>');
 
       return (
         '<a class="ifx-mcmp__row" href="' + href + '" data-ifx-mcmp-row="' + i + '">' +
           '<span class="ifx-mcmp__rank">' + (i + 1) + '</span>' +
-          '<span class="ifx-mcmp__name" title="' + esc(item.label) + '">' + esc(item.label) + '</span>' +
+          nameHtml +
           '<span class="ifx-mcmp__bar-wrap">' +
             '<span class="ifx-mcmp__bar ' + barClass + '" style="width:' + item.score + '%"></span>' +
           '</span>' +
@@ -323,9 +330,16 @@
     }
     var barClass = side === 'pos' ? 'is-positive' : 'is-negative';
     var href = entityLink(block, item);
+    var kind = block.entityType === 'sector' ? 'sector'
+      : (block.entityType === 'family' || block.entityType === 'hst' ? 'family'
+        : ((block.entityType === 'story' || block.entityType === 'chu-de' || block.entityType === 'cau-chuyen')
+          ? 'cau-chuyen' : 'stock'));
+    var nameHtml = global.IfluxBlockTemplates && IfluxBlockTemplates.entityName
+      ? IfluxBlockTemplates.entityName(item.label, kind, { className: 'ifx-mcmp__name' })
+      : ('<span class="ifx-mcmp__name" title="' + esc(item.label) + '">' + esc(item.label) + '</span>');
     var inner =
       '<span class="ifx-mcmp__rank">' + (i + 1) + '</span>' +
-      '<span class="ifx-mcmp__name" title="' + esc(item.label) + '">' + esc(item.label) + '</span>' +
+      nameHtml +
       '<span class="ifx-mcmp__bar-wrap">' +
         '<span class="ifx-mcmp__bar ' + barClass + '" style="width:' + item.score + '%"></span>' +
       '</span>' +

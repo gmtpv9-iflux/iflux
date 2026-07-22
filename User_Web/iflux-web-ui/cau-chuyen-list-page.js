@@ -95,7 +95,12 @@
       introEl.textContent =
         'Các chủ đề thị trường đã trưởng thành — chọn một câu chuyện để xem mã liên quan và diễn biến.';
     }
-    if (document.title.indexOf('·') < 0) document.title = 'Danh sách câu chuyện · iFlux';
+    if (window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
+      IfluxPageDefinition.applyPatch({
+        title: 'Danh sách câu chuyện',
+        documentTitle: 'Danh sách câu chuyện · iFlux'
+      });
+    }
     if (!mount) return;
 
     mount.innerHTML = '<div class="ifx-com-empty">Đang tải câu chuyện…</div>';

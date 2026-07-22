@@ -10,7 +10,7 @@
     var alerts = st.getAlerts();
     if (!alerts.length) {
       root.innerHTML =
-        '<div class="ifx-alert-empty">Chưa có cảnh báo nào.<br/>Bấm chuông trên từng mã CP trong Watchlist để đặt cảnh báo.</div>';
+        '<div class="ifx-alert-empty">Chưa có cảnh báo nào.<br/>Bấm chuông trên từng mã CP trong danh sách theo dõi để đặt cảnh báo.</div>';
       return;
     }
 

@@ -131,10 +131,17 @@
       if (link) {
         link.href = hrefFor(source, item.id);
         link.title = item.name + ' · ' + fmtPct(item.perf);
+        var kind = source === 'sector' ? 'sector'
+          : (source === 'family' ? 'family'
+            : ((source === 'chu-de' || source === 'story') ? 'cau-chuyen' : 'stock'));
+        var nameHtml = global.IfluxBlockTemplates && IfluxBlockTemplates.entityName
+          ? (tier === 'tiny'
+            ? IfluxBlockTemplates.entityName(item.name, kind, { className: 'ifx-mkt-heat-tile__name', tiny: true })
+            : IfluxBlockTemplates.entityName(item.name, kind, { className: 'ifx-mkt-heat-tile__name' }))
+          : ('<span class="ifx-mkt-heat-tile__name">' + esc(tier === 'tiny' ? item.name.split(' ')[0] : item.name) + '</span>');
         link.innerHTML = tier === 'tiny'
-          ? '<span class="ifx-mkt-heat-tile__name">' + esc(item.name.split(' ')[0]) + '</span>'
-          : '<span class="ifx-mkt-heat-tile__name">' + esc(item.name) + '</span>' +
-            '<span class="ifx-mkt-heat-tile__perf">' + fmtPct(item.perf) + '</span>';
+          ? nameHtml
+          : nameHtml + '<span class="ifx-mkt-heat-tile__perf">' + fmtPct(item.perf) + '</span>';
       }
     });
 

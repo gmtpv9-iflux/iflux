@@ -399,7 +399,7 @@
       renderAs: 'WGT-COM-TOPWL',
       group: 'community',
       groupLabel: 'Cộng đồng',
-      title: 'Top Watchlist mạnh nhất',
+      title: 'Top theo dõi mạnh nhất',
       description: 'Hiệu suất TB watchlist · chép danh mục Elite',
       tier: 'elite',
       kind: 'list',
@@ -416,14 +416,14 @@
       type: 'WGT-WAT-001',
       group: 'personal',
       groupLabel: 'Cá nhân',
-      title: 'Watchlist',
+      title: 'Theo dõi',
       description: 'Danh sách mã đang theo dõi',
       tier: 'free',
       kind: 'list',
       popularity: 100,
       defaultConfig: { width: 'full' },
       footerHref: '../watchlist/index.html',
-      footerLabel: 'Mở Watchlist đầy đủ'
+      footerLabel: 'Mở danh sách theo dõi đầy đủ'
     }
   ];
 
