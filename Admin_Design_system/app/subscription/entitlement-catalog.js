@@ -289,8 +289,30 @@
     'BLK-FLW-NET-STORY': 'BLK-FLW-NET-CHUDE'
   };
 
+  /** Widget thuộc SoT Phân quyền = có trong Tầng 4. Ngoài danh sách → không áp dụng Permission. */
+  function isPermissionScopedWidget(id) {
+    id = String(id || '');
+    if (!isWidgetEntitlementId(id)) return false;
+    var P = l4();
+    if (P && typeof P.widgetIds === 'function') {
+      return P.widgetIds().indexOf(id) >= 0;
+    }
+    if (wl() && wl().allWidgetIdsInLibrary) {
+      return wl().allWidgetIdsInLibrary().indexOf(id) >= 0;
+    }
+    return false;
+  }
+
+  function isStaticPageBlock(id) {
+    return STATIC_PAGE_BLOCKS.some(function (b) { return b.id === id; });
+  }
+
   function resolveBlockEnabled(plan, id) {
     if (!plan || !plan.blocks) return false;
+    /* Nội dung đặc thù trang — không cấu hình trong ma trận Widget → luôn mở. */
+    if (isStaticPageBlock(id)) return true;
+    /* WGT-* không có trong Tầng 4 (vd Page Composite) → ngoài phạm vi Permission → luôn mở. */
+    if (isWidgetEntitlementId(id) && !isPermissionScopedWidget(id)) return true;
     if (plan.blocks[id]) return true;
     var alias = BLOCK_ALIASES[id];
     if (alias && plan.blocks[alias]) return true;
@@ -347,6 +369,20 @@
         out[b.id] = tierRank(tier) >= tierRank(b.minTier);
       }
     });
+    /* Elite: Widget mới trong thư viện mặc định bật (kể cả chưa có trong BLOCKS catalog). */
+    if (tier === 'elite') {
+      var ids = [];
+      if (wl() && wl().allWidgetIdsInLibrary) ids = wl().allWidgetIdsInLibrary();
+      if ((!ids || !ids.length) && global.PlatformLayersWidgets && PlatformLayersWidgets.widgetIds) {
+        ids = PlatformLayersWidgets.widgetIds();
+      }
+      if ((!ids || !ids.length) && global.PageSettingsCatalog && PageSettingsCatalog.allWidgetIds) {
+        ids = PageSettingsCatalog.allWidgetIds();
+      }
+      (ids || []).forEach(function (id) {
+        if (isWidgetEntitlementId(id)) out[id] = true;
+      });
+    }
     var plan = { tier: tier, blocks: out };
     syncPageBlocksFromWidgets(plan);
     return plan.blocks;
@@ -717,6 +753,8 @@
     applyPageBlockDefaults: applyPageBlockDefaults,
     syncPageBlocksFromWidgets: syncPageBlocksFromWidgets,
     resolveBlockEnabled: resolveBlockEnabled,
+    isPermissionScopedWidget: isPermissionScopedWidget,
+    isWidgetEntitlementId: isWidgetEntitlementId,
     buildBlocksCatalog: buildBlocksCatalog,
     refreshBlocksCatalog: function () {
       L4_ADAPTER = null; /* rebuild adapter — Tầng 4 có thể nạp sau file này */

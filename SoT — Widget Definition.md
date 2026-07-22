@@ -161,7 +161,7 @@ Widget chỉ định nghĩa:
 
 Business Logic luôn thuộc Kiến trúc 4 tầng (Tầng tính toán - data source).
 
-Tại tầng 4, hệ thống sẽ hiển thị danh sách Widget hiện có kèm theo dữ liệu data mẫu. Sau này các Data này sẽ được thay thế thành data thật khi tầng tính toán hoàn thiện.
+Tại tầng 4, hệ thống sẽ hiển thị danh sách Widget hiện có kèm theo dữ liệu data mẫu đến từ Template hoặc do Admin tự dựng mẫu. Sau này các Data này sẽ được thay thế thành data thật khi tầng tính toán hoàn thiện.
 
 Sau khi Business Logic tính xong, Runtime chỉ nhận ViewModel để hiển thị.
 
@@ -256,23 +256,36 @@ Admin
     └── Mẫu giao diện
 ```
 
-Template quyết định:
+Template = **một ID** (không nhân bản TMP-…-WEB / TMP-…-MOBILE).
 
-- bố cục
-- biểu đồ
-- bảng
-- KPI
-- Ranking
-- Timeline
-- Heatmap
-- Card
-- Danh sách
-- Màu sắc
-- Typography
-- Responsive
-- Animation
+### General (Admin sở hữu)
+
+- Name · Description · Capability · Schema (inputs) · Preview Data nghiệp vụ · Đặc tả hiển thị
+
+### Supported Runtime + Runtime Implementation (Developer / Build sở hữu)
+
+- Mỗi Runtime (web · mobile · …) có **Implementation** riêng: entry module, assets, version, deps.
+- Admin **chỉ xem** trạng thái **Ready / Draft** — **không** nhập path module.
+- Runtime đang Publish (hiện tại = **web**) chưa Ready → Template coi là **Draft** với Runtime đó · Widget Authoring không nên chọn để Publish.
+
+### Artifact shape A
+
+```
+Publish(runtime)
+  → Widget Published (Runtime)   // mỗi Runtime một Artifact riêng
+```
+
+Template quyết định cách trình bày (bố cục, biểu đồ, bảng, KPI, Ranking, Timeline, Heatmap, Card, danh sách, màu, typography, responsive, animation) **thông qua Implementation của Runtime đích**, không qua Runtime tự resolve Template.
 
 Một Widget có thể đổi Template mà không cần đổi Widget.
+
+Publish resolve bằng:
+
+```
+resolveRuntimeImplementation(template, runtime)
+```
+
+Runtime User chỉ đọc Published Artifact — **không** resolve Template.
 
 ---
 
@@ -337,11 +350,11 @@ Sau khi Publish, hệ thống sẽ resolve toàn bộ:
 
 - Permission
 - Layout
-- Template
+- **Runtime Implementation** (`resolveRuntimeImplementation(template, runtime)`)
 - Capability
 - Dependency
 
-để sinh ra Published Artifact.
+để sinh ra **Widget Published (Runtime)** / Page Published Artifact.
 
 Published Artifact là đầu vào duy nhất của Runtime.
 

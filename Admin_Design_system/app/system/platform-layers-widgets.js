@@ -22,6 +22,7 @@
   var TEMPLATE_ROLES = {
     'TMP-SUMMARY': { name: 'Summary / Overview' },
     'TMP-HEATMAP': { name: 'Heatmap' },
+    'TMP-COM-STOCK-HEAT': { name: 'Heatmap cổ phiếu cộng đồng' },
     'TMP-TREND-LINE': { name: 'Trend / Multi-series Area Line' },
     'TMP-NET-SUBJECT': { name: 'Net-flow theo chủ thể' },
     'TMP-RANK-PERF': { name: 'Ranking · Hiệu suất' },
@@ -825,7 +826,7 @@
       iconKey: 'message-circle',
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.',
-      templateRef: 'TMP-HEATMAP',
+      templateRef: 'TMP-COM-STOCK-HEAT',
       outputs: [
         {
           symbol: 'ticker', name: 'Mã cổ phiếu', type: 'text',

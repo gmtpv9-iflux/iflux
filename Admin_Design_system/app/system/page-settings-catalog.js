@@ -716,6 +716,61 @@
     };
   }
 
+  /**
+   * Widget đang Bật ở Widget Placement (Cài đặt trang) — chỉ WGT-* thuộc Tầng 4.
+   * Dedup theo mã. Không lấy Sitemap / Page Composite.
+   */
+  function listEnabledPlacementWidgets(storeData) {
+    var data = storeData;
+    if (!data && global.PageSettingsStore && PageSettingsStore.read) {
+      data = PageSettingsStore.read();
+    }
+    var l4 = {};
+    allWidgetIds().forEach(function (id) { l4[id] = true; });
+    var pages = buildModel(data || {});
+    var byId = {};
+    pages.forEach(function (page) {
+      (page.layoutSlots || []).forEach(function (slot) {
+        if (!slot || !slot.widgetId || !slot.enabled) return;
+        if (!l4[slot.widgetId]) return;
+        if (byId[slot.widgetId]) return;
+        var copy = resolveWidgetCopy(slot.widgetId);
+        byId[slot.widgetId] = {
+          id: slot.widgetId,
+          title: (copy && copy.title) ? copy.title : slot.widgetId,
+          description: (copy && copy.description) ? copy.description : ''
+        };
+      });
+    });
+    return Object.keys(byId).sort(function (a, b) {
+      return String(a).localeCompare(String(b));
+    }).map(function (id) { return byId[id]; });
+  }
+
+  /**
+   * Toàn bộ Widget Definition Tầng 4 — SoT duy nhất cho «Tất cả Widget» (Phân quyền sử dụng).
+   * Không gồm Sitemap / Page Composite.
+   */
+  function listAllWidgets() {
+    var P = global.PlatformLayersWidgets;
+    var ids = (P && typeof P.widgetIds === 'function')
+      ? P.widgetIds()
+      : allWidgetIds();
+    return ids.slice().sort(function (a, b) {
+      return String(a).localeCompare(String(b));
+    }).map(function (id) {
+      var copy = resolveWidgetCopy(id);
+      if ((!copy || !copy.title || copy.title === id) && P && P.resolveWidgetCopy) {
+        copy = P.resolveWidgetCopy(id) || copy;
+      }
+      return {
+        id: id,
+        title: (copy && copy.title) ? copy.title : id,
+        description: (copy && copy.description) ? copy.description : ''
+      };
+    });
+  }
+
   global.PageSettingsCatalog = {
     DEFAULT_PAGES: DEFAULT_PAGES,
     WIDTH_SPAN: WIDTH_SPAN,
@@ -744,6 +799,8 @@
     allWidgetIds: allWidgetIds,
     widgetsForPage: widgetsForPage,
     widgetRow: widgetRow,
+    listEnabledPlacementWidgets: listEnabledPlacementWidgets,
+    listAllWidgets: listAllWidgets,
     defaultLayoutSlots: defaultLayoutSlots
   };
 })(window);

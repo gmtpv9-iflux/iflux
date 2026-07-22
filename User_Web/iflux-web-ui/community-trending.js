@@ -180,18 +180,22 @@
     if (wl() && wl().refreshHearts) wl().refreshHearts();
   }
 
+  /**
+   * Chiều cao canvas treemap khi layout đôi (stocks + stories cùng hàng).
+   * Host Widget Published đơn lẻ: không ghi đè — để CSS / layout App Shell lo (giống Widget khác).
+   */
   function syncCanvasHeight(row) {
     var storiesPanel = row.querySelector('[data-ifx-trending-stories]');
     var stocksPanel = row.querySelector('[data-ifx-trending-stocks]');
     var canvas = row.querySelector('[data-ifx-cap-treemap]');
     var storyList = row.querySelector('.ifx-com-story-rank-list');
-    if (!canvas || !storiesPanel || !stocksPanel) return 0;
+    if (!canvas || !storiesPanel || !stocksPanel) return canvas ? canvas.clientHeight || 0 : 0;
 
-    var title = stocksPanel.querySelector('.ifx-com-trending-panel__head h3');
+    var title = stocksPanel.querySelector('.ifx-com-trending-panel__head h3') ||
+      stocksPanel.querySelector('.ifx-widget__header h3');
     var hint = stocksPanel.querySelector('.ifx-com-ticker-heat__hint');
     var titleH = title ? title.offsetHeight + 14 : 14;
     var hintH = hint ? hint.offsetHeight + 10 : 0;
-
     var listH = storyList ? storyList.offsetHeight : 0;
     var target = Math.max(200, listH > 0 ? listH : storiesPanel.offsetHeight - titleH - hintH);
 
@@ -212,25 +216,36 @@
       return;
     }
 
-    function paint() {
+    /* Cùng pattern preview heatmap / Widget host: đợi container có bề rộng thật rồi mới layout. */
+    function paint(tries) {
+      tries = tries || 0;
       syncCanvasHeight(row);
-      paintTreemap(canvas, items);
+      var el = row.querySelector('[data-ifx-cap-treemap]');
+      if (!el || !el.isConnected) return;
+      var w = el.clientWidth;
+      var h = el.clientHeight;
+      if ((w < 40 || h < 40) && tries < 40) {
+        setTimeout(function () { paint(tries + 1); }, 80);
+        return;
+      }
+      if (w < 40 || h < 40) return;
+      paintTreemap(el, items);
     }
 
-    paint();
+    paint(0);
     requestAnimationFrame(function () {
-      requestAnimationFrame(paint);
+      requestAnimationFrame(function () { paint(0); });
     });
 
     if (typeof ResizeObserver !== 'undefined') {
       if (row.__ifxCapRo) row.__ifxCapRo.disconnect();
-      var ro = new ResizeObserver(function () { paint(); });
+      var ro = new ResizeObserver(function () { paint(0); });
       ro.observe(row);
       var stories = row.querySelector('[data-ifx-trending-stories]');
       if (stories) ro.observe(stories);
       row.__ifxCapRo = ro;
     } else {
-      global.addEventListener('resize', paint);
+      global.addEventListener('resize', function () { paint(0); });
     }
   }
 

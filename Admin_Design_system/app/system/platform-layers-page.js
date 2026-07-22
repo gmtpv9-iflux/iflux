@@ -317,10 +317,16 @@
 
   function templateSelectOptions(selected, widget) {
     var compat = widget ? wlib().compatibleTemplates(widget) : [];
+    var impl = global.TemplateWebImplementations;
     return wlib().allTemplateIds().map(function (id) {
       var ok = !widget || compat.indexOf(id) >= 0;
-      return '<option value="' + esc(id) + '"' + (id === selected ? ' selected' : '') + '>' +
-        esc(wlib().templateName(id)) + ' · ' + esc(id) + (widget ? (ok ? ' ✓' : '') : '') + '</option>';
+      var ready = impl && impl.isReady ? impl.isReady(id) : true;
+      var label = esc(wlib().templateName(id)) + ' · ' + esc(id);
+      if (widget) label += ok ? ' ✓' : '';
+      label += ready ? ' · Ready' : ' · Draft';
+      /* Gate Wave 2: Draft (chưa Implementation Web) — vẫn hiện nhưng đánh dấu; Publish sẽ fail rõ. */
+      return '<option value="' + esc(id) + '"' + (id === selected ? ' selected' : '') +
+        (ready ? '' : ' data-tpl-draft="1"') + '>' + label + '</option>';
     }).join('');
   }
 

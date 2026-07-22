@@ -112,6 +112,29 @@
       spec: 'Chỉ hiển thị Top 10 phần tử có trọng số cao nhất (sắp theo cột kích thước giảm dần, lấy 10). Treemap: diện tích ∝ trọng số, màu theo giá trị (dương = xanh, âm = đỏ). Trong ô: nhãn + giá trị.'
     },
     {
+      id: 'TMP-COM-STOCK-HEAT',
+      name: 'Bản đồ nhiệt cổ phiếu cộng đồng',
+      description: 'Treemap mã CP theo mức độ quan tâm cộng đồng; diện tích = quan tâm, màu = hiệu suất phiên.',
+      headTitle: 'Cổ phiếu được quan tâm hàng đầu',
+      headDesc: 'Diện tích = mức độ quan tâm · màu = hiệu suất phiên',
+      domain: 'community',
+      render: 'com-stock-heat',
+      preview: { type: 'WGT-COM-001', config: { stocksOnly: true } },
+      resources: {
+        component: ['squarified-treemap.js', 'community-trending.js'],
+        css: ['community.css', 'block-templates.css', 'watchlist.css'],
+        js: ['templates-preview.js'],
+        library: []
+      },
+      inputs: [
+        { label: 'Mã cổ phiếu', demo: 'VIN | VIC | VHM | VCB | HPG | SSI' },
+        { label: 'Lượt quan tâm (kích thước)', demo: '639 | 629 | 569 | 426 | 156 | 180' },
+        { label: 'Hiệu suất hôm nay (%)', demo: '1.2 | -0.8 | 2.1 | 0.4 | 3.1 | -0.5' }
+      ],
+      displayCases: ['Treemap Top 10 theo quan tâm cộng đồng'],
+      spec: 'Top 10 mã theo mức độ quan tâm cộng đồng (giảm dần). Treemap: diện tích ∝ quan tâm, màu theo hiệu suất phiên.'
+    },
+    {
       id: 'TMP-TREND-LINE',
       name: 'Biểu đồ vùng nhiều chuỗi',
       description: 'Biểu đồ vùng dùng để so sánh nhiều chuỗi dữ liệu theo các mốc trên trục hoành.',
@@ -442,6 +465,42 @@
         'Chỉ nhận các giai đoạn đã có đủ dữ liệu (Widget lọc trước)'
       ],
       spec: 'Body: danh sách dòng giai đoạn. Mỗi dòng = nhãn giai đoạn → nhãn trái/phải (chrome) + thanh vị trí (đoạn trái/phải màu token DS, % trên thanh, vạch giữa = giá hiện tại) → vùng trái · giá giữa · vùng phải. Tỉ lệ thanh suy ra từ |% trái| : |% phải|. Không tính nghiệp vụ; không gồm Header Widget.'
+    },
+    {
+      id: 'TMP-SR-HISTORY',
+      name: 'Lịch sử Hỗ trợ - Kháng cự',
+      description: 'Một khung thời gian (tab) — vị trí giá hiện tại giữa vùng hỗ trợ và kháng cự, kèm khoảng giá và khoảng % còn lại.',
+      headTitle: 'Lịch sử Hỗ trợ - Kháng cự',
+      headDesc: 'Hỗ trợ · Hiện tại · Kháng cự theo khung thời gian.',
+      domain: 'market',
+      render: 'sr-history',
+      preview: { type: 'TMP-SR-HISTORY', config: {} },
+      resources: {
+        component: ['block-templates.js'],
+        css: ['block-templates.css'],
+        js: ['templates-preview.js'],
+        library: []
+      },
+      headers: {
+        left: 'Hỗ trợ',
+        center: 'Hiện tại',
+        right: 'Kháng cự'
+      },
+      inputs: [
+        { label: 'Tab khung thời gian', demo: '1 tháng | 3 tháng | 1 năm | Lịch sử' },
+        { label: 'Vùng hỗ trợ (text)', demo: '18.20–18.60 | 17.80–18.40 | 16.50–18.00 | 15.20–17.80' },
+        { label: 'Giá hiện tại', demo: '20.85 | 20.85 | 20.85 | 20.85' },
+        { label: 'Vùng kháng cự (text)', demo: '21.20–21.60 | 22.00–22.80 | 23.10–24.00 | 22.50–24.20' },
+        { label: '% còn tới hỗ trợ (±)', demo: '-15 | -18 | -22 | -25' },
+        { label: '% còn tới kháng cự (±)', demo: '3 | 6 | 10 | 12' }
+      ],
+      displayCases: [
+        'Tab ix-segmented: 1 tháng · 3 tháng · 1 năm · Lịch sử',
+        'Hàng nhãn: Hỗ trợ | Hiện tại | Kháng cự',
+        'Thanh: đoạn hỗ trợ · chấm hiện tại · đoạn kháng cự (tỉ lệ từ |%|)',
+        'Khoảng giá dưới thanh; hint «Còn ±% nữa» hai bên'
+      ],
+      spec: 'Body: tab khung thời gian (ix-segmented) → panel một khung: nhãn 3 cột → thanh trái/phải + chấm giữa → vùng giá 3 cột → hint % hai bên. Tỉ lệ thanh suy ra từ |% hỗ trợ| : |% kháng cự|. Không tính nghiệp vụ; không gồm Header Widget.'
     }
   ];
 

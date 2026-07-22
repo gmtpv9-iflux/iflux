@@ -68,8 +68,13 @@
     { id: 'TMP-ARTIFACT-CARD', label: 'Artifact Card (Platform demo)' },
     { id: 'TMP-COM-STOCK-HEAT', label: 'Heatmap cổ phiếu cộng đồng' },
     { id: 'TMP-COM-STORY-TOP', label: 'Chủ đề tích cực hàng đầu' },
+    { id: 'TMP-COMMUNITY-STORY-TOP', label: 'Chủ đề tích cực hàng đầu (SoT Admin)' },
     { id: 'TMP-COM-ACTIVE', label: 'Thành viên tích cực' },
-    { id: 'TMP-MARKET-HEATMAP', label: 'Heatmap thị trường / câu chuyện' }
+    { id: 'TMP-COMMUNITY-LIST', label: 'Danh sách xếp hạng cộng đồng' },
+    { id: 'TMP-DIVERGING-BARS', label: 'Cột hai chiều quanh trục 0' },
+    { id: 'TMP-TREND-LINE', label: 'Biểu đồ vùng nhiều chuỗi' },
+    { id: 'TMP-MARKET-HEATMAP', label: 'Heatmap thị trường / câu chuyện' },
+    { id: 'TMP-HEATMAP', label: 'Heatmap (SoT Admin)' }
   ];
 
   global.IfluxWidgetPublishClient = {

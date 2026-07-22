@@ -36,9 +36,7 @@
             <button type="button" class="ix-btn ix-btn-primary" id="btn-save-matrix"><i class="ti ti-device-floppy"></i> Lưu phân quyền</button>
           </div>
         </div>
-        <div class="ix-card">
-          <div class="ix-card-body" id="matrix-mount"></div>
-        </div>
+        <div id="matrix-mount"></div>
       </div>
     </main>
   </div>
@@ -51,41 +49,63 @@
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="../../iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
 <script src="../system/platform-layers-widgets.js?v=stripTabTopN20260718"></script>
-<script src="entitlement-catalog.js?v=l4sot20260714b"></script>
+<script src="../system/widget-library-catalog.js?v=l4sot20260714b"></script>
+<script src="../system/page-settings-catalog.js?v=entL4Scope20260721"></script>
+<script src="../system/page-settings-store.js?v=cauChuyen20260720"></script>
+<script src="../system/widget-publish-client.js?v=entPlaceList20260720"></script>
+<script src="entitlement-catalog.js?v=entL4Scope20260721"></script>
 <script src="plans-store.js"></script>
-<script src="entitlement-matrix-ui.js"></script>
+<script src="entitlement-matrix-ui.js?v=entL4Scope20260721"></script>
 <script>
 (function () {
-  /* Tầng 4 (SoT) → Phân quyền: rebuild catalog sau khi Tầng 4 load */
+  var mount = document.getElementById('matrix-mount');
+
   if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
     EntitlementCatalog.refreshBlocksCatalog();
   }
-  EntitlementMatrixUI.render(document.getElementById('matrix-mount'));
 
-  function loadMatrix() {
-    if (PlansStore.hydrate) {
-      PlansStore.hydrate().then(function () {
-        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
-      }).catch(function () {
-        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
-      });
-    } else {
-      EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+  function hydratePlacementFromPublished() {
+    var client = window.IfluxWidgetPublishClient;
+    var cat = window.PageSettingsCatalog;
+    var store = window.PageSettingsStore;
+    if (!client || !client.getPage || !cat || !store || !store.hydratePublishedPage) {
+      return Promise.resolve();
     }
+    var keys = cat.buildModel(store.read()).map(function (page) { return page.key; });
+    return Promise.all(keys.map(function (key) {
+      return client.getPage(key).then(function (res) {
+        if (res && res.ok && res.data) store.hydratePublishedPage(key, res.data);
+      });
+    }));
   }
 
-  loadMatrix();
-
-  document.getElementById('btn-save-matrix').addEventListener('click', function () {
-    var overrides = EntitlementMatrixUI.collect();
-    var result = PlansStore.saveMatrixOverrides(overrides);
-    if (!result.ok) {
-      ixToast(result.error || 'Lưu thất bại', 'danger');
-      return;
+  function bootMatrix() {
+    EntitlementMatrixUI.render(mount);
+    function loadMatrix() {
+      if (PlansStore.hydrate) {
+        PlansStore.hydrate().then(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        }).catch(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        });
+      } else {
+        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+      }
     }
-    ixToast('Đã lưu ma trận phân quyền · website cập nhật khi tải lại trang (Ctrl+F5)', 'success');
     loadMatrix();
-  });
+    document.getElementById('btn-save-matrix').addEventListener('click', function () {
+      var overrides = EntitlementMatrixUI.collect();
+      var result = PlansStore.saveMatrixOverrides(overrides);
+      if (!result.ok) {
+        ixToast(result.error || 'Lưu thất bại', 'danger');
+        return;
+      }
+      ixToast('Đã lưu ma trận phân quyền · website cập nhật khi tải lại trang (Ctrl+F5)', 'success');
+      loadMatrix();
+    });
+  }
+
+  hydratePlacementFromPublished().then(bootMatrix).catch(bootMatrix);
 })();
 </script>
 </body>

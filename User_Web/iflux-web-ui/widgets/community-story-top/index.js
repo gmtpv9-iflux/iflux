@@ -22,7 +22,7 @@ var DEPS_TIERS = [
     ASSET + 'watchlist-ui.js'
   ],
   [
-    ASSET + 'community-trending.js?v=span61220260714'
+    ASSET + 'community-trending.js?v=stocksOnlyH20260722'
   ]
 ];
 

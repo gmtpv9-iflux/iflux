@@ -1,0 +1,86 @@
+/**
+ * TMP-COMMUNITY-LIST — ESM Widget module (Publish display.module).
+ * Cùng Template SoT #3; phân nhánh theo widgetId (ViewModel / legacy mount).
+ */
+import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+
+var ASSET = '/User_Web/iflux-web-ui/';
+
+export const meta = {
+  templateId: 'TMP-COMMUNITY-LIST',
+  title: 'Danh sách xếp hạng cộng đồng'
+};
+
+var DEPS_BY_WIDGET = {
+  'WGT-COM-002': [
+    [ASSET + 'stock-store.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
+    [ASSET + 'community-active-members.js']
+  ],
+  'WGT-COM-003': [
+    [ASSET + 'community-store.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
+    [ASSET + 'community-featured-experts.js']
+  ],
+  'WGT-COM-004': [
+    [
+      ASSET + 'watchlist-store.js?v=phaseBExit20260721b',
+      ASSET + 'profile-links.js',
+      ASSET + 'community-top-watchlist-store.js'
+    ],
+    [ASSET + 'watchlist-ui.js?v=phaseBExit20260721b'],
+    [ASSET + 'community-top-watchlist.js?v=phaseBExit20260721b']
+  ]
+};
+
+function widgetIdFromCtx(ctx) {
+  ctx = ctx || {};
+  return (
+    ctx.widgetId ||
+    (ctx.slot && ctx.slot.id) ||
+    (ctx.artifact && ctx.artifact.id) ||
+    ''
+  );
+}
+
+export async function mount(el, ctx) {
+  if (!el) return;
+  var widgetId = widgetIdFromCtx(ctx);
+  var tiers = DEPS_BY_WIDGET[widgetId];
+  if (!tiers) {
+    el.innerHTML =
+      '<div class="ifx-wl-empty">TMP-COMMUNITY-LIST chưa hỗ trợ widget ' +
+      (widgetId || '(thiếu id)') +
+      '</div>';
+    return;
+  }
+  await loadScriptTiers(tiers);
+
+  if (widgetId === 'WGT-COM-002') {
+    if (!window.IfluxCommunityActiveMembers) {
+      el.innerHTML = '<div class="ifx-wl-empty">Thiếu community-active-members.js</div>';
+      return;
+    }
+    window.IfluxCommunityActiveMembers.mount(el);
+  } else if (widgetId === 'WGT-COM-003') {
+    if (!window.IfluxCommunityFeaturedExperts) {
+      el.innerHTML = '<div class="ifx-wl-empty">Thiếu community-featured-experts.js</div>';
+      return;
+    }
+    window.IfluxCommunityFeaturedExperts.mount(el);
+  } else if (widgetId === 'WGT-COM-004') {
+    if (!window.IfluxCommunityTopWatchlist) {
+      el.innerHTML = '<div class="ifx-wl-empty">Thiếu community-top-watchlist.js</div>';
+      return;
+    }
+    window.IfluxCommunityTopWatchlist.mount(el, { withHead: true });
+  }
+
+  return {
+    unmount: function () {
+      if (el) el.innerHTML = '';
+    }
+  };
+}
+
+export function unmount(el) {
+  if (el) el.innerHTML = '';
+}
