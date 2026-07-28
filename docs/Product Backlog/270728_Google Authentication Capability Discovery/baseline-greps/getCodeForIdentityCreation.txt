@@ -1,0 +1,16 @@
+User_Web/iflux-web-ui/auth-social.js:241:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-social.js:242:      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+User_Web/iflux-web-ui/auth-social.js:253:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-social.js:254:      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
+User_Web/iflux-web-ui/auth-login-init.js:139:    if (AR && AR.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-login-init.js:140:      var code = AR.getCodeForIdentityCreation();
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:122:  function getCodeForIdentityCreation() {
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:186:    getCodeForIdentityCreation: getCodeForIdentityCreation,
+User_Web/iflux-web-ui/auth.js:452:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth.js:453:      return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:477:    if (AR && AR.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:478:      return AR.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/auth-register-init.js:3:  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-register-init.js:4:    return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/google-onetap.js:74:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/google-onetap.js:75:      refCode = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;

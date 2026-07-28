@@ -1295,10 +1295,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     opts = opts || {};
     var p = String(provider || '').toLowerCase();
     if (useApi()) {
-      if (!opts.referral_code) {
-        var ctxCode = getAffiliateContextCode();
-        if (ctxCode) opts.referral_code = ctxCode;
-      }
+      // referral_code chỉ do SocialLoginUseCase (hoặc caller tường minh) gắn — không dual-inject AR tại đây
       return IfluxApiClient.authSocial(p, tokens || {}, opts).then(function (res) {
         return IfluxApiClient.authMe(res.token).then(function (profile) {
           var user = apiProfileToAppUser(profile);
@@ -1564,6 +1561,11 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
       global.location.replace(defaultPath || appHomePath());
     }
   }
+
+  /** Authentication Capability — sole post-auth Redirect Policy (OD-SOL-12 / WP4). */
+  global.IfluxAuthRedirectPolicy = {
+    execute: redirectAfterAuth
+  };
 
   validateLocalSession();
   initCrossTabSync();

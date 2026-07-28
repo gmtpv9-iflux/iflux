@@ -119,7 +119,7 @@
 
   function socialAuthSuccess(provider, user) {
     ixToast('Đăng nhập ' + providerLabel(provider) + ' thành công', 'success');
-    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+    /* Redirect: IfluxAuthRedirectPolicy via SocialLoginUseCase (WP4) — Page không self-navigate */
   }
 
   function socialAuthError(provider, err) {
@@ -134,18 +134,10 @@
     return map[String(p || '').toLowerCase()] || p;
   }
 
-  function affiliateReferralCodeForIdentity() {
-    var AR = window.IfluxAffiliateResolver;
-    if (AR && AR.getCodeForIdentityCreation) {
-      var code = AR.getCodeForIdentityCreation();
-      return code || undefined;
-    }
-    return undefined;
-  }
-
+  var rememberEl = document.querySelector('#panel-email .ix-checkbox');
   IfluxAuthSocial.initPage({
     onSuccess: socialAuthSuccess,
     onError: socialAuthError,
-    referral_code: affiliateReferralCodeForIdentity()
+    remember_me: !!(rememberEl && rememberEl.checked)
   });
 })();

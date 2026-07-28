@@ -1,0 +1,10 @@
+User_Web/iflux-web-ui/auth-social.js:113:    return loadScript('https://accounts.google.com/gsi/client').then(function () {
+User_Web/iflux-web-ui/auth-social.js:114:      if (!global.google || !google.accounts || !google.accounts.id) {
+User_Web/iflux-web-ui/auth-social.js:117:      google.accounts.id.initialize({
+User_Web/iflux-web-ui/auth-social.js:148:          google.accounts.id.prompt(function (notification) {
+User_Web/iflux-web-ui/google-onetap.js:9:  var GSI_SRC = 'https://accounts.google.com/gsi/client';
+User_Web/iflux-web-ui/google-onetap.js:42:      if (global.google && google.accounts && google.accounts.id) return resolve();
+User_Web/iflux-web-ui/google-onetap.js:45:          if (global.google && google.accounts && google.accounts.id) {
+User_Web/iflux-web-ui/google-onetap.js:106:    if (!global.google || !google.accounts || !google.accounts.id) return;
+User_Web/iflux-web-ui/google-onetap.js:107:    google.accounts.id.initialize({
+User_Web/iflux-web-ui/google-onetap.js:116:    google.accounts.id.prompt(function (notification) {

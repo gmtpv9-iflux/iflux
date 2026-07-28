@@ -1,0 +1,2 @@
+User_Web/iflux-web-ui/auth-social.js:252:  function affiliateCodeForSocial(frozen) {
+User_Web/iflux-web-ui/auth-social.js:276:          referral_code: affiliateCodeForSocial(opts.referral_code),

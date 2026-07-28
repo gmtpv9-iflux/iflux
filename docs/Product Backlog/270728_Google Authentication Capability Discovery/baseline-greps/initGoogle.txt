@@ -1,0 +1,3 @@
+User_Web/iflux-web-ui/auth-social.js:110:  function initGoogle(cfg) {
+User_Web/iflux-web-ui/auth-social.js:136:      return initGoogle(cfg).then(function () {
+User_Web/iflux-web-ui/auth-social.js:296:          return initGoogle(c.google).catch(function () { /* optional */ });

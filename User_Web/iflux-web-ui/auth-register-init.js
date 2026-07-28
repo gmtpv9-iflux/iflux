@@ -329,10 +329,9 @@ function providerLabel(p) {
 }
 
 IfluxAuthSocial.initPage({
-  referral_code: getEffectiveRefCode(),
   onSuccess: function (provider) {
     ixToast('Đăng ký ' + providerLabel(provider) + ' thành công!', 'success');
-    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+    /* Redirect: IfluxAuthRedirectPolicy via SocialLoginUseCase (WP4) */
   },
   onError: function (provider, err) {
     ixToast(err.message || 'Đăng nhập thất bại.', 'danger');

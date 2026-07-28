@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const { query } = require('../../core/database/connection');
 const { sendVerificationOtp, isConfigured } = require('../../core/email/mailer');
 const { getLogger } = require('../../core/logger/logger');
-const { verifySocialToken } = require('./social-auth.service');
+const verifierRegistry = require('./identity/verifier-registry');
+const { toLegacySocialProfile } = require('./identity/verified-identity');
 
 const OTP_TTL_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
@@ -629,13 +630,15 @@ async function createSocialUser(provider, profile, referredBy) {
 }
 
 /**
- * Đăng nhập / đăng ký qua Google, Apple, Facebook, Zalo.
+ * Đăng nhập / đăng ký social — Identity orchestration.
+ * Verify = VerifierRegistry → VerifiedIdentity (không verify token trong service này).
  * @param {object} config
- * @param {{ provider: string, id_token?: string, access_token?: string, referral_code?: string }} payload
+ * @param {{ provider: string, id_token?: string, access_token?: string, oauth_code?: string, referral_code?: string }} payload
  */
 async function socialLoginOrRegister(config, payload) {
   const provider = String(payload.provider || '').toLowerCase();
-  const profile = await verifySocialToken(config, provider, payload);
+  const verified = await verifierRegistry.verify(config, provider, payload);
+  const profile = toLegacySocialProfile(verified);
 
   let user = await getUserBySocialProvider(provider, profile.providerId);
   let isNew = false;

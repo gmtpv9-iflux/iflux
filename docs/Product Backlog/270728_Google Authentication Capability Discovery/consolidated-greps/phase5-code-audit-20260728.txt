@@ -1,0 +1,41 @@
+=== DATE 2026-07-28T13:28:19Z ===
+=== METRICS baseline AFFILIATE_GOLDEN vs working tree ===
+auth-social GOLDEN:      322
+auth-social NOW:         260
+onetap GOLDEN:      147
+onetap NOW: DELETED
+social-auth.service GOLDEN:      217
+social-auth.service NOW:          37
+=== WP1 GIS in auth-social ===
+CLEAN
+=== WP1 GIS only in GoogleProvider ===
+8:  var GSI_SRC = 'https://accounts.google.com/gsi/client';
+61:    return loadScript(GSI_SRC).then(function () {
+62:      if (!global.google || !google.accounts || !google.accounts.id) {
+66:      google.accounts.id.initialize({
+107:          google.accounts.id.prompt(function (notification) {
+=== WP2 AR read in social path (UseCase) ===
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:10:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:11:      return IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+=== WP2 loginWithSocial dual inject ===
+getAffiliateContextCode in loginWithSocial: False
+AffiliateResolver in loginWithSocial: False
+=== WP3 onetap User_Web ===
+CLEAN
+=== WP4 Provider nav ===
+PROVIDER_NO_NAV
+=== WP5 verifier DB ===
+VERIFIER_NO_DB
+=== WP5 switch in auth.service/identity ===
+backend/src/modules/legacy-auth/identity/verifier-registry.js:5: * Registration layer only — không switch(provider) trong IdentityService.
+=== WP6 shim export ===
+backend/src/modules/legacy-auth/social-auth.service.js:5: * Verify = identity/verifier-registry. Không shim verifyGoogleIdToken / verifySocialToken.
+=== residual Apple/FB/Zalo in auth-social ===
+115:  function loginApple(opts) {
+121:          if (!global.AppleID) throw new Error('Apple Sign In SDK không khả dụng.');
+122:          AppleID.auth.init({
+128:          return AppleID.auth.signIn();
+138:  function loginFacebook(opts) {
+149:          FB.login(function (response) {
+163:  function loginZalo(opts) {
+173:        'https://oauth.zaloapp.com/v4/permission?app_id=' +

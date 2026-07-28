@@ -1,12 +1,12 @@
 /**
- * iFlux — Social login (Google / Apple / Facebook / Zalo)
- * Gọi IfluxAuth.loginWithSocial → POST /auth/social khi dataMode=api
+ * iFlux — Social residual (Apple / Facebook / Zalo) + UI bind.
+ * Google → SocialLoginUseCase.execute (Registry → Provider).
+ * Không GIS · không đọc AR (UseCase sở hữu AR read).
  */
 (function (global) {
   'use strict';
 
   var config = null;
-  var googleInitialized = false;
 
   function resolveSocialApiBase() {
     if (global.IfluxApiConfig && IfluxApiConfig.isEnabled && IfluxApiConfig.isEnabled()) {
@@ -96,63 +96,20 @@
     );
   }
 
-  function ensureAuth() {
-    if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) {
-      return Promise.reject(new Error('Hệ thống đăng nhập chưa sẵn sàng.'));
+  function runGoogle(opts) {
+    var uc = global.IfluxSocialLoginUseCase;
+    if (!uc || !uc.execute) {
+      return Promise.reject(new Error('SocialLoginUseCase chưa sẵn sàng.'));
     }
+    return uc.execute('google', opts || {});
   }
 
-  function finishSocialLogin(provider, tokens, opts) {
-    ensureAuth();
-    return IfluxAuth.loginWithSocial(provider, tokens || {}, opts || {});
-  }
-
-  function initGoogle(cfg) {
-    if (!cfg || !cfg.enabled || !cfg.clientId) return Promise.resolve();
-    if (googleInitialized) return Promise.resolve();
-    return loadScript('https://accounts.google.com/gsi/client').then(function () {
-      if (!global.google || !google.accounts || !google.accounts.id) {
-        throw new Error('Google Sign-In SDK không khả dụng.');
-      }
-      google.accounts.id.initialize({
-        client_id: cfg.clientId,
-        callback: function (response) {
-          global.__ifxGoogleCredential = response;
-          if (global.__ifxOnGoogleCredential) {
-            global.__ifxOnGoogleCredential(response);
-          }
-        },
-        auto_select: false,
-        cancel_on_tap_outside: true
-      });
-      googleInitialized = true;
-    });
-  }
-
-  function loginGoogle(opts) {
-    return loadConfig().then(function (c) {
-      var cfg = c.google || {};
-      if (!cfg.enabled || !cfg.clientId) return notConfigured('google');
-      return initGoogle(cfg).then(function () {
-        return new Promise(function (resolve, reject) {
-          global.__ifxOnGoogleCredential = function (response) {
-            global.__ifxOnGoogleCredential = null;
-            if (!response || !response.credential) {
-              reject(new Error('Đăng nhập Google bị hủy.'));
-              return;
-            }
-            finishSocialLogin('google', { id_token: response.credential }, opts)
-              .then(resolve)
-              .catch(reject);
-          };
-          google.accounts.id.prompt(function (notification) {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              reject(new Error('Không mở được cửa sổ Google. Thử trình duyệt khác hoặc cho phép đăng nhập bên thứ ba.'));
-            }
-          });
-        });
-      });
-    });
+  function completeTokens(provider, tokens, opts) {
+    var uc = global.IfluxSocialLoginUseCase;
+    if (!uc || !uc.completeWithTokens) {
+      return Promise.reject(new Error('SocialLoginUseCase chưa sẵn sàng.'));
+    }
+    return uc.completeWithTokens(provider, tokens, opts || {});
   }
 
   function loginApple(opts) {
@@ -173,7 +130,7 @@
         .then(function (res) {
           var idToken = res.authorization && res.authorization.id_token;
           if (!idToken) throw new Error('Apple không trả id_token.');
-          return finishSocialLogin('apple', { id_token: idToken }, opts);
+          return completeTokens('apple', { id_token: idToken }, opts);
         });
     });
   }
@@ -194,7 +151,7 @@
               reject(new Error('Đăng nhập Facebook bị hủy.'));
               return;
             }
-            finishSocialLogin('facebook', { access_token: response.authResponse.accessToken }, opts)
+            completeTokens('facebook', { access_token: response.authResponse.accessToken }, opts)
               .then(resolve)
               .catch(reject);
           }, { scope: 'public_profile,email' });
@@ -237,11 +194,7 @@
     if (saved && state && saved !== state) {
       return Promise.reject(new Error('Zalo OAuth state không khớp.'));
     }
-    var ref = null;
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
-    }
-    return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
+    return completeTokens('zalo', { oauth_code: code }, {}).then(function (user) {
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, '', window.location.pathname + window.location.hash);
       }
@@ -249,19 +202,11 @@
     });
   }
 
-  function affiliateCodeForSocial(frozen) {
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
-      if (fresh) return fresh;
-    }
-    return frozen || null;
-  }
-
   function bindSocialButtons(root, opts) {
     opts = opts || {};
     root = root || document;
     var map = {
-      google: loginGoogle,
+      google: runGoogle,
       apple: loginApple,
       facebook: loginFacebook,
       zalo: loginZalo
@@ -273,7 +218,6 @@
         e.preventDefault();
         var run = map[provider];
         var runOpts = {
-          referral_code: affiliateCodeForSocial(opts.referral_code),
           remember_me: opts.remember_me
         };
         if (opts.onStart) opts.onStart(provider);
@@ -291,11 +235,6 @@
   function initPage(opts) {
     opts = opts || {};
     return loadConfig()
-      .then(function (c) {
-        if (c.google && c.google.enabled) {
-          return initGoogle(c.google).catch(function () { /* optional */ });
-        }
-      })
       .then(function () {
         return handleZaloCallback()
           .then(function (user) {
@@ -311,7 +250,6 @@
 
   global.IfluxAuthSocial = {
     loadConfig: loadConfig,
-    loginGoogle: loginGoogle,
     loginApple: loginApple,
     loginFacebook: loginFacebook,
     loginZalo: loginZalo,
