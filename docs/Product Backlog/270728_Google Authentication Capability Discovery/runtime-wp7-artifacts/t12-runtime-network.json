@@ -1,0 +1,24 @@
+{
+  "btnVisible": true,
+  "hasOneTapHeuristic": false,
+  "onetapScripts": [],
+  "socialScripts": [
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/identity-proof.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/google-provider.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/provider-registry.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/social-login-usecase.js?v=wp4Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/auth-social.js?v=wp2Ggl20260728"
+  ],
+  "relatedRequests": [
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/identity-proof.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/google-provider.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/provider-registry.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/social-login-usecase.js?v=wp4Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/auth-social.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/identity-proof.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/google-provider.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/provider-registry.js?v=wp2Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/social-auth/social-login-usecase.js?v=wp4Ggl20260728",
+    "http://127.0.0.1:8777/User_Web/iflux-web-ui/auth-social.js?v=wp2Ggl20260728"
+  ]
+}

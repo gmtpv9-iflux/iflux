@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+X-Request-Id: 714ca281-a907-4e25-af4d-d2f7a5625158
+Vary: Origin
+Access-Control-Allow-Credentials: true
+Content-Type: application/json; charset=utf-8
+Content-Length: 254
+ETag: W/"fe-rqzj4BHT1IHDhGrm2/5eTMxXhSc"
+Date: Tue, 28 Jul 2026 13:40:08 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
