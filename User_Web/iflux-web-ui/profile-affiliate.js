@@ -1,10 +1,12 @@
-/* Profile — tab Affiliate (hoa hồng + danh sách thành viên mạng giới thiệu) */
+/* Owner: tab-affiliate (#tab-affiliate) — một entry bind DOM · Store · API · payout UI */
 (function (global) {
   'use strict';
 
   var memberFilters = { q: '', layer: '' };
-  var memberPage = 1;
-  var MEMBERS_PER_PAGE = 10;
+  var commissionFilters = { q: '' };
+  var memberVisibleCount = 10;
+  var commissionVisibleCount = 10;
+  var PAGE_SIZE = 10;
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -16,11 +18,47 @@
     return 'ix-layer-f0';
   }
 
-  function statusChip(e) {
+  function commissionStatusChip(e) {
     if (e.paid || e.status === 'paid') {
       return '<span class="ix-chip ix-chip-success" style="font-size:11px">Đã thanh toán</span>';
     }
     return '<span class="ix-chip ix-chip-warning" style="font-size:11px">Chờ xử lý</span>';
+  }
+
+  function accountStatusChip(status) {
+    if (status === 'suspended') {
+      return '<span class="ix-chip ix-chip-danger" style="font-size:11px">Tạm khóa</span>';
+    }
+    return '<span class="ix-chip ix-chip-success" style="font-size:11px">Hoạt động</span>';
+  }
+
+  function formatJoinDate(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleDateString('vi-VN');
+    } catch (e) {
+      return '—';
+    }
+  }
+
+  function renderLoadMore(containerId, shown, total, onLoad) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    if (!total) return;
+    if (shown >= total) {
+      var info = document.createElement('span');
+      info.className = 'ix-page-info';
+      info.textContent = total + ' mục';
+      el.appendChild(info);
+      return;
+    }
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ix-btn ix-btn-text ix-btn-sm';
+    btn.textContent = 'Xem thêm (' + (total - shown) + ' còn lại)';
+    btn.addEventListener('click', onLoad);
+    el.appendChild(btn);
   }
 
   function renderNetworkOverview(Store, userId, cfg) {
@@ -48,143 +86,251 @@
     }).join('');
   }
 
-  function renderMembersPager(total, page) {
-    var pager = document.getElementById('ifx-aff-members-pager');
-    if (!pager) return;
-
-    var pages = Math.max(1, Math.ceil(total / MEMBERS_PER_PAGE));
-    page = Math.max(1, Math.min(page, pages));
-    memberPage = page;
-    pager.innerHTML = '';
-
-    if (!total) return;
-
-    if (total <= MEMBERS_PER_PAGE) {
-      var only = document.createElement('span');
-      only.className = 'ix-page-info';
-      only.textContent = total + ' thành viên';
-      pager.appendChild(only);
-      return;
-    }
-
-    var nav = document.createElement('div');
-    nav.style.display = 'flex';
-    nav.style.gap = '4px';
-
-    function makeBtn(label, targetPage, disabled) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'ix-page-btn' + (targetPage === page ? ' active' : '');
-      b.textContent = label;
-      b.disabled = !!disabled;
-      b.addEventListener('click', function () {
-        memberPage = targetPage;
-        var user = global.IfluxAuth && IfluxAuth.getUser();
-        if (user && global.IfluxLoyaltyAffiliateStore) {
-          renderMembers(IfluxLoyaltyAffiliateStore, user.id);
-        }
-      });
-      return b;
-    }
-
-    nav.appendChild(makeBtn('‹', page - 1, page === 1));
-    for (var p = 1; p <= pages; p++) nav.appendChild(makeBtn(String(p), p, false));
-    nav.appendChild(makeBtn('›', page + 1, page === pages));
-
-    var info = document.createElement('span');
-    info.className = 'ix-page-info';
-    info.textContent = ((page - 1) * MEMBERS_PER_PAGE + 1) + '–' +
-      Math.min(page * MEMBERS_PER_PAGE, total) + ' / ' + total + ' thành viên';
-
-    pager.appendChild(nav);
-    pager.appendChild(info);
-  }
-
   function renderMembers(Store, userId) {
     var tbody = document.querySelector('#aff-members-table tbody');
     if (!tbody) return;
 
     var rows = Store.listNetworkMembers(userId, memberFilters);
     var total = rows.length;
-    var pages = Math.max(1, Math.ceil(total / MEMBERS_PER_PAGE));
-    if (memberPage > pages) memberPage = pages;
+    var visible = Math.min(memberVisibleCount, total);
+    var pageRows = rows.slice(0, visible);
 
     if (!total) {
-      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--ix-text-muted)">Chưa có thành viên trong mạng giới thiệu của bạn.</td></tr>';
-      renderMembersPager(0, 1);
+      tbody.innerHTML = '<tr><td colspan="4" data-label="" style="text-align:center;padding:28px;color:var(--ix-text-muted)">Chưa có thành viên trong mạng giới thiệu của bạn.</td></tr>';
+      renderLoadMore('ifx-aff-members-pager', 0, 0);
       return;
     }
 
-    var start = (memberPage - 1) * MEMBERS_PER_PAGE;
-    var pageRows = rows.slice(start, start + MEMBERS_PER_PAGE);
-
     tbody.innerHTML = pageRows.map(function (m) {
       return '<tr>' +
-        '<td><div class="ix-user-cell"><div class="ix-avatar-sm ' + esc(m.avatarCls) + '">' + esc(m.initials) + '</div>' +
+        '<td data-label="Ngày tham gia" style="font-size:12px;color:var(--ix-text-muted)">' + esc(formatJoinDate(m.joinedAt)) + '</td>' +
+        '<td data-label="Thành viên"><div class="ix-user-cell"><div class="ix-avatar-sm ' + esc(m.avatarCls) + '">' + esc(m.initials) + '</div>' +
           '<div><div class="ix-user-name">' + esc(m.display_name) + '</div>' +
           '<div style="font-size:11px;color:var(--ix-text-muted)">' + (m.referral_code ? esc(m.referral_code) : '—') + '</div></div></div></td>' +
-        '<td><span class="' + layerClass(m.layer) + '">' + esc(m.layer) + '</span></td>' +
-        '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(new Date(m.joinedAt).toLocaleDateString('vi-VN')) + '</td>' +
+        '<td data-label="Lớp"><span class="' + layerClass(m.layer) + '">' + esc(m.layer) + '</span></td>' +
+        '<td data-label="Trạng thái">' + accountStatusChip(m.accountStatus) + '</td>' +
       '</tr>';
     }).join('');
-    renderMembersPager(total, memberPage);
+
+    renderLoadMore('ifx-aff-members-pager', visible, total, function () {
+      memberVisibleCount += PAGE_SIZE;
+      renderMembers(Store, userId);
+    });
+  }
+
+  function renderCommissionTable(Store, userId) {
+    var tbody = document.querySelector('#aff-table tbody');
+    if (!tbody) return;
+
+    var rows = Store.listForUser(userId, commissionFilters);
+    var total = rows.length;
+    var visible = Math.min(commissionVisibleCount, total);
+    var pageRows = rows.slice(0, visible);
+
+    if (!total) {
+      tbody.innerHTML = '<tr><td colspan="7" data-label="" style="text-align:center;padding:28px;color:var(--ix-text-muted)">Chưa có hoa hồng từ chuỗi giới thiệu.</td></tr>';
+      renderLoadMore('ifx-aff-commission-pager', 0, 0);
+      return;
+    }
+
+    tbody.innerHTML = pageRows.map(function (e) {
+      return '<tr>' +
+        '<td data-label="Ngày" style="font-size:12px;color:var(--ix-text-muted)">' + esc(formatJoinDate(e.at)) + '</td>' +
+        '<td data-label="Người được giới thiệu"><div class="ix-user-cell"><div class="ix-avatar-sm ' + esc(e.buyerAvatarCls) + '">' + esc(e.buyerInitials) + '</div>' +
+          '<div><div class="ix-user-name">' + esc(e.buyerName) + '</div><div style="font-size:11px;color:var(--ix-text-muted)">' + esc(e.sourceNote) + '</div></div></div></td>' +
+        '<td data-label="Lớp"><span class="' + layerClass(e.layer) + '">' + esc(e.layer) + '</span></td>' +
+        '<td data-label="Sản phẩm" style="font-size:13px">' + esc(e.productLabel) + '</td>' +
+        '<td data-label="Giá trị đơn" style="font-weight:600;color:var(--ix-text-primary)">' + Store.formatVnd(e.orderAmount) + '</td>' +
+        '<td data-label="Hoa hồng" style="color:var(--ix-success);font-weight:700">+' + Store.formatVnd(e.commission) + '</td>' +
+        '<td data-label="Trạng thái">' + commissionStatusChip(e) + '</td></tr>';
+    }).join('');
+
+    renderLoadMore('ifx-aff-commission-pager', visible, total, function () {
+      commissionVisibleCount += PAGE_SIZE;
+      renderCommissionTable(Store, userId);
+    });
+  }
+
+  function setAffiliateLoading(loading) {
+    var root = document.getElementById('tab-affiliate');
+    if (!root) return;
+    root.setAttribute('data-ifx-aff-state', loading ? 'loading' : 'ready');
+    var loadEl = root.querySelector('[data-ifx-aff-loading]');
+    var pane = root.querySelector('[data-ifx-aff-data-pane]');
+    if (loadEl) loadEl.hidden = !loading;
+    if (pane) pane.hidden = !!loading;
+  }
+
+  function paintRates(cfg, root) {
+    root = root || document.getElementById('tab-affiliate');
+    if (!root || !cfg) return;
+    var map = { f0: cfg.f0_pct, f1: cfg.f1_pct, f2: cfg.f2_pct };
+    root.querySelectorAll('[data-ifx-aff-rate]').forEach(function (el) {
+      var key = el.getAttribute('data-ifx-aff-rate');
+      if (map[key] != null) el.textContent = map[key] + '%';
+    });
+    var minEl = root.querySelector('[data-ifx-aff-min-payout]');
+    if (minEl && global.IfluxLoyaltyAffiliateStore) {
+      minEl.textContent = IfluxLoyaltyAffiliateStore.formatVnd(cfg.min_payout || 0);
+    }
+  }
+
+  function paintSummary(Store, stats, cfg) {
+    var root = document.getElementById('tab-affiliate');
+    if (!root) return;
+    var sums = {
+      total: Store.formatVnd(stats.totalEarn),
+      unpaid: Store.formatVnd(stats.unpaid),
+      signups: String(stats.signups),
+      conv: stats.convRate + '%'
+    };
+    root.querySelectorAll('[data-ifx-aff-sum]').forEach(function (el) {
+      var key = el.getAttribute('data-ifx-aff-sum');
+      if (sums[key] != null) el.textContent = sums[key];
+    });
+    paintRates(cfg, root);
+  }
+
+  function paintPayoutBar(user) {
+    var Payout = global.IfluxAffiliatePayoutStore;
+    var root = document.getElementById('tab-affiliate');
+    if (!root || !Payout || !user) return;
+    var min = Payout.getMinPayout();
+    var available = Payout.getAvailableBalance(user.id);
+    var balanceEl = root.querySelector('[data-ifx-aff-balance]');
+    if (balanceEl) balanceEl.textContent = Payout.formatVnd(available);
+    var btn = root.querySelector('[data-ifx-aff-payout]');
+    if (!btn) return;
+    var canPayout = available >= min;
+    btn.disabled = !canPayout;
+    btn.setAttribute('aria-disabled', canPayout ? 'false' : 'true');
+    btn.title = canPayout
+      ? 'Gửi yêu cầu rút hoa hồng'
+      : ('Cần tối thiểu ' + Payout.formatVnd(min));
+  }
+
+  function bindPayoutButton() {
+    var btn = document.querySelector('[data-ifx-aff-payout]');
+    if (!btn || btn.dataset.ifxPayoutBound) return;
+    btn.dataset.ifxPayoutBound = '1';
+    btn.addEventListener('click', function () {
+      var user = global.IfluxAuth && IfluxAuth.getUser();
+      var UI = global.IfluxAffiliatePayoutUI;
+      if (!user || !UI || btn.disabled) return;
+      UI.open(user, {
+        onSuccess: function () {
+          render();
+        }
+      });
+    });
+  }
+
+  function referralLinkForUser(user) {
+    if (!user || !user.referral_code) return '';
+    var Store = global.IfluxLoyaltyAffiliateStore;
+    if (Store && Store.buildReferralLink) return Store.buildReferralLink(user.referral_code);
+    if (Store && Store.getReferralLinkForUser) return Store.getReferralLinkForUser(user);
+    return '';
+  }
+
+  function refreshRefLinkFields() {
+    var user = global.IfluxAuth && IfluxAuth.getUser();
+    if (!user || !user.referral_code) return;
+    var link = referralLinkForUser(user);
+    var refLink = document.getElementById('ref-link');
+    var refCode = document.getElementById('ref-code');
+    if (refLink && link) refLink.value = link;
+    if (refCode) refCode.value = user.referral_code;
+  }
+
+  function copyRefValue(inputId) {
+    var el = document.getElementById(inputId);
+    if (!el) return;
+    var text = String(el.value || el.textContent || '').trim();
+    if (!text) {
+      if (global.ixToast) ixToast('Không có nội dung để sao chép', 'warning');
+      return;
+    }
+    function notify(ok) {
+      if (global.ixToast) ixToast(ok ? 'Đã sao chép!' : 'Không sao chép được', ok ? 'success' : 'warning');
+    }
+    if (global.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { notify(true); }).catch(function () { notify(false); });
+      return;
+    }
+    try {
+      el.focus();
+      el.select();
+      notify(document.execCommand('copy'));
+    } catch (e) {
+      notify(false);
+    }
+  }
+
+  function bindCopyRef() {
+    var root = document.getElementById('tab-affiliate');
+    if (!root) return;
+    root.querySelectorAll('[data-ix-copy-ref]').forEach(function (btn) {
+      if (btn.dataset.ifxAffCopyBound) return;
+      btn.dataset.ifxAffCopyBound = '1';
+      btn.addEventListener('click', function () {
+        copyRefValue(btn.getAttribute('data-ix-copy-ref'));
+      });
+    });
+  }
+
+  function hardenAffiliateSearchInput(input) {
+    if (!input || input.dataset.ifxAffSearchHardened === '1') return;
+    var wrap = input.closest('.ix-table-search');
+    var HS = global.IfluxHeaderSearch;
+    if (HS && HS.hardenInput) {
+      HS.hardenInput(input, wrap);
+    } else {
+      input.setAttribute('autocomplete', 'off');
+      input.setAttribute('autocorrect', 'off');
+      input.setAttribute('autocapitalize', 'off');
+      input.setAttribute('spellcheck', 'false');
+      input.setAttribute('data-lpignore', 'true');
+      input.setAttribute('data-1p-ignore', 'true');
+    }
+    input.dataset.ifxAffSearchHardened = '1';
+    input.addEventListener('focus', function () {
+      input.removeAttribute('readonly');
+      if (HS && HS.sanitizeAutofillLeak) HS.sanitizeAutofillLeak(input);
+    });
   }
 
   function render() {
     var Store = global.IfluxLoyaltyAffiliateStore;
-    var tbody = document.querySelector('#aff-table tbody');
     if (!Store) return;
 
     var user = global.IfluxAuth && IfluxAuth.getUser();
     if (!user) return;
 
-    function paint() {
-      if (global.IfluxSubscriptionOrdersStore && IfluxSubscriptionOrdersStore.reconcileReferralCommissions) {
-        IfluxSubscriptionOrdersStore.reconcileReferralCommissions();
-      }
+    setAffiliateLoading(true);
+    paintRates(Store.getConfig());
 
+    function paint() {
       var stats = Store.getStatsForUser(user.id);
       var cfg = Store.getConfig();
 
-    var sumTotal = document.querySelector('#tab-affiliate .ix-aff-sum-val.ix-aff-sum-accent');
-    var sumUnpaid = document.querySelector('#tab-affiliate .ix-aff-sum-item:nth-child(2) .ix-aff-sum-val');
-    var sumCount = document.querySelector('#tab-affiliate .ix-aff-sum-item:nth-child(3) .ix-aff-sum-val');
-    var sumConv = document.querySelector('#tab-affiliate .ix-aff-sum-item:nth-child(4) .ix-aff-sum-val');
-    var balanceEl = document.querySelector('#tab-affiliate strong[style*="ix-success"]');
+      paintSummary(Store, stats, cfg);
 
-    if (sumTotal) sumTotal.textContent = Store.formatVnd(stats.totalEarn);
-    if (sumUnpaid) sumUnpaid.textContent = Store.formatVnd(stats.unpaid);
-    if (sumCount) sumCount.textContent = String(stats.signups);
-    if (sumConv) sumConv.textContent = stats.convRate + '%';
-    if (balanceEl) balanceEl.textContent = Store.formatVnd(stats.unpaid);
+      renderNetworkOverview(Store, user.id, cfg);
+      renderMembers(Store, user.id);
+      renderCommissionTable(Store, user.id);
+      refreshRefLinkFields();
 
-    document.querySelectorAll('#tab-affiliate .ix-layer-pill strong').forEach(function (el, i) {
-      var rates = [cfg.f0_pct, cfg.f1_pct, cfg.f2_pct];
-      if (rates[i] != null) el.textContent = rates[i] + '%';
-    });
-
-    renderNetworkOverview(Store, user.id, cfg);
-    renderMembers(Store, user.id);
-
-    if (!tbody) return;
-
-    var rows = Store.listForUser(user.id);
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ix-text-muted)">Chưa có hoa hồng từ chuỗi giới thiệu.</td></tr>';
-    } else {
-      tbody.innerHTML = rows.map(function (e) {
-        return '<tr>' +
-          '<td><div class="ix-user-cell"><div class="ix-avatar-sm ' + esc(e.buyerAvatarCls) + '">' + esc(e.buyerInitials) + '</div>' +
-          '<div><div class="ix-user-name">' + esc(e.buyerName) + '</div><div style="font-size:11px;color:var(--ix-text-muted)">' + esc(e.sourceNote) + '</div></div></div></td>' +
-          '<td><span class="' + layerClass(e.layer) + '">' + esc(e.layer) + '</span></td>' +
-          '<td style="font-size:13px">' + esc(e.productLabel) + '</td>' +
-          '<td style="font-weight:600;color:var(--ix-text-primary)">' + Store.formatVnd(e.orderAmount) + '</td>' +
-          '<td style="color:var(--ix-accent);font-weight:600">' + esc(e.commissionPct) + '%</td>' +
-          '<td style="color:var(--ix-success);font-weight:700">+' + Store.formatVnd(e.commission) + '</td>' +
-          '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(new Date(e.at).toLocaleDateString('vi-VN')) + '</td>' +
-          '<td>' + statusChip(e) + '</td></tr>';
-      }).join('');
-    }
+      var Payout = global.IfluxAffiliatePayoutStore;
+      if (Payout && Payout.refreshFromApi) {
+        Payout.refreshFromApi(false).finally(function () {
+          paintPayoutBar(user);
+          setAffiliateLoading(false);
+        });
+      } else {
+        paintPayoutBar(user);
+        setAffiliateLoading(false);
+      }
     }
 
     if (Store.syncFromServerAsync) {
@@ -196,11 +342,12 @@
 
   function bindMembersFilters() {
     var search = document.querySelector('[data-ifx-aff-members-search]');
+    if (search) hardenAffiliateSearchInput(search);
     if (search && !search.dataset.ifxAffBound) {
       search.dataset.ifxAffBound = '1';
       search.addEventListener('input', function () {
         memberFilters.q = search.value.trim();
-        memberPage = 1;
+        memberVisibleCount = PAGE_SIZE;
         var user = global.IfluxAuth && IfluxAuth.getUser();
         if (user && global.IfluxLoyaltyAffiliateStore) {
           renderMembers(IfluxLoyaltyAffiliateStore, user.id);
@@ -213,10 +360,26 @@
       layerSel.dataset.ifxAffBound = '1';
       layerSel.addEventListener('change', function () {
         memberFilters.layer = layerSel.value;
-        memberPage = 1;
+        memberVisibleCount = PAGE_SIZE;
         var user = global.IfluxAuth && IfluxAuth.getUser();
         if (user && global.IfluxLoyaltyAffiliateStore) {
           renderMembers(IfluxLoyaltyAffiliateStore, user.id);
+        }
+      });
+    }
+  }
+
+  function bindCommissionFilters() {
+    var search = document.querySelector('[data-ifx-aff-commission-search]');
+    if (search) hardenAffiliateSearchInput(search);
+    if (search && !search.dataset.ifxAffBound) {
+      search.dataset.ifxAffBound = '1';
+      search.addEventListener('input', function () {
+        commissionFilters.q = search.value.trim();
+        commissionVisibleCount = PAGE_SIZE;
+        var user = global.IfluxAuth && IfluxAuth.getUser();
+        if (user && global.IfluxLoyaltyAffiliateStore) {
+          renderCommissionTable(IfluxLoyaltyAffiliateStore, user.id);
         }
       });
     }
@@ -233,10 +396,15 @@
   }
 
   function init() {
+    if (!document.getElementById('tab-affiliate')) return;
     bindMembersFilters();
+    bindCommissionFilters();
+    bindCopyRef();
+    bindPayoutButton();
     render();
     bindAffiliateTabRefresh();
   }
 
   global.IfluxProfileAffiliate = { init: init, render: render };
+  global.IfluxProfileAffiliatePage = global.IfluxProfileAffiliate;
 })(window);

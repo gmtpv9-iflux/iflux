@@ -136,11 +136,81 @@
     return request('/auth/referrals/sync', { headers: authHeaders(token) });
   }
 
+  function listMyAffiliatePayoutRequests(token) {
+    return request('/affiliate-payouts/requests/mine', { headers: authHeaders(token) });
+  }
+
+  function createAffiliatePayoutRequest(token, payload) {
+    return request('/affiliate-payouts/requests', {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: payload
+    });
+  }
+
+  function listAffiliatePayoutRequestsAdmin(filters) {
+    filters = filters || {};
+    var qs = [];
+    if (filters.status) qs.push('status=' + encodeURIComponent(filters.status));
+    if (filters.q) qs.push('q=' + encodeURIComponent(filters.q));
+    var suffix = qs.length ? '?' + qs.join('&') : '';
+    return request('/affiliate-payouts/requests' + suffix, { headers: adminHeaders() });
+  }
+
+  function approveAffiliatePayoutAdmin(id) {
+    return request('/affiliate-payouts/requests/' + encodeURIComponent(id) + '/approve', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: {}
+    });
+  }
+
+  function completeAffiliatePayoutAdmin(id) {
+    return request('/affiliate-payouts/requests/' + encodeURIComponent(id) + '/complete', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: {}
+    });
+  }
+
+  function rejectAffiliatePayoutAdmin(id, reason) {
+    return request('/affiliate-payouts/requests/' + encodeURIComponent(id) + '/reject', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: { reason: reason || '' }
+    });
+  }
+
   function updateProfile(token, patch) {
     return request('/users/profile', {
       method: 'PUT',
       headers: authHeaders(token),
       body: patch
+    });
+  }
+
+  function changePassword(token, currentPassword, newPassword) {
+    return request('/users/change-password', {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: {
+        current_password: currentPassword,
+        new_password: newPassword
+      }
+    });
+  }
+
+  function getNotificationPreferences(token) {
+    return request('/users/me/notification-preferences', {
+      headers: authHeaders(token)
+    });
+  }
+
+  function patchNotificationPreferences(token, payload) {
+    return request('/users/me/notification-preferences', {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: payload
     });
   }
 
@@ -464,7 +534,16 @@
     authMe: authMe,
     validateReferralCode: validateReferralCode,
     getAffiliateSync: getAffiliateSync,
+    listMyAffiliatePayoutRequests: listMyAffiliatePayoutRequests,
+    createAffiliatePayoutRequest: createAffiliatePayoutRequest,
+    listAffiliatePayoutRequestsAdmin: listAffiliatePayoutRequestsAdmin,
+    approveAffiliatePayoutAdmin: approveAffiliatePayoutAdmin,
+    completeAffiliatePayoutAdmin: completeAffiliatePayoutAdmin,
+    rejectAffiliatePayoutAdmin: rejectAffiliatePayoutAdmin,
     updateProfile: updateProfile,
+    changePassword: changePassword,
+    getNotificationPreferences: getNotificationPreferences,
+    patchNotificationPreferences: patchNotificationPreferences,
     getUserDataSync: getUserDataSync,
     getWatchlist: getWatchlist,
     saveWatchlist: saveWatchlist,

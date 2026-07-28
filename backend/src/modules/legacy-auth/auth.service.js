@@ -12,6 +12,7 @@ const MAX_ATTEMPTS = 5;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 
 function genReferralCode() {
+  /* Public Identity (publicId := referral_code). Chỉ cấp lúc INSERT — AFF-ID-002 immutable sau khi có mã. */
   return 'IFL' + Math.random().toString(36).slice(2, 7).toUpperCase();
 }
 
@@ -271,6 +272,11 @@ async function resendVerificationOtp(config, email) {
   };
 }
 
+async function emitReferralCreatedAfterIdentityCreated(opts) {
+  const { notifyReferralSignupF0Safe } = require('../notifications/referral-signup.consumer');
+  return notifyReferralSignupF0Safe(opts);
+}
+
 async function verifyEmailCode(config, email, code) {
   const normEmail = String(email || '').trim().toLowerCase();
   const normCode = String(code || '').trim();
@@ -327,6 +333,15 @@ async function verifyEmailCode(config, email, code) {
   }
   const user = await createUserFromPending(normEmail, payload);
   await query('DELETE FROM email_verification_otps WHERE email = $1', [normEmail]);
+  try {
+    await emitReferralCreatedAfterIdentityCreated({
+      newUserId: user.id,
+      displayName: payload.display_name,
+      referredById: payload.referred_by
+    });
+  } catch (e) {
+    getLogger().warn({ err: e && e.message, userId: user.id }, 'referral hook after verify');
+  }
   return user;
 }
 
@@ -369,6 +384,52 @@ async function updateProfile(userId, fields) {
   );
 }
 
+async function getUserPasswordCapability(userId) {
+  const res = await query(
+    'SELECT auth_provider, password_hash FROM users WHERE id = $1',
+    [userId]
+  );
+  const row = res.rows[0];
+  if (!row) {
+    const err = new Error('User not found');
+    err.statusCode = 404;
+    throw err;
+  }
+  return {
+    auth_provider: row.auth_provider || 'email',
+    has_password: !!(row.password_hash && String(row.password_hash).length > 0)
+  };
+}
+
+async function changeUserPassword(userId, currentPassword, newPassword) {
+  const next = String(newPassword || '');
+  if (next.length < 8) {
+    const err = new Error('Mật khẩu mới phải có ít nhất 8 ký tự.');
+    err.statusCode = 422;
+    throw err;
+  }
+  const res = await query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+  const row = res.rows[0];
+  if (!row) {
+    const err = new Error('User not found');
+    err.statusCode = 404;
+    throw err;
+  }
+  if (!row.password_hash) {
+    const err = new Error('Tài khoản đăng nhập bằng mạng xã hội — chưa có mật khẩu email để đổi.');
+    err.statusCode = 422;
+    throw err;
+  }
+  const valid = await bcrypt.compare(String(currentPassword || ''), row.password_hash);
+  if (!valid) {
+    const err = new Error('Mật khẩu hiện tại không đúng.');
+    err.statusCode = 401;
+    throw err;
+  }
+  const hash = await bcrypt.hash(next, 10);
+  await query('UPDATE users SET password_hash = $2, updated_at = NOW() WHERE id = $1', [userId, hash]);
+}
+
 const AFFILIATE_RATES = { f0_pct: 10, f1_pct: 5, f2_pct: 2.5 };
 const AFFILIATE_LAYERS = ['F0', 'F1', 'F2'];
 
@@ -407,7 +468,7 @@ function buildSourceNote(layer, uplineIndex, uplineChain, usersById) {
 async function getAffiliateSync(userId) {
   userId = String(userId);
   const usersRes = await query(
-    `SELECT id, display_name, referral_code, referred_by, subscription_tier, created_at
+    `SELECT id, display_name, referral_code, referred_by, subscription_tier, created_at, account_status
      FROM users`
   );
   const usersById = {};
@@ -450,6 +511,7 @@ async function getAffiliateSync(userId) {
       tier: String(user.subscription_tier || 'free').toLowerCase(),
       via_user_id: idx === 0 ? null : chain[idx - 1],
       purchases,
+      account_status: user.account_status || 'active',
       status: purchases > 0 ? 'purchased' : 'active'
     });
   });
@@ -601,6 +663,15 @@ async function socialLoginOrRegister(config, payload) {
     user = await createSocialUser(provider, profile, referredBy);
     isNew = true;
     getLogger().info({ provider, userId: user.id }, 'Social user created');
+    try {
+      await emitReferralCreatedAfterIdentityCreated({
+        newUserId: user.id,
+        displayName: profile.displayName,
+        referredById: referredBy
+      });
+    } catch (e) {
+      getLogger().warn({ err: e && e.message, userId: user.id }, 'referral hook after social signup');
+    }
   }
 
   return { user, isNew };
@@ -613,6 +684,8 @@ module.exports = {
   resendVerificationOtp,
   loginUser,
   updateProfile,
+  getUserPasswordCapability,
+  changeUserPassword,
   verifyEmailCode,
   lookupReferrerByCode,
   getAffiliateSync,

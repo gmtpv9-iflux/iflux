@@ -3,12 +3,17 @@
 const express = require('express');
 const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
+const { success } = require('../../shared/response/api-response');
+const { fromAppError } = require('../../shared/response/api-response');
+const preferenceService = require('../notifications/preference.service');
 const {
   startRegistration,
   resendVerificationOtp,
   loginUser,
   getUserProfile,
   updateProfile,
+  getUserPasswordCapability,
+  changeUserPassword,
   verifyEmailCode,
   lookupReferrerByCode,
   getAffiliateSync,
@@ -128,6 +133,7 @@ function createLegacyAuthRouter(deps) {
     try {
       const user = await getUserProfile(req.user.id);
       if (!user) return res.status(404).json({ error: 'User not found' });
+      const pwCap = await getUserPasswordCapability(req.user.id);
       res.json({
         id: user.id,
         email: user.email,
@@ -138,8 +144,12 @@ function createLegacyAuthRouter(deps) {
         status: user.status || 'active',
         created_at: user.created_at,
         referral_code: user.referral_code,
+        publicId: user.referral_code || null,
+        id_internal: user.id,
         referred_by: user.referred_by || null,
-        plan_expired_at: user.plan_expired_at
+        plan_expired_at: user.plan_expired_at,
+        auth_provider: pwCap.auth_provider,
+        has_password: pwCap.has_password
       });
     } catch (err) {
       next(err);
@@ -160,6 +170,56 @@ function createLegacyAuthRouter(deps) {
       await updateProfile(req.user.id, req.body || {});
       res.json({ ok: true });
     } catch (err) {
+      next(err);
+    }
+  });
+
+  const changePasswordSchema = z.object({
+    body: z.object({
+      current_password: z.string().min(1),
+      new_password: z.string().min(8)
+    })
+  });
+
+  router.post('/change-password', auth.authenticate, validate(changePasswordSchema), async (req, res, next) => {
+    try {
+      const { current_password, new_password } = req.validated.body;
+      await changeUserPassword(req.user.id, current_password, new_password);
+      res.json({ ok: true });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  const prefPatchSchema = z.object({
+    body: z.object({
+      items: z.array(z.object({
+        type_code: z.string().min(1),
+        enabled: z.boolean()
+      }).strict()).min(1)
+    })
+  });
+
+  router.get('/me/notification-preferences', auth.authenticate, async (req, res, next) => {
+    try {
+      const data = await preferenceService.listForUser(req.user.id);
+      return success(res, data);
+    } catch (err) {
+      if (err.statusCode) return fromAppError(res, err);
+      next(err);
+    }
+  });
+
+  router.patch('/me/notification-preferences', auth.authenticate, validate(prefPatchSchema), async (req, res, next) => {
+    try {
+      if (req.body && req.body.items && req.body.items.some(function (i) { return i && i.bucket; })) {
+        const { AppError } = require('../../shared/exceptions/app-error');
+        throw AppError.badRequest('INVALID_PAYLOAD', 'Bucket đã retire — dùng type_code');
+      }
+      const data = await preferenceService.patchForUser(req.user.id, req.validated.body);
+      return success(res, data);
+    } catch (err) {
+      if (err.statusCode) return fromAppError(res, err);
       next(err);
     }
   });

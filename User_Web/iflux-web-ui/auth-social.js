@@ -211,9 +211,6 @@
       var state = 'ifx_' + Math.random().toString(36).slice(2, 10);
       try {
         sessionStorage.setItem('ifx_zalo_oauth_state', state);
-        if (opts && opts.referral_code) {
-          sessionStorage.setItem('ifx_zalo_ref', opts.referral_code);
-        }
       } catch (e) { /* ignore */ }
       var url =
         'https://oauth.zaloapp.com/v4/permission?app_id=' +
@@ -241,16 +238,23 @@
       return Promise.reject(new Error('Zalo OAuth state không khớp.'));
     }
     var ref = null;
-    try {
-      ref = sessionStorage.getItem('ifx_zalo_ref');
-      sessionStorage.removeItem('ifx_zalo_ref');
-    } catch (e) { /* ignore */ }
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+    }
     return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, '', window.location.pathname + window.location.hash);
       }
       return user;
     });
+  }
+
+  function affiliateCodeForSocial(frozen) {
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
+      if (fresh) return fresh;
+    }
+    return frozen || null;
   }
 
   function bindSocialButtons(root, opts) {
@@ -268,8 +272,12 @@
       el.addEventListener('click', function (e) {
         e.preventDefault();
         var run = map[provider];
+        var runOpts = {
+          referral_code: affiliateCodeForSocial(opts.referral_code),
+          remember_me: opts.remember_me
+        };
         if (opts.onStart) opts.onStart(provider);
-        run({ referral_code: opts.referral_code, remember_me: opts.remember_me })
+        run(runOpts)
           .then(function (user) {
             if (opts.onSuccess) opts.onSuccess(provider, user);
           })

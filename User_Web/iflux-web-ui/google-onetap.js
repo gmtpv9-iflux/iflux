@@ -70,12 +70,24 @@
   function onCredential(response) {
     if (!response || !response.credential) return;
     if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) return;
-    IfluxAuth.loginWithSocial('google', { id_token: response.credential }, {})
+    var refCode = null;
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+      refCode = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+    }
+    IfluxAuth.loginWithSocial('google', { id_token: response.credential }, {
+      referral_code: refCode
+    })
       .then(function () {
         try { localStorage.removeItem(DISMISS_KEY); } catch (e) { /* ignore */ }
         var to = (IfluxAuth.appHomePath && IfluxAuth.appHomePath()) || null;
         if (to && !isLoggedInPage()) {
-          global.location.href = to;
+          if (global.IfluxHref && global.IfluxHref.navigate) {
+            global.IfluxHref.navigate(to);
+          } else if (global.IfluxShellUrlWriter && global.IfluxShellUrlWriter.navigate) {
+            global.IfluxShellUrlWriter.navigate(to);
+          } else {
+            global.location.href = to;
+          }
         } else {
           global.location.reload();
         }

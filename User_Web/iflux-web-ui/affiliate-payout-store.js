@@ -152,14 +152,20 @@
 
   function navigateToFix(check) {
     if (!check || check.ok) return;
-    var accountTab = document.querySelector('[data-ix-profile-tab="tab-account"]');
-    if (accountTab) accountTab.click();
-    if (!global.IfluxProfileMyPage) return;
     if (check.profileMissing.length) {
-      IfluxProfileMyPage.switchSubtab('mine-personal');
-      IfluxProfileMyPage.enterEditMode();
+      if (global.IfluxAccountProfileNav && IfluxAccountProfileNav.switchTab) {
+        IfluxAccountProfileNav.switchTab('tab-profile');
+      }
+      if (global.IfluxProfileSidebar && IfluxProfileSidebar.enterEditMode) {
+        IfluxProfileSidebar.enterEditMode();
+      } else {
+        var editBtn = document.querySelector('[data-ifx-side-edit-open]');
+        if (editBtn) editBtn.click();
+      }
     } else if (check.bankMissing.length) {
-      IfluxProfileMyPage.switchSubtab('mine-payment');
+      if (global.IfluxAccountProfileNav && IfluxAccountProfileNav.switchTab) {
+        IfluxAccountProfileNav.switchTab('tab-payment');
+      }
     }
   }
 

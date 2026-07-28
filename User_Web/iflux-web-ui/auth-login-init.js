@@ -51,14 +51,14 @@
         reason: document.getElementById('emergency-reason').value.trim()
       });
       ixToast('Đã gửi yêu cầu khóa khẩn cấp. Đội hỗ trợ sẽ liên hệ qua email.', 'success');
-      setTimeout(function () { location.href = '/'; }, 800);
+      setTimeout(function () { location.href = '/cong-dong'; }, 800);
     } catch (err) {
       ixToast(err.message, 'danger');
     }
   });
 
   document.getElementById('btn-emergency-back').addEventListener('click', function () {
-    location.href = '/';
+    location.href = '/cong-dong';
   });
 
   var tabs = document.querySelectorAll('[data-login-tab]');
@@ -134,8 +134,18 @@
     return map[String(p || '').toLowerCase()] || p;
   }
 
+  function affiliateReferralCodeForIdentity() {
+    var AR = window.IfluxAffiliateResolver;
+    if (AR && AR.getCodeForIdentityCreation) {
+      var code = AR.getCodeForIdentityCreation();
+      return code || undefined;
+    }
+    return undefined;
+  }
+
   IfluxAuthSocial.initPage({
     onSuccess: socialAuthSuccess,
-    onError: socialAuthError
+    onError: socialAuthError,
+    referral_code: affiliateReferralCodeForIdentity()
   });
 })();

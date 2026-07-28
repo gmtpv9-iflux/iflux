@@ -3,7 +3,8 @@
   'use strict';
 
   var CONFIG_KEY = 'iflux_loyalty_affiliate_config_v1';
-  var EVENTS_KEY = 'iflux_loyalty_affiliate_events_v1';
+  var EVENTS_KEY = 'iflux_loyalty_affiliate_events_v2';
+  var EVENTS_LEGACY_KEY = 'iflux_loyalty_affiliate_events_v1';
   var PARENTS_KEY = 'iflux_referral_parents_v1';
   var MEMBERS_META_KEY = 'iflux_referral_members_meta_v1';
   var REF_COOKIE = 'iflux_ref_code';
@@ -36,98 +37,45 @@
     return '';
   }
 
-  function parseRefFromLocation(loc) {
+  /* Incoming publicId — delegate Affiliate Context sole owner (OD-AFF-02). */
+  function parsePublicIdFromPath(loc) {
     loc = loc || global.location;
     if (!loc) return '';
-    var href = String(loc.href || '');
-    var search = loc.search || '';
-    if (!search && href.indexOf('?') >= 0) {
-      search = '?' + href.split('?').pop().split('#')[0];
+    var AR = global.IfluxAffiliateResolver;
+    if (AR && typeof AR.parseAffiliatePath === 'function') {
+      var hit = AR.parseAffiliatePath(loc.pathname || '');
+      return hit && hit.publicId ? hit.publicId : '';
     }
-    try {
-      var params = new URLSearchParams(search);
-      var ref = params.get('ref') || params.get('r');
-      if (ref) return String(ref).trim().toUpperCase();
-    } catch (e) { /* ignore */ }
-    var m = href.match(/[?&](?:ref|r)=([^&#]+)/i);
-    if (!m) return '';
-    try {
-      return decodeURIComponent(m[1].replace(/\+/g, ' ')).trim().toUpperCase();
-    } catch (e2) {
-      return String(m[1]).trim().toUpperCase();
-    }
+    return '';
   }
 
-  function hasRefInUrl(loc) {
-    return !!parseRefFromLocation(loc);
+  function hasPublicIdInPath(loc) {
+    return !!parsePublicIdFromPath(loc);
   }
 
   function buildReferralLink(code) {
     code = String(code || '').trim().toUpperCase();
     if (!code) return '';
-    var q = '?ref=' + encodeURIComponent(code);
-    var loc = global.location;
-
-    /* Affiliate link → trang chủ; mã lưu cookie/localStorage tới khi đăng ký */
-    if (loc && loc.protocol === 'file:') {
-      var path = loc.pathname || '';
-      var idx = path.indexOf('/User_Web/');
-      if (idx >= 0) {
-        return 'file://' + path.slice(0, idx + '/User_Web/'.length) + 'home/index.html' + q;
-      }
-      return '../home/index.html' + q;
+    if (!/^IFL[A-Z0-9]{5,17}$/.test(code)) return '';
+    /* AC-NAV-ROOT — affiliate root = /{publicId} only; không /nha-cua-toi */
+    var origin = (appOrigin() || 'https://iflux.vn').replace(/\/$/, '');
+    var canonical = origin + '/';
+    var SF = global.IfluxShareFoundation || global.IfluxInsightShareStore;
+    if (SF && SF.decorateAffiliateRef) {
+      return SF.decorateAffiliateRef(canonical, code);
     }
-
-    var origin = appOrigin();
-    var prefix = userWebPathPrefix();
-    if (prefix.charAt(0) !== '/') prefix = '/' + prefix;
-    return (origin || '') + prefix + 'home/index.html' + q;
-  }
-
-  function parseRefFromReturnParam(loc) {
-    loc = loc || global.location;
-    if (!loc) return '';
-    try {
-      var params = new URLSearchParams(loc.search || '');
-      var ret = params.get('return');
-      if (!ret) return '';
-      var decoded = decodeURIComponent(ret);
-      var m = decoded.match(/[?&](?:ref|r)=([^&#]+)/i);
-      if (!m) return '';
-      return decodeURIComponent(m[1].replace(/\+/g, ' ')).trim().toUpperCase();
-    } catch (e) {
-      return '';
-    }
-  }
-
-  function storeRefCode(code, fromAffiliateLink) {
-    code = String(code || '').trim().toUpperCase();
-    if (!code) return;
-    var days = (getConfig().cookie_days || 30);
-    var expires = new Date();
-    expires.setDate(expires.getDate() + days);
-    try {
-      document.cookie = REF_COOKIE + '=' + encodeURIComponent(code) +
-        ';path=/;expires=' + expires.toUTCString() + ';SameSite=Lax';
-    } catch (e) { /* file:// may block cookies */ }
-    try {
-      localStorage.setItem(REF_STORAGE, code);
-      if (fromAffiliateLink) localStorage.setItem(REF_FROM_LINK_KEY, '1');
-    } catch (e2) { /* private mode */ }
-  }
-
-  function isRefFromAffiliateLink() {
-    if (parseRefFromLocation() || parseRefFromReturnParam()) return true;
-    try {
-      return localStorage.getItem(REF_FROM_LINK_KEY) === '1';
-    } catch (e) {
-      return false;
-    }
+    return origin + '/' + code;
   }
 
   function getReferralLinkForUser(user) {
-    if (!user || !user.referral_code) return buildReferralLink('DEMO');
+    if (!user || !user.referral_code) return '';
     return buildReferralLink(user.referral_code);
+  }
+
+  function isRefFromAffiliateLink() {
+    var AR = global.IfluxAffiliateResolver;
+    if (AR && AR.readActive && AR.readActive()) return true;
+    return false;
   }
 
   function readJson(key, fallback) {
@@ -161,6 +109,7 @@
       joinedAt: meta.joinedAt || new Date().toISOString().slice(0, 10),
       tier: meta.tier || 'free',
       status: meta.status || 'active',
+      accountStatus: meta.accountStatus || 'active',
       purchases: meta.purchases != null ? meta.purchases : 0
     };
   }
@@ -173,70 +122,115 @@
     writeJson(PARENTS_KEY, map);
   }
 
+  function readEventsMap() {
+    var map = readJson(EVENTS_KEY, null);
+    if (map && typeof map === 'object' && !Array.isArray(map)) return map;
+    migrateEventsFromLegacy();
+    return readJson(EVENTS_KEY, {});
+  }
+
+  function migrateEventsFromLegacy() {
+    var legacy = readJson(EVENTS_LEGACY_KEY, []);
+    if (!Array.isArray(legacy) || !legacy.length) {
+      if (!readJson(EVENTS_KEY, null)) writeJson(EVENTS_KEY, {});
+      try { localStorage.removeItem(EVENTS_LEGACY_KEY); } catch (e) { /* ignore */ }
+      return;
+    }
+    var map = {};
+    legacy.forEach(function (e) {
+      if (!e || !e.beneficiaryId || isLegacyDemoAffiliateEvent(e)) return;
+      var bid = String(e.beneficiaryId);
+      if (!map[bid]) map[bid] = [];
+      map[bid].push(e);
+    });
+    writeJson(EVENTS_KEY, map);
+    try { localStorage.removeItem(EVENTS_LEGACY_KEY); } catch (e2) { /* ignore */ }
+  }
+
+  function readEventsForUser(beneficiaryId) {
+    if (!beneficiaryId) return [];
+    var map = readEventsMap();
+    return (map[String(beneficiaryId)] || []).slice();
+  }
+
+  function writeEventsForUser(beneficiaryId, list) {
+    if (!beneficiaryId) return;
+    var map = readEventsMap();
+    map[String(beneficiaryId)] = list || [];
+    writeJson(EVENTS_KEY, map);
+  }
+
   function readEvents() {
-    return readJson(EVENTS_KEY, []);
+    var map = readEventsMap();
+    var out = [];
+    Object.keys(map).forEach(function (uid) {
+      (map[uid] || []).forEach(function (e) { out.push(e); });
+    });
+    return out;
   }
 
   function writeEvents(list) {
-    writeJson(EVENTS_KEY, list);
+    var map = {};
+    (list || []).forEach(function (e) {
+      if (!e || !e.beneficiaryId) return;
+      var bid = String(e.beneficiaryId);
+      if (!map[bid]) map[bid] = [];
+      map[bid].push(e);
+    });
+    writeJson(EVENTS_KEY, map);
   }
 
-  function ensureSeed() {
-    var parents = readParents();
-    var events = readEvents();
-    var seeded = false;
+  var LEGACY_DEMO_IDS = ['usr_demo_001', 'usr_ref_b', 'usr_ref_c', 'usr_ref_d'];
 
-    if (!parents.usr_ref_b) {
-      parents.usr_ref_b = 'usr_demo_001';
-      parents.usr_ref_c = 'usr_ref_b';
-      parents.usr_ref_d = 'usr_ref_c';
-      seeded = true;
-    }
+  function useApiAffiliate() {
+    if (global.IfluxData && IfluxData.isApi && IfluxData.isApi()) return true;
+    var token = global.IfluxAuth && IfluxAuth.getToken && IfluxAuth.getToken();
+    return !!(token && token.indexOf('mock_jwt_') !== 0 &&
+      global.IfluxApiClient && IfluxApiClient.getAffiliateSync);
+  }
+
+  function isLegacyDemoAffiliateId(id) {
+    return LEGACY_DEMO_IDS.indexOf(String(id || '')) >= 0;
+  }
+
+  function isLegacyDemoAffiliateEvent(evt) {
+    if (!evt) return false;
+    if (String(evt.id || '').indexOf('evt_seed_') === 0) return true;
+    if (isLegacyDemoAffiliateId(evt.beneficiaryId)) return true;
+    if (isLegacyDemoAffiliateId(evt.buyerId)) return true;
+    return false;
+  }
+
+  function purgeLegacyDemoAffiliateData() {
+    var parents = readParents();
+    var parentsChanged = false;
+    LEGACY_DEMO_IDS.forEach(function (id) {
+      if (parents[id]) {
+        delete parents[id];
+        parentsChanged = true;
+      }
+    });
+    Object.keys(parents).forEach(function (childId) {
+      if (isLegacyDemoAffiliateId(parents[childId])) {
+        delete parents[childId];
+        parentsChanged = true;
+      }
+    });
+    if (parentsChanged) writeParents(parents);
 
     var meta = readMembersMeta();
-    if (!meta.usr_ref_b) {
-      meta.usr_ref_b = { joinedAt: '2024-06-15', tier: 'premium', status: 'purchased', purchases: 1 };
-      meta.usr_ref_c = { joinedAt: '2024-06-18', tier: 'premium', status: 'purchased', purchases: 1 };
-      meta.usr_ref_d = { joinedAt: '2024-06-20', tier: 'free', status: 'active', purchases: 0 };
-      writeMembersMeta(meta);
-      seeded = true;
-    }
+    var metaChanged = false;
+    LEGACY_DEMO_IDS.forEach(function (id) {
+      if (meta[id]) {
+        delete meta[id];
+        metaChanged = true;
+      }
+    });
+    if (metaChanged) writeMembersMeta(meta);
 
-    if (!events.length) {
-      var now = new Date().toISOString().slice(0, 10);
-      events = [
-        mkSeedEvent('evt_seed_1', 'usr_demo_001', 'Nguyễn Văn Minh', 'usr_ref_b', 'Trần Thị B', 'TB', 'F0', 830000, 10, 83000, 'Premium / 1 tháng', 'qua mã MINH10', 'paid', now),
-        mkSeedEvent('evt_seed_2', 'usr_demo_001', 'Nguyễn Văn Minh', 'usr_ref_c', 'Lê Văn C', 'LC', 'F1', 1200000, 5, 60000, 'Premium / Hàng năm', 'F0 của Trần Thị B', 'pending', now)
-      ];
-      seeded = true;
-    }
-
-    if (seeded) {
-      writeParents(parents);
-      writeEvents(events);
-    }
-  }
-
-  function mkSeedEvent(id, benId, benName, buyerId, buyerName, initials, layer, amount, pct, commission, product, note, status, at) {
-    return {
-      id: id,
-      beneficiaryId: benId,
-      beneficiaryName: benName,
-      buyerId: buyerId,
-      buyerName: buyerName,
-      buyerInitials: initials,
-      buyerAvatarCls: avatarClassFromName(buyerName),
-      layer: layer,
-      orderId: 'ord_' + id,
-      orderAmount: amount,
-      commissionPct: pct,
-      commission: commission,
-      productLabel: product,
-      sourceNote: note,
-      status: status,
-      paid: status === 'paid',
-      at: at
-    };
+    var events = readEvents();
+    var cleanEvents = events.filter(function (e) { return !isLegacyDemoAffiliateEvent(e); });
+    if (cleanEvents.length !== events.length) writeEvents(cleanEvents);
   }
 
   function avatarClassFromName(name) {
@@ -274,6 +268,8 @@
     if (!payload || !beneficiaryId) return false;
     beneficiaryId = String(beneficiaryId);
 
+    purgeLegacyDemoAffiliateData();
+
     var parents = readParents();
     Object.keys(payload.parentsMap || {}).forEach(function (childId) {
       if (payload.parentsMap[childId]) {
@@ -289,6 +285,7 @@
         joinedAt: String(m.joined_at || '').slice(0, 10) || new Date().toISOString().slice(0, 10),
         tier: m.tier || 'free',
         status: m.status || 'active',
+        accountStatus: m.account_status || 'active',
         purchases: m.purchases || 0
       };
     });
@@ -296,19 +293,10 @@
 
     (payload.users || []).forEach(cacheUserRecord);
 
-    var events = readEvents();
-    var changed = false;
-    (payload.events || []).forEach(function (srvEvt) {
-      if (!srvEvt || String(srvEvt.beneficiaryId) !== beneficiaryId) return;
-      if (events.some(function (e) {
-        return e.orderId === srvEvt.orderId &&
-          e.beneficiaryId === srvEvt.beneficiaryId &&
-          e.layer === srvEvt.layer;
-      })) return;
-      events.unshift(srvEvt);
-      changed = true;
+    var serverEvents = (payload.events || []).filter(function (srvEvt) {
+      return srvEvt && String(srvEvt.beneficiaryId) === beneficiaryId;
     });
-    if (changed) writeEvents(events);
+    writeEventsForUser(beneficiaryId, serverEvents);
 
     return true;
   }
@@ -437,9 +425,6 @@
       }
     }
 
-    if (code === 'MINH10') {
-      return { id: 'usr_demo_001', display_name: 'Nguyễn Văn Minh', referral_code: 'MINH10' };
-    }
     return null;
   }
 
@@ -455,12 +440,6 @@
       var c = IfluxCustomersStore.getCustomerById(userId);
       if (c) return { id: c.id, display_name: c.name, referral_code: c.affiliate };
     }
-    if (userId === 'usr_demo_001') {
-      return { id: 'usr_demo_001', display_name: 'Nguyễn Văn Minh', referral_code: 'MINH10' };
-    }
-    if (userId === 'usr_ref_b') return { id: 'usr_ref_b', display_name: 'Trần Thị B', referral_code: 'TRANB01' };
-    if (userId === 'usr_ref_c') return { id: 'usr_ref_c', display_name: 'Lê Văn C', referral_code: 'LEVC02' };
-    if (userId === 'usr_ref_d') return { id: 'usr_ref_d', display_name: 'Phạm Thị D', referral_code: 'PHAMD03' };
     return { id: userId, display_name: 'Thành viên', referral_code: '' };
   }
 
@@ -493,29 +472,19 @@
     return 'Giới thiệu gián tiếp';
   }
 
-  function captureRefFromUrl() {
-    var ref = parseRefFromLocation() || parseRefFromReturnParam();
-    if (!ref) return;
-    storeRefCode(ref, true);
-  }
-
   function getStoredRefCode() {
-    try {
-      var ls = localStorage.getItem(REF_STORAGE);
-      if (ls) return String(ls).trim().toUpperCase();
-    } catch (e) { /* ignore */ }
-    var match = document.cookie.match(new RegExp('(?:^|; )' + REF_COOKIE + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]).toUpperCase() : '';
+    var AR = global.IfluxAffiliateResolver;
+    if (AR && AR.getCodeForIdentityCreation) {
+      return AR.getCodeForIdentityCreation() || '';
+    }
+    return '';
   }
 
   function clearStoredRefCode() {
-    try {
-      localStorage.removeItem(REF_STORAGE);
-      localStorage.removeItem(REF_FROM_LINK_KEY);
-    } catch (e) { /* ignore */ }
-    try {
-      document.cookie = REF_COOKIE + '=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    } catch (e2) { /* ignore */ }
+    var AR = global.IfluxAffiliateResolver;
+    if (AR && AR.clearContext) {
+      AR.clearContext();
+    }
   }
 
   function getReferredByFromProfile(userId) {
@@ -614,18 +583,12 @@
         joinedAt: new Date().toISOString().slice(0, 10),
         tier: 'free',
         status: 'active',
+        accountStatus: 'active',
         purchases: 0
       };
       writeMembersMeta(meta);
     }
 
-    if (isNew && global.IfluxInAppNotifications) {
-      var newUser = resolveUser(userId);
-      IfluxInAppNotifications.pushReferralSignup(referrerId, {
-        userId: userId,
-        display_name: newUser ? newUser.display_name : 'Thành viên mới'
-      });
-    }
     return referrerId;
   }
 
@@ -693,12 +656,6 @@
     });
   }
 
-  function linkNewUserToReferrer(userId) {
-    var code = getStoredRefCode();
-    if (!code) return null;
-    return applyReferralAtSignup(userId, code, { silent: true });
-  }
-
   function setReferrer(userId, referrerId) {
     if (!userId || !referrerId || userId === referrerId) return;
     var parents = readParents();
@@ -707,8 +664,8 @@
   }
 
   function processPurchase(buyer, orderAmount, meta) {
-    ensureSeed();
     meta = meta || {};
+    if (useApiAffiliate()) return { ok: false, events: [], skipped: 'api_sot' };
     var cfg = getConfig();
     if (!cfg.enabled || !buyer || !buyer.id || !orderAmount) return { ok: false, events: [] };
 
@@ -784,7 +741,6 @@
   }
 
   function listNetworkMembers(userId, filters) {
-    ensureSeed();
     filters = filters || {};
     var q = (filters.q || '').toLowerCase();
     var layerFilter = filters.layer || '';
@@ -808,7 +764,8 @@
           layer,
           viaUser && viaUser.display_name,
           meta.tier,
-          child.referral_code
+          child.referral_code,
+          meta.accountStatus === 'suspended' ? 'tạm khóa' : 'hoạt động'
         ].join(' ').toLowerCase();
         if (hay.indexOf(q) < 0) return;
       }
@@ -823,6 +780,7 @@
         joinedAt: meta.joinedAt,
         tier: meta.tier,
         status: meta.status,
+        accountStatus: meta.accountStatus || 'active',
         purchases: meta.purchases,
         viaName: viaUser ? viaUser.display_name : 'Trực tiếp',
         commissionEarned: sumCommissionFromBuyer(userId, childId)
@@ -858,11 +816,11 @@
   }
 
   function listForUser(userId, filters) {
-    ensureSeed();
     filters = filters || {};
     var q = (filters.q || '').toLowerCase();
-    return readEvents().filter(function (e) {
-      if (e.beneficiaryId !== userId) return false;
+    var source = readEventsForUser(userId);
+    return source.filter(function (e) {
+      if (String(e.beneficiaryId) !== String(userId)) return false;
       if (filters.layer && e.layer !== filters.layer) return false;
       if (filters.status && e.status !== filters.status) return false;
       if (q) {
@@ -897,18 +855,7 @@
   }
 
   function listAllEvents() {
-    ensureSeed();
-    return readEvents().slice();
-  }
-
-  ensureSeed();
-
-  if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', captureRefFromUrl);
-    } else {
-      captureRefFromUrl();
-    }
+    return readEvents().filter(function (e) { return !isLegacyDemoAffiliateEvent(e); });
   }
 
   global.IfluxLoyaltyAffiliateStore = {
@@ -919,11 +866,8 @@
     REF_COOKIE: REF_COOKIE,
     REF_STORAGE: REF_STORAGE,
     getConfig: getConfig,
-    captureRefFromUrl: captureRefFromUrl,
-    parseRefFromLocation: parseRefFromLocation,
-    parseRefFromReturnParam: parseRefFromReturnParam,
-    hasRefInUrl: hasRefInUrl,
-    storeRefCode: storeRefCode,
+    parsePublicIdFromPath: parsePublicIdFromPath,
+    hasPublicIdInPath: hasPublicIdInPath,
     getStoredRefCode: getStoredRefCode,
     clearStoredRefCode: clearStoredRefCode,
     isRefFromAffiliateLink: isRefFromAffiliateLink,
@@ -936,7 +880,6 @@
     buildReferralLink: buildReferralLink,
     getReferralLinkForUser: getReferralLinkForUser,
     findUserByReferralCode: findUserByReferralCode,
-    linkNewUserToReferrer: linkNewUserToReferrer,
     setReferrer: setReferrer,
     ensureBuyerReferralLink: ensureBuyerReferralLink,
     syncReferralParentFromUser: syncReferralParentFromUser,

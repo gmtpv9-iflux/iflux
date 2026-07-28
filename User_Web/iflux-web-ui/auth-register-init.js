@@ -1,46 +1,23 @@
 /* Phase A extracted from auth/register.html */
-function getUrlRefCode() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.parseRefFromLocation) {
-    return IfluxLoyaltyAffiliateStore.parseRefFromLocation();
+function affiliateContextCode() {
+  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+    return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
   }
-  var href = String(location.href || '');
-  var search = location.search || '';
-  if (!search && href.indexOf('?') >= 0) {
-    search = '?' + href.split('?').pop().split('#')[0];
-  }
-  try {
-    var params = new URLSearchParams(search);
-    var ref = params.get('ref') || params.get('r');
-    if (ref) return String(ref).trim().toUpperCase();
-  } catch (e) { /* ignore */ }
-  var m = href.match(/[?&](?:ref|r)=([^&#]+)/i);
-  if (!m) return '';
-  try { return decodeURIComponent(m[1]).trim().toUpperCase(); } catch (e2) { return String(m[1]).trim().toUpperCase(); }
-}
-
-function getStoredRefCode() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.getStoredRefCode) {
-    return IfluxLoyaltyAffiliateStore.getStoredRefCode();
-  }
-  try {
-    return String(localStorage.getItem('iflux_ref_code') || '').trim().toUpperCase();
-  } catch (e) {
-    return '';
-  }
+  return '';
 }
 
 function isRefFromAffiliateLink() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink) {
-    return IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink();
+  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.readActive) {
+    return !!IfluxAffiliateResolver.readActive();
   }
-  return !!getUrlRefCode();
+  return false;
 }
 
 function resolveRefCode() {
-  return getUrlRefCode() || getStoredRefCode();
+  return affiliateContextCode();
 }
 
-/** Mã gửi đi khi đăng ký: ô nhập là nguồn chính; chỉ dùng cookie/localStorage khi khóa từ link Affiliate */
+/** Mã gửi đi khi đăng ký: ô nhập là nguồn chính; chỉ dùng Affiliate Context khi khóa từ link */
 function getEffectiveRefCode() {
   var input = document.getElementById('reg-referral');
   var locked = isRefFromAffiliateLink();
@@ -54,13 +31,7 @@ function getEffectiveRefCode() {
   var label = document.getElementById('reg-ref-label');
   if (!input) return;
 
-  if (window.IfluxLoyaltyAffiliateStore) {
-    IfluxLoyaltyAffiliateStore.captureRefFromUrl();
-  }
-
-  var urlRef = getUrlRefCode();
-  var storedRef = getStoredRefCode();
-  var refCode = urlRef || storedRef;
+  var refCode = affiliateContextCode();
   var fromAffiliateLink = isRefFromAffiliateLink() && !!refCode;
 
   if (!refCode) return;
