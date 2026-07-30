@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách mã · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-promo-page="list">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." disabled /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+          <div>
+            <h1 class="ix-page-title">Danh sách mã</h1>
+            <div class="ix-breadcrumb">
+              <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Loyalty &amp; Membership</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Mã khuyến mãi</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Danh sách mã</span>
+            </div>
+          </div>
+          <a href="/admin/thanh-vien/ma-them" class="ix-btn ix-btn-primary"><i class="ti ti-plus"></i> Thêm mã khuyến mãi</a>
+        </div>
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="promo-search" placeholder="Tìm mã..." /></div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead><tr>
+                <th>Loại mã</th><th>Mã</th><th>Giá trị</th><th>Giá trị tối đa</th><th>Giới hạn số lượng</th><th>Giới hạn thời gian</th><th>Trạng thái</th><th></th>
+              </tr></thead>
+              <tbody id="promo-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=loyalty20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=loyalty20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="promo-catalog-store.js?v=loyalty20260723"></script>
+<script src="promo-page.js?v=loyalty20260723"></script>
+</body>
+</html>

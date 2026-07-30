@@ -1,12 +1,24 @@
 /**
  * iFlux — Social login (Google / Apple / Facebook / Zalo)
+ * Google: GIS Architecture — One Tap (prompt @ load) + renderButton visible (Button flow).
  * Gọi IfluxAuth.loginWithSocial → POST /auth/social khi dataMode=api
+ *
+ * SoT: docs/.../26-Google-SignIn-Target-Architecture.md
  */
 (function (global) {
   'use strict';
 
   var config = null;
   var googleInitialized = false;
+  var googleButtonReady = false;
+  var pageSocialOpts = null;
+
+  /* ===== LEGACY (commented — offscreen proxy + prompt-on-click) — không dùng =====
+  var googleActivatorReady = false;
+  function ensureOffscreenGoogleActivator(cfg) { ... }
+  function clickOffscreenGoogleActivator() { ... }
+  function startGoogleLoginFromUserGesture(opts) { ... prompt() after click ... }
+  ===== END LEGACY ===== */
 
   function resolveSocialApiBase() {
     if (global.IfluxApiConfig && IfluxApiConfig.isEnabled && IfluxApiConfig.isEnabled()) {
@@ -107,6 +119,36 @@
     return IfluxAuth.loginWithSocial(provider, tokens || {}, opts || {});
   }
 
+  function affiliateCodeForSocial(frozen) {
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
+      if (fresh) return fresh;
+    }
+    return frozen || null;
+  }
+
+  function buildGoogleRunOpts() {
+    var opts = pageSocialOpts || {};
+    return {
+      referral_code: affiliateCodeForSocial(opts.referral_code),
+      remember_me: opts.remember_me
+    };
+  }
+
+  function onGoogleCredential(response) {
+    if (!response || !response.credential) return;
+    var opts = pageSocialOpts || {};
+    var runOpts = buildGoogleRunOpts();
+    if (opts.onStart) opts.onStart('google');
+    finishSocialLogin('google', { id_token: response.credential }, runOpts)
+      .then(function (user) {
+        if (opts.onSuccess) opts.onSuccess('google', user);
+      })
+      .catch(function (err) {
+        if (opts.onError) opts.onError('google', err);
+      });
+  }
+
   function initGoogle(cfg) {
     if (!cfg || !cfg.enabled || !cfg.clientId) return Promise.resolve();
     if (googleInitialized) return Promise.resolve();
@@ -116,43 +158,57 @@
       }
       google.accounts.id.initialize({
         client_id: cfg.clientId,
-        callback: function (response) {
-          global.__ifxGoogleCredential = response;
-          if (global.__ifxOnGoogleCredential) {
-            global.__ifxOnGoogleCredential(response);
-          }
-        },
+        callback: onGoogleCredential,
         auto_select: false,
-        cancel_on_tap_outside: true
+        cancel_on_tap_outside: true,
+        use_fedcm_for_prompt: true,
+        use_fedcm_for_button: true,
+        itp_support: true
       });
       googleInitialized = true;
     });
   }
 
-  function loginGoogle(opts) {
-    return loadConfig().then(function (c) {
-      var cfg = c.google || {};
-      if (!cfg.enabled || !cfg.clientId) return notConfigured('google');
-      return initGoogle(cfg).then(function () {
-        return new Promise(function (resolve, reject) {
-          global.__ifxOnGoogleCredential = function (response) {
-            global.__ifxOnGoogleCredential = null;
-            if (!response || !response.credential) {
-              reject(new Error('Đăng nhập Google bị hủy.'));
-              return;
-            }
-            finishSocialLogin('google', { id_token: response.credential }, opts)
-              .then(resolve)
-              .catch(reject);
-          };
-          google.accounts.id.prompt(function (notification) {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              reject(new Error('Không mở được cửa sổ Google. Thử trình duyệt khác hoặc cho phép đăng nhập bên thứ ba.'));
-            }
-          });
-        });
-      });
+  /** GIS Button thật — slot nhìn thấy (#ifx-google-signin-btn). Không offscreen / không JS proxy. */
+  function renderVisibleGoogleButton() {
+    var slot = document.getElementById('ifx-google-signin-btn');
+    if (!slot || !global.google || !google.accounts || !google.accounts.id) {
+      googleButtonReady = false;
+      return false;
+    }
+    slot.innerHTML = '';
+    google.accounts.id.renderButton(slot, {
+      type: 'icon',
+      theme: 'outline',
+      size: 'medium',
+      shape: 'circle'
     });
+    googleButtonReady = true;
+    return true;
+  }
+
+  /**
+   * One Tap — chỉ gọi lúc page ready (không gắn user click).
+   * Skip / not displayed / dismiss không credential → im lặng (không toast hệ thống).
+   */
+  function promptOneTapOnLoad() {
+    if (!global.google || !google.accounts || !google.accounts.id) return;
+    if (typeof google.accounts.id.prompt !== 'function') return;
+    try {
+      google.accounts.id.prompt(function (notification) {
+        if (!notification) return;
+        /* intentional no-op on skip / notDisplayed / dismiss — Button vẫn sẵn sàng */
+      });
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  /** API tương thích — không còn custom-icon → prompt. */
+  function loginGoogle() {
+    return Promise.reject(
+      new Error('Dùng nút Google trên trang để đăng nhập.')
+    );
   }
 
   function loginApple(opts) {
@@ -211,9 +267,6 @@
       var state = 'ifx_' + Math.random().toString(36).slice(2, 10);
       try {
         sessionStorage.setItem('ifx_zalo_oauth_state', state);
-        if (opts && opts.referral_code) {
-          sessionStorage.setItem('ifx_zalo_ref', opts.referral_code);
-        }
       } catch (e) { /* ignore */ }
       var url =
         'https://oauth.zaloapp.com/v4/permission?app_id=' +
@@ -241,10 +294,9 @@
       return Promise.reject(new Error('Zalo OAuth state không khớp.'));
     }
     var ref = null;
-    try {
-      ref = sessionStorage.getItem('ifx_zalo_ref');
-      sessionStorage.removeItem('ifx_zalo_ref');
-    } catch (e) { /* ignore */ }
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+    }
     return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, '', window.location.pathname + window.location.hash);
@@ -256,8 +308,8 @@
   function bindSocialButtons(root, opts) {
     opts = opts || {};
     root = root || document;
+    /* Google: không bind — user click nút GIS renderButton */
     var map = {
-      google: loginGoogle,
       apple: loginApple,
       facebook: loginFacebook,
       zalo: loginZalo
@@ -268,8 +320,12 @@
       el.addEventListener('click', function (e) {
         e.preventDefault();
         var run = map[provider];
+        var runOpts = {
+          referral_code: affiliateCodeForSocial(opts.referral_code),
+          remember_me: opts.remember_me
+        };
         if (opts.onStart) opts.onStart(provider);
-        run({ referral_code: opts.referral_code, remember_me: opts.remember_me })
+        run(runOpts)
           .then(function (user) {
             if (opts.onSuccess) opts.onSuccess(provider, user);
           })
@@ -282,10 +338,16 @@
 
   function initPage(opts) {
     opts = opts || {};
+    pageSocialOpts = opts;
     return loadConfig()
       .then(function (c) {
         if (c.google && c.google.enabled) {
-          return initGoogle(c.google).catch(function () { /* optional */ });
+          return initGoogle(c.google)
+            .then(function () {
+              renderVisibleGoogleButton();
+              promptOneTapOnLoad();
+            })
+            .catch(function () { /* optional */ });
         }
       })
       .then(function () {
@@ -309,6 +371,7 @@
     loginZalo: loginZalo,
     bindSocialButtons: bindSocialButtons,
     initPage: initPage,
-    handleZaloCallback: handleZaloCallback
+    handleZaloCallback: handleZaloCallback,
+    isGoogleButtonReady: function () { return googleButtonReady; }
   };
 })(window);

@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-009
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Onboarding
+Owner đích (map): Onboarding
+Usage audit: ✓ (symbol scan)
+Dep động: Có
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: Dep động onboarding
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux — Onboarding spotlight tour (User Web)
  */
@@ -7,7 +21,7 @@
   var LOCAL_DONE_KEY = 'iflux_onboarding_web_done';
   var running = false;
   var maskId = 'ifx-onboard-mask';
-  var MASK_OVERLAY = 'rgba(8, 9, 18, 0.5)';
+  var MASK_OVERLAY = 'rgba(0, 0, 0, 0.75)';
   var scrollLockY = 0;
   var maskEl = null;
   var panelEl = null;
@@ -197,7 +211,7 @@
     var style = document.createElement('style');
     style.id = 'ifx-onboard-critical-css';
     style.textContent =
-      '.ifx-onboard-mask-host{position:fixed;inset:0;z-index:10050;pointer-events:none;background:#000;opacity:.6}' +
+      '.ifx-onboard-mask-host{position:fixed;inset:0;z-index:10050;pointer-events:none;background:transparent}' +
       '.ifx-onboard-mask{display:block;width:100%;height:100%}' +
       '.ifx-onboard-center{position:fixed;z-index:10060;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:auto;width:min(520px,calc(100vw - 28px));max-height:min(520px,calc(100vh - 40px));padding:26px 28px 20px}' +
       'html.ifx-onboard-active,body.ifx-onboard-active{overflow:hidden!important}';
@@ -337,7 +351,8 @@
 
       if (target && target.closest && target.closest('.ifx-topnav-menu') &&
           global.IfluxWebUI && IfluxWebUI.openMobileNav &&
-          window.innerWidth <= 1023.98) {
+          global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell &&
+          global.IfluxBreakpoint.isMobileShell()) {
         IfluxWebUI.openMobileNav();
       }
 

@@ -1,0 +1,65 @@
+=== WP1 GIS in auth-social ===
+CLEAN
+=== WP1 GIS in GoogleProvider ===
+8:  var GSI_SRC = 'https://accounts.google.com/gsi/client';
+62:      if (!global.google || !google.accounts || !google.accounts.id) {
+66:      google.accounts.id.initialize({
+83:  function getProof() {
+107:          google.accounts.id.prompt(function (notification) {
+124:    getProof: getProof
+=== WP2 AR readers social path ===
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:477:    if (AR && AR.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:478:      return AR.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/auth.js:452:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth.js:453:      return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:122:  function getCodeForIdentityCreation() {
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:186:    getCodeForIdentityCreation: getCodeForIdentityCreation,
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:10:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:11:      return IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+User_Web/iflux-web-ui/auth-register-init.js:3:  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-register-init.js:4:    return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+=== WP2 dual inject loginWithSocial ===
+getAffiliateContextCode in loginWithSocial: False
+=== WP3 onetap ===
+CLEAN
+FILE_DELETED
+=== WP4 redirect ===
+User_Web/iflux-web-ui/auth.js:1532:  function redirectAfterAuth(defaultPath) {
+User_Web/iflux-web-ui/auth.js:1566:  global.IfluxAuthRedirectPolicy = {
+User_Web/iflux-web-ui/auth.js:1567:    execute: redirectAfterAuth
+User_Web/iflux-web-ui/auth.js:1660:    redirectAfterAuth: redirectAfterAuth,
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:41:    var policy = global.IfluxAuthRedirectPolicy;
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:46:    if (global.IfluxAuth && typeof IfluxAuth.redirectAfterAuth === 'function') {
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js:47:      IfluxAuth.redirectAfterAuth();
+PROVIDER_NO_NAV
+establishSession has redirect/location: False
+=== WP5 verifier DB ===
+VERIFIER_NO_DB
+=== WP5 switch statements ===
+NO_SWITCH
+=== WP5 auth.service verify token ===
+IDENTITY_NO_VERIFY
+=== WP6 shim ===
+backend/src/modules/legacy-auth/social-auth.service.js:5: * Verify = identity/verifier-registry. Không shim verifyGoogleIdToken / verifySocialToken.
+=== tree social-auth + identity ===
+User_Web/iflux-web-ui/social-auth/google-provider.js
+User_Web/iflux-web-ui/social-auth/identity-proof.js
+User_Web/iflux-web-ui/social-auth/provider-registry.js
+User_Web/iflux-web-ui/social-auth/social-login-usecase.js
+backend/src/modules/legacy-auth/identity/verified-identity.js
+backend/src/modules/legacy-auth/identity/verifier-registry.js
+backend/src/modules/legacy-auth/identity/verifiers/apple-verifier.js
+backend/src/modules/legacy-auth/identity/verifiers/facebook-verifier.js
+backend/src/modules/legacy-auth/identity/verifiers/google-verifier.js
+backend/src/modules/legacy-auth/identity/verifiers/zalo-verifier.js
+=== metrics ===
+     260 User_Web/iflux-web-ui/auth-social.js
+     126 User_Web/iflux-web-ui/social-auth/google-provider.js
+      36 User_Web/iflux-web-ui/social-auth/identity-proof.js
+      41 User_Web/iflux-web-ui/social-auth/provider-registry.js
+     103 User_Web/iflux-web-ui/social-auth/social-login-usecase.js
+      37 backend/src/modules/legacy-auth/social-auth.service.js
+     603 total
+=== HEAD ===
+b539a959350bceeedb75f1c831a2c20227e042db
+feature/google-login-rebuild

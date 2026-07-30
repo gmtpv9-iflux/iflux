@@ -6,8 +6,8 @@
   function tpl() { return global.IfluxBlockTemplates; }
 
   function libraryCopy(widgetId) {
-    if (global.WidgetLibraryCatalog && WidgetLibraryCatalog.resolveWidgetCopy) {
-      return WidgetLibraryCatalog.resolveWidgetCopy(widgetId);
+    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
+      return L4RuntimeReader.resolveWidgetCopy(widgetId);
     }
     return { title: 'Tổng quan thị trường', description: '' };
   }

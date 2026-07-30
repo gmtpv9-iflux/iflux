@@ -7,6 +7,10 @@
   var LOADING = false;
   var LOADED = false;
 
+  function canPerm(key) {
+    return !!(global.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
   function apiBase() {
     return (global.IfluxAdminAuth && IfluxAdminAuth.apiBase) ? IfluxAdminAuth.apiBase() : '/api';
   }
@@ -180,8 +184,13 @@
       var actions = '';
       if (o.status === 'pending') {
         actions =
-          '<button type="button" class="ix-btn ix-btn-success ix-btn-sm" data-adm-txn-approve="' + esc(o.id) + '"><i class="ti ti-check"></i> Duyệt</button> ' +
-          '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-adm-txn-reject="' + esc(o.id) + '"><i class="ti ti-x"></i> Từ chối</button>';
+          (canPerm('subscription.transactions.approve_payment')
+            ? '<button type="button" class="ix-btn ix-btn-success ix-btn-sm" data-adm-txn-approve="' + esc(o.id) + '"><i class="ti ti-check"></i> Duyệt</button> '
+            : '') +
+          (canPerm('subscription.transactions.status_rejected')
+            ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-adm-txn-reject="' + esc(o.id) + '"><i class="ti ti-x"></i> Từ chối</button>'
+            : '');
+        if (!actions) actions = '<span style="font-size:12px;color:var(--ix-text-muted)">—</span>';
       } else {
         actions = '<span style="font-size:12px;color:var(--ix-text-muted)">' +
           (o.approvedAt ? fmtDate(o.approvedAt) : (o.rejectedAt ? fmtDate(o.rejectedAt) : '—')) +

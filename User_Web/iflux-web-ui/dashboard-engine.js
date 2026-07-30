@@ -667,10 +667,10 @@
     var meta = IfluxWidgetRegistry.byType(instance.widget_type);
     if (!meta) return null;
 
-    var copy = global.PlatformLayersWidgets && PlatformLayersWidgets.resolveWidgetCopy
-      ? PlatformLayersWidgets.resolveWidgetCopy(instance.widget_type)
-      : (global.WidgetLibraryCatalog && WidgetLibraryCatalog.resolveWidgetCopy
-        ? WidgetLibraryCatalog.resolveWidgetCopy(instance.widget_type)
+    var copy = global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy
+      ? L4RuntimeReader.resolveWidgetCopy(instance.widget_type)
+      : (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy
+        ? L4RuntimeReader.resolveWidgetCopy(instance.widget_type)
         : null);
     var displayTitle = copy ? copy.title : meta.title;
     var displayDescription = copy ? copy.description : (meta.description || '');
@@ -689,9 +689,11 @@
       ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm ifx-widget-remove" title="Gỡ tiện ích"><i class="ti ti-x"></i></button>'
       : '';
 
-    var chromelessShare = ['WGT-MKT-001', 'WGT-MKT-007', 'WGT-MKT-008'].indexOf(instance.widget_type) >= 0;
-    var shareInHeader = !editMode && !chromelessShare && global.IfluxInsightShare
-      ? (IfluxInsightShare.shareActionsHtml ? IfluxInsightShare.shareActionsHtml() : '<span class="ifx-block-share-actions">' + IfluxInsightShare.shareButtonHtml() + '</span>')
+    /* Share stub — Foundation Share Action lazy khi click. */
+    var shareInHeader = !editMode
+      ? '<span class="ifx-block-share-actions">' +
+          '<button type="button" class="ifx-insight-share-btn" title="Chia sẻ Insight" aria-label="Chia sẻ Insight">' +
+            '<i class="ti ti-share-3"></i></button></span>'
       : '';
 
     var dragHandle = editMode
@@ -702,20 +704,23 @@
       ? widthToggleHtml(getWidgetWidth(instance), instance.instance_id)
       : '';
 
+    /* UI-001: .ifx-widget = host layout; .ifx-widget__surface = TPL-SHELL-CARD fallback (không gắn .ifx-mkt-card để tránh block-templates ghi đè khi demote) */
     node.innerHTML =
-      '<div class="ifx-widget__header">' +
-        dragHandle +
-        '<h3>' + displayTitle + '</h3>' +
-        (displayDescription ? '<p class="ifx-widget__subtitle">' + displayDescription + '</p>' : '') +
-        '<div class="ifx-widget__actions">' +
-          widthToggle +
-          shareInHeader +
-          removeBtn + '</div>' +
-      '</div>' +
-      '<div class="ifx-widget__body"></div>' +
-      '<div class="ifx-widget__footer">' +
-        '<span data-ifx-widget-ts>Cập nhật: dữ liệu mẫu</span>' +
-        (meta.footerHref ? '<a href="' + meta.footerHref + '">' + footerLabel + ' →</a>' : '') +
+      '<div class="ifx-widget__surface">' +
+        '<div class="ifx-widget__header">' +
+          dragHandle +
+          '<h3>' + displayTitle + '</h3>' +
+          (displayDescription ? '<p class="ifx-widget__subtitle">' + displayDescription + '</p>' : '') +
+          '<div class="ifx-widget__actions">' +
+            widthToggle +
+            shareInHeader +
+            removeBtn + '</div>' +
+        '</div>' +
+        '<div class="ifx-widget__body"></div>' +
+        '<div class="ifx-widget__footer">' +
+          '<span data-ifx-widget-ts>Cập nhật: dữ liệu mẫu</span>' +
+          (meta.footerHref ? '<a href="' + meta.footerHref + '">' + footerLabel + ' →</a>' : '') +
+        '</div>' +
       '</div>';
 
     var body = node.querySelector('.ifx-widget__body');
@@ -1110,11 +1115,11 @@
   }
 
   function widgetDisplayCopy(type) {
-    if (global.PlatformLayersWidgets && PlatformLayersWidgets.resolveWidgetCopy) {
-      return PlatformLayersWidgets.resolveWidgetCopy(type);
+    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
+      return L4RuntimeReader.resolveWidgetCopy(type);
     }
-    if (global.WidgetLibraryCatalog && WidgetLibraryCatalog.resolveWidgetCopy) {
-      return WidgetLibraryCatalog.resolveWidgetCopy(type);
+    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
+      return L4RuntimeReader.resolveWidgetCopy(type);
     }
     var meta = registry() && registry().byType(type);
     return {

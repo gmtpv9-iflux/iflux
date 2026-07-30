@@ -12,7 +12,7 @@ export const meta = { id: 'WGT-SEARCH-PAGE', title: 'Tìm kiếm' };
 var CORE_TIERS = [
   [ADMIN + 'iflux-admin-ui.js'],
   [ASSET + 'stock-mentions.js'],
-  [ASSET + 'watchlist-store.js', ASSET + 'alert-store.js', ASSET + 'alert-ui.js', ASSET + 'watchlist-ui.js'],
+  [ASSET + 'watchlist-store.js', ASSET + 'alert-store.js', ASSET + 'alert-ui.js', ADMIN + 'foundation/heart-action.js?v=followFound20260724', ASSET + 'watchlist-ui.js'],
   [ASSET + 'search-page-inline.js']
 ];
 

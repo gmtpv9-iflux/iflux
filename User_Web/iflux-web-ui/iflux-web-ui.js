@@ -12,6 +12,20 @@
     document.body.classList.add('ifx-user-web');
   }
 
+  /** mobile-shell semantic → bp-lg (Foundation via IfluxBreakpoint) */
+  function ifxIsMobileShell() {
+    var bp = window.IfluxBreakpoint;
+    if (bp && bp.isMobileShell) return bp.isMobileShell();
+    if (bp && bp.belowSemantic) return bp.belowSemantic('mobile-shell');
+    var el = document.documentElement;
+    if (el && window.getComputedStyle && typeof window.innerWidth === 'number') {
+      var raw = window.getComputedStyle(el).getPropertyValue('--ifx-bp-lg').trim();
+      var n = parseFloat(raw, 10);
+      if (!isNaN(n)) return window.innerWidth <= n;
+    }
+    return false;
+  }
+
   /* Nhận diện thương hiệu = chữ iFlux (ix-auth-brand-name), không dùng logo SVG tự tạo */
   function patchTextBrand() {
     document.querySelectorAll('.ifx-brand-auth-logo').forEach(function (el) {
@@ -29,6 +43,22 @@
     });
   }
   patchTextBrand();
+
+  function appNavigate(canonical, opts) {
+    /* P6-API-01 — internal nav chỉ Writer.navigate */
+    var W = window.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical, opts);
+      return;
+    }
+    window.location.href = canonical;
+  }
+
+  function appHref(canonical) {
+    if (window.IfluxHref && IfluxHref.forCanonical) return IfluxHref.forCanonical(canonical);
+    if (window.IfluxRoutes && IfluxRoutes.to) return IfluxRoutes.to(canonical);
+    return canonical;
+  }
 
   document.querySelectorAll('[data-ix-toggle-password]').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -50,7 +80,7 @@
         base = IfluxAuth.guestHomePath();
       }
       if (!base) base = (window.IfluxRoutes && IfluxRoutes.siteRoot) ? IfluxRoutes.siteRoot() : '/';
-      window.location.href = base;
+      appNavigate(base);
     });
   });
 
@@ -70,7 +100,8 @@
       ? IfluxAuth.getMenuTierLabel()
       : (user.tier_label || (user.tier === 'free' ? 'Miễn phí' : user.tier) || 'Miễn phí');
     var chipClass = tierChipClass(user);
-    document.querySelectorAll('[data-ifx-tier]').forEach(function (el) {
+    /* Chỉ cập nhật chip trong menu avatar — không còn chip cấp trên header topnav. */
+    document.querySelectorAll('.ix-dropdown-menu [data-ifx-tier], .ifx-topnav-drawer-user [data-ifx-tier]').forEach(function (el) {
       el.textContent = label;
       el.className = 'ix-chip ' + chipClass;
     });
@@ -98,25 +129,55 @@
     if (opts.message) q.push('message=' + encodeURIComponent(opts.message));
     if (opts.showPropose) q.push('propose=1');
 
-    var parts = location.pathname.split('/');
-    var idx = parts.indexOf('User_Web');
-    if (idx >= 0) {
-      return parts.slice(0, idx + 1).join('/') + '/pricing/index.html' + (q.length ? '?' + q.join('&') : '');
+    var base;
+    if (window.IfluxRoutes && IfluxRoutes.to) {
+      base = IfluxRoutes.to('pricing', { canonical: true, skipDecorate: true });
+    } else {
+      var parts = location.pathname.split('/');
+      var idx = parts.indexOf('User_Web');
+      if (idx >= 0) {
+        base = parts.slice(0, idx + 1).join('/') + '/pricing/index.html';
+      } else {
+        base = '../pricing/index.html';
+      }
     }
-    return '../pricing/index.html' + (q.length ? '?' + q.join('&') : '');
+    return base + (q.length ? '?' + q.join('&') : '');
   }
-
-  document.querySelectorAll('[data-ifx-pricing-open]').forEach(function (el) {
-    el.addEventListener('click', function (e) {
-      e.preventDefault();
-      window.IfluxWebUI.openPricing(JSON.parse(el.getAttribute('data-ifx-pricing-open') || '{}'));
-    });
-  });
 
   window.IfluxWebUI = window.IfluxWebUI || {};
   window.IfluxWebUI.refreshTierChips = refreshTierChips;
   window.IfluxWebUI.pricingPageUrl = pricingPageUrl;
   window.IfluxWebUI.syncTopnav = syncTopnav;
+
+  var pricingLoadPromise = null;
+  function ensurePricingModal() {
+    if (window.IfluxPricingModal) return Promise.resolve(window.IfluxPricingModal);
+    if (pricingLoadPromise) return pricingLoadPromise;
+    var base = resolveWebUiBaseSafe();
+    pricingLoadPromise = new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = base + 'iflux-pricing-modal.js?v=b4w3_20260727';
+      s.onload = function () { resolve(window.IfluxPricingModal); };
+      s.onerror = function () { resolve(null); };
+      document.body.appendChild(s);
+    });
+    return pricingLoadPromise;
+  }
+
+  function resolveWebUiBaseSafe() {
+    var scripts = document.getElementsByTagName('script');
+    var base = '/User_Web/iflux-web-ui/';
+    var i;
+    for (i = scripts.length - 1; i >= 0; i--) {
+      var src = scripts[i].src || '';
+      if (src.indexOf('iflux-web-ui.js') >= 0) {
+        return src.replace(/iflux-web-ui\.js.*$/, '');
+      }
+    }
+    return base;
+  }
+
+  /* Click CTA → dynamic import Pricing Modal. Không idle / login preload. */
   window.IfluxWebUI.openPricing = function (opts) {
     opts = opts || {};
     var user = window.IfluxAuth && IfluxAuth.getUser();
@@ -131,62 +192,36 @@
         return;
       }
     }
-    window.location.href = pricingPageUrl(opts);
-  };
-
-  function checkSubscriptionLifecyclePrompts(opts) {
-    opts = opts || {};
-    if (!window.IfluxAuth || !IfluxAuth.isLoggedIn()) return;
-    if (window.IfluxPricingModal && IfluxPricingModal.tryPromptLifecycle) {
-      IfluxPricingModal.tryPromptLifecycle(opts);
-      return;
-    }
-    if (location.pathname.indexOf('/pricing/') >= 0) return;
-    var sub = IfluxAuth.getSubscriptionState ? IfluxAuth.getSubscriptionState() : 'free';
-    if (sub !== 'expired') return;
-    try {
-      if (sessionStorage.getItem('iflux_pricing_entry_dismissed') === '1') return;
-    } catch (e) { /* ignore */ }
-    window.location.href = pricingPageUrl({ mode: 'expired' });
-  }
-
-  function loadPricingModalAndPrompts(opts) {
-    opts = opts || {};
-    function boot() {
-      checkSubscriptionLifecyclePrompts(opts);
-    }
-    if (window.IfluxPricingModal) {
-      boot();
-      return;
-    }
-    var scripts = document.getElementsByTagName('script');
-    var base = '../iflux-web-ui/';
-    var i;
-    for (i = scripts.length - 1; i >= 0; i--) {
-      var src = scripts[i].src || '';
-      if (src.indexOf('iflux-web-ui.js') >= 0) {
-        base = src.replace(/iflux-web-ui\.js.*$/, '');
-        break;
+    ensurePricingModal().then(function (modal) {
+      if (modal && modal.open) {
+        modal.open(opts);
+        return;
       }
-    }
-    var s = document.createElement('script');
-    s.src = base + 'iflux-pricing-modal.js';
-    s.onload = boot;
-    document.body.appendChild(s);
-  }
+      appNavigate(pricingPageUrl(opts));
+    });
+  };
+  window.IfluxWebUI.ensurePricingModal = ensurePricingModal;
+
+  document.querySelectorAll('[data-ifx-pricing-open]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.IfluxWebUI.openPricing(JSON.parse(el.getAttribute('data-ifx-pricing-open') || '{}'));
+    });
+  });
+
+  /* Chỉ sau onboarding (tương tác thật) — không idle sau login. */
+  document.addEventListener('iflux-onboarding-finished', function () {
+    ensurePricingModal().then(function (modal) {
+      if (modal && modal.tryPromptLifecycle) {
+        modal.tryPromptLifecycle({ afterOnboarding: true });
+      }
+    });
+  });
 
   if (window.IfluxAuth && IfluxAuth.isLoggedIn()) {
     if (IfluxAuth.syncSubscriptionLifecycle) IfluxAuth.syncSubscriptionLifecycle();
     refreshTierChips();
-    ifxDeferIdle(function () {
-      loadPricingModalAndPrompts({ allowTrialOffer: true });
-    });
   }
-
-  document.addEventListener('iflux-onboarding-finished', function () {
-    loadPricingModalAndPrompts({ afterOnboarding: true });
-  });
-
   function findMarketLink(menu) {
     var link = menu.querySelector('a[href*="market/"]');
     if (link) return link;
@@ -316,7 +351,7 @@
     var a = document.createElement('a');
     a.className = 'ix-dropdown-item';
     if (it.greet) {
-      a.href = it.href || '/tai-khoan';
+      a.href = appHref(it.href || '/tai-khoan');
       a.innerHTML = '<i class="ti ti-user-circle"></i> Chào ';
       var s = document.createElement('span');
       s.setAttribute('data-ifx-user-name', '');
@@ -343,7 +378,7 @@
       a.href = '#';
       a.setAttribute('data-ifx-open-bug', '');
     } else {
-      a.href = it.href;
+      a.href = appHref(it.href);
     }
     var i = document.createElement('i');
     i.className = 'ti ' + it.icon;
@@ -391,7 +426,7 @@
         lo.addEventListener('click', function (e) {
           e.preventDefault();
           if (window.IfluxAuth) IfluxAuth.logout();
-          window.location.href = (window.IfluxRoutes && IfluxRoutes.siteRoot) ? IfluxRoutes.siteRoot() : '/';
+          appNavigate((window.IfluxRoutes && IfluxRoutes.siteRoot) ? IfluxRoutes.siteRoot() : '/');
         });
         frag.appendChild(lo);
       }
@@ -406,9 +441,9 @@
         avatar.setAttribute('title', 'Trang cá nhân');
       }
     });
-    /* Cấp thành viên đã chuyển vào menu avatar (dòng "Chào …") → ẩn chip lẻ trên topnav */
-    document.querySelectorAll('.ifx-topnav-actions [data-ifx-tier]').forEach(function (el) {
-      if (!el.closest('.ix-dropdown-menu')) el.style.display = 'none';
+    /* Xóa chip cấp thành viên khỏi header (không ẩn — xóa DOM). Tier chỉ còn trong menu avatar nếu có. */
+    document.querySelectorAll('.ifx-topnav-actions > [data-ifx-tier], .ifx-topnav-actions > .ix-chip[data-ifx-tier]').forEach(function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
     });
     bindAvatarNav();
     bindPartnerOpen();
@@ -544,11 +579,11 @@
       /* Mobile: toggle User Hub full-page (tap lần nữa để đóng). Desktop: hover xem menu,
          click → trang cá nhân. */
       var header = avatar.closest('.ifx-topnav');
-      if (window.innerWidth <= 1023.98 && header && header._ifxOpenUserHub) {
+      if (ifxIsMobileShell() && header && header._ifxOpenUserHub) {
         header._ifxOpenUserHub();
         return;
       }
-      window.location.href = '/tai-khoan';
+      appNavigate('/tai-khoan');
     }, true);
   }
 
@@ -582,8 +617,40 @@
     return resolveHeaderDropdown(header, '.ifx-topnav-notif', 'data-ifx-notif-dropdown');
   }
 
-  function getMsgDropdown(header) {
-    return resolveHeaderDropdown(header, '.ifx-topnav-messages', 'data-ifx-messages-dropdown');
+  /** Icon Chat → trang Tin nhắn. Không dropdown, không load JS chat trên trang khác. */
+  function messagesPageHref() {
+    if (window.IfluxRoutes && IfluxRoutes.to) {
+      return IfluxRoutes.to('messages');
+    }
+    try {
+      if (window.IfluxRoutes && IfluxRoutes.routes && IfluxRoutes.routes.messages) {
+        return appHref(IfluxRoutes.routes.messages.public || '/tin-nhan');
+      }
+    } catch (e) { /* ignore */ }
+    return appHref('/tin-nhan');
+  }
+
+  function wireMessagesShortcut(header) {
+    if (!header) return;
+    header.querySelectorAll('[data-ifx-messages-dropdown]').forEach(function (el) {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    });
+    var wrap = header.querySelector('.ifx-topnav-messages');
+    if (wrap) {
+      wrap.classList.remove('ix-dropdown', 'open');
+      header.classList.remove('ifx-topnav--messages-open');
+    }
+    var btn = header.querySelector('[data-ifx-messages-btn]');
+    if (!btn || btn._ifxMsgNavBound) return;
+    btn._ifxMsgNavBound = true;
+    btn.removeAttribute('aria-expanded');
+    btn.removeAttribute('data-ix-toggle');
+    /* Giữ nguyên button + icon ti-messages — chỉ đổi hành vi click. */
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      appNavigate(messagesPageHref());
+    }, true);
   }
 
   function closeMobileSearch(header) {
@@ -644,8 +711,7 @@
    * cho style drawer, đã chỉnh full-width), header hiện nút Back. Consumer thuần của
    * IfluxAppShell.getUserHub(). KHÔNG tạo class DS mới. */
   function initMobileUserHub() {
-    var DRAWER_MAX = 1023.98;
-    function isMobile() { return window.innerWidth <= DRAWER_MAX; }
+    function isMobile() { return ifxIsMobileShell(); }
 
     document.querySelectorAll('.ifx-topnav').forEach(function (header, idx) {
       if (header.getAttribute('data-ifx-userhub') === '1') return;
@@ -698,7 +764,7 @@
         lo.addEventListener('click', function (e) {
           e.preventDefault();
           if (window.IfluxAuth) IfluxAuth.logout();
-          window.location.href = (window.IfluxRoutes && IfluxRoutes.siteRoot) ? IfluxRoutes.siteRoot() : '/';
+          appNavigate((window.IfluxRoutes && IfluxRoutes.siteRoot) ? IfluxRoutes.siteRoot() : '/');
         });
         frag.appendChild(lo);
         panel.appendChild(frag);
@@ -757,10 +823,8 @@
   }
 
   function initMobileTopbar() {
-    var DRAWER_MAX = 1023.98;
-
     function isMobileBar() {
-      return window.innerWidth <= DRAWER_MAX;
+      return ifxIsMobileShell();
     }
 
     document.querySelectorAll('.ifx-topnav').forEach(function (header) {
@@ -814,30 +878,22 @@
 
       if (!header.querySelector('[data-ifx-messages-btn]') && actions) {
         var msgWrapEl = document.createElement('div');
-        msgWrapEl.className = 'ix-dropdown ifx-topnav-messages';
+        msgWrapEl.className = 'ifx-topnav-messages';
         var msgBtnEl = document.createElement('button');
         msgBtnEl.type = 'button';
         msgBtnEl.className = 'ifx-topnav-messages-btn ix-nav-btn';
         msgBtnEl.setAttribute('data-ifx-messages-btn', '');
         msgBtnEl.setAttribute('aria-label', 'Tin nhắn');
-        msgBtnEl.setAttribute('aria-expanded', 'false');
         msgBtnEl.innerHTML = '<i class="ti ti-messages"></i>';
-        var msgMenuEl = document.createElement('div');
-        msgMenuEl.className = 'ix-dropdown-menu';
-        msgMenuEl.setAttribute('data-ifx-messages-dropdown', '');
-        msgMenuEl.setAttribute('data-ifx-panel', 'messages');
         msgWrapEl.appendChild(msgBtnEl);
-        msgWrapEl.appendChild(msgMenuEl);
         insertBeforeAvatar(msgWrapEl);
-        if (window.IfluxHeaderMessagesUI && IfluxHeaderMessagesUI.mountMessages) {
-          IfluxHeaderMessagesUI.mountMessages();
-        }
       }
 
       var notifWrap = header.querySelector('.ifx-topnav-notif');
       var bellBtn = header.querySelector('[data-ifx-notif-bell]');
       var msgWrap = header.querySelector('.ifx-topnav-messages');
       var msgBtn = header.querySelector('[data-ifx-messages-btn]');
+      wireMessagesShortcut(header);
 
       /* Desktop + mobile: avatar luôn item cuối trong .ifx-topnav-actions (cùng vị trí desktop). */
       function orderHeaderActions() {
@@ -874,16 +930,6 @@
         }
       }
 
-      function mountMsgDropdown() {
-        var msgDropdown = getMsgDropdown(header);
-        if (!msgDropdown || !msgWrap) return;
-        if (isMobileBar()) {
-          if (msgDropdown.parentNode !== header) header.appendChild(msgDropdown);
-        } else if (msgDropdown.parentNode !== msgWrap) {
-          msgWrap.appendChild(msgDropdown);
-        }
-      }
-
       function openMobileNotif() {
         var notifDropdown = getNotifDropdown(header);
         if (!notifDropdown) return;
@@ -902,28 +948,6 @@
           bellBtn.setAttribute('aria-expanded', 'true');
           bellBtn.setAttribute('aria-label', 'Đóng thông báo');
           bellBtn.innerHTML = '<i class="ti ti-x"></i>';
-        }
-        syncTopnavActiveHeight(header);
-      }
-
-      function openMobileMessages() {
-        var msgDropdown = getMsgDropdown(header);
-        if (!msgDropdown) return;
-        mobileNavControllers.forEach(function (ctrl) {
-          if (ctrl.header !== header) return;
-          ctrl.setOpen(false);
-        });
-        closeMobileSearch(header);
-        closeMobileNotif(header);
-        mountMsgDropdown();
-        if (window.IfluxHeaderMessagesUI && IfluxHeaderMessagesUI.renderMessagesPanel) {
-          IfluxHeaderMessagesUI.renderMessagesPanel(header);
-        }
-        header.classList.add('ifx-topnav--messages-open');
-        if (msgBtn) {
-          msgBtn.setAttribute('aria-expanded', 'true');
-          msgBtn.setAttribute('aria-label', 'Đóng tin nhắn');
-          msgBtn.innerHTML = '<i class="ti ti-x"></i>';
         }
         syncTopnavActiveHeight(header);
       }
@@ -959,25 +983,22 @@
           e.stopImmediatePropagation();
           if (header.classList.contains('ifx-topnav--notif-open')) {
             closeMobileNotif(header);
+            return;
+          }
+          function open() { openMobileNotif(); }
+          if (window.IfluxUserNotificationsUI) {
+            open();
+          } else if (window.IfluxWebUI && IfluxWebUI.ensureUserNotifications) {
+            IfluxWebUI.ensureUserNotifications(false).then(open);
           } else {
-            openMobileNotif();
+            open();
           }
         }, true);
       }
 
       if (msgBtn && !msgBtn._ifxMobileMsgBound) {
+        /* Icon Chat = link /tin-nhan — không mở panel mobile. */
         msgBtn._ifxMobileMsgBound = true;
-        msgBtn.addEventListener('click', function (e) {
-          if (!isMobileBar()) return;
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          if (header.classList.contains('ifx-topnav--messages-open')) {
-            closeMobileMessages(header);
-          } else {
-            openMobileMessages();
-          }
-        }, true);
       }
 
       if (searchTrigger && !searchTrigger._ifxSearchBound) {
@@ -1006,11 +1027,6 @@
             closeMobileNotif(header);
           }
         }
-        if (header.classList.contains('ifx-topnav--messages-open')) {
-          if (!e.target.closest('[data-ifx-messages-dropdown]') && !e.target.closest('[data-ifx-messages-btn]')) {
-            closeMobileMessages(header);
-          }
-        }
       });
 
       function onLayoutChange() {
@@ -1019,13 +1035,10 @@
           if (window.IfluxUserNotificationsUI && IfluxUserNotificationsUI.renderBellPanel) {
             IfluxUserNotificationsUI.renderBellPanel(header);
           }
-          if (window.IfluxHeaderMessagesUI && IfluxHeaderMessagesUI.renderMessagesPanel) {
-            IfluxHeaderMessagesUI.renderMessagesPanel(header);
-          }
         }
         mountNotifDropdown();
-        mountMsgDropdown();
         orderHeaderActions();
+        wireMessagesShortcut(header);
         if (!isMobileBar()) {
           closeMobileSearch(header);
           closeMobileNotif(header);
@@ -1037,13 +1050,13 @@
       window.addEventListener('resize', onLayoutChange);
       onLayoutChange();
     });
+    installHeaderChromeLazy();
   }
 
   function initMobileTabbar() {
     if (!document.querySelector('.ifx-app')) return;
 
-    var DRAWER_MAX = 1023.98;
-    function isMobileBar() { return window.innerWidth <= DRAWER_MAX; }
+    function isMobileBar() { return ifxIsMobileShell(); }
 
     var bar = document.getElementById('ifx-mobile-tabbar');
     if (!bar) {
@@ -1080,54 +1093,148 @@
       if (btn) btn.click();
     }
 
-    function renderPrimary(items) {
+    function renderTabbar(items, mode, opts) {
+      opts = opts || {};
+      mode = mode || 'primary';
       bar.innerHTML = '';
-      bar.setAttribute('aria-label', 'Điều hướng chính');
-      bar.removeAttribute('data-ifx-tabbar-mode');
-      var byKey = {};
-      items.forEach(function (it) { byKey[it.key] = it; });
-      var ordered = ORDER.map(function (k) { return byKey[k]; }).filter(Boolean);
-      items.forEach(function (it) { if (ORDER.indexOf(it.key) < 0) ordered.push(it); });
-      ordered.forEach(function (it) {
+      if (mode === 'primary') {
+        bar.setAttribute('aria-label', 'Điều hướng chính');
+        bar.removeAttribute('data-ifx-tabbar-mode');
+      } else if (mode === 'context') {
+        bar.setAttribute('aria-label', 'Tab chi tiết');
+        bar.setAttribute('data-ifx-tabbar-mode', 'context');
+      } else if (mode === 'account') {
+        bar.setAttribute('aria-label', 'Tab hồ sơ');
+        bar.setAttribute('data-ifx-tabbar-mode', 'account');
+      }
+      var commentN = opts.commentN || '';
+      var list = items;
+      if (mode === 'primary') {
+        var byKey = {};
+        items.forEach(function (it) { byKey[it.key] = it; });
+        list = ORDER.map(function (k) { return byKey[k]; }).filter(Boolean);
+        items.forEach(function (it) { if (ORDER.indexOf(it.key) < 0) list.push(it); });
+      }
+      list.forEach(function (it) {
         var link = document.createElement('a');
-        link.href = it.href;
+        var label = (mode === 'primary') ? (SHORT[it.key] || it.label) : it.label;
+        link.href = (mode === 'primary' && it.href) ? it.href : '#';
         link.className = 'ifx-mobile-tabbar__item' + (it.active ? ' is-active' : '');
-        if (it.exclusive) link.className += ' ifx-mobile-tabbar__item--flow';
-        link.innerHTML = tabbarItemHtml(it, SHORT[it.key] || it.label);
-      bar.appendChild(link);
-    });
+        if (mode === 'primary' && it.exclusive) link.className += ' ifx-mobile-tabbar__item--flow';
+        var badge = '';
+        if (mode === 'context' && it.key === 'comments' && commentN && commentN !== '0') {
+          badge = '<span class="ifx-mobile-tabbar__comment-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
+        }
+        link.innerHTML = tabbarItemHtml(it, label) + badge;
+        if (mode === 'context') {
+          link.setAttribute('data-ifx-context-tab', it.key);
+          link.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (it.key === 'comments') {
+              if (openCommentsPage()) return;
+            }
+            activateContextTab(it.key);
+            syncMobileTabbar();
+          });
+        } else if (mode === 'account') {
+          var tabId = it.tabId || it.key;
+          link.setAttribute('data-ifx-account-tab', tabId);
+          link.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (window.IfluxHubPage && IfluxHubPage.switchTab && document.querySelector('[data-ifx-hub-tab-panels]')) {
+              IfluxHubPage.switchTab(tabId);
+              syncMobileTabbar();
+            } else if (window.IfluxAccountProfileNav && IfluxAccountProfileNav.switchTab) {
+              IfluxAccountProfileNav.switchTab(tabId);
+            }
+          });
+        }
+        bar.appendChild(link);
+      });
+    }
+
+    function renderPrimary(items) {
+      renderTabbar(items, 'primary');
     }
 
     function renderContext(items) {
-      bar.innerHTML = '';
-      bar.setAttribute('aria-label', 'Tab chi tiết');
-      bar.setAttribute('data-ifx-tabbar-mode', 'context');
       var countEl = document.querySelector('[data-ec-comment-count]');
       var commentN = countEl ? String(countEl.textContent || '').trim() : '';
-      items.forEach(function (it) {
-        var link = document.createElement('a');
-        link.href = '#';
-        link.className = 'ifx-mobile-tabbar__item' + (it.active ? ' is-active' : '');
-        link.setAttribute('data-ifx-context-tab', it.key);
-        var badge = '';
-        if (it.key === 'comments' && commentN && commentN !== '0') {
-          badge = '<span class="ifx-mobile-tabbar__comment-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
+      renderTabbar(items, 'context', { commentN: commentN });
+    }
+
+    function renderAccount() {
+      var shell = window.IfluxAppShell;
+      if (!shell || !shell.resolveNavigationItems) return;
+      var ctx = shell.resolveNavigationContext();
+      renderTabbar(shell.resolveNavigationItems('accountProfile', ctx), 'account');
+    }
+
+    /** Chi tiết bài viết — entity row (trên) + Host ActionBar (dưới). Không proxy-click. */
+    function ensureArticleIxBottomSlot() {
+      bar.removeAttribute('hidden');
+      bar.style.display = '';
+      bar.setAttribute('aria-label', 'Tương tác bài viết');
+      bar.setAttribute('data-ifx-tabbar-mode', 'article');
+
+      var entities = bar.querySelector('[data-ifx-ix-article-entities]');
+      if (!entities) {
+        entities = document.createElement('div');
+        entities.setAttribute('data-ifx-ix-article-entities', '');
+        entities.className = 'ifx-com-article__entities';
+        entities.setAttribute('aria-label', 'Gắn kèm bài viết');
+        entities.setAttribute('hidden', 'hidden');
+      }
+
+      var slot = bar.querySelector('[data-ifx-ix-article-bottom-root]');
+      if (!slot) {
+        bar.innerHTML = '';
+        bar.appendChild(entities);
+        slot = document.createElement('div');
+        slot.setAttribute('data-ifx-ix-article-bottom-root', '');
+        slot.className = 'ifx-mobile-tabbar__ix';
+        bar.appendChild(slot);
+      } else {
+        if (entities.parentNode !== bar) {
+          bar.insertBefore(entities, slot);
+        } else if (slot.previousElementSibling !== entities) {
+          bar.insertBefore(entities, slot);
         }
-        link.innerHTML = tabbarItemHtml(it, it.label) + badge;
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          activateContextTab(it.key);
-          syncMobileTabbar();
-        });
-        bar.appendChild(link);
-      });
+      }
+      try {
+        document.dispatchEvent(new CustomEvent('iflux-ix-bottom-slot-ready'));
+      } catch (e) { /* ignore */ }
+      return slot;
+    }
+
+    function renderArticleActions() {
+      ensureArticleIxBottomSlot();
+    }
+
+    function hideMobileTabbar() {
+      bar.innerHTML = '';
+      bar.removeAttribute('data-ifx-tabbar-mode');
+      bar.setAttribute('hidden', 'hidden');
+      bar.style.display = 'none';
     }
 
     function syncMobileTabbar() {
       var shell = window.IfluxAppShell;
       if (!isMobileBar() || !shell) return;
-      if (shell.getNavMode && shell.getNavMode() === 'CONTEXT' && document.querySelector('[data-ec-tabs]')) {
-        var ctx = shell.detectContext ? shell.detectContext() : null;
+      /* Trang bình luận riêng — không hiện bottom menu (composer thay chỗ) */
+      if (document.querySelector('[data-ifx-comments-page]') || window.__IFLUX_SHELL_READY === 'comments') {
+        hideMobileTabbar();
+        return;
+      }
+      bar.removeAttribute('hidden');
+      bar.style.display = '';
+      var ctx = shell.detectContext ? shell.detectContext() : null;
+      var model = shell.currentNavigationModel ? shell.currentNavigationModel() : null;
+      if (ctx && ctx.entityType === 'communityPost') {
+        renderArticleActions();
+      } else if (model && model.modelId === 'accountProfile') {
+        renderAccount();
+      } else if (shell.getNavMode && shell.getNavMode() === 'CONTEXT' && document.querySelector('[data-ec-tabs]')) {
         var items = shell.getContextNav(ctx ? ctx.entityType : null);
         var activeKey = getActiveContextKey();
         items = items.map(function (it) {
@@ -1140,8 +1247,8 @@
         });
         renderContext(items);
       } else {
-        var items = (shell.getPrimaryNav) ? shell.getPrimaryNav() : [];
-        if (items.length) renderPrimary(items);
+        var primaryItems = (shell.getPrimaryNav) ? shell.getPrimaryNav() : [];
+        if (primaryItems.length) renderPrimary(primaryItems);
       }
       document.querySelectorAll('.ifx-topnav').forEach(function (header) {
         if (header._ifxSyncContextBack) header._ifxSyncContextBack();
@@ -1149,6 +1256,7 @@
     }
 
     window.IfluxWebUI.syncMobileTabbar = syncMobileTabbar;
+    window.IfluxWebUI.ensureArticleIxBottomSlot = ensureArticleIxBottomSlot;
     syncMobileTabbar();
     window.addEventListener('resize', syncMobileTabbar);
     document.addEventListener('iflux-context-ready', syncMobileTabbar);
@@ -1156,8 +1264,7 @@
 
   /* ĐỢT 2 — Nút Back header khi CONTEXT mode (mobile). Khác User Hub back (chỉ khi hub mở). */
   function initMobileContextBack() {
-    var DRAWER_MAX = 1023.98;
-    function isMobile() { return window.innerWidth <= DRAWER_MAX; }
+    function isMobile() { return ifxIsMobileShell(); }
     function isMessagesPage() {
       var path = '';
       try { path = (window.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
@@ -1181,6 +1288,11 @@
       else header.insertBefore(backBtn, header.firstChild);
 
       backBtn.addEventListener('click', function () {
+        var forced = backBtn.getAttribute('data-ifx-back-href');
+        if (forced) {
+          appNavigate(forced);
+          return;
+        }
         if (window.history.length > 1) {
           window.history.back();
           return;
@@ -1188,14 +1300,15 @@
         var href = (window.IfluxAppShell && IfluxAppShell.getBackHref)
           ? IfluxAppShell.getBackHref()
           : '/';
-        window.location.href = href;
+        appNavigate(href);
       });
 
       function applyMode() {
         var shell = window.IfluxAppShell;
         var isCtx = isMobile() && shell && shell.getNavMode && shell.getNavMode() === 'CONTEXT';
+        var isComments = header.getAttribute('data-ifx-header-mode') === 'comments';
         var hubOpen = header.classList.contains('ifx-topnav--nav-open');
-        backBtn.style.display = (isCtx && !hubOpen && !isMessagesPage()) ? 'flex' : 'none';
+        backBtn.style.display = ((isCtx || isComments) && !hubOpen && !isMessagesPage()) ? 'flex' : 'none';
         syncTopnavActiveHeight(header);
       }
 
@@ -1205,10 +1318,62 @@
     });
   }
 
+  /** Comments page: đổ title + likes vào .ifx-topnav sẵn có (reuse context-back). */
+  function setCommentsShellHeader(opts) {
+    opts = opts || {};
+    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+      header.setAttribute('data-ifx-header-mode', 'comments');
+
+      var backBtn = header.querySelector('[data-ifx-context-back]');
+      if (backBtn && opts.backHref) backBtn.setAttribute('data-ifx-back-href', String(opts.backHref));
+
+      var titleEl = header.querySelector('[data-ifx-comments-title]');
+      if (!titleEl) {
+        titleEl = document.createElement('span');
+        titleEl.className = 'ifx-topnav-name';
+        titleEl.setAttribute('data-ifx-comments-title', '');
+        if (backBtn) backBtn.insertAdjacentElement('afterend', titleEl);
+        else header.insertBefore(titleEl, header.querySelector('.ifx-topnav-actions'));
+      }
+      titleEl.textContent = opts.title != null ? String(opts.title) : 'Bình luận';
+
+      var actions = header.querySelector('.ifx-topnav-actions') || header;
+      var likeBtn = header.querySelector('[data-ifx-ix-post-like]');
+      var showLike = opts.likes != null || typeof opts.onLike === 'function';
+      if (!showLike) {
+        if (likeBtn) likeBtn.remove();
+      } else {
+        if (!likeBtn) {
+          likeBtn = document.createElement('button');
+          likeBtn.type = 'button';
+          likeBtn.className = 'ifx-topnav-navbtn ix-nav-btn';
+          likeBtn.setAttribute('data-ifx-ix-post-like', '');
+          likeBtn.setAttribute('aria-label', 'Thích');
+          likeBtn.innerHTML =
+            '<span class="ifx-com-side-count" data-ifx-ix-post-likes>0</span>' +
+            ' <i class="ti ti-heart"></i>';
+          actions.appendChild(likeBtn);
+        }
+        var likesEl = likeBtn.querySelector('[data-ifx-ix-post-likes]');
+        if (likesEl && opts.likes != null) likesEl.textContent = String(opts.likes);
+        if (typeof opts.onLike === 'function') {
+          likeBtn.onclick = function (e) {
+            e.preventDefault();
+            opts.onLike();
+          };
+        }
+      }
+
+      if (header._ifxSyncContextBack) header._ifxSyncContextBack();
+      else syncTopnavActiveHeight(header);
+    });
+  }
+
+  window.IfluxWebUI.setCommentsShellHeader = setCommentsShellHeader;
+
   /* Mobile — trang Tin nhắn (/tin-nhan): nút Back App Shell đồng bộ stack chat. */
   function initMobileMessagesShell() {
-    var DRAWER_MAX = 1023.98;
-    function isMobile() { return window.innerWidth <= DRAWER_MAX; }
+    function isMobile() { return ifxIsMobileShell(); }
     function isMessagesPage() {
       var path = '';
       try { path = (window.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
@@ -1253,7 +1418,7 @@
           return;
         }
         if (window.history.length > 1) window.history.back();
-        else window.location.href = (window.IfluxRoutes && IfluxRoutes.to) ? IfluxRoutes.to('home', { canonical: true }) : '/nha-cua-toi';
+        else appNavigate((window.IfluxRoutes && IfluxRoutes.to) ? IfluxRoutes.to('home', { canonical: true, skipDecorate: true }) : '/nha-cua-toi');
       });
 
       document.addEventListener('iflux-chat-mobile-view', function (e) {
@@ -1303,17 +1468,13 @@
   function syncMobileHeaderPanels() {
     document.querySelectorAll('.ifx-topnav').forEach(function (header) {
       var notifDropdown = getNotifDropdown(header);
-      var msgDropdown = getMsgDropdown(header);
-      if (window.innerWidth <= 1023.98) {
+      if (ifxIsMobileShell()) {
         if (notifDropdown && notifDropdown.parentNode !== header) header.appendChild(notifDropdown);
-        if (msgDropdown && msgDropdown.parentNode !== header) header.appendChild(msgDropdown);
       }
       if (window.IfluxUserNotificationsUI && IfluxUserNotificationsUI.renderBellPanel) {
         IfluxUserNotificationsUI.renderBellPanel(header);
       }
-      if (window.IfluxHeaderMessagesUI && IfluxHeaderMessagesUI.renderMessagesPanel) {
-        IfluxHeaderMessagesUI.renderMessagesPanel(header);
-      }
+      wireMessagesShortcut(header);
     });
   }
 
@@ -1338,210 +1499,165 @@
     }
   }
 
-  function loadUserNotifications() {
-    if (!document.querySelector('.ifx-user-menu') || !window.IfluxAuth || !IfluxAuth.isLoggedIn()) return;
+  function resolveWebUiBase() {
     var scripts = document.getElementsByTagName('script');
     var base = '../iflux-web-ui/';
     var i;
     for (i = scripts.length - 1; i >= 0; i--) {
       var src = scripts[i].src || '';
       if (src.indexOf('iflux-web-ui.js') >= 0) {
-        base = src.replace(/iflux-web-ui\.js.*$/, '');
-        break;
+        return src.replace(/iflux-web-ui\.js.*$/, '');
       }
     }
-    function boot() {
+    return base;
+  }
+
+  function loadScriptChain(base, steps, done) {
+    var idx = 0;
+    function loadNext() {
+      if (idx >= steps.length) {
+        if (done) done();
+        return;
+      }
+      var step = steps[idx];
+      if (step.g && window[step.g]) {
+        idx += 1;
+        loadNext();
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = base + step.src;
+      s.onload = function () {
+        idx += 1;
+        loadNext();
+      };
+      s.onerror = function () {
+        if (step.optional) {
+          idx += 1;
+          loadNext();
+        }
+      };
+      document.body.appendChild(s);
+    }
+    loadNext();
+  }
+
+  /* Task5 Lazy L12 — chuông: chỉ tải khi click (không hover). */
+  var notifLoadPromise = null;
+
+  function ensureUserNotifications(openAfter) {
+    if (!document.querySelector('.ifx-user-menu') || !window.IfluxAuth || !IfluxAuth.isLoggedIn()) {
+      return Promise.resolve();
+    }
+    function finish() {
       if (window.IfluxUserNotificationsUI) {
         IfluxUserNotificationsUI.init();
         if (window.IfluxWebUI && IfluxWebUI.syncMobileHeaderPanels) IfluxWebUI.syncMobileHeaderPanels();
       }
+      if (!openAfter) return;
+      var wrap = document.querySelector('.ifx-topnav-notif');
+      var bell = wrap && wrap.querySelector('[data-ifx-notif-bell]');
+      if (!bell || !wrap || wrap.classList.contains('open')) return;
+      setTimeout(function () { bell.click(); }, 0);
     }
     if (window.IfluxInAppNotifications && window.IfluxUserNotificationsUI) {
-      boot();
-      return;
+      finish();
+      return Promise.resolve();
     }
-    var chain = ['inapp-notifications.js', 'iflux-user-notifications-ui.js'];
-    var idx = 0;
-    function loadNext() {
-      if (idx >= chain.length) {
-        boot();
-        return;
-      }
-      if (chain[idx] === 'inapp-notifications.js' && window.IfluxInAppNotifications) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      if (chain[idx] === 'iflux-user-notifications-ui.js' && window.IfluxUserNotificationsUI) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = base + chain[idx];
-      s.onload = function () {
-        idx += 1;
-        loadNext();
-      };
-      document.body.appendChild(s);
+    if (!notifLoadPromise) {
+      var base = resolveWebUiBase();
+      notifLoadPromise = new Promise(function (resolve) {
+        loadScriptChain(base, [
+          { src: 'client-local-notification-types.js?v=notifPhaseD4_20260728', g: 'IfluxClientLocalNotificationTypes' },
+          { src: 'inapp-notifications.js?v=notifPhaseD4_20260728', g: 'IfluxInAppNotifications' },
+          { src: 'iflux-user-notifications-ui.js?v=fn00120260724', g: 'IfluxUserNotificationsUI' }
+        ], resolve);
+      });
     }
-    loadNext();
+    return notifLoadPromise.then(finish);
   }
 
-  ifxDeferIdle(loadUserNotifications);
+  function bindHeaderChromeLazy(root, ensureFn) {
+    if (!root || root.getAttribute('data-ifx-chrome-lazy')) return;
+    root.setAttribute('data-ifx-chrome-lazy', '1');
+    var btn = root.querySelector('[data-ifx-notif-bell]');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      if (window.IfluxUserNotificationsUI) return;
+      e.preventDefault();
+      e.stopPropagation();
+      ensureFn(true);
+    }, true);
+  }
 
-  function loadHeaderMessages() {
-    if (!document.querySelector('.ifx-app')) return;
-    if (!document.querySelector('.ifx-user-menu')) return;
+  function installHeaderChromeLazy() {
     if (!window.IfluxAuth || !IfluxAuth.isLoggedIn()) return;
-    var scripts = document.getElementsByTagName('script');
-    var base = '../iflux-web-ui/';
-    var i;
-    for (i = scripts.length - 1; i >= 0; i--) {
-      var src = scripts[i].src || '';
-      if (src.indexOf('iflux-web-ui.js') >= 0) {
-        base = src.replace(/iflux-web-ui\.js.*$/, '');
-        break;
-      }
-    }
-    function boot() {
-      if (window.IfluxHeaderMessagesUI) {
-        IfluxHeaderMessagesUI.init();
-        syncMobileHeaderPanels();
-      }
-    }
-    function startChain() {
-      if (window.IfluxHeaderMessagesUI) {
-        boot();
-        return;
-      }
-      var chain = ['profile-chat-store.js', 'iflux-header-messages-ui.js'];
-      var idx = 0;
-      function loadNext() {
-        if (idx >= chain.length) {
-          boot();
-          return;
-        }
-        if (chain[idx] === 'profile-chat-store.js' && window.IfluxProfileChatStore) {
-          idx += 1;
-          loadNext();
-          return;
-        }
-        if (chain[idx] === 'iflux-header-messages-ui.js' && window.IfluxHeaderMessagesUI) {
-          idx += 1;
-          loadNext();
-          return;
-        }
-        var s = document.createElement('script');
-        s.src = base + chain[idx];
-        s.onload = function () {
-          idx += 1;
-          loadNext();
-        };
-        s.onerror = function () {
-          if (chain[idx] === 'profile-chat-store.js') {
-            idx += 1;
-            loadNext();
-          }
-        };
-        document.body.appendChild(s);
-      }
-      loadNext();
-    }
-    /* Lazy khi mở panel tin nhắn — không idle kéo chat-store mọi trang. */
-    var msgBtn = document.querySelector('[data-ifx-messages-btn]');
-    if (msgBtn && !msgBtn.getAttribute('data-ifx-msg-lazy')) {
-      msgBtn.setAttribute('data-ifx-msg-lazy', '1');
-      msgBtn.addEventListener('click', function onMsg() {
-        msgBtn.removeEventListener('click', onMsg);
-        startChain();
-      }, true);
-      return;
-    }
-    ifxDeferIdle(startChain);
+    bindHeaderChromeLazy(document.querySelector('.ifx-topnav-notif'), ensureUserNotifications);
   }
 
-  loadHeaderMessages();
+  window.IfluxWebUI.installHeaderChromeLazy = installHeaderChromeLazy;
+  window.IfluxWebUI.ensureUserNotifications = ensureUserNotifications;
 
-  function loadInsightShare() {
-    if (!document.querySelector('.ifx-app')) return;
-    var scripts = document.getElementsByTagName('script');
-    var base = '../iflux-web-ui/';
-    var i;
-    for (i = scripts.length - 1; i >= 0; i--) {
-      var src = scripts[i].src || '';
-      if (src.indexOf('iflux-web-ui.js') >= 0) {
-        base = src.replace(/iflux-web-ui\.js.*$/, '');
-        break;
+  /* Foundation Share Action — không idle / shell preload.
+     Trigger: click nút Share · hoặc Widget/Feature gọi ensureShareAction(). */
+  var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
+  var shareLoadPromise = null;
+
+  function ensureShareAction() {
+    var api = window.IfluxShareAction || window.IfluxInsightShare;
+    if (api && window.IfluxInsightShareStore) {
+      return Promise.resolve(api);
+    }
+    if (shareLoadPromise) return shareLoadPromise;
+    var ver = 'p7ShareSheet20260730';
+    shareLoadPromise = new Promise(function (resolve) {
+      var link = document.querySelector('link[href*="share-action.css"], link[href*="insight-share.css"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = FOUNDATION + 'share-action.css?v=' + ver;
+        document.head.appendChild(link);
       }
-    }
-    var link = document.querySelector('link[href*="insight-share.css"]');
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = base + 'insight-share.css';
-      document.head.appendChild(link);
-    }
-    function bootShare() {
-      if (window.IfluxInsightShare) IfluxInsightShare.init();
-    }
-    if (window.IfluxInsightShareStore && window.IfluxInsightShare) {
-      bootShare();
-      return;
-    }
-    var chain = ['insight-share-store.js', 'insight-share-ui.js'];
-    var idx = 0;
-    function loadNext() {
-      if (idx >= chain.length) {
-        bootShare();
-        return;
-      }
-      if (chain[idx] === 'insight-share-store.js' && window.IfluxInsightShareStore) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      if (chain[idx] === 'insight-share-ui.js' && window.IfluxInsightShare) {
-        idx += 1;
-        loadNext();
-        return;
-      }
-      var s = document.createElement('script');
-      s.src = base + chain[idx];
-      s.onload = function () {
-        idx += 1;
-        loadNext();
-      };
-      document.body.appendChild(s);
-    }
-    loadNext();
+      loadScriptChain(FOUNDATION, [
+        { src: 'share-action-store.js?v=' + ver, g: 'IfluxInsightShareStore' },
+        { src: 'share-action.js?v=' + ver, g: 'IfluxInsightShare' }
+      ], function () {
+        var S = window.IfluxShareAction || window.IfluxInsightShare;
+        if (S && S.init) S.init();
+        resolve(S);
+      });
+    });
+    return shareLoadPromise;
   }
 
-  ifxDeferIdle(loadInsightShare);
-
-  /* Google One Tap — đề xuất đăng ký/đăng nhập Google cho khách khi vào web. */
-  function loadGoogleOneTap() {
-    if (!document.querySelector('.ifx-app')) return;
-    if (window.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn()) return;
-    if (/\/auth\//.test(window.location.pathname)) return;
-    if (window.IfluxData && IfluxData.isApi && !IfluxData.isApi()) return;
-    if (window.IfluxGoogleOneTap) { IfluxGoogleOneTap.boot(); return; }
-    var scripts = document.getElementsByTagName('script');
-    var base = '../iflux-web-ui/';
-    var i;
-    for (i = scripts.length - 1; i >= 0; i--) {
-      var src = scripts[i].src || '';
-      if (src.indexOf('iflux-web-ui.js') >= 0) {
-        base = src.replace(/iflux-web-ui\.js.*$/, '');
-        break;
+  function installShareActionLazy() {
+    if (document.__ifxShareClickLazy) return;
+    document.__ifxShareClickLazy = true;
+    document.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest && e.target.closest('.ifx-insight-share-btn, [data-ifx-share-action]');
+      if (!btn) return;
+      /* P7-DQ-01 — Guest → Login trước khi load / chạy Share */
+      if (!window.IfluxAuth || !IfluxAuth.isLoggedIn || !IfluxAuth.isLoggedIn()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (IfluxAuth && IfluxAuth.requireAuth) IfluxAuth.requireAuth();
+        else if (window.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
+        return;
       }
-    }
-    var s = document.createElement('script');
-    s.src = base + 'google-onetap.js';
-    document.body.appendChild(s);
+      if (window.IfluxShareAction || window.IfluxInsightShare) return;
+      e.preventDefault();
+      e.stopPropagation();
+      ensureShareAction().then(function (S) {
+        if (!S) return;
+        if (S.patchAll) S.patchAll(document);
+        setTimeout(function () { btn.click(); }, 0);
+      });
+    }, true);
   }
 
-  ifxDeferIdle(loadGoogleOneTap);
+  window.IfluxWebUI.ensureShareAction = ensureShareAction;
+  window.IfluxWebUI.ensureInsightShare = ensureShareAction;
+  installShareActionLazy();
 
   function loadOnboarding() {
     if (!document.querySelector('.ifx-app')) return;

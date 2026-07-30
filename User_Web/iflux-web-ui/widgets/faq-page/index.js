@@ -8,6 +8,20 @@ var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 export const meta = { id: 'WGT-FAQ-PAGE', title: 'Câu hỏi thường gặp' };
 
+function routeUrl(key) {
+  var R = typeof window !== 'undefined' && window.IfluxRoutes;
+  if (R && R.to) return R.to(key);
+  var fb = { pricing: '/goi-cuoc', membership: '/thanh-vien', loyalty: '/thanh-vien' };
+  return fb[key] || '/';
+}
+
+function applyConsumerLinks(root) {
+  if (!root) return;
+  root.querySelectorAll('[data-route-key]').forEach(function (a) {
+    a.href = routeUrl(a.getAttribute('data-route-key'));
+  });
+}
+
 var CORE_TIERS = [
   [ASSET + 'faq-store.js'],
   [ASSET + 'faq-page.js']
@@ -35,8 +49,8 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
           <p>Đội ngũ iFlux sẵn sàng hỗ trợ qua email hoặc xem thêm tại trang Gói cước &amp; Membership.</p>
           <div class="ifx-faq-support__actions">
             <a href="mailto:support@iflux.vn" class="ix-btn ix-btn-primary"><i class="ti ti-mail"></i> support@iflux.vn</a>
-            <a href="/goi-cuoc" class="ix-btn ix-btn-outline"><i class="ti ti-crown"></i> Gói cước</a>
-            <a href="/thanh-vien" class="ix-btn ix-btn-outline"><i class="ti ti-gift"></i> Membership</a>
+            <a href="#" data-route-key="pricing" class="ix-btn ix-btn-outline"><i class="ti ti-crown"></i> Gói cước</a>
+            <a href="#" data-route-key="membership" class="ix-btn ix-btn-outline"><i class="ti ti-gift"></i> Membership</a>
           </div>
         </div>
       </div>
@@ -44,6 +58,7 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
 
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
+  applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();

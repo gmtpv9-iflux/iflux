@@ -261,7 +261,7 @@
           '<span class="ix-badge ix-badge-info">Top biến động</span>' +
           '<div class="ifx-stock-row__actions">' +
             '<button type="button" class="ifx-stock-row__alert" disabled aria-label="Cảnh báo"><i class="ti ti-bell"></i></button>' +
-            '<button type="button" class="ifx-stock-row__heart" disabled aria-label="Theo dõi"><i class="ti ti-heart"></i></button>' +
+            '<button type="button" class="ifx-follow ifx-heart" disabled aria-label="Theo dõi"><i class="ti ti-bookmark"></i></button>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -300,8 +300,9 @@
       return '<span class="ifx-flow-panel__net is-up">+₫120B</span>';
     }
     if (pt === 'com-author') {
-      return '<div class="ifx-com-post__author"><span class="ifx-com-card__avatar ix-avatar ix-avatar-sm ix-avatar-accent">NA</span>' +
-        '<span class="ifx-com-post__author-name">Nguyễn Văn A</span><span class="ix-chip ix-chip-tier-premium">Premium</span></div>';
+      /* Item vẫn dùng trên bài chi tiết — không gắn feed card */
+      return '<div class="ifx-com-article__author" style="display:flex;align-items:center;gap:8px"><span class="ifx-com-card__avatar ix-avatar ix-avatar-sm ix-avatar-accent">NA</span>' +
+        '<span>Nguyễn Văn A</span><span class="ix-chip ix-chip-tier-premium">Premium</span></div>';
     }
     if (pt === 'com-title') {
       return '<div class="ifx-com-post__title-row"><span class="ifx-com-post__time">2h</span><span class="ifx-com-post__title-sep">·</span>' +

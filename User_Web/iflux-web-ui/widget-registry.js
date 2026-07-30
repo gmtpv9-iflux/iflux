@@ -484,25 +484,17 @@
     for (var p = 0; p < PAGE_SIDEBAR_COMPONENTS.length; p++) {
       if (PAGE_SIDEBAR_COMPONENTS[p].type === type) return PAGE_SIDEBAR_COMPONENTS[p];
     }
-    /* Fallback membership từ Tầng 4 (qua facade WidgetLibraryCatalog) */
-    var cat = global.WidgetLibraryCatalog || global.PlatformLayersWidgets;
+    /* Fallback membership từ Tầng 4 — L4RuntimeReader (ABH E6) */
+    var cat = global.L4RuntimeReader;
     if (!cat) return null;
-    var can = (cat.canonicalWidgetId ? cat.canonicalWidgetId(type) : type);
-    var libs = cat.allWidgetIdsInLibrary
-      ? cat.allWidgetIdsInLibrary()
-      : (cat.widgetIds ? cat.widgetIds() : []);
+    var can = type;
+    var libs = cat.widgetIds ? cat.widgetIds() : [];
     if (libs.indexOf(can) < 0 && libs.indexOf(type) < 0) return null;
-    var specs = cat.WIDGET_SPECS || {};
-    var spec = specs[can] || specs[type] || {};
-    var meta = global.PlatformLayersWidgets && PlatformLayersWidgets.entitlementMeta
-      ? PlatformLayersWidgets.entitlementMeta(can)
-      : null;
-    if (meta) {
-      spec = { title: meta.title, description: meta.description, tier: meta.tier };
-    }
-    var dep = cat.getPageDeploy
-      ? cat.getPageDeploy(can)
-      : (cat.widgetDeploy ? cat.widgetDeploy(can) : { pages: ['dashboard'] });
+    var meta = cat.entitlementMeta ? cat.entitlementMeta(can) : null;
+    var spec = meta
+      ? { title: meta.title, description: meta.description, tier: meta.tier }
+      : { title: can, description: '', tier: 'free' };
+    var dep = meta && meta.pages ? { pages: meta.pages } : { pages: ['dashboard'] };
     var pages = dep.pages || ['dashboard'];
     var group = 'market';
     var groupLabel = 'Thị trường';
@@ -529,8 +521,7 @@
    * Bỏ qua pageComponent (WGT-PRF-*) — thành phần trang, không chọn trong Tùy chỉnh.
    */
   function grouped() {
-    var cat = global.WidgetLibraryCatalog;
-    var P = global.PlatformLayersWidgets;
+    var P = global.L4RuntimeReader;
     var order = ['market', 'flow', 'community', 'personal'];
     var map = {};
 
@@ -541,9 +532,7 @@
       map[w.group].items.push(w);
     }
 
-    var ids = null;
-    if (P && P.widgetIds) ids = P.widgetIds();
-    else if (cat && cat.allWidgetIdsInLibrary) ids = cat.allWidgetIdsInLibrary();
+    var ids = P && P.widgetIds ? P.widgetIds() : null;
 
     if (ids && ids.length) {
       ids.forEach(function (wid) {

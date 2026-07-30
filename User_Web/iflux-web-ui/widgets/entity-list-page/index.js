@@ -27,7 +27,8 @@ var CORE_TIERS = [
   [
     ASSET + 'iflux-market-quotes.js',
     ASSET + 'watchlist-store.js',
-    ASSET + 'alert-store.js'
+    ASSET + 'alert-store.js',
+    ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
     ASSET + 'watchlist-ui.js',

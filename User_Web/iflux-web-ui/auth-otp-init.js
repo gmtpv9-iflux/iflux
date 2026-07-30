@@ -1,6 +1,9 @@
 /* Phase A extracted from auth/verify-otp.html */
 if (window.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn()) {
-  location.replace('../home/index.html');
+  location.replace(
+    (window.IfluxAuth.appHomePath && IfluxAuth.appHomePath()) ||
+    (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/cong-dong')
+  );
 }
 
 var pending = IfluxAuth.loadPendingVerification();
@@ -104,7 +107,10 @@ function submitVerify() {
   })
     .then(function () {
       ixToast('Xác thực thành công!', 'success');
-      location.replace('../home/index.html');
+      location.replace(
+        (IfluxAuth.appHomePath && IfluxAuth.appHomePath()) ||
+        (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/cong-dong')
+      );
     })
     .catch(function (e) {
       if (btn) btn.disabled = false;

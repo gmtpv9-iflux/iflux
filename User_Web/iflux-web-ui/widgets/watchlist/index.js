@@ -7,7 +7,8 @@
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
-var V = 'phaseBExit20260721c';
+var V = 'followFound20260724';
+var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
 
 export const meta = { id: 'WGT-WAT-001', title: 'Theo dõi' };
 
@@ -18,6 +19,7 @@ export async function mount(el, ctx) {
     /* W1/OI-H2: IfluxBlockTemplates do Shell — skip list Feature */
     { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + V },
     { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=' + V },
+    { global: 'IfluxHeartAction', src: FOUNDATION + 'heart-action.js?v=' + V },
     { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=' + V },
     { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=' + V },
     { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=' + V },

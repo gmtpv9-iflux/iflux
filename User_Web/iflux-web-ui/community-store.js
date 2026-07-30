@@ -1,11 +1,18 @@
-/* Cộng đồng — bài viết, tương tác, SEO/GEO (sandbox localStorage) */
+/* Cộng đồng — bài viết / tương tác.
+ * Ownership SoT:
+ *   Server (API/DB) = Source of Truth nghiệp vụ
+ *   memStore        = runtime state (mirror)
+ *   localStorage    = CẤM cho dữ liệu nghiệp vụ (comment/like/post body)
+ */
 (function (global) {
   'use strict';
 
-  var STORAGE_KEY = 'iflux_community_v2';
-  var LEGACY_STORAGE_KEYS = ['iflux_community_v1'];
-  var WRITE_TIERS = { premium: 1, elite: 1, ctv: 1, partner: 1, admin: 1 };
-  var EXPERT_WRITE_TIERS = { elite: 1, ctv: 1, partner: 1, admin: 1 };
+  var LEGACY_BUSINESS_KEYS = ['iflux_community_v2', 'iflux_community_v1'];
+  /* Runtime SoT mirror — không ghi nghiệp vụ xuống localStorage */
+  var memStore = null;
+  /* User Web: tắt viết bài mọi tier (bài chuyên gia quản lý ở Admin — giai đoạn sau). */
+  var WRITE_TIERS = {};
+  var EXPERT_WRITE_TIERS = {};
   var CONTENT_TYPE_NEWS = 'news';
   var CONTENT_TYPE_EXPERT = 'expert';
   var ADMIN_AUTHOR = {
@@ -91,9 +98,13 @@
       var linked = text.replace(/\b([A-Z]{2,5})\b/g, function (sym) {
         if (!known[sym]) return sym;
         if (!toLink[sym]) return sym;
-        var symHref = global.IfluxSeoUrl
-          ? IfluxSeoUrl.stockHref(sym)
-          : '/co-phieu/' + encodeURIComponent(sym);
+        var symHref = global.IfluxHref
+          ? IfluxHref.forCanonical(global.IfluxSeoUrl
+            ? IfluxSeoUrl.stockHref(sym)
+            : '/co-phieu/' + encodeURIComponent(sym))
+          : (global.IfluxSeoUrl
+            ? IfluxSeoUrl.stockHref(sym)
+            : '/co-phieu/' + encodeURIComponent(sym));
         return '<a class="ifx-ticker-link" href="' + symHref + '">' + sym + '</a>';
       });
       return '>' + linked + '<';
@@ -117,13 +128,13 @@
 
   function normalizePostRecord(post) {
     if (!post.status) post.status = 'published';
+    if (post.content_type === 'article' || post.content_type === 'insight') {
+      post.content_type = CONTENT_TYPE_NEWS;
+    }
     if (!post.content_type) {
       post.content_type = String(post.id || '').indexOf('post_expert_') === 0
         ? CONTENT_TYPE_EXPERT
         : CONTENT_TYPE_NEWS;
-    }
-    if (post.content_type === CONTENT_TYPE_NEWS && String(post.id || '').indexOf('post_seed_') === 0) {
-      post.author = ADMIN_AUTHOR;
     }
     if (!post.author) post.author = { display_name: 'Thành viên', tier: 'premium', tier_label: 'Premium' };
     if (!post.stats) {
@@ -139,8 +150,18 @@
     if (!post.title) post.title = 'Bài viết cộng đồng';
     post.chu_de_tags = normalizePrimaryStory(post.chu_de_tags || post.story_tags);
     post.story_tags = post.chu_de_tags;
-    post.tickers = extractTickersFromPost(post.title, post.excerpt, post.body_html);
+    var existingTickers = Array.isArray(post.tickers) ? post.tickers.slice() : [];
+    var extracted = extractTickersFromPost(post.title, post.excerpt, post.body_html || post.body);
+    var seenTk = {};
+    post.tickers = existingTickers.concat(extracted).filter(function (t) {
+      var u = String(t || '').toUpperCase();
+      if (!u || seenTk[u]) return false;
+      seenTk[u] = true;
+      return true;
+    });
+    if (!post.body_html && post.body) post.body_html = post.body;
     post.body_html = linkifyTickersInHtml(post.body_html, post.tickers);
+    /* Metadata SoT chỉ từ API — CẤM migrate cover/seo → metadata hoặc tự sinh og_image. */
     if (global.IfluxCommunityGeoAi) {
       if (!post.geo_ai || !post.geo_ai.summary) {
         var seed = IfluxCommunityGeoAi.seedGeoAiById(post.id);
@@ -153,846 +174,179 @@
     return post;
   }
 
-  function readAll() {
-    try {
-      LEGACY_STORAGE_KEYS.forEach(function (k) {
-        try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
-      });
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var data = JSON.parse(raw);
-        if (data && Array.isArray(data.posts)) {
-          data.posts.forEach(function (p) {
-            if (p && p.seo && p.seo.og_image && String(p.seo.og_image).indexOf('/og/community/') >= 0) {
-              p.seo.og_image = '';
-            }
-          });
-        }
-        return data;
-      }
-    } catch (e) { /* ignore */ }
-    return null;
+  function purgeLegacyBusinessStorage() {
+    LEGACY_BUSINESS_KEYS.forEach(function (k) {
+      try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
+    });
   }
 
   function writeAll(data, opts) {
     opts = opts || {};
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    memStore = data;
+    /* Cấm persist nghiệp vụ xuống localStorage */
+    purgeLegacyBusinessStorage();
     if (opts.silent) return;
     document.dispatchEvent(new CustomEvent('iflux-community-change'));
   }
 
+  /* Seed hardcode đã gỡ — nguồn sự thật = API / community_posts (DB). */
   function seedPosts() {
-    var ts = nowIso();
-    return [
-      {
-        id: 'post_seed_hpg',
-        slug: 'hpg-tri-vong-thep-dau-tu-cong-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'HPG và chu kỳ thép: Cơ hội khi đầu tư công tăng tốc',
-        excerpt: 'Phân tích triển vọng HPG trong bối cảnh đầu tư công và xuất khẩu thép phục hồi — góc nhìn cho nhà đầu tư dài hạn tại Việt Nam.',
-        body_html:
-          '<p>HPG đang hưởng lợi từ hai làn sóng: đầu tư công hạ tầng và nhu cầu thép xây dựng nội địa.</p>' +
-          '<h2>Điểm nhấn cơ bản</h2><p>Biên lợi nhuận thép xây dựng cải thiện khi chi phí đầu vào ổn định.</p>' +
-          '<h2>Khuyến nghị</h2><p>Theo dõi vùng tích lũy, ưu tiên vị thế trung hạn khi dòng tiền ngành quay lại.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'dau-tu-cong', name: 'Đầu tư công' }],
-        tickers: ['HPG'],
-        seo: {
-          meta_title: 'HPG 2026: Triển vọng thép & đầu tư công | iFlux',
-          meta_description: 'Phân tích HPG trong chu kỳ đầu tư công 2026. Khuyến nghị đầu tư, thẻ chủ đề thép và xuất khẩu — nội dung Premium iFlux.',
-          focus_keyword: 'cổ phiếu HPG',
-          secondary_keywords: ['đầu tư công', 'ngành thép', 'HPG 2026'],
-          canonical_url: '',
-          og_title: 'HPG và chu kỳ thép 2026',
-          og_description: 'Góc nhìn Premium về HPG, đầu tư công và xuất khẩu thép.',
-          og_image: '',
-          og_image_alt: 'Biểu đồ ngành thép Việt Nam',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Việt Nam',
-          geo_keywords: ['đầu tư chứng khoán Việt Nam', 'cổ phiếu thép VN'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'AnalysisNewsArticle', faq: [{ q: 'HPG có phù hợp trung hạn?', a: 'Theo dõi khi dòng tiền ngành thép cải thiện và biên lợi nhuận ổn định.' }] },
-        author: { id: 'usr_ctv_01', display_name: 'Trần Anh Khoa', tier: 'ctv', tier_label: 'CTV' },
-        stats: { likes: 24, comments: 3, shares: 8, views: 412, favorites: 11 },
-        liked_by: [],
-        favorited_by: [],
-        comments: [
-          { id: 'c1', user_id: 'u2', user_name: 'Lan Phương', body: 'Hay, đợi HPG về vùng 27 xem thêm.', created_at: ts, likes: 12, shares: 3, replies: 4 },
-          { id: 'c2', user_id: 'u3', user_name: 'Đức Minh', body: 'Theo dõi thêm HSG cùng nhóm.', created_at: ts, likes: 5, shares: 1, replies: 1 }
-        ]
-      },
-      {
-        id: 'post_seed_fpt',
-        slug: 'fpt-ai-viet-nam-tang-truong-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'FPT trong làn sóng AI Việt Nam: Chủ đề tăng trưởng 2026',
-        excerpt: 'Đánh giá vị thế FPT khi doanh nghiệp Việt tăng chi cho chuyển đổi số và AI — liên kết chủ đề AI Việt Nam.',
-        body_html:
-          '<p>FPT duy trì tốc độ tăng trưởng dịch vụ CNTT và đẩy mạnh hợp đồng AI.</p>' +
-          '<h2>Catalyst</h2><p>Nhu cầu triển khai AI nội bộ tại doanh nghiệp lớn.</p>' +
-          '<h2>Rủi ro</h2><p>Biến động tỷ giá và cạnh tranh nhân sự AI.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ai-vn', name: 'AI Việt Nam' }],
-        tickers: ['FPT'],
-        seo: {
-          meta_title: 'FPT & AI Việt Nam 2026 — Khuyến nghị Premium | iFlux',
-          meta_description: 'Phân tích FPT trong chủ đề AI Việt Nam. SEO/GEO chuẩn, gắn mã FPT, bình luận cộng đồng Premium iFlux.',
-          focus_keyword: 'cổ phiếu FPT',
-          secondary_keywords: ['AI Việt Nam', 'FPT 2026'],
-          canonical_url: '',
-          og_title: 'FPT & AI Việt Nam 2026',
-          og_description: 'Khuyến nghị đầu tư FPT — làn sóng AI doanh nghiệp.',
-          og_image: '',
-          og_image_alt: 'FPT AI Việt Nam',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hà Nội',
-          geo_keywords: ['cổ phiếu công nghệ Việt Nam'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'NewsArticle', faq: [] },
-        author: { id: 'usr_demo_001', display_name: 'Nguyễn Văn Minh', tier: 'premium', tier_label: 'Premium' },
-        stats: { likes: 18, comments: 1, shares: 5, views: 286, favorites: 7 },
-        liked_by: [],
-        favorited_by: [],
-        comments: [
-          { id: 'c3', user_id: 'u4', user_name: 'Hùng Vũ', body: 'Theo dõi margin dịch vụ cloud quý tới.', created_at: ts, likes: 8, shares: 6, replies: 2 }
-        ]
-      },
-      {
-        id: 'post_seed_vcb',
-        slug: 'vcb-tang-von-ngan-hang-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'VCB tăng vốn: Ai hưởng lợi nhất trong hệ sinh thái Vietcombank?',
-        excerpt: 'Phân tích tăng vốn VCB và tác động NIM.',
-        body_html: '<p>VCB triển khai kế hoạch tăng vốn lớn.</p><h2>Tác động</h2><p>ROE và room tín dụng.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'tang-von-nh', name: 'Tăng vốn NH' }],
-        tickers: ['VCB', 'STB'],
-        seo: { meta_title: 'VCB tăng vốn 2026 | iFlux', meta_description: 'Phân tích VCB', og_image: '', robots: 'index,follow' },
-        geo: { language: 'vi-VN', country: 'VN', region: 'Việt Nam', target_locale: 'vi_VN' },
-        schema: { type: 'NewsArticle', faq: [] },
-        author: { id: 'u5', display_name: 'Lê Minh', tier: 'premium', tier_label: 'Premium' },
-        stats: { likes: 89, comments: 24, shares: 15, views: 520, favorites: 20 },
-        liked_by: [], favorited_by: [], comments: []
-      },
-      {
-        id: 'post_seed_vhm',
-        slug: 'vhm-nghi-quyet-bds-tphcm',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Nghị quyết tháo gỡ pháp lý BĐS: VHM và chuỗi căn hộ TP.HCM',
-        excerpt: 'BĐS sau Nghị quyết 18 — vùng mua VHM.',
-        body_html: '<p>VHM hưởng lợi từ pháp lý được tháo gỡ.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'can-ho-hcm', name: 'Căn hộ TP.HCM' }],
-        tickers: ['VHM', 'VIC'],
-        seo: {
-          meta_title: 'VHM: Nghị quyết tháo gỡ BĐS TP.HCM — Phân tích 2026 | iFlux',
-          meta_description: 'Phân tích VHM sau Nghị quyết tháo gỡ pháp lý BĐS TP.HCM. Giá, dòng tiền, chủ đề căn hộ và khuyến nghị từ cộng đồng Premium iFlux.',
-          focus_keyword: 'cổ phiếu VHM',
-          secondary_keywords: ['Vinhomes', 'BĐS TP.HCM', 'Nghị quyết 18', 'VHM 2026'],
-          canonical_url: 'https://iflux.vn/cong-dong/bai-viet/post_seed_vhm',
-          og_title: 'VHM và chuỗi căn hộ TP.HCM sau Nghị quyết',
-          og_description: 'Góc nhìn cộng đồng về VHM trong bối cảnh tháo gỡ pháp lý BĐS.',
-          og_image: '',
-          og_image_alt: 'Vinhomes TP.HCM',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'TP.HCM',
-          geo_keywords: ['đầu tư bất động sản TP.HCM', 'cổ phiếu VHM Việt Nam'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'Article', faq: [] },
-        author: { id: 'u6', display_name: 'Hoàng Nam', tier: 'ctv', tier_label: 'CTV' },
-        stats: { likes: 178, comments: 52, shares: 33, views: 890, favorites: 45 },
-        liked_by: [], favorited_by: [], comments: []
-      },
-      {
-        id: 'post_seed_ssi',
-        slug: 'ssi-dong-tien-chung-khoan-tuan',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'SSI và dòng tiền nhóm chứng khoán: Trade ngắn hạn tuần này',
-        excerpt: 'Thanh khoản SSI, VND tăng — tín hiệu ngắn hạn.',
-        body_html: '<p>Nhóm CK hưởng lợi khi VN-Index vượt vùng tích lũy.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'nghi-quyet', name: 'Nghị quyết NN' }],
-        tickers: ['SSI', 'VND', 'HCM'],
-        seo: { meta_title: 'SSI CK tuần | iFlux', meta_description: 'SSI phân tích', og_image: '', robots: 'index,follow' },
-        geo: { language: 'vi-VN', country: 'VN', target_locale: 'vi_VN' },
-        schema: { type: 'NewsArticle', faq: [] },
-        author: { id: 'u7', display_name: 'Anh Nguyên', tier: 'premium', tier_label: 'Premium' },
-        stats: { likes: 96, comments: 31, shares: 18, views: 410, favorites: 22 },
-        liked_by: [], favorited_by: [], comments: []
-      },
-      {
-        id: 'post_seed_mwg',
-        slug: 'mwg-ban-le-phuc-hoi-fdi',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'MWG trong chủ đề FDI 2026: Bán lẻ phục hồi đến đâu?',
-        excerpt: 'MWG và FDI — kỳ vọng doanh thu.',
-        body_html: '<p>FDI tăng hỗ trợ sức mua bán lẻ.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'fdi', name: 'FDI 2026' }],
-        tickers: ['MWG'],
-        seo: { meta_title: 'MWG FDI | iFlux', meta_description: 'MWG', og_image: '', robots: 'index,follow' },
-        geo: { language: 'vi-VN', country: 'VN', target_locale: 'vi_VN' },
-        schema: { type: 'Article', faq: [] },
-        author: { id: 'u8', display_name: 'Violet Long', tier: 'premium', tier_label: 'Premium' },
-        stats: { likes: 134, comments: 45, shares: 29, views: 670, favorites: 38 },
-        liked_by: [], favorited_by: [], comments: []
-      },
-      {
-        id: 'post_seed_stb',
-        slug: 'stb-lai-suat-giam-ngan-hang',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Lãi suất giảm: STB và nhóm ngân hàng mid-cap có gì khác?',
-        excerpt: 'Chu kỳ lãi suất giảm — STB vs VCB.',
-        body_html: '<p>Margin cho vay phục hồi khi lãi suất hạ nhiệt.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'lai-suat', name: 'Lãi suất giảm' }],
-        tickers: ['STB', 'VCB'],
-        seo: { meta_title: 'STB lãi suất | iFlux', meta_description: 'STB', og_image: '', robots: 'index,follow' },
-        geo: { language: 'vi-VN', country: 'VN', target_locale: 'vi_VN' },
-        schema: { type: 'NewsArticle', faq: [] },
-        author: { id: 'u9', display_name: 'Trần Nguyên', tier: 'ctv', tier_label: 'CTV' },
-        stats: { likes: 142, comments: 38, shares: 21, views: 780, favorites: 40 },
-        liked_by: [], favorited_by: [], comments: []
-      },
-      {
-        id: 'post_seed_vic',
-        slug: 'vic-ev-xe-dien-vinfast',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'VinFast và EV xe điện: VIC — cơ hội hay bẫy giá?',
-        excerpt: 'EV story và VIC ecosystem.',
-        body_html: '<p>EV là catalyst dài hạn cho họ VIN.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ev', name: 'EV xe điện' }],
-        tickers: ['VIC', 'VHM'],
-        seo: { meta_title: 'VIC EV | iFlux', meta_description: 'VIC', og_image: '', robots: 'index,follow' },
-        geo: { language: 'vi-VN', country: 'VN', target_locale: 'vi_VN' },
-        schema: { type: 'AnalysisNewsArticle', faq: [] },
-        author: { id: 'u10', display_name: 'Phạm Khoa', tier: 'premium', tier_label: 'Premium' },
-        stats: { likes: 214, comments: 67, shares: 44, views: 1200, favorites: 88 },
-        liked_by: [], favorited_by: [], comments: []
-      }
-    ];
+    return [];
   }
 
   function seedExpertPosts() {
-    var ts = nowIso();
-    var eliteA = {
-      id: 'usr_elite_01',
-      display_name: 'Lê Minh Quân',
-      tier: 'elite',
-      tier_label: 'Elite'
-    };
-    var eliteB = {
-      id: 'usr_elite_02',
-      display_name: 'Nguyễn Thảo Vy',
-      tier: 'elite',
-      tier_label: 'Elite'
-    };
-
-    return [
-      {
-        id: 'post_expert_hpg',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'hpg-phan-tich-chuyen-sau-thep-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'HPG — Góc nhìn chuyên gia: Chu kỳ thép và biên lợi nhuận Q2/2026',
-        excerpt: 'Phân tích chuyên sâu HPG: cung cầu thép xây dựng, xuất khẩu và điểm vào vùng giá trị — bài viết Elite chuẩn SEO/GEO.',
-        body_html:
-          '<p>HPG đang ở giai đoạn tích lũy khi kỳ vọng đầu tư công được định giá một phần vào giá cổ phiếu.</p>' +
-          '<h2>Khung phân tích</h2><p>Biên gộp thép xây dựng phục hồi khi giá quặng ổn định; theo dõi tỷ lệ nợ/ròng vốn chủ sở hữu.</p>' +
-          '<h2>Kịch bản</h2><p>Cơ sở: sideway 2–3 quý. Tích cực: breakout khi volume ngành xác nhận.</p>' +
-          '<h2>Rủi ro</h2><p>Thép Trung Quốc giá rẻ và biến động tỷ giá USD/VND.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'thep-xk', name: 'Xuất khẩu thép' }],
-        tickers: ['HPG', 'HSG'],
-        seo: {
-          meta_title: 'HPG chuyên gia 2026: Chu kỳ thép & biên lợi nhuận | iFlux Elite',
-          meta_description: 'Phân tích chuyên gia Elite về HPG — chu kỳ thép, xuất khẩu, đầu tư công. SEO/GEO đầy đủ, FAQ schema.',
-          focus_keyword: 'phân tích HPG chuyên gia',
-          secondary_keywords: ['cổ phiếu HPG 2026', 'ngành thép Việt Nam', 'HPG khuyến nghị'],
-          canonical_url: '',
-          og_title: 'HPG — Góc nhìn chuyên gia Elite',
-          og_description: 'Chu kỳ thép và biên lợi nhuận HPG 2026.',
-          og_image: '',
-          og_image_alt: 'Phân tích HPG Elite',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hải Phòng',
-          geo_keywords: ['đầu tư cổ phiếu thép Việt Nam', 'HPG phân tích chuyên gia'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'HPG có phù hợp tích lũy trung hạn?', a: 'Theo dõi khi biên gộp cải thiện và dòng tiền ngành thép quay lại.' },
-            { q: 'Rủi ro chính với HPG?', a: 'Cạnh tranh thép nhập khẩu và chu kỳ BĐS chậm hơn kỳ vọng.' }
-          ]
-        },
-        author: eliteA,
-        stats: { likes: 56, comments: 14, shares: 22, views: 1840, favorites: 31 },
-        liked_by: [],
-        favorited_by: [],
-        comments: [
-          { id: 'ex_c1', user_id: 'u2', user_name: 'Lan Phương', body: 'Bài chuyên sâu, cảm ơn anh Quân.', created_at: ts, likes: 8, shares: 1, replies: 0 }
-        ]
-      },
-      {
-        id: 'post_expert_banking',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'nganh-ngan-hang-nim-roe-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Ngành Ngân hàng: NIM, ROE và chu kỳ tăng vốn — Góc nhìn Elite',
-        excerpt: 'Đánh giá chu kỳ NIM ngành ngân hàng Việt Nam 2026 — VCB, TCB, MBB và room tăng trưởng tín dụng.',
-        body_html:
-          '<p>Ngành ngân hàng chuyển từ kỳ vọng giảm lãi suất sang giai đoạn chọn lọc theo chất lượng tăng vốn.</p>' +
-          '<h2>NIM và chi phí vốn</h2><p>Biên NIM có thể chạm đáy rồi bật nhẹ khi huy động ổn định.</p>' +
-          '<h2>Phân hóa cổ phiếu</h2><p>Nhóm vốn chủ lớn (VCB, TCB) vs mid-cap (MBB, STB) — khác biệt về kế hoạch tăng vốn.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'tang-von-nh', name: 'Tăng vốn NH' }],
-        tickers: ['VCB', 'TCB', 'MBB', 'STB'],
-        seo: {
-          meta_title: 'Ngân hàng VN 2026: NIM & ROE — Phân tích Elite | iFlux',
-          meta_description: 'Bài chuyên gia Elite về ngành ngân hàng: NIM, ROE, tăng vốn VCB TCB MBB. Chuẩn SEO/GEO.',
-          focus_keyword: 'phân tích ngành ngân hàng 2026',
-          secondary_keywords: ['NIM ngân hàng', 'VCB TCB', 'ROE ngân hàng Việt Nam'],
-          og_title: 'Ngành Ngân hàng — Góc nhìn Elite',
-          og_description: 'NIM, ROE và chu kỳ tăng vốn 2026.',
-          og_image: '',
-          og_image_alt: 'Phân tích ngành ngân hàng',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Việt Nam',
-          geo_keywords: ['cổ phiếu ngân hàng Việt Nam', 'đầu tư VCB TCB'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'Ngành ngân hàng 2026 thuận lợi không?', a: 'Thuận nếu tín dụng tăng ổn định và NIM không bị bóp thêm.' }
-          ]
-        },
-        author: eliteB,
-        stats: { likes: 72, comments: 19, shares: 28, views: 2100, favorites: 44 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_vin',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'ho-vin-ecosystem-vic-vhm-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Họ VIN: Định giá hệ sinh thái VIC–VHM sau chu kỳ EV',
-        excerpt: 'Chuyên gia Elite phân tích họ VIN — VIC, VHM, VRE: catalyst EV, BĐS và điểm hội tụ dòng tiền.',
-        body_html:
-          '<p>Họ VIN cần được nhìn như một portfolio có tương quan dòng tiền, không chỉ từng mã riêng lẻ.</p>' +
-          '<h2>VIC & VinFast</h2><p>EV là option dài hạn — discount NAV phản ánh kỳ vọng burn rate.</p>' +
-          '<h2>VHM</h2><p>Tháo gỡ pháp lý BĐS hỗ trợ bán hàng căn hộ — sensitivity theo lãi suất.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ev', name: 'EV xe điện' }],
-        tickers: ['VIC', 'VHM', 'VRE'],
-        seo: {
-          meta_title: 'Họ VIN VIC VHM 2026 — Phân tích Elite | iFlux',
-          meta_description: 'Phân tích chuyên gia Elite họ VIN: VIC, VHM, EV và BĐS. SEO/GEO schema FAQ.',
-          focus_keyword: 'họ VIN cổ phiếu',
-          secondary_keywords: ['VIC VHM', 'VinFast đầu tư', 'hệ sinh thái VIN'],
-          og_title: 'Họ VIN — Góc nhìn Elite',
-          og_description: 'Định giá ecosystem VIC–VHM 2026.',
-          og_image: '',
-          og_image_alt: 'Họ VIN phân tích',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hà Nội',
-          geo_keywords: ['cổ phiếu Vingroup', 'đầu tư VIC VHM'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'AnalysisNewsArticle', faq: [] },
-        author: eliteA,
-        stats: { likes: 91, comments: 27, shares: 35, views: 2650, favorites: 58 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_ai',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'fpt-ai-viet-nam-chuyen-gia-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'AI Việt Nam & FPT: Lộ trình doanh thu từ hợp đồng enterprise',
-        excerpt: 'Elite đánh giá FPT trong chủ đề AI Việt Nam — margin dịch vụ, hợp đồng B2B và peer CMG.',
-        body_html:
-          '<p>FPT là proxy thanh khoản cao nhất cho chủ đề AI enterprise tại Việt Nam trong danh mục mid-large cap.</p>' +
-          '<h2>Doanh thu AI</h2><p>Tăng trưởng % AI trong tổng doanh thu là KPI theo dõi hàng quý.</p>' +
-          '<h2>Định giá</h2><p>So sánh P/E với nhóm IT regional — premium hợp lý nếu margin ổn định.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ai-vn', name: 'AI Việt Nam' }],
-        tickers: ['FPT', 'CMG'],
-        seo: {
-          meta_title: 'FPT AI Việt Nam 2026 — Bài chuyên gia Elite | iFlux',
-          meta_description: 'Phân tích Elite FPT & AI Việt Nam: doanh thu enterprise, margin, SEO/GEO.',
-          focus_keyword: 'FPT AI Việt Nam',
-          secondary_keywords: ['cổ phiếu FPT', 'AI doanh nghiệp Việt Nam'],
-          og_title: 'FPT & AI VN — Elite',
-          og_description: 'Lộ trình doanh thu AI enterprise.',
-          og_image: '',
-          og_image_alt: 'FPT AI phân tích',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hà Nội',
-          geo_keywords: ['đầu tư AI Việt Nam', 'cổ phiếu công nghệ FPT'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'FPT có phải cổ phiếu lõi cho chủ đề AI VN?', a: 'Là ứng viên thanh khoản tốt; cần theo dõi margin và tỷ trọng AI trong doanh thu.' }
-          ]
-        },
-        author: eliteB,
-        stats: { likes: 64, comments: 16, shares: 24, views: 1920, favorites: 37 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_vhm',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'vhm-bds-chuyen-gia-can-ho-tphcm',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'VHM & BĐS TP.HCM: Mô hình dòng tiền sau tháo gỡ pháp lý',
-        excerpt: 'Chuyên gia Elite phân tích VHM trong chủ đề căn hộ TP.HCM — presale, NAV và sensitivity lãi suất.',
-        body_html:
-          '<p>VHM là cổ phiếu nhạy với tốc độ hấp thụ căn hộ cao cấp tại TP.HCM sau giai đoạn pháp lý được cải thiện.</p>' +
-          '<h2>Presale & dòng tiền</h2><p>Theo dõi tỷ lệ bán hàng theo dự án và tiến độ giải ngân.</p>' +
-          '<h2>So sánh ngành</h2><p>Phân hóa với NVL, KDH về quỹ đất và leverage.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'can-ho-hcm', name: 'Căn hộ TP.HCM' }],
-        tickers: ['VHM', 'NVL', 'KDH'],
-        seo: {
-          meta_title: 'VHM BĐS TP.HCM — Phân tích Elite 2026 | iFlux',
-          meta_description: 'Bài chuyên gia Elite về VHM, căn hộ TP.HCM, dòng tiền BĐS. SEO/GEO đầy đủ.',
-          focus_keyword: 'phân tích VHM BĐS',
-          secondary_keywords: ['Vinhomes 2026', 'cổ phiếu bất động sản TP.HCM'],
-          og_title: 'VHM BĐS — Góc nhìn Elite',
-          og_description: 'Dòng tiền VHM sau tháo gỡ pháp lý.',
-          og_image: '',
-          og_image_alt: 'VHM phân tích BĐS',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'TP.HCM',
-          geo_keywords: ['đầu tư bất động sản TP.HCM', 'cổ phiếu VHM'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'AnalysisNewsArticle', faq: [] },
-        author: eliteA,
-        stats: { likes: 48, comments: 11, shares: 17, views: 1560, favorites: 29 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      }
-    ];
-  }
-
-  function seedExpertPosts() {
-    var ts = nowIso();
-    var eliteA = {
-      id: 'usr_elite_01',
-      display_name: 'Lê Minh Quân',
-      tier: 'elite',
-      tier_label: 'Elite'
-    };
-    var eliteB = {
-      id: 'usr_elite_02',
-      display_name: 'Nguyễn Thảo Vy',
-      tier: 'elite',
-      tier_label: 'Elite'
-    };
-
-    return [
-      {
-        id: 'post_expert_hpg',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'hpg-phan-tich-chuyen-sau-thep-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'HPG — Góc nhìn chuyên gia: Chu kỳ thép và biên lợi nhuận Q2/2026',
-        excerpt: 'Phân tích chuyên sâu HPG: cung cầu thép xây dựng, xuất khẩu và điểm vào vùng giá trị — bài viết Elite chuẩn SEO/GEO.',
-        body_html:
-          '<p>HPG đang ở giai đoạn tích lũy khi kỳ vọng đầu tư công được định giá một phần vào giá cổ phiếu.</p>' +
-          '<h2>Khung phân tích</h2><p>Biên gộp thép xây dựng phục hội khi giá quặng ổn định; theo dõi tỷ lệ nợ/ròng vốn chủ sở hữu.</p>' +
-          '<h2>Kịch bản</h2><p>Cơ sở: sideway 2–3 quý. Tích cực: breakout khi volume ngành xác nhận.</p>' +
-          '<h2>Rủi ro</h2><p>Thép Trung Quốc giá rẻ và biến động tỷ giá USD/VND.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'thep-xk', name: 'Xuất khẩu thép' }],
-        tickers: ['HPG', 'HSG'],
-        seo: {
-          meta_title: 'HPG chuyên gia 2026: Chu kỳ thép & biên lợi nhuận | iFlux Elite',
-          meta_description: 'Phân tích chuyên gia Elite về HPG — chu kỳ thép, xuất khẩu, đầu tư công. SEO/GEO đầy đủ, FAQ schema.',
-          focus_keyword: 'phân tích HPG chuyên gia',
-          secondary_keywords: ['cổ phiếu HPG 2026', 'ngành thép Việt Nam', 'HPG khuyến nghị'],
-          canonical_url: '',
-          og_title: 'HPG — Góc nhìn chuyên gia Elite',
-          og_description: 'Chu kỳ thép và biên lợi nhuận HPG 2026.',
-          og_image: '',
-          og_image_alt: 'Phân tích HPG Elite',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hải Phòng',
-          geo_keywords: ['đầu tư cổ phiếu thép Việt Nam', 'HPG phân tích chuyên gia'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'HPG có phù hợp tích lũy trung hạn?', a: 'Theo dõi khi biên gộp cải thiện và dòng tiền ngành thép quay lại.' },
-            { q: 'Rủi ro chính với HPG?', a: 'Cạnh tranh thép nhập khẩu và chu kỳ BĐS chậm hơn kỳ vọng.' }
-          ]
-        },
-        author: eliteA,
-        stats: { likes: 56, comments: 14, shares: 22, views: 1840, favorites: 31 },
-        liked_by: [],
-        favorited_by: [],
-        comments: [
-          { id: 'ex_c1', user_id: 'u2', user_name: 'Lan Phương', body: 'Bài chuyên sâu, cảm ơn anh Quân.', created_at: ts, likes: 8, shares: 1, replies: 0 }
-        ]
-      },
-      {
-        id: 'post_expert_banking',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'nganh-ngan-hang-nim-roe-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Ngành Ngân hàng: NIM, ROE và chu kỳ tăng vốn — Góc nhìn Elite',
-        excerpt: 'Đánh giá chu kỳ NIM ngành ngân hàng Việt Nam 2026 — VCB, TCB, MBB và room tăng trưởng tín dụng.',
-        body_html:
-          '<p>Ngành ngân hàng chuyển từ kỳ vọng giảm lãi suất sang giai đoạn chọn lọc theo chất lượng tăng vốn.</p>' +
-          '<h2>NIM và chi phí vốn</h2><p>Biên NIM có thể chạm đáy rồi bật nhẹ khi huy động ổn định.</p>' +
-          '<h2>Phân hóa cổ phiếu</h2><p>Nhóm vốn chủ lớn (VCB, TCB) vs mid-cap (MBB, STB) — khác biệt về kế hoạch tăng vốn.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'tang-von-nh', name: 'Tăng vốn NH' }],
-        tickers: ['VCB', 'TCB', 'MBB', 'STB'],
-        seo: {
-          meta_title: 'Ngân hàng VN 2026: NIM & ROE — Phân tích Elite | iFlux',
-          meta_description: 'Bài chuyên gia Elite về ngành ngân hàng: NIM, ROE, tăng vốn VCB TCB MBB. Chuẩn SEO/GEO.',
-          focus_keyword: 'phân tích ngành ngân hàng 2026',
-          secondary_keywords: ['NIM ngân hàng', 'VCB TCB', 'ROE ngân hàng Việt Nam'],
-          og_title: 'Ngành Ngân hàng — Góc nhìn Elite',
-          og_description: 'NIM, ROE và chu kỳ tăng vốn 2026.',
-          og_image: '',
-          og_image_alt: 'Phân tích ngành ngân hàng',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Việt Nam',
-          geo_keywords: ['cổ phiếu ngân hàng Việt Nam', 'đầu tư VCB TCB'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'Ngành ngân hàng 2026 thuận lợi không?', a: 'Thuận nếu tín dụng tăng ổn định và NIM không bị bóp thêm.' }
-          ]
-        },
-        author: eliteB,
-        stats: { likes: 72, comments: 19, shares: 28, views: 2100, favorites: 44 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_vin',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'ho-vin-ecosystem-vic-vhm-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'Họ VIN: Định giá hệ sinh thái VIC–VHM sau chu kỳ EV',
-        excerpt: 'Chuyên gia Elite phân tích họ VIN — VIC, VHM, VRE: catalyst EV, BĐS và điểm hội tụ dòng tiền.',
-        body_html:
-          '<p>Họ VIN cần được nhìn như một portfolio có tương quan dòng tiền, không chỉ từng mã riêng lẻ.</p>' +
-          '<h2>VIC & VinFast</h2><p>EV là option dài hạn — discount NAV phản ánh kỳ vọng burn rate.</p>' +
-          '<h2>VHM</h2><p>Tháo gờ pháp lý BĐS hỗ trợ bán hàng căn hộ — sensitivity theo lãi suất.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ev', name: 'EV xe điện' }],
-        tickers: ['VIC', 'VHM', 'VRE'],
-        seo: {
-          meta_title: 'Họ VIN VIC VHM 2026 — Phân tích Elite | iFlux',
-          meta_description: 'Phân tích chuyên gia Elite họ VIN: VIC, VHM, EV và BĐS. SEO/GEO schema FAQ.',
-          focus_keyword: 'họ VIN cổ phiếu',
-          secondary_keywords: ['VIC VHM', 'VinFast đầu tư', 'hệ sinh thái VIN'],
-          og_title: 'Họ VIN — Góc nhìn Elite',
-          og_description: 'Định giá ecosystem VIC–VHM 2026.',
-          og_image: '',
-          og_image_alt: 'Họ VIN phân tích',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hà Nội',
-          geo_keywords: ['cổ phiếu Vingroup', 'đầu tư VIC VHM'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'AnalysisNewsArticle', faq: [] },
-        author: eliteA,
-        stats: { likes: 91, comments: 27, shares: 35, views: 2650, favorites: 58 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_ai',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'fpt-ai-viet-nam-chuyen-gia-2026',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'AI Việt Nam & FPT: Lộ trình doanh thu từ hợp đồng enterprise',
-        excerpt: 'Elite đánh giá FPT trong chủ đề AI Việt Nam — margin dịch vụ, hợp đồng B2B và peer CMG.',
-        body_html:
-          '<p>FPT là proxy thanh khoản cao nhất cho chủ đề AI enterprise tại Việt Nam trong danh mục mid-large cap.</p>' +
-          '<h2>Doanh thu AI</h2><p>Tăng trưởng % AI trong tổng doanh thu là KPI theo dõi hàng quý.</p>' +
-          '<h2>Định giá</h2><p>So sánh P/E với nhóm IT regional — premium hợp lý nếu margin ổn định.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'ai-vn', name: 'AI Việt Nam' }],
-        tickers: ['FPT', 'CMG'],
-        seo: {
-          meta_title: 'FPT AI Việt Nam 2026 — Bài chuyên gia Elite | iFlux',
-          meta_description: 'Phân tích Elite FPT & AI Việt Nam: doanh thu enterprise, margin, SEO/GEO.',
-          focus_keyword: 'FPT AI Việt Nam',
-          secondary_keywords: ['cổ phiếu FPT', 'AI doanh nghiệp Việt Nam'],
-          og_title: 'FPT & AI VN — Elite',
-          og_description: 'Lộ trình doanh thu AI enterprise.',
-          og_image: '',
-          og_image_alt: 'FPT AI phân tích',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'Hà Nội',
-          geo_keywords: ['đầu tư AI Việt Nam', 'cổ phiếu công nghệ FPT'],
-          target_locale: 'vi_VN'
-        },
-        schema: {
-          type: 'AnalysisNewsArticle',
-          faq: [
-            { q: 'FPT có phải cổ phiếu lõi cho chủ đề AI VN?', a: 'Là ứng viên thanh khoản tốt; cần theo dõi margin và tỷ trọng AI trong doanh thu.' }
-          ]
-        },
-        author: eliteB,
-        stats: { likes: 64, comments: 16, shares: 24, views: 1920, favorites: 37 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      },
-      {
-        id: 'post_expert_vhm',
-        content_type: CONTENT_TYPE_EXPERT,
-        slug: 'vhm-bds-chuyen-gia-can-ho-tphcm',
-        status: 'published',
-        created_at: ts,
-        updated_at: ts,
-        published_at: ts,
-        title: 'VHM & BĐS TP.HCM: Mô hình dòng tiền sau tháo gỡ pháp lý',
-        excerpt: 'Chuyên gia Elite phân tích VHM trong chủ đề căn hộ TP.HCM — presale, NAV và sensitivity lãi suất.',
-        body_html:
-          '<p>VHM là cổ phiếu nhạy với tốc độ hấp thụ căn hộ cao cấp tại TP.HCM sau giai đoạn pháp lý được cải thiện.</p>' +
-          '<h2>Presale & dòng tiền</h2><p>Theo dõi tỷ lệ bán hàng theo dự án và tiến độ giải ngân.</p>' +
-          '<h2>So sánh ngành</h2><p>Phân hóa với NVL, KDH về quỹ đất và leverage.</p>',
-        chu_de_tags: [{ source: 'chu-de', sourceId: 'can-ho-hcm', name: 'Căn hộ TP.HCM' }],
-        tickers: ['VHM', 'NVL', 'KDH'],
-        seo: {
-          meta_title: 'VHM BĐS TP.HCM — Phân tích Elite 2026 | iFlux',
-          meta_description: 'Bài chuyên gia Elite về VHM, căn hộ TP.HCM, dòng tiền BĐS. SEO/GEO đầy đủ.',
-          focus_keyword: 'phân tích VHM BĐS',
-          secondary_keywords: ['Vinhomes 2026', 'cổ phiếu bất động sản TP.HCM'],
-          og_title: 'VHM BĐS — Góc nhìn Elite',
-          og_description: 'Dòng tiền VHM sau tháo gỡ pháp lý.',
-          og_image: '',
-          og_image_alt: 'VHM phân tích BĐS',
-          robots: 'index,follow'
-        },
-        geo: {
-          language: 'vi-VN',
-          country: 'VN',
-          region: 'TP.HCM',
-          geo_keywords: ['đầu tư bất động sản TP.HCM', 'cổ phiếu VHM'],
-          target_locale: 'vi_VN'
-        },
-        schema: { type: 'AnalysisNewsArticle', faq: [] },
-        author: eliteA,
-        stats: { likes: 48, comments: 11, shares: 17, views: 1560, favorites: 29 },
-        liked_by: [],
-        favorited_by: [],
-        comments: []
-      }
-    ];
+    return [];
   }
 
   function countPublished(posts) {
     return (posts || []).filter(function (p) {
-      return !p.status || p.status === 'published';
+      return !p.status || p.status === 'published' || p.status === 'published_rss';
     }).length;
   }
 
-  function mergeSeedPosts(data) {
-    var seeds = seedPosts().map(normalizePostRecord);
-    var ids = {};
-    data.posts.forEach(function (p) { if (p && p.id) ids[p.id] = true; });
-    seeds.forEach(function (p) {
-      if (!ids[p.id]) data.posts.push(p);
-    });
+  function isSeedId(id) {
+    var s = String(id || '');
+    return s.indexOf('post_seed_') === 0 || s.indexOf('post_expert_') === 0;
   }
 
-  function mergeExpertPosts(data) {
-    var seeds = seedExpertPosts().map(normalizePostRecord);
-    var ids = {};
-    data.posts.forEach(function (p) { if (p && p.id) ids[p.id] = true; });
-    seeds.forEach(function (p) {
-      if (!ids[p.id]) data.posts.push(p);
-    });
-  }
-
-  function repairStore(data) {
-    var changed = false;
-    data.posts.forEach(function (p) {
-      normalizePostRecord(p);
-    });
-    if (!countPublished(data.posts)) {
-      mergeSeedPosts(data);
-      data.posts.forEach(normalizePostRecord);
-      changed = true;
-    }
-    return changed;
+  function stripSeedPosts(posts) {
+    return (posts || []).filter(function (p) { return p && !isSeedId(p.id); });
   }
 
   function ensureStore() {
-    var data = readAll();
-    var migrated = false;
+    if (memStore && Array.isArray(memStore.posts)) return memStore;
+    memStore = { posts: [], version: 7, source: 'api' };
+    purgeLegacyBusinessStorage();
+    return memStore;
+  }
 
-    if (!data || !data.posts || !data.posts.length) {
-      data = {
-        posts: seedPosts().concat(seedExpertPosts()).map(normalizePostRecord),
-        version: 5
-      };
-      writeAll(data, { silent: true });
-      return data;
-    }
-
-    if (!data.version || data.version < 2) {
-      var seeds = seedPosts();
-      var ids = {};
-      data.posts.forEach(function (p) { ids[p.id] = true; });
-      seeds.forEach(function (p) {
-        if (!ids[p.id]) data.posts.push(p);
-      });
-      data.version = 2;
-      migrated = true;
-    }
-    if (!data.version || data.version < 3) {
-      data.posts.forEach(normalizePostRecord);
-      data.version = 3;
-      migrated = true;
-    }
-    data.posts.forEach(function (p) {
-      if (!p.status) {
-        p.status = 'published';
-        migrated = true;
+  function communityApiBase() {
+    try {
+      var host = String((global.location && location.hostname) || '').toLowerCase();
+      if (host === 'iflux.vn' || host === 'www.iflux.vn' || host.indexOf('staging.') === 0) {
+        return '/api';
       }
-    });
-    if (!data.version || data.version < 4) {
-      data.posts.forEach(function (p) {
-        if (global.IfluxCommunityGeoAi) {
-          if (!p.geo_ai || !p.geo_ai.summary) {
-            var seed = IfluxCommunityGeoAi.seedGeoAiById(p.id);
-            p.geo_ai = seed || IfluxCommunityGeoAi.generateDraft(p);
-          }
-          p.geo_ai = IfluxCommunityGeoAi.normalizeGeoAi(p);
-          p.schema = p.schema || { type: 'NewsArticle', faq: [] };
-          p.schema.faq = p.geo_ai.faq.slice();
-        }
-      });
-      data.version = 4;
-      migrated = true;
+    } catch (e) { /* ignore */ }
+    if (global.IfluxApiConfig && IfluxApiConfig.getBaseUrl) {
+      var b = IfluxApiConfig.getBaseUrl();
+      if (b) return String(b).replace(/\/$/, '');
     }
-    if (!data.version || data.version < 5) {
-      mergeExpertPosts(data);
-      data.posts.forEach(function (p) {
-        normalizePostRecord(p);
-      });
-      data.version = 5;
-      migrated = true;
-    }
+    return '/api';
+  }
 
-    if (migrated) writeAll(data, { silent: true });
-    if (repairStore(data)) {
-      writeAll(data, { silent: true });
+  function authToken() {
+    try {
+      if (global.IfluxAuth && IfluxAuth.getToken) return IfluxAuth.getToken();
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  function preserveSessionComments(incomingList) {
+    var prevCommentsByKey = {};
+    try {
+      var prev = memStore && Array.isArray(memStore.posts) ? memStore.posts : [];
+      prev.forEach(function (p) {
+        if (!p || !p.comments || !p.comments.length) return;
+        if (!p._commentsFromApi) return;
+        if (p.id) prevCommentsByKey['id:' + p.id] = p.comments;
+        if (p.slug) prevCommentsByKey['slug:' + p.slug] = p.comments;
+      });
+    } catch (e) { /* ignore */ }
+    return (incomingList || []).map(function (incoming) {
+      var kept = prevCommentsByKey['id:' + incoming.id]
+        || (incoming.slug && prevCommentsByKey['slug:' + incoming.slug])
+        || null;
+      if (kept) {
+        incoming.comments = kept;
+        incoming._commentsFromApi = true;
+        incoming.stats = Object.assign({}, incoming.stats || {}, { comments: kept.length });
+      } else if (!incoming.comments) {
+        incoming.comments = [];
+        incoming._commentsFromApi = false;
+      }
+      incoming.liked_by = incoming.liked_by || [];
+      incoming.favorited_by = incoming.favorited_by || [];
+      return incoming;
+    });
+  }
+
+  function normalizeIncomingList(raw) {
+    if (!Array.isArray(raw)) raw = [];
+    return preserveSessionComments(
+      raw.map(function (p) { return normalizePostRecord(p); }).filter(function (p) {
+        return p && p.id && !isSeedId(p.id);
+      })
+    );
+  }
+
+  /**
+   * Store chỉ nhận dữ liệu (SoT Ownership).
+   * CẤM IO — feed/article do IfluxCommunityApiBridge (Data Provider) fetch.
+   */
+  function setFeed(cards, opts) {
+    opts = opts || {};
+    var incoming = normalizeIncomingList(cards);
+    var data = ensureStore();
+    if (opts.replace === false || opts.merge) {
+      var byId = {};
+      (data.posts || []).forEach(function (p) {
+        if (p && p.id) byId[p.id] = p;
+      });
+      incoming.forEach(function (p) {
+        var prev = byId[p.id];
+        if (prev && prev.body_html && !p.body_html) {
+          p.body_html = prev.body_html;
+          if (prev.body) p.body = prev.body;
+          if (prev.seo) p.seo = prev.seo;
+        }
+        if (prev && prev.metadata && !p.metadata) {
+          p.metadata = prev.metadata;
+        }
+        if (prev && prev._commentsFromApi && prev.comments && prev.comments.length) {
+          p.comments = prev.comments;
+          p._commentsFromApi = true;
+        }
+        byId[p.id] = p;
+      });
+      data.posts = Object.keys(byId).map(function (k) { return byId[k]; });
+    } else {
+      data.posts = incoming;
     }
-    return data;
+    data.version = 7;
+    data.source = 'provider';
+    data.hydrated_at = nowIso();
+    writeAll(data);
+    return { ok: true, posts: data.posts, total: data.posts.length };
+  }
+
+  function setArticle(article) {
+    if (!article || !article.id) return { ok: false, reason: 'empty' };
+    var normalized = normalizeIncomingList([article])[0];
+    if (!normalized) return { ok: false, reason: 'invalid' };
+    var data = ensureStore();
+    var posts = data.posts || [];
+    var idx = -1;
+    for (var i = 0; i < posts.length; i++) {
+      if (posts[i].id === normalized.id || (normalized.slug && posts[i].slug === normalized.slug)) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      var prev = posts[idx];
+      if (prev._commentsFromApi && prev.comments && prev.comments.length && !normalized._commentsFromApi) {
+        normalized.comments = prev.comments;
+        normalized._commentsFromApi = true;
+      }
+      posts[idx] = normalized;
+    } else {
+      posts.unshift(normalized);
+    }
+    data.posts = posts;
+    data.source = 'provider';
+    data.hydrated_at = nowIso();
+    writeAll(data);
+    return { ok: true, post: normalized };
   }
 
   function canWrite(user) {
@@ -1008,8 +362,16 @@
     if (!source || !groupId) return true;
     var tax = global.IfluxWatchlistTaxonomy;
     var tags = post.story_tags || [];
+    var srcNorm = String(source);
+    var isStoryFamily = srcNorm === 'story' || srcNorm === 'chu-de' || srcNorm === 'cau-chuyen';
     if (tags.some(function (t) {
-      return t.source === source && String(t.sourceId) === String(groupId);
+      var ts = String(t.source || '');
+      var idOk = String(t.sourceId) === String(groupId);
+      if (!idOk) return false;
+      if (isStoryFamily) {
+        return !ts || ts === 'story' || ts === 'chu-de' || ts === 'cau-chuyen';
+      }
+      return ts === srcNorm;
     })) return true;
     if (!tax) return false;
     var group = tax.getGroup(source, groupId);
@@ -1068,7 +430,7 @@
     filter = filter || {};
     var posts = ensureStore().posts.filter(function (p) {
       if (filter.includeDrafts) return true;
-      return !p.status || p.status === 'published';
+      return !p.status || p.status === 'published' || p.status === 'published_rss';
     });
 
     if (filter.relatedTo) {
@@ -1099,9 +461,10 @@
         return postMatchesTaxonomy(p, filter.taxSource, filter.taxGroupId);
       });
     }
-    if (filter.storyId) {
+    if (filter.storyId || filter.chuDeId) {
+      var sid = filter.storyId || filter.chuDeId;
       posts = posts.filter(function (p) {
-        return postMatchesTaxonomy(p, 'story', filter.storyId);
+        return postMatchesTaxonomy(p, 'story', sid) || postMatchesTaxonomy(p, 'chu-de', sid);
       });
     }
     if (filter.topic) {
@@ -1159,6 +522,12 @@
         var cslug = String(p.category_slug || (p.category && p.category.slug) || '').toLowerCase();
         var cname = String(p.category_name || (p.category && (p.category.name || p.category.label)) || '').toLowerCase();
         return cid === ck || cslug === ck || cname === ck;
+      });
+    }
+    if (filter.excludeId != null && filter.excludeId !== '') {
+      var ex = String(filter.excludeId);
+      posts = posts.filter(function (p) {
+        return String(p.id || '') !== ex && String(p.slug || '') !== ex;
       });
     }
     if (filter.q) {
@@ -1495,6 +864,138 @@
     return ensureStore().posts.find(function (p) { return p.id === id; }) || null;
   }
 
+  /** Gắn / cập nhật 1 bài vào runtime store (không persist LS). Comment chỉ từ API. */
+  function upsertPostLocal(raw) {
+    if (!raw || !raw.id) return null;
+    var data = ensureStore();
+    var incoming = normalizePostRecord(Object.assign({}, raw));
+    var idx = data.posts.findIndex(function (p) {
+      return p.id === incoming.id || (incoming.slug && p.slug === incoming.slug);
+    });
+    if (idx >= 0) {
+      var prev = data.posts[idx];
+      /* Giữ thread đã hydrate từ comment API trong session */
+      if (prev._commentsFromApi && prev.comments && prev.comments.length) {
+        incoming.comments = prev.comments;
+        incoming._commentsFromApi = true;
+      } else {
+        incoming.comments = [];
+        incoming._commentsFromApi = false;
+      }
+      incoming.stats = Object.assign({}, incoming.stats || {}, {
+        comments: incoming._commentsFromApi
+          ? incoming.comments.length
+          : ((incoming.stats && incoming.stats.comments) || 0)
+      });
+      data.posts[idx] = incoming;
+    } else {
+      incoming.comments = [];
+      incoming._commentsFromApi = false;
+      data.posts.unshift(incoming);
+    }
+    writeAll(data, { silent: true });
+    return incoming;
+  }
+
+  function applyCommentsToPost(postKey, comments, total) {
+    var data = ensureStore();
+    var post = data.posts.find(function (p) {
+      return p.slug === postKey || p.id === postKey;
+    });
+    if (!post) return null;
+    post.comments = Array.isArray(comments) ? comments.slice() : [];
+    post._commentsFromApi = true;
+    post.stats = post.stats || {};
+    post.stats.comments = total != null ? total : post.comments.length;
+    writeAll(data, { silent: true });
+    return post;
+  }
+
+  /** GET comment SoT từ server → mirror vào memStore */
+  function loadComments(slugOrId, opts) {
+    opts = opts || {};
+    var key = String(slugOrId || '').trim();
+    if (!key) return Promise.reject(new Error('Thiếu bài viết'));
+    var url = communityApiBase() + '/community/posts/' + encodeURIComponent(key) + '/comments';
+    if (opts.limit) url += '?limit=' + encodeURIComponent(opts.limit);
+    return fetch(url, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          if (!res.ok) {
+            var msg = (body && body.error && body.error.message) || body.message || ('HTTP ' + res.status);
+            throw new Error(msg);
+          }
+          return body;
+        });
+      })
+      .then(function (body) {
+        var payload = (body && body.data) || body || {};
+        var list = payload.comments || [];
+        var total = payload.total != null ? payload.total : list.length;
+        var post = applyCommentsToPost(key, list, total);
+        return { ok: true, comments: list, total: total, post: post };
+      });
+  }
+
+  /**
+   * POST comment → Server SoT → cập nhật memStore.
+   * Trả Promise<{ post, comment }>. Không ghi localStorage.
+   */
+  function addComment(slug, user, bodyOrPayload) {
+    var payload = (bodyOrPayload && typeof bodyOrPayload === 'object')
+      ? bodyOrPayload
+      : { body: bodyOrPayload };
+    var body = String(payload.body || '').trim();
+    var image = payload.image || null;
+    if (!body && !image) return Promise.reject(new Error('Nhập nội dung hoặc đính kèm hình ảnh.'));
+    if (!user || !user.id) return Promise.reject(new Error('Đăng nhập để bình luận.'));
+
+    var data = ensureStore();
+    var post = data.posts.find(function (p) {
+      return p.slug === slug || p.id === slug;
+    }) || null;
+    if (!post) return Promise.reject(new Error('Bài viết không tồn tại.'));
+
+    var token = authToken();
+    if (!token || String(token).indexOf('mock_jwt_') === 0) {
+      return Promise.reject(new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.'));
+    }
+
+    var postKey = post.id || post.slug || slug;
+    var url = communityApiBase() + '/community/posts/' + encodeURIComponent(postKey) + '/comments';
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ body: body, image: image })
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (resp) {
+        if (!res.ok) {
+          var msg = (resp && resp.error && resp.error.message) || resp.message || ('HTTP ' + res.status);
+          throw new Error(msg);
+        }
+        return resp;
+      });
+    }).then(function (resp) {
+      var payloadOut = (resp && resp.data) || resp || {};
+      var comment = payloadOut.comment;
+      if (!comment) throw new Error('Server không trả bình luận.');
+      post.comments = post.comments || [];
+      /* Tránh trùng nếu đã có */
+      var exists = post.comments.some(function (c) { return c && c.id === comment.id; });
+      if (!exists) post.comments.unshift(comment);
+      post._commentsFromApi = true;
+      post.stats = post.stats || {};
+      post.stats.comments = payloadOut.total != null ? payloadOut.total : post.comments.length;
+      writeAll(data);
+      return { post: post, comment: comment };
+    });
+  }
+
   function uniqueSlug(base, excludeId) {
     var slug = slugify(base) || 'bai-viet';
     var posts = ensureStore().posts;
@@ -1508,7 +1009,7 @@
   }
 
   function savePost(payload, user) {
-    if (!canWrite(user)) throw new Error('Chỉ thành viên Premium trở lên mới được đăng bài.');
+    if (!canWrite(user)) throw new Error('Chức năng viết bài cộng đồng tạm đóng. Bài chuyên gia sẽ được quản lý ở giai đoạn sau.');
     var data = ensureStore();
     var ts = nowIso();
     var isNew = !payload.id;
@@ -1560,27 +1061,24 @@
         }).catch(function () { /* offline */ });
       }
     }
-    if (isNew && post.status === 'published' && global.IfluxInAppNotifications && global.IfluxProfileFollowStore && global.IfluxAuth) {
-      var session = IfluxAuth.getUser();
-      var authorId = (post.author && post.author.id) || (user && user.id);
-      if (session && authorId && session.id !== authorId && IfluxProfileFollowStore.isFollowing(session.id, authorId)) {
-        IfluxInAppNotifications.pushCommunityPost(session.id, { author: post.author, post: post });
-      }
-    }
     return post;
   }
 
   function bumpView(slug) {
-    var post = getPostBySlug(slug);
+    var data = ensureStore();
+    var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
     if (!post) return;
+    post.stats = post.stats || {};
     post.stats.views = (post.stats.views || 0) + 1;
-    writeAll(ensureStore());
+    writeAll(data);
   }
 
   function toggleLike(slug, userId) {
-    var post = getPostBySlug(slug);
+    var data = ensureStore();
+    var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
     if (!post || !userId) return post;
     post.liked_by = post.liked_by || [];
+    post.stats = post.stats || {};
     var idx = post.liked_by.indexOf(userId);
     if (idx >= 0) {
       post.liked_by.splice(idx, 1);
@@ -1589,14 +1087,16 @@
       post.liked_by.push(userId);
       post.stats.likes = (post.stats.likes || 0) + 1;
     }
-    writeAll(ensureStore());
+    writeAll(data);
     return post;
   }
 
   function toggleFavorite(slug, userId) {
-    var post = getPostBySlug(slug);
+    var data = ensureStore();
+    var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
     if (!post || !userId) return post;
     post.favorited_by = post.favorited_by || [];
+    post.stats = post.stats || {};
     var idx = post.favorited_by.indexOf(userId);
     if (idx >= 0) {
       post.favorited_by.splice(idx, 1);
@@ -1605,28 +1105,7 @@
       post.favorited_by.push(userId);
       post.stats.favorites = (post.stats.favorites || 0) + 1;
     }
-    writeAll(ensureStore());
-    return post;
-  }
-
-  function addComment(slug, user, body) {
-    body = (body || '').trim();
-    if (!body) throw new Error('Nhập nội dung bình luận.');
-    var post = getPostBySlug(slug);
-    if (!post) throw new Error('Bài viết không tồn tại.');
-    post.comments = post.comments || [];
-    post.comments.push({
-      id: uid('cmt'),
-      user_id: user.id || 'anon',
-      user_name: user.display_name || 'Thành viên',
-      body: body,
-      created_at: nowIso(),
-      likes: 0,
-      shares: 0,
-      replies: 0
-    });
-    post.stats.comments = post.comments.length;
-    writeAll(ensureStore());
+    writeAll(data);
     return post;
   }
 
@@ -1641,11 +1120,12 @@
     var seo = post.seo || {};
     var geo = post.geo || {};
     var schema = post.schema || {};
+    var meta = post.metadata || {};
     var ld = {
       '@context': 'https://schema.org',
       '@type': schema.type || 'NewsArticle',
-      headline: post.title,
-      description: post.excerpt || seo.meta_description,
+      headline: meta.title,
+      description: meta.description,
       datePublished: post.published_at || post.created_at,
       dateModified: post.updated_at,
       inLanguage: geo.language || 'vi-VN',
@@ -1658,13 +1138,13 @@
         name: 'iFlux',
         logo: { '@type': 'ImageObject', url: 'https://iflux.vn/logo.png' }
       },
-      mainEntityOfPage: pageUrl,
+      mainEntityOfPage: pageUrl || meta.canonical || meta.url,
       keywords: [seo.focus_keyword].concat(seo.secondary_keywords || []).filter(Boolean).join(', '),
       about: (post.tickers || []).map(function (t) {
         return { '@type': 'Corporation', name: t, tickerSymbol: t };
       })
     };
-    if (seo.og_image) ld.image = seo.og_image;
+    if (meta.image) ld.image = meta.image;
     if (geo.country) {
       ld.contentLocation = { '@type': 'Country', name: geo.region || geo.country };
     }
@@ -1692,23 +1172,24 @@
 
   function exportSeoSeed(post, baseUrl) {
     baseUrl = baseUrl || (global.IfluxSeoUrl ? IfluxSeoUrl.PROD_ORIGIN : '');
-    var url = global.IfluxSeoUrl
+    var meta = post.metadata || {};
+    var url = meta.canonical || meta.url || (global.IfluxSeoUrl
       ? IfluxSeoUrl.postCanonical(post)
-      : baseUrl + '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug);
+      : baseUrl + '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug));
     return {
       url: url,
       slug: post.slug,
       path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug),
       meta: {
-        title: (post.seo && post.seo.meta_title) || post.title,
-        description: (post.seo && post.seo.meta_description) || post.excerpt,
-        canonical: (post.seo && post.seo.canonical_url) || url,
+        title: meta.title,
+        description: meta.description,
+        canonical: meta.canonical || meta.url || url,
         robots: (post.seo && post.seo.robots) || 'index,follow',
         keywords: [post.seo && post.seo.focus_keyword].concat((post.seo && post.seo.secondary_keywords) || []).concat((post.geo && post.geo.geo_keywords) || []).filter(Boolean),
         og: {
-          title: (post.seo && post.seo.og_title) || post.title,
-          description: (post.seo && post.seo.og_description) || post.excerpt,
-          image: post.seo && post.seo.og_image,
+          title: meta.title,
+          description: meta.description,
+          image: meta.image,
           image_alt: post.seo && post.seo.og_image_alt,
           locale: (post.geo && post.geo.target_locale) || 'vi_VN'
         }
@@ -1735,12 +1216,16 @@
     getPosts: getPosts,
     getPostsByAuthor: getPostsByAuthor,
     countPosts: countPosts,
+    setFeed: setFeed,
+    setArticle: setArticle,
     postMatchesTaxonomy: postMatchesTaxonomy,
     CONTENT_TYPE_NEWS: CONTENT_TYPE_NEWS,
     CONTENT_TYPE_EXPERT: CONTENT_TYPE_EXPERT,
     ADMIN_AUTHOR: ADMIN_AUTHOR,
     getPostBySlug: getPostBySlug,
     getPostById: getPostById,
+    upsertPostLocal: upsertPostLocal,
+    loadComments: loadComments,
     savePost: savePost,
     bumpView: bumpView,
     toggleLike: toggleLike,

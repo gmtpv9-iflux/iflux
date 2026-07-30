@@ -63,14 +63,19 @@ function renderSearch(q) {
     '</div></div>';
   }).join('');
 
-  IfluxWatchlistUI.refreshHearts();
+  if (global.IfluxHeartAction) IfluxHeartAction.refresh();
   if (window.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
 }
 
 document.getElementById('search-input').addEventListener('input', function () {
   renderSearch(this.value.trim());
 });
-IfluxWatchlistUI.bindHearts(document);
+if (global.IfluxWatchlistUI && IfluxWatchlistUI.bindRowActions) {
+  IfluxWatchlistUI.bindRowActions(document);
+} else {
+  if (global.IfluxHeartAction) IfluxHeartAction.bind(document);
+  if (global.IfluxAlertUI) IfluxAlertUI.bindAlerts(document);
+}
 renderSearch('');
   }
   global.IfluxSearchPageInline = { init: run };

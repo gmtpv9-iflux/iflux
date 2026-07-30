@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-STR — Danh sách câu chuyện · iFlux Admin</title>
+  <title>Danh sách Câu chuyện · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
   <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
@@ -26,17 +26,19 @@
         <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
       </header>
       <div class="ix-content">
-        <h1 class="ix-page-title">Danh sách câu chuyện</h1>
+        <h1 class="ix-page-title">Danh sách Câu chuyện</h1>
         <div class="ix-breadcrumb ix-mb-24">
           <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Câu chuyện</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Danh sách câu chuyện</span>
+          <span>Cộng đồng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Danh sách Câu chuyện</span>
         </div>
-        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">
-          Các chủ đề đang ở trạng thái <strong>Trưởng thành</strong> — nguồn từ
-          <a href="/admin/cong-dong/danh-sach-chu-de">Danh sách chủ đề</a> (Cộng đồng).
-        </p>
         <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Lifecycle</label><select class="ix-select" id="adm-story-lifecycle"><option value="">Tất cả</option></select></div>
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-story-status"><option value="">Tất cả</option><option value="mature">Trưởng thành</option><option value="declining">Suy yếu</option></select></div>
+            </div>
+          </div>
           <div class="ix-table-toolbar">
             <div style="font-size:13px;color:var(--ix-text-muted)">Tổng: <strong id="adm-story-count">0</strong> câu chuyện</div>
             <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="adm-story-reload" style="margin-left:auto"><i class="ti ti-refresh"></i> Làm mới</button>
@@ -49,6 +51,7 @@
                   <th>Lifecycle</th>
                   <th>Trạng thái</th>
                   <th>Số CP</th>
+                  <th>Tạo bởi</th>
                   <th>Cập nhật</th>
                   <th>Thao tác</th>
                 </tr>
@@ -62,13 +65,13 @@
   </div>
 </div>
 <script src="../../iflux-admin-ui/admin-auth.js"></script>
-<script src="../../iflux-admin-ui/chu-de-registry-store.js?v=20260720status4"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260720caude1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260720caude1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="../../iflux-admin-ui/chu-de-registry-store.js?v=20260723story1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723story"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723story"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="chu-de-cau-chuyen-list-page.js?v=20260720caude1"></script>
+<script src="chu-de-cau-chuyen-list-page.js?v=20260723story1"></script>
 </body>
 </html>

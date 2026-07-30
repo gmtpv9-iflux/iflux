@@ -148,8 +148,12 @@
   }
 
   function postCanonical(post, origin) {
-    var seo = post && post.seo ? post.seo : {};
-    if (seo.canonical_url) return seo.canonical_url;
+    /* Article Metadata SoT — không dùng seo.canonical / canonical_url RSS ngoài. */
+    var meta = post && post.metadata;
+    if (meta && typeof meta === 'object') {
+      var fromMeta = meta.canonical || meta.url;
+      if (fromMeta) return fromMeta;
+    }
     var ref = postRef(post);
     return (origin || PROD_ORIGIN) + '/cong-dong/bai-viet/' + encodeURIComponent(ref || '');
   }
@@ -329,6 +333,7 @@
 
   function autoPathBase() {
     var path = (global.location && global.location.pathname) || '';
+    if (/\/binh-luan\/?$/i.test(path)) return ensurePathBase('comments/');
     if (/^\/(?:co-phieu|stocks)\//i.test(path)) return ensurePathBase('stock/');
     if (/^\/(?:nganh|sectors)\//i.test(path)) return ensurePathBase('sector/');
     if (/^\/(?:he-sinh-thai|ho-co-phieu|ecosystems)\//i.test(path)) return ensurePathBase('family/');
@@ -381,18 +386,36 @@
     return global.IfluxPageDefinition || null;
   }
 
+  /**
+   * Consume Article Metadata SoT từ Backend — không derive.
+   * Chỉ return post.metadata (hoặc object rỗng nếu thiếu).
+   */
+  function resolvePostShareMeta(post) {
+    var m = post && post.metadata;
+    if (!m || typeof m !== 'object') return {};
+    return m;
+  }
+
+  /** Pipeline B: chỉ expose metadata.* — thiếu field thì bỏ qua, không defensive default. */
   function applyPostSeoToDocument(post) {
     if (!post) return;
     var seo = post.seo || {};
-    var canonical = postCanonical(post);
-    var title = seo.meta_title || (post.title + ' | iFlux Cộng đồng');
-    var desc = seo.meta_description || post.excerpt || '';
+    var meta = resolvePostShareMeta(post);
+    if (!meta || !Object.keys(meta).length) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('[iFlux] article.metadata thiếu — bỏ qua apply SEO share');
+      }
+      return;
+    }
+    var canonical = meta.canonical || meta.url || null;
+    var ogUrl = meta.url || meta.canonical || null;
     var jsonLd = {
       '@context': 'https://schema.org',
       '@type': seo.schema_type || 'NewsArticle',
-      headline: post.title,
-      description: desc,
-      url: canonical,
+      headline: meta.title,
+      description: meta.description,
+      url: canonical || undefined,
+      image: meta.image || undefined,
       datePublished: post.published_at || post.created_at,
       inLanguage: 'vi-VN',
       author: post.author ? { '@type': 'Person', name: post.author.display_name } : undefined,
@@ -400,26 +423,29 @@
         return { '@type': 'Corporation', tickerSymbol: t, url: stockCanonical(t) };
       })
     };
-    if (pageDefinition() && pageDefinition().applyPatch) {
-      pageDefinition().applyPatch({
-        title: post.title,
-        intro: post.excerpt || '',
-        documentTitle: title,
-        seo: {
-          description: desc,
-          robots: seo.robots || 'index,follow',
-          canonical: canonical,
-          'og:title': seo.og_title || title,
-          'og:description': seo.og_description || desc,
-          'og:type': 'article',
-          'og:url': canonical,
-          'og:image': seo.og_image || null,
-          jsonLd: [{ id: 'ifx-story-jsonld', data: jsonLd }]
-        }
-      });
-      return;
-    }
-    /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
+    if (!pageDefinition() || !pageDefinition().applyPatch) return;
+    var patch = {
+      title: meta.title,
+      intro: meta.description,
+      documentTitle: meta.documentTitle || meta.title,
+      seo: {
+        description: meta.description,
+        robots: seo.robots || 'index,follow',
+        canonical: canonical,
+        'og:title': meta.title,
+        'og:description': meta.description,
+        'og:type': 'article',
+        'og:url': ogUrl,
+        'og:image': meta.image || null,
+        'og:site_name': meta.site_name || null,
+        'twitter:card': meta.twitter_card || null,
+        'twitter:title': meta.title,
+        'twitter:description': meta.description,
+        'twitter:image': meta.image || null,
+        jsonLd: [{ id: 'ifx-story-jsonld', data: jsonLd }]
+      }
+    };
+    pageDefinition().applyPatch(patch);
   }
 
   function applyStorySeoToDocument(post) {
@@ -509,6 +535,87 @@
     return '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
   }
 
+  /* ── Trang bình luận riêng ── */
+
+  function commentsPath(scope, id) {
+    scope = String(scope || '');
+    id = String(id || '');
+    if (!scope || !id) return '/binh-luan';
+    if (isFileProto()) {
+      return userWebRoot() + 'comments/index.html?scope=' + encodeURIComponent(scope) + '&id=' + encodeURIComponent(id);
+    }
+    if (scope === 'post') return '/cong-dong/bai-viet/' + encodeURIComponent(id) + '/binh-luan';
+    if (scope === 'stock') return '/co-phieu/' + encodeURIComponent(String(id).toUpperCase()) + '/binh-luan';
+    if (scope === 'sector') return '/nganh/' + encodeURIComponent(id) + '/binh-luan';
+    if (scope === 'family') return '/he-sinh-thai/' + encodeURIComponent(id) + '/binh-luan';
+    if (scope === 'story') return '/cau-chuyen/' + encodeURIComponent(id) + '/binh-luan';
+    return '/binh-luan';
+  }
+
+  function postCommentsPath(postOrRef) {
+    return commentsPath('post', postRef(postOrRef) || postOrRef);
+  }
+
+  function stockCommentsPath(ticker) {
+    return commentsPath('stock', ticker);
+  }
+
+  function sectorCommentsPath(slugOrId) {
+    return commentsPath('sector', sectorSlug(slugOrId) || slugOrId);
+  }
+
+  function familyCommentsPath(slugOrId) {
+    return commentsPath('family', slugify(slugOrId) || slugOrId);
+  }
+
+  function storyCommentsPath(slugOrId) {
+    return commentsPath('story', slugify(slugOrId) || slugOrId);
+  }
+
+  function parseCommentsContext(loc) {
+    loc = loc || global.location;
+    if (!loc) return null;
+    var params = new URLSearchParams(loc.search || '');
+    var scopeQ = params.get('scope');
+    var idQ = params.get('id');
+    if (scopeQ && idQ) return { scope: scopeQ, id: idQ };
+
+    var path = loc.pathname || '';
+    var m = path.match(/\/cong-dong\/bai-viet\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'post', id: decodeURIComponent(m[1]) };
+    m = path.match(/\/co-phieu\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'stock', id: decodeURIComponent(m[1]).toUpperCase() };
+    m = path.match(/\/nganh\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'sector', id: decodeURIComponent(m[1]) };
+    m = path.match(/\/he-sinh-thai\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'family', id: decodeURIComponent(m[1]) };
+    m = path.match(/\/cau-chuyen\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'story', id: decodeURIComponent(m[1]) };
+    m = path.match(/\/chu-de\/([^/?#]+)\/binh-luan\/?$/i);
+    if (m) return { scope: 'story', id: decodeURIComponent(m[1]) };
+    return null;
+  }
+
+  function commentsHrefFromLocation(loc) {
+    loc = loc || global.location;
+    var ctx = parseCommentsContext(loc);
+    if (ctx) return commentsPath(ctx.scope, ctx.id);
+
+    var postId = parsePostRef(loc);
+    if (postId && /\/(?:cong-dong\/bai-viet|community\/posts)/i.test(loc.pathname || '')) {
+      return postCommentsPath(postId);
+    }
+    var ticker = parseStockTicker(loc);
+    if (ticker) return stockCommentsPath(ticker);
+    var sectorId = parseSectorId(loc);
+    if (sectorId) return sectorCommentsPath(sectorId);
+    var ecoId = parseEcosystemId(loc);
+    if (ecoId) return familyCommentsPath(ecoId);
+    var storyId = parseChuDeEntitySlug ? parseChuDeEntitySlug(loc) : parseChuDeSlug(loc);
+    if (storyId) return storyCommentsPath(storyId);
+    return null;
+  }
+
   if (typeof document !== 'undefined') {
     autoPathBase();
   }
@@ -547,6 +654,14 @@
     pagePath: pagePath,
     storySlugPath: storySlugPath,
     stockSlugPath: stockSlugPath,
+    commentsPath: commentsPath,
+    postCommentsPath: postCommentsPath,
+    stockCommentsPath: stockCommentsPath,
+    sectorCommentsPath: sectorCommentsPath,
+    familyCommentsPath: familyCommentsPath,
+    storyCommentsPath: storyCommentsPath,
+    parseCommentsContext: parseCommentsContext,
+    commentsHrefFromLocation: commentsHrefFromLocation,
     storyCanonical: storyCanonical,
     stockCanonical: stockCanonical,
     sectorCanonical: sectorCanonical,
@@ -565,6 +680,7 @@
     parseTagSlug: parseTagSlug,
     ensurePathBase: ensurePathBase,
     autoPathBase: autoPathBase,
+    resolvePostShareMeta: resolvePostShareMeta,
     applyPostSeoToDocument: applyPostSeoToDocument,
     applyStorySeoToDocument: applyStorySeoToDocument,
     applyStockSeoToDocument: applyStockSeoToDocument

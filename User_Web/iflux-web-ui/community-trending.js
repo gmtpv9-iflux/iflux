@@ -8,7 +8,7 @@
   function st() { return global.IfluxCommunityStore; }
   function mk() { return global.IfluxMockMarket; }
   function ui() { return global.IfluxCommunityUI; }
-  function wl() { return global.IfluxWatchlistUI; }
+  function heart() { return global.IfluxHeartAction; }
   function treemap() { return global.IfluxSquarifiedTreemap; }
 
   function fmtPct(n) {
@@ -120,7 +120,7 @@
     });
 
     var m = mk();
-    var heartFn = wl() && wl().heartButtonHtml;
+    var heartFn = heart() && heart().heartButtonHtml;
     var byTk = {};
     canvas.querySelectorAll('[data-ifx-cap-tile]').forEach(function (el) {
       byTk[el.getAttribute('data-ifx-cap-tile')] = el;
@@ -145,7 +145,9 @@
           var state = m && m.getStockPriceState ? m.getStockPriceState(tileKey) : 'ref';
           var heart = heartFn ? heartFn(tileKey) : '';
           el.innerHTML =
-            '<a class="ifx-cap-tile__link is-' + state + '" href="' + (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey)) + '"></a>' +
+            '<a class="ifx-cap-tile__link is-' + state + '" href="' + (global.IfluxHref
+              ? IfluxHref.forCanonical(global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey))
+              : (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey))) + '"></a>' +
             (heart ? '<div class="ifx-cap-tile__heart">' + heart + '</div>' : '');
         }
         canvas.appendChild(el);
@@ -177,21 +179,25 @@
       if (orphan.parentNode) orphan.parentNode.removeChild(orphan);
     });
 
-    if (wl() && wl().refreshHearts) wl().refreshHearts();
+    if (heart() && heart().refresh) heart().refresh();
   }
 
+  /**
+   * Chiều cao canvas treemap khi layout đôi (stocks + stories cùng hàng).
+   * Host Widget Published đơn lẻ: không ghi đè — để CSS / layout App Shell lo (giống Widget khác).
+   */
   function syncCanvasHeight(row) {
     var storiesPanel = row.querySelector('[data-ifx-trending-stories]');
     var stocksPanel = row.querySelector('[data-ifx-trending-stocks]');
     var canvas = row.querySelector('[data-ifx-cap-treemap]');
     var storyList = row.querySelector('.ifx-com-story-rank-list');
-    if (!canvas || !storiesPanel || !stocksPanel) return 0;
+    if (!canvas || !storiesPanel || !stocksPanel) return canvas ? canvas.clientHeight || 0 : 0;
 
-    var title = stocksPanel.querySelector('.ifx-com-trending-panel__head h3');
+    var title = stocksPanel.querySelector('.ifx-com-trending-panel__head h3') ||
+      stocksPanel.querySelector('.ifx-widget__header h3');
     var hint = stocksPanel.querySelector('.ifx-com-ticker-heat__hint');
     var titleH = title ? title.offsetHeight + 14 : 14;
     var hintH = hint ? hint.offsetHeight + 10 : 0;
-
     var listH = storyList ? storyList.offsetHeight : 0;
     var target = Math.max(200, listH > 0 ? listH : storiesPanel.offsetHeight - titleH - hintH);
 
@@ -212,35 +218,46 @@
       return;
     }
 
-    function paint() {
+    /* Cùng pattern preview heatmap / Widget host: đợi container có bề rộng thật rồi mới layout. */
+    function paint(tries) {
+      tries = tries || 0;
       syncCanvasHeight(row);
-      paintTreemap(canvas, items);
+      var el = row.querySelector('[data-ifx-cap-treemap]');
+      if (!el || !el.isConnected) return;
+      var w = el.clientWidth;
+      var h = el.clientHeight;
+      if ((w < 40 || h < 40) && tries < 40) {
+        setTimeout(function () { paint(tries + 1); }, 80);
+        return;
+      }
+      if (w < 40 || h < 40) return;
+      paintTreemap(el, items);
     }
 
-    paint();
+    paint(0);
     requestAnimationFrame(function () {
-      requestAnimationFrame(paint);
+      requestAnimationFrame(function () { paint(0); });
     });
 
     if (typeof ResizeObserver !== 'undefined') {
       if (row.__ifxCapRo) row.__ifxCapRo.disconnect();
-      var ro = new ResizeObserver(function () { paint(); });
+      var ro = new ResizeObserver(function () { paint(0); });
       ro.observe(row);
       var stories = row.querySelector('[data-ifx-trending-stories]');
       if (stories) ro.observe(stories);
       row.__ifxCapRo = ro;
     } else {
-      global.addEventListener('resize', paint);
+      global.addEventListener('resize', function () { paint(0); });
     }
   }
 
   function storyEntityHref(it) {
-    if (it && it.href) return it.href;
+    if (it && it.href) return global.IfluxHref ? IfluxHref.forCanonical(it.href) : it.href;
     var id = it.id || it.name;
-    if (global.IfluxSeoUrl && IfluxSeoUrl.storyEntityHref) {
-      return IfluxSeoUrl.storyEntityHref(id);
-    }
-    return '/chu-de/' + encodeURIComponent(id);
+    var c = (global.IfluxSeoUrl && IfluxSeoUrl.storyEntityHref)
+      ? IfluxSeoUrl.storyEntityHref(id)
+      : '/chu-de/' + encodeURIComponent(id);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function storyWidgetMeta() {
@@ -249,7 +266,7 @@
       description: 'Top N Topic/Story theo điểm Interest trong cửa sổ Ngày|Tuần|Tháng.',
       limit: 10
     };
-    var P = global.PlatformLayersWidgets;
+    var P = global.L4RuntimeReader;
     if (!P) return fallback;
     var copy = P.resolveWidgetCopy ? P.resolveWidgetCopy('WGT-COM-CHUDE-TOP') : null;
     var w = P.getWidget ? P.getWidget('WGT-COM-CHUDE-TOP') : null;
@@ -275,7 +292,7 @@
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.'
     };
-    var P = global.PlatformLayersWidgets;
+    var P = global.L4RuntimeReader;
     if (!P) return fallback;
     var copy = P.resolveWidgetCopy ? P.resolveWidgetCopy('WGT-COM-001') : null;
     var w = P.getWidget ? P.getWidget('WGT-COM-001') : null;
@@ -289,7 +306,7 @@
     if (!items.length) {
       return '<div class="ifx-com-trending-empty">Chưa có chủ đề nổi bật.</div>';
     }
-    var storyHeartFn = wl() && wl().storyHeartButtonHtml;
+    var storyHeartFn = heart() && heart().storyHeartButtonHtml;
     return items.map(function (it, i) {
       var rank = i + 1;
       var heart = storyHeartFn ? storyHeartFn(it.id) : '';
@@ -397,7 +414,8 @@
     container.innerHTML = renderHtml(opts);
     var scope = container.querySelector('[data-ifx-trending-row]') || container;
     if (!opts.storyOnly) mountCapTreemap(scope);
-    if (wl() && wl().refreshHearts) wl().refreshHearts();
+    if (heart() && heart().bind) heart().bind(container);
+    else if (heart() && heart().refresh) heart().refresh();
     container.querySelectorAll('[data-ifx-stop-link]').forEach(function (wrap) {
       wrap.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); });
     });

@@ -164,19 +164,71 @@
     { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'BLK-COM-TOPWL', 'WGT-COM-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
   ];
 
+  var STATIC_DISPLAY_BLOCKS = [
+    { id: 'BLK-COM-NEWS', label: 'Tin tức', kind: 'page', group: 'Block trang · Cộng đồng', minTier: 'guest', page: 'community' },
+    { id: 'BLK-LOY-INTRO', label: 'Giới thiệu', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
+    { id: 'BLK-LOY-AFFILIATE', label: 'Affiliate', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
+    { id: 'BLK-FAQ-LIST', label: 'Danh sách FAQ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' },
+    { id: 'BLK-FAQ-SUPPORT', label: 'Khối liên hệ hỗ trợ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' }
+  ];
+
+  var PAGE_LABELS = {
+    dashboard: 'Nhà', market: 'Thị trường', community: 'Cộng đồng', flow: 'Dòng tiền',
+    loyalty: 'Membership', faq: 'FAQ', account: 'Tài khoản', messages: 'Tin nhắn'
+  };
+
+  function l4wlib() {
+    return global.PlatformLayersWidgets;
+  }
+
+  function l4BlockLabel(id) {
+    var P = l4wlib();
+    if (P && P.resolveWidgetCopy) {
+      var c = P.resolveWidgetCopy(id);
+      if (c && c.title) return c.title;
+    }
+    return id;
+  }
+
+  function l4PageLabel(pageKey) {
+    return PAGE_LABELS[pageKey] || pageKey;
+  }
+
+  function l4AdminGroup(block) {
+    if (!block) return '';
+    var kindLabel = block.kind === 'widget' ? 'Widget' : 'Block';
+    return l4PageLabel(block.page) + ' · ' + kindLabel;
+  }
+
+  function buildL4BlockEntries() {
+    var P = l4wlib();
+    var list = [];
+    if (P && typeof P.entitlementList === 'function') {
+      P.entitlementList().forEach(function (m) {
+        if (!m || !m.id) return;
+        list.push({
+          id: m.id,
+          label: m.title || m.id,
+          kind: 'widget',
+          group: (m.domain || 'Widget') + ' · Widget',
+          minTier: m.tier || 'free',
+          page: (m.pages && m.pages[0]) || 'dashboard'
+        });
+      });
+    }
+    STATIC_DISPLAY_BLOCKS.forEach(function (b) { list.push(b); });
+    return list;
+  }
+
   function buildDisplayBlocks() {
-    var cat = global.EntitlementCatalog;
-    var blocks = (cat && cat.BLOCKS) || [];
+    var blocks = buildL4BlockEntries();
     return blocks.map(function (b) {
       var alg = ALGORITHMS.find(function (a) { return a.outputs.indexOf(b.id) >= 0; });
-      var label = cat && cat.getBlockLabel ? cat.getBlockLabel(b.id) : b.label;
-      var adminGroup = cat && cat.getBlockAdminGroup ? cat.getBlockAdminGroup(b) : b.group;
-      var pageLabel = cat && cat.getPageLabel ? cat.getPageLabel(b.page) : b.page;
       return {
         id: b.id,
-        label: label,
-        group: adminGroup,
-        pageLabel: pageLabel,
+        label: b.label || l4BlockLabel(b.id),
+        group: b.group || l4AdminGroup(b),
+        pageLabel: l4PageLabel(b.page),
         kind: b.kind,
         page: b.page,
         minTier: b.minTier,

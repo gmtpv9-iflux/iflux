@@ -1,0 +1,85 @@
+---
+description: Engineering Change Governance — Reuse/Modify trước Create; cấm hide+new; thiếu quyết định thì hỏi user
+alwaysApply: true
+---
+
+# Engineering Change Governance (Cursor)
+
+SoT đầy đủ: [`docs/SoT — Engineering Change Governance.md`](docs/SoT — Engineering Change Governance.md) (v1.1.1).  
+Product SoT: [`docs/SoT — iFlux Product Architecture (V2).md`](docs/SoT — iFlux Product Architecture (V2).md).
+
+## Cấm ngay
+
+- Tạo implementation mới rồi `display:none` / ẩn cái cũ (CG-010, CG-011).
+- Tạo file/helper mới chỉ vì đổi label / text / style / naming (CG-011) → **Modify existing**.
+- Implement trước khi có Impact Analysis (CG-005).
+- Tạo file mới không trả lời “why cannot modify existing?” (CG-012).
+- Migrate xong mà không xóa dead JS/CSS/import/config (CG-020, CG-021).
+- Prefix `new_` / `v2_` / `final_` / `latest_` để né migration.
+- Tự suy đoán / workaround / implementation song song khi **chưa đủ** Product / Architecture / Ownership decision (CG-030).
+
+## Uncertainty Handling (CG-030) — quan trọng nhất
+
+Cái nào **không biết nên sửa thế nào** → **trao đổi solution với user**. Thế thôi.
+
+Khi thiếu thông tin:
+
+1. Nêu rõ điểm chưa xác định.
+2. Đưa các solution khả thi.
+3. Phân tích trade-off.
+4. Chờ user chốt.
+
+**Stop implementation** cho đến khi có quyết định. Không tự bịa giải pháp “ít sửa code nhất”.
+
+Ví dụ cần hỏi (không phải vấn đề code):
+
+- Share về Home hay Entity URL?
+- Template: một ID nhiều runtime hay mỗi runtime một template?
+- Comment: Runtime riêng hay reuse Article Runtime?
+
+## Flow bắt buộc
+
+```
+Request
+ → Impact Analysis
+ → Ownership / Existing
+ → Đủ thông tin?
+      ├── Có → Plan → Implement → Cleanup → Verify
+      └── Không → Discuss Solution → Confirm → Plan → Implement …
+```
+
+Impact Analysis tối thiểu:
+
+```
+Feature / Current owner / Files / Functions / Consumers / Storage-API
+Decision: Reuse | Modify | Migrate | Delete
+```
+
+Không có → Plan không hợp lệ → không code.
+
+## Ưu tiên
+
+```
+Reuse → Modify → Refactor ownership → Migrate → Delete → Create new capability
+```
+
+Existing code = evidence hiện trạng, **không** phải authority (CG-006). Quyết định theo SoT + Ownership + Contract.
+
+## File mới
+
+Phải ghi:
+
+```
+Existing owner / file:
+Why cannot modify:
+New responsibility difference:
+Removal plan for old (nếu migrate):
+```
+
+## Review
+
+Trước khi báo xong: Applicable SoT, inventory, plan, changed/added/deleted files, migration + test evidence. Không chỉ “đã làm xong”.
+
+## Backup vs thi công
+
+User chỉ bảo backup → **chỉ backup**, không tự sang implement.

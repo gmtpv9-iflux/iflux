@@ -15,7 +15,9 @@
   function isPublicPage() {
     var path = (global.location && global.location.pathname) || '';
     if (/\/auth\/(login|forgot|register|verify-2fa)\.html$/i.test(path)) return true;
-    if (/\/admin\/login\/?$/i.test(path)) return true;
+    if (/\/admin\/(login|dang-nhap)\/?$/i.test(path)) return true;
+    /* Checklist hub — đọc menu SoT không bắt buộc đăng nhập */
+    if (/\/Admin_Design_system\/hub\.html$/i.test(path)) return true;
     return false;
   }
 
@@ -256,7 +258,7 @@
   function loadRbacClient() {
     if (document.querySelector('script[data-ix-rbac]')) return;
     var s = document.createElement('script');
-    s.src = '/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=20260716rbacfix1';
+    s.src = '/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=menuFix20260725';
     s.setAttribute('data-ix-rbac', '');
     s.async = true;
     document.head.appendChild(s);

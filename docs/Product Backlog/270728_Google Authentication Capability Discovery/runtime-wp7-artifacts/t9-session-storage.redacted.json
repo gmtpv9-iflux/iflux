@@ -1,0 +1,11 @@
+{
+  "iflux_referral_directory_v1": "{\"IFL1QIF9\":{\"id\":\"e7657598-3c6f-498a-bc…[redacted]…FLNU6MH\"}}",
+  "iflux_active_session": "{\"userId\":\"32ebd86f-a7f5-4cf9-b5ba-041db…[redacted]…246410025}",
+  "iflux_referral_members_meta_v1": "{\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\":…[redacted]…hases\":0}}",
+  "iflux_user_profiles_v1": "{\"byEmail\":{\"wp7.runtime.1785246163@iflu…[redacted]…\":null}}}}",
+  "iflux_user_session": "{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR…[redacted]…_ebf2vdn\"}",
+  "iflux_customers_v1": "[{\"id\":\"32ebd86f-a7f5-4cf9-b5ba-041db3e4…[redacted]…e\":\"app\"}]",
+  "iflux_referral_users_cache_v1": "{\"e7657598-3c6f-498a-bc95-c9898b921030\":…[redacted]…FLNU6MH\"}}",
+  "iflux_referral_parents_v1": "{\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\":…[redacted]…8b921030\"}",
+  "iflux_loyalty_affiliate_events_v2": "{\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\":[]}"
+}

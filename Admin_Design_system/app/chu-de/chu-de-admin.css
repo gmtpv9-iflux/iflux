@@ -148,7 +148,7 @@
   background: linear-gradient(90deg, var(--ix-accent), #00A67E);
   border-radius: 999px;
 }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .adm-str-detail-grid { grid-template-columns: 1fr; }
   .adm-str-anl-kpi-row { grid-template-columns: repeat(2, 1fr); }
 }

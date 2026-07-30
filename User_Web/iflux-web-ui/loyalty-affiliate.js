@@ -133,14 +133,26 @@
     if (copyCode) copyCode.addEventListener('click', function () {
       copyText(ref.code, codeInput);
     });
+    function openAffiliateLink(url) {
+      if (!url) return;
+      /* Absolute outbound / already-built referral URL — allowlist EVIDENCE */
+      if (/^https?:\/\//i.test(url)) {
+        global.location.href = url;
+        return;
+      }
+      /* Same-origin path — P6-API-01 */
+      if (global.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
+        IfluxShellUrlWriter.navigate(url);
+        return;
+      }
+      global.location.href = url;
+    }
     if (openLink) openLink.addEventListener('click', function () {
-      var url = linkInput && linkInput.value ? linkInput.value : ref.link;
-      if (url) global.location.href = url;
+      openAffiliateLink(linkInput && linkInput.value ? linkInput.value : ref.link);
     });
     if (linkInput) {
       linkInput.addEventListener('dblclick', function () {
-        var url = linkInput.value || ref.link;
-        if (url) global.location.href = url;
+        openAffiliateLink(linkInput.value || ref.link);
       });
       linkInput.title = 'Double-click để mở trang đăng ký';
     }

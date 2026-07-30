@@ -12,10 +12,9 @@ var FEATURE_SCRIPTS = [
   /* W4: market stack = Shell MARKET_PLATFORM (checkout) */
   ASSET + 'stock-mentions.js',
   ASSET + 'loyalty-coupon-store.js',
-  ASSET + 'loyalty-affiliate-store.js',
-  ASSET + 'system-notification-catalog.js',
-  ASSET + 'system-notification-templates-store.js',
-  ASSET + 'inapp-notifications.js',
+  ASSET + 'loyalty-affiliate-store.js?v=shareAffP5_20260727',
+  ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728',
+  ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728',
   ASSET + 'subscription-orders-store.js',
   ADMIN + 'iflux-customers-store.js',
   ASSET + 'checkout-page.js'
@@ -40,8 +39,8 @@ async function main() {
   function start() {
     if (window.IfluxCheckoutPage) IfluxCheckoutPage.init();
   }
-  if (window.PlansStore && PlansStore.hydrate) {
-    PlansStore.hydrate().then(start).catch(start);
+  if (window.PlansRuntimeReader && PlansRuntimeReader.load) {
+    PlansRuntimeReader.load().then(start).catch(start);
   } else {
     start();
   }

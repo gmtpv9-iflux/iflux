@@ -4,10 +4,10 @@
   <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-MDO-003 — Missing Tick Monitor · iFlux Admin</title>
+  <title>ADM-MDO-003 — Tick thiếu · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
 </head>
 <body>
 <div class="ix-root">
@@ -22,28 +22,40 @@
     <main class="ix-main">
       <header class="ix-navbar" data-ix-admin-shell="header">
         <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
-        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
       </header>
-            <div class="ix-content">
-        <h1 class="ix-page-title" id="adm-page-title"></h1>
-        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
-        <p id="adm-page-intro" style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px"></p>
-        <div id="adm-page-root"></div>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Tick thiếu</h1>
+        <div class="ix-breadcrumb ix-mb-24">
+          <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Vận hành dữ liệu</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Tick thiếu</span>
+        </div>
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div class="ix-caption">Tổng: <strong id="adm-miss-count">0</strong> mã</div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead><tr><th>Mã</th><th>Phiên</th><th>Gap</th><th>Ghi chú</th></tr></thead>
+              <tbody id="adm-miss-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
   </div>
 </div>
-<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=waveB20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=waveB20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
-<script src="../admin/admin-page-kit.js"></script>
-<script src="../admin/admin-screens-gd1.js"></script>
-<script>document.body.setAttribute('data-adm-screen','ADM-MDO-003');AdminScreensGd1.boot();</script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="market-ops-wave-b.js?v=waveB20260727"></script>
+<script>AdmMarketOpsWaveB.initMissing();</script>
 </body>
 </html>

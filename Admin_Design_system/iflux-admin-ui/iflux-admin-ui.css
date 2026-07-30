@@ -13,8 +13,9 @@
 @import url('./semantic/theme.css');
 @import url('./semantic/business-tokens.css');
 @import url('./semantic/aliases.css');
-@import url('./typography.css');
+@import url('./typography.css?v=feedCard20260723');
 @import url('./spacing.css');
-@import url('./components.css?v=viewportSoT20260718');
+@import url('./foundation/heart-action.css');
+@import url('./components.css?v=gisBtnNoIframeClass20260730');
 @import url('./atoms-extensions.css');
 @import url('./utilities.css');

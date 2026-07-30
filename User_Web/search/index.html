@@ -25,13 +25,24 @@
     </a>
     <nav class="ifx-topnav-menu" data-ifx-guest-nav></nav>
     <div class="ifx-topnav-actions" data-ifx-guest-actions>
-      <a href="/dang-nhap" class="ix-btn ix-btn-outline ix-btn-sm">Đăng nhập</a>
+      <div class="ifx-topnav-search-wrap" data-ifx-header-search>
+        <div class="ix-search ifx-hdr-search" role="combobox" aria-expanded="false">
+          <i class="ti ti-search"></i>
+          <input type="search" autocomplete="off" spellcheck="false" placeholder="Tìm CP, ngành, họ, chủ đề… (⌘K)" aria-label="Tìm kiếm thị trường" />
+          <kbd class="ifx-hdr-search-kbd">⌘K</kbd>
+        </div>
+        <div class="ifx-hdr-search-dropdown" hidden></div>
+      </div>
+      <div class="ix-dropdown ifx-user-menu">
+        <button class="ix-avatar" data-ix-toggle="dropdown" data-ifx-user-initials>U</button>
+        <div class="ix-dropdown-menu"></div>
+      </div>
     </div>
   </header>
   <main class="ifx-main ifx-main--search">
     <div data-ifx-page-runtime></div>
   </main>
 </div>
-<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=phaseCW420260721"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=shellParity20260724"></script>
 </body>
 </html>

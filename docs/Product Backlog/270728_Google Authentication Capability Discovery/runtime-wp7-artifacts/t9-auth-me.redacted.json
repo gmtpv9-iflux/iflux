@@ -1,0 +1,17 @@
+{
+  "id": "32ebd86f-a7f5-4cf9-b5ba-041db3e435e8",
+  "email": "wp7.runtime.1785246163@iflux.test",
+  "phone": null,
+  "plan": "free",
+  "display_name": "WP7 Runtime",
+  "nickname": "WP7 Runtime",
+  "status": "active",
+  "created_at": "2026-07-28T13:43:06.276Z",
+  "referral_code": "IFLNU6MH",
+  "publicId": "IFLNU6MH",
+  "id_internal": "32ebd86f-a7f5-4cf9-b5ba-041db3e435e8",
+  "referred_by": "456ca07a-2d4a-482f-947e-f4f982cf2dbf",
+  "plan_expired_at": null,
+  "auth_provider": "email",
+  "has_password": true
+}

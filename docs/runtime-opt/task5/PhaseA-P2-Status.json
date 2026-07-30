@@ -1,0 +1,19 @@
+{
+  "step": "P2 dual-copy started",
+  "cut_load": false,
+  "copiedTo": "User_Web/iflux-web-ui/community.css",
+  "from": [
+    "block-templates.css ifx-com-* (standalone Community rules)",
+    "watchlist.css .ifx-stock-row__heart*"
+  ],
+  "stillLoadedByCommunity": [
+    "watchlist.css (manifest css[])",
+    "watchlist-ui.js / watchlist-store.js (feature modules)",
+    "block-templates.css (manifest + widgets — still need ifx-cap-tile for WGT)"
+  ],
+  "next": [
+    "Bóc JS heart helpers WatchlistUI → module Owner rõ (Shared/Community) trước khi bỏ watchlist-ui.js",
+    "Sau regression: bỏ watchlist.css khỏi community.manifest nếu dual-copy đủ",
+    "Không bỏ block-templates.css khi Widget còn ifx-cap-tile"
+  ]
+}

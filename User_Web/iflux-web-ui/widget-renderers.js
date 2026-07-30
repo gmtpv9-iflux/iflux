@@ -54,8 +54,8 @@
   }
 
   function stockHref(ticker) {
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(ticker);
-    return '/co-phieu/' + encodeURIComponent(ticker);
+    var c = global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(ticker) : '/co-phieu/' + encodeURIComponent(ticker);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function rangeTabsHtml(activeDays) {
@@ -164,7 +164,8 @@
         el.innerHTML = '<div class="ifx-wl-block" data-ifx-wl-block></div>';
       }
       IfluxWatchlistBlock.mount(el.querySelector('[data-ifx-wl-block]'));
-      if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(el);
+      if (global.IfluxHeartAction) IfluxHeartAction.bind(el);
+      if (global.IfluxAlertUI) IfluxAlertUI.bindAlerts(el);
     },
 
     /*
@@ -199,7 +200,9 @@
       items.sort(function (a, b) { return (a.rank || 99) - (b.rank || 99); });
       el.innerHTML = '<div class="ifx-sector-grid">' + items.slice(0, 4).map(function (sec) {
         return (
-          '<a class="ifx-sector-card" href="' + (global.IfluxSeoUrl ? IfluxSeoUrl.sectorHref(sec.id) : '/nganh/' + encodeURIComponent(sec.id)) + '">' +
+          '<a class="ifx-sector-card" href="' + (global.IfluxHref
+            ? IfluxHref.forCanonical(global.IfluxSeoUrl ? IfluxSeoUrl.sectorHref(sec.id) : '/nganh/' + encodeURIComponent(sec.id))
+            : (global.IfluxSeoUrl ? IfluxSeoUrl.sectorHref(sec.id) : '/nganh/' + encodeURIComponent(sec.id))) + '">' +
             '<div class="ifx-sector-card__head"><span class="ifx-sector-card__name">' + sec.name + '</span>' +
             '<span class="ifx-sector-card__rank">#' + sec.rank + '</span></div>' +
             '<div class="ifx-sector-card__metrics">' +
@@ -362,8 +365,8 @@
     var meta = global.IfluxWidgetRegistry && IfluxWidgetRegistry.byType(type);
     var renderType = (meta && meta.renderAs) || type;
     var cfg = Object.assign({}, meta && meta.defaultConfig || {}, config || {});
-    if (global.WidgetLibraryCatalog && WidgetLibraryCatalog.resolveWidgetCopy) {
-      var copy = WidgetLibraryCatalog.resolveWidgetCopy(type);
+    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
+      var copy = L4RuntimeReader.resolveWidgetCopy(type);
       if (cfg.title == null) cfg.title = copy.title;
       if (cfg.description == null) cfg.description = copy.description;
     }

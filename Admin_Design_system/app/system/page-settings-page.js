@@ -166,8 +166,11 @@
     var slots = (page.layoutSlots || []).slice().sort(function (a, b) { return a.position - b.position; });
     var grid = slots.map(function (slot) {
       var copy = catalog().widgetRow(page, slot.widgetId, 'layout');
+      var tpl = resolveTemplateLabel(slot.widgetId);
       return '<div class="ps-grid-slot" style="grid-column:span ' + Math.min(12, Math.max(1, slot.span)) + '">' +
         '<div class="ps-grid-slot__id">' + esc(slot.widgetId) + '</div>' +
+        '<div class="ps-grid-slot__tpl" style="font-size:10px;color:var(--ix-text-muted)">' +
+          (tpl ? ('Template: ' + esc(tpl)) : 'Template: chưa gắn') + '</div>' +
         '<div class="ps-grid-slot__title">' + esc(copy.title) + '</div>' +
         '<div class="ps-grid-slot__meta">pos ' + slot.position + ' · span ' + slot.span +
         (slot.enabled ? '' : ' · <em>tắt</em>') + '</div></div>';
@@ -203,6 +206,27 @@
     );
   }
 
+  function resolveTemplateLabel(widgetId) {
+    var id = null;
+    if (global.PageRuntimeManifest && typeof PageRuntimeManifest.resolveTemplateRef === 'function') {
+      id = PageRuntimeManifest.resolveTemplateRef(widgetId);
+    }
+    if (!id && global.PlatformLayersWidgets && typeof PlatformLayersWidgets.getDefinition === 'function') {
+      var def = PlatformLayersWidgets.getDefinition(widgetId);
+      if (def && def.templateRef) id = String(def.templateRef);
+    }
+    return id || null;
+  }
+
+  function widgetIdCellHtml(wid) {
+    var tpl = resolveTemplateLabel(wid);
+    var tplLine = tpl
+      ? '<div class="ps-widget-tpl" style="font-size:10px;color:var(--ix-text-muted);margin-top:4px;line-height:1.35">' +
+          'Template: <code style="font-size:10px;color:var(--ix-text-secondary)">' + esc(tpl) + '</code></div>'
+      : '<div class="ps-widget-tpl" style="font-size:10px;color:var(--ix-danger);margin-top:4px">Template: <em>chưa gắn</em></div>';
+    return '<code style="font-size:11px;color:var(--ix-accent)">' + esc(wid) + '</code>' + tplLine;
+  }
+
   var WIDGET_TABLE_HEAD =
     '<th>Widget</th><th>Tên</th><th>Trang deploy</th><th>Widget Host</th>' +
     '<th>Vị trí</th><th>Kích thước</th><th>Bật</th><th>User override</th>';
@@ -217,20 +241,24 @@
       (row.userCanOverride ? ' checked' : '') + ' /></td>';
   }
 
+  /* Trang deploy = trang Widget đang Bật (enabled), không chỉ «đã từng có placement». */
   function placementPagesForWidget(pages, widgetId) {
     return pages.filter(function (p) {
       return (p.layoutSlots || []).some(function (slot) {
-        return slot.widgetId === widgetId && slot.hasPlacement;
+        return slot.widgetId === widgetId && slot.hasPlacement && slot.enabled;
       });
     });
   }
 
   function widgetTableRows(page) {
     var pages = model();
+    /* Ưu tiên 1: đang Bật lên đầu · Ưu tiên 2: theo mã Widget */
     var ids = (page.widgetIds || []).slice().sort(function (a, b) {
-      var aPlaced = placementPagesForWidget(pages, a).length > 0;
-      var bPlaced = placementPagesForWidget(pages, b).length > 0;
-      if (aPlaced !== bPlaced) return aPlaced ? 1 : -1;
+      var rowA = catalog().widgetRow(page, a);
+      var rowB = catalog().widgetRow(page, b);
+      var enA = !!(rowA && rowA.enabled);
+      var enB = !!(rowB && rowB.enabled);
+      if (enA !== enB) return enA ? -1 : 1;
       return String(a).localeCompare(String(b));
     });
     var regions = catalog().pageRegions(page.key);
@@ -244,7 +272,7 @@
       if (regions.indexOf(curSection) < 0) curSection = regions[0] || 'main';
 
       return '<tr data-ps-widget="' + esc(wid) + '" data-ps-placement="' + (row.hasPlacement ? '1' : '0') + '">' +
-        '<td><code style="font-size:11px;color:var(--ix-accent)">' + esc(wid) + '</code></td>' +
+        '<td>' + widgetIdCellHtml(wid) + '</td>' +
         '<td><strong>' + esc(row.title) + '</strong><div style="font-size:11px;color:var(--ix-text-muted);margin-top:2px">' + esc(row.description) + '</div></td>' +
         '<td style="font-size:12px">' + (pagesLabel ? esc(pagesLabel) : '<span class="ps-cell-dead">Chưa có Placement</span>') + '</td>' +
         '<td style="text-align:center">' +

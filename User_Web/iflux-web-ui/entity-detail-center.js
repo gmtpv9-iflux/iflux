@@ -102,7 +102,8 @@
   }
 
   function memberHref(tk) {
-    return seo() ? seo().stockHref(tk) : '/co-phieu/' + encodeURIComponent(tk);
+    var c = seo() ? seo().stockHref(tk) : '/co-phieu/' + encodeURIComponent(tk);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function groupInfoPanel(detail) {

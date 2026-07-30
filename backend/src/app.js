@@ -60,8 +60,27 @@ function createApp(config) {
   const subscriptions = createSubscriptionsRouter({ config, auth: userAndAdminAuth });
   app.use(`${config.LEGACY_API_PREFIX}/subscriptions`, subscriptions);
 
+  const { createAffiliatePayoutsRouter } = require('./modules/affiliate-payouts/payouts.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/affiliate-payouts`, createAffiliatePayoutsRouter({ config, auth: userAndAdminAuth }));
+
   app.use(`${config.LEGACY_API_PREFIX}`, createMarketRouter());
   app.use(`${config.LEGACY_API_PREFIX}/community`, createCommunityRouter({ auth: userAndAdminAuth, config }));
+  const { createInteractionV1Router } = require('./modules/interaction/interaction.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/interaction/v1`, createInteractionV1Router({ auth: userAndAdminAuth, config }));
+
+  const { createFollowRouter } = require('./modules/follow/follow.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/follow`, createFollowRouter({ auth }));
+
+  const { createNotificationsRouter } = require('./modules/notifications/notifications.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/notifications`, createNotificationsRouter({ auth }));
+
+  try {
+    const { registerFnNotificationSubscribers } = require('./modules/notifications/fn-subscriber');
+    registerFnNotificationSubscribers();
+  } catch (e) {
+    console.warn('[FN-001] subscriber register', e && e.message);
+  }
+
   const { createContentRouter } = require('./modules/content/content.routes');
   app.use(
     `${config.LEGACY_API_PREFIX}/content`,
@@ -70,14 +89,14 @@ function createApp(config) {
       config
     })
   );
-  app.use(`${config.LEGACY_API_PREFIX}/onboarding`, createOnboardingRouter({ config, auth }));
-  app.use(`${config.LEGACY_API_PREFIX}/plans`, createPlansRouter({ config }));
+  app.use(`${config.LEGACY_API_PREFIX}/onboarding`, createOnboardingRouter({ config, auth: userAndAdminAuth }));
+  app.use(`${config.LEGACY_API_PREFIX}/plans`, createPlansRouter({ config, auth: adminAuthMw }));
 
   const { createDsSotRouter } = require('./modules/ds-sot/ds-sot.routes');
-  app.use(`${config.LEGACY_API_PREFIX}/ds-sot`, createDsSotRouter({ config }));
+  app.use(`${config.LEGACY_API_PREFIX}/ds-sot`, createDsSotRouter({ config, auth: adminAuthMw }));
 
   const { createPageCompositionRouter } = require('./modules/page-composition/page-composition.routes');
-  app.use(`${config.LEGACY_API_PREFIX}/page-composition`, createPageCompositionRouter({ config }));
+  app.use(`${config.LEGACY_API_PREFIX}/page-composition`, createPageCompositionRouter({ config, auth: adminAuthMw }));
 
   const { createWidgetPublishRouter } = require('./modules/widget-publish/widget-publish.routes');
   app.use(`${config.LEGACY_API_PREFIX}`, createWidgetPublishRouter({ config, auth: adminAuthMw }));
@@ -86,6 +105,58 @@ function createApp(config) {
 
   const { createAdminUsersRouter } = require('./modules/admin-users/admin-users.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/users`, createAdminUsersRouter({ config, auth: adminAuthMw }));
+
+  const { createSectorsAdminRouter } = require('./modules/market/sectors-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/sectors`, createSectorsAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createEcosystemsAdminRouter } = require('./modules/market/ecosystems-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/ecosystems`, createEcosystemsAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createEtlJobsAdminRouter } = require('./modules/data/etl-jobs-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/etl-jobs`, createEtlJobsAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createSourcesAdminRouter } = require('./modules/data/sources-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/sources`, createSourcesAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createDataOpsRouter } = require('./modules/data/data-ops.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/data-ops`, createDataOpsRouter({ config, auth: adminAuthMw }));
+
+  const { createDashboardAdminRouter } = require('./modules/dashboard/dashboard-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/dashboard`, createDashboardAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createGuidesAdminRouter } = require('./modules/guides/guides-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/guides`, createGuidesAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createInterfaceAdminRouter } = require('./modules/interface/interface-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/interface`, createInterfaceAdminRouter({ config, auth: adminAuthMw }));
+
+  const { createMarketWaveBRouter, createMarketOpsWaveBRouter } = require('./modules/market/market-wave-b.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/market-config`, createMarketWaveBRouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/market-ops`, createMarketOpsWaveBRouter({ config, auth: adminAuthMw }));
+  const { createMarketStocksWaveFRouter } = require('./modules/market/market-wave-f.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/market/stocks`, createMarketStocksWaveFRouter({ config, auth: adminAuthMw }));
+
+  const { createAiAdminRouter, createNotificationsAdminRouter } = require('./modules/ai/ai-notif-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/ai`, createAiAdminRouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/notifications`, createNotificationsAdminRouter({ config, auth: adminAuthMw }));
+
+  const {
+    createMetadataAdminRouter,
+    createMarketingBrandRouter,
+    createCommunityOpsAdminRouter
+  } = require('./modules/metadata/wave-d-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/metadata`, createMetadataAdminRouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/marketing`, createMarketingBrandRouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/community-ops`, createCommunityOpsAdminRouter({ config, auth: adminAuthMw }));
+
+  const {
+    createSubscriptionWaveERouter,
+    createSystemWaveERouter,
+    createStoriesWaveERouter
+  } = require('./modules/subscription/wave-e-admin.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/subscription`, createSubscriptionWaveERouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/system`, createSystemWaveERouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/stories`, createStoriesWaveERouter({ config, auth: adminAuthMw }));
 
   const { createAdminRbacRouter } = require('./modules/admin-rbac/admin-rbac.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/access`, createAdminRbacRouter({ config, auth: adminAuthMw }));

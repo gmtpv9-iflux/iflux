@@ -1,0 +1,3 @@
+User_Web/iflux-web-ui/auth-social.js:132:  function loginGoogle(opts) {
+User_Web/iflux-web-ui/auth-social.js:264:      google: loginGoogle,
+User_Web/iflux-web-ui/auth-social.js:314:    loginGoogle: loginGoogle,

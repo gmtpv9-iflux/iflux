@@ -2,12 +2,26 @@
 (function (global) {
   'use strict';
 
-  var commentSort = 'newest';
   var currentSlug = '';
 
   function st() { return global.IfluxCommunityStore; }
   function ui() { return global.IfluxCommunityUI; }
-  function auth() { return global.IfluxAuth; }
+
+  function routeUrl(key) {
+    var R = global.IfluxRoutes;
+    if (R && R.to) return R.to(key);
+    if (key === 'community') return '/cong-dong';
+    return '/';
+  }
+
+  function consumerNavigate(canonical) {
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical);
+      return;
+    }
+    global.location.href = canonical;
+  }
 
   function userId() {
     return ui().currentUserId();
@@ -38,6 +52,17 @@
   function prepareArticleBody(html) {
     var div = document.createElement('div');
     div.innerHTML = html || '';
+    /* Ảnh RSS/editor thường có width/height cố định → tràn khung; bỏ attr + inline để CSS fit full width */
+    div.querySelectorAll('img').forEach(function (img) {
+      img.removeAttribute('width');
+      img.removeAttribute('height');
+      try {
+        img.style.removeProperty('width');
+        img.style.removeProperty('height');
+        img.style.removeProperty('max-width');
+        img.style.removeProperty('min-width');
+      } catch (e) { /* ignore */ }
+    });
     var headings = [];
     var used = {};
     div.querySelectorAll('h2').forEach(function (h2, i) {
@@ -67,33 +92,14 @@
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
-  function commentFilterTabsHtml(active) {
-    var tabs = [
-      { key: 'newest', label: 'Mới nhất' },
-      { key: 'liked', label: 'Yêu thích' },
-      { key: 'debate', label: 'Tranh luận' },
-      { key: 'shared', label: 'Chia sẻ' }
-    ];
-    return tabs.map(function (t) {
-      return '<button type="button" class="ifx-com-cmt-tab' + (active === t.key ? ' is-active' : '') +
-        '" data-ifx-com-cmt-sort="' + t.key + '">' + t.label + '</button>';
-    }).join('');
-  }
-
-  function renderCommentList(post) {
-    var sorted = ui().sortComments(post.comments || [], commentSort);
-    if (!sorted.length) {
-      return '<div class="ifx-com-comments__empty">Chưa có bình luận. Hãy làm người đầu tiên.</div>';
-    }
-    return sorted.map(ui().commentItemHtml).join('');
-  }
-
   function renderArticleMain(post, slug, uid, liked, favorited, bodyHtml) {
     var seo = post.seo || {};
     var geo = post.geo || {};
     var published = post.published_at || post.created_at;
     var modified = post.updated_at || published;
-    var canonical = seo.canonical_url || location.href.split('#')[0];
+    var canonical = global.IfluxSeoUrl
+      ? IfluxSeoUrl.postCanonical(post)
+      : ((post.metadata && (post.metadata.canonical || post.metadata.url)) || '');
 
     return (
       '<article class="ifx-com-article" itemscope itemtype="' + schemaType(post) + '">' +
@@ -131,15 +137,7 @@
           '</div>' +
 
           '<div class="ifx-com-article__tags" aria-label="Thẻ bài viết">' + ui().postTagsHtml(post) + '</div>' +
-
-          '<div class="ifx-com-article__actions" role="toolbar" aria-label="Tương tác bài viết">' +
-            '<button type="button" class="ifx-com-action' + (liked ? ' is-active' : '') + '" data-ifx-com-like aria-pressed="' + liked + '">' +
-              '<i class="ti ti-heart"></i> <span>' + (post.stats.likes || 0) + '</span></button>' +
-            '<button type="button" class="ifx-com-action' + (favorited ? ' is-active' : '') + '" data-ifx-com-fav aria-pressed="' + favorited + '">' +
-              '<i class="ti ti-star"></i> <span>' + (post.stats.favorites || 0) + '</span></button>' +
-            '<button type="button" class="ifx-com-action" data-ifx-com-share><i class="ti ti-share"></i> Chia sẻ</button>' +
-            '<button type="button" class="ifx-com-action" data-ifx-com-seo><i class="ti ti-code"></i> SEO seed</button>' +
-          '</div>' +
+          /* Entity mobile = slot trên bottom IX (Shell); desktop = sidebar. CẤM strip trên thân bài. */
         '</header>' +
 
         '<div class="ifx-com-article__body" itemprop="articleBody">' + bodyHtml + '</div>' +
@@ -167,57 +165,96 @@
     );
   }
 
-  function renderSidebar(post, tocHeadings) {
+  /**
+   * Presentation từ Resolver (IO) — Page/Layout gọi; không matchMedia trong Component.
+   * RC-IO-04 · RC-IU-02
+   */
+  function resolvePresentation() {
+    if (global.IfluxInteractionPresentationResolver && IfluxInteractionPresentationResolver.resolve) {
+      return IfluxInteractionPresentationResolver.resolve({
+        pageDefinition: { pageKey: 'communityPost' },
+        viewport: { width: typeof window !== 'undefined' ? window.innerWidth : 1200 }
+      });
+    }
+    return 'sidebar';
+  }
+
+  /**
+   * Sidebar comments slot — Host Interactive khi Presentation = sidebar.
+   * Mobile: Presentation = bottom-bar → card ẩn (không mount Host thứ hai).
+   */
+  function renderCommentsSideCard(post) {
+    var n = (post && post.stats && post.stats.comments) || 0;
+    /* Slice 4 pattern: section giữ chrome; Host mount vào slot rỗng — không gắn root lên section */
+    return (
+      '<section class="ifx-com-side-card ifx-com-side-card--comments" data-ifx-article-comments-surface="host" data-ifx-com-comment-count="' + n + '">' +
+        '<h2 class="ifx-com-side-card__title"><i class="ti ti-message"></i> Bình luận</h2>' +
+        '<div data-ifx-ix-interactive-root></div>' +
+      '</section>'
+    );
+  }
+
+  function renderSidebar(post, tocHeadings, presentation) {
     return (
       '<aside class="ifx-com-story-aside" aria-label="Thông tin liên quan">' +
-        '<section class="ifx-com-side-card">' +
+        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
           '<h2 class="ifx-com-side-card__title"><i class="ti ti-bookmark"></i> Chủ đề</h2>' +
           '<p class="ifx-com-side-card__sub">Chủ đề được nhắc trong bài — bấm để mở</p>' +
           '<div class="ifx-com-side-list">' + ui().sidebarStoryRowsHtml(post) + '</div>' +
         '</section>' +
 
-        '<section class="ifx-com-side-card">' +
+        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
           '<h2 class="ifx-com-side-card__title"><i class="ti ti-chart-dots-3"></i> Ngành</h2>' +
           '<p class="ifx-com-side-card__sub">Ngành liên quan — bấm để mở trang ngành</p>' +
           '<div class="ifx-com-side-list">' + ui().sidebarSectorRowsHtml(post) + '</div>' +
         '</section>' +
 
-        '<section class="ifx-com-side-card">' +
+        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
           '<h2 class="ifx-com-side-card__title"><i class="ti ti-chart-line"></i> Cổ phiếu</h2>' +
           '<p class="ifx-com-side-card__sub">Bấm mã để mở trang cổ phiếu</p>' +
           '<div class="ifx-com-side-list">' + ui().sidebarTickerRowsHtml(post) + '</div>' +
         '</section>' +
 
-        '<section class="ifx-com-side-card">' +
+        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
           '<h2 class="ifx-com-side-card__title"><i class="ti ti-hierarchy-2"></i> Hệ sinh thái</h2>' +
           '<p class="ifx-com-side-card__sub">Hệ sinh thái liên quan — bấm để mở</p>' +
           '<div class="ifx-com-side-list">' + ui().sidebarEcosystemRowsHtml(post) + '</div>' +
         '</section>' +
 
         renderTocHtml(tocHeadings) +
-
-        '<section class="ifx-com-side-card ifx-com-side-card--comments">' +
-          '<h2 class="ifx-com-side-card__title"><i class="ti ti-message"></i> Bình luận <span class="ifx-com-side-count">' + (post.stats.comments || 0) + '</span></h2>' +
-          '<div class="ifx-com-cmt-tabs" role="tablist">' + commentFilterTabsHtml(commentSort) + '</div>' +
-          '<form class="ifx-com-comment-form ifx-com-comment-form--side" data-ifx-com-comment-form>' +
-            '<textarea class="ix-input" rows="3" placeholder="Viết bình luận..." data-ifx-com-comment-body required></textarea>' +
-            '<button type="submit" class="ix-btn ix-btn-primary ix-btn-sm">Gửi</button>' +
-          '</form>' +
-          '<div class="ifx-com-comments__list ifx-com-comments__list--side" data-ifx-com-comments>' +
-            renderCommentList(post) +
-          '</div>' +
-        '</section>' +
+        renderCommentsSideCard(post) +
       '</aside>'
     );
   }
 
-  /* Khối "Bài viết liên quan" — lazy load, hiển thị như trang Cộng đồng (Tin tức / chuyên gia) */
+  /* Cùng danh mục (ưu tiên) — fallback liên quan thực thể nếu thiếu category. */
+  function relatedFilterFor(post) {
+    if (!post) return { relatedTo: post };
+    var cat = post.category_id
+      || (post.category && (post.category.id || post.category.slug || post.category.name))
+      || post.category_slug
+      || post.category_name;
+    if (cat) {
+      return {
+        categoryId: cat,
+        excludeId: post.id || post.slug
+      };
+    }
+    return { relatedTo: post };
+  }
+
+  /* Khối "Bài viết liên quan" — cấu trúc section giống trang chủ Cộng đồng (DailyFeed). */
   function renderRelatedFeed(post) {
+    var catLabel = (post && (post.category_name
+      || (post.category && (post.category.name || post.category.label))
+      || post.category_slug)) || '';
     return (
-      '<section class="ifx-com-list-section ifx-com-related-feed" aria-label="Bài viết liên quan">' +
+      '<section class="ifx-com-related-feed" aria-label="Bài viết liên quan">' +
         '<div class="ifx-com-list-head">' +
           '<h2 class="ifx-com-list-title"><i class="ti ti-news"></i> Bài viết liên quan</h2>' +
-          '<span class="ifx-com-section-hint">Chủ đề · ngành · cổ phiếu · hệ sinh thái được nhắc trong bài</span>' +
+          '<span class="ifx-com-section-hint">' +
+            (catLabel ? ('Cùng danh mục · ' + esc(catLabel)) : 'Cùng danh mục / thực thể được nhắc trong bài') +
+          '</span>' +
         '</div>' +
         '<div data-ifx-com-related-feed></div>' +
       '</section>'
@@ -227,10 +264,13 @@
   function mountRelatedFeed(root, post) {
     var mount = root.querySelector('[data-ifx-com-related-feed]');
     if (!mount || !global.IfluxDailyFeed) return;
+    /* Giống trang chủ: Tin tức + Chuyên gia nổi bật + Bài viết chuyên gia */
     global.IfluxDailyFeed.mount(mount, {
-      filter: { relatedTo: post },
-      showExperts: false,
-      expertTitle: 'Bài viết chuyên gia liên quan'
+      filter: relatedFilterFor(post),
+      showNews: true,
+      showExperts: true,
+      showExpertPosts: true,
+      expertTitle: 'Bài viết của chuyên gia'
     });
   }
 
@@ -260,77 +300,190 @@
     setTimeout(function () { scrollToHeading(el); }, 80);
   }
 
-  function bindEvents(root, post, slug) {
-    var uid = userId();
+  function openInteractiveFallback() {
+    var href = global.IfluxSeoUrl && IfluxSeoUrl.commentsHrefFromLocation
+      ? IfluxSeoUrl.commentsHrefFromLocation()
+      : null;
+    if (href) {
+      consumerNavigate(href);
+      return;
+    }
+    if (global.ixToast) ixToast('Mở trang bình luận', 'info');
+  }
 
-    root.querySelector('[data-ifx-com-like]').addEventListener('click', function () {
-      st().toggleLike(slug, uid);
-      render(root);
-    });
+  /**
+   * UI Ownership — Article chỉ mount ĐÚNG MỘT Interaction Presentation.
+   * Desktop/tablet (>1024 / bp-lg): surface = sidebar (interactive).
+   * Mobile (≤1024 / mobile-shell): surface = bottom-bar (ActionBar → Store) — cùng đối tượng, khác chỗ hiển thị.
+   * CẤM Body ActionBar · CẤM mount hai Host cùng lúc · CẤM Shell proxy-click.
+   */
+  var _ixRemountBound = false;
+  var _ixLastSurface = '';
+  var _ixRetryTimer = null;
 
-    root.querySelector('[data-ifx-com-fav]').addEventListener('click', function () {
-      st().toggleFavorite(slug, uid);
-      render(root);
-    });
+  function useBottomIxSurface() {
+    return typeof window !== 'undefined' && window.IfluxBreakpoint && window.IfluxBreakpoint.isMobileShell
+      ? window.IfluxBreakpoint.isMobileShell()
+      : false;
+  }
 
-    root.querySelector('[data-ifx-com-share]').addEventListener('click', function () {
-      var url = ui().shareUrl(slug);
-      st().bumpShare(slug);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function () {
-          if (global.ixToast) ixToast('Đã sao chép link chia sẻ', 'success');
+  /** Mobile: đổ entity chips vào slot trên bottom IX — cùng postEntityChipsHtml (SoT). */
+  function fillArticleEntityStrip(post) {
+    var el = document.querySelector('[data-ifx-ix-article-entities]');
+    if (!el || !ui().postEntityChipsHtml) return;
+    var chips = ui().postEntityChipsHtml(post);
+    if (!chips) {
+      el.innerHTML = '';
+      el.setAttribute('hidden', 'hidden');
+      return;
+    }
+    el.innerHTML = '<div class="ifx-com-pills ifx-com-pills--scroll">' + chips + '</div>';
+    el.removeAttribute('hidden');
+  }
+
+  function clearArticleEntityStrip() {
+    var el = document.querySelector('[data-ifx-ix-article-entities]');
+    if (!el) return;
+    el.innerHTML = '';
+    el.setAttribute('hidden', 'hidden');
+  }
+
+  function mountInteractionHosts(root, post) {
+    if (!root || !post) return;
+    /* Phase 5 RC-IR: Host chưa sẵn → Summary boot rồi retry */
+    if (!global.IfluxInteractionHost || !IfluxInteractionHost.mountInteraction) {
+      if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {
+        IfluxInteractionBoot.ensureForSummary().then(function () {
+          if (root.isConnected) mountInteractionHosts(root, post);
         });
-      } else {
-        prompt('Sao chép link:', url);
       }
-    });
+      return;
+    }
+    var target = { type: 'post', id: String(post.id || post.slug || '') };
+    var Host = IfluxInteractionHost;
+    var sideRoot = root.querySelector('[data-ifx-ix-interactive-root]');
+    var useBottom = useBottomIxSurface();
+    var surface = useBottom ? 'bottom-bar' : 'sidebar';
+    var commentsCard = root.querySelector('.ifx-com-side-card--comments');
+    var bottomRoot = null;
 
-    var seoModal = root.querySelector('[data-ifx-com-seo-modal]');
-    var seed = st().exportSeoSeed(post, location.origin + location.pathname.replace(/\/[^/]+$/, ''));
-    root.querySelector('[data-ifx-com-seo]').addEventListener('click', function () {
-      root.querySelector('[data-ifx-com-seo-json]').textContent = JSON.stringify(seed, null, 2);
-      seoModal.classList.add('open');
-    });
-    root.querySelector('[data-ifx-com-seo-close]').addEventListener('click', function () {
-      seoModal.classList.remove('open');
-    });
-    seoModal.addEventListener('click', function (e) {
-      if (e.target === seoModal) seoModal.classList.remove('open');
-    });
-    root.querySelector('[data-ifx-com-seo-copy]').addEventListener('click', function () {
-      var text = root.querySelector('[data-ifx-com-seo-json]').textContent;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(function () {
-          if (global.ixToast) ixToast('Đã sao chép SEO seed', 'success');
-        });
+    if (useBottom) {
+      if (global.IfluxWebUI && typeof IfluxWebUI.ensureArticleIxBottomSlot === 'function') {
+        IfluxWebUI.ensureArticleIxBottomSlot();
+      } else if (global.IfluxWebUI && typeof IfluxWebUI.syncMobileTabbar === 'function') {
+        IfluxWebUI.syncMobileTabbar();
       }
-    });
-
-    root.querySelector('[data-ifx-com-comment-form]').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var body = root.querySelector('[data-ifx-com-comment-body]').value;
-      var user = auth() && auth().getUser();
-      if (!user) return;
-      try {
-        st().addComment(slug, user, body);
-        commentSort = 'newest';
-        render(root);
-        if (global.ixToast) ixToast('Đã gửi bình luận', 'success');
-      } catch (err) {
-        if (global.ixToast) ixToast(err.message, 'warning');
+      bottomRoot = document.querySelector('[data-ifx-ix-article-bottom-root]');
+      if (!bottomRoot) {
+        /* Chưa có slot (shell chưa sẵn) — gỡ Host sidebar để không giữ 2 surface. */
+        if (sideRoot && Host.unmountRoot) Host.unmountRoot(sideRoot);
+        if (commentsCard) commentsCard.setAttribute('hidden', 'hidden');
+        clearTimeout(_ixRetryTimer);
+        _ixRetryTimer = setTimeout(function () {
+          if (root.isConnected) mountInteractionHosts(root, post);
+        }, 100);
+        return;
       }
-    });
+    }
 
-    root.querySelectorAll('[data-ifx-com-cmt-sort]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        commentSort = btn.getAttribute('data-ifx-com-cmt-sort');
-        var list = root.querySelector('[data-ifx-com-comments]');
-        var fresh = st().getPostBySlug(slug);
-        if (list && fresh) list.innerHTML = renderCommentList(fresh);
-        root.querySelectorAll('[data-ifx-com-cmt-sort]').forEach(function (b) {
-          b.classList.toggle('is-active', b.getAttribute('data-ifx-com-cmt-sort') === commentSort);
-        });
+    if (sideRoot && Host.unmountRoot) Host.unmountRoot(sideRoot);
+    bottomRoot = document.querySelector('[data-ifx-ix-article-bottom-root]');
+    if (bottomRoot && Host.unmountRoot) Host.unmountRoot(bottomRoot);
+
+    function doMountSummary() {
+      bottomRoot = document.querySelector('[data-ifx-ix-article-bottom-root]');
+      if (!bottomRoot) return;
+      fillArticleEntityStrip(post);
+      Host.mountInteraction({
+        root: bottomRoot,
+        target: target,
+        mode: 'summary',
+        presentation: 'bottom-bar',
+        variant: 'bar',
+        pageDefinition: { pageKey: 'communityPost' },
+        onOpenInteractive: function () { openInteractiveFallback(); }
       });
+      if (commentsCard) commentsCard.setAttribute('hidden', 'hidden');
+    }
+
+    function doMountInteractive() {
+      clearArticleEntityStrip();
+      if (commentsCard) commentsCard.removeAttribute('hidden');
+      if (!sideRoot) return;
+      Host.mountInteraction({
+        root: sideRoot,
+        target: target,
+        mode: 'interactive',
+        presentation: 'sidebar',
+        pageDefinition: { pageKey: 'communityPost' },
+        onOpenInteractive: function () {
+          var composer = sideRoot.querySelector('[data-ifx-ix-body]');
+          if (composer) {
+            try { composer.focus(); } catch (e) { /* ignore */ }
+          }
+        }
+      });
+    }
+
+    /* RC-IR-01/04: bottom = Summary only; sidebar = lazy Interactive */
+    if (useBottom) {
+      if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {
+        IfluxInteractionBoot.ensureForSummary().then(doMountSummary).catch(doMountSummary);
+      } else {
+        doMountSummary();
+      }
+    } else if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForInteractive) {
+      IfluxInteractionBoot.ensureForInteractive().then(doMountInteractive).catch(doMountInteractive);
+    } else {
+      doMountInteractive();
+    }
+    _ixLastSurface = surface;
+
+    if (!_ixRemountBound) {
+      _ixRemountBound = true;
+      var t = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(t);
+        t = setTimeout(function () {
+          if (!root.isConnected) return;
+          var next = useBottomIxSurface() ? 'bottom-bar' : 'sidebar';
+          if (next === _ixLastSurface) return;
+          var p = st() && currentSlug ? (st().getPostBySlug(currentSlug) || st().getPostById(currentSlug)) : post;
+          if (p) mountInteractionHosts(root, p);
+        }, 120);
+      });
+      document.addEventListener('iflux-ix-bottom-slot-ready', function () {
+        if (!root.isConnected) return;
+        if (!useBottomIxSurface()) return;
+        var p = st() && currentSlug ? (st().getPostBySlug(currentSlug) || st().getPostById(currentSlug)) : post;
+        if (p) mountInteractionHosts(root, p);
+      });
+      document.addEventListener('iflux-context-ready', function () {
+        if (!root.isConnected) return;
+        if (!useBottomIxSurface()) return;
+        if (document.querySelector('[data-ifx-ix-article-bottom-root][data-ifx-ix-host]')) return;
+        var p = st() && currentSlug ? (st().getPostBySlug(currentSlug) || st().getPostById(currentSlug)) : post;
+        if (p) mountInteractionHosts(root, p);
+      });
+    }
+  }
+
+  function syncCommentCountAttr(root, counts) {
+    if (!root || !counts) return;
+    var n = counts.comments != null ? counts.comments : 0;
+    root.querySelectorAll('[data-ifx-com-comment-count]').forEach(function (el) {
+      el.setAttribute('data-ifx-com-comment-count', String(n));
+    });
+  }
+
+  function bindEvents(root, post, slug) {
+    /* Like / fav / share / comment → Interaction Host sidebar (không CommunityStore.stats++) */
+    document.addEventListener('iflux-ix-projection', function onProj(ev) {
+      if (!root.isConnected) {
+        document.removeEventListener('iflux-ix-projection', onProj);
+        return;
+      }
+      syncCommentCountAttr(root, ev.detail && ev.detail.counts);
     });
   }
 
@@ -367,34 +520,32 @@
     var liked = (post.liked_by || []).indexOf(uid) >= 0;
     var favorited = (post.favorited_by || []).indexOf(uid) >= 0;
     var bodyPrep = prepareArticleBody(post.body_html);
+    var presentation = resolvePresentation();
+
+    if (global.IfluxInteractionHost && IfluxInteractionHost.unmountAll) {
+      try { IfluxInteractionHost.unmountAll(); } catch (e) { /* ignore */ }
+    }
 
     root.innerHTML =
       '<nav class="ifx-com-breadcrumb" aria-label="Breadcrumb">' +
-        '<a href="' + (global.IfluxSeoUrl ? IfluxSeoUrl.communityPath() : 'index.html') + '"><i class="ti ti-arrow-left"></i> Cộng đồng</a>' +
+        '<a href="' + esc(routeUrl('community')) + '"><i class="ti ti-arrow-left"></i> Cộng đồng</a>' +
         '<span class="ifx-com-breadcrumb__sep">/</span>' +
         '<span class="ifx-com-breadcrumb__current">' + esc(post.title) + '</span>' +
       '</nav>' +
       '<div class="ifx-com-story-layout">' +
         '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
-        renderSidebar(post, bodyPrep.headings) +
+        renderSidebar(post, bodyPrep.headings, presentation) +
       '</div>' +
-      renderRelatedFeed(post) +
-      '<div class="ix-modal-overlay" id="ifxComSeoModal" data-ifx-com-seo-modal>' +
-        '<div class="ix-modal-box ifx-com-seo-modal" style="max-width:640px;max-height:85vh;overflow:auto">' +
-          '<button type="button" class="ix-modal-close" data-ifx-com-seo-close><i class="ti ti-x"></i></button>' +
-          '<div class="ix-modal-title">SEO / GEO seed</div>' +
-          '<div class="ix-modal-sub">JSON xuất từ bài viết — dùng cho sitemap, meta, schema</div>' +
-          '<pre class="ifx-com-seo-json" data-ifx-com-seo-json></pre>' +
-          '<div style="margin-top:12px;text-align:right">' +
-            '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-ifx-com-seo-copy><i class="ti ti-copy"></i> Sao chép</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
+      renderRelatedFeed(post);
 
     bindEvents(root, post, slug);
     bindTocLinks(root);
     mountRelatedFeed(root, post);
+    mountInteractionHosts(root, post);
     scrollToHashHeading(root);
+    try {
+      document.dispatchEvent(new CustomEvent('iflux-context-ready'));
+    } catch (e) { /* ignore */ }
   }
 
   function init() {
@@ -407,7 +558,21 @@
         })()
       : new URLSearchParams(location.search).get('slug');
     if (slug && st()) st().bumpView(slug);
-    render(root);
+
+    function run() {
+      render(root);
+    }
+
+    /* Phase 5 RC-IR-01: Article entry = Summary boot; Interactive lazy trong mountInteractionHosts */
+    if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {
+      IfluxInteractionBoot.ensureForSummary().then(run).catch(function (err) {
+        if (global.console && console.warn) console.warn('[CommunityPost] IX Summary boot', err);
+        run();
+      });
+    } else {
+      run();
+    }
+
     document.addEventListener('iflux-community-change', function () { render(root); });
   }
 

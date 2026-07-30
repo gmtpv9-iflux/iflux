@@ -3,10 +3,11 @@
   'use strict';
 
   var _activePeerId = null;
-  var MOBILE_CHAT_MAX = 1023.98;
 
   function isMobileChat() {
-    return global.innerWidth <= MOBILE_CHAT_MAX;
+    return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
+      ? global.IfluxBreakpoint.isMobileShell()
+      : false;
   }
 
   function updateUrlPeer(peerId) {

@@ -16,13 +16,13 @@ var DEPS_TIERS = [
   [
     /* W4: seo-url = Shell trên community */
     ASSET + 'community-store.js',
-    ASSET + 'watchlist-store.js'
+    ASSET + 'watchlist-store.js?v=followFound20260724'
   ],
   [
-    ASSET + 'watchlist-ui.js'
+    '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724'
   ],
   [
-    ASSET + 'community-trending.js?v=span61220260714'
+    ASSET + 'community-trending.js?v=followFound20260724'
   ]
 ];
 

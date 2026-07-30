@@ -1247,7 +1247,9 @@
           buy: f.buy,
           sell: f.sell,
           net: f.net,
-          href: (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tk) : '/co-phieu/' + encodeURIComponent(tk))
+          href: global.IfluxHref
+            ? IfluxHref.forCanonical(global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tk) : '/co-phieu/' + encodeURIComponent(tk))
+            : (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tk) : '/co-phieu/' + encodeURIComponent(tk))
         });
       });
     } else {
@@ -1262,6 +1264,7 @@
             : (scope === 'family'
               ? '/he-sinh-thai/' + encodeURIComponent(g.id)
               : '/chu-de/' + encodeURIComponent(g.id)));
+        if (global.IfluxHref) href = IfluxHref.forCanonical(href);
         items.push({
           id: g.id,
           label: g.name,

@@ -62,8 +62,26 @@ class IfluxDevHandler(SimpleHTTPRequestHandler):
     def _plans_payload(self):
         if os.path.isfile(PLANS_FILE):
             with open(PLANS_FILE, 'r', encoding='utf-8') as f:
-                return f.read()
-        return json.dumps({'version': 1, 'updatedAt': 0, 'overrides': {}, 'custom': []})
+                data = json.load(f)
+            if not (isinstance(data.get('plans'), list) and data['plans']):
+                data = self._build_artifact(data)
+                with open(PLANS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+            return json.dumps(data, ensure_ascii=False)
+        return json.dumps({'version': 1, 'updatedAt': 0, 'overrides': {}, 'custom': [], 'plans': []})
+
+    def _build_artifact(self, data):
+        import subprocess
+        script = os.path.join(ROOT, 'tools', 'build-plans-artifact.js')
+        if os.path.isfile(script):
+            try:
+                subprocess.run(['node', script], cwd=ROOT, check=True, capture_output=True, timeout=30)
+                with open(PLANS_FILE, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        data.setdefault('plans', [])
+        return data
 
     def _rewrite_path(self, path):
         """Return (filesystem path relative to ROOT, extra query dict) or None."""
@@ -121,9 +139,17 @@ class IfluxDevHandler(SimpleHTTPRequestHandler):
         raw = self.rfile.read(length).decode('utf-8')
         data = json.loads(raw)
         data['updatedAt'] = data.get('updatedAt') or int(__import__('time').time() * 1000)
+        data = self._build_artifact(data)
         os.makedirs(os.path.dirname(PLANS_FILE), exist_ok=True)
         with open(PLANS_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+        backend_file = os.path.join(ROOT, 'backend', 'data', 'plans-runtime.json')
+        try:
+            os.makedirs(os.path.dirname(backend_file), exist_ok=True)
+            with open(backend_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except OSError:
+            pass
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()

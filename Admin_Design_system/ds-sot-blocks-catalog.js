@@ -130,10 +130,9 @@
             comp('rows', 'Entity rows', 'item.market.stock-row-wrap', 'item')
           ], { anatomy: 'list rows*' }),
           tpl('tpl-feed-card', 'Feed Post Body', 'block.template.feed-card', 'ifx-com-post', 'com-card', [
-            comp('author', 'Author', 'item.community.author', 'item'),
             comp('title', 'Title row', 'item.community.title-row', 'item'),
             comp('stats', 'Engagement', 'item.community.stats', 'item')
-          ], { anatomy: 'author · title · tags · stats' })
+          ], { anatomy: 'thumb · title · tags · stats (author chỉ bài chi tiết)' })
         ]
       },
       {

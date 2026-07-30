@@ -2,7 +2,7 @@
 
 const express = require('express');
 const rbac = require('./admin-rbac.service');
-const { createRbacContext, requirePermission } = require('./admin-rbac.middleware');
+const { createRbacContext, requirePermission, requireAnyPermission } = require('./admin-rbac.middleware');
 
 function ipOf(req) {
   return (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.ip || null;
@@ -36,6 +36,19 @@ function createAdminRbacRouter(deps) {
         permissions: Array.from(set)
       }
     });
+  });
+
+  /* Hồ sơ cá nhân — mọi admin tự sửa tên của mình (không cần access.admin_accounts.edit) */
+  router.patch('/me', async (req, res, next) => {
+    try {
+      const name = req.body && req.body.name != null ? String(req.body.name).trim() : '';
+      if (!name) {
+        return res.status(400).json({ error: { message: 'Họ tên là bắt buộc.' } });
+      }
+      await rbac.updateAccount(req.admin.id, { name: name });
+      await audit(req, 'update_own_profile', 'admin_account', req.admin.id, { name: name });
+      res.json({ ok: true, admin: { id: req.admin.id, name: name, email: req.admin.email } });
+    } catch (err) { next(err); }
   });
 
   router.post('/change-password', async (req, res, next) => {
@@ -91,7 +104,7 @@ function createAdminRbacRouter(deps) {
     } catch (err) { next(err); }
   });
 
-  router.put('/roles/:id/permissions', requirePermission('access.roles.assign_permission'), async (req, res, next) => {
+  router.put('/roles/:id/permissions', requireAnyPermission('access.roles.assign_permission', 'access.permissions.assign_permission'), async (req, res, next) => {
     try {
       await rbac.setRolePermissions(req.params.id, (req.body && req.body.permissionKeys) || []);
       rbac.invalidateContextCache();
@@ -141,7 +154,14 @@ function createAdminRbacRouter(deps) {
     } catch (err) { next(err); }
   });
 
-  router.patch('/accounts/:id/status', requirePermission('access.admin_accounts.lock'), async (req, res, next) => {
+  router.patch('/accounts/:id/status', function (req, res, next) {
+    const status = String((req.body && req.body.status) || '').trim();
+    const key =
+      status === 'locked'
+        ? 'access.admin_accounts.status_locked'
+        : 'access.admin_accounts.status_active';
+    return requirePermission(key)(req, res, next);
+  }, async (req, res, next) => {
     try {
       await rbac.setAccountStatus(req.params.id, req.body && req.body.status);
       rbac.invalidateContextCache();

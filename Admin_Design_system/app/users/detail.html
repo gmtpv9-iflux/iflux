@@ -137,7 +137,7 @@
                       <input type="text" class="ix-input" id="adm-pwd-reason" placeholder="VD: Ticket #1024 — user quên mật khẩu" />
                     </div>
                     <div>
-                      <button type="button" class="ix-btn ix-btn-primary" id="adm-btn-override-pwd">Ghi đè mật khẩu</button>
+                      <button type="button" class="ix-btn ix-btn-primary" id="adm-btn-override-pwd" data-ix-perm="users.list.reset_password">Ghi đè mật khẩu</button>
                     </div>
                   </div>
                 </div>
@@ -170,10 +170,11 @@
   </div>
 </div>
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js?v=noep2users20260726"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="../../iflux-admin-ui/pattern-user-profile.js"></script>
@@ -185,7 +186,7 @@
 <script src="../../../User_Web/iflux-web-ui/stock-comments-ui.js"></script>
 <script src="../../../User_Web/iflux-web-ui/profile-follow-store.js"></script>
 <script src="../../../User_Web/iflux-web-ui/profile-page.js"></script>
-<script src="users-detail.js"></script>
+<script src="users-detail.js?v=noep2users20260726"></script>
 <script>UsersDetail.init();</script>
   <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
 </body>

@@ -1,0 +1,104 @@
+=== loginGoogle ===
+User_Web/iflux-web-ui/auth-social.js:132:  function loginGoogle(opts) {
+User_Web/iflux-web-ui/auth-social.js:264:      google: loginGoogle,
+User_Web/iflux-web-ui/auth-social.js:314:    loginGoogle: loginGoogle,
+=== initGoogle ===
+User_Web/iflux-web-ui/auth-social.js:110:  function initGoogle(cfg) {
+User_Web/iflux-web-ui/auth-social.js:136:      return initGoogle(cfg).then(function () {
+User_Web/iflux-web-ui/auth-social.js:296:          return initGoogle(c.google).catch(function () { /* optional */ });
+=== __ifxOnGoogleCredential ===
+User_Web/iflux-web-ui/auth-social.js:121:          if (global.__ifxOnGoogleCredential) {
+User_Web/iflux-web-ui/auth-social.js:122:            global.__ifxOnGoogleCredential(response);
+User_Web/iflux-web-ui/auth-social.js:138:          global.__ifxOnGoogleCredential = function (response) {
+User_Web/iflux-web-ui/auth-social.js:139:            global.__ifxOnGoogleCredential = null;
+=== google.accounts ===
+User_Web/iflux-web-ui/auth-social.js:113:    return loadScript('https://accounts.google.com/gsi/client').then(function () {
+User_Web/iflux-web-ui/auth-social.js:114:      if (!global.google || !google.accounts || !google.accounts.id) {
+User_Web/iflux-web-ui/auth-social.js:117:      google.accounts.id.initialize({
+User_Web/iflux-web-ui/auth-social.js:148:          google.accounts.id.prompt(function (notification) {
+User_Web/iflux-web-ui/google-onetap.js:9:  var GSI_SRC = 'https://accounts.google.com/gsi/client';
+User_Web/iflux-web-ui/google-onetap.js:42:      if (global.google && google.accounts && google.accounts.id) return resolve();
+User_Web/iflux-web-ui/google-onetap.js:45:          if (global.google && google.accounts && google.accounts.id) {
+User_Web/iflux-web-ui/google-onetap.js:106:    if (!global.google || !google.accounts || !google.accounts.id) return;
+User_Web/iflux-web-ui/google-onetap.js:107:    google.accounts.id.initialize({
+User_Web/iflux-web-ui/google-onetap.js:116:    google.accounts.id.prompt(function (notification) {
+=== google-onetap|gonetap ===
+User_Web/iflux-web-ui/iflux-web-ui.js:1675:    s.src = base + 'google-onetap.js';
+User_Web/iflux-web-ui/google-onetap.js:10:  var DISMISS_KEY = 'iflux_gonetap_dismiss_at';
+=== affiliateCodeForSocial ===
+User_Web/iflux-web-ui/auth-social.js:252:  function affiliateCodeForSocial(frozen) {
+User_Web/iflux-web-ui/auth-social.js:276:          referral_code: affiliateCodeForSocial(opts.referral_code),
+=== getCodeForIdentityCreation ===
+User_Web/iflux-web-ui/auth-login-init.js:139:    if (AR && AR.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-login-init.js:140:      var code = AR.getCodeForIdentityCreation();
+User_Web/iflux-web-ui/auth-social.js:241:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-social.js:242:      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+User_Web/iflux-web-ui/auth-social.js:253:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-social.js:254:      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:122:  function getCodeForIdentityCreation() {
+User_Web/iflux-web-ui/runtime/affiliate-resolver.js:186:    getCodeForIdentityCreation: getCodeForIdentityCreation,
+User_Web/iflux-web-ui/auth.js:452:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth.js:453:      return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:477:    if (AR && AR.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/loyalty-affiliate-store.js:478:      return AR.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/auth-register-init.js:3:  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/auth-register-init.js:4:    return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+User_Web/iflux-web-ui/google-onetap.js:74:    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
+User_Web/iflux-web-ui/google-onetap.js:75:      refCode = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+=== referral_code (auth social paths) ===
+User_Web/iflux-web-ui/google-onetap.js:78:      referral_code: refCode
+User_Web/iflux-web-ui/auth-social.js:244:    return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
+User_Web/iflux-web-ui/auth-social.js:276:          referral_code: affiliateCodeForSocial(opts.referral_code),
+User_Web/iflux-web-ui/iflux-api-bundle.js:81:        referral_code: referralCode || null,
+User_Web/iflux-web-ui/iflux-api-bundle.js:114:      referral_code: opts.referral_code || null
+User_Web/iflux-web-ui/auth-register-init.js:147:    referral_code: refCode,
+User_Web/iflux-web-ui/auth-register-init.js:179:  if (refInput && draft.referral_code && !isRefFromAffiliateLink()) {
+User_Web/iflux-web-ui/auth-register-init.js:180:    refInput.value = draft.referral_code;
+User_Web/iflux-web-ui/auth-register-init.js:270:      referral_code: draft.referral_code,
+User_Web/iflux-web-ui/auth-register-init.js:332:  referral_code: getEffectiveRefCode(),
+User_Web/iflux-web-ui/auth.js:191:      referral_code: profile.referral_code || '',
+User_Web/iflux-web-ui/auth.js:392:      referral_code: c.affiliate || '',
+User_Web/iflux-web-ui/auth.js:470:    var fromForm = String(data.referral_code || '').trim().toUpperCase();
+User_Web/iflux-web-ui/auth.js:572:    referral_code: 'IFLMVN10',
+User_Web/iflux-web-ui/auth.js:870:    if (!user || !user.referral_code) return user;
+User_Web/iflux-web-ui/auth.js:872:      user.referral_link = IfluxLoyaltyAffiliateStore.buildReferralLink(user.referral_code);
+User_Web/iflux-web-ui/auth.js:1267:        referral_code: 'IFLUX' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+User_Web/iflux-web-ui/auth.js:1298:      if (!opts.referral_code) {
+User_Web/iflux-web-ui/auth.js:1300:        if (ctxCode) opts.referral_code = ctxCode;
+User_Web/iflux-web-ui/auth.js:1387:      referral_code: 'IFLUX' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+User_Web/iflux-web-ui/auth-login-init.js:149:    referral_code: affiliateReferralCodeForIdentity()
+=== switch(provider) / case google social-auth ===
+backend/src/modules/legacy-auth/social-auth.service.js:177:    case 'google':
+=== IfluxAuthSocial ===
+User_Web/iflux-web-ui/auth-login-init.js:146:  IfluxAuthSocial.initPage({
+User_Web/iflux-web-ui/auth-social.js:312:  global.IfluxAuthSocial = {
+User_Web/iflux-web-ui/auth-register-init.js:331:IfluxAuthSocial.initPage({
+=== loginWithSocial ===
+User_Web/iflux-web-ui/auth-social.js:3: * Gọi IfluxAuth.loginWithSocial → POST /auth/social khi dataMode=api
+User_Web/iflux-web-ui/auth-social.js:100:    if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) {
+User_Web/iflux-web-ui/auth-social.js:107:    return IfluxAuth.loginWithSocial(provider, tokens || {}, opts || {});
+User_Web/iflux-web-ui/auth.js:1294:  function loginWithSocial(provider, tokens, opts) {
+User_Web/iflux-web-ui/auth.js:1637:    loginWithSocial: loginWithSocial,
+User_Web/iflux-web-ui/google-onetap.js:72:    if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) return;
+User_Web/iflux-web-ui/google-onetap.js:77:    IfluxAuth.loginWithSocial('google', { id_token: response.credential }, {
+=== redirectAfterAuth ===
+User_Web/iflux-web-ui/auth-login-init.js:5:    IfluxAuth.redirectAfterAuth();
+User_Web/iflux-web-ui/auth-login-init.js:92:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-login-init.js:111:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-login-init.js:122:    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth.js:1535:  function redirectAfterAuth(defaultPath) {
+User_Web/iflux-web-ui/auth.js:1658:    redirectAfterAuth: redirectAfterAuth,
+User_Web/iflux-web-ui/auth-register-init.js:276:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-register-init.js:335:    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+=== finishSocialLogin|bindSocialButtons ===
+User_Web/iflux-web-ui/auth-social.js:105:  function finishSocialLogin(provider, tokens, opts) {
+User_Web/iflux-web-ui/auth-social.js:144:            finishSocialLogin('google', { id_token: response.credential }, opts)
+User_Web/iflux-web-ui/auth-social.js:176:          return finishSocialLogin('apple', { id_token: idToken }, opts);
+User_Web/iflux-web-ui/auth-social.js:197:            finishSocialLogin('facebook', { access_token: response.authResponse.accessToken }, opts)
+User_Web/iflux-web-ui/auth-social.js:244:    return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
+User_Web/iflux-web-ui/auth-social.js:260:  function bindSocialButtons(root, opts) {
+User_Web/iflux-web-ui/auth-social.js:303:            bindSocialButtons(document, opts);
+User_Web/iflux-web-ui/auth-social.js:306:            bindSocialButtons(document, opts);
+User_Web/iflux-web-ui/auth-social.js:318:    bindSocialButtons: bindSocialButtons,
+=== googleProxy (must be ABSENT on freeze) ===
+=== GoogleProvider|SocialLoginUseCase|ProviderRegistry|VerifierRegistry|IdentityProof (must be ABSENT pre-WP) ===

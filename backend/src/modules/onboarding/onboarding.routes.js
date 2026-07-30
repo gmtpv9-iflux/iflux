@@ -3,7 +3,6 @@
 const express = require('express');
 const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
-const { AppError } = require('../../shared/exceptions/app-error');
 const {
   listSteps,
   listAllSteps,
@@ -11,16 +10,7 @@ const {
   updateStep,
   deleteStep
 } = require('./onboarding.service');
-
-function requireAdminKey(config) {
-  return function adminKeyGuard(req, res, next) {
-    const key = req.headers['x-admin-key'];
-    if (!key || key !== config.ADMIN_API_KEY) {
-      return next(AppError.forbidden('ADMIN_FORBIDDEN', 'Admin key required'));
-    }
-    next();
-  };
-}
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 const stepBodySchema = z.object({
   channel: z.enum(['app', 'web']),
@@ -34,7 +24,9 @@ const stepBodySchema = z.object({
 
 function createOnboardingRouter(deps) {
   const router = express.Router();
-  const adminGuard = requireAdminKey(deps.config);
+  const perm = function () {
+    return requireAdminPermission(deps, Array.prototype.slice.call(arguments));
+  };
 
   router.get('/steps', async (req, res, next) => {
     try {
@@ -49,7 +41,7 @@ function createOnboardingRouter(deps) {
     }
   });
 
-  router.get('/admin/steps', adminGuard, async (req, res, next) => {
+  router.get('/admin/steps', perm('marketing.onboarding.view'), async (req, res, next) => {
     try {
       const channel = req.query.channel ? String(req.query.channel) : null;
       const steps = await listAllSteps(channel);
@@ -59,7 +51,7 @@ function createOnboardingRouter(deps) {
     }
   });
 
-  router.post('/admin/steps', adminGuard, validate(z.object({ body: stepBodySchema })), async (req, res, next) => {
+  router.post('/admin/steps', perm('marketing.onboarding.edit'), validate(z.object({ body: stepBodySchema })), async (req, res, next) => {
     try {
       const step = await createStep(req.validated.body);
       res.status(201).json({ step });
@@ -68,7 +60,7 @@ function createOnboardingRouter(deps) {
     }
   });
 
-  router.put('/admin/steps/:id', adminGuard, validate(z.object({
+  router.put('/admin/steps/:id', perm('marketing.onboarding.edit'), validate(z.object({
     body: stepBodySchema.partial()
   })), async (req, res, next) => {
     try {
@@ -79,7 +71,7 @@ function createOnboardingRouter(deps) {
     }
   });
 
-  router.delete('/admin/steps/:id', adminGuard, async (req, res, next) => {
+  router.delete('/admin/steps/:id', perm('marketing.onboarding.edit'), async (req, res, next) => {
     try {
       await deleteStep(req.params.id);
       res.json({ ok: true });

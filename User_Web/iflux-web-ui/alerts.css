@@ -142,7 +142,7 @@
 .ifx-alert-empty { padding: 48px 16px;
  text-align: center;
  color: var(--ix-text-muted); }
-@media (max-width: 520px) { .ifx-alert-form__row { grid-template-columns: 1fr; }
+@media (max-width: 640px) { .ifx-alert-form__row { grid-template-columns: 1fr; }
 .ifx-alert-item { flex-direction: column; align-items: stretch; }
 
 }

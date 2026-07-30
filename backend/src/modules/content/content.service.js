@@ -1163,6 +1163,33 @@ async function archiveChuDeAdmin(idOrSlug) {
   return rowToChuDeAdmin(upd.rows[0]);
 }
 
+async function deleteChuDeAdmin(idOrSlug) {
+  const story = await getStory(idOrSlug);
+  if (!story) {
+    const err = new Error('Không tìm thấy chủ đề');
+    err.statusCode = 404;
+    throw err;
+  }
+  await query('DELETE FROM content_chu_de WHERE id = $1', [story.id]);
+  return { id: story.id };
+}
+
+async function setChuDeLifecycleAdmin(idOrSlug, lifecycle) {
+  const story = await getStory(idOrSlug);
+  if (!story) {
+    const err = new Error('Không tìm thấy chủ đề');
+    err.statusCode = 404;
+    throw err;
+  }
+  const life = String(lifecycle || '').trim();
+  const upd = await query(
+    `UPDATE content_chu_de SET lifecycle = $2, status = 'active', updated_at = NOW()
+     WHERE id = $1 RETURNING *`,
+    [story.id, life]
+  );
+  return rowToChuDeAdmin(upd.rows[0]);
+}
+
 /**
  * Top topics theo Interest trong period — shape cho WGT-COM-CHUDE-TOP.
  */
@@ -1717,6 +1744,8 @@ module.exports = {
   upsertChuDeAdmin,
   upsertChuDe: upsertChuDeAdmin,
   archiveChuDeAdmin,
+  deleteChuDeAdmin,
+  setChuDeLifecycleAdmin,
   seedFoundationChuDe,
   ensureFoundationChuDe,
   INTEREST_WEIGHTS,

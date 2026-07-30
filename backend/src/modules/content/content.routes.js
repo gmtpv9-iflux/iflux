@@ -5,30 +5,14 @@ const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
 const content = require('./content.service');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 function createContentRouter(deps) {
   const router = express.Router();
   const auth = deps.auth || {};
   const config = deps.config || {};
-
-  function requireAdminKey(req, res, next) {
-    const key = req.headers['x-admin-key'];
-    if (!key || key !== config.ADMIN_API_KEY) {
-      return res.status(403).json({ error: 'Admin key required' });
-    }
-    next();
-  }
-
-  const jwtGuard = auth.authenticateAdmin;
-  const requireAdmin = function (req, res, next) {
-    const hasBearer = String(req.headers.authorization || '').startsWith('Bearer ');
-    if (jwtGuard && hasBearer) {
-      return jwtGuard(req, res, function (err) {
-        if (!err && req.admin) return next();
-        return requireAdminKey(req, res, next);
-      });
-    }
-    return requireAdminKey(req, res, next);
+  const perm = function () {
+    return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
   };
 
   router.get('/articles', async (req, res, next) => {
@@ -98,7 +82,7 @@ function createContentRouter(deps) {
 
   router.patch(
     '/articles/:id',
-    requireAdmin,
+    perm('community.articles.edit'),
     validate(patchArticleSchema),
     async (req, res, next) => {
       try {
@@ -217,7 +201,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/interest/recompute', requireAdmin, async (req, res, next) => {
+  router.post('/interest/recompute', perm('stories.registry.edit'), async (req, res, next) => {
     try {
       const result = await content.recomputeInterestScores({
         period: (req.body && req.body.period) || req.query.period || 'week',
@@ -229,7 +213,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/topics/mark-candidates', requireAdmin, async (req, res, next) => {
+  router.post('/topics/mark-candidates', perm('stories.registry.edit'), async (req, res, next) => {
     try {
       const rows = await content.markCandidates({ config: req.body && req.body.config });
       return success(res, { candidates: rows, total: rows.length });
@@ -245,7 +229,7 @@ function createContentRouter(deps) {
     }).optional()
   });
 
-  router.post('/topics/:id/promote', requireAdmin, validate(promoteSchema), async (req, res, next) => {
+  router.post('/topics/:id/promote', perm('stories.registry.edit'), validate(promoteSchema), async (req, res, next) => {
     try {
       const body = (req.validated && req.validated.body) || req.body || {};
       const result = await content.promoteTopic(req.params.id, {
@@ -283,7 +267,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/relevance/recompute', requireAdmin, async (req, res, next) => {
+  router.post('/relevance/recompute', perm('stories.registry.edit'), async (req, res, next) => {
     try {
       const result = await content.recomputeRelevanceScores({
         storyId: (req.body && (req.body.story_id || req.body.storyId)) || undefined,
@@ -295,7 +279,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/topics/auto-promote', requireAdmin, async (req, res, next) => {
+  router.post('/topics/auto-promote', perm('stories.registry.edit'), async (req, res, next) => {
     try {
       const result = await content.autoPromoteCandidates({
         forceRun: !!(req.body && req.body.forceRun),
@@ -343,7 +327,7 @@ function createContentRouter(deps) {
 
   router.post(
     '/ingest',
-    requireAdmin,
+    perm('community.articles.create'),
     validate(ingestSchema),
     async (req, res, next) => {
       try {
@@ -372,7 +356,7 @@ function createContentRouter(deps) {
 
   router.post(
     '/ingest/batch',
-    requireAdmin,
+    perm('community.articles.create'),
     validate(batchSchema),
     async (req, res, next) => {
       try {
@@ -409,7 +393,7 @@ function createContentRouter(deps) {
     }
   );
 
-  router.post('/ingest/run', requireAdmin, async (req, res, next) => {
+  router.post('/ingest/run', perm('community.articles.create'), async (req, res, next) => {
     try {
       const { runVnstockNewsIngest } = require('../../../workers/run-vnstock-ingest');
       const body = req.body || {};
@@ -503,7 +487,7 @@ function createContentRouter(deps) {
     source: z.string().optional().nullable()
   });
 
-  router.get('/admin/chu-de', requireAdmin, async (req, res, next) => {
+  router.get('/admin/chu-de', perm('stories.registry.view'), async (req, res, next) => {
     try {
       const stories = await content.listStories({
         include_all: true,
@@ -518,7 +502,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/admin/chu-de/seed-foundation', requireAdmin, async (req, res, next) => {
+  router.post('/admin/chu-de/seed-foundation', perm('stories.registry.create'), async (req, res, next) => {
     try {
       const result = await content.seedFoundationChuDe();
       return success(res, result);
@@ -527,7 +511,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/admin/chu-de', requireAdmin, validate(z.object({ body: chuDeBodySchema })), async (req, res, next) => {
+  router.post('/admin/chu-de', perm('stories.registry.create'), validate(z.object({ body: chuDeBodySchema })), async (req, res, next) => {
     try {
       const actor = {
         id: (req.admin && (req.admin.id || req.admin.email)) || 'admin',
@@ -540,7 +524,7 @@ function createContentRouter(deps) {
     }
   });
 
-  router.put('/admin/chu-de/:id', requireAdmin, validate(z.object({ body: chuDeBodySchema.partial() })), async (req, res, next) => {
+  router.put('/admin/chu-de/:id', perm('stories.registry.edit'), validate(z.object({ body: chuDeBodySchema.partial() })), async (req, res, next) => {
     try {
       const actor = {
         id: (req.admin && (req.admin.id || req.admin.email)) || 'admin',
@@ -556,9 +540,45 @@ function createContentRouter(deps) {
     }
   });
 
-  router.post('/admin/chu-de/:id/archive', requireAdmin, async (req, res, next) => {
+  router.post('/admin/chu-de/:id/archive', perm('stories.registry.status_archived'), async (req, res, next) => {
     try {
       const item = await content.archiveChuDeAdmin(req.params.id);
+      return success(res, { 'chu-de': item, story: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.delete('/admin/chu-de/:id', perm('stories.registry.delete'), async (req, res, next) => {
+    try {
+      const result = await content.deleteChuDeAdmin(req.params.id);
+      return success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/chu-de/:id/status-new', perm('stories.registry.status_new'), async (req, res, next) => {
+    try {
+      const item = await content.setChuDeLifecycleAdmin(req.params.id, 'new');
+      return success(res, { 'chu-de': item, story: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/chu-de/:id/status-mature', perm('stories.registry.status_mature'), async (req, res, next) => {
+    try {
+      const item = await content.setChuDeLifecycleAdmin(req.params.id, 'mature');
+      return success(res, { 'chu-de': item, story: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/chu-de/:id/status-declining', perm('stories.registry.status_declining'), async (req, res, next) => {
+    try {
+      const item = await content.setChuDeLifecycleAdmin(req.params.id, 'declining');
       return success(res, { 'chu-de': item, story: item });
     } catch (err) {
       next(err);

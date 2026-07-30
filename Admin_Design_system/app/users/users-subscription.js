@@ -344,6 +344,42 @@
       expiresAt: planExpiry(plan)
     };
     if (!confirm('Ghi đè gói thành ' + (PKG_LABELS[pkg] || pkg) + ' · ' + (PLAN_LABELS[plan] || plan) + '?')) return;
+
+    if ((pkg === 'Premium' || pkg === 'Elite') && customer.id) {
+      var token = null;
+      try {
+        if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+          var s = IfluxAdminAuth.getSession();
+          if (s && s.token) token = s.token;
+        }
+      } catch (e) { /* ignore */ }
+      var base = (global.IfluxAdminAuth && IfluxAdminAuth.apiBase) ? IfluxAdminAuth.apiBase() : '/api';
+      if (token) {
+        fetch(base + '/admin/users/' + encodeURIComponent(customer.id) + '/grant-premium', {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          },
+          body: JSON.stringify({ package: pkg, planType: plan === 'freemium' ? 'monthly' : plan })
+        }).then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok) {
+              var m = data && data.error;
+              if (m && typeof m === 'object') m = m.message || JSON.stringify(m);
+              throw new Error(m || ('HTTP ' + res.status));
+            }
+            return data.customer || patch;
+          });
+        }).then(function (c) {
+          applyPatch(Object.assign({}, patch, c || {}), 'Ghi đè gói', (PKG_LABELS[pkg] || pkg) + ' / ' + (PLAN_LABELS[plan] || plan));
+        }).catch(function (err) {
+          if (global.ixToast) ixToast(err.message || 'Ghi đè thất bại', 'danger');
+        });
+        return;
+      }
+    }
     applyPatch(patch, 'Ghi đè gói', (PKG_LABELS[pkg] || pkg) + ' / ' + (PLAN_LABELS[plan] || plan));
   }
 

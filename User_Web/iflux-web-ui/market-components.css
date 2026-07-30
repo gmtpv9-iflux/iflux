@@ -237,7 +237,8 @@
 /* StockRow responsive — mirror Breakpoint SoT:
    dưới bp-lg (1024): bỏ Volume; dưới bp-md (768): bỏ thêm Name.
    CSS media conditions không đọc được custom property nên dùng biên px tương ứng. */
-@media (max-width: 1023.98px) {
+/* SYNC:market-components-mobile → bp-lg Foundation layout.css --ifx-bp-lg = 1024px */
+@media (max-width: 1024px) {
   .ifx-stock-row {
     grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
   }
@@ -252,15 +253,13 @@
   .ifx-stock-row__vol { display: none; }
 }
 
-@media (max-width: 767.98px) {
+/* SYNC:market-components-tablet → bp-md Foundation layout.css --ifx-bp-md = 768px */
+@media (max-width: 768px) {
   .ifx-stock-row {
     grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
   }
   .ifx-stock-row__name,
   .ifx-stock-row__vol { display: none; }
-}
-
-@media (max-width: 960px) {
   .ifx-sector-grid { grid-template-columns: 1fr; }
   .ifx-market-header__breadth { margin-left: 0; width: 100%; }
 }

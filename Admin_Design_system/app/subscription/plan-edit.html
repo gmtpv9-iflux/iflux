@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-SUB-001 — Sửa Plan · iFlux Admin</title>
+  <title>Gói Hội viên · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
 <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
@@ -27,17 +27,17 @@
       </header>
       <div class="ix-content">
 
-        <div class="ix-breadcrumb ix-mb-16"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><a href="plans.html">Plan Registry</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span id="plan-breadcrumb">Premium</span></div>
+        <div class="ix-breadcrumb ix-mb-16"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Quản lý sản phẩm</span><i class="ti ti-chevron-right" style="font-size:12px"></i><a href="plans.html">Gói Hội viên</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span id="plan-breadcrumb">Premium</span></div>
 
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
           <div>
-            <h1 class="ix-page-title" style="margin-bottom:2px" id="plan-page-title">Sửa plan Premium</h1>
-            <p style="font-size:13px;color:var(--ix-text-muted)">Cấu hình giá, IAP SKU và quyền sử dụng theo Contract Spec §4.5</p>
+            <h1 class="ix-page-title" style="margin-bottom:2px" id="plan-page-title">Sửa gói</h1>
+            <p style="font-size:13px;color:var(--ix-text-muted)">Cấu hình giá, IAP SKU và quyền sử dụng</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <a href="plans.html" class="ix-btn ix-btn-outline">Huỷ</a>
-            <button class="ix-btn ix-btn-outline">Lưu nháp</button>
-            <button class="ix-btn ix-btn-primary" id="btn-save-plan"><i class="ti ti-device-floppy"></i> Lưu plan</button>
+            <button type="button" class="ix-btn ix-btn-outline">Lưu nháp</button>
+            <button type="button" class="ix-btn ix-btn-primary" id="btn-save-plan"><i class="ti ti-device-floppy"></i> Lưu gói</button>
           </div>
         </div>
 
@@ -45,7 +45,7 @@
           <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:24px">
 
             <div class="ix-card">
-              <div class="ix-card-header"><div class="ix-card-title">Thông tin plan</div></div>
+              <div class="ix-card-header"><div class="ix-card-title">Thông tin gói</div></div>
               <div class="ix-card-body">
                 <div class="ix-form-group">
                   <label class="ix-label">Tên hiển thị</label>
@@ -210,10 +210,10 @@
 <script src="../system/platform-layers-widgets.js?v=stripTabTopN20260718"></script>
 <script src="entitlement-catalog.js?v=l4sot20260714b"></script>
 <script src="plans-store.js"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
 <script>
@@ -221,6 +221,11 @@
   if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
     EntitlementCatalog.refreshBlocksCatalog();
   }
+  document.addEventListener('iflux-widget-catalog-changed', function () {
+    if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
+      EntitlementCatalog.refreshBlocksCatalog();
+    }
+  });
   var params = new URLSearchParams(location.search);
   var planKey = (params.get('plan') || 'premium').toLowerCase();
   var isNew = planKey === 'new';
@@ -239,15 +244,15 @@
   var isGuest = planKey === 'guest';
 
   if (isNew) {
-    document.title = 'ADM-SUB-001 — Thêm plan mới · iFlux Admin';
-    document.getElementById('plan-breadcrumb').textContent = 'Thêm mới';
-    document.getElementById('plan-page-title').textContent = 'Thêm plan mới';
+    document.title = 'Thêm Gói · iFlux Admin';
+    document.getElementById('plan-breadcrumb').textContent = 'Thêm Gói';
+    document.getElementById('plan-page-title').textContent = 'Thêm Gói';
     tierField.removeAttribute('readonly');
     statsCard.style.display = 'none';
   } else {
-    document.title = 'ADM-SUB-001 — Sửa ' + p.name + ' · iFlux Admin';
+    document.title = 'Sửa gói ' + p.name + ' · iFlux Admin';
     document.getElementById('plan-breadcrumb').textContent = p.name;
-    document.getElementById('plan-page-title').textContent = 'Sửa plan ' + p.name;
+    document.getElementById('plan-page-title').textContent = 'Sửa gói ' + p.name;
     if (p.builtin) {
       tierField.setAttribute('readonly', 'readonly');
       tierField.style.background = 'var(--ix-bg-subtle)';

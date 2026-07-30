@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-REQ — Yêu cầu rút tiền · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" id="adm-payout-search" placeholder="Tìm theo tên, email, ngân hàng..." /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Yêu cầu rút tiền</h1>
+        <div class="ix-breadcrumb ix-mb-24">
+          <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Quản lý người dùng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Quản lý yêu cầu</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <span>Yêu cầu rút tiền</span>
+        </div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Duyệt yêu cầu rút hoa hồng Affiliate do người dùng gửi từ Hồ sơ / Membership.</p>
+
+        <div class="ix-grid ix-grid-3 ix-mb-24">
+          <div class="ix-stat-card"><div class="ix-stat-icon warning"><i class="ti ti-clock"></i></div><div><div class="ix-stat-label">Chờ duyệt</div><div class="ix-stat-value" id="adm-payout-stat-pending">—</div></div></div>
+          <div class="ix-stat-card"><div class="ix-stat-icon info"><i class="ti ti-progress"></i></div><div><div class="ix-stat-label">Đang xử lý</div><div class="ix-stat-value" id="adm-payout-stat-processing">—</div></div></div>
+          <div class="ix-stat-card"><div class="ix-stat-icon success"><i class="ti ti-circle-check"></i></div><div><div class="ix-stat-label">Đã chuyển khoản</div><div class="ix-stat-value" id="adm-payout-stat-paid">—</div></div></div>
+        </div>
+
+        <div class="ix-filter-bar ix-mb-16">
+          <div class="ix-filter-group">
+            <label class="ix-label">Trạng thái</label>
+            <select class="ix-select" id="adm-payout-filter-status">
+              <option value="">Tất cả</option>
+              <option value="pending">Chờ duyệt</option>
+              <option value="processing">Đang xử lý</option>
+              <option value="paid">Đã chuyển khoản</option>
+              <option value="rejected">Từ chối</option>
+            </select>
+          </div>
+          <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="adm-payout-refresh"><i class="ti ti-refresh"></i> Làm mới</button>
+        </div>
+
+        <div class="ix-card">
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Người dùng</th>
+                  <th>Số tiền</th>
+                  <th>Ngân hàng</th>
+                  <th>Chủ tài khoản</th>
+                  <th>Trạng thái</th>
+                  <th>Ghi chú</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="adm-payout-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--ix-text-muted)">Đang tải…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
+<script src="/User_Web/iflux-web-ui/affiliate-payout-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=reqMenu20260723"></script>
+<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="withdrawals-page.js?v=reqMenu20260723"></script>
+</body>
+</html>

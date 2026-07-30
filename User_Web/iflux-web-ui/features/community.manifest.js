@@ -29,25 +29,23 @@ var manifest = {
     'IfluxGuestShell',
     'IfluxWatchlistTaxonomy',
     'IfluxMockMarket',
-    'IfluxSeoUrl',
-    'IfluxMarketSeedData',
-    'IfluxMarketEcosystemSeeds',
-    'IfluxMarketRegistryStore'
+    'IfluxSeoUrl'
+    /* Seed/registry/ecosystem: không boot Community (MARKET_CORE).
+       Search tự ensureDeps khi mở ô tìm. */
   ],
   requiresDefinition: true,
   requiresAPI: true,
   modules: [
     m('profile-users-store', 'store', ASSET + 'profile-users-store.js', 'IfluxProfileUsersStore'),
     m('profile-links', 'js', ASSET + 'profile-links.js', 'IfluxProfileLinks'),
-    m('watchlist-store', 'store', ASSET + 'watchlist-store.js', 'IfluxWatchlistStore'),
-    m('watchlist-ui', 'js', ASSET + 'watchlist-ui.js', 'IfluxWatchlistUI'),
-    m('community-geo-ai', 'js', ASSET + 'community-geo-ai.js', 'IfluxCommunityGeoAi'),
+    /* Task5: Heart = Foundation (click / widget mount). Không boot watchlist-ui trên feed. */
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=' + P4, 'IfluxPageLayoutEngine'),
-    m('community-store', 'store', ASSET + 'community-store.js', 'IfluxCommunityStore'),
-    m('community-ui', 'js', ASSET + 'community-ui.js', 'IfluxCommunityUI'),
+    m('community-store', 'store', ASSET + 'community-store.js?v=b4Href20260727', 'IfluxCommunityStore'),
+    m('community-api-bridge', 'js', ASSET + 'iflux-community-api-bridge.js?v=b4Href20260727', 'IfluxCommunityApiBridge'),
+    m('community-ui', 'js', ASSET + 'community-ui.js?v=b4Href20260727', 'IfluxCommunityUI'),
     m('community-daily-feed', 'js', ASSET + 'community-daily-feed.js', 'IfluxDailyFeed'),
-    m('community-page', 'js', ASSET + 'community-page.js?v=entStaticOpen20260721', 'IfluxCommunityPage'),
-    m('community-css', 'css', ASSET + 'community.css', null)
+    m('community-page', 'js', ASSET + 'community-page.js?v=b4w2Nav20260727', 'IfluxCommunityPage'),
+    m('community-css', 'css', ASSET + 'community.css?v=feedCard20260723c', null)
   ],
   lazyChildren: [
     'WGT-COM-001',

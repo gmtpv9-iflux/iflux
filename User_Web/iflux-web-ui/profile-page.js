@@ -9,8 +9,10 @@
   var _ctx = { userId: null, stockBase: '../stock/', communityBase: '../community/', readOnlyFollowing: false };
 
   function stockPageHref(ticker) {
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(ticker);
-    return '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
+    var c = global.IfluxSeoUrl
+      ? IfluxSeoUrl.stockHref(ticker)
+      : '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function userId() {
@@ -48,74 +50,53 @@
     return global.IfluxAuth && IfluxAuth.getUser();
   }
 
+  function loadScriptOnce(src) {
+    return new Promise(function (resolve, reject) {
+      var bare = String(src || '').split('?')[0];
+      if (document.querySelector('script[data-ifx-lazy-src="' + src + '"]')) {
+        resolve();
+        return;
+      }
+      var existing = document.querySelector('script[src="' + src + '"],script[src^="' + bare + '?"]');
+      if (existing) {
+        resolve();
+        return;
+      }
+      var el = document.createElement('script');
+      el.src = src;
+      el.async = false;
+      el.setAttribute('data-ifx-lazy-src', src);
+      el.onload = function () { resolve(); };
+      el.onerror = function () { reject(new Error('lazy fail ' + src)); };
+      document.head.appendChild(el);
+    });
+  }
+
+  /** Slice 4.5: không lazy stock-comments-ui — LS key đã retire */
   function renderRecentPosts() {
     var wrap = document.getElementById('ifx-profile-posts');
-    if (!wrap || !global.IfluxStockStore) return;
-
-    var uid = userId();
-    var items = IfluxStockStore.listTopCommentsByUser(uid);
-    var ui = global.IfluxStockCommentsUI;
-
-    if (!items.length) {
-      wrap.innerHTML = '<div class="ifx-profile-empty"><i class="ti ti-message-off"></i><p>Chưa có bài viết trên trang Cổ phiếu / Ngành / Hệ sinh thái / Chủ đề.</p>' +
-        (_ctx.readOnlyFollowing ? '' : '<a href="' + esc(stockPageHref('VIC')) + '" class="ix-btn ix-btn-outline ix-btn-sm">Mở trang cổ phiếu và viết bài</a>') + '</div>';
-      return;
-    }
-
-    var html = '<ul class="ifx-profile-timeline">';
-    items.slice(0, 10).forEach(function (row) {
-      var card = ui ? ui.listItemHtml(row.comment, row.feedKey || row.ticker, uid, { base: _ctx.stockBase, profile: true }) : '';
-      html += '<li class="ifx-profile-timeline__item">' +
-        '<div class="ifx-profile-timeline__rail"><span class="ifx-profile-timeline__dot"></span></div>' +
-        '<div class="ifx-profile-timeline__body">' +
-          '<div class="ifx-profile-timeline__meta">' +
-            '<span class="ifx-profile-timeline__ctx">' + esc(contextLabel(row.comment.tags)) + '</span>' +
-            '<span class="ifx-profile-timeline__time">' + esc(fmtTimelineDate(row.comment.created_at)) + '</span>' +
-          '</div>' +
-          '<div class="ifx-profile-timeline__card">' + card + '</div>' +
-        '</div></li>';
-    });
-    html += '</ul>';
-    wrap.innerHTML = html;
-
-    if (ui && ui.bindProfileTimeline) {
-      ui.bindProfileTimeline(wrap, function () { renderRecentPosts(); });
-    }
+    if (!wrap) return;
+    wrap.innerHTML =
+      '<div class="ifx-profile-empty"><i class="ti ti-message-off"></i>' +
+      '<p>Bạn chưa có bình luận nào.</p>' +
+      '<p>Hãy tham gia thảo luận trên trang bình luận.</p>' +
+      (_ctx.readOnlyFollowing
+        ? ''
+        : '<a href="' + esc(stockPageHref('HPG')) + '" class="ix-btn ix-btn-outline ix-btn-sm">Mở cổ phiếu</a>') +
+      '</div>';
   }
 
   function renderTimeline() {
     var wrap = document.getElementById('ifx-profile-timeline');
-    if (!wrap || !global.IfluxStockStore) return;
-
-    var uid = userId();
-    var items = IfluxStockStore.listTopCommentsByUser(uid);
-    var ui = global.IfluxStockCommentsUI;
-
-    if (!items.length) {
-      wrap.innerHTML = '<div class="ifx-profile-empty"><i class="ti ti-message-off"></i><p>Chưa có bình luận trên bài viết Họ CP / Ngành / Chủ đề / Cổ phiếu.</p>' +
-        (_ctx.readOnlyFollowing ? '' : '<a href="' + esc(stockPageHref('HPG')) + '" class="ix-btn ix-btn-outline ix-btn-sm">Viết bình luận đầu tiên</a>') + '</div>';
-      return;
-    }
-
-    var html = '<ul class="ifx-profile-timeline">';
-    items.forEach(function (row) {
-      var card = ui ? ui.listItemHtml(row.comment, row.feedKey || row.ticker, uid, { base: _ctx.stockBase, profile: true }) : '';
-      html += '<li class="ifx-profile-timeline__item">' +
-        '<div class="ifx-profile-timeline__rail"><span class="ifx-profile-timeline__dot"></span></div>' +
-        '<div class="ifx-profile-timeline__body">' +
-          '<div class="ifx-profile-timeline__meta">' +
-            '<span class="ifx-profile-timeline__ctx">' + esc(contextLabel(row.comment.tags)) + '</span>' +
-            '<span class="ifx-profile-timeline__time">' + esc(fmtTimelineDate(row.comment.created_at)) + '</span>' +
-          '</div>' +
-          '<div class="ifx-profile-timeline__card">' + card + '</div>' +
-        '</div></li>';
-    });
-    html += '</ul>';
-    wrap.innerHTML = html;
-
-    if (ui && ui.bindProfileTimeline) {
-      ui.bindProfileTimeline(wrap, function () { renderTimeline(); });
-    }
+    if (!wrap) return;
+    wrap.innerHTML =
+      '<div class="ifx-profile-empty"><i class="ti ti-message-off"></i>' +
+      '<p>Bạn chưa có bình luận nào.</p>' +
+      '<p>Hãy tham gia thảo luận.</p>' +
+      (_ctx.readOnlyFollowing
+        ? ''
+        : '<a href="' + esc(stockPageHref('HPG')) + '" class="ix-btn ix-btn-outline ix-btn-sm">Viết bình luận đầu tiên</a>') +
+      '</div>';
   }
 
   function renderFollowing() {
@@ -181,7 +162,6 @@
     }
     if (!opts.skipFollowing) renderFollowing();
 
-    document.addEventListener('iflux-stock-comments-change', renderTimeline);
     document.addEventListener('iflux-community-change', function () {
       renderRecentPosts();
     });

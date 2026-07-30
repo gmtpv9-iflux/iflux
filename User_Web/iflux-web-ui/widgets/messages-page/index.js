@@ -8,12 +8,26 @@ var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 export const meta = { id: 'WGT-MSG-PAGE', title: 'Tin nhắn' };
 
+function routeUrl(key) {
+  var R = typeof window !== 'undefined' && window.IfluxRoutes;
+  if (R && R.to) return R.to(key);
+  var fb = { home: '/nha-cua-toi' };
+  return fb[key] || '/';
+}
+
+function applyConsumerLinks(root) {
+  if (!root) return;
+  root.querySelectorAll('[data-route-key]').forEach(function (a) {
+    a.href = routeUrl(a.getAttribute('data-route-key'));
+  });
+}
+
 var CORE_TIERS = [
-  [ASSET + 'stock-store.js', ASSET + 'stock-comments-ui.js'],
+  /* RC-IR-05: Tin nhắn không phải Interactive comment surface — không kéo stock-comments-ui */
   [ASSET + 'community-store.js', ASSET + 'community-ui.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
-  [ASSET + 'profile-follow-store.js?v=chatGate20260708', ASSET + 'profile-friend-store.js?v=chatGate20260708', ASSET + 'profile-block-store.js'],
+  [ASSET + 'profile-follow-store.js?v=fn00120260724', ASSET + 'profile-friend-store.js?v=chatGate20260708', ASSET + 'profile-block-store.js'],
   [ASSET + 'profile-chat-access.js?v=chatGate20260708', ASSET + 'profile-chat-store.js?v=msg20260711', ASSET + 'profile-chat-page.js?v=msg20260711'],
-  [ASSET + 'profile-avatar.js', ASSET + 'system-notification-catalog.js', ASSET + 'system-notification-templates-store.js', ASSET + 'inapp-notifications.js'],
+  [ASSET + 'profile-avatar.js', ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728', ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728'],
   [ASSET + 'profile-page.js', ASSET + 'profile-bind.js?v=planPromo20260708']
 ];
 
@@ -21,7 +35,7 @@ function renderLayout(manifest) {
   var title = (manifest && manifest.title) || 'Tin nhắn';
   return `<h1 class="ix-page-title">` + title + `</h1>
     <div class="ix-breadcrumb ix-mb-24">
-      <a href="/nha-cua-toi">Nhà của tôi</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tin nhắn</span>
+      <a href="#" data-route-key="home">Nhà của tôi</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tin nhắn</span>
     </div>
 
     <div class="ix-profile-tabs">
@@ -86,6 +100,7 @@ function renderLayout(manifest) {
 export async function mount(el, ctx) {
   ctx = ctx || {};
   el.innerHTML = renderLayout(ctx.manifest);
+  applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();

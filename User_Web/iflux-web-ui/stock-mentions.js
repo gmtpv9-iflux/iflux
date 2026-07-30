@@ -200,25 +200,23 @@
     if (!entity || !entity.type) return '';
     opts = opts || {};
     var id = entity.id;
+    var c = '';
     if (global.IfluxSeoUrl) {
-      if (entity.type === 'ticker') return IfluxSeoUrl.stockHref(id);
-      if (entity.type === 'sector') return IfluxSeoUrl.sectorHref(id);
-      if (entity.type === 'family') return IfluxSeoUrl.ecosystemHref(id);
-      if (entity.type === 'story' || entity.type === 'chu-de') return IfluxSeoUrl.storyEntityHref(id);
+      if (entity.type === 'ticker') c = IfluxSeoUrl.stockHref(id);
+      else if (entity.type === 'sector') c = IfluxSeoUrl.sectorHref(id);
+      else if (entity.type === 'family') c = IfluxSeoUrl.ecosystemHref(id);
+      else if (entity.type === 'story' || entity.type === 'chu-de') c = IfluxSeoUrl.storyEntityHref(id);
+    } else if (entity.type === 'ticker') {
+      c = '/co-phieu/' + encodeURIComponent(String(id).toUpperCase());
+    } else if (entity.type === 'sector') {
+      c = '/nganh/' + encodeURIComponent(id);
+    } else if (entity.type === 'family') {
+      c = '/he-sinh-thai/' + encodeURIComponent(id);
+    } else if (entity.type === 'story' || entity.type === 'chu-de') {
+      c = '/chu-de/' + encodeURIComponent(id);
     }
-    if (entity.type === 'ticker') {
-      return '/co-phieu/' + encodeURIComponent(String(id).toUpperCase());
-    }
-    if (entity.type === 'sector') {
-      return '/nganh/' + encodeURIComponent(id);
-    }
-    if (entity.type === 'family') {
-      return '/he-sinh-thai/' + encodeURIComponent(id);
-    }
-    if (entity.type === 'story' || entity.type === 'chu-de') {
-      return '/chu-de/' + encodeURIComponent(id);
-    }
-    return '';
+    if (!c) return '';
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function tagRefHref(type, ref, opts) {

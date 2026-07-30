@@ -269,10 +269,8 @@
     }
     if (pt === 'shell-com-post') {
       return '<article class="ifx-com-card ds-preview-card" data-ds-card-root style="max-width:100%;padding:var(--ds-preview-body-py,12px);border:1px solid var(--ix-border);border-radius:var(--ds-preview-radius,var(--ix-radius-lg))">' +
-        '<div class="ifx-com-post__author" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
-          '<span class="ix-avatar ix-avatar-sm ix-avatar-accent">NA</span><strong style="font-size:12px">Nguyễn A</strong></div>' +
-        '<div style="font-size:12px;font-weight:600;margin-bottom:4px">Xu hướng ngành ngân hàng</div>' +
-        '<div style="font-size:10px;color:var(--ix-text-muted)">♥ 24 · 💬 8</div></article>';
+        '<div style="font-size:var(--ifx-com-feed-card-title-size,16px);font-weight:600;margin-bottom:8px;line-height:1.4;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden">Xu hướng ngành ngân hàng quý này và tác động dòng tiền</div>' +
+        '<div class="ifx-com-post__stats" style="font-size:var(--ifx-com-feed-card-stats-size,12px);color:var(--ix-text-muted)"><span><i class="ti ti-heart"></i> 24</span> <span><i class="ti ti-message"></i> 8</span> <span><i class="ti ti-share"></i> 3</span></div></article>';
     }
     if (pt === 'shell-widget') {
       return '<div class="ifx-widget ds-preview-card" data-ds-card-root style="max-width:100%">' +

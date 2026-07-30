@@ -2,7 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { verifyGoogleIdToken } = require('../legacy-auth/social-auth.service');
+const googleVerifier = require('../legacy-auth/identity/verifiers/google-verifier');
 const rbac = require('../admin-rbac/admin-rbac.service');
 
 function parseAllowedEmails(config) {
@@ -34,13 +34,16 @@ function generateAdminToken(config, admin, rememberMe) {
 }
 
 async function loginWithGoogle(config, idToken, rememberMe) {
-  const profile = await verifyGoogleIdToken(idToken, config.GOOGLE_CLIENT_ID);
-  if (!profile.email) {
+  const verified = await googleVerifier.verify(
+    { GOOGLE_CLIENT_ID: config.GOOGLE_CLIENT_ID },
+    { id_token: idToken }
+  );
+  if (!verified.email) {
     const err = new Error('Google không trả email. Vui lòng cấp quyền email.');
     err.statusCode = 422;
     throw err;
   }
-  if (!profile.emailVerified) {
+  if (!verified.emailVerified) {
     const err = new Error('Email Google chưa được xác minh.');
     err.statusCode = 403;
     throw err;
@@ -48,23 +51,32 @@ async function loginWithGoogle(config, idToken, rememberMe) {
 
   // Cho phép nếu: nằm trong allowlist gốc HOẶC có tài khoản admin trong DB.
   let dbAccount = null;
-  try { dbAccount = await rbac.getAccountByEmail(profile.email); } catch (e) { dbAccount = null; }
+  try { dbAccount = await rbac.getAccountByEmail(verified.email); } catch (e) { dbAccount = null; }
+  if (isAllowedAdminEmail(config, verified.email)) {
+    try {
+      await rbac.ensureBootstrapAdmin(config);
+      rbac.invalidateContextCache();
+      dbAccount = await rbac.getAccountByEmail(verified.email);
+    } catch (e) { /* ignore — middleware allowlist vẫn bypass */ }
+  }
   if (dbAccount && dbAccount.status === 'locked') {
     const err = new Error('Tài khoản quản trị đã bị khóa.');
     err.statusCode = 403;
     throw err;
   }
-  if (!isAllowedAdminEmail(config, profile.email) && !dbAccount) {
+  if (!isAllowedAdminEmail(config, verified.email) && !dbAccount) {
     const err = new Error('Tài khoản này không có quyền truy cập Admin.');
     err.statusCode = 403;
     throw err;
   }
 
+  const isSuper = !!(dbAccount && dbAccount.isSuper) || isAllowedAdminEmail(config, verified.email);
   const admin = {
-    email: profile.email,
-    name: (dbAccount && dbAccount.name) || profile.displayName || profile.email,
-    avatarUrl: profile.avatarUrl || (dbAccount && dbAccount.avatarUrl) || null,
-    provider: 'google'
+    email: verified.email,
+    name: (dbAccount && dbAccount.name) || verified.displayName || verified.email,
+    avatarUrl: verified.avatarUrl || (dbAccount && dbAccount.avatarUrl) || null,
+    provider: 'google',
+    isSuper: isSuper
   };
   const token = generateAdminToken(config, admin, !!rememberMe);
   try { await rbac.touchLogin(admin.email, 'google'); } catch (e) { /* ignore */ }
@@ -121,7 +133,8 @@ async function loginWithPassword(config, email, password, rememberMe) {
         email: normEmail,
         name: (acc && acc.name) || normEmail,
         avatarUrl: (acc && acc.avatarUrl) || null,
-        provider: 'password'
+        provider: 'password',
+        isSuper: !!(acc && acc.isSuper) || isAllowedAdminEmail(config, normEmail)
       };
       const token = generateAdminToken(config, admin, !!rememberMe);
       try { await rbac.touchLogin(normEmail, 'password'); } catch (e) { /* ignore */ }
@@ -144,11 +157,18 @@ async function loginWithPassword(config, email, password, rememberMe) {
   const ok = await bcrypt.compare(String(password), hash);
   if (!ok) throw invalid;
 
+  if (isAllowedAdminEmail(config, normEmail)) {
+    try {
+      await rbac.ensureBootstrapAdmin(config);
+      rbac.invalidateContextCache();
+    } catch (e) { /* ignore */ }
+  }
   const admin = {
     email: normEmail,
     name: normEmail,
     avatarUrl: null,
-    provider: 'password'
+    provider: 'password',
+    isSuper: true
   };
   const token = generateAdminToken(config, admin, !!rememberMe);
   try { await rbac.touchLogin(normEmail, 'password'); } catch (e) { /* ignore */ }

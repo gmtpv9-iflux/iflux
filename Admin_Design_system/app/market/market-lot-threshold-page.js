@@ -59,6 +59,19 @@
     renderTierCard();
     renderOverrides();
     toast('Đã lưu ngưỡng mặc định theo tier', 'success');
+    var payload = { large: large, mid: mid, small: small, overrides: {} };
+    var h = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    var token = null;
+    if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+      var s = IfluxAdminAuth.getSession();
+      if (s && s.token) token = s.token;
+    }
+    if (token) h.Authorization = 'Bearer ' + token;
+    else h['X-Admin-Key'] = 'iflux-admin-local-dev';
+    var base = (global.IfluxAdminAuth && IfluxAdminAuth.apiBase) ? IfluxAdminAuth.apiBase() : '/api';
+    fetch(base + '/admin/market-config/lot-threshold', {
+      method: 'PATCH', headers: h, body: JSON.stringify({ payload: payload })
+    }).catch(function () { /* local OK */ });
   }
 
   function renderOverrides() {

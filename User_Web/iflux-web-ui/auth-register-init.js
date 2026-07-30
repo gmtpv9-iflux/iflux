@@ -1,46 +1,24 @@
 /* Phase A extracted from auth/register.html */
-function getUrlRefCode() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.parseRefFromLocation) {
-    return IfluxLoyaltyAffiliateStore.parseRefFromLocation();
+function activeOwnerCode() {
+  if (window.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+    return IfluxIdentityContext.getActiveOwner() || '';
   }
-  var href = String(location.href || '');
-  var search = location.search || '';
-  if (!search && href.indexOf('?') >= 0) {
-    search = '?' + href.split('?').pop().split('#')[0];
-  }
-  try {
-    var params = new URLSearchParams(search);
-    var ref = params.get('ref') || params.get('r');
-    if (ref) return String(ref).trim().toUpperCase();
-  } catch (e) { /* ignore */ }
-  var m = href.match(/[?&](?:ref|r)=([^&#]+)/i);
-  if (!m) return '';
-  try { return decodeURIComponent(m[1]).trim().toUpperCase(); } catch (e2) { return String(m[1]).trim().toUpperCase(); }
-}
-
-function getStoredRefCode() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.getStoredRefCode) {
-    return IfluxLoyaltyAffiliateStore.getStoredRefCode();
-  }
-  try {
-    return String(localStorage.getItem('iflux_ref_code') || '').trim().toUpperCase();
-  } catch (e) {
-    return '';
-  }
+  return '';
 }
 
 function isRefFromAffiliateLink() {
-  if (window.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink) {
-    return IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink();
+  var AR = window.IfluxAffiliateResolver;
+  if (AR && AR.isPathCapturedAttribution) {
+    return !!AR.isPathCapturedAttribution();
   }
-  return !!getUrlRefCode();
+  return false;
 }
 
 function resolveRefCode() {
-  return getUrlRefCode() || getStoredRefCode();
+  return activeOwnerCode();
 }
 
-/** Mã gửi đi khi đăng ký: ô nhập là nguồn chính; chỉ dùng cookie/localStorage khi khóa từ link Affiliate */
+/** Mã gửi đi khi đăng ký: ô nhập là nguồn chính; chỉ dùng Affiliate Context khi khóa từ link */
 function getEffectiveRefCode() {
   var input = document.getElementById('reg-referral');
   var locked = isRefFromAffiliateLink();
@@ -54,13 +32,7 @@ function getEffectiveRefCode() {
   var label = document.getElementById('reg-ref-label');
   if (!input) return;
 
-  if (window.IfluxLoyaltyAffiliateStore) {
-    IfluxLoyaltyAffiliateStore.captureRefFromUrl();
-  }
-
-  var urlRef = getUrlRefCode();
-  var storedRef = getStoredRefCode();
-  var refCode = urlRef || storedRef;
+  var refCode = activeOwnerCode();
   var fromAffiliateLink = isRefFromAffiliateLink() && !!refCode;
 
   if (!refCode) return;
@@ -357,13 +329,25 @@ function providerLabel(p) {
   return map[String(p || '').toLowerCase()] || p;
 }
 
-IfluxAuthSocial.initPage({
-  referral_code: getEffectiveRefCode(),
+function enableAuthSocialButtons() {
+  /* Google: nút GIS #ifx-google-signin-btn — không disabled custom */
+  ['btn-apple', 'btn-facebook', 'btn-zalo'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.removeAttribute('disabled');
+  });
+}
+
+var socialInit = IfluxAuthSocial.initPage({
   onSuccess: function (provider) {
     ixToast('Đăng ký ' + providerLabel(provider) + ' thành công!', 'success');
-    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+    /* Redirect: IfluxAuthRedirectPolicy via SocialLoginUseCase (WP4) */
   },
   onError: function (provider, err) {
     ixToast(err.message || 'Đăng nhập thất bại.', 'danger');
   }
 });
+if (socialInit && typeof socialInit.then === 'function') {
+  socialInit.then(enableAuthSocialButtons, enableAuthSocialButtons);
+} else {
+  enableAuthSocialButtons();
+}

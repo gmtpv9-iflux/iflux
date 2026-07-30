@@ -5,8 +5,7 @@ export default {
   pageKey: 'communityPost',
   path: '/cong-dong/bai-viet',
   title: 'Bài viết cộng đồng',
-  documentTitle: 'Bài viết · iFlux',
-  renderPageHead: false,
+  documentTitle: '',
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{
@@ -17,9 +16,9 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-post-page/index.js?v=phaseCW120260721c',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/community-post-page/index.js?v=b5ixFlat20260727',
     css: [
-      '/User_Web/iflux-web-ui/community.css',
+      '/User_Web/iflux-web-ui/community.css?v=imgFit20260725',
       '/User_Web/iflux-web-ui/block-templates.css'
     ]
   }]

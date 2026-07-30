@@ -362,10 +362,17 @@
 
     if (valid && valid.ok && valid.coupon) {
       var c = valid.coupon;
-      if (c.discount_fixed) {
-        couponDiscount = Math.min(baseAmount(), c.discount_fixed);
+      var base = baseAmount();
+      if (c.type === 'voucher' || c.discount_fixed) {
+        var fixed = Number(c.discount_fixed || c.value) || 0;
+        couponDiscount = Math.min(base, fixed);
+        if (c.type === 'voucher' && c.max_value > 0) {
+          couponDiscount = Math.min(couponDiscount, Math.round(base * (Number(c.max_value) / 100)));
+        }
       } else {
-        couponDiscount = Math.round(baseAmount() * ((c.discount_pct || 10) / 100));
+        var pct = Number(c.discount_pct || c.value) || 0;
+        couponDiscount = Math.round(base * (pct / 100));
+        if (c.max_value > 0) couponDiscount = Math.min(couponDiscount, Number(c.max_value));
       }
       msg.style.color = 'var(--ix-success)';
       msg.textContent = '✓ Mã ' + code + ' hợp lệ — đã áp dụng';
@@ -462,6 +469,27 @@
       var orderStore = window.IfluxSubscriptionOrdersStore;
 
       function afterOrder(order) {
+        if (order && snapshot.couponDiscount > 0) {
+          try {
+            var codeEl = document.getElementById('coupon-input');
+            var code = codeEl ? String(codeEl.value || '').trim().toUpperCase() : '';
+            if (code) {
+              var usageKey = 'iflux_loyalty_promo_usage_v1';
+              var usage = [];
+              try { usage = JSON.parse(localStorage.getItem(usageKey) || '[]'); } catch (e) { usage = []; }
+              usage.push({
+                id: 'uso_' + Date.now(),
+                code: code,
+                orderId: order.id || '',
+                email: (user && user.email) || '',
+                orderAmount: snapshot.amount + snapshot.couponDiscount,
+                discount: snapshot.couponDiscount,
+                at: new Date().toISOString()
+              });
+              localStorage.setItem(usageKey, JSON.stringify(usage));
+            }
+          } catch (e) { /* ignore */ }
+        }
         if (!isTransfer && window.IfluxLoyaltyAffiliateStore && user && order && order.status !== 'pending') {
           var referrerUserId = (order && order.referrerUserId) ||
             (IfluxLoyaltyAffiliateStore.getReferrerId && IfluxLoyaltyAffiliateStore.getReferrerId(user.id)) ||

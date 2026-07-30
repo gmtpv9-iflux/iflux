@@ -6,7 +6,6 @@ export default {
   path: '/theo-doi',
   title: 'Danh sách theo dõi',
   documentTitle: 'Theo dõi · iFlux',
-  renderPageHead: false,
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

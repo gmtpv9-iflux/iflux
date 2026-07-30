@@ -1,20 +1,31 @@
 'use strict';
 
 const { legacyRuntimeFor, legacyDepsFor, legacyCssFor } = require('../seed/legacy-runtime-map');
-const { templateRuntimeFor } = require('../seed/template-runtime-map');
+const {
+  resolveRuntimeImplementation,
+  RUNTIME_WEB
+} = require('../seed/runtime-implementations');
 
-function resolveTemplate(draft) {
+/**
+ * Wave 3 — nguồn chuẩn: resolveRuntimeImplementation(template, runtime).
+ * Legacy WGT-id + debt module vẫn giữ (Wave 4 soft — chưa cắt cứng).
+ */
+function resolveTemplate(draft, opts) {
+  opts = opts || {};
+  const runtime = String(opts.runtime || draft.runtime || RUNTIME_WEB).toLowerCase();
   const templateId = draft.template || draft.templateId || null;
 
-  /* 1) Template SoT (chuẩn) */
-  let rt = templateRuntimeFor(templateId);
+  /* 1) Runtime Implementation Ready (chuẩn) */
+  let rt = resolveRuntimeImplementation(templateId, runtime);
 
-  /* 2) Legacy widgetId map (widget cũ) */
-  if (!rt) rt = legacyRuntimeFor(draft.id);
+  /* 2) Legacy widgetId map (Wave 4 soft — giữ) */
+  if (!rt) {
+    const legacy = legacyRuntimeFor(draft.id);
+    if (legacy) rt = { renderer: legacy.renderer, module: legacy.module, _legacy: true };
+  }
 
   /*
-   * 3) Technical Debt (Post-MVP): draft.module / lazyModule string.
-   * Admin dài hạn không nhập URL — chỉ Template. Giữ tạm cho MVP.
+   * 3) Technical Debt: draft.module / lazyModule (Wave 4 soft — giữ).
    */
   const debtModule =
     (draft.display && draft.display.module) ||
@@ -32,10 +43,13 @@ function resolveTemplate(draft) {
 
   if (!rt || !rt.module) {
     const e = new Error(
-      'Publish thiếu display.module — chọn Template hợp lệ (hoặc Temporary Debt: draft.module). template=' +
-        (templateId || '') +
-        ' id=' +
-        (draft.id || '')
+      'Runtime ' +
+        runtime.toUpperCase() +
+        ' chưa sẵn sàng cho Template ' +
+        (templateId || '(không có)') +
+        ' (id=' +
+        (draft.id || '') +
+        '). Cần Implementation Ready từ Developer/Build.'
     );
     e.statusCode = 400;
     throw e;
@@ -43,11 +57,13 @@ function resolveTemplate(draft) {
 
   return {
     templateId: templateId || 'TMP-LEGACY',
+    runtime: runtime,
     display: {
       renderer: rt.renderer || 'generic',
       module: rt.module,
       renderSpec: {
         templateId: templateId || 'TMP-LEGACY',
+        runtime: runtime,
         variant: draft.renderVariant || 'default'
       }
     }
@@ -112,6 +128,7 @@ function resolveDependency(resolvedDisplay, draft) {
 
 module.exports = {
   resolveTemplate,
+  resolveRuntimeImplementation,
   resolveLayout,
   resolvePermission,
   resolveCapability,

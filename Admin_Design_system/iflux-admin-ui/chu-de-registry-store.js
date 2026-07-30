@@ -163,8 +163,17 @@
 
   function listStories(filters) {
     filters = filters || {};
+    var statusSet = null;
+    if (filters.statuses && filters.statuses.length) {
+      statusSet = {};
+      filters.statuses.forEach(function (st) { statusSet[st] = true; });
+    }
     return cache.stories.filter(function (s) {
-      if (filters.status && s.status !== filters.status) return false;
+      if (statusSet) {
+        if (!statusSet[s.status]) return false;
+      } else if (filters.status && s.status !== filters.status) {
+        return false;
+      }
       if (filters.lifecycle && s.lifecycle !== filters.lifecycle) return false;
       if (filters.keyword) {
         var q = filters.keyword.toLowerCase();
@@ -174,6 +183,26 @@
       return true;
     }).sort(function (a, b) {
       return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+    });
+  }
+
+  function isStoryStatus(status) {
+    return status === 'mature' || status === 'declining';
+  }
+
+  function promoteToStory(id) {
+    var s = getStory(id);
+    if (!s) return Promise.reject(new Error('Không tìm thấy chủ đề'));
+    if (isStoryStatus(s.status)) {
+      return Promise.resolve(s);
+    }
+    return upsertStory({
+      id: s.id,
+      name: s.name,
+      slug: s.slug,
+      description: s.description,
+      lifecycle: s.lifecycle,
+      status: 'mature'
     });
   }
 
@@ -299,10 +328,12 @@
     STATUS_ORDER: STATUS_ORDER,
     LIFECYCLE_ORDER: LIFECYCLE_ORDER,
     normalizeStatus: normalizeStatus,
+    isStoryStatus: isStoryStatus,
     loadFromApi: loadFromApi,
     listStories: listStories,
     getStory: getStory,
     upsertStory: upsertStory,
+    promoteToStory: promoteToStory,
     archiveStory: archiveStory,
     mergeStories: mergeStories,
     setLifecycle: setLifecycle,

@@ -7,6 +7,39 @@
   var selectedChuDe = null;
   var entityMode = 'tickers'; /* tickers | sectors | ecosystems | exchange */
   var suggestTimer = null;
+  var bodyEditor = null;
+
+  function canPerm(key) {
+    return !!(window.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
+  function gateArticleMutateUi() {
+    var id = qs('id');
+    var need = id ? 'community.articles.edit' : 'community.articles.create';
+    var loaded = !!(window.IfluxAdminRbac && IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded());
+    var ok = loaded && canPerm(need);
+    ['btn-save-draft', 'btn-save-content', 'btn-publish'].forEach(function (bid) {
+      var el = $(bid);
+      if (el) el.style.display = ok ? '' : 'none';
+    });
+    var chuDeCreate = $('art-chude-create');
+    if (chuDeCreate) chuDeCreate.style.display = (loaded && canPerm('stories.registry.create')) ? '' : 'none';
+    if (loaded && !ok) {
+      toast(id ? 'Bạn không có quyền sửa bài viết.' : 'Bạn không có quyền tạo bài viết.', 'danger');
+    }
+  }
+
+  function whenRbacReady(fn) {
+    if (window.IfluxAdminRbac && IfluxAdminRbac.refresh) {
+      if (IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded()) {
+        fn();
+      } else {
+        IfluxAdminRbac.refresh().then(fn).catch(fn);
+      }
+      return;
+    }
+    fn();
+  }
 
   function $(id) { return document.getElementById(id); }
 
@@ -267,7 +300,6 @@
     var categoryId = $('fld-category').value;
     if (!title) throw new Error('Tiêu đề là bắt buộc');
     if (!categoryId) throw new Error('Chọn đúng 1 danh mục');
-    if (!selectedChuDe) throw new Error('Chọn hoặc tạo 1 chủ đề');
 
     var tickers = [];
     var sectors = [];
@@ -287,11 +319,13 @@
       title: title,
       slug: ($('fld-slug').value || '').trim() || slugify(title),
       excerpt: excerpt,
-      body_html: ($('fld-body').value || '').trim(),
+      body_html: bodyEditor
+        ? bodyEditor.getBodyHtml()
+        : (($('fld-body') && $('fld-body').value) || '').trim(),
       category_id: categoryId,
-      chu_de_id: selectedChuDe.id,
-      chu_de_slug: selectedChuDe.slug,
-      chu_de_name: selectedChuDe.name,
+      chu_de_id: selectedChuDe ? selectedChuDe.id : null,
+      chu_de_slug: selectedChuDe ? (selectedChuDe.slug || '') : '',
+      chu_de_name: selectedChuDe ? (selectedChuDe.name || '') : '',
       tickers: tickers,
       sectors: sectors,
       ecosystems: ecosystems,
@@ -328,7 +362,8 @@
     $('fld-title').value = item.title || '';
     $('fld-slug').value = item.slug || '';
     $('fld-excerpt').value = item.excerpt || '';
-    $('fld-body').value = item.body_html || '';
+    if (bodyEditor) bodyEditor.setBodyHtml(item.body_html || '');
+    else if ($('fld-body')) $('fld-body').value = item.body_html || '';
     if (item.category_id) $('fld-category').value = item.category_id;
     if (item.chu_de || item.chu_de_id) {
       setChuDe({
@@ -348,6 +383,17 @@
     $('fld-seo-keywords').value = seo.keywords || '';
     $('fld-seo-canonical').value = seo.canonical || '';
     $('fld-status').value = item.status || 'draft';
+    var pubAt = item.scheduled_at || item.published_at || '';
+    if ($('fld-publish-at') && pubAt) {
+      try {
+        var dPub = new Date(pubAt);
+        if (!isNaN(dPub.getTime())) {
+          var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+          $('fld-publish-at').value = dPub.getFullYear() + '-' + pad(dPub.getMonth() + 1) + '-' + pad(dPub.getDate()) +
+            'T' + pad(dPub.getHours()) + ':' + pad(dPub.getMinutes());
+        }
+      } catch (ePub) { /* ignore */ }
+    }
     var d = item.display || {};
     $('fld-d-featured').checked = !!d.featured;
     $('fld-d-pin').checked = !!(d.pin || d.sticky);
@@ -433,21 +479,40 @@
     if (pubBtn) pubBtn.addEventListener('click', function () { save('published'); });
   }
 
+  function mountBodyEditor() {
+    var root = $('article-body-editor-root');
+    if (!root || !window.IfluxArticleBodyEditor) {
+      toast('Không khởi tạo được trình soạn thảo', 'danger');
+      return;
+    }
+    try {
+      bodyEditor = IfluxArticleBodyEditor.mount(root);
+    } catch (err) {
+      console.error(err);
+      toast(err.message || 'Lỗi TipTap / DOMPurify', 'danger');
+    }
+  }
+
   function boot() {
     bind();
     setEntityMode('tickers');
-    loadCategories().then(function () {
-      var id = qs('id');
-      if (!id) {
-        suggestChuDe('');
-        return;
-      }
-      return request('/community/admin/articles/' + encodeURIComponent(id)).then(function (data) {
-        fillForm(data.article || data);
+    mountBodyEditor();
+    function start() {
+      gateArticleMutateUi();
+      loadCategories().then(function () {
+        var id = qs('id');
+        if (!id) {
+          suggestChuDe('');
+          return;
+        }
+        return request('/community/admin/articles/' + encodeURIComponent(id)).then(function (data) {
+          fillForm(data.article || data);
+        });
+      }).catch(function (err) {
+        toast(err.message || 'Không tải được dữ liệu', 'danger');
       });
-    }).catch(function (err) {
-      toast(err.message || 'Không tải được dữ liệu', 'danger');
-    });
+    }
+    whenRbacReady(start);
   }
 
   if (document.readyState === 'loading') {

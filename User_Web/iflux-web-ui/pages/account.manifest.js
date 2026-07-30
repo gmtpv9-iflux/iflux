@@ -3,7 +3,6 @@ export default {
   path: '/tai-khoan',
   title: 'Tài khoản',
   documentTitle: 'Tài khoản · iFlux',
-  renderPageHead: false,
   seo: {
     description: 'Quản lý hồ sơ, quyền riêng tư, thanh toán và hoạt động tài khoản iFlux.',
     robots: 'noindex,follow'

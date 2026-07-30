@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-006
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 const META_FIELDS = [
   ['description', 'name'],
   ['robots', 'name'],
@@ -11,6 +24,7 @@ const META_FIELDS = [
   ['og:locale', 'property'],
   ['og:url', 'property'],
   ['og:image', 'property'],
+  ['og:site_name', 'property'],
   ['twitter:card', 'name'],
   ['twitter:title', 'name'],
   ['twitter:description', 'name'],
@@ -89,17 +103,6 @@ function setJsonLdEntries(entries) {
   });
 }
 
-function updatePageHead(definition) {
-  var titleEl = document.querySelector('[data-ifx-page-def-title]');
-  if (titleEl) titleEl.textContent = definition && definition.title ? definition.title : '';
-  var introEl = document.querySelector('[data-ifx-page-def-intro]');
-  if (introEl) {
-    var intro = definition && definition.intro ? definition.intro : '';
-    introEl.textContent = intro;
-    introEl.hidden = !intro;
-  }
-}
-
 function applySeo(definition) {
   var seo = definition && definition.seo ? definition.seo : null;
   if (!seo) {
@@ -138,10 +141,10 @@ export function patchActiveDefinition(patch) {
 export function applyDefinitionToDocument(definition) {
   if (!definition) return null;
   var next = setActiveDefinition(definition);
+  /* SEO only — không render Page Header UI (ifx-rt-page-head đã bỏ). */
   if (next.documentTitle) {
     document.title = next.documentTitle;
   }
-  updatePageHead(next);
   applySeo(next);
   return next;
 }
@@ -151,7 +154,6 @@ export function applyDefinitionPatch(patch) {
   if (next.documentTitle) {
     document.title = next.documentTitle;
   }
-  updatePageHead(next);
   applySeo(next);
   return next;
 }

@@ -3,10 +3,11 @@
   'use strict';
 
   var currentTicker = '';
-  var MOBILE_SHELL_MAX = 1023.98;
 
   function isMobileShell() {
-    return global.innerWidth <= MOBILE_SHELL_MAX;
+    return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
+      ? global.IfluxBreakpoint.isMobileShell()
+      : false;
   }
 
   function destroyLeftCharts(left) {
@@ -45,10 +46,10 @@
   function mk() { return global.IfluxMockMarket; }
   function comStore() { return global.IfluxCommunityStore; }
   function comUi() { return global.IfluxCommunityUI; }
+  function cta() { return global.IfluxCommentsCta; }
   function stockSt() { return global.IfluxStockStore; }
   function wlUi() { return global.IfluxWatchlistUI; }
   function auth() { return global.IfluxAuth; }
-  function chatUi() { return global.IfluxStockCommentsUI; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
 
@@ -149,7 +150,7 @@
   }
 
   function renderHeader(detail) {
-    var heart = wlUi() ? wlUi().heartButtonHtml(detail.ticker) : '';
+    var heart = global.IfluxHeartAction ? IfluxHeartAction.heartButtonHtml(detail.ticker) : '';
     return (
       '<div class="ifx-stock-head">' +
         '<div class="ifx-stock-head__info">' +
@@ -226,14 +227,23 @@
   }
 
   function commentCount(ticker) {
-    return stockSt() ? stockSt().countActivity(ticker) : 0;
+    return 0;
   }
 
   function renderCenter(ticker, detail, newsState) {
     newsState = newsState || {};
-    var commentsSectionHtml = chatUi()
-      ? chatUi().panelHtml(ticker)
-      : '<div class="ifx-stock-empty">Bình luận</div>';
+    var target = { type: 'stock', id: String(ticker || '').toUpperCase() };
+    var commentsSectionHtml = cta()
+      ? cta().html({ target: target, count: null })
+      : '<div class="ifx-com-empty"><a class="ix-btn ix-btn-outline" href="' +
+          esc(global.IfluxHref
+            ? IfluxHref.forCanonical(global.IfluxSeoUrl && IfluxSeoUrl.stockCommentsPath
+              ? IfluxSeoUrl.stockCommentsPath(ticker)
+              : '/co-phieu/' + encodeURIComponent(ticker) + '/binh-luan')
+            : ((global.IfluxSeoUrl && IfluxSeoUrl.stockCommentsPath
+              ? IfluxSeoUrl.stockCommentsPath(ticker)
+              : '/co-phieu/' + encodeURIComponent(ticker) + '/binh-luan'))) +
+          '">Bình luận</a></div>';
 
     if (global.IfluxEntityDetailCenter) {
       return IfluxEntityDetailCenter.render({
@@ -266,10 +276,16 @@
   }
 
   function bindEvents(root, ticker, detail, newsState) {
-    if (chatUi()) chatUi().bind(root, ticker);
+    if (cta()) {
+      cta().mount(root, { type: 'stock', id: String(ticker || '').toUpperCase() });
+    }
     if (timelineFeed() && newsState) timelineFeed().bind(root, newsState);
 
-    if (wlUi()) wlUi().bindHearts(root);
+    if (wlUi() && wlUi().bindRowActions) wlUi().bindRowActions(root);
+    else {
+      if (global.IfluxHeartAction) IfluxHeartAction.bind(root);
+      if (global.IfluxAlertUI) IfluxAlertUI.bindAlerts(root);
+    }
     if (global.IfluxEntityDetailCenter) {
       IfluxEntityDetailCenter.mount(root, {
         kind: 'stock',
@@ -278,7 +294,9 @@
         storyBase: newsState && newsState.storyBase,
         onTab: function (key) {
           syncMobileLeftColumn(root, key, ticker, detail);
-          if (key === 'comments' && chatUi()) chatUi().refreshFeed(root, ticker);
+          if (key === 'comments' && cta()) {
+            cta().mount(root, { type: 'stock', id: String(ticker || '').toUpperCase() });
+          }
         }
       });
     }
@@ -351,10 +369,10 @@
   function init() {
     var root = document.querySelector('[data-ifx-stock-page]');
     if (!root) return;
+    if (global.IfluxStockStore && IfluxStockStore.purgeLocalComments) {
+      try { IfluxStockStore.purgeLocalComments(); } catch (e) { /* ignore */ }
+    }
     render(root);
-    document.addEventListener('iflux-stock-comments-change', function () {
-      if (chatUi()) chatUi().refreshFeed(root, currentTicker);
-    });
   }
 
   global.IfluxStockPage = { init: init };

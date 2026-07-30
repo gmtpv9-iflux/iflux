@@ -68,9 +68,8 @@ CREATE INDEX IF NOT EXISTS idx_admin_audit_created ON admin_audit_log(created_at
 CREATE INDEX IF NOT EXISTS idx_admin_account_roles_admin ON admin_account_roles(admin_id);
 CREATE INDEX IF NOT EXISTS idx_admin_role_permissions_role ON admin_role_permissions(role_id);
 
--- Hai vai trò gốc (không cho xóa)
+-- Vai trò neo Admin (full quyền, chỉ Owner). Không seed Role nhân viên mặc định (Human Control SoT).
 INSERT INTO admin_roles (code, name, description, is_system, is_super)
 VALUES
-    ('admin', 'Admin', 'Toàn quyền trên toàn bộ hệ thống Admin.', TRUE, TRUE),
-    ('sub_admin', 'Sub Admin', 'Quản trị viên phụ — quyền được cấp theo từng Permission.', TRUE, FALSE)
+    ('admin', 'Admin', 'Tài khoản Admin — toàn quyền. Chỉ Owner sử dụng. Không chỉnh trên Matrix.', TRUE, TRUE)
 ON CONFLICT (code) DO NOTHING;

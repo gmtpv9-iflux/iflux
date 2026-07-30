@@ -8,6 +8,31 @@ var ASSET = '/User_Web/iflux-web-ui/';
 
 export const meta = { id: 'WGT-PRICING-PAGE', title: 'Gói cước' };
 
+function routeUrl(key) {
+  var R = typeof window !== 'undefined' && window.IfluxRoutes;
+  if (R && R.to) return R.to(key);
+  var fb = { faq: '/hoi-dap' };
+  return fb[key] || '/';
+}
+
+function applyConsumerLinks(root) {
+  if (!root) return;
+  root.querySelectorAll('[data-route-key]').forEach(function (a) {
+    a.href = routeUrl(a.getAttribute('data-route-key'));
+  });
+  root.querySelectorAll('[data-route-canonical]').forEach(function (a) {
+    var path = a.getAttribute('data-route-canonical');
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      /* P6-API-01 — internal nav chỉ Writer.navigate */
+      var W = window.IfluxShellUrlWriter;
+      if (W && W.navigate) W.navigate(path);
+      else location.href = path;
+    });
+    a.href = '#';
+  });
+}
+
 var CORE_TIERS = [
   [ASSET + 'iflux-plans-catalog.js'],
   [ASSET + 'pricing-page.js']
@@ -42,7 +67,7 @@ var LAYOUT_HTML =
   '</div>' +
   '<div class="ix-mb-24">' +
     '<h3 style="font-size:20px;font-weight:700;color:var(--ix-text-primary);margin-bottom:6px;text-align:center">Câu hỏi thường gặp</h3>' +
-    '<p style="text-align:center;font-size:13px;color:var(--ix-text-muted);margin-bottom:0">Không tìm thấy câu trả lời? <a class="ix-link" href="/hoi-dap">Xem trang FAQ</a> hoặc <a class="ix-link" href="mailto:support@iflux.vn">liên hệ chúng tôi</a></p>' +
+    '<p style="text-align:center;font-size:13px;color:var(--ix-text-muted);margin-bottom:0">Không tìm thấy câu trả lời? <a class="ix-link" href="#" data-route-key="faq">Xem trang FAQ</a> hoặc <a class="ix-link" href="mailto:support@iflux.vn">liên hệ chúng tôi</a></p>' +
     '<div class="ix-faq-grid ix-mt-6">' +
       '<div class="ix-accordion" data-single>' +
         '<div class="ix-accordion-item open">' +
@@ -70,12 +95,13 @@ var LAYOUT_HTML =
     '<div class="ix-card-body" style="text-align:center;padding:40px">' +
       '<h3 style="font-size:20px;font-weight:700;color:var(--ix-text-primary);margin-bottom:8px">Chưa chắc chắn?</h3>' +
       '<p style="font-size:14px;color:var(--ix-text-muted);margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.6">Bắt đầu với gói Premium 1 tháng. Hoàn tiền 100% trong 7 ngày — không hỏi thêm câu nào.</p>' +
-      '<a href="/tai-khoan/thanh-toan?plan=premium&cycle=monthly" class="ix-btn ix-btn-primary ix-btn-lg" id="cta-bottom-premium">Bắt đầu dùng Premium →</a>' +
+      '<a href="#" data-route-canonical="/tai-khoan/thanh-toan?plan=premium&amp;cycle=monthly" class="ix-btn ix-btn-primary ix-btn-lg" id="cta-bottom-premium">Bắt đầu dùng Premium →</a>' +
     '</div>' +
   '</div>';
 
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
+  applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();

@@ -11,15 +11,9 @@
   function isPermissionScopedWidget(id) {
     id = String(id || '');
     if (!id || id.indexOf('WGT-') !== 0) return false;
-    if (global.EntitlementCatalog && typeof EntitlementCatalog.isPermissionScopedWidget === 'function') {
-      return EntitlementCatalog.isPermissionScopedWidget(id);
-    }
-    var P = global.PlatformLayersWidgets;
-    if (P && typeof P.widgetIds === 'function') {
-      return P.widgetIds().indexOf(id) >= 0;
-    }
-    if (global.PageSettingsCatalog && typeof PageSettingsCatalog.allWidgetIds === 'function') {
-      return PageSettingsCatalog.allWidgetIds().indexOf(id) >= 0;
+    var L4 = global.L4RuntimeReader;
+    if (L4 && typeof L4.widgetIds === 'function') {
+      return L4.widgetIds().indexOf(id) >= 0;
     }
     return false;
   }
@@ -53,13 +47,18 @@
       setHostState(el, !!ent.hasBlock(wid));
     });
 
-    /* data-ifx-ent-block (BLK-* đặc thù / legacy): ngoài phạm vi ma trận Widget. */
+    /* data-ifx-ent-block (BLK-*): tôn trọng plan.blocks qua hasBlock (STATIC + legacy). */
     document.querySelectorAll('[data-ifx-ent-block]').forEach(function (el) {
       if (el.getAttribute('data-widget-id')) return;
+      var bid = el.getAttribute('data-ifx-ent-block');
       el.hidden = false;
       el.style.display = '';
       el.removeAttribute('aria-hidden');
-      setHostState(el, true);
+      if (!bid) {
+        setHostState(el, true);
+        return;
+      }
+      setHostState(el, !!ent.hasBlock(bid));
     });
 
     document.querySelectorAll('[data-ifx-ent-block-section]').forEach(function (section) {

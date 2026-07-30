@@ -1,0 +1,22 @@
+[
+  {
+    "url": "http://127.0.0.1:8777/User_Web/auth/login.html?dataMode=api&return=%2Fcong-dong",
+    "status": 200,
+    "body": "<!DOCTYPE html>\n<html lang=\"vi\">\n<head>\n  <meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>Đăng nhập · iFlux</title>\n  <link rel=\"preload\" href=\"/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2\" as=\"font\" type=\"font/woff2\" crossorigin />\n  <link rel=\"stylesheet\" href=\"/Admin_Design_system/iflux-admin-ui/fonts.css\" />\n  <link rel=\"stylesheet\" href=\"../iflux-web-ui/iflux-web-ui.css\" />\n  </head>\n<body class=\"ifx-auth-page\">\n<di"
+  },
+  {
+    "url": "http://localhost:3001/api/auth/social/config",
+    "status": 200,
+    "body": "{\"google\":{\"enabled\":true,\"clientId\":\"642927266497-o04c7abj4rbj1lobf906342ivhaoecse.apps.googleusercontent.com\"},\"apple\":{\"enabled\":false,\"clientId\":null},\"facebook\":{\"enabled\":false,\"appId\":null},\"zalo\":{\"enabled\":false,\"appId\":null,\"redirectUri\":null}}"
+  },
+  {
+    "url": "http://localhost:3001/api/auth/login",
+    "status": 200,
+    "body": "{\"token\":\"[REDACTED]\",\"user\":{\"id\":\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\",\"email\":\"wp7.runtime.1785246163@iflux.test\",\"plan\":\"free\"}}"
+  },
+  {
+    "url": "http://localhost:3001/api/auth/me",
+    "status": 200,
+    "body": "{\"id\":\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\",\"email\":\"wp7.runtime.1785246163@iflux.test\",\"phone\":null,\"plan\":\"free\",\"display_name\":\"WP7 Runtime\",\"nickname\":\"WP7 Runtime\",\"status\":\"active\",\"created_at\":\"2026-07-28T13:43:06.276Z\",\"referral_code\":\"IFLNU6MH\",\"publicId\":\"IFLNU6MH\",\"id_internal\":\"32ebd86f-a7f5-4cf9-b5ba-041db3e435e8\",\"referred_by\":\"456ca07a-2d4a-482f-947e-f4f982cf2dbf\",\"plan_expired_at\":null,\"auth_provider\":\"email\",\"has_password\":true}"
+  }
+]

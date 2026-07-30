@@ -2,12 +2,14 @@
 
 const { createDnseClient } = require('./dnse.client');
 const { getRawCatalog } = require('./dnse.raw-catalog');
+const { requireJwtPermission } = require('../admin-rbac/admin-perm-guard');
 
 function createDnseRouter({ config, auth }) {
   const router = require('express').Router();
   const client = createDnseClient(config);
+  const viewGuard = requireJwtPermission({ config, auth }, ['market_ops.feed_health.view']);
 
-  router.get('/raw-catalog', auth.authenticateAdmin, async (req, res, next) => {
+  router.get('/raw-catalog', viewGuard, async (req, res, next) => {
     try {
       res.json({ ok: true, ...getRawCatalog() });
     } catch (err) {
@@ -15,7 +17,7 @@ function createDnseRouter({ config, auth }) {
     }
   });
 
-  router.get('/status', auth.authenticateAdmin, async (req, res, next) => {
+  router.get('/status', viewGuard, async (req, res, next) => {
     try {
       const catalog = getRawCatalog();
       const configured = client.isConfigured();

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Phân quyền sử dụng · iFlux Admin</title>
+  <title>Vai trò &amp; Quyền · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
 <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
   <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 </head>
-<body>
+<body data-ix-view-api="/admin/subscription/entitlements">
 <div class="ix-root">
   <div class="ix-layout">
     <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
@@ -28,65 +28,103 @@
       <div class="ix-content">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
           <div>
-            <h1 class="ix-page-title" style="margin-bottom:4px">Phân quyền sử dụng</h1>
-            <div class="ix-breadcrumb"><a href="plans.html">Gói đăng ký</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Phân quyền sử dụng</span></div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Vai trò &amp; Quyền</h1>
+            <div class="ix-breadcrumb">
+              <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Quản lý người dùng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Quản lý khách hàng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
+              <span>Vai trò &amp; Quyền</span>
+            </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <a href="plans.html" class="ix-btn ix-btn-outline"><i class="ti ti-arrow-left"></i> Danh mục gói</a>
-            <button type="button" class="ix-btn ix-btn-primary" id="btn-save-matrix"><i class="ti ti-device-floppy"></i> Lưu phân quyền</button>
+            <a href="../users/list.html" class="ix-btn ix-btn-outline"><i class="ti ti-arrow-left"></i> Danh sách người dùng</a>
+            <button type="button" class="ix-btn ix-btn-primary" id="btn-save-matrix"><i class="ti ti-device-floppy"></i> Lưu</button>
           </div>
         </div>
-        <div class="ix-card">
-          <div class="ix-card-body" id="matrix-mount"></div>
-        </div>
+        <div id="matrix-mount"></div>
       </div>
     </main>
   </div>
 </div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="../../iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
-<script src="../system/platform-layers-widgets.js?v=stripTabTopN20260718"></script>
-<script src="entitlement-catalog.js?v=l4sot20260714b"></script>
-<script src="plans-store.js"></script>
-<script src="entitlement-matrix-ui.js"></script>
+<script src="../system/platform-layers-widgets.js?v=abhE3close20260727"></script>
+<script src="../system/widget-library-catalog.js?v=l4sot20260714b"></script>
+<!-- ABH E1/E2: Read adapters — không PageSettingsStore / widget-publish-client -->
+<script src="/Admin_Design_system/shared/runtime-read/widget-registry-reader.js?v=abhE120260727"></script>
+<script src="/Admin_Design_system/shared/runtime-read/placement-widget-index-reader.js?v=abhE3fix20260727"></script>
+<script src="entitlement-catalog.js?v=entStaticFix20260726"></script>
+<script src="plans-store.js?v=entApiSoT20260727"></script>
+<script src="entitlement-matrix-ui.js?v=abhE3close20260727"></script>
 <script>
 (function () {
-  /* Tầng 4 (SoT) → Phân quyền: rebuild catalog sau khi Tầng 4 load */
+  var mount = document.getElementById('matrix-mount');
+
   if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
     EntitlementCatalog.refreshBlocksCatalog();
   }
-  EntitlementMatrixUI.render(document.getElementById('matrix-mount'));
 
-  function loadMatrix() {
-    if (PlansStore.hydrate) {
-      PlansStore.hydrate().then(function () {
-        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
-      }).catch(function () {
-        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
-      });
-    } else {
-      EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+  document.addEventListener('iflux-widget-catalog-changed', function () {
+    if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
+      EntitlementCatalog.refreshBlocksCatalog();
     }
+    if (window.EntitlementMatrixUI && EntitlementMatrixUI.render && mount) {
+      EntitlementMatrixUI.render(mount);
+      if (window.PlansStore && PlansStore.getMatrixPlans) {
+        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+      }
+    }
+  });
+
+  function bootMatrix() {
+    EntitlementMatrixUI.render(mount);
+    function loadMatrix() {
+      if (PlansStore.hydrate) {
+        PlansStore.hydrate().then(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        }).catch(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        });
+      } else {
+        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+      }
+    }
+    loadMatrix();
+    document.getElementById('btn-save-matrix').addEventListener('click', function () {
+      var btn = document.getElementById('btn-save-matrix');
+      var overrides = EntitlementMatrixUI.collect();
+      btn.disabled = true;
+      PlansStore.saveMatrixOverrides(overrides).then(function (result) {
+        btn.disabled = false;
+        if (!result.ok) {
+          ixToast(result.error || 'Lưu thất bại', 'danger');
+          return;
+        }
+        ixToast('Đã lưu ma trận phân quyền · User Web đồng bộ qua server', 'success');
+        loadMatrix();
+      }).catch(function (err) {
+        btn.disabled = false;
+        ixToast(String(err && err.message ? err.message : err) || 'Lưu thất bại', 'danger');
+      });
+    });
   }
 
-  loadMatrix();
-
-  document.getElementById('btn-save-matrix').addEventListener('click', function () {
-    var overrides = EntitlementMatrixUI.collect();
-    var result = PlansStore.saveMatrixOverrides(overrides);
-    if (!result.ok) {
-      ixToast(result.error || 'Lưu thất bại', 'danger');
-      return;
+  function prefetchThenBoot() {
+    var p = Promise.resolve();
+    if (window.PlacementWidgetIndexReader && PlacementWidgetIndexReader.fetch) {
+      p = PlacementWidgetIndexReader.fetch().catch(function () { return null; });
     }
-    ixToast('Đã lưu ma trận phân quyền · website cập nhật khi tải lại trang (Ctrl+F5)', 'success');
-    loadMatrix();
-  });
+    p.then(bootMatrix).catch(bootMatrix);
+  }
+
+  prefetchThenBoot();
 })();
 </script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveE20260727"></script>
 </body>
 </html>

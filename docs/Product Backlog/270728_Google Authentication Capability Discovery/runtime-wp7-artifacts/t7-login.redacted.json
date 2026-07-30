@@ -1,0 +1,8 @@
+{
+  "token": "eyJhbGciOiJI…(redacted)…PMAcWY",
+  "user": {
+    "id": "32ebd86f-a7f5-4cf9-b5ba-041db3e435e8",
+    "email": "wp7.runtime.1785246163@iflux.test",
+    "plan": "free"
+  }
+}

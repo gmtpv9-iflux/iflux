@@ -4,9 +4,9 @@
  * Phase C W3: Feature Manifest + Runtime (NOT_LOADED→READY→DISPOSED).
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-import featureManifest from '../../features/community.manifest.js?v=phaseCW5gate20260721';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=feedCover20260725';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=feedCover20260725';
+import featureManifest from '../../features/community.manifest.js?v=b4Href20260727';
 
 export const meta = { id: 'WGT-COM-PAGE', title: 'Cộng đồng' };
 
@@ -45,7 +45,7 @@ function isCollectionIndexPath() {
 
 function applyCommunity(root) {
   if (window.IfluxCommunityPage && IfluxCommunityPage.init) IfluxCommunityPage.init();
-  if (window.IfluxInsightShare && IfluxInsightShare.patchAll) IfluxInsightShare.patchAll(root || document);
+  /* Share Action không preload trên Community — click Share mới load Foundation. */
 }
 
 export async function mount(el) {
@@ -57,6 +57,13 @@ export async function mount(el) {
       if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
     }
   });
+
+  /* Data Provider → Store (SoT). Không còn Store.hydrateFromApi. */
+  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadFeed) {
+    await IfluxCommunityApiBridge.loadFeed({ limit: 36 });
+  } else if (window.IfluxCommunityProvider && IfluxCommunityProvider.loadFeed) {
+    await IfluxCommunityProvider.loadFeed({ limit: 36 });
+  }
 
   var indexOnly = isCollectionIndexPath();
   function onPlans() {
@@ -79,9 +86,6 @@ export async function mount(el) {
       if (titles[path] && window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
         IfluxPageDefinition.applyPatch({ documentTitle: titles[path] });
       }
-      document.querySelectorAll('.ifx-rt-page-head').forEach(function (node) {
-        if (node && node.parentNode) node.parentNode.removeChild(node);
-      });
     }, 0);
   }
   document.addEventListener('iflux-plans-updated', onPlans);

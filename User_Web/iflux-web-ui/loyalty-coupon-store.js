@@ -13,17 +13,42 @@
 
   var CATALOG_KEY = 'iflux_loyalty_coupon_catalog_v1';
 
+  function normalizeCatalogItem(c) {
+    if (!c) return null;
+    if (c.type === 'voucher' || c.type === 'coupon') {
+      return {
+        type: c.type,
+        code: c.code,
+        label: c.code,
+        discount_pct: c.type === 'coupon' ? Number(c.value) || 0 : 0,
+        discount_fixed: c.type === 'voucher' ? Number(c.value) || 0 : 0,
+        max_value: Number(c.max_value) || 0,
+        min_order: 0,
+        expires_at: c.ends_at || c.expires_at || '',
+        starts_at: c.starts_at || '',
+        active: c.active !== false
+      };
+    }
+    return c;
+  }
+
   function getCatalog() {
     try {
       var raw = localStorage.getItem(CATALOG_KEY);
       if (raw) {
         var list = JSON.parse(raw);
         if (Array.isArray(list) && list.length) {
-          return list.filter(function (c) { return c.active !== false; });
+          return list.map(normalizeCatalogItem).filter(function (c) { return c && c.active !== false; });
         }
       }
     } catch (e) { /* fallback */ }
     return CATALOG;
+  }
+
+  function isExpired(c) {
+    var end = c && (c.ends_at || c.expires_at);
+    if (!end) return false;
+    return new Date(end).getTime() < Date.now();
   }
 
   function readAll() {
@@ -60,11 +85,6 @@
       var c = getCatalog().find(function (x) { return x.code === code; });
       return c ? Object.assign({ code: code, status: isExpired(c) ? 'expired' : 'active' }, c) : null;
     }).filter(Boolean);
-  }
-
-  function isExpired(c) {
-    if (!c || !c.expires_at) return false;
-    return new Date(c.expires_at).getTime() < Date.now();
   }
 
   function findCode(code) {

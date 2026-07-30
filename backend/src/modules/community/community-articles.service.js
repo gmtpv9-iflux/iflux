@@ -4,7 +4,12 @@ const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 const categories = require('./community-categories.service');
 
-const STATUSES = ['draft', 'pending', 'published', 'scheduled'];
+const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'scheduled'];
+
+/** Bài đang lên User Web (Xuất bản Admin hoặc Xuất bản RSS) */
+function isLivePublished(status) {
+  return status === 'published' || status === 'published_rss';
+}
 
 function slugify(s) {
   return String(s || '')
@@ -64,9 +69,7 @@ function normalizeArticleInput(input, actor) {
   const chuDeId = input.chu_de_id || (input.chu_de && input.chu_de.id) || null;
   const chuDeSlug = input.chu_de_slug || (input.chu_de && input.chu_de.slug) || '';
   const chuDeName = input.chu_de_name || (input.chu_de && (input.chu_de.name || input.chu_de.label)) || '';
-  if (!chuDeId && !chuDeSlug && !chuDeName) {
-    throw AppError.badRequest('ARTICLE_CHU_DE_REQUIRED', 'Chủ đề là bắt buộc (chọn đúng 1)');
-  }
+  /* Chủ đề tuỳ chọn — bài không gắn chủ đề không đóng góp Topic Engine / Story */
 
   const tickers = uniqUpper(input.tickers, 5);
   const sectors = uniqSlug(input.sectors, 3);
@@ -119,7 +122,12 @@ function normalizeArticleInput(input, actor) {
       title: String(seo.title || seo.seo_title || '').trim() || title,
       description: String(seo.description || seo.seo_description || '').trim() || excerpt,
       keywords: String(seo.keywords || seo.seo_keywords || '').trim(),
-      canonical: String(seo.canonical || seo.canonical_url || '').trim()
+      canonical: String(seo.canonical || seo.canonical_url || '').trim(),
+      meta_title: String(seo.meta_title || seo.og_title || seo.title || seo.seo_title || '').trim() || title,
+      meta_description: String(seo.meta_description || seo.og_description || seo.description || seo.seo_description || '').trim() || excerpt,
+      og_title: String(seo.og_title || seo.meta_title || seo.title || seo.seo_title || '').trim() || title,
+      og_description: String(seo.og_description || seo.meta_description || seo.description || seo.seo_description || '').trim() || excerpt,
+      og_image: String(seo.og_image || cover.url || input.cover_url || '').trim()
     },
     status,
     display: {
@@ -129,7 +137,7 @@ function normalizeArticleInput(input, actor) {
       share: display.share !== false
     },
     scheduled_at: status === 'scheduled' ? (input.scheduled_at || input.publish_at || null) : null,
-    published_at: status === 'published' ? (input.published_at || new Date().toISOString()) : null,
+    published_at: isLivePublished(status) ? (input.published_at || new Date().toISOString()) : null,
     author: input.author || {
       id: actor && actor.id ? actor.id : 'admin',
       display_name: (actor && (actor.name || actor.email)) || 'Admin',
@@ -140,6 +148,10 @@ function normalizeArticleInput(input, actor) {
 }
 
 async function ensureChuDe(normalized) {
+  const hasAny =
+    !!(normalized && (normalized.chu_de_id || normalized.chu_de_slug || normalized.chu_de_name));
+  if (!hasAny) return null;
+
   if (normalized.chu_de_id) {
     const byId = await query('SELECT id, slug, label FROM content_chu_de WHERE id = $1 LIMIT 1', [normalized.chu_de_id]);
     if (byId.rows[0]) {
@@ -151,7 +163,7 @@ async function ensureChuDe(normalized) {
     }
   }
   const slug = normalized.chu_de_slug || slugify(normalized.chu_de_name);
-  if (!slug) throw AppError.badRequest('ARTICLE_CHU_DE_REQUIRED', 'Chủ đề không hợp lệ');
+  if (!slug) return null;
 
   const bySlug = await query('SELECT id, slug, label FROM content_chu_de WHERE slug = $1 LIMIT 1', [slug]);
   if (bySlug.rows[0]) {
@@ -217,8 +229,7 @@ async function listArticles(filters) {
     params.push(filters.status);
     sql += ` AND status = $${params.length}`;
   } else if (!filters.include_all) {
-    params.push('published');
-    sql += ` AND status = $${params.length}`;
+    sql += ` AND status IN ('published', 'published_rss')`;
   }
   if (filters.q) {
     params.push('%' + String(filters.q).trim().toLowerCase() + '%');
@@ -241,10 +252,25 @@ async function listArticles(filters) {
   return res.rows.map(rowToArticle);
 }
 
+/** ArticleDetail — có body_html; vẫn CẤM dump comments[] / liked_by / rss / display. */
+const ARTICLE_DETAIL_PAYLOAD_SQL = `(
+  payload
+  - 'comments' - 'liked_by' - 'favorited_by'
+  - 'rss' - 'display'
+)`;
+
 async function getArticle(idOrSlug) {
-  const byId = await query('SELECT * FROM community_posts WHERE id = $1 LIMIT 1', [idOrSlug]);
+  const cols =
+    `id, user_id, content_type, status, created_at, updated_at, ${ARTICLE_DETAIL_PAYLOAD_SQL} AS payload`;
+  const byId = await query(
+    `SELECT ${cols} FROM community_posts WHERE id = $1 LIMIT 1`,
+    [idOrSlug]
+  );
   if (byId.rows[0]) return rowToArticle(byId.rows[0]);
-  const bySlug = await query(`SELECT * FROM community_posts WHERE payload->>'slug' = $1 LIMIT 1`, [idOrSlug]);
+  const bySlug = await query(
+    `SELECT ${cols} FROM community_posts WHERE payload->>'slug' = $1 LIMIT 1`,
+    [idOrSlug]
+  );
   return rowToArticle(bySlug.rows[0]);
 }
 
@@ -255,17 +281,23 @@ async function createArticle(input, actor) {
   normalized.category_name = cat.name;
 
   const chuDe = await ensureChuDe(normalized);
-  normalized.chu_de_id = chuDe.id;
-  normalized.chu_de_slug = chuDe.slug;
-  normalized.chu_de_name = chuDe.name;
+  if (chuDe) {
+    normalized.chu_de_id = chuDe.id;
+    normalized.chu_de_slug = chuDe.slug;
+    normalized.chu_de_name = chuDe.name;
+  } else {
+    normalized.chu_de_id = null;
+    normalized.chu_de_slug = '';
+    normalized.chu_de_name = '';
+  }
 
   const id = input.id || 'post_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
   const now = new Date().toISOString();
   const record = Object.assign({}, normalized, {
     id,
     chu_de: chuDe,
-    chu_de_tags: [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }],
-    story_tags: [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }],
+    chu_de_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
+    story_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
     created_at: now,
     updated_at: now,
     stats: { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 },
@@ -286,9 +318,25 @@ async function createArticle(input, actor) {
     ]
   );
 
-  if (record.status === 'published') {
+  if (isLivePublished(record.status) && chuDe) {
     await bumpChuDeStats(chuDe, record.tickers);
   }
+  try {
+    const bus = require('../../core/events/bus');
+    if (isLivePublished(record.status)) {
+      const author = record.author || {};
+      await bus.publish(bus.EVENTS.COMMUNITY_POST_PUBLISHED, {
+        postId: record.id,
+        id: record.id,
+        slug: record.slug,
+        title: record.title,
+        status: record.status,
+        tickers: record.tickers || [],
+        authorId: record.user_id || author.id || (actor && (actor.user_id || actor.id)) || null,
+        authorName: author.display_name || author.name || (actor && actor.name) || 'Thành viên'
+      });
+    }
+  } catch (e) { /* event bus optional at boot */ }
   return record;
 }
 
@@ -298,9 +346,13 @@ async function updateArticle(id, input, actor) {
 
   const merged = Object.assign({}, current, input, {
     category_id: input.category_id != null ? input.category_id : current.category_id,
-    chu_de_id: input.chu_de_id != null ? input.chu_de_id : current.chu_de_id,
-    chu_de_name: input.chu_de_name != null ? input.chu_de_name : (current.chu_de_name || (current.chu_de && current.chu_de.name)),
-    chu_de_slug: input.chu_de_slug != null ? input.chu_de_slug : (current.chu_de_slug || (current.chu_de && current.chu_de.slug)),
+    chu_de_id: Object.prototype.hasOwnProperty.call(input, 'chu_de_id') ? input.chu_de_id : current.chu_de_id,
+    chu_de_name: Object.prototype.hasOwnProperty.call(input, 'chu_de_name')
+      ? input.chu_de_name
+      : (current.chu_de_name || (current.chu_de && current.chu_de.name)),
+    chu_de_slug: Object.prototype.hasOwnProperty.call(input, 'chu_de_slug')
+      ? input.chu_de_slug
+      : (current.chu_de_slug || (current.chu_de && current.chu_de.slug)),
     tickers: input.tickers != null ? input.tickers : current.tickers,
     sectors: input.sectors != null ? input.sectors : current.sectors,
     ecosystems: input.ecosystems != null ? input.ecosystems : current.ecosystems,
@@ -318,17 +370,17 @@ async function updateArticle(id, input, actor) {
 
   const chuDe = await ensureChuDe(normalized);
   const now = new Date().toISOString();
-  const wasPublished = current.status === 'published';
+  const wasPublished = isLivePublished(current.status);
   const record = Object.assign({}, current, normalized, {
     id: current.id,
     chu_de: chuDe,
-    chu_de_id: chuDe.id,
-    chu_de_slug: chuDe.slug,
-    chu_de_name: chuDe.name,
-    chu_de_tags: [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }],
-    story_tags: [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }],
+    chu_de_id: chuDe ? chuDe.id : null,
+    chu_de_slug: chuDe ? chuDe.slug : '',
+    chu_de_name: chuDe ? chuDe.name : '',
+    chu_de_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
+    story_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
     updated_at: now,
-    published_at: normalized.status === 'published'
+    published_at: isLivePublished(normalized.status)
       ? (current.published_at || now)
       : current.published_at || null
   });
@@ -343,9 +395,25 @@ async function updateArticle(id, input, actor) {
     [current.id, record.content_type, record.status, JSON.stringify(record)]
   );
 
-  if (!wasPublished && record.status === 'published') {
+  if (!wasPublished && isLivePublished(record.status) && chuDe) {
     await bumpChuDeStats(chuDe, record.tickers);
   }
+  try {
+    const bus = require('../../core/events/bus');
+    if (!wasPublished && isLivePublished(record.status)) {
+      const author = record.author || {};
+      await bus.publish(bus.EVENTS.COMMUNITY_POST_PUBLISHED, {
+        postId: record.id,
+        id: record.id,
+        slug: record.slug,
+        title: record.title,
+        status: record.status,
+        tickers: record.tickers || [],
+        authorId: record.user_id || author.id || (actor && (actor.user_id || actor.id)) || null,
+        authorName: author.display_name || author.name || (actor && actor.name) || 'Thành viên'
+      });
+    }
+  } catch (e) { /* ignore */ }
   return record;
 }
 
@@ -354,6 +422,53 @@ async function deleteArticle(id) {
   if (!current) throw AppError.notFound('Không tìm thấy bài viết');
   await query('DELETE FROM community_posts WHERE id = $1', [current.id]);
   return { id: current.id, deleted: true };
+}
+
+/**
+ * Kiểm duyệt story (community.stories.*) — tái dùng updateArticle, không đụng articles.* perm.
+ * action: publish | feature | pin | lock | unlock | unfeature | unpin
+ */
+async function moderateStoryPost(id, action, actor) {
+  const current = await getArticle(id);
+  if (!current) throw AppError.notFound('Không tìm thấy bài viết');
+  const act = String(action || '').toLowerCase();
+  const display = Object.assign({}, current.display || {});
+  let status = current.status;
+  if (act === 'publish') {
+    status = 'published';
+  } else if (act === 'feature') {
+    display.featured = true;
+  } else if (act === 'unfeature') {
+    display.featured = false;
+  } else if (act === 'pin') {
+    display.pin = true;
+    display.sticky = true;
+  } else if (act === 'unpin') {
+    display.pin = false;
+    display.sticky = false;
+  } else if (act === 'lock') {
+    display.locked = true;
+    display.comments = false;
+  } else if (act === 'unlock') {
+    display.locked = false;
+    display.comments = true;
+  } else {
+    throw AppError.badRequest('INVALID_STORY_ACTION', 'Hành động kiểm duyệt không hợp lệ.');
+  }
+  return updateArticle(id, { status: status, display: display }, actor);
+}
+
+/** Sửa nhẹ tiêu đề / body / status cho community.stories.edit */
+async function editStoryPost(id, patch, actor) {
+  const current = await getArticle(id);
+  if (!current) throw AppError.notFound('Không tìm thấy bài viết');
+  const input = {};
+  if (patch.title != null) input.title = patch.title;
+  if (patch.body_html != null) input.body_html = patch.body_html;
+  if (patch.excerpt != null) input.excerpt = patch.excerpt;
+  if (patch.status != null) input.status = patch.status;
+  if (patch.display) input.display = patch.display;
+  return updateArticle(id, input, actor);
 }
 
 /** Gợi ý chủ đề từ tiêu đề / từ khóa tìm kiếm */
@@ -532,6 +647,189 @@ async function listAuthorsAdmin(filters) {
   return rows;
 }
 
+const PUBLIC_ORIGIN = 'https://iflux.vn';
+
+function firstHtmlImage(html) {
+  const m = String(html || '').match(/<img[^>]+src=["']([^"']+)["']/i);
+  return m && m[1] ? m[1] : '';
+}
+
+function absoluteAssetUrl(url, origin) {
+  const raw = String(url || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.indexOf('//') === 0) return 'https:' + raw;
+  const base = origin || PUBLIC_ORIGIN;
+  return base + (raw.charAt(0) === '/' ? raw : '/' + raw);
+}
+
+function escapeHtmlAttr(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Article Metadata SoT — một nơi sinh metadata cho mọi pipeline (A share / B SPA).
+ * Renderer chỉ consume; không tự suy field.
+ */
+function resolveArticleMetadata(article, origin) {
+  const item = article || {};
+  const seo = item.seo || {};
+  const cover = item.cover || {};
+  const base = origin || PUBLIC_ORIGIN;
+  const title = String(
+    seo.og_title ||
+    seo.meta_title ||
+    seo.title ||
+    item.title ||
+    'iFlux'
+  ).trim();
+  const description = String(
+    seo.og_description ||
+    seo.meta_description ||
+    seo.description ||
+    item.excerpt ||
+    ''
+  ).trim();
+  const image = absoluteAssetUrl(
+    seo.og_image || cover.url || firstHtmlImage(item.body_html || item.body) || '',
+    base
+  );
+  const slug = item.slug || item.id || '';
+  /* Chia sẻ link iFlux → url / canonical luôn URL iFlux (không dùng canonical RSS ngoài). */
+  const canonical = base + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  const documentTitle = title.indexOf('iFlux') >= 0 ? title : title + ' · iFlux';
+  return {
+    title,
+    description,
+    image,
+    url: canonical,
+    canonical,
+    site_name: 'iFlux',
+    twitter_card: image ? 'summary_large_image' : 'summary',
+    documentTitle
+  };
+}
+
+/** @deprecated alias — dùng resolveArticleMetadata (SoT). Pipeline A không gọi trực tiếp. */
+function resolveOpenGraphMeta(article, origin) {
+  return resolveArticleMetadata(article, origin);
+}
+
+function attachArticleMetadata(article, origin) {
+  if (!article) return article;
+  article.metadata = resolveArticleMetadata(article, origin || PUBLIC_ORIGIN);
+  return article;
+}
+
+/**
+ * Head tags từ Article Metadata SoT — một builder cho Pipeline A và B (CG-001/002).
+ * Chỉ consume meta; không đọc article/seo/cover.
+ * Defensive default (A/B shell) được phép; không suy từ nguồn bài viết.
+ */
+function buildArticleMetadataHeadHtml(meta) {
+  const m = meta && typeof meta === 'object' ? meta : {};
+  const title = escapeHtmlAttr(m.title || 'iFlux');
+  const documentTitle = escapeHtmlAttr(m.documentTitle || m.title || 'iFlux');
+  const description = escapeHtmlAttr(m.description || '');
+  const image = escapeHtmlAttr(m.image || '');
+  const canonical = escapeHtmlAttr(m.canonical || m.url || PUBLIC_ORIGIN);
+  const siteName = escapeHtmlAttr(m.site_name || 'iFlux');
+  const twitterCard = escapeHtmlAttr(m.twitter_card || 'summary');
+  const ogUrl = escapeHtmlAttr(m.url || m.canonical || PUBLIC_ORIGIN);
+  let imageMeta = '';
+  if (image) {
+    imageMeta =
+      '  <meta property="og:image" content="' + image + '" />\n' +
+      '  <meta property="og:image:secure_url" content="' + image + '" />\n' +
+      '  <meta name="twitter:image" content="' + image + '" />\n';
+  }
+  return (
+    '  <title>' + documentTitle + '</title>\n' +
+    '  <meta name="description" content="' + description + '" />\n' +
+    '  <link rel="canonical" href="' + canonical + '" />\n' +
+    '  <meta property="og:site_name" content="' + siteName + '" />\n' +
+    '  <meta property="og:type" content="article" />\n' +
+    '  <meta property="og:locale" content="vi_VN" />\n' +
+    '  <meta property="og:title" content="' + title + '" />\n' +
+    '  <meta property="og:description" content="' + description + '" />\n' +
+    '  <meta property="og:url" content="' + ogUrl + '" />\n' +
+    imageMeta +
+    '  <meta name="twitter:card" content="' + twitterCard + '" />\n' +
+    '  <meta name="twitter:title" content="' + title + '" />\n' +
+    '  <meta name="twitter:description" content="' + description + '" />\n'
+  );
+}
+
+/**
+ * Pipeline A — Share Preview renderer (OG-only shell).
+ * Hằng số shell (refresh, stub body) là khung HTML A — không phải metadata bài.
+ */
+function renderOpenGraphHtml(meta) {
+  const m = meta && typeof meta === 'object' ? meta : {};
+  const canonical = escapeHtmlAttr(m.canonical || m.url || PUBLIC_ORIGIN);
+  return '<!DOCTYPE html>\n' +
+    '<html lang="vi">\n' +
+    '<head>\n' +
+    '  <meta charset="utf-8" />\n' +
+    buildArticleMetadataHeadHtml(meta) +
+    '  <meta http-equiv="refresh" content="0;url=' + canonical + '" />\n' +
+    '</head>\n' +
+    '<body>\n' +
+    '  <p><a href="' + canonical + '">Xem bài viết trên iFlux</a></p>\n' +
+    '</body>\n' +
+    '</html>\n';
+}
+
+function resolveUserWebRoot() {
+  if (process.env.DEPLOY_WEB_PRODUCTION) return process.env.DEPLOY_WEB_PRODUCTION;
+  if (process.env.APP_ENV === 'production' || process.env.NODE_ENV === 'production') {
+    return '/var/www/iflux/production';
+  }
+  const path = require('path');
+  return path.resolve(__dirname, '../../../../..');
+}
+
+/**
+ * Pipeline B — SPA shell + Metadata SoT trong <head> (cùng head builder với A).
+ * Template: User_Web/community/post.html (Reuse). Không hardcode title bài.
+ */
+function renderArticleSpaHtml(meta) {
+  const fs = require('fs');
+  const path = require('path');
+  const templatePath = path.join(resolveUserWebRoot(), 'User_Web', 'community', 'post.html');
+  let html;
+  try {
+    html = fs.readFileSync(templatePath, 'utf8');
+  } catch (err) {
+    throw new AppError('Không đọc được shell bài viết', 500, 'SPA_SHELL_MISSING');
+  }
+  const head = buildArticleMetadataHeadHtml(meta);
+  /* Bỏ title placeholder trong template — thay bằng SoT head (có <title>). */
+  html = html.replace(/<title>[^<]*<\/title>\s*/i, '');
+  html = html.replace(/<!-- Title \+ OG[\s\S]*?-->\s*/i, '');
+  /* Gỡ meta SoT cũ nếu inject lại (idempotent). */
+  html = html.replace(/\s*<meta name="description"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<link rel="canonical"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<meta property="og:[^"]+"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<meta name="twitter:[^"]+"[^>]*>\s*/gi, '\n');
+  /* Inject sớm sau charset/viewport — crawler đọc head đầu trang. */
+  if (/<meta charset="utf-8"[^>]*>\s*<meta name="viewport"[^>]*>/i.test(html)) {
+    html = html.replace(
+      /(<meta charset="utf-8"[^>]*>\s*<meta name="viewport"[^>]*>)/i,
+      '$1\n' + head
+    );
+  } else if (/<\/head>/i.test(html)) {
+    html = html.replace(/<\/head>/i, head + '</head>');
+  } else {
+    html = head + html;
+  }
+  return html;
+}
+
 module.exports = {
   slugify,
   listArticles,
@@ -539,10 +837,20 @@ module.exports = {
   createArticle,
   updateArticle,
   deleteArticle,
+  moderateStoryPost,
+  editStoryPost,
   suggestChuDe,
   suggestTickersForChuDe,
+  resolveArticleMetadata,
+  resolveOpenGraphMeta,
+  attachArticleMetadata,
+  buildArticleMetadataHeadHtml,
+  renderOpenGraphHtml,
+  renderArticleSpaHtml,
+  PUBLIC_ORIGIN,
   createChuDeQuick,
   listChuDeAdmin,
   listAuthorsAdmin,
-  STATUSES
+  STATUSES,
+  isLivePublished
 };

@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-012
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /* Guest shell — menu động + nút Đăng nhập trên trang thật (Market/Flow/…)
  * Không còn trang /guest riêng. Guest = cùng trang + entitlement hẹp + CTA auth.
  */
@@ -6,6 +19,18 @@
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function consumerNavigate(canonical, opts) {
+    opts = opts || {};
+    if (opts.replace == null) opts.replace = true;
+    /* P6-API-01 — internal nav chỉ Writer.navigate */
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical, opts);
+      return;
+    }
+    global.location.replace(canonical);
   }
 
   function routeTo(key) {
@@ -28,9 +53,9 @@
 
   function loginUrl() {
     if (global.IfluxRoutes) {
-      return IfluxRoutes.to('auth.login') + '?return=' + encodeURIComponent(IfluxRoutes.to('home'));
+      return IfluxRoutes.to('auth.login') + '?return=' + encodeURIComponent(IfluxRoutes.to('community', { canonical: true, skipDecorate: true }));
     }
-    return '/dang-nhap?return=/nha-cua-toi';
+    return '/dang-nhap?return=/cong-dong';
   }
 
   /* Top-nav do App Shell (IfluxAppShellHeader, trong platform-boot) sinh ra — MỘT SoT
@@ -42,6 +67,9 @@
   }
 
   function renderGuestActions() {
+    try {
+      if (/\/binh-luan\/?$/i.test(global.location.pathname || '')) return;
+    } catch (e0) { /* ignore */ }
     var actions = document.querySelector('[data-ifx-guest-actions]');
     if (!actions) return;
     /* Giữ slot Search (nếu có) — chỉ thay CTA auth, không innerHTML cả khối. */
@@ -73,14 +101,10 @@
   function syncBrandHref() {
     var brand = document.querySelector('a.ifx-topnav-brand');
     if (!brand) return;
-    var href;
-    if (isLoggedIn()) {
-      href = global.IfluxRoutes ? IfluxRoutes.to('home') : '/nha-cua-toi';
-    } else {
-      href = global.IfluxRoutes ? IfluxRoutes.to('community') : '/cong-dong';
-      if (!href || href === '/') href = '/cong-dong';
-    }
-    brand.setAttribute('href', href);
+    var href = global.IfluxRoutes
+      ? IfluxRoutes.to('community', { canonical: true, skipDecorate: true })
+      : '/cong-dong';
+    brand.setAttribute('href', global.IfluxHref ? IfluxHref.forCanonical(href) : href);
   }
 
   function bootstrapPage(pageKey, initFn) {
@@ -88,6 +112,12 @@
 
     function applyEntitlements() {
       if (global.IfluxBlockGate) IfluxBlockGate.apply(pageKey);
+    }
+
+    /* Paint nav sync ngay khi đã có session — không chờ PlansStore.hydrate */
+    if (isLoggedIn()) {
+      renderGuestNav(pageKey);
+      syncBrandHref();
     }
 
     function run() {
@@ -109,7 +139,7 @@
         }
       } else {
         if (!IfluxEntitlements.canAccessPage(pageKey)) {
-          global.location.replace(firstGuestPageUrl());
+          consumerNavigate(firstGuestPageUrl());
           proceed = false;
         } else {
           renderGuestNav(pageKey);
@@ -126,7 +156,7 @@
       document.addEventListener('iflux-plans-updated', function () {
         if (!isLoggedIn()) {
           if (!IfluxEntitlements.canAccessPage(pageKey)) {
-            global.location.replace(firstGuestPageUrl());
+            consumerNavigate(firstGuestPageUrl());
             return;
           }
           renderGuestNav(pageKey);
@@ -138,38 +168,41 @@
       });
     }
 
-    if (global.PlansStore && PlansStore.hydrate) {
-      PlansStore.hydrate().then(run).catch(run);
+    if (global.PlansRuntimeReader && PlansRuntimeReader.load) {
+      PlansRuntimeReader.load().then(run).catch(run);
     } else {
       run();
     }
   }
 
-  /** Điểm vào gốc: đã login → Nhà; chưa → trang public đầu tiên (thường Market). */
+  /** Điểm vào gốc: đã login → Cộng đồng; chưa → trang public đầu tiên. */
   function initGuestLanding() {
     function goPublic() {
-      global.location.replace(firstGuestPageUrl());
+      consumerNavigate(firstGuestPageUrl());
     }
 
-    function goHomeIfSession() {
+    function goAppHomeIfSession() {
+      var dest = (global.IfluxAuth && IfluxAuth.appHomePath)
+        ? IfluxAuth.appHomePath()
+        : routeTo('community');
       if (!isLoggedIn()) {
         goPublic();
         return;
       }
       if (global.IfluxAuth && IfluxAuth.refreshSessionFromApi && global.IfluxRuntime && IfluxRuntime.isApiMode && IfluxRuntime.isApiMode()) {
         IfluxAuth.refreshSessionFromApi().then(function (user) {
-          if (user) global.location.replace(routeTo('home'));
+          if (user) consumerNavigate(dest);
           else goPublic();
         }).catch(goPublic);
         return;
       }
-      global.location.replace(routeTo('home'));
+      consumerNavigate(dest);
     }
 
-    if (global.PlansStore && PlansStore.hydrate) {
-      PlansStore.hydrate().then(goHomeIfSession).catch(goHomeIfSession);
+    if (global.PlansRuntimeReader && PlansRuntimeReader.load) {
+      PlansRuntimeReader.load().then(goAppHomeIfSession).catch(goAppHomeIfSession);
     } else {
-      goHomeIfSession();
+      goAppHomeIfSession();
     }
   }
 

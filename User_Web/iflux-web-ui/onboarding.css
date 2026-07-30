@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-008
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Onboarding
+Owner đích (map): Onboarding
+Usage audit: ✓ (symbol scan)
+Dep động: Có thể
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: @import từ app-shell.css
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux User Web — onboarding spotlight
  */
@@ -7,8 +21,7 @@
   inset: 0;
   z-index: 10050;
   pointer-events: none;
-  background: #000000;
-  opacity: 0.6;
+  background: transparent;
 }
 
 .ifx-onboard-mask {
@@ -38,13 +51,13 @@
   margin: -2px -2px 14px;
   border-radius: 8px;
   overflow: hidden;
-  max-height: 140px;
+  aspect-ratio: 16 / 9;
 }
 
 .ifx-onboard-center__media img {
   display: block;
   width: 100%;
-  height: 140px;
+  height: auto;
   object-fit: cover;
 }
 
@@ -84,16 +97,11 @@
 
 .ifx-onboard-spotlight {
   position: relative;
-  z-index: 10055 !important;
-  box-shadow:
-    0 0 0 2px rgba(115, 103, 240, 0.85),
-    0 0 0 6px rgba(115, 103, 240, 0.18),
-    0 8px 28px rgba(0, 0, 0, 0.35);
+  z-index: 10055;
   filter: brightness(1.12);
-}
-
-body.ifx-onboard-active .ifx-topnav {
-  z-index: 10052;
+  background: var(--color-text-on-primary);
+  color: var(--color-text-on-success);
+  border-radius: 8px;
 }
 
 html.ifx-onboard-active,

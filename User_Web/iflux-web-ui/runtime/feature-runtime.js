@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-008
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Feature Runtime — Manifest Contract §4.1.1 + State Machine §4.1.2
  * Wave 3 Phase C: assert Shell/Definition · tải modules[] Feature-only · lifecycle.
@@ -5,7 +18,7 @@
  * KHÔNG tải Shell deps · KHÔNG apply Definition · KHÔNG preload lazyChildren.
  */
 
-import { loadScript, loadStyle } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=feedCard20260723c';
 
 var STATES = {
   NOT_LOADED: 'NOT_LOADED',

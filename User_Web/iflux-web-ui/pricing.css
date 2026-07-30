@@ -205,7 +205,7 @@ padding: 7px 0;
  align-items: flex-start; }
 .ix-plan-box .ix-btn[disabled],
 .ix-radio-card[aria-disabled="true"] { cursor: default; }
-@media (max-width: 900px) { .ix-plan-grid { grid-template-columns: 1fr; }
+@media (max-width: 1024px) { .ix-plan-grid { grid-template-columns: 1fr; }
 .ix-faq-grid { grid-template-columns: 1fr; }
 .ifx-checkout-grid { grid-template-columns: 1fr; }
 .ix-order-summary { position: static; }

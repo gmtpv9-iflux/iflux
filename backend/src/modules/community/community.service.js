@@ -68,8 +68,15 @@ function rowToPost(row) {
 async function listPosts(filters = {}) {
   await ensureSeeded();
   const params = [];
-  let sql = 'SELECT * FROM community_posts WHERE status = $1';
-  params.push(filters.status || 'published');
+  const status = filters.status || 'published';
+  let sql;
+  /* Mặc định / published: gồm cả Xuất bản (RSS) — cùng hiện trên User Web */
+  if (status === 'published' || status === 'public') {
+    sql = `SELECT * FROM community_posts WHERE status IN ('published', 'published_rss')`;
+  } else {
+    sql = 'SELECT * FROM community_posts WHERE status = $1';
+    params.push(status);
+  }
   if (filters.content_type) {
     params.push(filters.content_type);
     sql += ` AND content_type = $${params.length}`;

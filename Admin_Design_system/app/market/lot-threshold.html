@@ -8,13 +8,14 @@
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
 <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
   <style>
     .ix-modal-overlay { display: none; }
     .ix-offcanvas { transform: translateX(100%); }
     .ix-offcanvas.open { transform: translateX(0); }
   </style>
 </head>
-<body>
+<body data-ix-view-api="/admin/market-config/lot-threshold">
 <div class="ix-root">
   <div class="ix-layout">
 <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
@@ -42,7 +43,7 @@
               <div class="ix-form-group" style="margin:0"><label class="ix-label">Trung bình</label><input type="text" class="ix-input" id="adm-mkt-lot-mid" /></div>
               <div class="ix-form-group" style="margin:0"><label class="ix-label">Nhỏ</label><input type="text" class="ix-input" id="adm-mkt-lot-small" /></div>
             </div>
-            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-adm-mkt-save-tiers" style="margin-top:12px"><i class="ti ti-device-floppy"></i> Lưu ngưỡng mặc định</button>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-adm-mkt-save-tiers" data-ix-perm="market.lot_threshold.edit" style="margin-top:12px"><i class="ti ti-device-floppy"></i> Lưu ngưỡng mặc định</button>
           </div>
         </div>
         <div class="ix-card">
@@ -65,14 +66,15 @@
 <script src="../../iflux-admin-ui/iflux-market-seed-data.js"></script>
 <script src="../../iflux-admin-ui/iflux-market-ecosystem-seeds.js"></script>
 <script src="../../iflux-admin-ui/iflux-market-registry-store.js"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="market-lot-threshold-page.js"></script>
 <script>AdmMarketLotThreshold.init();</script>
   <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveB20260727"></script>
 </body>
 </html>

@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-006
+Priority: P1
+STATUS: Used|dep-dong
+OWNER (hiện tại): Auth
+Owner đích (map): Auth
+Usage audit: ✓
+Dep động: Có
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
+===== IFX-AUDIT-END ===== */
 /* iFlux User Web — auth (PostgreSQL via iflux-api hoặc local sandbox) */
 (function (global) {
   'use strict';
@@ -29,8 +43,8 @@
 
   function defaultTrialDays(tier) {
     tier = tier || 'premium';
-    if (global.PlansStore && PlansStore.getPlan) {
-      var p = PlansStore.getPlan(tier);
+    if (global.PlansRuntimeReader && PlansRuntimeReader.getPlan) {
+      var p = PlansRuntimeReader.getPlan(tier);
       if (p && p.trial > 0) return p.trial;
     }
     return tier === 'elite' ? 14 : 7;
@@ -259,11 +273,11 @@
     return null;
   }
 
-  function assertRegistrationUnique(data) {
+  /** Sandbox only — email/phone uniqueness vs localStorage · customers · credentials */
+  function assertRegistrationUniqueLocal(data) {
     data = data || {};
     var email = normEmail(data.email);
     var phoneRaw = String(data.phone || '').trim();
-    var phoneKey = normPhone(data.phone);
     var excludeUserId = data.excludeUserId || null;
 
     if (email && findExistingByEmail(email, excludeUserId)) {
@@ -273,20 +287,32 @@
       throw emailErr;
     }
 
-    if (phoneRaw) {
-      if (!phoneKey || phoneKey.length < 10 || phoneKey.length > 12) {
-        var phoneInvalid = new Error('Số điện thoại không hợp lệ. Nhập số Việt Nam (vd: 0912 345 678).');
-        phoneInvalid.code = 'INVALID_PHONE';
-        phoneInvalid.field = 'phone';
-        throw phoneInvalid;
-      }
-      if (findExistingByPhone(phoneRaw, excludeUserId)) {
-        var phoneErr = new Error('Số điện thoại này đã được liên kết với tài khoản khác. Vui lòng dùng số khác hoặc đăng nhập.');
-        phoneErr.code = 'PHONE_TAKEN';
-        phoneErr.field = 'phone';
-        throw phoneErr;
-      }
+    if (phoneRaw && findExistingByPhone(phoneRaw, excludeUserId)) {
+      var phoneErr = new Error('Số điện thoại này đã được liên kết với tài khoản khác. Vui lòng dùng số khác hoặc đăng nhập.');
+      phoneErr.code = 'PHONE_TAKEN';
+      phoneErr.field = 'phone';
+      throw phoneErr;
     }
+  }
+
+  /** Phone format — cả API và sandbox. Uniqueness: sandbox = local · API = server (PostgreSQL). */
+  function assertRegistrationPhoneFormat(data) {
+    data = data || {};
+    var phoneRaw = String(data.phone || '').trim();
+    if (!phoneRaw) return;
+    var phoneKey = normPhone(data.phone);
+    if (!phoneKey || phoneKey.length < 10 || phoneKey.length > 12) {
+      var phoneInvalid = new Error('Số điện thoại không hợp lệ. Nhập số Việt Nam (vd: 0912 345 678).');
+      phoneInvalid.code = 'INVALID_PHONE';
+      phoneInvalid.field = 'phone';
+      throw phoneInvalid;
+    }
+  }
+
+  function assertRegistrationUnique(data) {
+    assertRegistrationPhoneFormat(data);
+    if (useApi()) return;
+    assertRegistrationUniqueLocal(data);
   }
 
   function readProfiles() {
@@ -422,50 +448,34 @@
     persistCustomer(DEFAULT_USER);
   }
 
-  function captureRefFromUrl() {
-    if (global.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.captureRefFromUrl) {
-      IfluxLoyaltyAffiliateStore.captureRefFromUrl();
+  function getActiveOwnerCode() {
+    if (global.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+      return IfluxIdentityContext.getActiveOwner() || '';
+    }
+    return '';
+  }
+
+  function clearAffiliateContextAfterConsume() {
+    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.clearContext) {
+      IfluxAffiliateResolver.clearContext();
       return;
     }
-    try {
-      var params = new URLSearchParams(global.location.search);
-      var ref = params.get('ref') || params.get('r');
-      if (!ref) {
-        var ret = params.get('return');
-        if (ret) {
-          var m = decodeURIComponent(ret).match(/[?&](?:ref|r)=([^&#]+)/i);
-          if (m) ref = decodeURIComponent(m[1]);
-        }
-      }
-      if (!ref) return;
-      ref = String(ref).trim().toUpperCase();
-      var expires = new Date();
-      expires.setDate(expires.getDate() + 30);
-      document.cookie = REF_COOKIE + '=' + encodeURIComponent(ref) +
-        ';path=/;expires=' + expires.toUTCString() + ';SameSite=Lax';
-      try {
-        localStorage.setItem(REF_COOKIE, ref);
-        localStorage.setItem('iflux_ref_from_link', '1');
-      } catch (e2) { /* ignore */ }
-    } catch (e) { /* ignore */ }
+    if (global.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.clearStoredRefCode) {
+      IfluxLoyaltyAffiliateStore.clearStoredRefCode();
+    }
   }
 
   function resolveRegistrationRefCode(data) {
     data = data || {};
     var fromForm = String(data.referral_code || '').trim().toUpperCase();
-    var stored = '';
-    if (global.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.getStoredRefCode) {
-      stored = IfluxLoyaltyAffiliateStore.getStoredRefCode();
-    } else {
-      try {
-        stored = String(localStorage.getItem(REF_COOKIE) || '').trim().toUpperCase();
-      } catch (e) { /* ignore */ }
-    }
     var fromLink = data.referral_locked ||
       (global.IfluxLoyaltyAffiliateStore && IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink &&
         IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink());
 
-    if (fromLink) return fromForm || stored;
+    if (fromLink) {
+      var fromCtx = getActiveOwnerCode();
+      return fromForm || fromCtx;
+    }
     return fromForm;
   }
 
@@ -507,6 +517,9 @@
     if (!refCode && !user.referred_by) return Promise.resolve(null);
 
     applyRegistrationReferral(user, data);
+    if (user.referred_by) {
+      clearAffiliateContextAfterConsume();
+    }
     if (user.referred_by || !refCode || !global.IfluxLoyaltyAffiliateStore) {
       return Promise.resolve(user.referred_by || null);
     }
@@ -540,15 +553,6 @@
     }
   }
 
-  function applyReferrerToUser(userId) {
-    if (!userId || !global.IfluxLoyaltyAffiliateStore) return;
-    var parents = IfluxLoyaltyAffiliateStore.getUplineChain(userId, 1);
-    if (parents.length) return;
-    IfluxLoyaltyAffiliateStore.linkNewUserToReferrer(userId);
-  }
-
-  captureRefFromUrl();
-
   var DEFAULT_USER = {
     id: 'usr_demo_001',
     display_name: 'Nguyễn Văn Minh',
@@ -565,9 +569,9 @@
     country: 'Việt Nam',
     joined_at: '15/01/2024',
     bio: 'Nhà đầu tư cá nhân — theo dõi dòng tiền và ngành.',
-    referral_code: 'MINH10',
+    referral_code: 'IFLMVN10',
     referral_link: '',
-    stats: { posts: 42, followers: 128, following: 87 },
+    stats: { posts: 0, followers: 0, following: 0 },
     plan: {
       name: 'Premium',
       tier: 'premium',
@@ -800,14 +804,19 @@
     var isAuthPage = R ? R.isAuthPage(path) : /\/auth\//.test(path);
 
     if (loggedIn && isAuthPage) {
-      global.location.replace(appHomePath());
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+        global.location.replace(appHomePath());
+      }
       return;
     }
     if (loggedIn && (R ? R.isGuestPage(path) : /\/guest\/?$/.test(path))) {
-      global.location.replace(appHomePath());
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+        global.location.replace(appHomePath());
+      }
       return;
     }
     if (!loggedIn && (R ? R.requiresAuth(path) : false) && document.querySelector('.ifx-app')) {
+      /* Auth zone entry — allowlist DQ-02: loginWithReturn, không Writer.navigate vào auth */
       global.location.replace(R ? R.loginWithReturn(path) : guestHomePath());
       return;
     }
@@ -900,6 +909,9 @@
       IfluxUserDataSync.resetHydration();
       IfluxUserDataSync.hydrateFromServer();
     }
+    if (global.IfluxPncLifecycle && IfluxPncLifecycle.onSessionEstablished) {
+      IfluxPncLifecycle.onSessionEstablished(user, { reason: opts.pncReason || 'login' });
+    }
     return user;
   }
 
@@ -981,7 +993,7 @@
               password: data.password
             });
           }
-          establishSession(user, token, { refresh: true });
+          establishSession(user, token, { refresh: true, pncReason: 'register' });
           markPendingOnboarding();
           return user;
         });
@@ -1281,7 +1293,6 @@
     }
     establishSession(user);
     if (isNewSocial) markPendingOnboarding();
-    if (!opts.skipReferrer) applyReferrerToUser(user.id);
     return user;
   }
 
@@ -1289,12 +1300,15 @@
     opts = opts || {};
     var p = String(provider || '').toLowerCase();
     if (useApi()) {
+      // referral_code chỉ do SocialLoginUseCase (hoặc caller tường minh) gắn — không dual-inject AR tại đây
       return IfluxApiClient.authSocial(p, tokens || {}, opts).then(function (res) {
         return IfluxApiClient.authMe(res.token).then(function (profile) {
           var user = apiProfileToAppUser(profile);
           establishSession(user, res.token, { refresh: true });
           if (res.is_new) markPendingOnboarding();
-          if (!opts.skipReferrer) applyReferrerToUser(user.id);
+          if (res.is_new && user.referred_by) {
+            clearAffiliateContextAfterConsume();
+          }
           return user;
         });
       });
@@ -1335,7 +1349,6 @@
 
     user = Object.assign({}, user, { phone: phone });
     establishSession(user);
-    applyReferrerToUser(user.id);
     return user;
   }
 
@@ -1457,6 +1470,9 @@
   }
 
   function logout() {
+    if (global.IfluxPncLifecycle && IfluxPncLifecycle.onLogout) {
+      IfluxPncLifecycle.onLogout();
+    }
     clearActiveSession();
     var s = read();
     if (global.IfluxUserDataSync) IfluxUserDataSync.resetHydration();
@@ -1469,7 +1485,10 @@
   }
 
   function appHomePath() {
-    return global.IfluxRoutes ? IfluxRoutes.to('home') : '../home/index.html';
+    /* Trang chủ mặc định sau đăng nhập = Cộng đồng (không phải Nhà của tôi). */
+    return global.IfluxRoutes
+      ? IfluxRoutes.to('community', { canonical: true })
+      : '../community/index.html';
   }
 
   function currentReturnPath() {
@@ -1492,6 +1511,9 @@
     if (!isLoggedIn()) {
       var dest;
       if (global.IfluxRoutes) {
+        if (global.IfluxPncLifecycle && IfluxPncLifecycle.saveReturnTo) {
+          IfluxPncLifecycle.saveReturnTo(IfluxRoutes.pathname());
+        }
         dest = IfluxRoutes.loginWithReturn(IfluxRoutes.pathname());
       } else {
         dest = (loginPath || '../auth/login.html') + '?return=' + encodeURIComponent(currentReturnPath());
@@ -1502,26 +1524,59 @@
     return true;
   }
 
+  /** P6-API-01 — thin alias only → IfluxShellUrlWriter.navigate */
+  function shellNavigate(canonical, opts) {
+    opts = opts || {};
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical, Object.assign({ replace: true }, opts));
+      return true;
+    }
+    return false;
+  }
+
   function redirectAfterAuth(defaultPath) {
+    var R = global.IfluxRoutes;
     var params = new URLSearchParams(global.location.search);
     var ret = params.get('return');
     if (ret && ret.indexOf('auth') === -1) {
       var path = decodeURIComponent(ret);
-      if (path.indexOf('http') === 0 || path.indexOf('/') === 0) {
+      if (path.indexOf('http') === 0) {
+        /* Allowlist: absolute external / full URL hop */
         global.location.replace(path);
-      } else if (path.indexOf('../') === 0) {
+        return;
+      }
+      if (path.indexOf('../') === 0) {
+        /* Allowlist: legacy relative auth-zone file hop */
         global.location.replace(path);
-      } else if (global.IfluxRoutes && IfluxRoutes.route(path)) {
-        global.location.replace(IfluxRoutes.to(path));
-      } else {
-        global.location.replace('../' + path);
+        return;
+      }
+      var canonical = path;
+      if (R) {
+        if (R.route(path)) canonical = R.to(path, { skipDecorate: true });
+        else canonical = R.normalizePath(path);
+      }
+      if (canonical.indexOf('/') !== 0) {
+        global.location.replace('../' + canonical);
+        return;
+      }
+      if (!shellNavigate(canonical)) {
+        /* Dev/file fallback only when Writer missing */
+        global.location.replace(canonical);
       }
       return;
     }
-    global.location.replace(defaultPath || (global.IfluxRoutes ? IfluxRoutes.to('home') : '../home/index.html'));
+    var homeCanonical = R ? R.to('community', { skipDecorate: true }) : '/cong-dong';
+    if (!shellNavigate(homeCanonical)) {
+      global.location.replace(defaultPath || homeCanonical);
+    }
   }
 
-  captureRefFromUrl();
+  /** Authentication Capability — sole post-auth Redirect Policy (OD-SOL-12 / WP4). */
+  global.IfluxAuthRedirectPolicy = {
+    execute: redirectAfterAuth
+  };
+
   validateLocalSession();
   initCrossTabSync();
   if (!useApi()) {
@@ -1531,6 +1586,12 @@
   } else if (isLoggedIn()) {
     refreshSessionFromApi();
   }
+  /* App Shell Header: platform-boot có thể paint trước khi Auth chạy — báo ngay sau boot sync */
+  try {
+    document.dispatchEvent(new CustomEvent('iflux-auth-changed', {
+      detail: { loggedIn: isLoggedIn(), boot: true }
+    }));
+  } catch (eBootAuth) { /* ignore */ }
 
   global.IfluxUserStorage = {
     DEMO_USER_ID: DEFAULT_USER.id,

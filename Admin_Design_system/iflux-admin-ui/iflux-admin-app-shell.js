@@ -23,12 +23,75 @@
 
   function canShowHref(href) {
     var rb = rbac();
-    if (!rb || !rb.hasPermission || !rb.permForHref) return true;
-    /* Chưa nạp quyền → hiện đủ menu; sau fetchAccessMe sẽ refresh ẩn item. */
-    if (rb.isLoaded && !rb.isLoaded()) return true;
+    if (!rb || !rb.hasPermission || !rb.permForHref) return false;
+    /* Fail-closed: chưa nạp quyền → ẩn mục menu được bảo vệ. */
+    if (rb.isLoaded && !rb.isLoaded()) return false;
     var need = rb.permForHref(href);
     if (!need) return true;
     return rb.hasPermission(need);
+  }
+
+  function mapItem(node, active) {
+    var href = hrefFor(node.routeKey);
+    return {
+      type: 'item',
+      key: node.key,
+      routeKey: node.routeKey,
+      label: node.label,
+      icon: node.icon,
+      badge: node.badge || null,
+      href: href,
+      active: node.routeKey === active
+    };
+  }
+
+  function mapParent(node, active) {
+    var children = [];
+    var childActive = false;
+    (node.children || []).forEach(function (ch) {
+      if (ch.type !== 'item') return;
+      var href = hrefFor(ch.routeKey);
+      if (!canShowHref(href)) return;
+      var mapped = mapItem(ch, active);
+      if (mapped.active) childActive = true;
+      children.push(mapped);
+    });
+    if (!children.length && !canShowHref(hrefFor(node.routeKey))) return null;
+    return {
+      type: 'parent',
+      key: node.key,
+      routeKey: node.routeKey,
+      label: node.label,
+      icon: node.icon,
+      badge: node.badge || null,
+      href: hrefFor(node.routeKey),
+      open: childActive || node.routeKey === active,
+      active: node.routeKey === active && !childActive,
+      children: children
+    };
+  }
+
+  /* Mỗi MODULE (group): mặc định expand parent đầu tiên; nếu đã có parent mở vì route active thì giữ. */
+  function applyDefaultFirstParentOpen(nodes) {
+    var i = 0;
+    while (i < nodes.length) {
+      if (nodes[i].type !== 'group') {
+        i += 1;
+        continue;
+      }
+      i += 1;
+      var firstParent = null;
+      var anyOpen = false;
+      while (i < nodes.length && nodes[i].type !== 'group') {
+        if (nodes[i].type === 'parent') {
+          if (!firstParent) firstParent = nodes[i];
+          if (nodes[i].open) anyOpen = true;
+        }
+        i += 1;
+      }
+      if (firstParent && !anyOpen) firstParent.open = true;
+    }
+    return nodes;
   }
 
   function getSidebarNav() {
@@ -42,6 +105,16 @@
         pendingGroup = { type: 'group', label: node.label };
         return;
       }
+      if (node.type === 'parent') {
+        var parent = mapParent(node, active);
+        if (!parent) return;
+        if (pendingGroup) {
+          out.push(pendingGroup);
+          pendingGroup = null;
+        }
+        out.push(parent);
+        return;
+      }
       if (node.type !== 'item') return;
       var href = hrefFor(node.routeKey);
       if (!canShowHref(href)) return;
@@ -49,18 +122,9 @@
         out.push(pendingGroup);
         pendingGroup = null;
       }
-      out.push({
-        type: 'item',
-        key: node.key,
-        routeKey: node.routeKey,
-        label: node.label,
-        icon: node.icon,
-        badge: node.badge || null,
-        href: href,
-        active: node.routeKey === active
-      });
+      out.push(mapItem(node, active));
     });
-    return out;
+    return applyDefaultFirstParentOpen(out);
   }
 
   function getHeaderState() {

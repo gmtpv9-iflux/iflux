@@ -89,6 +89,25 @@
   }
 
   /**
+   * Binding Widget→Template từ SoT #4 (Tầng 4).
+   * Placement không sở hữu Template — chỉ preserve tham chiếu để Publish resolve SoT #3.
+   */
+  function resolveTemplateRef(widgetId) {
+    var L4 = global.PlatformLayersWidgets;
+    if (L4) {
+      if (typeof L4.getDefinition === 'function') {
+        var def = L4.getDefinition(widgetId);
+        if (def && def.templateRef) return String(def.templateRef);
+      }
+      if (typeof L4.getWidget === 'function') {
+        var w = L4.getWidget(widgetId);
+        if (w && (w.templateRef || w.template)) return String(w.templateRef || w.template);
+      }
+    }
+    return null;
+  }
+
+  /**
    * @param {object} page — từ PageSettingsCatalog.buildModel()
    * @returns {object} manifest JSON (không chứa implementation)
    */
@@ -102,6 +121,7 @@
       .map(function (slot) {
         var rt = resolveRuntime(slot.widgetId);
         var copy = resolveWidgetCopy(slot.widgetId);
+        var templateRef = resolveTemplateRef(slot.widgetId);
         var config = slot.config ? Object.assign({}, slot.config) : {};
         if (slot.widgetId === 'WGT-MKT-004' && !config.source) config.source = 'sector';
         if (slot.widgetId === 'WGT-MKT-005' && !config.source) config.source = 'family';
@@ -116,6 +136,9 @@
           locked: !!slot.locked,
           userCanOverride: !!slot.userCanOverride,
           config: config,
+          /* Preserve SoT #4 binding — Publish resolve SoT #3 từ id này */
+          template: templateRef,
+          templateRef: templateRef,
           lazyModule: rt ? rt.lazyModule : null,
           css: rt ? rt.css : []
         };
@@ -146,6 +169,7 @@
   global.PageRuntimeManifest = {
     RUNTIME_WIDGET_MODULES: RUNTIME_WIDGET_MODULES,
     resolveRuntime: resolveRuntime,
+    resolveTemplateRef: resolveTemplateRef,
     toRuntimeManifest: toRuntimeManifest
   };
 })(window);

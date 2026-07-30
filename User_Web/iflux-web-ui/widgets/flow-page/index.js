@@ -85,9 +85,7 @@ function applyFlow(root) {
   if (window.IfluxFlowPage && IfluxFlowPage.init) IfluxFlowPage.init();
   bindFlowTabs(root || document);
   if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('flow');
-  if (window.IfluxInsightShare && IfluxInsightShare.patchAll) {
-    IfluxInsightShare.patchAll(root || document);
-  }
+  /* Share: click stub Foundation — không ensure khi mount Flow page. */
 }
 
 export async function mount(el) {

@@ -1,0 +1,7 @@
+{
+  "has_btn_google": true,
+  "html_mentions_onetap": false,
+  "boot_loads_usecase": true,
+  "boot_loads_google_provider": true,
+  "boot_loads_onetap": false
+}

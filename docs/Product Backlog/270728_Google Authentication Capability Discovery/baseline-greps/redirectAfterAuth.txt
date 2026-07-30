@@ -1,0 +1,8 @@
+User_Web/iflux-web-ui/auth-login-init.js:5:    IfluxAuth.redirectAfterAuth();
+User_Web/iflux-web-ui/auth-login-init.js:92:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-login-init.js:111:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-login-init.js:122:    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-register-init.js:276:      setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth-register-init.js:335:    setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
+User_Web/iflux-web-ui/auth.js:1535:  function redirectAfterAuth(defaultPath) {
+User_Web/iflux-web-ui/auth.js:1658:    redirectAfterAuth: redirectAfterAuth,

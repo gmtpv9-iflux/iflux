@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-003
+Priority: P1
+STATUS: Used|bundle
+OWNER (hiện tại): Admin DS components
+Owner đích (map): Admin DS components.css
+Usage audit: ✓
+Dep động: Có
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Shell UI + interaction — P1 FAIL
+===== IFX-AUDIT-END ===== */
 /* =================================================================
    VUEXY DARK — Design System
    Tokens: primitives/ + semantic/ (imported via iflux-admin-ui.css)
@@ -269,7 +283,23 @@ body {
   padding: 4px 0;
 }
 .ix-menu-item.open + .ix-menu-sub { display: block; }
-.ix-menu-sub .ix-menu-item { padding-left: 50px; font-size: var(--ifx-font-size-14); }
+.ix-menu-sub .ix-menu-item {
+  padding-left: var(--ifx-space-32);
+  font-size: var(--ifx-font-size-14);
+  gap: var(--ifx-inline-sm);
+}
+.ix-menu-bullet {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ix-text-muted);
+  flex-shrink: 0;
+  margin-left: var(--ifx-space-16);
+}
+.ix-menu-sub .ix-menu-item:hover .ix-menu-bullet,
+.ix-menu-sub .ix-menu-item.active .ix-menu-bullet {
+  background: var(--ix-accent);
+}
 
 /* -----------------------------------------------------------------
    5. NAVBAR ELEMENTS
@@ -1151,14 +1181,14 @@ body {
    ----------------------------------------------------------------- */
 .ix-perm-table { width: 100%; border-collapse: collapse; font-size: var(--ifx-font-size-14); }
 .ix-perm-group-row td {
-  padding: 14px 12px 6px;
-  font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-bold);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ix-text-muted);
+  padding: 14px 12px 8px;
+  font-size: var(--ifx-font-size-18);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: var(--ifx-letter-spacing-normal);
+  text-transform: none;
+  color: var(--ix-text-primary);
   border-bottom: none;
-  background: rgba(255, 255, 255, 0.02);
+  background: transparent;
 }
 .ix-perm-table td { padding: 10px 12px; border-bottom: 1px solid var(--ix-border); }
 .ix-perm-table tr:last-child td { border-bottom: none; }
@@ -1852,12 +1882,38 @@ body {
   color: var(--ix-text-secondary);
   transition: all .15s;
   text-decoration: none;
+  padding: 0;
+  font: inherit;
+  box-sizing: border-box;
+}
+.ix-social-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 .ix-social-btn:hover { border-color: var(--ix-accent); color: var(--ix-accent); }
 .ix-social-btn.facebook:hover { color: #1877f2; border-color: #1877f2; }
 .ix-social-btn.twitter:hover  { color: #1da1f2; border-color: #1da1f2; }
 .ix-social-btn.github:hover   { color: #cfd3ec;  border-color: #cfd3ec; }
 .ix-social-btn.google:hover   { color: #ea4335; border-color: #ea4335; }
+/* GIS renderButton host (#ifx-google-signin-btn): clip khung vuông GIS thành vòng tròn 36px như icon social khác */
+#ifx-google-signin-btn.ix-social-btn {
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+#ifx-google-signin-btn.ix-social-btn > div {
+  width: 36px !important;
+  height: 36px !important;
+  max-width: 36px;
+  max-height: 36px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
 .ix-auth-footer {
   text-align: center;
   margin-top: var(--ifx-space-16);
@@ -2126,7 +2182,7 @@ body {
   color: var(--ix-text-muted); font-size: var(--ifx-font-size-20);
 }
 .ix-modal-sub { font-size: var(--ifx-font-size-14); color: var(--ix-text-muted); margin-bottom: var(--ifx-space-24); }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .ix-profile-grid { flex-direction: column; }
   .ix-profile-sidebar { width: 100%; }
   .ix-aff-summary { grid-template-columns: repeat(2,1fr); }

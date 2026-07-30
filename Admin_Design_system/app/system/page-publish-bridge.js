@@ -57,11 +57,17 @@
 
     var widgetDrafts = {};
     widgets.forEach(function (w) {
+      /* Bug A fix: giữ binding SoT #4 — không bịa TMP-LEGACY khi Definition đã có templateRef */
+      var templateId = w.template || w.templateRef || null;
+      if (!templateId && global.PageRuntimeManifest && PageRuntimeManifest.resolveTemplateRef) {
+        templateId = PageRuntimeManifest.resolveTemplateRef(w.id);
+      }
+      if (!templateId) templateId = 'TMP-LEGACY';
       widgetDrafts[w.id] = {
         id: w.id,
         title: w.title || w.id,
         description: w.description || '',
-        template: w.template || 'TMP-LEGACY',
+        template: templateId,
         blocks: Array.isArray(w.blocks) ? w.blocks.slice() : [],
         minTier: w.minTier || 'free',
         css: Array.isArray(w.css) ? w.css.slice() : [],

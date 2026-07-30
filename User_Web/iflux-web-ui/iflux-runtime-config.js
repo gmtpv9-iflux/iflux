@@ -14,7 +14,7 @@
       { environment: 'development', match: { protocol: 'file:' } }
     ],
     defaults: {
-      production: { dataMode: 'sandbox', apiBaseUrl: 'https://api.iflux.vn/api' },
+      production: { dataMode: 'api', apiBaseUrl: 'https://iflux.vn/api' },
       staging: { dataMode: 'sandbox' },
       development: { dataMode: 'mock', apiBaseUrl: 'http://localhost:3001/api' }
     },

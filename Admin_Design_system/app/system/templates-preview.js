@@ -105,9 +105,14 @@
     };
   }
 
-  /** Preview Template chỉ dựng phần thân; tiêu đề/mô tả thuộc Widget Definition. */
-  function withWidgetHead(bodyHtml) {
-    return '<div class="ifx-wgt-block">' + bodyHtml + '</div>';
+  /** Preview Template chỉ dựng phần thân; tiêu đề/mô tả thuộc Widget Definition.
+   * UI-001: mặc định bọc TPL-SHELL-CARD (.ifx-mkt-card). Driver đã emit Feature shell → opts.ownCard = true. */
+  function withWidgetHead(bodyHtml, head, opts) {
+    opts = opts || {};
+    var body = opts.ownCard
+      ? bodyHtml
+      : ('<div class="ifx-mkt-card ifx-tpl-preview-card"><div class="ifx-mkt-card__body">' + bodyHtml + '</div></div>');
+    return '<div class="ifx-wgt-block">' + body + '</div>';
   }
 
   function needDS(host, ok, msg) {
@@ -149,7 +154,8 @@
     host.innerHTML = withWidgetHead(
       '<section class="ifx-com-overview"><div class="ifx-com-overview__indices">' +
         T().renderIndexGrid(ex) + '</div></section>',
-      head
+      head,
+      { ownCard: true }
     );
     markMissing(host, '.ifx-com-ex-card', g.flags);
   };
@@ -195,7 +201,7 @@
     var duoDesc = 'Radar hai cực · danh sách 2 cột — dữ liệu demo';
     var inBlock = { id: 'tpl-duo-in', title: '', polarity: 'positive', entityType: 'stock', items: inItems, duoTitle: duoTitle, duoDescription: duoDesc };
     var outBlock = { id: 'tpl-duo-out', title: '', polarity: 'negative', entityType: 'stock', items: outItems, duoTitle: duoTitle, duoDescription: duoDesc };
-    host.innerHTML = withWidgetHead('<div data-tpl-duo-host></div>', head);
+    host.innerHTML = withWidgetHead('<div data-tpl-duo-host></div>', head, { ownCard: true });
     global.IfluxFlowScoreTop.mount(host.querySelector('[data-tpl-duo-host]'), [outBlock, inBlock], { mergePairs: true });
   };
 
@@ -226,7 +232,7 @@
       riskLabel: 'Chỉ báo rủi ro',
       hideCompliance: true
     };
-    host.innerHTML = withWidgetHead('<div data-tpl-sig-host></div>', head);
+    host.innerHTML = withWidgetHead('<div data-tpl-sig-host></div>', head, { ownCard: true });
     global.IfluxFlowScoreTop.mount(host.querySelector('[data-tpl-sig-host]'), [block], { mergePairs: false });
   };
 
@@ -383,7 +389,8 @@
     }).join('');
     host.innerHTML = withWidgetHead(
       '<section class="ifx-com-experts-leaders"><div class="ifx-com-expert-list">' + rows + '</div></section>',
-      head
+      head,
+      { ownCard: true }
     );
     markMissing(host, '.ifx-com-expert-row', g.flags);
   };
@@ -465,8 +472,11 @@
     items.sort(function (a, b) { return (b.weight || 0) - (a.weight || 0); });
     items = items.slice(0, 10);
     host.innerHTML = withWidgetHead(
-      '<div class="ifx-mkt-heatmap-wrap"><div class="ifx-mkt-heatmap" data-tpl-heat></div></div>',
-      head
+      '<div class="ifx-mkt-card"><div class="ifx-mkt-card__body">' +
+        '<div class="ifx-mkt-heatmap-wrap"><div class="ifx-mkt-heatmap" data-tpl-heat></div></div>' +
+      '</div></div>',
+      head,
+      { ownCard: true }
     );
     var canvas = host.querySelector('[data-tpl-heat]');
 
@@ -499,6 +509,59 @@
               ? '<span class="ifx-mkt-heat-tile__name">' + esc(String(it.name).split(' ')[0]) + '</span>'
               : '<span class="ifx-mkt-heat-tile__name">' + esc(it.name) + '</span>' +
                 '<span class="ifx-mkt-heat-tile__perf">' + fmtPct(it.perf) + '</span>') +
+          '</a>';
+        canvas.appendChild(el);
+      });
+    }
+    paint();
+    if (typeof ResizeObserver !== 'undefined') {
+      try { new ResizeObserver(paint).observe(canvas); } catch (e) { /* ignore */ }
+    }
+  };
+
+  /* TMP-COM-STOCK-HEAT — cùng treemap DS, class community (không dùng market-heatmap wrap) */
+  DRIVERS['com-stock-heat'] = function (host, c, tpl, head) {
+    if (!needDS(host, global.IfluxSquarifiedTreemap && T(), 'Thiếu squarified-treemap.js')) return;
+    var nm = cols(c[0]), sz = cols(c[1]).map(num), pf = cols(c[2]).map(num);
+    var items = [];
+    nm.forEach(function (name, i) {
+      if (!name) return;
+      items.push({
+        ticker: name,
+        marketCap: Math.max(sz[i] || 1, 1),
+        weight: Math.max(sz[i] || 1, 1),
+        stock: { change_pct: pf[i] || 0 },
+        perf: pf[i] || 0
+      });
+    });
+    items.sort(function (a, b) { return (b.weight || 0) - (a.weight || 0); });
+    items = items.slice(0, 10);
+    host.innerHTML = withWidgetHead(
+      '<div class="ifx-com-trending-panel ifx-com-trending-panel--stocks">' +
+        '<div class="ifx-cap-treemap" data-ifx-cap-treemap role="img" aria-label="Treemap cổ phiếu quan tâm" style="min-height:200px"></div>' +
+      '</div>',
+      head,
+      { ownCard: true }
+    );
+    var canvas = host.querySelector('[data-ifx-cap-treemap]');
+    function paint() {
+      if (!canvas || !canvas.isConnected) return;
+      var w = canvas.clientWidth, h = canvas.clientHeight || 200;
+      if (w < 40) { setTimeout(paint, 80); return; }
+      canvas.innerHTML = '';
+      global.IfluxSquarifiedTreemap.layout(items, w, h).forEach(function (r) {
+        var it = r.item;
+        var dir = T().perfDirection(it.perf);
+        var el = document.createElement('div');
+        el.className = 'ifx-cap-tile';
+        el.style.left = r.x + 'px';
+        el.style.top = r.y + 'px';
+        el.style.width = Math.max(0, r.width - 2) + 'px';
+        el.style.height = Math.max(0, r.height - 2) + 'px';
+        el.innerHTML =
+          '<a class="ifx-cap-tile__link is-' + dir + '" href="#">' +
+            '<span class="ifx-cap-tile__tk">' + esc(it.ticker) + '</span>' +
+            '<span class="ifx-cap-tile__chg">' + fmtPct(it.perf) + '</span>' +
           '</a>';
         canvas.appendChild(el);
       });
@@ -666,6 +729,54 @@
     markMissing(host, '.ifx-zone-pos__row', g.flags);
   };
 
+  /* Lịch sử Hỗ trợ — Kháng cự → TMP-SR-HISTORY (renderSrHistory) */
+  DRIVERS['sr-history'] = function (host, c, tpl, head) {
+    if (!needDS(host, T() && T().renderSrHistory, 'Thiếu block-templates.js')) return;
+    var g = groupAlign([c[0], c[1], c[2], c[3], c[4], c[5]]);
+    var tabs = colsN(c[0], g.max);
+    var leftRanges = colsN(c[1], g.max);
+    var centers = colsN(c[2], g.max);
+    var rightRanges = colsN(c[3], g.max);
+    var leftPcts = colsN(c[4], g.max);
+    var rightPcts = colsN(c[5], g.max);
+    var headers = (currentOverrides && currentOverrides.headers)
+      ? currentOverrides.headers
+      : ((global.TemplatesStore && TemplatesStore.getHeaders)
+        ? TemplatesStore.getHeaders(tpl)
+        : (tpl && tpl.headers) || {});
+    if (!tabs.length) tabs = ['1 tháng', '3 tháng', '1 năm', 'Lịch sử'];
+
+    function paint(activeIdx) {
+      var i = Math.max(0, Math.min(tabs.length - 1, Number(activeIdx) || 0));
+      host.innerHTML = withWidgetHead(
+        T().renderSrHistory({
+          tabs: tabs,
+          activeIndex: i,
+          leftRange: leftRanges[i],
+          center: centers[i],
+          rightRange: rightRanges[i],
+          leftPct: leftPcts[i],
+          rightPct: rightPcts[i],
+          leftLabel: headers.left || 'Hỗ trợ',
+          centerLabel: headers.center || 'Hiện tại',
+          rightLabel: headers.right || 'Kháng cự',
+          emptyMsg: 'Chưa có dữ liệu'
+        }),
+        head
+      );
+      markMissing(host, '[data-ifx-sr-hist-panel]', g.flags);
+    }
+
+    paint(0);
+    if (host._ifxSrHistPreviewBound) return;
+    host._ifxSrHistPreviewBound = true;
+    host.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-ifx-sr-hist-tab]');
+      if (!btn || !host.contains(btn)) return;
+      paint(btn.getAttribute('data-ifx-sr-hist-tab'));
+    });
+  };
+
   /* Trend / Area line → area 2 chuỗi thật (giống widget thanh khoản, token màu DS) */
   DRIVERS['trend'] = function (host, c, tpl, head) {
     if (!needDS(host, T() && typeof ApexCharts !== 'undefined', 'Thiếu ApexCharts / block-templates.js')) return;
@@ -694,7 +805,8 @@
         '</div>' +
         '<div class="ifx-mkt-liq-chart" data-tpl-liq></div>' +
       '</div></div>',
-      head
+      head,
+      { ownCard: true }
     );
 
     var el = host.querySelector('[data-tpl-liq]');

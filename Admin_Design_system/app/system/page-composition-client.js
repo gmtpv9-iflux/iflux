@@ -32,9 +32,14 @@
   function saveDraft(pageKey) {
     var manifest = manifestFor(pageKey);
     if (!manifest) return Promise.resolve({ ok: false, error: 'no-manifest' });
+    var headers = { 'Content-Type': 'application/json' };
+    if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+      var session = IfluxAdminAuth.getSession();
+      if (session && session.token) headers.Authorization = 'Bearer ' + session.token;
+    }
     return fetch(endpoint(pageKey), {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify({ manifest: manifest })
     }).then(function (r) { return r.json(); }).catch(function (err) {
       return { ok: false, error: String(err) };

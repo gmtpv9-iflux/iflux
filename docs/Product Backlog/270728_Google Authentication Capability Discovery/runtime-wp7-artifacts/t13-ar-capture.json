@@ -1,0 +1,23 @@
+{
+  "http://127.0.0.1:8777/IFLQVRZX": {
+    "status": 404,
+    "hasAR": false,
+    "code": null,
+    "stored": {},
+    "href": "http://127.0.0.1:8777/IFLQVRZX"
+  },
+  "http://127.0.0.1:8777/User_Web/home/index.html?ref=IFLQVRZX&dataMode=api": {
+    "status": 200,
+    "hasAR": false,
+    "code": null,
+    "stored": {},
+    "href": "http://127.0.0.1:8777/dang-nhap?return=%2FUser_Web%2Fhome%2Findex.html"
+  },
+  "http://127.0.0.1:8777/User_Web/guest/index.html?dataMode=api": {
+    "status": 404,
+    "hasAR": false,
+    "code": null,
+    "stored": {},
+    "href": "http://127.0.0.1:8777/User_Web/guest/index.html?dataMode=api"
+  }
+}

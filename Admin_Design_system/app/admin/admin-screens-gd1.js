@@ -243,7 +243,7 @@
         { key: 'lastLogin', label: 'Đăng nhập', mono: true }
       ],
       rows: [
-        { email: 'super@iflux.vn', name: 'Super Admin', role: 'Super Admin', status: 'active', twofa: 'Bật', lastLogin: 'Hôm nay 09:12' },
+        { email: 'admin@iflux.vn', name: 'Admin', role: 'Admin', status: 'active', twofa: 'Bật', lastLogin: 'Hôm nay 09:12' },
         { email: 'ops@iflux.vn', name: 'Ops', role: 'Operator', status: 'invited', twofa: 'Chưa', lastLogin: '—' }
       ],
       rowActions: function () { return rowBtn('Sửa', 'ti ti-edit') + rowBtn('Khóa', 'ti ti-ban'); }

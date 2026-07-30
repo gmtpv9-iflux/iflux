@@ -3,6 +3,41 @@
   'use strict';
 
   var STORAGE_KEY = 'iflux_stock_comments_v6';
+  /* Slice 4.5 / RC-PS-04: key RETIRED — mặc định cấm ghi authoritative */
+  var _authoritativeWrite = false;
+
+  function setAuthoritativeWriteEnabled(on) {
+    if (on) {
+      if (global.console && console.warn) {
+        console.warn('[RC-PS-04] Cấm bật lại ghi authoritative ' + STORAGE_KEY + ' (key đã retire)');
+      }
+      return;
+    }
+    _authoritativeWrite = false;
+  }
+
+  function writeAll(data) {
+    if (!_authoritativeWrite) {
+      if (global.console && console.warn) {
+        console.warn('[RC-PS-04] Cấm ghi ' + STORAGE_KEY + ' (retired)');
+      }
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    document.dispatchEvent(new CustomEvent('iflux-stock-comments-change'));
+  }
+
+  /** Retire: chỉ emit nếu thực sự vừa xóa key */
+  function purgeLocalComments() {
+    try {
+      if (!localStorage.getItem(STORAGE_KEY)) return false;
+      localStorage.removeItem(STORAGE_KEY);
+      document.dispatchEvent(new CustomEvent('iflux-stock-comments-change'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   function uid(prefix) {
     return (prefix || 'sc') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -54,11 +89,6 @@
     return emptyStore();
   }
 
-  function writeAll(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    document.dispatchEvent(new CustomEvent('iflux-stock-comments-change'));
-  }
-
   function normalizeTagRef(ref) {
     if (!ref) return null;
     if (typeof ref === 'string') return { id: ref, name: ref };
@@ -92,6 +122,7 @@
       user_id: r.user_id || '',
       user_name: r.user_name || 'Thành viên',
       body: r.body || '',
+      image: r.image || null,
       created_at: r.created_at || new Date().toISOString(),
       reply_to_id: r.reply_to_id || null,
       reactions: normalizeReactions(r.reactions)
@@ -104,6 +135,7 @@
       user_id: c.user_id || '',
       user_name: c.user_name || 'Thành viên',
       body: c.body || '',
+      image: c.image || null,
       created_at: c.created_at || new Date().toISOString(),
       tags: normalizeTags(c.tags),
       reactions: normalizeReactions(c.reactions),
@@ -364,6 +396,13 @@
     return commentsForFeed(readAll(), feedKey);
   }
 
+  /** Dual-read migration — không seed demo (RC-API-12) */
+  function peekComments(feedKey) {
+    feedKey = normalizeFeedKey(feedKey);
+    if (!feedKey) return [];
+    return commentsForFeed(readAll(), feedKey);
+  }
+
   function getComment(feedKey, commentId) {
     feedKey = ensureFeed(feedKey);
     return findCommentInFeed(readAll(), feedKey, commentId);
@@ -382,7 +421,8 @@
     payload = payload || {};
     var rawBody = (payload.body || '').trim();
     var body = mentions() ? mentions().stripMentions(rawBody) : rawBody;
-    if (!body) throw new Error('Nhập nội dung bình luận.');
+    var image = payload.image || null;
+    if (!body && !image) throw new Error('Nhập nội dung hoặc đính kèm hình ảnh.');
     ensureFeed(feedKey);
     var store = readAll();
     var tags = payload.tags
@@ -393,6 +433,7 @@
       user_id: user && user.id ? user.id : 'usr_local',
       user_name: user && user.display_name ? user.display_name : 'Thành viên',
       body: body,
+      image: image,
       created_at: new Date().toISOString(),
       tags: tags,
       reactions: { positive: [], negative: [] },
@@ -483,6 +524,9 @@
   }
 
   global.IfluxStockStore = {
+    setAuthoritativeWriteEnabled: setAuthoritativeWriteEnabled,
+    purgeLocalComments: purgeLocalComments,
+    peekComments: peekComments,
     getComments: getComments,
     getComment: getComment,
     countActivity: countActivity,

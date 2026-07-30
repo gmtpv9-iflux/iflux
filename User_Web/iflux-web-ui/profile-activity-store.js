@@ -1,30 +1,63 @@
-/* Hoạt động gần đây — không gồm tương tác xã hội (Timeline / follow / chat) */
+/* Hoạt động gần đây — scoped theo userId (Wave B) */
 (function (global) {
   'use strict';
 
-  var STORAGE_KEY = 'iflux_profile_activity_v1';
+  var STORAGE_KEY = 'iflux_profile_activity_v2';
+  var LEGACY_KEY = 'iflux_profile_activity_v1';
+  var migrated = false;
 
-  function readAll() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
+  function scope() {
+    return global.IfluxProfileLocalScope || null;
+  }
+
+  function ensureMigrated() {
+    if (migrated) return;
+    migrated = true;
+    var S = scope();
+    if (S && S.migrateFlatListToMap) {
+      S.migrateFlatListToMap(LEGACY_KEY, STORAGE_KEY, 'userId');
     }
   }
 
-  function writeAll(list) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  function readMap() {
+    ensureMigrated();
+    var S = scope();
+    if (S) return S.readMap(STORAGE_KEY, {});
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function writeMap(map) {
+    var S = scope();
+    if (S) S.writeMap(STORAGE_KEY, map);
+    else localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
     if (typeof document !== 'undefined') {
       document.dispatchEvent(new CustomEvent('iflux-profile-activity-change'));
     }
+  }
+
+  function listRaw(userId) {
+    if (!userId) return [];
+    var map = readMap();
+    return (map[String(userId)] || []).slice();
+  }
+
+  function saveList(userId, list) {
+    if (!userId) return;
+    var map = readMap();
+    map[String(userId)] = list;
+    writeMap(map);
   }
 
   function log(userId, item) {
     if (!userId || !item) return null;
     var entry = {
       id: item.id || ('act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
-      userId: userId,
+      userId: String(userId),
       type: item.type || 'system',
       icon: item.icon || 'ti-activity',
       iconClass: item.iconClass || 'accent',
@@ -32,10 +65,10 @@
       desc: item.desc || '',
       at: item.at || new Date().toISOString()
     };
-    var list = readAll();
+    var list = listRaw(userId);
     list.unshift(entry);
     if (list.length > 300) list = list.slice(0, 300);
-    writeAll(list);
+    saveList(userId, list);
     return entry;
   }
 
@@ -84,7 +117,7 @@
   function mergeOrders(userId) {
     if (!userId || !global.IfluxSubscriptionOrdersStore) return;
     var orders = IfluxSubscriptionOrdersStore.listOrders({ userId: userId });
-    var list = readAll();
+    var list = listRaw(userId);
     var ids = {};
     list.forEach(function (a) { ids[a.id] = true; });
 
@@ -99,11 +132,13 @@
     list.sort(function (a, b) {
       return new Date(b.at).getTime() - new Date(a.at).getTime();
     });
-    writeAll(list);
+    saveList(userId, list);
   }
 
   function seedIfEmpty(userId) {
-    var list = readAll().filter(function (a) { return a.userId === userId; });
+    var S = scope();
+    if (S && S.useApi && S.useApi()) return;
+    var list = listRaw(userId);
     if (list.length) return;
     var now = Date.now();
     [
@@ -114,30 +149,6 @@
         title: 'Cập nhật hồ sơ cá nhân',
         desc: 'Đã lưu thông tin hiển thị công khai trên hồ sơ.',
         at: new Date(now - 86400000 * 2).toISOString()
-      },
-      {
-        type: 'alert',
-        icon: 'ti-bell',
-        iconClass: 'warning',
-        title: 'Tạo cảnh báo giá',
-        desc: 'Cảnh báo HPG vượt ngưỡng 28.500 — push & email.',
-        at: new Date(now - 86400000 * 4).toISOString()
-      },
-      {
-        type: 'watchlist',
-        icon: 'ti-bookmark',
-        iconClass: 'success',
-        title: 'Thêm mã vào danh sách theo dõi',
-        desc: 'FPT, VCB được thêm vào tab "Ngân hàng".',
-        at: new Date(now - 86400000 * 6).toISOString()
-      },
-      {
-        type: 'widget',
-        icon: 'ti-layout-grid',
-        iconClass: 'accent',
-        title: 'Thêm tiện ích Dashboard',
-        desc: 'Widget "Độ rộng thị trường" được ghim lên dashboard.',
-        at: new Date(now - 86400000 * 9).toISOString()
       }
     ].forEach(function (item) {
       log(userId, item);
@@ -149,7 +160,7 @@
     if (!userId) return [];
     mergeOrders(userId);
     if (opts.seed !== false) seedIfEmpty(userId);
-    var list = readAll().filter(function (a) { return a.userId === userId; });
+    var list = listRaw(userId);
     list.sort(function (a, b) {
       return new Date(b.at).getTime() - new Date(a.at).getTime();
     });

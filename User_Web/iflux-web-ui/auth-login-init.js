@@ -51,14 +51,24 @@
         reason: document.getElementById('emergency-reason').value.trim()
       });
       ixToast('Đã gửi yêu cầu khóa khẩn cấp. Đội hỗ trợ sẽ liên hệ qua email.', 'success');
-      setTimeout(function () { location.href = '/'; }, 800);
+      setTimeout(function () {
+        if (window.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
+          IfluxShellUrlWriter.navigate('/cong-dong', { replace: true });
+        } else {
+          location.href = '/cong-dong';
+        }
+      }, 800);
     } catch (err) {
       ixToast(err.message, 'danger');
     }
   });
 
   document.getElementById('btn-emergency-back').addEventListener('click', function () {
-    location.href = '/';
+    if (window.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
+      IfluxShellUrlWriter.navigate('/cong-dong', { replace: true });
+    } else {
+      location.href = '/cong-dong';
+    }
   });
 
   var tabs = document.querySelectorAll('[data-login-tab]');
@@ -134,8 +144,31 @@
     return map[String(p || '').toLowerCase()] || p;
   }
 
-  IfluxAuthSocial.initPage({
+  function affiliateReferralCodeForIdentity() {
+    var AR = window.IfluxAffiliateResolver;
+    if (AR && AR.getCodeForIdentityCreation) {
+      var code = AR.getCodeForIdentityCreation();
+      return code || undefined;
+    }
+    return undefined;
+  }
+
+  function enableAuthSocialButtons() {
+    /* Google: nút GIS #ifx-google-signin-btn — không disabled custom */
+    ['btn-apple', 'btn-facebook', 'btn-zalo'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.removeAttribute('disabled');
+    });
+  }
+
+  var socialInit = IfluxAuthSocial.initPage({
     onSuccess: socialAuthSuccess,
-    onError: socialAuthError
+    onError: socialAuthError,
+    referral_code: affiliateReferralCodeForIdentity()
   });
+  if (socialInit && typeof socialInit.then === 'function') {
+    socialInit.then(enableAuthSocialButtons, enableAuthSocialButtons);
+  } else {
+    enableAuthSocialButtons();
+  }
 })();

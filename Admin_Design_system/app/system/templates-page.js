@@ -13,7 +13,14 @@
 (function (global) {
   'use strict';
 
-  var state = { q: '', editingId: null, draft: null, previewIds: {} };
+  var state = {
+    q: '',
+    editingId: null,
+    draft: null,
+    previewIds: {},
+    runtimeTab: {},
+    runtimeMode: {}
+  };
 
   function cat() { return global.TemplatesCatalog; }
   function store() { return global.TemplatesStore; }
@@ -161,12 +168,70 @@
       resourceList(arr);
   }
 
+  function webImpl() { return global.TemplateWebImplementations; }
+
+  function webStatus(templateId) {
+    return webImpl() && webImpl().status ? webImpl().status(templateId) : 'draft';
+  }
+
+  function runtimeTabOf(id) {
+    return state.runtimeTab[id] || 'web';
+  }
+
+  function runtimeModeOf(id) {
+    return state.runtimeMode[id] || 'preview';
+  }
+
+  function statusChip(templateId) {
+    var st = webStatus(templateId);
+    if (st === 'ready') {
+      return '<span class="ix-chip ix-chip-success">Web · Ready</span>';
+    }
+    return '<span class="ix-chip ix-chip-warning">Web · Draft</span>';
+  }
+
+  /* Runtime Implement — Admin chỉ xem Ready/Draft + module (Developer đăng ký). */
+  function runtimeImplementPanel(t) {
+    var tab = runtimeTabOf(t.id);
+    if (tab !== 'web') {
+      return '<p class="tpl-pv-hint">Runtime này chưa mở Implementation trong giai đoạn Web-first.<br/>Chỉ xem trạng thái — không nhập path module.</p>';
+    }
+    var row = webImpl() && webImpl().impl ? webImpl().impl(t.id) : null;
+    var st = webStatus(t.id);
+    return '<div class="tpl-pv-live">' +
+      '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Trạng thái</span>' +
+        (st === 'ready'
+          ? '<span class="ix-chip ix-chip-success">Ready</span>'
+          : '<span class="ix-chip ix-chip-warning">Draft</span>') +
+      '</div>' +
+      '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Runtime</span><code>web</code></div>' +
+      '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Entry (Build)</span><code>' +
+        esc(row && row.module ? row.module : '— chưa đăng ký') + '</code></div>' +
+      '<p class="tpl-col__hint" style="margin-top:10px">Admin chỉ xem. Developer/Build đăng ký Implementation — không nhập path trên UI này.</p>' +
+    '</div>';
+  }
+
+  function runtimeToolbar(t) {
+    var tab = runtimeTabOf(t.id);
+    var mode = runtimeModeOf(t.id);
+    return '<div class="tpl-rt-bar">' +
+      '<div class="tpl-rt-tabs">' +
+        '<button type="button" class="ix-btn ix-btn-sm ' + (tab === 'web' ? 'ix-btn-primary' : 'ix-btn-outline') + '" data-tpl-rt-tab="web" data-tpl-id="' + esc(t.id) + '">Web</button>' +
+        '<button type="button" class="ix-btn ix-btn-sm ix-btn-outline" disabled title="Chưa mở">Mobile</button>' +
+      '</div>' +
+      '<div class="tpl-rt-modes">' +
+        '<button type="button" class="ix-btn ix-btn-sm ' + (mode === 'preview' ? 'ix-btn-primary' : 'ix-btn-outline') + '" data-tpl-rt-mode="preview" data-tpl-id="' + esc(t.id) + '">Preview</button>' +
+        '<button type="button" class="ix-btn ix-btn-sm ' + (mode === 'implement' ? 'ix-btn-primary' : 'ix-btn-outline') + '" data-tpl-rt-mode="implement" data-tpl-id="' + esc(t.id) + '">Runtime Implement</button>' +
+      '</div>' +
+    '</div>';
+  }
+
   /* Luôn read-only — metadata audit, không chỉnh sửa kể cả Edit Mode. */
   function techBlock(t) {
     var res = t.resources || {};
     var previewType = (t.preview && t.preview.type) || '—';
     return '<div class="tpl-col tpl-col--tech">' +
-      '<div class="tpl-col__label">Thông tin kỹ thuật <span class="tpl-col__hint">(Admin · metadata audit · luôn read-only)</span></div>' +
+      '<div class="tpl-col__label">Thông tin kỹ thuật <span class="tpl-col__hint">(General · metadata audit · luôn read-only)</span></div>' +
       '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 120px">Renderer</span><code>' + esc(t.render || '—') + '</code></div>' +
       '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 120px">Preview Widget</span><code>' + esc(previewType) + '</code></div>' +
       techGroup('Component', res.component) +
@@ -191,9 +256,11 @@
         '<div class="tpl-row__head">' +
           '<div class="tpl-row__meta">' +
             '<code class="tpl-row__id">' + esc(t.id) + '</code>' +
+            statusChip(t.id) +
           '</div>' +
           '<div class="tpl-row__actions">' + actions + '</div>' +
         '</div>' +
+        '<div class="tpl-col__label">General</div>' +
         (isEditing
           ? identityBlock(t)
           : '<h3 class="ix-card-title tpl-row__title">' + esc(name) + '</h3>' +
@@ -204,8 +271,30 @@
         specBlock(t, isEditing) +
         techBlock(t) +
       '</div>' +
-      '<div class="tpl-row__right" data-tpl-preview="' + esc(t.id) + '"></div>' +
+      '<div class="tpl-row__right">' +
+        runtimeToolbar(t) +
+        '<div data-tpl-preview="' + esc(t.id) + '"></div>' +
+      '</div>' +
     '</div>';
+  }
+
+  function paintRightPanel(t) {
+    var mount = document.querySelector('[data-tpl-preview="' + t.id + '"]');
+    if (!mount) return;
+    var mode = runtimeModeOf(t.id);
+    if (mode === 'implement') {
+      mount.innerHTML = runtimeImplementPanel(t);
+      return;
+    }
+    if (!preview()) return;
+    if (state.previewIds[t.id]) {
+      var a = previewArgs(t);
+      preview().render(mount, t, a.demo, a.overrides);
+    } else if (preview().empty) {
+      preview().empty(mount);
+    } else {
+      mount.innerHTML = '<p class="tpl-pv-hint">Bấm <strong>Xem</strong> để Preview Runtime Web.</p>';
+    }
   }
 
   function renderRoot() {
@@ -217,14 +306,7 @@
       return;
     }
     root.innerHTML = items.map(renderRow).join('');
-    items.forEach(function (t) {
-      var mount = document.querySelector('[data-tpl-preview="' + t.id + '"]');
-      if (!mount || !preview()) return;
-      if (state.previewIds[t.id]) {
-        var a = previewArgs(t);
-        preview().render(mount, t, a.demo, a.overrides);
-      } else preview().empty(mount);
-    });
+    items.forEach(function (t) { paintRightPanel(t); });
     var stamp = document.getElementById('tpl-updated');
     if (stamp) {
       var u = store().read().updatedAt;
@@ -239,23 +321,17 @@
   function viewTemplate(id) {
     var t = cat().byId(id);
     state.previewIds[id] = true;
-    var mount = document.querySelector('[data-tpl-preview="' + id + '"]');
+    state.runtimeMode[id] = 'preview';
     var row = document.querySelector('[data-tpl-row="' + id + '"]');
     if (row) row.classList.add('is-previewing');
-    if (mount && t && preview()) {
-      var a = previewArgs(t);
-      preview().render(mount, t, a.demo, a.overrides);
-    }
+    if (t) paintRightPanel(t);
+    else renderRoot();
   }
 
   function refreshPreviewIfShown(id) {
-    if (!state.previewIds[id]) return;
+    if (!state.previewIds[id] && runtimeModeOf(id) !== 'implement') return;
     var t = cat().byId(id);
-    var mount = document.querySelector('[data-tpl-preview="' + id + '"]');
-    if (mount && t && preview()) {
-      var a = previewArgs(t);
-      preview().render(mount, t, a.demo, a.overrides);
-    }
+    if (t) paintRightPanel(t);
   }
 
   function saveDraft(id) {
@@ -294,6 +370,22 @@
     if (!root) return;
 
     root.addEventListener('click', function (e) {
+      var rtTab = e.target.closest('[data-tpl-rt-tab]');
+      if (rtTab) {
+        var tid = rtTab.getAttribute('data-tpl-id');
+        state.runtimeTab[tid] = rtTab.getAttribute('data-tpl-rt-tab') || 'web';
+        renderRoot();
+        return;
+      }
+      var rtMode = e.target.closest('[data-tpl-rt-mode]');
+      if (rtMode) {
+        var mid = rtMode.getAttribute('data-tpl-id');
+        var mode = rtMode.getAttribute('data-tpl-rt-mode') || 'preview';
+        state.runtimeMode[mid] = mode;
+        if (mode === 'preview') state.previewIds[mid] = true;
+        renderRoot();
+        return;
+      }
       var view = e.target.closest('[data-tpl-view]');
       if (view) { viewTemplate(view.getAttribute('data-tpl-view')); return; }
       var edit = e.target.closest('[data-tpl-edit]');

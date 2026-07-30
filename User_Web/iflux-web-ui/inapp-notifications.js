@@ -1,9 +1,19 @@
-/* Thông báo in-app — Cộng đồng, Loyalty, Cảnh báo (localStorage scoped + sync server) */
+/* Thông báo in-app — server inbox (Platform) + localStorage chỉ cho client-only chưa migrate */
 (function (global) {
   'use strict';
 
   var STORAGE_KEY = 'iflux_inapp_notifications_v1';
   var DEMO_USER_ID = 'usr_demo_001';
+
+  function clientLocalTypes() {
+    return global.IfluxClientLocalNotificationTypes || null;
+  }
+
+  function isClientLocalType(type) {
+    var cl = clientLocalTypes();
+    if (cl && cl.isClientLocalType) return cl.isClientLocalType(type);
+    return false;
+  }
 
   var TYPE_META = {
     community_post: { icon: 'ti-users', category: 'community', menuKey: 'community' },
@@ -102,6 +112,10 @@
   }
 
   function push(item) {
+    if (!item || !item.type) return null;
+    var cl = clientLocalTypes();
+    if (cl && cl.assertClientLocalWrite && !cl.assertClientLocalWrite(item.type)) return null;
+    if (!isClientLocalType(item.type)) return null;
     item = enrichItem(item);
     var list = readAll();
     if (list.some(function (n) { return n.id === item.id; })) return item;
@@ -111,34 +125,13 @@
     return item;
   }
 
-  function renderTpl(caseId, vars) {
-    var T = global.IfluxSystemNotificationTemplates;
-    if (T && T.render) return T.render(caseId, vars);
-    return null;
-  }
-
   function pushOrderStatus(userId, data) {
     if (!userId || !data) return null;
     var status = data.status;
     var title = 'Đơn nâng cấp gói';
     var message = '';
     var toastType = 'success';
-    var vars = {
-      'Tên người dùng': data.userName || '',
-      'Tên gói': data.planName || '',
-      'Số tiền': formatVnd(data.amount),
-      'Mã chuyển khoản': data.transferRef || '',
-      'Mã đơn hàng': data.orderId || '',
-      'Lý do từ chối': data.reason || ''
-    };
-    var caseId = status === 'pending' ? 'USER_ORD_PENDING' : status === 'approved' ? 'USER_ORD_APPROVED' : status === 'rejected' ? 'USER_ORD_REJECTED' : null;
-    var rendered = caseId ? renderTpl(caseId, vars) : null;
-    if (rendered) {
-      title = rendered.title;
-      message = rendered.message;
-      if (status === 'pending') toastType = 'info';
-      else if (status === 'rejected') toastType = 'danger';
-    } else if (status === 'pending') {
+    if (status === 'pending') {
       title = 'Đã gửi yêu cầu nâng cấp';
       message = 'Đơn ' + (data.planName || '') + ' (' + formatVnd(data.amount) + ') đang chờ Admin xác nhận chuyển khoản.';
       if (data.transferRef) message += ' Nội dung CK: ' + data.transferRef + '.';
@@ -169,21 +162,12 @@
 
   function pushAffiliateCommission(userId, evt) {
     if (!userId || !evt) return null;
-    var vars = {
-      'Tên người dùng': evt.referrerName || '',
-      'Số tiền hoa hồng': formatVnd(evt.commission),
-      'Tầng affiliate': evt.layer,
-      'Phần trăm hoa hồng': evt.commissionPct,
-      'Tên người mua': evt.buyerName,
-      'Sản phẩm': evt.productLabel
-    };
-    var rendered = renderTpl('USER_AFF_COMMISSION', vars);
     return push({
       id: 'notif_' + evt.id,
       userId: userId,
       type: 'affiliate_commission',
-      title: rendered ? rendered.title : 'Hoa hồng Affiliate',
-      message: rendered ? rendered.message : 'Bạn vừa nhận ' + formatVnd(evt.commission) + ' (' + evt.layer + ' · ' + evt.commissionPct + '%) từ ' + evt.buyerName + ' mua ' + evt.productLabel,
+      title: 'Hoa hồng Affiliate',
+      message: 'Bạn vừa nhận ' + formatVnd(evt.commission) + ' (' + evt.layer + ' · ' + evt.commissionPct + '%) từ ' + evt.buyerName + ' mua ' + evt.productLabel,
       amount: evt.commission,
       layer: evt.layer,
       read: false,
@@ -192,64 +176,16 @@
     });
   }
 
-  function pushReferralSignup(userId, data) {
-    if (!userId || !data) return null;
-    var vars = {
-      'Tên người dùng': data.referrerName || '',
-      'Tên thành viên mới': data.display_name || 'Thành viên mới'
-    };
-    var rendered = renderTpl('USER_AFF_REFERRAL', vars);
-    return push({
-      id: 'notif_ref_' + (data.userId || Date.now()),
-      userId: userId,
-      type: 'referral_signup',
-      title: rendered ? rendered.title : 'Referral mới',
-      message: rendered ? rendered.message : (data.display_name || 'Thành viên mới') + ' đã đăng ký qua mã giới thiệu của bạn.',
-      read: false,
-      at: new Date().toISOString(),
-      href: '../home/index.html?tab=affiliate'
-    });
-  }
-
-  function pushCommunityPost(userId, data) {
-    if (!userId || !data || !data.post) return null;
-    var author = data.author || data.post.author || {};
-    var vars = {
-      'Tên người dùng': data.recipientName || '',
-      'Tên tác giả': author.display_name || 'Người bạn theo dõi',
-      'Tiêu đề bài viết': data.post.title || 'Bài viết'
-    };
-    var rendered = renderTpl('USER_COMM_POST', vars);
-    return push({
-      id: 'notif_post_' + data.post.id,
-      userId: userId,
-      type: 'community_post',
-      title: rendered ? rendered.title : 'Bài viết mới',
-      message: rendered ? rendered.message : (author.display_name || 'Người bạn theo dõi') + ' vừa đăng: «' + (data.post.title || 'Bài viết') + '»',
-      read: false,
-      at: data.post.published_at || data.post.created_at || new Date().toISOString(),
-      href: (global.IfluxSeoUrl
-        ? IfluxSeoUrl.postHref(data.post)
-        : '/cong-dong/bai-viet/' + encodeURIComponent(data.post.id || data.post.slug || ''))
-    });
-  }
-
   function pushCommunityMessage(userId, data) {
     if (!userId || !data) return null;
     var sender = data.sender || {};
     var preview = String(data.preview || '').slice(0, 120);
-    var vars = {
-      'Tên người dùng': data.recipientName || '',
-      'Tên người gửi': sender.display_name || 'Thành viên',
-      'Nội dung tin nhắn': preview
-    };
-    var rendered = renderTpl('USER_COMM_MESSAGE', vars);
     return push({
       id: 'notif_msg_' + (data.messageId || sender.id + '_' + Date.now()),
       userId: userId,
       type: 'community_message',
-      title: rendered ? rendered.title : 'Tin nhắn mới',
-      message: rendered ? rendered.message : (sender.display_name || 'Thành viên') + ': ' + preview,
+      title: 'Tin nhắn mới',
+      message: (sender.display_name || 'Thành viên') + ': ' + preview,
       read: false,
       at: new Date().toISOString(),
       href: '../home/index.html?tab=messages&peer=' + encodeURIComponent(sender.id || '')
@@ -260,18 +196,12 @@
     if (!userId || !alert) return null;
     var st = global.IfluxAlertStore;
     var cond = st ? st.formatCondition(alert) : (alert.ticker || 'CP');
-    var vars = {
-      'Tên người dùng': alert.userName || '',
-      'Mã cổ phiếu': alert.ticker,
-      'Điều kiện cảnh báo': cond
-    };
-    var rendered = renderTpl('USER_ALERT_TRIGGERED', vars);
     return push({
       id: 'notif_alert_' + alert.id + '_triggered',
       userId: userId,
       type: 'alert_triggered',
-      title: rendered ? rendered.title : 'Cảnh báo kích hoạt · ' + alert.ticker,
-      message: rendered ? rendered.message : cond,
+      title: 'Cảnh báo kích hoạt · ' + alert.ticker,
+      message: cond,
       read: false,
       at: new Date().toISOString(),
       href: '../home/index.html'
@@ -283,7 +213,9 @@
     var uid = String(userId || '');
     /* community_message thuộc biểu tượng tin nhắn — không đưa vào chuông / menu badge */
     var list = readAll().filter(function (n) {
-      return String(n.userId) === uid && n.type !== 'community_message';
+      if (String(n.userId) !== uid || n.type === 'community_message') return false;
+      if (!isClientLocalType(n.type)) return false;
+      return true;
     }).map(enrichItem);
     if (opts.unreadOnly) list = list.filter(function (n) { return !n.read; });
     if (opts.menuKey) list = list.filter(function (n) { return n.menuKey === opts.menuKey; });
@@ -292,7 +224,99 @@
     return list;
   }
 
+  /* FN-001 — server inbox (Need Now summary / Need Soon panel). App Shell only. */
+  var serverUnread = null;
+  var serverPanelCache = null;
+
+  function notifApiBase() {
+    try {
+      var host = String((global.location && location.hostname) || '').toLowerCase();
+      if (host === 'iflux.vn' || host === 'www.iflux.vn' || host.indexOf('staging.') === 0) return '/api';
+    } catch (e) { /* ignore */ }
+    if (global.IfluxApiConfig && IfluxApiConfig.getBaseUrl) {
+      var b = IfluxApiConfig.getBaseUrl();
+      if (b) return String(b).replace(/\/$/, '');
+    }
+    return '/api';
+  }
+
+  function notifAuthHeaders() {
+    var h = { Accept: 'application/json' };
+    try {
+      if (global.IfluxAuth && IfluxAuth.getToken) {
+        var t = IfluxAuth.getToken();
+        if (t) h.Authorization = 'Bearer ' + t;
+      }
+    } catch (e) { /* ignore */ }
+    return h;
+  }
+
+  function mapServerItem(n) {
+    return enrichItem({
+      id: n.id,
+      type: n.templateCode || 'server',
+      templateCode: n.templateCode,
+      title: n.title,
+      message: n.body || '',
+      icon: n.icon,
+      read: !!n.read,
+      at: n.createdAt,
+      href: n.href || '#'
+    });
+  }
+
+  function fetchSummary() {
+    return fetch(notifApiBase() + '/notifications/summary', {
+      headers: notifAuthHeaders(),
+      credentials: 'same-origin'
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) return null;
+        var body = (data && data.data) || data || {};
+        serverUnread = Number(body.unreadCount) || 0;
+        return serverUnread;
+      });
+    }).catch(function () { return null; });
+  }
+
+  function fetchInboxPage(opts) {
+    opts = opts || {};
+    var qs = ['limit=' + encodeURIComponent(opts.limit || 15)];
+    if (opts.cursor) qs.push('cursor=' + encodeURIComponent(opts.cursor));
+    return fetch(notifApiBase() + '/notifications?' + qs.join('&'), {
+      headers: notifAuthHeaders(),
+      credentials: 'same-origin'
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) throw new Error('inbox_fail');
+        var body = (data && data.data) || data || {};
+        serverPanelCache = {
+          items: (body.items || []).map(mapServerItem),
+          next_cursor: body.next_cursor || null
+        };
+        return serverPanelCache;
+      });
+    });
+  }
+
+  function markServerRead(ids) {
+    var list = Array.isArray(ids) ? ids : (ids ? [ids] : []);
+    if (!list.length) return Promise.resolve();
+    return Promise.all(list.map(function (id) {
+      return fetch(notifApiBase() + '/notifications/' + encodeURIComponent(id) + '/read', {
+        method: 'POST',
+        headers: notifAuthHeaders(),
+        credentials: 'same-origin'
+      }).then(function () {
+        if (serverUnread != null && serverUnread > 0) serverUnread -= 1;
+      }).catch(function () { /* ignore */ });
+    })).then(function () {
+      try { document.dispatchEvent(new CustomEvent('iflux-notifications-change')); } catch (e) { /* ignore */ }
+    });
+  }
+
   function unreadCount(userId) {
+    if (serverUnread != null) return serverUnread;
     return listForUser(userId, { unreadOnly: true }).length;
   }
 
@@ -342,6 +366,12 @@
       if (String(n.userId) === uid) n.read = true;
     });
     writeAll(list);
+    serverUnread = 0;
+    fetch(notifApiBase() + '/notifications/read-all', {
+      method: 'POST',
+      headers: notifAuthHeaders(),
+      credentials: 'same-origin'
+    }).catch(function () { /* ignore */ });
   }
 
   function markMenuRead(userId, menuKey) {
@@ -364,16 +394,16 @@
       if (localStorage.getItem(flagKey + '_' + userId) === '1') return;
     } catch (e) { /* ignore */ }
 
-    pushCommunityPost(userId, {
-      author: { id: 'u5', display_name: 'Quốc Bảo' },
-      post: {
-        id: 'post_seed_notif_1',
-        slug: 'vic-ev-xe-dien-vinfast',
-        title: 'VIC EV — VinFast và chu kỳ xe điện',
-        published_at: new Date(Date.now() - 7200000).toISOString()
-      }
+    push({
+      id: 'notif_ord_demo_pending',
+      userId: userId,
+      type: 'subscription_order',
+      title: 'Đã gửi yêu cầu nâng cấp',
+      message: 'Đơn Premium / 1 tháng (₫830.000) đang chờ Admin xác nhận.',
+      read: false,
+      at: new Date(Date.now() - 86400000).toISOString(),
+      href: '../home/index.html?tab=account'
     });
-    pushReferralSignup(userId, { userId: 'usr_ref_demo', display_name: 'Phạm Minh Tuấn' });
     pushAffiliateCommission(userId, {
       id: 'evt_seed_notif_1',
       commission: 83000,
@@ -406,8 +436,6 @@
   global.IfluxInAppNotifications = {
     pushOrderStatus: pushOrderStatus,
     pushAffiliateCommission: pushAffiliateCommission,
-    pushReferralSignup: pushReferralSignup,
-    pushCommunityPost: pushCommunityPost,
     pushCommunityMessage: pushCommunityMessage,
     pushAlertTriggered: pushAlertTriggered,
     listForUser: listForUser,
@@ -421,8 +449,13 @@
     seedDemoIfEmpty: seedDemoIfEmpty,
     hydrateFromServer: hydrateFromServer,
     exportForSync: exportForSync,
+    fetchSummary: fetchSummary,
+    fetchInboxPage: fetchInboxPage,
+    markServerRead: markServerRead,
+    getServerPanelCache: function () { return serverPanelCache; },
     CATEGORY_LABELS: CATEGORY_LABELS,
     initForCurrentUser: function () {
+      fetchSummary().catch(function () { /* offline */ });
       if (global.IfluxUserNotificationsUI) IfluxUserNotificationsUI.init();
     }
   };

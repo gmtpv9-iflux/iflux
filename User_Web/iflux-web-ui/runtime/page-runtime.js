@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-003
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Runtime — Page Runtime (ESM)
  * Slot path: Page Manifest → sections → Widget Loader.
@@ -7,11 +20,10 @@
 import {
   ensureSections,
   applyMarketLayout,
-  applyHubLayout,
-  renderPageHeader
-} from './app-shell.js?v=phaseB220260721a';
-import { applyDefinitionToDocument } from './page-definition.js?v=phaseB220260721a';
-import { loadWidget } from './widget-loader.js?v=bpPhaseD20260716';
+  applyHubLayout
+} from './app-shell.js?v=noPageHead20260722';
+import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
+import { loadWidget } from './widget-loader.js?v=entStrip20260724';
 import { loadScript } from './legacy-bridge.js?v=phaseCW420260721';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
 
@@ -33,9 +45,6 @@ export async function bootPage(m, mountEl) {
   mountEl.innerHTML = '';
   mountEl.classList.add('ifx-rt-page');
 
-  if (m.renderPageHead !== false) {
-    renderPageHeader(mountEl, m);
-  }
   var sectionMap = ensureSections(mountEl, m);
 
   if (m.pageKey === 'market') {
@@ -89,29 +98,5 @@ export async function bootPage(m, mountEl) {
     loaded.push(entry);
   }
 
-  /* Host trống → ẩn tiêu đề/mô tả page (App Shell chrome) đi kèm. */
-  syncEmptyPageHead(mountEl);
-
   return { manifest: m, widgets: loaded };
-}
-
-/** Khi mọi [data-ifx-section] trống — không hiện title/intro page. */
-function syncEmptyPageHead(root) {
-  if (!root) return;
-  var head = root.querySelector('.ifx-rt-page-head');
-  if (!head) return;
-  var hosts = root.querySelectorAll('[data-ifx-section]');
-  var any = false;
-  for (var i = 0; i < hosts.length; i++) {
-    var h = hosts[i];
-    if (h.querySelector('[data-widget-id], .ifx-rt-widget')) {
-      any = true;
-      break;
-    }
-    if (h.children && h.children.length) {
-      any = true;
-      break;
-    }
-  }
-  head.hidden = !any;
 }

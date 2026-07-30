@@ -20,6 +20,62 @@
   function ui() { return global.IfluxCommunityUI; }
   function tax() { return global.IfluxWatchlistTaxonomy; }
 
+  function routeUrl(key) {
+    var R = global.IfluxRoutes;
+    if (R && R.to) return R.to(key);
+    var c = key === 'community' ? '/cong-dong' : '/';
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
+  }
+
+  function idHref(canonical) {
+    return global.IfluxHref ? IfluxHref.forCanonical(canonical) : canonical;
+  }
+
+  /* Task5 — Heart = Foundation; Store = Watchlist data. Không tải watchlist-ui. */
+  var heartLoadPromise = null;
+  var HEART_JS = '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724';
+  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=followFound20260724';
+
+  function ensureHeartLazy() {
+    if (global.IfluxHeartAction && global.IfluxWatchlistStore) {
+      return Promise.resolve();
+    }
+    if (heartLoadPromise) return heartLoadPromise;
+    function loadScript(src) {
+      return new Promise(function (resolve) {
+        if (document.querySelector('script[src="' + src + '"]')) {
+          resolve();
+          return;
+        }
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = function () { resolve(); };
+        s.onerror = function () { resolve(); };
+        document.head.appendChild(s);
+      });
+    }
+    heartLoadPromise = loadScript(STORE_JS)
+      .then(function () { return loadScript(HEART_JS); })
+      .then(function () {
+        if (global.IfluxHeartAction && IfluxHeartAction.bind) {
+          IfluxHeartAction.bind(document);
+        }
+      });
+    return heartLoadPromise;
+  }
+
+  function scheduleHeartClickLazy() {
+    if (document.__ifxComHeartClickLazy) return;
+    document.__ifxComHeartClickLazy = true;
+    document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
+      if (e.target.closest('[data-ifx-heart], .ifx-heart, .ifx-cap-tile__heart, .ifx-com-story-rank__heart')) {
+        ensureHeartLazy();
+      }
+    }, true);
+  }
+
   /* Permission SoT = IfluxEntitlements. Composite chỉ HỎI engine, không tự quyết.
      Engine vắng mặt => fail-closed (không lộ block paywall). */
   function blockVisible(blockId) {
@@ -95,19 +151,24 @@
   }
 
   function collectionItemHref(kind, item) {
+    var c;
     if (kind === 'topic') {
       var slug = item.slug || item.id;
-      if (global.IfluxSeoUrl && IfluxSeoUrl.communityTopicHref) return IfluxSeoUrl.communityTopicHref(slug);
-      return '/cong-dong/chu-de/' + encodeURIComponent(slug);
-    }
-    if (kind === 'author') {
+      c = (global.IfluxSeoUrl && IfluxSeoUrl.communityTopicHref)
+        ? IfluxSeoUrl.communityTopicHref(slug)
+        : '/cong-dong/chu-de/' + encodeURIComponent(slug);
+    } else if (kind === 'author') {
       var key = item.username || item.id || item.display_name;
-      if (global.IfluxSeoUrl && IfluxSeoUrl.communityAuthorHref) return IfluxSeoUrl.communityAuthorHref(key);
-      return '/cong-dong/tac-gia/' + encodeURIComponent(key);
+      c = (global.IfluxSeoUrl && IfluxSeoUrl.communityAuthorHref)
+        ? IfluxSeoUrl.communityAuthorHref(key)
+        : '/cong-dong/tac-gia/' + encodeURIComponent(key);
+    } else {
+      var cat = item.slug || item.id;
+      c = (global.IfluxSeoUrl && IfluxSeoUrl.communityCategoryHref)
+        ? IfluxSeoUrl.communityCategoryHref(cat)
+        : '/cong-dong/danh-muc/' + encodeURIComponent(cat);
     }
-    var cat = item.slug || item.id;
-    if (global.IfluxSeoUrl && IfluxSeoUrl.communityCategoryHref) return IfluxSeoUrl.communityCategoryHref(cat);
-    return '/cong-dong/danh-muc/' + encodeURIComponent(cat);
+    return idHref(c);
   }
 
   function collectionRowHtml(kind, item, idx) {
@@ -150,15 +211,11 @@
         documentTitle: meta.title + ' · iFlux'
       });
     }
-    /* Gỡ tiêu đề Page Shell (manifest Cộng đồng) — tránh 2 h1 */
-    document.querySelectorAll('.ifx-rt-page-head').forEach(function (el) {
-      if (el && el.parentNode) el.parentNode.removeChild(el);
-    });
     root.innerHTML =
       '<div class="ifx-com-feed-layout">' +
         '<div class="ifx-com-feed-main">' +
           '<div class="ifx-com-breadcrumb">' +
-            '<a href="/cong-dong">Cộng đồng</a>' +
+            '<a href="' + esc(routeUrl('community')) + '">Cộng đồng</a>' +
             '<span class="ifx-com-breadcrumb__sep">/</span>' +
             '<span class="ifx-com-breadcrumb__current">' + esc(meta.title) + '</span>' +
           '</div>' +
@@ -226,7 +283,7 @@
           '<div class="ifx-com-ticker-banner__text">' +
             '<i class="ti ti-chart-line"></i> Bài viết liên quan đến <strong>' + f.ticker + '</strong>' +
           '</div>' +
-          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="/cong-dong">Xem tất cả</a>' +
+          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(routeUrl('community')) + '">Xem tất cả</a>' +
         '</div>'
       );
     }
@@ -238,7 +295,7 @@
           '<div class="ifx-com-ticker-banner__text">' +
             '<i class="ti ti-book-2"></i> Chủ đề: <strong>' + name + '</strong>' +
           '</div>' +
-          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="/cong-dong">Xem tất cả</a>' +
+          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(routeUrl('community')) + '">Xem tất cả</a>' +
         '</div>'
       );
     }
@@ -248,7 +305,7 @@
           '<div class="ifx-com-ticker-banner__text">' +
             '<i class="ti ti-user"></i> Tác giả: <strong>' + f.author + '</strong>' +
           '</div>' +
-          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="/cong-dong">Xem tất cả</a>' +
+          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(routeUrl('community')) + '">Xem tất cả</a>' +
         '</div>'
       );
     }
@@ -258,7 +315,7 @@
           '<div class="ifx-com-ticker-banner__text">' +
             '<i class="ti ti-category"></i> Danh mục: <strong>' + f.category + '</strong>' +
           '</div>' +
-          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="/cong-dong">Xem tất cả</a>' +
+          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(routeUrl('community')) + '">Xem tất cả</a>' +
         '</div>'
       );
     }
@@ -560,7 +617,7 @@
   function boot() {
     var root = document.querySelector('[data-ifx-community-feed]');
     if (!root) return;
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(document);
+    scheduleHeartClickLazy();
 
     var indexKind = readCollectionIndex();
     if (indexKind) {
@@ -570,12 +627,14 @@
 
     renderShell(root);
     mountDailyFeed(root);
-    setTimeout(function () {
-      if (global.IfluxInsightShare) IfluxInsightShare.patchAll(root);
-    }, 120);
 
     document.addEventListener('iflux-watchlist-change', function () {
-      if (global.IfluxWatchlistUI) IfluxWatchlistUI.refreshHearts();
+      ensureHeartLazy().then(function () {
+        if (global.IfluxHeartAction) IfluxHeartAction.refresh();
+      });
+    });
+    document.addEventListener('iflux-heart-change', function () {
+      if (global.IfluxHeartAction) IfluxHeartAction.refresh();
     });
   }
 

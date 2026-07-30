@@ -10,7 +10,27 @@
 
   function fmtTime(iso) {
     if (!iso) return '';
-    try { return new Date(iso).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }); } catch (e) { return ''; }
+    try {
+      var d = new Date(iso);
+      var hh = String(d.getHours()).padStart(2, '0');
+      var mm = String(d.getMinutes()).padStart(2, '0');
+      var dd = String(d.getDate()).padStart(2, '0');
+      var mo = String(d.getMonth() + 1).padStart(2, '0');
+      return hh + ':' + mm + ', ' + dd + '-' + mo + '-' + d.getFullYear();
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function renderNotifItem(n) {
+    var unread = !n.read ? ' is-unread' : '';
+    return '<a href="' + esc(n.href || '#') + '" class="ifx-user-notif-item' + unread + '" data-ifx-notif-id="' + esc(n.id) + '">' +
+      '<span class="ifx-user-notif-item__icon" aria-hidden="true"><i class="ti ' + esc(n.icon || 'ti-bell') + '"></i></span>' +
+      '<span class="ifx-user-notif-item__body">' +
+        '<strong class="ifx-user-notif-item__title">' + esc(n.title) + '</strong>' +
+        '<span class="ifx-user-notif-item__msg">' + esc(n.message) + '</span>' +
+        '<time class="ifx-user-notif-item__time">' + esc(fmtTime(n.at)) + '</time>' +
+      '</span></a>';
   }
 
   function currentUser() {
@@ -64,26 +84,35 @@
     var user = currentUser();
     var st = notifStore();
     if (!user || !st) return;
-    var counts = st.groupedUnread(user.id);
-    document.querySelectorAll('[data-ifx-menu-badge]').forEach(function (el) {
-      var key = el.getAttribute('data-ifx-menu-badge');
-      var n = counts[key] || 0;
-      if (n > 0) {
-        el.textContent = n > 9 ? '9+' : String(n);
-        el.hidden = false;
-      } else {
-        el.hidden = true;
+
+    function paint() {
+      var counts = st.groupedUnread(user.id);
+      document.querySelectorAll('[data-ifx-menu-badge]').forEach(function (el) {
+        var key = el.getAttribute('data-ifx-menu-badge');
+        var n = counts[key] || 0;
+        if (n > 0) {
+          el.textContent = n > 9 ? '9+' : String(n);
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+        }
+      });
+      var bellBadge = document.querySelector('[data-ifx-bell-notif-badge]');
+      if (bellBadge) {
+        var total = st.unreadCount(user.id);
+        if (total > 0) {
+          bellBadge.textContent = total > 9 ? '9+' : String(total);
+          bellBadge.hidden = false;
+        } else {
+          bellBadge.hidden = true;
+        }
       }
-    });
-    var bellBadge = document.querySelector('[data-ifx-bell-notif-badge]');
-    if (bellBadge) {
-      var total = st.unreadCount(user.id);
-      if (total > 0) {
-        bellBadge.textContent = total > 9 ? '9+' : String(total);
-        bellBadge.hidden = false;
-      } else {
-        bellBadge.hidden = true;
-      }
+    }
+
+    paint();
+    /* Need Now: badge summary từ server */
+    if (st.fetchSummary) {
+      st.fetchSummary().then(function () { paint(); }).catch(function () { /* keep local */ });
     }
   }
 
@@ -92,34 +121,88 @@
     var st = notifStore();
     if (!container || !user || !st) return;
 
-    var groups = st.groupedForUser(user.id, { limit: 10 });
-    if (!groups.length) {
-      container.innerHTML = '<div class="ifx-user-notif-empty">Chưa có thông báo</div>';
-      return;
+    function paintLocal() {
+      var groups = st.groupedForUser(user.id, { limit: 10 });
+      if (!groups.length) {
+        container.innerHTML = '<div class="ifx-user-notif-empty">Chưa có thông báo</div>';
+        return;
+      }
+      container.innerHTML = groups.map(function (g) {
+        return '<div class="ifx-user-notif-group">' +
+          '<div class="ifx-user-notif-group__title">' + esc(g.label) + '</div>' +
+          g.items.map(renderNotifItem).join('') +
+          '</div>';
+      }).join('');
     }
 
-    container.innerHTML = groups.map(function (g) {
-      return '<div class="ifx-user-notif-group">' +
-        '<h2 class="ifx-user-notif-group__title">' + esc(g.label) + '</h2>' +
-        g.items.map(function (n) {
-          var unread = !n.read ? ' is-unread' : '';
-          return '<a href="' + esc(n.href || '#') + '" class="ifx-user-notif-item' + unread + '" data-ifx-notif-id="' + esc(n.id) + '">' +
-            '<span class="ifx-user-notif-item__icon"><i class="ti ' + esc(n.icon || 'ti-bell') + '"></i></span>' +
-            '<span class="ifx-user-notif-item__body">' +
-              '<span class="ifx-user-notif-item__title">' + esc(n.title) + '</span>' +
-              '<span class="ifx-user-notif-item__msg">' + esc(n.message) + '</span>' +
-              '<span class="ifx-user-notif-item__time">' + esc(fmtTime(n.at)) + '</span>' +
-            '</span>' +
-          '</a>';
-        }).join('') +
-      '</div>';
-    }).join('');
+    /* Need Soon: panel page 1 từ server khi mở */
+    if (st.fetchInboxPage) {
+      container.innerHTML = '<div class="ifx-user-notif-empty">Đang tải…</div>';
+      st.fetchInboxPage({ limit: 15 }).then(function (page) {
+        var items = (page && page.items) || [];
+        if (!items.length) {
+          paintLocal();
+          bindPanelActions(container, st);
+          return;
+        }
+        container.innerHTML = '<div class="ifx-user-notif-group">' +
+          '<div class="ifx-user-notif-group__title">Thông báo</div>' +
+          items.map(renderNotifItem).join('') +
+          '</div>';
+        if (page.next_cursor) {
+          container.insertAdjacentHTML('beforeend',
+            '<button type="button" class="ifx-user-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
+        }
+        bindPanelActions(container, st);
+      }).catch(function () {
+        paintLocal();
+        bindPanelActions(container, st);
+      });
+      return;
+    }
+    paintLocal();
+    bindPanelActions(container, st);
+  }
 
+  function bindPanelActions(container, st) {
+    if (!container || !st) return;
     container.querySelectorAll('[data-ifx-notif-id]').forEach(function (a) {
+      if (a._ifxNotifBound) return;
+      a._ifxNotifBound = true;
       a.addEventListener('click', function () {
-        st.markRead([a.getAttribute('data-ifx-notif-id')]);
+        var id = a.getAttribute('data-ifx-notif-id');
+        if (st.markServerRead) st.markServerRead([id]);
+        else st.markRead([id]);
       });
     });
+    var moreBtn = container.querySelector('[data-ifx-notif-more]');
+    if (moreBtn && !moreBtn._ifxNotifMoreBound && st.fetchInboxPage) {
+      moreBtn._ifxNotifMoreBound = true;
+      moreBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var cursor = moreBtn.getAttribute('data-ifx-notif-more');
+        moreBtn.disabled = true;
+        moreBtn.textContent = 'Đang tải…';
+        st.fetchInboxPage({ limit: 15, cursor: cursor }).then(function (page) {
+          var items = (page && page.items) || [];
+          moreBtn.remove();
+          if (!items.length) return;
+          var html = items.map(renderNotifItem).join('');
+          var group = container.querySelector('.ifx-user-notif-group');
+          if (group) group.insertAdjacentHTML('beforeend', html);
+          else container.insertAdjacentHTML('beforeend', html);
+          if (page.next_cursor) {
+            container.insertAdjacentHTML('beforeend',
+              '<button type="button" class="ifx-user-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
+          }
+          bindPanelActions(container, st);
+        }).catch(function () {
+          moreBtn.disabled = false;
+          moreBtn.textContent = 'Xem thêm';
+        });
+      });
+    }
   }
 
   function findNotifDropdown(notifWrap, header) {
@@ -207,7 +290,9 @@
   }
 
   function isMobileBar() {
-    return global.innerWidth <= 1023.98;
+    return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
+      ? global.IfluxBreakpoint.isMobileShell()
+      : false;
   }
 
   function renderBellPanel(header) {
@@ -250,20 +335,7 @@
       }
 
       bellBtn.addEventListener('click', toggleBell);
-
-      notifWrap.addEventListener('mouseenter', function () {
-        if (isMobileBar()) return;
-        clearTimeout(closeTimer);
-        notifWrap.classList.add('open');
-        openPanel();
-      });
-      notifWrap.addEventListener('mouseleave', function () {
-        if (isMobileBar()) return;
-        clearTimeout(closeTimer);
-        closeTimer = setTimeout(function () {
-          notifWrap.classList.remove('open');
-        }, 260);
-      });
+      /* Chỉ mở bằng click — không hover mở panel. */
     });
 
     document.addEventListener('click', function (e) {

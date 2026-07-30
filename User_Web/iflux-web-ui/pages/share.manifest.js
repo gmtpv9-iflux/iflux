@@ -3,7 +3,6 @@ export default {
   path: '/chia-se',
   title: 'Chia sẻ insight',
   documentTitle: 'Chia sẻ insight · iFlux',
-  renderPageHead: false,
   seo: {
     description: 'Xem insight được chia sẻ từ iFlux và chuyển tiếp đúng hành trình người dùng.',
     robots: 'noindex,follow',

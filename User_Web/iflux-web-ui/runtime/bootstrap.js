@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-001
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Runtime — Bootstrap (ESM entry)
  * Boot tối thiểu: detect page → App Shell deps → resolve manifest → page-runtime.
@@ -9,9 +22,9 @@
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=phaseB220260721a';
-import { applyDefinitionToDocument } from './page-definition.js?v=phaseB220260721a';
-import { bootShell } from './shell-boot.js?v=phaseCW5gate20260721';
+import { bootPage } from './page-runtime.js?v=entStrip20260724';
+import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
+import { bootShell } from './shell-boot.js?v=abhE520260727';
 
 var VER = '?v=phaseCW5gate20260721';
 var P4 = '?v=phaseCW5gate20260721';
@@ -21,7 +34,7 @@ var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
   flow: function () { return import('../pages/flow.manifest.js' + VER); },
-  community: function () { return import('../pages/community.manifest.js' + VER); },
+  community: function () { return import('../pages/community.manifest.js?v=b4Href20260727'); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js' + VER); },
   sectors: function () { return import('../pages/sectors.manifest.js' + VER); },
@@ -38,12 +51,13 @@ var MANIFEST_MAP = {
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
   messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  communityPost: function () { return import('../pages/community-post.manifest.js' + VER); },
+  communityPost: function () { return import('../pages/community-post.manifest.js?v=b5ixFlat20260727'); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
   communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },
   share: function () { return import('../pages/share.manifest.js' + VER); },
-  stockComment: function () { return import('../pages/stock-comment.manifest.js' + VER); }
+  stockComment: function () { return import('../pages/stock-comment.manifest.js' + VER); },
+  comments: function () { return import('../pages/comments.manifest.js?v=ixShellSlim20260724'); }
 };
 
 /** Runtime pageKey → PagePublished key. */
@@ -58,9 +72,17 @@ var PAGE_PUBLISHED = {
 };
 
 function detectPageKey() {
-  var path = (location.pathname || '/').toLowerCase();
+  var raw = location.pathname || '/';
+  var path = raw;
+  if (window.IfluxNormalizePath) {
+    path = window.IfluxNormalizePath(raw);
+  }
+  path = String(path || '/').toLowerCase();
 
   /* Path cụ thể TRƯỚC nhánh rộng — học Phase A (viet-bai) + Ownership Proof (comment/checkout). */
+  if (/\/binh-luan(\/|$)/.test(path) || /\/user_web\/comments(\/|$)/.test(path) || /\/comments\/index\.html/.test(path)) {
+    return 'comments';
+  }
   if (/\/user_web\/stock\/comment/.test(path) || /\/stock\/comment\.html/.test(path)) {
     return 'stockComment';
   }
@@ -237,7 +259,7 @@ export async function start(opts) {
   }
 
   /* Shell-only pages (Feature tự boot sau) — dùng Definition nhưng không mount page-runtime. */
-  var SHELL_ONLY = { account: 1, checkout: 1, communityWrite: 1, share: 1, stockComment: 1 };
+  var SHELL_ONLY = { account: 1, checkout: 1, communityWrite: 1, share: 1, stockComment: 1, comments: 1 };
   if (SHELL_ONLY[pageKey]) {
     applyDefinitionToDocument(manifest);
     window.__IFLUX_SHELL_READY = pageKey;

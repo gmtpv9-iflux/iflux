@@ -199,8 +199,8 @@
       return;
     }
 
-    if (!window.PlansStore) {
-      console.warn('[iFlux pricing] PlansStore chưa load — dùng fallback Miễn phí + catalog tối thiểu.');
+    if (!window.PlansRuntimeReader) {
+      console.warn('[iFlux pricing] PlansRuntimeReader chưa load — dùng fallback Miễn phí + catalog tối thiểu.');
     }
 
     renderGrid();
