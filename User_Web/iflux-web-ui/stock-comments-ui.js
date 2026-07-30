@@ -43,9 +43,13 @@
     (tags.tickers || []).forEach(function (tk) {
       var href = mn()
         ? mn().tagRefHref('ticker', { id: tk, name: tk }, opts)
-        : (global.IfluxSeoUrl
-          ? IfluxSeoUrl.stockHref(tk)
-          : '/co-phieu/' + encodeURIComponent(String(tk || '').toUpperCase()));
+        : (global.IfluxHref
+          ? IfluxHref.forCanonical(global.IfluxSeoUrl
+            ? IfluxSeoUrl.stockHref(tk)
+            : '/co-phieu/' + encodeURIComponent(String(tk || '').toUpperCase()))
+          : (global.IfluxSeoUrl
+            ? IfluxSeoUrl.stockHref(tk)
+            : '/co-phieu/' + encodeURIComponent(String(tk || '').toUpperCase())));
       html += '<a class="ifx-com-tag ifx-com-tag--ticker" href="' + esc(href) + '">' + esc(tk) + '</a>';
     });
     if (tags.sector && tags.sector.name) {
@@ -150,6 +154,7 @@
           '<span class="ifx-stock-cmt__time">' + esc(fmtTime(r.created_at)) + '</span>' +
         '</div>' +
         '<p class="ifx-stock-cmt__body">' + bodyHtml(r.body) + '</p>' +
+        (global.IfluxCommentComposer ? IfluxCommentComposer.imageHtml(r.image) : '') +
         '<div class="ifx-stock-cmt__stats">' +
           statIcon('ti-mood-smile', pos) +
           statIcon('ti-mood-sad', neg) +
@@ -203,6 +208,7 @@
           '<span class="ifx-stock-cmt__time">' + esc(fmtTime(c.created_at)) + '</span>' +
         '</div>' +
         '<p class="ifx-stock-cmt__body">' + bodyHtml(c.body) + '</p>' +
+        (global.IfluxCommentComposer ? IfluxCommentComposer.imageHtml(c.image) : '') +
         tagsHtml(c.tags) +
         '<div class="ifx-stock-cmt__stats">' +
           statIcon('ti-mood-smile', pos) +
@@ -233,29 +239,41 @@
       : (isGroup
         ? 'Chia sẻ nhận định về chủ đề này — gõ @ để gắn thêm thẻ...'
         : 'Chia sẻ nhận định về cổ phiếu này — gõ @ để gắn thêm thẻ...');
-    var submitLabel = opts.detail ? 'Gửi phản hồi' : 'Gửi';
     var pageTags = st() ? st().pageTagsForFeed(feedKey) : null;
+    var extraTop =
+      (opts.detail
+        ? '<div class="ifx-stock-cmt-detail__reply-bar" data-ifx-reply-bar hidden>' +
+            '<span data-ifx-reply-bar-text></span>' +
+            '<button type="button" class="ifx-stock-cmt-detail__reply-bar-cancel" data-ifx-reply-bar-cancel aria-label="Hủy phản hồi"><i class="ti ti-x"></i></button>' +
+          '</div>'
+        : '') +
+      '<div class="ifx-stock-chat__tag-preview" data-ifx-tag-preview>' +
+        (pageTags ? tagPreviewHtml(pageTags) : '') +
+      '</div>';
+    var formAttrs = formKey +
+      ' data-ifx-composer-feed="' + esc(feedKey) + '"' +
+      ' data-ifx-composer-ticker="' + esc(feedKey) + '" data-ifx-reply-to-id=""';
+
+    if (global.IfluxCommentComposer) {
+      return IfluxCommentComposer.html({
+        formClass: formClass,
+        formAttrs: formAttrs,
+        bodyAttr: bodyKey,
+        placeholder: placeholder,
+        withMentionDrop: true,
+        extraTop: extraTop
+      });
+    }
 
     return (
-      '<form class="' + formClass + '" ' + formKey +
-        ' data-ifx-composer-feed="' + esc(feedKey) + '"' +
-        ' data-ifx-composer-ticker="' + esc(feedKey) + '" data-ifx-reply-to-id="">' +
-        (opts.detail
-          ? '<div class="ifx-stock-cmt-detail__reply-bar" data-ifx-reply-bar hidden>' +
-              '<span data-ifx-reply-bar-text></span>' +
-              '<button type="button" class="ifx-stock-cmt-detail__reply-bar-cancel" data-ifx-reply-bar-cancel aria-label="Hủy phản hồi"><i class="ti ti-x"></i></button>' +
-            '</div>'
-          : '') +
-        '<div class="ifx-stock-chat__tag-preview" data-ifx-tag-preview>' +
-          (pageTags ? tagPreviewHtml(pageTags) : '') +
-        '</div>' +
+      '<form class="' + formClass + '" ' + formAttrs + '>' +
+        extraTop +
         '<div class="ifx-mention-wrap">' +
-          '<textarea class="ix-input" rows="2" placeholder="' + esc(placeholder) + '" ' + bodyKey + ' required></textarea>' +
+          '<textarea class="ix-input" rows="2" placeholder="' + esc(placeholder) + '" ' + bodyKey + '></textarea>' +
           '<div class="ifx-mention-drop" data-ifx-mention-drop hidden></div>' +
         '</div>' +
         '<div class="ifx-stock-chat__composer-foot">' +
-          (opts.detail ? '' : '<span class="ifx-stock-chat__composer-hint">Mã trang tự gắn thẻ · @ chỉ thêm thẻ, không hiện trong nội dung</span>') +
-          '<button type="submit" class="ix-btn ix-btn-primary ix-btn-sm"><i class="ti ti-send"></i> ' + submitLabel + '</button>' +
+          '<button type="submit" class="ix-btn ix-btn-primary ix-btn-sm" aria-label="Gửi"><i class="ti ti-send"></i></button>' +
         '</div>' +
       '</form>'
     );
@@ -305,7 +323,7 @@
 
   function bindMentionForm(form) {
     if (!form || !mn()) return;
-    var ta = form.querySelector('textarea');
+    var ta = form.querySelector('[data-ifx-stock-comment-body], [data-ifx-stock-reply-body], .ifx-cmt-composer__input, textarea');
     var drop = form.querySelector('[data-ifx-mention-drop]');
     var preview = form.querySelector('[data-ifx-tag-preview]');
     var feedKey = form.getAttribute('data-ifx-composer-feed') || form.getAttribute('data-ifx-composer-ticker') || '';
@@ -330,17 +348,22 @@
 
   function bindComposer(form, feedKey, root) {
     if (!form) return;
+    if (global.IfluxCommentComposer) IfluxCommentComposer.bind(form);
     bindMentionForm(form);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      var payload = global.IfluxCommentComposer
+        ? IfluxCommentComposer.readPayload(form)
+        : { body: '', image: null };
       var ta = form.querySelector('[data-ifx-stock-comment-body]');
       var user = auth() ? auth().getUser() : null;
       try {
-        var raw = ta ? ta.value.trim() : '';
+        var raw = (payload.body || (ta ? ta.value.trim() : '')).trim();
         var tags = resolveComposerTags(feedKey, form, raw);
         var body = mn() ? mn().stripMentions(raw) : raw;
-        st().addComment(feedKey, user, { body: body, tags: tags });
-        if (ta) ta.value = '';
+        st().addComment(feedKey, user, { body: body, tags: tags, image: payload.image || null });
+        if (global.IfluxCommentComposer) IfluxCommentComposer.reset(form);
+        else if (ta) ta.value = '';
         resetComposerTags(form, feedKey);
         refreshFeed(root, feedKey, true);
       } catch (err) {

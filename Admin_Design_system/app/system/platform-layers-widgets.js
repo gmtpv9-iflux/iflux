@@ -1875,12 +1875,21 @@
     }
   }
 
-  function notifyPropagate() {
+  function notifyPropagate(opts) {
+    opts = opts || {};
     try { installLibraryFacade(); } catch (e) { /* ignore */ }
     try {
-      if (global.EntitlementCatalog && typeof global.EntitlementCatalog.refreshBlocksCatalog === 'function') {
-        global.EntitlementCatalog.refreshBlocksCatalog();
+      var detail = {
+        source: 'layer4',
+        action: opts.action || 'save',
+        at: new Date().toISOString()
+      };
+      if (opts.widgetIds && opts.widgetIds.length) {
+        detail.widgetIds = opts.widgetIds.slice();
       }
+      document.dispatchEvent(new CustomEvent('iflux-widget-catalog-changed', {
+        detail: Object.freeze(detail)
+      }));
     } catch (e2) { /* ignore */ }
   }
 
@@ -2104,7 +2113,7 @@
       data.items[id] = nextDef;
     }
     writeStore(data);
-    notifyPropagate();
+    notifyPropagate({ action: 'save', widgetIds: [id] });
     return clone(nextDef);
   }
 
@@ -2136,7 +2145,7 @@
     var data = readStore();
     data.custom[id] = def;
     writeStore(data);
-    notifyPropagate();
+    notifyPropagate({ action: 'save', widgetIds: [id] });
     return clone(def);
   }
 
@@ -2146,7 +2155,7 @@
       delete data.custom[id];
       delete data.items[id];
       writeStore(data);
-      notifyPropagate();
+      notifyPropagate({ action: 'delete', widgetIds: [id] });
       return true;
     }
     var builtin = false;
@@ -2155,14 +2164,14 @@
     if (data.deleted.indexOf(id) < 0) data.deleted.push(id);
     delete data.items[id];
     writeStore(data);
-    notifyPropagate();
+    notifyPropagate({ action: 'delete', widgetIds: [id] });
     return true;
   }
 
   function resetAll() {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(STORAGE_KEY_V1);
-    notifyPropagate();
+    notifyPropagate({ action: 'bulk' });
     return readStore();
   }
   function updatedAt() { return readStore().updatedAt; }

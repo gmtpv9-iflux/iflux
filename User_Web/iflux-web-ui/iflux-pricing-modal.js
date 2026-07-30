@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-010
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Pricing
+Owner đích (map): Pricing
+Usage audit: ✓ (symbol scan)
+Dep động: Có thể
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: Owner sai nếu Community load
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux — Pricing / trial lifecycle modals (User Web)
  */
@@ -14,6 +28,16 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function consumerNavigate(canonical) {
+    /* P6-API-01 — internal nav chỉ Writer.navigate */
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical);
+      return;
+    }
+    global.location.href = canonical;
   }
 
   function pricingUrl(opts) {
@@ -153,7 +177,7 @@
     if (gotoBtn) {
       gotoBtn.addEventListener('click', function () {
         modal.close();
-        global.location.href = pricingUrl({ showPropose: true });
+        consumerNavigate(pricingUrl({ showPropose: true }));
       });
     }
 
@@ -184,7 +208,7 @@
         '</div>' +
         '<div class="ifx-pricing-modal__actions">' +
           '<a href="' + esc(checkoutUrl(tier, 'annual')) + '" class="ix-btn ix-btn-primary ix-w-full">Nâng cấp ' + esc(label) + ' →</a>' +
-          '<a href="' + esc(pricingUrl({ mode: 'expired', reason: 'expired' })) + '" class="ix-btn ix-btn-outline ix-w-full">So sánh các gói</a>' +
+          '<a href="' + esc(global.IfluxHref ? global.IfluxHref.forCanonical(pricingUrl({ mode: 'expired', reason: 'expired' })) : pricingUrl({ mode: 'expired', reason: 'expired' })) + '" class="ix-btn ix-btn-outline ix-w-full">So sánh các gói</a>' +
           '<button type="button" class="ix-btn ix-btn-ghost ix-w-full" data-ifx-trial-freemium>Tiếp tục Miễn phí</button>' +
         '</div>' +
       '</div>',
@@ -212,7 +236,7 @@
     if (mode === 'trial_offer' || mode === 'propose') return openTrialOffer(opts);
     if (mode === 'trial_expired') return openTrialExpired(opts);
     if (mode === 'expired') return openTrialExpired(opts);
-    global.location.href = pricingUrl(opts);
+    consumerNavigate(pricingUrl(opts));
   }
 
   function hasPendingOnboarding() {

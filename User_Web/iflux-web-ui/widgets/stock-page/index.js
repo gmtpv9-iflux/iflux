@@ -4,7 +4,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-import featureManifest from '../../features/stock.manifest.js?v=phaseCW5gate20260721';
+import featureManifest from '../../features/stock.manifest.js?v=feedDto20260724';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;
@@ -40,6 +40,15 @@ export async function mount(el) {
     featureRt.dispose();
     featureRt = null;
     return { unmount: function () { if (el) el.innerHTML = ''; } };
+  }
+  /* Entity Tin tức — FeedCard theo ticker (Data Provider), không dump posts?limit=100 */
+  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadEntityFeed) {
+    var tk = (window.IfluxSeoUrl && IfluxSeoUrl.parseStockTicker && IfluxSeoUrl.parseStockTicker())
+      || (window.IfluxStockPage && IfluxStockPage.currentTicker)
+      || null;
+    try {
+      await IfluxCommunityApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
+    } catch (eHyd) { /* seed fallback */ }
   }
   if (window.IfluxStockPage) IfluxStockPage.init();
   function onRemount() {

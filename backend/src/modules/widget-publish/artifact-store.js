@@ -176,6 +176,33 @@ async function getCurrentPage(pageKey) {
   };
 }
 
+/** All current PagePublished rows — for PlacementWidgetIndex builder (read-only). */
+async function listCurrentPages() {
+  const res = await query(
+    `SELECT c.page_key, p.artifact, p.etag, p.version, p.published_at
+     FROM page_current_versions c
+     JOIN page_published_versions p ON p.id = c.version_id
+     ORDER BY c.page_key ASC`
+  );
+  return res.rows.map(function (row) {
+    return {
+      pageKey: row.page_key,
+      artifact: row.artifact,
+      etag: row.etag,
+      version: row.version,
+      publishedAt: row.published_at
+    };
+  });
+}
+
+/** Widget ids with a current published version — L4 intersection set for index. */
+async function listCurrentWidgetIds() {
+  const res = await query(
+    'SELECT widget_id FROM widget_current_versions ORDER BY widget_id ASC'
+  );
+  return res.rows.map(function (row) { return row.widget_id; });
+}
+
 module.exports = {
   logLifecycle,
   nextWidgetVersion,
@@ -184,5 +211,7 @@ module.exports = {
   savePagePublished,
   getCurrentWidget,
   getWidgetByVersion,
-  getCurrentPage
+  getCurrentPage,
+  listCurrentPages,
+  listCurrentWidgetIds
 };

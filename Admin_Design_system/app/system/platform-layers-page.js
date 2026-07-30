@@ -146,8 +146,8 @@
   }
 
   function blockLabel(id) {
-    var Cat = global.EntitlementCatalog;
-    if (Cat && Cat.getBlockLabel) return Cat.getBlockLabel(id);
+    var copy = wlib().resolveWidgetCopy ? wlib().resolveWidgetCopy(id) : null;
+    if (copy && copy.title) return copy.title;
     return id;
   }
 

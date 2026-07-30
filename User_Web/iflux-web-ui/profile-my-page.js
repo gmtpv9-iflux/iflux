@@ -100,6 +100,11 @@
   }
 
   function bindPaymentForm() {
+    if (global.IfluxProfilePaymentPage) {
+      IfluxProfilePaymentPage.init();
+      return;
+    }
+    /* legacy inline — hub chưa nạp profile-payment-page.js */
     var uid = userId();
     if (!uid || !global.IfluxProfilePaymentStore) return;
 
@@ -181,7 +186,8 @@
   function refresh() {
     if (personalEditMode) populateEditForm();
     else bindPersonalView();
-    bindPaymentForm();
+    if (global.IfluxProfilePaymentPage) IfluxProfilePaymentPage.refresh();
+    else bindPaymentForm();
   }
 
   global.IfluxProfileMyPage = {

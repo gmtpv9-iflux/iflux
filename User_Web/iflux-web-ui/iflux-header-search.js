@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-007
+Priority: P1
+STATUS: Used|dep-dong
+OWNER (hiện tại): Shell/Search
+Owner đích (map): Shell/Search
+Usage audit: ✓
+Dep động: Có
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Chạy khi mở search — không P1 PASS
+===== IFX-AUDIT-END ===== */
 /* Header search — CP / Ngành / Họ CP / Chủ đề (giống Admin ix-search) */
 (function (global) {
   'use strict';
@@ -193,18 +207,22 @@
       var from = location.pathname.indexOf('/stock/') >= 0 ? 'stock' : 'other';
       return IfluxStockMentions.entityHref(entity, { from: from });
     }
+    var c;
     if (global.IfluxSeoUrl) {
-      if (entity.type === 'ticker') return IfluxSeoUrl.stockHref(entity.id);
-      if (entity.type === 'sector') return IfluxSeoUrl.sectorHref(entity.id);
-      if (entity.type === 'family') return IfluxSeoUrl.ecosystemHref(entity.id);
-      if (entity.type === 'story') return IfluxSeoUrl.storyEntityHref(entity.id);
+      if (entity.type === 'ticker') c = IfluxSeoUrl.stockHref(entity.id);
+      else if (entity.type === 'sector') c = IfluxSeoUrl.sectorHref(entity.id);
+      else if (entity.type === 'family') c = IfluxSeoUrl.ecosystemHref(entity.id);
+      else if (entity.type === 'story') c = IfluxSeoUrl.storyEntityHref(entity.id);
     }
-    var root = userWebRoot();
-    if (entity.type === 'ticker') return '/co-phieu/' + encodeURIComponent(String(entity.id).toUpperCase());
-    if (entity.type === 'sector') return '/nganh/' + encodeURIComponent(entity.id);
-    if (entity.type === 'family') return '/he-sinh-thai/' + encodeURIComponent(entity.id);
-    if (entity.type === 'story') return '/chu-de/' + encodeURIComponent(entity.id);
-    return root + 'search';
+    if (!c) {
+      var root = userWebRoot();
+      if (entity.type === 'ticker') c = '/co-phieu/' + encodeURIComponent(String(entity.id).toUpperCase());
+      else if (entity.type === 'sector') c = '/nganh/' + encodeURIComponent(entity.id);
+      else if (entity.type === 'family') c = '/he-sinh-thai/' + encodeURIComponent(entity.id);
+      else if (entity.type === 'story') c = '/chu-de/' + encodeURIComponent(entity.id);
+      else c = root + 'search';
+    }
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function buildIndex() {
@@ -469,7 +487,11 @@
           }
           e.preventDefault();
           pushRecent(entityFromItem(active));
-          location.href = active.getAttribute('href');
+          if (global.IfluxHref && global.IfluxHref.followHref) {
+            global.IfluxHref.followHref(active.getAttribute('href'));
+          } else {
+            location.href = active.getAttribute('href');
+          }
         }
         return;
       }
@@ -521,6 +543,8 @@
     clearRecent: clearRecent,
     pushQuery: pushQuery,
     readQueryRecent: readQueryRecent,
-    clearQueryRecent: clearQueryRecent
+    clearQueryRecent: clearQueryRecent,
+    hardenInput: hardenSearchInput,
+    sanitizeAutofillLeak: sanitizeAutofillLeak
   };
 })(window);

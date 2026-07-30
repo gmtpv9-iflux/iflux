@@ -13,20 +13,13 @@ const {
   getById,
   updateStatus
 } = require('./payouts.service');
-
-function requireAdminKey(config) {
-  return function adminKeyGuard(req, res, next) {
-    const key = req.headers['x-admin-key'];
-    if (!key || key !== config.ADMIN_API_KEY) {
-      return next(AppError.forbidden('ADMIN_FORBIDDEN', 'Admin key required'));
-    }
-    next();
-  };
-}
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 function createAffiliatePayoutsRouter(deps) {
   const router = express.Router();
-  const adminGuard = requireAdminKey(deps.config);
+  const perm = function () {
+    return requireAdminPermission(deps, Array.prototype.slice.call(arguments));
+  };
 
   const createSchema = z.object({
     body: z.object({
@@ -76,7 +69,7 @@ function createAffiliatePayoutsRouter(deps) {
     }
   });
 
-  router.get('/requests', adminGuard, async (req, res, next) => {
+  router.get('/requests', perm('requests.withdrawals.view'), async (req, res, next) => {
     try {
       const requests = await listAdmin({
         status: req.query.status,
@@ -88,7 +81,7 @@ function createAffiliatePayoutsRouter(deps) {
     }
   });
 
-  router.post('/requests/:id/approve', adminGuard, async (req, res, next) => {
+  router.post('/requests/:id/approve', perm('requests.withdrawals.status_processing'), async (req, res, next) => {
     try {
       const current = await getById(req.params.id);
       if (!current) return next(AppError.notFound('NOT_FOUND', 'Request not found'));
@@ -96,7 +89,7 @@ function createAffiliatePayoutsRouter(deps) {
         return next(AppError.badRequest('INVALID_STATUS', 'Chỉ duyệt yêu cầu đang chờ'));
       }
       const row = await updateStatus(req.params.id, 'processing', {
-        processed_by: (req.body && req.body.admin_name) || 'Admin'
+        processed_by: (req.body && req.body.admin_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
       });
       res.json({ ok: true, request: row });
     } catch (err) {
@@ -104,7 +97,7 @@ function createAffiliatePayoutsRouter(deps) {
     }
   });
 
-  router.post('/requests/:id/complete', adminGuard, async (req, res, next) => {
+  router.post('/requests/:id/complete', perm('requests.withdrawals.status_paid'), async (req, res, next) => {
     try {
       const current = await getById(req.params.id);
       if (!current) return next(AppError.notFound('NOT_FOUND', 'Request not found'));
@@ -112,7 +105,7 @@ function createAffiliatePayoutsRouter(deps) {
         return next(AppError.badRequest('INVALID_STATUS', 'Không thể hoàn tất yêu cầu này'));
       }
       const row = await updateStatus(req.params.id, 'paid', {
-        processed_by: (req.body && req.body.admin_name) || 'Admin'
+        processed_by: (req.body && req.body.admin_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
       });
       res.json({ ok: true, request: row });
     } catch (err) {
@@ -120,7 +113,7 @@ function createAffiliatePayoutsRouter(deps) {
     }
   });
 
-  router.post('/requests/:id/reject', adminGuard, async (req, res, next) => {
+  router.post('/requests/:id/reject', perm('requests.withdrawals.status_rejected'), async (req, res, next) => {
     try {
       const current = await getById(req.params.id);
       if (!current) return next(AppError.notFound('NOT_FOUND', 'Request not found'));
@@ -129,7 +122,7 @@ function createAffiliatePayoutsRouter(deps) {
       }
       const row = await updateStatus(req.params.id, 'rejected', {
         reject_reason: (req.body && req.body.reason) || 'Không đủ điều kiện',
-        processed_by: (req.body && req.body.admin_name) || 'Admin'
+        processed_by: (req.body && req.body.admin_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
       });
       if (!row) return next(AppError.notFound('NOT_FOUND', 'Request not found'));
       res.json({ ok: true, request: row });

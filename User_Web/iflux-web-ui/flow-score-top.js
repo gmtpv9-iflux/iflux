@@ -74,20 +74,25 @@
   }
 
   function entityLink(block, item) {
+    var c;
     if (block.entityType === 'stock') {
-      if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(item.label);
-      return '/stocks/' + encodeURIComponent(String(item.label || '').toUpperCase());
+      c = global.IfluxSeoUrl
+        ? IfluxSeoUrl.stockHref(item.label)
+        : '/stocks/' + encodeURIComponent(String(item.label || '').toUpperCase());
+    } else if (block.entityType === 'sector') {
+      c = global.IfluxSeoUrl
+        ? IfluxSeoUrl.sectorHref(item.label)
+        : '/sectors/' + encodeURIComponent(item.label);
+    } else if (block.entityType === 'story') {
+      c = global.IfluxSeoUrl
+        ? IfluxSeoUrl.storyEntityHref(item.label)
+        : '/chu-de/' + encodeURIComponent(item.label);
+    } else {
+      c = global.IfluxSeoUrl
+        ? IfluxSeoUrl.ecosystemHref(item.label)
+        : '/he-sinh-thai/' + encodeURIComponent(item.label);
     }
-    if (block.entityType === 'sector') {
-      if (global.IfluxSeoUrl) return IfluxSeoUrl.sectorHref(item.label);
-      return '/sectors/' + encodeURIComponent(item.label);
-    }
-    if (block.entityType === 'story') {
-      if (global.IfluxSeoUrl) return IfluxSeoUrl.storyEntityHref(item.label);
-      return '/chu-de/' + encodeURIComponent(item.label);
-    }
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.ecosystemHref(item.label);
-    return '/he-sinh-thai/' + encodeURIComponent(item.label);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function radarOptions(block) {
@@ -409,15 +414,15 @@
   }
 
   function enrichBlock(block) {
-    var cat = global.WidgetLibraryCatalog;
-    if (!cat || !cat.widgetDefaults) return block;
+    var L4 = global.L4RuntimeReader;
+    if (!L4 || !L4.entitlementMeta) return block;
     var wid = blockIdToWidgetId(block.id);
     if (!wid) return block;
-    var defs = cat.widgetDefaults(wid);
-    if (!defs) return block;
+    var meta = L4.entitlementMeta(wid);
+    if (!meta) return block;
     return Object.assign({}, block, {
-      title: defs.title || block.title,
-      description: defs.description || block.description
+      title: meta.title || block.title,
+      description: meta.description || block.description
     });
   }
 
@@ -464,14 +469,14 @@
     };
     var title = fallbacks[entity] || fallbacks.stock;
     var description = 'Đối chiếu Top 10 vào / ra · radar 20 điểm · list 2 cột';
-    var cat = global.WidgetLibraryCatalog;
+    var cat = global.L4RuntimeReader;
     if (cat) {
       if (cat.resolveWidgetCopy) {
         var copy = cat.resolveWidgetCopy(wid);
         if (copy && copy.title) title = copy.title;
         if (copy && copy.description) description = copy.description;
-      } else if (cat.widgetDefaults) {
-        var defs = cat.widgetDefaults(wid);
+      } else if (cat.entitlementMeta) {
+        var defs = cat.entitlementMeta(wid);
         if (defs && defs.title) title = defs.title;
         if (defs && defs.description) description = defs.description;
       }
@@ -687,7 +692,7 @@
     container.querySelectorAll('[data-ifx-mcmp-block]').forEach(bindHover);
     renderCharts(container, blocks);
     applyEliteGate(container, !!opts.eliteGate);
-    if (global.IfluxInsightShare) IfluxInsightShare.patchAll(container);
+    /* Share: Foundation lazy (click .ifx-insight-share-btn) — không preload widget. */
   }
 
   function resizeChartsInPanel(panel) {

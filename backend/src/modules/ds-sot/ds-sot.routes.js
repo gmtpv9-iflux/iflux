@@ -3,6 +3,7 @@
 const express = require('express');
 const fs = require('fs/promises');
 const path = require('path');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 function resolveOverridesPath(config) {
   if (config.DS_SOT_OVERRIDES_PATH) return config.DS_SOT_OVERRIDES_PATH;
@@ -35,9 +36,12 @@ async function writeStore(filePath, data) {
   await fs.rename(tmp, filePath);
 }
 
-function createDsSotRouter({ config }) {
+function createDsSotRouter(deps) {
+  deps = deps || {};
+  const config = deps.config || {};
   const router = express.Router();
   const filePath = resolveOverridesPath(config);
+  const writeGuard = requireAdminPermission(deps, 'interface.design_system.view');
 
   router.get('/overrides', async (req, res, next) => {
     try {
@@ -48,7 +52,7 @@ function createDsSotRouter({ config }) {
     }
   });
 
-  router.put('/overrides/:itemId', async (req, res, next) => {
+  router.put('/overrides/:itemId', writeGuard, async (req, res, next) => {
     try {
       const itemId = String(req.params.itemId || '').trim();
       if (!itemId || itemId.length > 120) {
@@ -80,7 +84,7 @@ function createDsSotRouter({ config }) {
     }
   });
 
-  router.delete('/overrides/:itemId', async (req, res, next) => {
+  router.delete('/overrides/:itemId', writeGuard, async (req, res, next) => {
     try {
       const itemId = String(req.params.itemId || '').trim();
       const data = await readStore(filePath);

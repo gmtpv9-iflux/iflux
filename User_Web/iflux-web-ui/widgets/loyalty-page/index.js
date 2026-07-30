@@ -8,6 +8,24 @@ var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 export const meta = { id: 'WGT-LOY-PAGE', title: 'Chương trình thành viên' };
 
+function routeUrl(key) {
+  var R = typeof window !== 'undefined' && window.IfluxRoutes;
+  if (R && R.to) return R.to(key);
+  var fb = { home: '/nha-cua-toi', pricing: '/goi-cuoc', faq: '/hoi-dap' };
+  return fb[key] || '/';
+}
+
+function applyConsumerLinks(root) {
+  if (!root) return;
+  root.querySelectorAll('[data-route-key]').forEach(function (a) {
+    var key = a.getAttribute('data-route-key');
+    var q = a.getAttribute('data-route-query');
+    var url = routeUrl(key);
+    if (q) url += (url.indexOf('?') >= 0 ? '&' : '?') + q;
+    a.href = url;
+  });
+}
+
 var CORE_TIERS = [
   [ASSET + 'loyalty-page.js']
 ];
@@ -16,11 +34,11 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
     <p class="ifx-page-intro">Chương trình thành viên iFlux — affiliate, insight card và quyền lợi khi biến tri thức đầu tư thành tài sản số.</p>
 
     <div class="ifx-loyalty-tabs">
-      <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro"><i class="ti ti-sparkles"></i> Giới thiệu</button>
-      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/account/affiliate"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
+      <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro" data-ifx-ent-block="BLK-LOY-INTRO"><i class="ti ti-sparkles"></i> Giới thiệu</button>
+      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/nha-cua-toi?tab=affiliate" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
     </div>
 
-    <div id="tab-membership-intro" class="ifx-loyalty-panel active">
+    <div id="tab-membership-intro" class="ifx-loyalty-panel active" data-ifx-ent-block="BLK-LOY-INTRO">
 
       <section class="ifx-mship-hero ifx-mship-hero--split">
         <div class="ifx-mship-hero__copy">
@@ -28,8 +46,8 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
           <h1 class="ifx-mship-hero__title">Xây dựng tài sản số từ tri thức đầu tư của bạn</h1>
           <p class="ifx-mship-hero__sub">iFlux không chỉ là nền tảng phân tích dòng tiền — biến kiến thức, kinh nghiệm và góc nhìn đầu tư thành tài sản số có giá trị lâu dài.</p>
           <div class="ifx-mship-hero__actions">
-            <a href="/nha-cua-toi?tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg"><i class="ti ti-affiliate"></i> Vào bảng Affiliate</a>
-            <a href="/goi-cuoc" class="ix-btn ix-btn-outline ix-btn-lg"><i class="ti ti-crown"></i> Xem gói cước</a>
+            <a href="#" data-route-key="home" data-route-query="tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Vào bảng Affiliate</a>
+            <a href="#" data-route-key="pricing" class="ix-btn ix-btn-outline ix-btn-lg"><i class="ti ti-crown"></i> Xem gói cước</a>
           </div>
           <div class="ifx-mship-hero__stats">
             <div class="ifx-mship-stat"><i class="ti ti-arrows-exchange"></i><div><strong>Realtime</strong><span>Dòng tiền thông minh</span></div></div>
@@ -238,7 +256,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
               <div class="ifx-mship-mock__card-img"></div>
               <div class="ifx-mship-mock__card-foot">
                 <span class="ifx-mship-mock__qr"><i class="ti ti-qrcode"></i></span>
-                <span>Quét để xem · ref MINH10</span>
+                <span>Quét để xem · ref IFL…</span>
               </div>
               <div class="ifx-mship-mock__socials">
                 <i class="ti ti-brand-facebook"></i>
@@ -259,7 +277,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
               <p>Mỗi bài viết, nhận định hoặc chia sẻ đều giúp bạn xây tệp người theo dõi riêng.</p>
               <ul class="ifx-mship-step-block__list">
                 <li><i class="ti ti-check"></i> Theo dõi và đọc phân tích của bạn</li>
-                <li><i class="ti ti-check"></i> Nhận thông báo khi bạn đăng bài</li>
+                <li><i class="ti ti-check"></i> Nhận thông báo hoạt động cộng đồng</li>
                 <li><i class="ti ti-check"></i> Đăng ký thành viên cộng đồng của bạn</li>
               </ul>
               <p class="ifx-mship-step-block__foot">Xây dựng <strong>thương hiệu cá nhân</strong> trong đầu tư.</p>
@@ -269,7 +287,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
                 <span>A</span><span>B</span><span>C</span><span>+128</span>
               </div>
               <div class="ifx-mship-mock__feed">
-                <div><i class="ti ti-heart"></i> 42 theo dõi mới</div>
+                <div><i class="ti ti-bookmark"></i> 42 theo dõi mới</div>
                 <div><i class="ti ti-bell"></i> Thông báo bài viết</div>
                 <div><i class="ti ti-message"></i> Phân tích SHB · Smart Money</div>
               </div>
@@ -351,7 +369,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
           <div class="ifx-mship-cta__icon" aria-hidden="true"><i class="ti ti-rocket"></i></div>
           <h3>Bắt đầu hành trình Membership</h3>
           <p>Lấy link Affiliate, chia sẻ Insight Card và theo dõi hoa hồng ngay trên Hồ sơ của bạn.</p>
-          <a href="/nha-cua-toi?tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg"><i class="ti ti-arrow-right"></i> Mở tab Affiliate trong Hồ sơ</a>
+          <a href="#" data-route-key="home" data-route-query="tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg"><i class="ti ti-arrow-right"></i> Mở tab Affiliate trong Hồ sơ</a>
         </div>
       </section>
 
@@ -410,7 +428,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
               </span>
               <i class="ti ti-chevron-right ifx-mship-support__channel-arrow"></i>
             </a>
-            <a href="/hoi-dap" class="ifx-mship-support__channel">
+            <a href="#" data-route-key="faq" class="ifx-mship-support__channel">
               <span class="ifx-mship-support__channel-icon ifx-mship-support__channel-icon--info"><i class="ti ti-help-circle"></i></span>
               <span class="ifx-mship-support__channel-text">
                 <strong>FAQ</strong>
@@ -425,6 +443,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
 
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
+  applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();

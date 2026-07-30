@@ -15,14 +15,14 @@ import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW42026072
 import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=phaseBExit20260721c';
 
 var A = '/User_Web/iflux-web-ui/';
-var V = 'phaseBExit20260721c';
+var V = 'ui00120260723';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 
 function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' : '?v=' + V) }; }
 
 var BASE = [
-  /* W4: mock-market + seo-url = Shell MARKET_PLATFORM (home) */
+  /* W4: mock-market + seo-url = Shell MARKET_CORE (home) — seed registry lazy theo widget */
   dep('IfluxWidgetRegistry', 'widget-registry.js'),
   dep('IfluxWidgetRenderers', 'widget-renderers.js'),
   dep('IfluxDashboardEngine', 'dashboard-engine.js')

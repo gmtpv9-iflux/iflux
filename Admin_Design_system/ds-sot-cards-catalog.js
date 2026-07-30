@@ -168,9 +168,9 @@
             cardId: 'CRD-SHELL-COM-POST',
             className: 'ifx-com-card',
             previewType: 'shell-com-post',
-            regions: 'author · body · stats',
-            anatomy: 'author row\n├── title · tags\n└── engagement stats',
-            structure: 'author (item.community.author)\n├── title-row\n├── tags\n└── stats\n    └── BLK-COM-FEED',
+            regions: 'thumb · body · stats',
+            anatomy: 'thumb\n├── title · tags\n└── engagement stats',
+            structure: 'thumb\n├── title-row (item.community.title-row)\n├── tags\n└── stats (item.community.stats)\n    └── BLK-COM-FEED\n(author / nguồn chỉ trên bài chi tiết)',
             blockRefs: ['BLK-COM-FEED'],
             productRefs: ['WGT-COM-FEED'],
             file: 'community.css'

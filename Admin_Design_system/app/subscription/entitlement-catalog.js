@@ -41,7 +41,7 @@
     { key: 'alerts', label: 'Cảnh báo giá / thị trường', group: 'Công cụ' },
     { key: 'dashboardWidgets', label: 'Widget dashboard', group: 'Dashboard' },
     { key: 'communityRead', label: 'Đọc feed cộng đồng', group: 'Cộng đồng' },
-    { key: 'communityWrite', label: 'Viết bài cộng đồng', group: 'Cộng đồng' },
+    { key: 'communityWrite', label: 'Viết bài cộng đồng (tạm đóng)', group: 'Cộng đồng' },
     { key: 'communityComment', label: 'Bình luận cộng đồng', group: 'Cộng đồng' },
     { key: 'flowRt', label: 'Dòng tiền real-time (WSS)', group: 'Dòng tiền' },
     { key: 'candles', label: 'Biểu đồ nến chi tiết', group: 'Thị trường' },
@@ -83,7 +83,7 @@
     { key: 'widgets', label: 'Thêm widget dashboard', group: 'Dashboard' },
     { key: 'search', label: 'Tìm kiếm toàn cục', group: 'Hệ thống' },
     { key: 'watchlist', label: 'Watchlist cá nhân', group: 'Cá nhân' },
-    { key: 'communityWrite', label: 'Viết bài cộng đồng', group: 'Cộng đồng' },
+    { key: 'communityWrite', label: 'Viết bài cộng đồng (tạm đóng)', group: 'Cộng đồng' },
     { key: 'flowExclusive', label: 'Block Độc quyền Elite', group: 'Dòng tiền' }
   ];
 
@@ -309,8 +309,20 @@
 
   function resolveBlockEnabled(plan, id) {
     if (!plan || !plan.blocks) return false;
-    /* Nội dung đặc thù trang — không cấu hình trong ma trận Widget → luôn mở. */
-    if (isStaticPageBlock(id)) return true;
+    /* Block trang (FAQ · Membership · Tin tức): tôn trọng plan.blocks khi đã set.
+     * Trước đây luôn true → Admin tắt (vd guest BLK-LOY-AFFILIATE) không có tác dụng. */
+    if (isStaticPageBlock(id)) {
+      if (Object.prototype.hasOwnProperty.call(plan.blocks, id)) {
+        return !!plan.blocks[id];
+      }
+      /* Chưa có key → mở theo minTier catalog (guest chỉ guest-min). */
+      var meta = STATIC_PAGE_BLOCKS.filter(function (b) { return b.id === id; })[0];
+      var tier = String((plan && plan.tier) || 'guest').toLowerCase();
+      if (tier === 'guest') {
+        return !!(meta && meta.minTier === 'guest');
+      }
+      return tierRank(tier) >= tierRank(meta && meta.minTier);
+    }
     /* WGT-* không có trong Tầng 4 (vd Page Composite) → ngoài phạm vi Permission → luôn mở. */
     if (isWidgetEntitlementId(id) && !isPermissionScopedWidget(id)) return true;
     if (plan.blocks[id]) return true;
@@ -376,8 +388,8 @@
       if ((!ids || !ids.length) && global.PlatformLayersWidgets && PlatformLayersWidgets.widgetIds) {
         ids = PlatformLayersWidgets.widgetIds();
       }
-      if ((!ids || !ids.length) && global.PageSettingsCatalog && PageSettingsCatalog.allWidgetIds) {
-        ids = PageSettingsCatalog.allWidgetIds();
+      if ((!ids || !ids.length) && global.WidgetRegistryReader && WidgetRegistryReader.widgetIds) {
+        ids = WidgetRegistryReader.widgetIds();
       }
       (ids || []).forEach(function (id) {
         if (isWidgetEntitlementId(id)) out[id] = true;
@@ -401,12 +413,12 @@
     if (tier === 'premium') {
       return Object.assign(all, {
         flowRt: true, candles: true, alerts: true, widgets: true,
-        search: true, watchlist: true, communityWrite: true
+        search: true, watchlist: true
       });
     }
     return Object.assign(all, {
       flowRt: true, candles: true, alerts: true, widgets: true,
-      search: true, watchlist: true, communityWrite: true, flowExclusive: true
+      search: true, watchlist: true, flowExclusive: true
     });
   }
 
@@ -456,7 +468,7 @@
       set('alerts', ['view', 'add', 'edit', 'delete']);
       set('dashboardWidgets', ['view', 'add', 'edit', 'delete']);
       set('communityRead', ['view']);
-      set('communityWrite', ['view', 'add', 'edit', 'delete']);
+      /* communityWrite: tắt toàn hệ thống — bài chuyên gia giai đoạn sau (Admin). */
       set('communityComment', ['view', 'add', 'edit', 'delete']);
       set('flowRt', ['view']);
       set('candles', ['view']);
@@ -465,6 +477,7 @@
       return out;
     }
     ACTIONS.forEach(function (a) {
+      if (a.key === 'communityWrite') return;
       set(a.key, ['view', 'add', 'edit', 'delete']);
     });
     return out;
@@ -667,6 +680,12 @@
     syncPageBlocksFromWidgets(plan);
     syncLegacyEntFromActions(plan);
 
+    /* SoT tạm thời: không cho User Web viết bài (mọi tier / override). */
+    plan.ent = plan.ent || {};
+    plan.ent.communityWrite = false;
+    plan.actions = plan.actions || {};
+    plan.actions.communityWrite = { view: false, add: false, edit: false, delete: false };
+
     if (plan.limits.maxWidgets == null && plan.ent.widgets) {
       plan.limits.maxWidgets = tier === 'free' ? 3 : 99;
     }
@@ -759,7 +778,7 @@
     refreshBlocksCatalog: function () {
       L4_ADAPTER = null; /* rebuild adapter — Tầng 4 có thể nạp sau file này */
       BLOCKS = buildBlocksCatalog();
-      /* Giữ export EntitlementCatalog.BLOCKS đồng bộ (plan-entitlements-ui đọc Cat.BLOCKS) */
+      /* Giữ export EntitlementCatalog.BLOCKS đồng bộ (EntitlementMatrixUI / plans-store đọc Cat.BLOCKS) */
       if (global.EntitlementCatalog) global.EntitlementCatalog.BLOCKS = BLOCKS;
       return BLOCKS;
     },

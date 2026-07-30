@@ -74,10 +74,11 @@
 
     <div class="ix-auth-divider">hoặc</div>
     <div class="ix-auth-socials">
-      <a class="ix-social-btn google" href="#" id="btn-google" title="Google"><i class="ti ti-brand-google-filled"></i></a>
-      <a class="ix-social-btn" href="#" id="btn-apple" title="Apple"><i class="ti ti-brand-apple-filled"></i></a>
-      <a class="ix-social-btn facebook" href="#" id="btn-facebook" title="Facebook"><i class="ti ti-brand-facebook-filled"></i></a>
-      <a class="ix-social-btn" href="#" id="btn-zalo" title="Zalo"><i class="ti ti-message-circle"></i></a>
+      <!-- GIS Sign in with Google Button (renderButton) — không icon custom / không JS proxy -->
+      <div id="ifx-google-signin-btn" class="ix-social-btn google" title="Google" aria-label="Đăng nhập bằng Google"></div>
+      <button type="button" class="ix-social-btn" id="btn-apple" title="Apple" disabled aria-label="Apple"><i class="ti ti-brand-apple-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn facebook" id="btn-facebook" title="Facebook" disabled aria-label="Facebook"><i class="ti ti-brand-facebook-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn" id="btn-zalo" title="Zalo" disabled aria-label="Zalo"><i class="ti ti-message-circle" aria-hidden="true"></i></button>
     </div>
 
     <div class="ix-auth-footer">
@@ -113,6 +114,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=affiliateE2E20260728"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=gisBtnUi20260730"></script>
 </body>
 </html>

@@ -90,10 +90,11 @@
 
     <div class="ix-auth-divider">hoặc đăng ký nhanh</div>
     <div class="ix-auth-socials">
-      <a class="ix-social-btn google" href="#" id="btn-google" title="Google"><i class="ti ti-brand-google-filled"></i></a>
-      <a class="ix-social-btn" href="#" id="btn-apple" title="Apple"><i class="ti ti-brand-apple-filled"></i></a>
-      <a class="ix-social-btn facebook" href="#" id="btn-facebook" title="Facebook"><i class="ti ti-brand-facebook-filled"></i></a>
-      <a class="ix-social-btn" href="#" id="btn-zalo" title="Zalo"><i class="ti ti-message-circle"></i></a>
+      <!-- GIS Sign in with Google Button (renderButton) — không icon custom / không JS proxy -->
+      <div id="ifx-google-signin-btn" class="ix-social-btn google" title="Google" aria-label="Đăng nhập bằng Google"></div>
+      <button type="button" class="ix-social-btn" id="btn-apple" title="Apple" disabled aria-label="Apple"><i class="ti ti-brand-apple-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn facebook" id="btn-facebook" title="Facebook" disabled aria-label="Facebook"><i class="ti ti-brand-facebook-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn" id="btn-zalo" title="Zalo" disabled aria-label="Zalo"><i class="ti ti-message-circle" aria-hidden="true"></i></button>
     </div>
     <p class="ifx-auth-hint" id="social-register-hint">Đăng ký / đăng nhập bằng tài khoản mạng xã hội — không cần mật khẩu</p>
 
@@ -103,6 +104,6 @@
     <a href="/cong-dong" class="ix-auth-back"><i class="ti ti-chevron-left" style="font-size:13px"></i> Về trang chủ</a>
   </div>
 </div>
-<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-register-boot.js?v=homeCd20260724"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-register-boot.js?v=gisBtnUi20260730"></script>
 </body>
 </html>

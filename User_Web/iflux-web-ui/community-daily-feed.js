@@ -298,8 +298,8 @@
     mount.insertAdjacentHTML('beforeend', dayBlockHtml(day, s.opts, isFirst));
     s.rendered += 1;
     toggleEnd(container, s.rendered >= s.days.length);
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(container);
-    if (global.IfluxInsightShare && IfluxInsightShare.patchAll) IfluxInsightShare.patchAll(container);
+    if (global.IfluxHeartAction) IfluxHeartAction.bind(container);
+    /* Share: Foundation lazy — click .ifx-insight-share-btn (App Shell stub), không preload feed. */
   }
 
   function renderReset(container) {

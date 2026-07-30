@@ -327,8 +327,8 @@
     }
     if (pt === 'com-card') {
       return '<article class="ifx-com-card ds-preview-block" data-ds-block-root style="max-width:100%;padding:10px;border:1px solid var(--ix-border);border-radius:var(--ix-radius-lg)">' +
-        '<div class="ifx-com-post__author"><span class="ix-avatar ix-avatar-sm">NM</span><span class="ifx-com-post__author-name">Nguyễn Minh</span></div>' +
-        '<p style="font-size:12px;margin:8px 0 0">Bài viết feed…</p></article>';
+        '<p style="font-size:var(--ifx-com-feed-card-title-size,16px);font-weight:600;margin:0 0 8px;line-height:1.4">Bài viết feed — tiêu đề 3 dòng</p>' +
+        '<div class="ifx-com-post__stats" style="font-size:var(--ifx-com-feed-card-stats-size,12px);color:var(--ix-text-muted)"><span><i class="ti ti-heart"></i> 5</span> <span><i class="ti ti-message"></i> 2</span> <span><i class="ti ti-share"></i> 0</span></div></article>';
     }
     if (pt === 'price-panel') {
       return '<div class="ifx-stock-head ds-preview-block" data-ds-block-root style="max-width:100%;padding:10px;border:1px solid var(--ix-border);border-radius:var(--ix-radius-lg)">' +

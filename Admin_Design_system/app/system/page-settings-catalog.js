@@ -330,7 +330,7 @@
   /** Community utilities — không composable Bố cục (chưa Widget Host riêng). */
   var COMMUNITY_UTILITY_PAGES = [
     { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/cong-dong/bai-viet/:id', dynamic: true, status: 'active' },
-    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/cong-dong/viet-bai', status: 'active' }
+    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/cong-dong/viet-bai', status: 'inactive' }
   ];
 
   /** Alias tương thích: shape cũ [{group,icon,desc,pages}] cho consumer ngoài. */

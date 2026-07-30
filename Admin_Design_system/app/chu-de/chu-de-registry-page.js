@@ -5,6 +5,10 @@
   var Store = global.IfluxChuDeRegistryStore;
   var editingId = null;
 
+  function canPerm(key) {
+    return !!(global.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -53,9 +57,15 @@
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(s.updatedAt)) + '</td>' +
         '<td><div style="display:flex;gap:4px;flex-wrap:wrap">' +
           '<a href="/admin/chu-de/detail?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Chi tiết"><i class="ti ti-file-description" style="font-size:14px"></i></a>' +
-          '<a href="/admin/chu-de/mapping?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Ánh xạ"><i class="ti ti-route" style="font-size:14px"></i></a>' +
-          '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-edit="' + esc(s.id) + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>' +
-          '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-archive="' + esc(s.id) + '" title="Lưu trữ"><i class="ti ti-archive" style="font-size:14px"></i></button>' +
+          (Store.isStoryStatus(s.status)
+            ? '<a href="/admin/cau-chuyen/chi-tiet?id=' + encodeURIComponent(s.id) + '" class="ix-btn ix-btn-icon" title="Xem câu chuyện"><i class="ti ti-books" style="font-size:14px"></i></a>'
+            : '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-story="' + esc(s.id) + '" title="Tạo câu chuyện"><i class="ti ti-book" style="font-size:14px"></i></button>') +
+          (canPerm('stories.registry.edit')
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-edit="' + esc(s.id) + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>'
+            : '') +
+          (canPerm('stories.registry.status_archived')
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-archive="' + esc(s.id) + '" title="Lưu trữ"><i class="ti ti-archive" style="font-size:14px"></i></button>'
+            : '') +
         '</div></td>' +
       '</tr>';
     }).join('');
@@ -74,13 +84,23 @@
 
   function openForm(id) {
     editingId = id || null;
+    var need = id ? 'stories.registry.edit' : 'stories.registry.create';
+    if (!canPerm(need)) {
+      toast('Bạn không có quyền ' + (id ? 'sửa' : 'tạo') + ' chủ đề.', 'danger');
+      return;
+    }
     var s = id ? Store.getStory(id) : null;
     document.getElementById('adm-str-reg-form-title').textContent = s ? 'Sửa chủ đề' : 'Tạo chủ đề mới';
     document.getElementById('adm-str-reg-name').value = s ? s.name : '';
     document.getElementById('adm-str-reg-desc').value = s ? s.description : '';
     fillLifecycleSelect(document.getElementById('adm-str-reg-form-lifecycle'), s ? s.lifecycle : 'emerging', false);
     document.getElementById('adm-str-reg-form-status').value = s ? s.status : 'new';
-    if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-str-reg-form');
+    var saveBtn = document.getElementById('btn-str-reg-save');
+    if (saveBtn) {
+      saveBtn.style.display = '';
+      saveBtn.setAttribute('data-ix-perm', need);
+    }
+    if (typeof global.ixOpenOffcanvas === 'function') global.ixOpenOffcanvas('offcanvas-str-reg-form');
   }
 
   function saveForm() {
@@ -93,7 +113,7 @@
       lifecycle: document.getElementById('adm-str-reg-form-lifecycle').value,
       status: document.getElementById('adm-str-reg-form-status').value
     }).then(function () {
-      if (typeof global.ixCloseModal === 'function') global.ixCloseModal('modal-str-reg-form');
+      if (typeof global.ixCloseOffcanvas === 'function') global.ixCloseOffcanvas('offcanvas-str-reg-form');
       renderTable();
       toast('Đã lưu chủ đề vào database', 'success');
     }).catch(function (err) {
@@ -125,6 +145,19 @@
     document.addEventListener('click', function (e) {
       var edit = e.target.closest('[data-str-reg-edit]');
       if (edit) { e.preventDefault(); openForm(edit.getAttribute('data-str-reg-edit')); return; }
+      var toStory = e.target.closest('[data-str-reg-story]');
+      if (toStory) {
+        e.preventDefault();
+        var sid = toStory.getAttribute('data-str-reg-story');
+        if (!confirm('Tạo câu chuyện từ chủ đề này? (đặt trạng thái Trưởng thành)')) return;
+        Store.promoteToStory(sid).then(function () {
+          renderTable();
+          toast('Đã tạo câu chuyện', 'success');
+        }).catch(function (err) {
+          toast(err.message || 'Tạo câu chuyện thất bại', 'danger');
+        });
+        return;
+      }
       var arch = e.target.closest('[data-str-reg-archive]');
       if (arch) {
         e.preventDefault();

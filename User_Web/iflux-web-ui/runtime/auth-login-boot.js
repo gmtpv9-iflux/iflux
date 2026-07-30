@@ -9,22 +9,18 @@ var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 var SHELL = [
   ASSET + 'iflux-platform-boot.js?v=homeCd20260724',
   ASSET + 'iflux-api-bundle.js',
-  ASSET + 'auth.js?v=wp4Ggl20260728'
+  ASSET + 'auth.js?v=p6Writer20260730'
 ];
 
 var FEATURE = [
   ADMIN + 'iflux-customers-store.js',
   ADMIN + 'iflux-credentials-store.js?v=20260706',
-  ASSET + 'loyalty-affiliate-store.js?v=shareAffP5_20260727',
-  ASSET + 'social-auth/identity-proof.js?v=wp2Ggl20260728',
-  ASSET + 'social-auth/google-provider.js?v=wp2Ggl20260728',
-  ASSET + 'social-auth/provider-registry.js?v=wp2Ggl20260728',
-  ASSET + 'social-auth/social-login-usecase.js?v=wp4Ggl20260728',
-  ASSET + 'auth-social.js?v=wp2Ggl20260728',
-  ASSET + 'iflux-user-data-sync.js',
+  ASSET + 'loyalty-affiliate-store.js?v=regAffLock20260728',
+  ASSET + 'auth-social.js?v=gisBtnUi20260730',
+  ASSET + 'iflux-user-data-sync.js?v=btnRace20260728',
   ADMIN + 'iflux-admin-ui.js',
-  ASSET + 'iflux-web-ui.js?v=wp3Ggl20260728',
-  ASSET + 'auth-login-init.js?v=wp4Ggl20260728'
+  ASSET + 'iflux-web-ui.js?v=p6Writer20260730',
+  ASSET + 'auth-login-init.js?v=p6Writer20260730'
 ];
 
 async function main() {

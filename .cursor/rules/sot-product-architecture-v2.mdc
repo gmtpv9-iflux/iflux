@@ -1,0 +1,36 @@
+---
+description: SoT Product Architecture — luôn dùng V2; không đọc V1 làm nguồn
+alwaysApply: true
+---
+
+# SoT Product Architecture = V2
+
+## File bắt buộc đọc trước mọi task UI / Product / Admin / DS
+
+[`docs/SoT — iFlux Product Architecture (V2).md`](docs/SoT — iFlux Product Architecture (V2).md)
+
+Pointer (cùng nội dung điều hướng):
+
+- [`docs/SoT — iFlux Product Architecture.md`](docs/SoT — iFlux Product Architecture.md)
+- [`SoT — iFlux Product Architecture.md`](SoT — iFlux Product Architecture.md) (repo root → trỏ V2)
+
+## Cấm
+
+- Dùng [`docs/SoT — iFlux Product Architecture (V1).md`](docs/SoT — iFlux Product Architecture (V1).md) làm nguồn áp dụng (chỉ archive).
+- Trích dẫn / quyết định kiến trúc từ bản cũ khi xung đột với V2.
+- Giả định path SoT chỉ ở repo root mà không mở **V2**.
+
+## Khi xung đột
+
+Tài liệu cấp dưới (feature SoT, plan, Admin Sitemap, route) phải sửa theo **V2**.
+
+## Share / Affiliate (Product)
+
+Share là **capability chung** (Product Architecture V2), không phải feature sở hữu của Widget hay Community.  
+Affiliate `?ref=` là **decorator của Share Action** (Share Foundation), không thuộc Loyalty Store (Loyalty chỉ sở hữu ref code + capture) và không nhét vào Article Metadata / canonical / OG.
+
+## Engineering Change
+
+Mọi thay đổi code phải tuân [`docs/SoT — Engineering Change Governance.md`](docs/SoT — Engineering Change Governance.md) **v1.1** + rule always-apply [`.cursor/rules/engineering-change-governance.mdc`](.cursor/rules/engineering-change-governance.mdc).
+
+Plan Share Affiliate (chỉ khi Owner yêu cầu thi công): [`docs/Plan — Extend Share Capability Affiliate URL Decorators.md`](docs/Plan — Extend Share Capability Affiliate URL Decorators.md).

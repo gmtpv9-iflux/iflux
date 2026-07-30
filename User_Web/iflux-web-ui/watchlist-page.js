@@ -6,7 +6,12 @@
     var root = document.querySelector('[data-ifx-wl-page]');
     if (!root || !global.IfluxWatchlistBlock) return;
     IfluxWatchlistBlock.initPage(root);
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(document);
+    if (global.IfluxWatchlistUI && IfluxWatchlistUI.bindRowActions) {
+      IfluxWatchlistUI.bindRowActions(document);
+    } else {
+      if (global.IfluxHeartAction) IfluxHeartAction.bind(document);
+      if (global.IfluxAlertUI) IfluxAlertUI.bindAlerts(document);
+    }
   }
 
   global.IfluxWatchlistPage = {

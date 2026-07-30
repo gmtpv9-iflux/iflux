@@ -1,20 +1,21 @@
 /* Phase A extracted from auth/register.html */
-function affiliateContextCode() {
-  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-    return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+function activeOwnerCode() {
+  if (window.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+    return IfluxIdentityContext.getActiveOwner() || '';
   }
   return '';
 }
 
 function isRefFromAffiliateLink() {
-  if (window.IfluxAffiliateResolver && IfluxAffiliateResolver.readActive) {
-    return !!IfluxAffiliateResolver.readActive();
+  var AR = window.IfluxAffiliateResolver;
+  if (AR && AR.isPathCapturedAttribution) {
+    return !!AR.isPathCapturedAttribution();
   }
   return false;
 }
 
 function resolveRefCode() {
-  return affiliateContextCode();
+  return activeOwnerCode();
 }
 
 /** Mã gửi đi khi đăng ký: ô nhập là nguồn chính; chỉ dùng Affiliate Context khi khóa từ link */
@@ -31,7 +32,7 @@ function getEffectiveRefCode() {
   var label = document.getElementById('reg-ref-label');
   if (!input) return;
 
-  var refCode = affiliateContextCode();
+  var refCode = activeOwnerCode();
   var fromAffiliateLink = isRefFromAffiliateLink() && !!refCode;
 
   if (!refCode) return;
@@ -328,7 +329,15 @@ function providerLabel(p) {
   return map[String(p || '').toLowerCase()] || p;
 }
 
-IfluxAuthSocial.initPage({
+function enableAuthSocialButtons() {
+  /* Google: nút GIS #ifx-google-signin-btn — không disabled custom */
+  ['btn-apple', 'btn-facebook', 'btn-zalo'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.removeAttribute('disabled');
+  });
+}
+
+var socialInit = IfluxAuthSocial.initPage({
   onSuccess: function (provider) {
     ixToast('Đăng ký ' + providerLabel(provider) + ' thành công!', 'success');
     /* Redirect: IfluxAuthRedirectPolicy via SocialLoginUseCase (WP4) */
@@ -337,3 +346,8 @@ IfluxAuthSocial.initPage({
     ixToast(err.message || 'Đăng nhập thất bại.', 'danger');
   }
 });
+if (socialInit && typeof socialInit.then === 'function') {
+  socialInit.then(enableAuthSocialButtons, enableAuthSocialButtons);
+} else {
+  enableAuthSocialButtons();
+}

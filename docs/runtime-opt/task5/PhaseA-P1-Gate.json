@@ -1,0 +1,169 @@
+{
+  "task": "Task5 PhaseA",
+  "step": "P1 usage audit + Gate",
+  "branch": "feat/task5-community-ui",
+  "coverage": "Coverage-20260722T164852.json",
+  "invariant": "Không tối ưu theo file — chỉ theo Owner. Không bỏ load chỉ vì Unused%.",
+  "kpi": "Community chỉ load đúng Owner; mỗi Owner một lần từ nguồn sở hữu.",
+  "cut_load_this_step": false,
+  "auditedAt": "2026-07-22",
+  "p1GateFormula": "Unused>80% ∧ BỏLoad=Có ∧ UsageAudit=✓ ∧ ¬DepĐộng ∧ OwnerĐích≠∅",
+  "results": [
+    {
+      "path": "Admin_Design_system/iflux-admin-ui/atoms-extensions.css",
+      "unusedPctCoverage": 100.0,
+      "priorityBucket": "P1-candidate",
+      "usageAudit": true,
+      "selectorsUsedCom": ["is-active", "is-down", "is-up", "ix-input", "ix-segment", "ix-segmented"],
+      "depDong": false,
+      "ownerHienTai": "Admin Design System (atoms-extensions)",
+      "ownerDich": "Admin Design System / atoms-extensions.css",
+      "boLoad": "Không",
+      "boLoadReason": "Nằm trong iflux-admin-ui.css @import — Community không load tách; cắt = phá bundle DS + shell.",
+      "migrationRoi": 2,
+      "p1Gate": "FAIL",
+      "next": "P4 — không audit toàn file; chỉ nhận code mới nếu P3 đưa vào"
+    },
+    {
+      "path": "Admin_Design_system/iflux-admin-ui/utilities.css",
+      "unusedPctCoverage": 100.0,
+      "priorityBucket": "P1-candidate",
+      "usageAudit": true,
+      "selectorsUsedCom": [],
+      "depDong": false,
+      "ownerHienTai": "Admin Design System (utilities)",
+      "ownerDich": "Admin Design System / utilities.css",
+      "boLoad": "Không",
+      "boLoadReason": "Cùng bundle iflux-admin-ui.css — không bỏ load từng file @import từ Community HTML.",
+      "migrationRoi": 1,
+      "p1Gate": "FAIL",
+      "note": "0 selector khớp Community sources (refined) — dead-within-bundle; không cắt @import ở Phase A"
+    },
+    {
+      "path": "Admin_Design_system/iflux-admin-ui/components.css",
+      "unusedPctCoverage": 94.9,
+      "priorityBucket": "P1-candidate",
+      "usageAudit": true,
+      "selectorsUsedComCount": 40,
+      "depDong": true,
+      "depDongNote": "Shell topnav/dropdown/modal/search — interaction sau first paint",
+      "ownerHienTai": "Admin Design System (components)",
+      "ownerDich": "Admin Design System / components.css",
+      "boLoad": "Không",
+      "migrationRoi": 1,
+      "p1Gate": "FAIL",
+      "next": "P4 — chỉ nhận"
+    },
+    {
+      "path": "Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css",
+      "unusedPctCoverage": 92.9,
+      "priorityBucket": "P1-candidate",
+      "usageAudit": true,
+      "depDong": false,
+      "ownerHienTai": "Admin Design System (icons)",
+      "ownerDich": "Admin Design System / tabler-icons",
+      "boLoad": "Không",
+      "boLoadReason": "HTML Community dùng ti ti-search; bundle Admin.",
+      "migrationRoi": 2,
+      "p1Gate": "FAIL",
+      "next": "Tách subset icon — ngoài Phase A P1 (Partial tương lai)"
+    },
+    {
+      "path": "User_Web/iflux-web-ui/block-templates.css",
+      "unusedPctCoverage": 95.4,
+      "priorityBucket": "P1-candidate → P2/P3 multi-owner",
+      "usageAudit": true,
+      "selectorsUsedCom": [
+        "ifx-cap-tile", "ifx-cap-tile__name", "ifx-com-card", "ifx-com-overview",
+        "ifx-com-post", "ifx-com-ex-grid", "ifx-widget__header", "ifx-block"
+      ],
+      "depDong": true,
+      "depDongNote": "Widget lazy (WGT-COM-001 treemap tiles) + published widgets",
+      "ownerHienTai": "block-templates.css (đa Owner: Template + Community ifx-com-*)",
+      "ownerDichMap": {
+        "ifx-com-*": "User_Web/iflux-web-ui/community.css",
+        "ifx-cap-tile* / template": "block-templates.css hoặc TMP CSS Owner",
+        "ifx-breadth-*": "block-templates / TMP-BREADTH"
+      },
+      "boLoad": "Không",
+      "boLoadReason": "Community + Widget còn dùng selector; phải bóc theo Owner trước.",
+      "migrationRoi": 5,
+      "p1Gate": "FAIL",
+      "next": "P2/P3 — bóc ifx-com-* sang community.css; giữ template; không cắt load sớm"
+    },
+    {
+      "path": "Admin_Design_system/iflux-admin-ui/iflux-market-registry-store.js",
+      "unusedPctCoverage": 82.2,
+      "priorityBucket": "P1-candidate",
+      "usageAudit": true,
+      "symbolsUsedCom": ["getStock", "load"],
+      "depDong": true,
+      "depDongNote": "Header search + requiresShell IfluxMarketRegistryStore",
+      "ownerHienTai": "Market Registry",
+      "ownerDich": "Admin_Design_system/iflux-admin-ui/iflux-market-registry-store.js",
+      "boLoad": "Không",
+      "migrationRoi": 2,
+      "p1Gate": "FAIL"
+    },
+    {
+      "path": "User_Web/iflux-web-ui/auth.js",
+      "unusedPctCoverage": 64.6,
+      "priorityBucket": "P1-extended (Owner ví dụ)",
+      "usageAudit": true,
+      "depDong": true,
+      "depDongNote": "Guest/login/session — classic Coverage false 'unused'",
+      "ownerDich": "Auth",
+      "boLoad": "Không",
+      "p1Gate": "FAIL",
+      "migrationRoi": 1
+    },
+    {
+      "path": "User_Web/iflux-web-ui/iflux-header-search.js",
+      "unusedPctCoverage": 75.3,
+      "priorityBucket": "P1-extended",
+      "usageAudit": true,
+      "depDong": true,
+      "depDongNote": "Chỉ chạy khi focus/⌘K search",
+      "ownerDich": "Shell / Search",
+      "boLoad": "Không",
+      "p1Gate": "FAIL"
+    }
+  ],
+  "p1PassCount": 0,
+  "p1PassRemoveLoad": [],
+  "handoffP2": [
+    {
+      "path": "User_Web/iflux-web-ui/watchlist.css",
+      "reason": "Owner sai — community.manifest css[] load Watchlist CSS",
+      "symbolsHint": ["ifx-stock-row__heart", "ifx-wl-empty"]
+    },
+    {
+      "path": "User_Web/iflux-web-ui/watchlist-ui.js",
+      "reason": "Owner sai — feature modules[] nhưng Community chỉ dùng heart helpers",
+      "symbolsUsedCom": ["bindHearts", "heartButtonHtml", "refreshHearts", "storyHeartButtonHtml", "fmtPct", "dirClass", "stockHref"]
+    },
+    {
+      "path": "User_Web/iflux-web-ui/watchlist-store.js",
+      "reason": "Owner sai — feature modules[]",
+      "symbolsUsedCom": ["copyPublicPortfolio", "normalize", "uid", "write"]
+    },
+    {
+      "path": "User_Web/iflux-web-ui/onboarding.css",
+      "reason": "Owner Onboarding — @import từ app-shell.css (Shell path)"
+    },
+    {
+      "path": "User_Web/iflux-web-ui/insight-share.css",
+      "reason": "Owner Insight Share — không có trong community.manifest css[] (Coverage vẫn thấy nếu shell kéo)"
+    }
+  ],
+  "ignoreMarked": [
+    "User_Web/iflux-web-ui/runtime/bootstrap.js",
+    "User_Web/iflux-web-ui/runtime/shell-boot.js",
+    "User_Web/iflux-web-ui/runtime/page-runtime.js",
+    "User_Web/iflux-web-ui/runtime/widget-loader.js",
+    "User_Web/iflux-web-ui/runtime/app-shell.js",
+    "User_Web/iflux-web-ui/runtime/page-definition.js",
+    "User_Web/iflux-web-ui/widget-shell.css",
+    "User_Web/iflux-web-ui/app-shell.css"
+  ]
+}

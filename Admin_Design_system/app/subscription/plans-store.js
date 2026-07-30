@@ -100,6 +100,9 @@
   }
 
   function apiBaseUrl() {
+    if (global.IfluxAdminAuth && global.IfluxAdminAuth.apiBase) {
+      return global.IfluxAdminAuth.apiBase();
+    }
     if (global.IfluxApiConfig) {
       if (global.IfluxApiConfig.isEnabled && !IfluxApiConfig.isEnabled()) return '';
       if (global.IfluxApiConfig.getBaseUrl) {
@@ -111,9 +114,73 @@
     var port = (global.location && global.location.port) || '';
     if (port === '8888' || host === '103.154.177.157') return '';
     if (host && host !== 'localhost' && host !== '127.0.0.1' && (global.location.protocol || '') !== 'file:') {
-      return 'https://api.iflux.vn/api';
+      return (global.location.origin || '') + '/api';
     }
     return 'http://localhost:3001/api';
+  }
+
+  function adminAuthHeaders() {
+    var h = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+      var s = IfluxAdminAuth.getSession();
+      if (s && s.token) h.Authorization = 'Bearer ' + s.token;
+    }
+    return h;
+  }
+
+  function hasAdminToken() {
+    return !!(adminAuthHeaders().Authorization);
+  }
+
+  function fetchAdminEntitlementsStore() {
+    if (!hasAdminToken()) return Promise.resolve(null);
+    return fetch(apiBaseUrl() + '/admin/subscription/entitlements', {
+      method: 'GET',
+      headers: adminAuthHeaders(),
+      cache: 'no-store'
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (body) {
+      var item = body.data && body.data.item;
+      var payload = item && item.payload;
+      if (!payload || !payload.overrides) return null;
+      var ts = payload.updatedAt || 0;
+      if (!ts && item.updated_at) {
+        var parsed = Date.parse(item.updated_at);
+        if (!isNaN(parsed)) ts = parsed;
+      }
+      return {
+        version: payload.version || 1,
+        updatedAt: ts || Date.now(),
+        overrides: payload.overrides || {},
+        custom: payload.custom || []
+      };
+    }).catch(function () {
+      return null;
+    });
+  }
+
+  function patchAdminEntitlementsStore(storeData) {
+    if (!hasAdminToken()) {
+      return Promise.resolve({ ok: false, error: 'Chưa đăng nhập Admin — không thể lưu lên server' });
+    }
+    return fetch(apiBaseUrl() + '/admin/subscription/entitlements', {
+      method: 'PATCH',
+      headers: adminAuthHeaders(),
+      body: JSON.stringify({ payload: storeData })
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (body) {
+        if (!res.ok) {
+          var err = body.error;
+          var msg = (err && (err.message || err.code)) || ('HTTP ' + res.status);
+          return { ok: false, error: msg };
+        }
+        return { ok: true };
+      });
+    }).catch(function (err) {
+      return { ok: false, error: String(err && err.message ? err.message : err) };
+    });
   }
 
   function storeHasPlanData(data) {
@@ -222,11 +289,9 @@
 
   function publishRuntime(data) {
     var payload = JSON.stringify(data);
-    var headers = {
-      'Content-Type': 'application/json',
-      'X-Admin-Key': 'iflux-admin-local-dev'
-    };
-    var urls = ['/api/plans/runtime', 'http://127.0.0.1:8777/api/plans/runtime'];
+    var headers = adminAuthHeaders();
+    if (!headers.Authorization) return;
+    var urls = ['/api/plans/runtime'];
     if (global.location && global.location.origin && global.location.protocol !== 'file:') {
       urls.push(global.location.origin + '/api/plans/runtime');
     }
@@ -245,7 +310,19 @@
     if (_hydratePromise) return _hydratePromise;
     if (_hydratedCache && !opts.force) return Promise.resolve(_hydratedCache);
     var local = loadStore();
-    _hydratePromise = fetchRuntimePlans().then(function (remote) {
+    _hydratePromise = Promise.all([
+      fetchRuntimePlans(),
+      fetchAdminEntitlementsStore()
+    ]).then(function (results) {
+      var remote = results[0];
+      var adminRemote = results[1];
+      if (adminRemote && storeHasPlanData(adminRemote)) {
+        var adminTs = adminRemote.updatedAt || 0;
+        var fileTs = (remote && remote.updatedAt) || 0;
+        if (!remote || !storeHasPlanData(remote) || adminTs >= fileTs) {
+          remote = adminRemote;
+        }
+      }
       var merged = mergeStoreData(local, remote);
       var localTs = local.updatedAt || 0;
       var mergedTs = merged.updatedAt || 0;
@@ -409,7 +486,7 @@
     },
 
     saveMatrixOverrides: function (tierOverrides) {
-      if (!tierOverrides) return { ok: false, error: 'Không có dữ liệu ma trận' };
+      if (!tierOverrides) return Promise.resolve({ ok: false, error: 'Không có dữ liệu ma trận' });
       var store = loadStore();
       Object.keys(tierOverrides).forEach(function (tier) {
         if (BASE[tier] === undefined) return;
@@ -424,8 +501,19 @@
         if (tier === 'guest' && merged.pages) merged.pages.dashboard = false;
         store.overrides[tier] = merged;
       });
-      saveStore(store);
-      return { ok: true };
+      store.updatedAt = Date.now();
+      try {
+        var json = JSON.stringify(store);
+        localStorage.setItem(STORAGE_KEY, json);
+        localStorage.setItem(MIRROR_KEY, json);
+      } catch (e) { /* ignore */ }
+
+      return patchAdminEntitlementsStore(store).then(function (apiResult) {
+        if (!apiResult.ok) return apiResult;
+        _hydratedCache = store;
+        notifyPlansUpdated(store.updatedAt);
+        return { ok: true };
+      });
     },
 
     savePlan: function (planKey, data) {
@@ -507,13 +595,6 @@
         tags: document.getElementById('field-tags').value.trim(),
         ent: {}, blocks: {}, limits: {}, pages: {}, actions: {}
       };
-      if (global.PlanEntitlementsUI && PlanEntitlementsUI.collect && document.querySelector('[data-ent-page]')) {
-        var entData = PlanEntitlementsUI.collect();
-        data.ent = entData.ent || {};
-        data.blocks = entData.blocks;
-        data.limits = entData.limits;
-        data.pages = entData.pages;
-      }
       return data;
     },
 
@@ -554,9 +635,6 @@
       if (document.getElementById('stat-mrr')) {
         document.getElementById('stat-mrr').textContent = p.mrr ? formatVnd(p.mrr) : '₫0';
       }
-      if (global.PlanEntitlementsUI && PlanEntitlementsUI.fill) {
-        PlanEntitlementsUI.fill(normalizePlanData(p));
-      }
     },
 
     renderTableRows: function (tbody, options) {
@@ -594,7 +672,7 @@
           '<td>' + formatSubs(p.subs) + '</td>' +
           '<td><span class="ix-chip ' + st.chip + '">' + st.text + '</span></td>' +
           '<td><div style="display:flex;gap:4px">' +
-            '<a href="plan-edit.html?plan=' + encodeURIComponent(editKey) + '" class="ix-btn ix-btn-icon" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></a>' +
+            '<a href="plan-edit.html?plan=' + encodeURIComponent(editKey) + '" class="ix-btn ix-btn-icon" title="Xem / Sửa"><i class="ti ti-edit" style="font-size:14px"></i></a>' +
             (canDelete ? '<button type="button" class="ix-btn ix-btn-icon" data-delete-plan="' + escapeHtml(p.id || p.tier) + '" title="Xoá"><i class="ti ti-trash" style="font-size:14px"></i></button>' : '') +
           '</div></td></tr>';
       }).join('');

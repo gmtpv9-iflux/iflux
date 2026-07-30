@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-015
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /* Widget shell — 2 cột dashboard + drag ghost */
 .ifx-dash-toolbar {
   display: flex;
@@ -144,10 +157,68 @@
 }
 
 .ifx-widget {
+  /* UI-001: Dashboard host = layout only — Card Owner là Template / .ifx-widget__surface */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.ifx-dash-canvas.is-edit .ifx-widget {
+  outline: 1px dashed var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  outline-offset: 2px;
+}
+
+/* TPL-SHELL-CARD fallback khi Template mount chưa có Feature shell */
+.ifx-widget__surface {
   background: var(--ix-bg-card);
   border: 1px solid var(--ix-border);
   border-radius: var(--ix-radius-lg);
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * UI-001: body đã có Feature Card Owner → demote surface (không card lần hai).
+ * Không whitelist theo WGT-* — chỉ theo class shell.
+ */
+.ifx-widget__surface:has(.ifx-mkt-liq-block),
+.ifx-widget__surface:has(.ifx-com-overview),
+.ifx-widget__surface:has(.ifx-com-breadth-sidebar),
+.ifx-widget__surface:has(.ifx-com-trending-panel),
+.ifx-widget__surface:has(.ifx-block.ifx-block--card),
+.ifx-widget__surface:has(.ifx-block.ifx-block--sidebar),
+.ifx-widget__surface:has(.ifx-mkt-card),
+.ifx-widget__surface:has(.ifx-flow-card),
+.ifx-widget__surface:has(.ifx-mkt-sidebar-widget),
+.ifx-widget__surface:has(.ifx-com-topwl),
+.ifx-widget__surface:has(.ifx-com-active-members),
+.ifx-widget__surface:has(.ifx-com-experts-leaders),
+.ifx-widget__surface:has(.ifx-mcmp) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* View: ẩn host header khi Template đã có head riêng trong Feature shell */
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mkt-liq-block) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-overview) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-breadth-sidebar) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-trending-panel) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-block.ifx-block--card) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-block.ifx-block--sidebar) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-flow-card) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mkt-sidebar-widget) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-topwl) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__header {
+  display: none;
 }
 .ifx-widget.is-dragging {
   opacity: 0.15;
@@ -260,61 +331,69 @@
   background: var(--ix-bg-hover);
 }
 .ifx-widget__drag:active { cursor: grabbing; }
-.ifx-widget__body { padding: var(--ifx-space-16); }
+.ifx-widget__body { padding: 0; }
+
+/* Inset UI-002: khi surface là Card Owner, body giữ một lớp inset */
+.ifx-widget__surface > .ifx-widget__body {
+  padding: var(--ifx-space-16);
+}
+.ifx-widget__surface > .ifx-widget__header {
+  margin-bottom: 0;
+}
+/* Feature shell đã có inset riêng → body không pad thêm */
+.ifx-widget__surface:has(.ifx-mkt-liq-block) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-overview) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-breadth-sidebar) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-trending-panel) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-block.ifx-block--card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-block.ifx-block--sidebar) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mkt-card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-flow-card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mkt-sidebar-widget) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-topwl) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-active-members) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-experts-leaders) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__body {
+  padding: 0;
+}
+
+/* Watchlist panel: surface là Card Owner — panel không vẽ card lần hai */
+.ifx-widget__surface .ifx-wl-stock-panel.ifx-wl-block {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
 
 /* Nhà của tôi — header có actions/drag: hàng ngang, title+subtitle cột trái */
+.ifx-widget__surface > .ifx-widget__header,
 .ifx-widget > .ifx-widget__header {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
 }
+.ifx-widget__surface > .ifx-widget__header > h3,
 .ifx-widget > .ifx-widget__header > h3 {
   flex: 1 1 auto;
   width: auto;
   min-width: 0;
 }
+.ifx-widget__surface > .ifx-widget__header > .ifx-widget__subtitle,
 .ifx-widget > .ifx-widget__header > .ifx-widget__subtitle {
   flex: 1 0 100%;
   order: 3;
   padding-left: 0;
 }
+.ifx-widget__surface > .ifx-widget__header > .ifx-widget__actions,
 .ifx-widget > .ifx-widget__header > .ifx-widget__actions {
   margin-left: auto;
 }
-.ifx-widget.is-edit > .ifx-widget__header > .ifx-widget__drag {
+.ifx-widget.is-edit .ifx-widget__header > .ifx-widget__drag {
   display: flex;
 }
 
-/* WGT-MKT-001 — cùng block Tổng quan thị trường như sidebar Cộng đồng */
-.ifx-dash-canvas:not(.is-edit) .ifx-widget[data-widget-type="WGT-MKT-001"] .ifx-widget__header {
-  display: none;
-}
-.ifx-widget[data-widget-type="WGT-MKT-001"] .ifx-widget__body {
-  padding: 0;
-}
-.ifx-widget[data-widget-type="WGT-MKT-001"] .ifx-com-overview--sidebar {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: var(--ifx-space-16);
-}
+/* WGT-* không whitelist chrome — UI-001: Template/Feature shell owns card; host surface :has() demote */
 
-/* WGT-MKT-007 / WGT-MKT-008 — KLGD / GTGD (giống preview Thư viện Widget) */
-.ifx-dash-canvas:not(.is-edit) .ifx-widget[data-widget-type="WGT-MKT-007"] .ifx-widget__header,
-.ifx-dash-canvas:not(.is-edit) .ifx-widget[data-widget-type="WGT-MKT-008"] .ifx-widget__header {
-  display: none;
-}
-.ifx-widget[data-widget-type="WGT-MKT-007"] .ifx-widget__body,
-.ifx-widget[data-widget-type="WGT-MKT-008"] .ifx-widget__body {
-  padding: 0;
-}
-.ifx-widget[data-widget-type="WGT-MKT-007"] .ifx-mkt-liq-block,
-.ifx-widget[data-widget-type="WGT-MKT-008"] .ifx-mkt-liq-block {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-}
 .ifx-widget__footer {
   display: flex;
   align-items: center;
@@ -340,7 +419,7 @@
   padding: 0 8px 5px;
 }
 .ifx-widget__body .ifx-wl-block .ifx-stock-row__alert,
-.ifx-widget__body .ifx-wl-block .ifx-stock-row__heart {
+.ifx-widget__body .ifx-wl-block .ifx-heart {
   width: 32px;
 }
 .ifx-widget__body .ifx-wl-block .ifx-stock-row__name,
@@ -356,7 +435,7 @@
   padding: 0 8px 5px;
 }
 .ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__alert,
-.ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__heart { width: 32px; }
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-heart { width: 32px; }
 .ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__name,
 .ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__vol,
 .ifx-dash-col--left .ifx-stock-row__name,
@@ -413,7 +492,7 @@
   position: relative;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="third"],
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="half"],
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="twothirds"] {
@@ -551,7 +630,7 @@
 .ifx-widget__body .ix-top10-market {
   --ix-top10-rw: 148px;
 }
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .ifx-widget__icon { display: none; }
   .ifx-widget__body .ix-top10-market {
     --ix-top10-h: 280px;
@@ -570,6 +649,6 @@
 }
 
 /* Preview/host có container context: áp dụng cùng contract mobile theo bề rộng shell. */
-@container (max-width: 720px) {
+@container (max-width: 768px) {
   .ifx-widget__icon { display: none; }
 }

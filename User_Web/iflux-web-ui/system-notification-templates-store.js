@@ -1,4 +1,11 @@
-/* ADM-SYS-003 — Lưu & render mẫu thông báo (localStorage sandbox) */
+/* DEPRECATED ARTIFACT — runtime retired Phase D3 (2026-07-28)
+ *
+ * Runtime consumer: 0 (không load boot production)
+ * Ownership: deprecated — archive only
+ * Deletion: scheduled post-D5 — xem PhaseD-D4-Architecture-Verification.md § Catalog registry
+ * CẤM import lại vào boot script hoặc renderTpl path mới.
+ *
+ * ADM-SYS-003 — Lưu & render mẫu thông báo (localStorage sandbox — legacy) */
 (function (global) {
   'use strict';
 

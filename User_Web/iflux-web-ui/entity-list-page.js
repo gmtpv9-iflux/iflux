@@ -135,8 +135,8 @@
   }
 
   function stockHref(t) {
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(t);
-    return '/co-phieu/' + encodeURIComponent(t);
+    var c = global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(t) : '/co-phieu/' + encodeURIComponent(t);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   /* ── Danh sách nhóm cho vùng main (mỗi nhóm = 1 tab) ── */
@@ -197,7 +197,7 @@
         emptyHtml: '<div class="ifx-mkt-empty">Chưa có cổ phiếu</div>',
         onRendered: function () {
           enrichRealQuotes(container);
-          if (global.IfluxWatchlistUI && IfluxWatchlistUI.refreshHearts) IfluxWatchlistUI.refreshHearts();
+          if (global.IfluxHeartAction) IfluxHeartAction.refresh();
           if (global.IfluxAlertUI && IfluxAlertUI.refreshAlertButtons) IfluxAlertUI.refreshAlertButtons();
         }
       });
@@ -314,7 +314,7 @@
       renderList(container, g.tickers);
     }
     enrichRealQuotes(main.querySelector('[data-elp-panel="' + idx + '"]') || main);
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.refreshHearts();
+    if (global.IfluxHeartAction) IfluxHeartAction.refresh();
     if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
   }
 
@@ -364,17 +364,24 @@
       bindTabs(main);
       bindLazyScroll(main);
 
-      if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(main);
+      if (global.IfluxWatchlistUI && IfluxWatchlistUI.bindRowActions) {
+        IfluxWatchlistUI.bindRowActions(main);
+      } else if (global.IfluxHeartAction) {
+        IfluxHeartAction.bind(main);
+      }
 
       document.addEventListener('iflux-watchlist-change', function () {
-        if (global.IfluxWatchlistUI) IfluxWatchlistUI.refreshHearts();
+        if (global.IfluxHeartAction) IfluxHeartAction.refresh();
+      });
+      document.addEventListener('iflux-heart-change', function () {
+        if (global.IfluxHeartAction) IfluxHeartAction.refresh();
       });
       document.addEventListener('iflux-alerts-change', function () {
         if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
       });
 
       startRealtime(main, SUBJECT[kind]);
-      if (global.IfluxInsightShare) IfluxInsightShare.patchAll(document);
+      /* Share: Foundation lazy khi click — không preload entity list. */
     });
   }
 

@@ -34,21 +34,22 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'watchlist-store.js',
-    ASSET + 'stock-store.js',
-    ASSET + 'community-store.js'
+    ASSET + 'stock-store.js?v=ix45Purge20260724',
+    ASSET + 'community-store.js?v=feedDto20260724',
+    ASSET + 'iflux-community-api-bridge.js?v=feedDto20260724',
+    ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
     ASSET + 'watchlist-ui.js',
     ASSET + 'community-ui.js',
-    ASSET + 'stock-mentions.js',
-    ASSET + 'stock-comments-ui.js',
+    ASSET + 'comments-cta.js?v=ix45Purge20260724',
     ASSET + 'entity-timeline-feed.js',
-    ASSET + 'community-daily-feed.js',
+    ASSET + 'community-daily-feed.js?v=entFeed20260724',
     ASSET + 'market-liquidity.js'
   ],
   [
-    ASSET + 'entity-detail-center.js',
-    ASSET + 'group-page.js',
+    ASSET + 'entity-detail-center.js?v=entFeed20260724',
+    ASSET + 'group-page.js?v=entFeed20260724',
     ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
   ]
 ];
@@ -89,7 +90,12 @@ export async function mount(el, ctx) {
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
+  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
+  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadFeed) {
+    try {
+      await IfluxCommunityApiBridge.loadFeed({ limit: 36 });
+    } catch (eHyd) { /* seed fallback */ }
+  }
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);
   function onRemount() {
     mountFromHostTree(el, publishKey);

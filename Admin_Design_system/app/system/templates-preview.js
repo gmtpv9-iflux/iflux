@@ -105,9 +105,14 @@
     };
   }
 
-  /** Preview Template chỉ dựng phần thân; tiêu đề/mô tả thuộc Widget Definition. */
-  function withWidgetHead(bodyHtml) {
-    return '<div class="ifx-wgt-block">' + bodyHtml + '</div>';
+  /** Preview Template chỉ dựng phần thân; tiêu đề/mô tả thuộc Widget Definition.
+   * UI-001: mặc định bọc TPL-SHELL-CARD (.ifx-mkt-card). Driver đã emit Feature shell → opts.ownCard = true. */
+  function withWidgetHead(bodyHtml, head, opts) {
+    opts = opts || {};
+    var body = opts.ownCard
+      ? bodyHtml
+      : ('<div class="ifx-mkt-card ifx-tpl-preview-card"><div class="ifx-mkt-card__body">' + bodyHtml + '</div></div>');
+    return '<div class="ifx-wgt-block">' + body + '</div>';
   }
 
   function needDS(host, ok, msg) {
@@ -149,7 +154,8 @@
     host.innerHTML = withWidgetHead(
       '<section class="ifx-com-overview"><div class="ifx-com-overview__indices">' +
         T().renderIndexGrid(ex) + '</div></section>',
-      head
+      head,
+      { ownCard: true }
     );
     markMissing(host, '.ifx-com-ex-card', g.flags);
   };
@@ -195,7 +201,7 @@
     var duoDesc = 'Radar hai cực · danh sách 2 cột — dữ liệu demo';
     var inBlock = { id: 'tpl-duo-in', title: '', polarity: 'positive', entityType: 'stock', items: inItems, duoTitle: duoTitle, duoDescription: duoDesc };
     var outBlock = { id: 'tpl-duo-out', title: '', polarity: 'negative', entityType: 'stock', items: outItems, duoTitle: duoTitle, duoDescription: duoDesc };
-    host.innerHTML = withWidgetHead('<div data-tpl-duo-host></div>', head);
+    host.innerHTML = withWidgetHead('<div data-tpl-duo-host></div>', head, { ownCard: true });
     global.IfluxFlowScoreTop.mount(host.querySelector('[data-tpl-duo-host]'), [outBlock, inBlock], { mergePairs: true });
   };
 
@@ -226,7 +232,7 @@
       riskLabel: 'Chỉ báo rủi ro',
       hideCompliance: true
     };
-    host.innerHTML = withWidgetHead('<div data-tpl-sig-host></div>', head);
+    host.innerHTML = withWidgetHead('<div data-tpl-sig-host></div>', head, { ownCard: true });
     global.IfluxFlowScoreTop.mount(host.querySelector('[data-tpl-sig-host]'), [block], { mergePairs: false });
   };
 
@@ -383,7 +389,8 @@
     }).join('');
     host.innerHTML = withWidgetHead(
       '<section class="ifx-com-experts-leaders"><div class="ifx-com-expert-list">' + rows + '</div></section>',
-      head
+      head,
+      { ownCard: true }
     );
     markMissing(host, '.ifx-com-expert-row', g.flags);
   };
@@ -465,8 +472,11 @@
     items.sort(function (a, b) { return (b.weight || 0) - (a.weight || 0); });
     items = items.slice(0, 10);
     host.innerHTML = withWidgetHead(
-      '<div class="ifx-mkt-heatmap-wrap"><div class="ifx-mkt-heatmap" data-tpl-heat></div></div>',
-      head
+      '<div class="ifx-mkt-card"><div class="ifx-mkt-card__body">' +
+        '<div class="ifx-mkt-heatmap-wrap"><div class="ifx-mkt-heatmap" data-tpl-heat></div></div>' +
+      '</div></div>',
+      head,
+      { ownCard: true }
     );
     var canvas = host.querySelector('[data-tpl-heat]');
 
@@ -527,10 +537,11 @@
     items.sort(function (a, b) { return (b.weight || 0) - (a.weight || 0); });
     items = items.slice(0, 10);
     host.innerHTML = withWidgetHead(
-      '<div class="ifx-wgt-block ifx-com-trending-panel ifx-com-trending-panel--stocks">' +
+      '<div class="ifx-com-trending-panel ifx-com-trending-panel--stocks">' +
         '<div class="ifx-cap-treemap" data-ifx-cap-treemap role="img" aria-label="Treemap cổ phiếu quan tâm" style="min-height:200px"></div>' +
       '</div>',
-      head
+      head,
+      { ownCard: true }
     );
     var canvas = host.querySelector('[data-ifx-cap-treemap]');
     function paint() {
@@ -794,7 +805,8 @@
         '</div>' +
         '<div class="ifx-mkt-liq-chart" data-tpl-liq></div>' +
       '</div></div>',
-      head
+      head,
+      { ownCard: true }
     );
 
     var el = host.querySelector('[data-tpl-liq]');

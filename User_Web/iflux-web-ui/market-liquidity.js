@@ -199,8 +199,8 @@
   }
 
   function libraryCopy(widgetId) {
-    if (global.WidgetLibraryCatalog && WidgetLibraryCatalog.resolveWidgetCopy) {
-      return WidgetLibraryCatalog.resolveWidgetCopy(widgetId);
+    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
+      return L4RuntimeReader.resolveWidgetCopy(widgetId);
     }
     return {
       title: widgetId === 'WGT-MKT-008' ? 'Giá trị giao dịch (GTGD)' : 'Khối lượng giao dịch (KLGD)',
@@ -261,9 +261,7 @@
     refresh();
     root._ifxLiqRefresh = refresh;
 
-    if (global.IfluxInsightShare && showHead) {
-      IfluxInsightShare.patchAll(root);
-    }
+    /* Share: Foundation lazy khi click — không preload liquidity widget. */
   }
 
   function tickAll() {

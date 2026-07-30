@@ -94,7 +94,7 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--ifx-space-16);
 }
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .ifx-mkt-grid-3 { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
@@ -220,7 +220,7 @@
   visibility: hidden !important;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ifx-mkt-layout {
     grid-template-columns: 1fr;
   }

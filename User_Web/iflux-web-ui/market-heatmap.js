@@ -33,16 +33,17 @@
   }
 
   function hrefFor(source, id) {
+    var c;
     if (global.IfluxSeoUrl) {
-      if (source === 'stock') return IfluxSeoUrl.stockHref(id);
-      if (source === 'sector') return IfluxSeoUrl.sectorHref(id);
-      if (source === 'family') return IfluxSeoUrl.ecosystemHref(id);
-      return IfluxSeoUrl.storyEntityHref(id);
-    }
-    if (source === 'stock') return '/co-phieu/' + encodeURIComponent(id);
-    if (source === 'sector') return '/nganh/' + encodeURIComponent(id);
-    if (source === 'family') return '/he-sinh-thai/' + encodeURIComponent(id);
-    return '/chu-de/' + encodeURIComponent(id);
+      if (source === 'stock') c = IfluxSeoUrl.stockHref(id);
+      else if (source === 'sector') c = IfluxSeoUrl.sectorHref(id);
+      else if (source === 'family') c = IfluxSeoUrl.ecosystemHref(id);
+      else c = IfluxSeoUrl.storyEntityHref(id);
+    } else if (source === 'stock') c = '/co-phieu/' + encodeURIComponent(id);
+    else if (source === 'sector') c = '/nganh/' + encodeURIComponent(id);
+    else if (source === 'family') c = '/he-sinh-thai/' + encodeURIComponent(id);
+    else c = '/chu-de/' + encodeURIComponent(id);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function isRemainder(item) {
@@ -152,7 +153,7 @@
   }
 
   function resolveWidgetCopy(widgetId) {
-    var cat = global.WidgetLibraryCatalog || global.PlatformLayersWidgets;
+    var cat = global.L4RuntimeReader;
     if (widgetId && cat && typeof cat.resolveWidgetCopy === 'function') {
       var copy = cat.resolveWidgetCopy(widgetId);
       if (copy && copy.title) return copy;
@@ -201,7 +202,9 @@
       || (sot && sot.description)
       || fallbackDescriptions[source]
       || '';
-    var headHtml = opts.withHead
+    var nestedInDashSurface = !!(el.closest && el.closest('.ifx-widget__surface'));
+    var showHead = nestedInDashSurface ? false : !!opts.withHead;
+    var headHtml = showHead
       ? (global.IfluxBlockTemplates && IfluxBlockTemplates.renderWgtHead
         ? IfluxBlockTemplates.renderWgtHead(title, description)
         : ('<div class="ifx-widget__header"><h3>' + esc(title) + '</h3>' +

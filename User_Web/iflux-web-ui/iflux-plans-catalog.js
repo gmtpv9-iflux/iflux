@@ -1,4 +1,4 @@
-/* User Web — đọc danh mục gói từ Admin PlansStore (localStorage iflux-admin-plans-v1) */
+/* User Web — đọc danh mục gói từ PlansRuntimeReader (GET /api/plans/runtime) */
 (function (global) {
   'use strict';
 
@@ -53,8 +53,8 @@
   };
 
   function store() {
-    if (!global.PlansStore) return null;
-    return global.PlansStore;
+    if (!global.PlansRuntimeReader) return null;
+    return global.PlansRuntimeReader;
   }
 
   function fmt(n) {
@@ -95,9 +95,6 @@
   function guestPlan() {
     var fromStore = getPlan('guest');
     if (fromStore) return fromStore;
-    if (global.EntitlementCatalog && EntitlementCatalog.normalizePlan) {
-      return EntitlementCatalog.normalizePlan(FALLBACK_GUEST);
-    }
     return FALLBACK_GUEST;
   }
 

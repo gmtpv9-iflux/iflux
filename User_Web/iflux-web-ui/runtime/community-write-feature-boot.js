@@ -1,15 +1,13 @@
 /**
  * Phase A — Feature Viết bài Cộng đồng sau App Shell Entry.
+ * Hiện tạm đóng UI viết bài (entitlement communityWrite = false toàn hệ thống).
  */
 import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
 var FEATURE_SCRIPTS = [
-  ASSET + 'iflux-user-data-sync.js',
-  '/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js',
-  ASSET + 'community-store.js',
-  ASSET + 'community-write-page.js?v=phaseA20260721'
+  ASSET + 'community-write-page.js?v=b4w2Nav20260727'
 ];
 
 function waitShellReady(pageKey) {

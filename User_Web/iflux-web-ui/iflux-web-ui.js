@@ -45,10 +45,7 @@
   patchTextBrand();
 
   function appNavigate(canonical, opts) {
-    if (window.IfluxHref && IfluxHref.navigate) {
-      IfluxHref.navigate(canonical, opts);
-      return;
-    }
+    /* P6-API-01 — internal nav chỉ Writer.navigate */
     var W = window.IfluxShellUrlWriter;
     if (W && W.navigate) {
       W.navigate(canonical, opts);
@@ -1612,7 +1609,7 @@
       return Promise.resolve(api);
     }
     if (shareLoadPromise) return shareLoadPromise;
-    var ver = 'shareBndWP2_20260727';
+    var ver = 'p7ShareSheet20260730';
     shareLoadPromise = new Promise(function (resolve) {
       var link = document.querySelector('link[href*="share-action.css"], link[href*="insight-share.css"]');
       if (!link) {
@@ -1639,6 +1636,14 @@
     document.addEventListener('click', function (e) {
       var btn = e.target && e.target.closest && e.target.closest('.ifx-insight-share-btn, [data-ifx-share-action]');
       if (!btn) return;
+      /* P7-DQ-01 — Guest → Login trước khi load / chạy Share */
+      if (!window.IfluxAuth || !IfluxAuth.isLoggedIn || !IfluxAuth.isLoggedIn()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (IfluxAuth && IfluxAuth.requireAuth) IfluxAuth.requireAuth();
+        else if (window.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
+        return;
+      }
       if (window.IfluxShareAction || window.IfluxInsightShare) return;
       e.preventDefault();
       e.stopPropagation();

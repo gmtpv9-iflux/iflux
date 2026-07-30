@@ -1,101 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-SUB-003 — Danh sách đơn hàng · iFlux Admin</title>
-  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
-  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+  <meta http-equiv="refresh" content="0;url=/admin/don-hang/list" />
+  <script>location.replace('/admin/don-hang/list');</script>
+  <title>Chuyển hướng…</title>
 </head>
-<body>
-<div class="ix-root">
-  <div class="ix-layout">
-    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
-      <div class="ix-brand">
-        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
-        <span class="ix-brand-name">iFlux Admin</span>
-      </div>
-      <nav class="ix-menu" data-ix-admin-nav></nav>
-    </aside>
-    <main class="ix-main">
-      <header class="ix-navbar" data-ix-admin-shell="header">
-        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
-        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
-      </header>
-      <div class="ix-content">
-        <h1>Danh sách đơn hàng</h1>
-        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Gói đăng ký</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-SUB-003</span></div>
-        <p style="color:var(--ix-text-muted);margin:-8px 0 20px;font-size:14px">Theo dõi đơn nâng cấp gói — duyệt các yêu cầu thanh toán chuyển khoản trước khi kích hoạt.</p>
-
-        <div class="ix-grid ix-grid-4 ix-mb-24">
-          <div class="ix-card ix-card-body">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div id="adm-txn-stat-total" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Tổng giao dịch</div></div>
-              <div class="ix-stat-icon accent" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-receipt"></i></div>
-            </div>
-          </div>
-          <div class="ix-card ix-card-body">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div id="adm-txn-stat-pending" style="font-size:18px;font-weight:700;color:var(--ix-warning)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">CK chờ duyệt</div></div>
-              <div class="ix-stat-icon warning" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-clock-hour-4"></i></div>
-            </div>
-          </div>
-          <div class="ix-card ix-card-body">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div id="adm-txn-stat-approved" style="font-size:18px;font-weight:700;color:var(--ix-success)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Đã duyệt / TT</div></div>
-              <div class="ix-stat-icon success" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-check"></i></div>
-            </div>
-          </div>
-          <div class="ix-card ix-card-body">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div><div id="adm-txn-stat-revenue" style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">—</div><div style="font-size:12px;color:var(--ix-text-muted)">Doanh thu ghi nhận</div></div>
-              <div class="ix-stat-icon info" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-currency-dong"></i></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ix-card">
-          <div class="ix-filter-bar">
-            <div class="ix-filter-bar-title">Bộ lọc</div>
-            <div class="ix-filter-row">
-              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-txn-filter-status"><option value="">Tất cả</option><option value="pending">Chờ duyệt</option><option value="approved">Đã duyệt</option><option value="paid">Thanh toán tức thì</option><option value="rejected">Từ chối</option></select></div>
-              <div><label class="ix-label">Hình thức</label><select class="ix-select" id="adm-txn-filter-method"><option value="">Tất cả</option><option value="transfer">Chuyển khoản</option><option value="card">Thẻ</option><option value="momo">MoMo</option><option value="vnpay">VNPay</option></select></div>
-            </div>
-          </div>
-          <div class="ix-table-toolbar">
-            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="adm-txn-search" placeholder="Tìm mã đơn, email, nội dung CK..." /></div>
-          </div>
-          <div class="ix-table-responsive">
-            <table class="ix-table" id="adm-txn-table">
-              <thead><tr>
-                <th>Mã đơn</th><th>Khách hàng</th><th>Gói</th><th>Số tiền</th><th>Thanh toán</th><th>Nội dung CK</th><th>Trạng thái</th><th>Thời gian</th><th>Thao tác</th>
-              </tr></thead>
-              <tbody id="adm-txn-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="../../iflux-admin-ui/admin-auth.js?v=20260712d"></script>
-<script src="../../../User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
-<script src="../../../User_Web/iflux-web-ui/loyalty-affiliate-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/inapp-notifications.js"></script>
-<script src="../../../User_Web/iflux-web-ui/subscription-orders-store.js"></script>
-<script src="../../iflux-admin-ui/iflux-customers-store.js"></script>
-<script src="transactions-page.js?v=20260712e"></script>
-  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
-</body>
+<body><p><a href="/admin/don-hang/list">Danh sách đơn hàng</a></p></body>
 </html>

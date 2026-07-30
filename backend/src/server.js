@@ -27,8 +27,30 @@ async function bootstrap() {
     logger.debug('scheduler heartbeat');
   });
 
-  /* RAW-CONTENT-VNSTOCK — mỗi 30 phút (có thể tắt bằng VNSTOCK_INGEST_CRON=off) */
-  const vnCron = process.env.VNSTOCK_INGEST_CRON || '*/30 * * * *';
+  /* RSS Cộng đồng — mỗi 10 phút → community_posts (đủ field → published_rss; thiếu → pending)
+     Tắt: RSS_COMMUNITY_INGEST_CRON=off */
+  const rssCron = process.env.RSS_COMMUNITY_INGEST_CRON || process.env.VNSTOCK_INGEST_CRON || '*/10 * * * *';
+  if (rssCron !== 'off' && rssCron !== '0') {
+    registerJob('rss-community-ingest', rssCron, async () => {
+      try {
+        const { runRssCommunityIngest } = require('./modules/community/rss-ingest.service');
+        const out = await runRssCommunityIngest({});
+        logger.info(
+          {
+            feeds: out && out.feeds,
+            created: out && out.created,
+            updated: out && out.updated
+          },
+          'rss-community-ingest done'
+        );
+      } catch (err) {
+        logger.error({ err: err.message }, 'rss-community-ingest failed');
+      }
+    });
+  }
+
+  /* RAW-CONTENT-VNSTOCK (Content Engine) — mặc định tắt khi đã có RSS Cộng đồng; bật bằng VNSTOCK_INGEST_CRON */
+  const vnCron = process.env.VNSTOCK_INGEST_CRON || 'off';
   if (vnCron !== 'off' && vnCron !== '0') {
     registerJob('vnstock-content-ingest', vnCron, async () => {
       try {

@@ -12,8 +12,20 @@ export const meta = { id: 'WGT-COM-POST-PAGE', title: 'Bài viết cộng đồn
 var CORE_TIERS = [
   [ADMIN + 'iflux-admin-ui.js'],
   [ASSET + 'stock-mentions.js'],
-  [ASSET + 'community-geo-ai.js', ASSET + 'community-store.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
-  [ASSET + 'watchlist-store.js', ASSET + 'watchlist-ui.js', ASSET + 'community-ui.js?v=phaseCW120260721c', ASSET + 'community-daily-feed.js', ASSET + 'community-post-page.js']
+  [
+    ASSET + 'community-store.js?v=metaSotB20260725',
+    ASSET + 'iflux-community-api-bridge.js?v=feedDto20260724',
+    ASSET + 'profile-users-store.js',
+    ASSET + 'profile-links.js'
+  ],
+  [
+    ASSET + 'watchlist-store.js?v=followFound20260724',
+    ADMIN + 'foundation/heart-action.js?v=followFound20260724',
+    ASSET + 'community-ui.js?v=b5wp1_20260727',
+    ASSET + 'community-daily-feed.js?v=entFeed20260724',
+    ASSET + 'interaction/boot.js?v=b5ixFlat20260727',
+    ASSET + 'community-post-page.js?v=b5ixFlat20260727'
+  ]
 ];
 
 var LAYOUT_HTML = `<div data-ifx-community-story></div>`;
@@ -21,9 +33,13 @@ var LAYOUT_HTML = `<div data-ifx-community-story></div>`;
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
   await loadScriptTiers(CORE_TIERS);
+  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadPostPage) {
+    var ref = window.IfluxSeoUrl && IfluxSeoUrl.parsePostRef ? IfluxSeoUrl.parsePostRef() : null;
+    if (ref) await IfluxCommunityApiBridge.loadPostPage({ idOrSlug: ref });
+  }
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-if (window.IfluxCommunityPostPage) IfluxCommunityPostPage.init();
+  if (window.IfluxCommunityPostPage) IfluxCommunityPostPage.init();
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

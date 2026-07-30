@@ -1,9 +1,25 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-004
+Priority: P1
+STATUS: Multi-owner
+OWNER (hiện tại): block-templates (Template + ifx-com-*)
+Owner đích (map): ifx-com-* → community.css; template → block-templates/TMP
+Usage audit: ✓
+Dep động: Có
+Migration ROI: 5
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Phải bóc theo Owner trước khi cắt load
+===== IFX-AUDIT-END ===== */
+
+/* IFX-AUDIT NOTE: Dual-copy ifx-com-* → community.css (T5A-P2-DUAL-COPY-001); gốc giữ đến khi cắt load an toàn */
 /**
  * iFlux Block Templates — SoT giao diện block (map Design Sandbox §15).
  * Chỉ dùng design tokens (--ix-*, --color-*, --ifx-*). Không hardcode hex/rgba.
  */
 
-/* ── TPL-SHELL-CARD / TPL-SHELL-SIDEBAR — canonical shell ── */
+/* ── TPL-SHELL-CARD / TPL-SHELL-SIDEBAR — canonical shell (UI-001 Card Owner) ── */
 .ifx-block,
 .ifx-mkt-card,
 .ifx-flow-card,
@@ -576,7 +592,8 @@
   font-size: var(--ifx-font-size-12);
 }
 
-@media (max-width: 480px) {
+/* SYNC:block-template-narrow → bp-xs Foundation layout.css --ifx-bp-xs = 375px */
+@media (max-width: 375px) {
   .ifx-zone-pos__track-row {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--ifx-space-4);
@@ -903,14 +920,16 @@
 .ifx-stock-row.is-down .ifx-stock-row__chg { color: var(--ix-danger); }
 
 /* TPL-LIST-ROW responsive — cùng biên Breakpoint SoT với StockRow component. */
-@media (max-width: 1023.98px) {
+/* SYNC:block-template-mobile → bp-lg Foundation layout.css --ifx-bp-lg = 1024px */
+@media (max-width: 1024px) {
   .ifx-list-row.ifx-stock-row {
     grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
   }
   .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
 }
 
-@media (max-width: 767.98px) {
+/* SYNC:block-template-tablet → bp-md Foundation layout.css --ifx-bp-md = 768px */
+@media (max-width: 768px) {
   .ifx-list-row.ifx-stock-row {
     grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
   }
@@ -920,14 +939,16 @@
 
 /* Preview/Widget host có container context: phản hồi theo không gian được cấp,
    dùng cùng biên bp-md/bp-lg thay vì viewport thật của trang Authoring. */
-@container (max-width: 1023.98px) {
+/* SYNC:block-template-mobile → bp-lg Foundation layout.css --ifx-bp-lg = 1024px */
+@container (max-width: 1024px) {
   .ifx-list-row.ifx-stock-row {
     grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
   }
   .ifx-list-row.ifx-stock-row .ifx-stock-row__vol { display: none; }
 }
 
-@container (max-width: 767.98px) {
+/* SYNC:block-template-tablet → bp-md Foundation layout.css --ifx-bp-md = 768px */
+@container (max-width: 768px) {
   .ifx-list-row.ifx-stock-row {
     grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
   }

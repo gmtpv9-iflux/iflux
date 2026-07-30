@@ -53,25 +53,16 @@
   }
 
   function widgetListForFilter() {
-    var P = global.PlatformLayersWidgets;
-    var cat = global.PageSettingsCatalog;
-    /* SoT «Tất cả» = Widget Definition Tầng 4 — không Sitemap. */
-    if (ACCESS_FILTER !== 'enabled' && P && typeof P.entitlementList === 'function') {
-      return P.entitlementList().map(function (m) {
-        return {
-          id: m.id,
-          title: m.title || m.id,
-          description: m.description || ''
-        };
-      }).sort(function (a, b) {
-        return String(a.id).localeCompare(String(b.id));
-      });
+    /* SoT «Tất cả» = Widget Definition Tầng 4 — qua WidgetRegistryReader (ABH E3). */
+    if (ACCESS_FILTER !== 'enabled') {
+      if (global.WidgetRegistryReader && typeof WidgetRegistryReader.listMatrixEntries === 'function') {
+        return WidgetRegistryReader.listMatrixEntries();
+      }
+      return [];
     }
-    if (!cat) return [];
-    if (ACCESS_FILTER === 'enabled' && typeof cat.listEnabledPlacementWidgets === 'function') {
-      return cat.listEnabledPlacementWidgets();
+    if (global.PlacementWidgetIndexReader && typeof PlacementWidgetIndexReader.listEnabledEntries === 'function') {
+      return PlacementWidgetIndexReader.listEnabledEntries();
     }
-    if (typeof cat.listAllWidgets === 'function') return cat.listAllWidgets();
     return [];
   }
 
@@ -301,11 +292,18 @@
     sel.addEventListener('change', function () {
       snapshotAccessIntoLastPlans();
       ACCESS_FILTER = sel.value === 'enabled' ? 'enabled' : 'all';
-      var panel = root.querySelector('#mx-access');
-      if (!panel) return;
-      panel.innerHTML = renderAccessPanel();
-      fillAccess(_lastPlans);
-      rebindAccessFilter(root);
+      function repaint() {
+        var panel = root.querySelector('#mx-access');
+        if (!panel) return;
+        panel.innerHTML = renderAccessPanel();
+        fillAccess(_lastPlans);
+        rebindAccessFilter(root);
+      }
+      if (ACCESS_FILTER === 'enabled' && global.PlacementWidgetIndexReader && PlacementWidgetIndexReader.fetch) {
+        PlacementWidgetIndexReader.fetch({ force: true }).then(repaint).catch(repaint);
+      } else {
+        repaint();
+      }
     });
   }
 

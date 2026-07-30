@@ -169,8 +169,8 @@
     var plan = null;
     if (global.IfluxPlansCatalog && IfluxPlansCatalog.getPlan) {
       plan = IfluxPlansCatalog.getPlan(tier);
-    } else if (global.PlansStore && PlansStore.getPlan) {
-      plan = PlansStore.getPlan(tier);
+    } else if (global.PlansRuntimeReader && PlansRuntimeReader.getPlan) {
+      plan = PlansRuntimeReader.getPlan(tier);
     }
     var planName = plan ? (plan.name || tier) : (payload.planName || tier);
     return {
@@ -549,6 +549,7 @@
   }
 
   function reconcileReferralCommissions() {
+    if (useApi()) return;
     if (!global.IfluxLoyaltyAffiliateStore) return;
     listOrders().forEach(function (order) {
       if (order.status !== 'approved' && order.status !== 'paid') return;

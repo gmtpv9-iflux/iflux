@@ -1,0 +1,27 @@
+{
+  "failed": [],
+  "state": {
+    "gsiIframes": [
+      "https://accounts.google.com/gsi/button?type=icon&theme=outline&size=medium&shape=circle&is_fedcm_supported=false&client_id=642927266497-o04c7abj4rbj1lobf906342ivhaoecse.apps.googleusercontent.com&iframe_id=gsi_498136_270814&cas=7kmWRwamTeUgDsk6K8hvpaT1BAJdDXFASnxQatmQ2IQ"
+    ],
+    "gsiDivs": [
+      {
+        "id": "googleidentityservice_button_styles",
+        "class": ""
+      },
+      {
+        "id": "googleidentityservice",
+        "class": ""
+      },
+      {
+        "id": "btn-google",
+        "class": "ix-social-btn google"
+      },
+      {
+        "id": "ifx-google-auth-proxy",
+        "class": ""
+      }
+    ],
+    "href": "https://iflux.vn/dang-nhap"
+  }
+}

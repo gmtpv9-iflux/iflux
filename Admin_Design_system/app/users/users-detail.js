@@ -132,6 +132,25 @@
       : '<span class="ix-chip ix-chip-warning" style="font-size:11px">Chưa thiết lập / đăng nhập OTP</span>';
   }
 
+  function adminToken() {
+    if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+      var s = IfluxAdminAuth.getSession();
+      if (s && s.token) return s.token;
+    }
+    try {
+      var raw = localStorage.getItem('iflux_admin_session') || sessionStorage.getItem('iflux_admin_session');
+      if (raw) {
+        var obj = JSON.parse(raw);
+        if (obj && obj.token) return obj.token;
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  function apiBase() {
+    return (global.IfluxAdminAuth && IfluxAdminAuth.apiBase) ? IfluxAdminAuth.apiBase() : '/api';
+  }
+
   function bindPasswordOverride(email) {
     var btn = document.getElementById('adm-btn-override-pwd');
     if (!btn) return;
@@ -147,21 +166,64 @@
         if (typeof ixToast === 'function') ixToast('Xác nhận mật khẩu không khớp', 'danger');
         return;
       }
-      if (!global.IfluxCredentialsStore) {
-        if (typeof ixToast === 'function') ixToast('Kho mật khẩu chưa sẵn sàng', 'danger');
+      var uid = customer && customer.id;
+      if (!uid) {
+        if (typeof ixToast === 'function') ixToast('Không tìm thấy ID khách hàng trên server', 'danger');
         return;
       }
-      var res = IfluxCredentialsStore.overridePassword(email, pwd, { by: 'admin', reason: reason });
-      if (!res.ok) {
-        if (typeof ixToast === 'function') ixToast(res.error || 'Lỗi ghi đè', 'danger');
+      var token = adminToken();
+      if (!token) {
+        if (typeof ixToast === 'function') ixToast('Cần đăng nhập Admin', 'danger');
         return;
       }
-      document.getElementById('adm-pwd-new').value = '';
-      document.getElementById('adm-pwd-confirm').value = '';
-      if (document.getElementById('adm-pwd-reason')) document.getElementById('adm-pwd-reason').value = '';
-      renderPasswordStatus(email);
-      if (typeof ixToast === 'function') ixToast('Đã ghi đè mật khẩu cho ' + email, 'success');
+      btn.disabled = true;
+      fetch(apiBase() + '/admin/users/' + encodeURIComponent(uid) + '/reset-password', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ password: pwd, reason: reason || undefined })
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (!res.ok) {
+            var m = data && data.error;
+            if (m && typeof m === 'object') m = m.message || JSON.stringify(m);
+            throw new Error(m || ('HTTP ' + res.status));
+          }
+          return data;
+        });
+      }).then(function () {
+        if (global.IfluxCredentialsStore) {
+          IfluxCredentialsStore.overridePassword(email, pwd, { by: 'admin', reason: reason });
+        }
+        document.getElementById('adm-pwd-new').value = '';
+        document.getElementById('adm-pwd-confirm').value = '';
+        if (document.getElementById('adm-pwd-reason')) document.getElementById('adm-pwd-reason').value = '';
+        renderPasswordStatus(email);
+        if (typeof ixToast === 'function') ixToast('Đã ghi đè mật khẩu cho ' + email, 'success');
+      }).catch(function (err) {
+        if (typeof ixToast === 'function') ixToast(err.message || 'Ghi đè thất bại', 'danger');
+      }).then(function () {
+        btn.disabled = false;
+      });
     });
+  }
+
+  function loadCustomerFromApi(email) {
+    var token = adminToken();
+    if (!token || !email) return Promise.resolve(null);
+    return fetch(apiBase() + '/admin/users?email=' + encodeURIComponent(email), {
+      headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
+      cache: 'no-store'
+    }).then(function (res) {
+      if (!res.ok) return null;
+      return res.json();
+    }).then(function (data) {
+      var list = (data && data.customers) || [];
+      return list[0] || null;
+    }).catch(function () { return null; });
   }
 
   function seedCommentsIfNeeded() {
@@ -171,8 +233,8 @@
 
   function initProfileTabs(c) {
     var uid = c.id || ('usr_' + c.email);
-    if (!c.id) {
-      global.IfluxCustomersStore.updateCustomer(c.email, { id: uid });
+    if (!c.id && global.IfluxCustomersStore) {
+      IfluxCustomersStore.updateCustomer(c.email, { id: uid });
       c.id = uid;
     }
 
@@ -202,28 +264,34 @@
     var crumb = document.getElementById('adm-user-crumb-email');
     if (crumb) crumb.textContent = email || 'Không tìm thấy';
 
-    if (!email || !global.IfluxCustomersStore) {
+    if (!email) {
       showMissing();
       return;
     }
 
-    customer = IfluxCustomersStore.getCustomerByEmail(email);
-    if (!customer) {
-      showMissing();
-      return;
+    function showCustomer(c) {
+      customer = c;
+      if (!customer) {
+        showMissing();
+        return;
+      }
+      if (global.IfluxCustomersStore) IfluxCustomersStore.upsertCustomer(customer);
+      var miss = document.getElementById('adm-user-missing');
+      var profile = document.getElementById('adm-user-profile');
+      if (miss) miss.hidden = true;
+      if (profile) profile.hidden = false;
+      renderSidebar(customer);
+      renderAccountTab(customer);
+      renderPasswordStatus(customer.email);
+      bindPasswordOverride(customer.email);
+      seedCommentsIfNeeded();
+      initProfileTabs(customer);
     }
 
-    var miss = document.getElementById('adm-user-missing');
-    var profile = document.getElementById('adm-user-profile');
-    if (miss) miss.hidden = true;
-    if (profile) profile.hidden = false;
-
-    renderSidebar(customer);
-    renderAccountTab(customer);
-    renderPasswordStatus(customer.email);
-    bindPasswordOverride(customer.email);
-    seedCommentsIfNeeded();
-    initProfileTabs(customer);
+    var local = global.IfluxCustomersStore ? IfluxCustomersStore.getCustomerByEmail(email) : null;
+    loadCustomerFromApi(email).then(function (apiCust) {
+      showCustomer(apiCust || local);
+    });
   }
 
   global.UsersDetail = { init: init, getCustomer: function () { return customer; } };

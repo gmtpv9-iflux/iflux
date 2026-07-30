@@ -186,34 +186,57 @@
       return;
     }
 
-    function refresh() {
+    var followingState = false;
+
+    function paint() {
       if (global.IfluxProfileBlockStore && IfluxProfileBlockStore.isBlocked(me.id, profile.id)) {
         btn.disabled = true;
         btn.textContent = 'Đã chặn';
         btn.className = 'ix-btn ix-btn-sm ix-btn-outline';
         return;
       }
-      var following = IfluxProfileFollowStore.isFollowing(me.id, profile.id);
-      btn.textContent = following ? 'Đang theo dõi' : 'Theo dõi';
-      btn.className = 'ix-btn ix-btn-sm ' + (following ? 'ix-btn-outline' : 'ix-btn-primary');
+      btn.textContent = followingState ? 'Đang theo dõi' : 'Theo dõi';
+      btn.className = 'ix-btn ix-btn-sm ' + (followingState ? 'ix-btn-outline' : 'ix-btn-primary');
       btn.disabled = false;
       refreshMessageButton(profile);
+    }
+
+    if (IfluxProfileFollowStore.existAsync) {
+      IfluxProfileFollowStore.existAsync(profile.id).then(function (f) {
+        followingState = !!f;
+        paint();
+      }).catch(function () { paint(); });
+    } else {
+      followingState = !!IfluxProfileFollowStore.isFollowing(me.id, profile.id);
+      paint();
+    }
+
+    if (IfluxProfileFollowStore.countsAsync) {
+      IfluxProfileFollowStore.countsAsync(profile.id).then(function (c) {
+        if (c && c.following != null) setText('[data-bind="following"]', c.following);
+        if (c && c.followers != null) setText('[data-bind="followers"]', c.followers);
+      }).catch(function () { /* ignore */ });
     }
 
     if (!btn.dataset.ifxBound) {
       btn.dataset.ifxBound = '1';
       btn.addEventListener('click', function () {
-        if (IfluxProfileFollowStore.isFollowing(me.id, profile.id)) {
-          IfluxProfileFollowStore.unfollow(me.id, profile.id);
-          if (global.ixToast) ixToast('Đã bỏ theo dõi', 'info');
-        } else {
-          IfluxProfileFollowStore.follow(me.id, profile);
-          if (global.ixToast) ixToast('Đã theo dõi ' + profile.display_name, 'success');
-        }
-        refresh();
+        btn.disabled = true;
+        var op = followingState
+          ? IfluxProfileFollowStore.unfollow(me.id, profile.id)
+          : IfluxProfileFollowStore.follow(me.id, profile);
+        Promise.resolve(op).then(function () {
+          followingState = !followingState;
+          if (global.ixToast) {
+            ixToast(followingState ? ('Đã theo dõi ' + profile.display_name) : 'Đã bỏ theo dõi', followingState ? 'success' : 'info');
+          }
+          paint();
+        }).catch(function (err) {
+          if (global.ixToast) ixToast((err && err.message) || 'Không thể cập nhật theo dõi', 'danger');
+          paint();
+        });
       });
     }
-    refresh();
   }
 
   function bindMessageButton(profile) {
@@ -245,7 +268,13 @@
         if (global.IfluxProfileChatStore) {
           IfluxProfileChatStore.ensureThread(me.id, profile);
         }
-        global.location.href = 'profile.html?tab=messages&with=' + encodeURIComponent(profile.id);
+        var msgPath = '/tin-nhan?with=' + encodeURIComponent(profile.id);
+        /* P6-API-01 — internal nav chỉ Writer.navigate */
+        if (global.IfluxShellUrlWriter && global.IfluxShellUrlWriter.navigate) {
+          global.IfluxShellUrlWriter.navigate(msgPath);
+        } else {
+          global.location.href = msgPath;
+        }
       });
     }
   }
@@ -320,37 +349,14 @@
       if (fieldKey) el.hidden = !settings[fieldKey];
     });
 
-    var showTimeline = !!settings.show_timeline;
-    var showFollowing = !!settings.show_following_list;
-
-    var timelineTab = document.querySelector('[data-ix-profile-tab="tab-timeline"]');
-    var timelinePanel = document.getElementById('tab-timeline');
-    var followingTab = document.querySelector('[data-ix-profile-tab="tab-following"]');
-    var followingPanel = document.getElementById('tab-following');
     var emptyPanel = document.getElementById('ifx-profile-public-empty');
-
-    if (timelineTab) timelineTab.hidden = !showTimeline;
-    if (timelinePanel) timelinePanel.hidden = !showTimeline;
-    if (followingTab) followingTab.hidden = !showFollowing;
-    if (followingPanel) followingPanel.hidden = !showFollowing;
-
     clearTabActive();
-
-    if (showTimeline) {
-      if (timelineTab) timelineTab.classList.add('active');
-      if (timelinePanel) timelinePanel.classList.add('active');
-    } else if (showFollowing) {
-      if (followingTab) followingTab.classList.add('active');
-      if (followingPanel) followingPanel.classList.add('active');
-    }
-
-    var anyTab = showTimeline || showFollowing;
     if (emptyPanel) {
-      emptyPanel.hidden = anyTab;
-      if (!anyTab) emptyPanel.classList.add('active');
+      emptyPanel.hidden = false;
+      emptyPanel.classList.add('active');
     }
 
-    return { settings: settings, showTimeline: showTimeline, showFollowing: showFollowing };
+    return { settings: settings, showTimeline: false, showFollowing: false };
   }
 
   function initPublicView(targetId) {

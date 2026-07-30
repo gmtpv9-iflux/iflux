@@ -1,12 +1,12 @@
 /**
  * WGT-COM-001 — Heatmap cổ phiếu cộng đồng (ESM)
- * Cùng luồng Widget khác: ensureSequence deps → mount producer.
- * Template SoT: TMP-COM-STOCK-HEAT → Implementation community-stock-heat.
+ * Heart = Foundation; Store = Watchlist data — không load watchlist-ui.
  */
 import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
-var V = 'comStockHeat20260722b';
+var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
+var V = 'followFound20260724';
 
 export const meta = {
   id: 'WGT-COM-001',
@@ -21,16 +21,15 @@ export async function mount(el, ctx) {
 
   await loadStyles([
     ASSET + 'community.css',
-    ASSET + 'block-templates.css',
-    ASSET + 'watchlist.css'
+    ASSET + 'block-templates.css'
   ]);
 
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
     { global: 'IfluxCommunityStore', src: ASSET + 'community-store.js' },
-    { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js' },
+    { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=' + V },
+    { global: 'IfluxHeartAction', src: FOUNDATION + 'heart-action.js?v=' + V },
     { global: 'IfluxSquarifiedTreemap', src: ASSET + 'squarified-treemap.js' },
-    { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js' },
     { global: 'IfluxCommunityTrending', src: ASSET + 'community-trending.js?v=' + V }
   ]);
 

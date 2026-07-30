@@ -73,8 +73,8 @@
             slot('row', 'Stock row', 'item.market.stock-row', 'ifx-stock-row'),
             slot('badges-row', 'Badge strip', 'chip.outline', 'ifx-stock-row__badges-row'),
             slot('alert', 'Alert btn', 'button.icon', 'ifx-stock-row__alert'),
-            slot('heart', 'Watch btn', 'button.icon', 'ifx-stock-row__heart')
-          ], layoutProps(), { file: 'watchlist.css', anatomy: 'dòng 1: tên · % · vol\ndòng 2: trạng thái · chuông · tim' }),
+            slot('follow', 'Follow btn', 'button.icon', 'ifx-follow')
+          ], layoutProps(), { file: 'watchlist.css', anatomy: 'dòng 1: tên · % · vol\ndòng 2: trạng thái · chuông · theo dõi' }),
           item('market-metric', 'Index Metric', 'item.market.index-metric', 'ifx-market-header__metric', 'user', 'market-metric', [
             slot('label', 'Label', 'label.caption', 'ifx-market-header__label'),
             slot('value', 'Value', 'financial.price.m', 'ifx-market-header__val')
@@ -157,32 +157,33 @@
       {
         title: 'Community',
         items: [
-          item('com-author', 'Post Author', 'item.community.author', 'ifx-com-post__author', 'user', 'com-author', [
+          item('com-author', 'Post Author', 'item.community.author', 'ifx-com-article__author', 'user', 'com-author', [
             slot('avatar', 'Avatar', 'avatar.sm', 'ifx-com-card__avatar'),
-            slot('name', 'Name', 'text.body', 'ifx-com-post__author-name'),
+            slot('name', 'Name', 'text.body', 'ifx-profile-link'),
             slot('tier', 'Membership', 'financial.tier.premium', 'ix-chip')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-100', '--ifx-font-size-10', 'font-size'),
             sem('color', 'text.muted', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'avatar · name · tier' }),
+          ], { file: 'community.css', anatomy: 'avatar · name · tier (bài chi tiết — không trên feed card)' }),
           item('com-title-row', 'Post Title Row', 'item.community.title-row', 'ifx-com-post__title-row', 'user', 'com-title', [
             slot('time', 'Time', 'label.caption', 'ifx-com-post__time'),
             slot('sep', 'Separator', 'text.muted', 'ifx-com-post__title-sep'),
             slot('title', 'Title', 'text.body', 'ifx-com-post__title-text')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
-            prim('font-size', 'fs-300', '--ifx-font-size-14', 'font-size')
-          ], { file: 'community.css', anatomy: 'time · sep · title' }),
+            prim('font-size', 'feed-card-title', '--ifx-com-feed-card-title-size', 'font-size'),
+            prim('line-clamp', 'feed-card-title-lines', '--ifx-com-feed-card-title-lines', 'line-clamp')
+          ], { file: 'community.css', anatomy: 'time · sep · title (clamp 3 · 15px)' }),
           item('com-stats', 'Engagement Stats', 'item.community.stats', 'ifx-com-post__stats', 'user', 'com-stats', [
             slot('likes', 'Likes', 'text.muted', 'span'),
             slot('comments', 'Comments', 'text.muted', 'span'),
-            slot('views', 'Views', 'text.muted', 'span')
+            slot('shares', 'Shares', 'text.muted', 'span')
           ], [
             prim('gap', 'space-14', '--ifx-item-gap', 'spacing'),
-            prim('font-size', 'fs-100', '--ifx-font-size-10', 'font-size'),
+            prim('font-size', 'feed-card-stats', '--ifx-com-feed-card-stats-size', 'font-size'),
             sem('color', 'text.muted', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'likes · comments · views' }),
+          ], { file: 'community.css', anatomy: 'likes · comments · shares (12px)' }),
           item('com-story-rank', 'Story Rank Row', 'item.community.story-rank', 'ifx-com-story-rank', 'user', 'story-rank', [
             slot('rank', 'Rank #', 'badge.info', 'ifx-com-story-rank__num'),
             slot('title', 'Story title', 'text.body', 'ifx-com-story-rank__title'),
@@ -299,7 +300,7 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('color-bull', 'market.price.up', '--ifx-item-bull'),
             sem('color-bear', 'market.price.down', '--ifx-item-bear')
-          ], { file: 'insight-share.css', anatomy: 'icon · label · chip' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'icon · label · chip' }),
           item('insight-confidence', 'Confidence Meter', 'item.insight.confidence', 'ifx-item-confidence', 'user', 'confidence', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('value', 'Score', 'text.body', 'strong'),
@@ -307,31 +308,31 @@
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('fill', 'action.primary', '--ifx-item-progress')
-          ], { file: 'insight-share.css', anatomy: 'label · value\n└── bar' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'label · value\n└── bar' }),
           item('insight-scenario', 'Scenario Tag', 'item.insight.scenario', 'ifx-item-scenario', 'user', 'scenario', [
             slot('chip', 'Scenario', 'chip.outline', 'ix-chip'),
             slot('desc', 'Description', 'text.muted', 'span')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing')
-          ], { file: 'insight-share.css', anatomy: 'chip · desc' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'chip · desc' }),
           item('insight-risk', 'Risk Level', 'item.insight.risk', 'ifx-item-risk', 'user', 'risk', [
             slot('label', 'Risk label', 'text.body', 'span'),
             slot('level', 'Level chip', 'badge.warning', 'ix-badge')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('color', 'status.warning', '--ifx-item-color')
-          ], { file: 'insight-share.css', anatomy: 'label · level' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'label · level' }),
           item('insight-framework', 'Analysis Framework', 'item.insight.framework', 'ifx-item-framework', 'user', 'framework', [
             slot('icon', 'Icon', 'icon.chart', 'ti-chart-dots'),
             slot('name', 'Framework', 'text.body', 'span')
-          ], layoutProps(), { file: 'insight-share.css', anatomy: 'icon · name' }),
+          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'icon · name' }),
           item('insight-ref-price', 'Reference Level', 'item.insight.ref-price', 'ifx-item-ref-price', 'user', 'ref-price', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('value', 'Level', 'financial.price.m', 'ifx-typo-price-m')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
             sem('color', 'text.secondary', '--ifx-item-color')
-          ], { file: 'insight-share.css', anatomy: 'label\n└── value' })
+          ], { file: 'foundation/share-action.css', anatomy: 'label\n└── value' })
         ]
       },
       {
@@ -344,26 +345,26 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-300', '--ifx-font-size-14', 'font-size'),
             sem('color', 'text.secondary', '--ifx-item-color')
-          ], { file: 'insight-share.css', anatomy: 'icon · text', note: 'Slot trong ifx-insight-card (share modal) · Product rename insight widget: TBD · ≠ Dashboard WGT-*' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'icon · text', note: 'Slot trong ifx-insight-card (share modal) · Product rename insight widget: TBD · ≠ Dashboard WGT-*' }),
           item('ai-score', 'AI Score', 'item.ai.score', 'ifx-item-ai-score', 'user', 'ai-score', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('score', 'Score', 'text.body', 'strong'),
             slot('badge', 'Grade', 'badge.info', 'ix-badge')
-          ], layoutProps(), { file: 'insight-share.css', anatomy: 'label · score · badge' }),
+          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'label · score · badge' }),
           item('ai-confidence', 'AI Confidence', 'item.ai.confidence', 'ifx-item-ai-confidence', 'user', 'ai-confidence', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('pct', 'Percent', 'financial.percent.up', 'span')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
             sem('color', 'action.primary', '--ifx-item-color')
-          ], { file: 'insight-share.css', anatomy: 'label · pct' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'label · pct' }),
           item('ai-reason', 'AI Reason', 'item.ai.reason', 'ifx-item-ai-reason', 'user', 'ai-reason', [
             slot('bullet', 'Bullet', 'dot.status', 'span'),
             slot('text', 'Reason', 'text.muted', 'span')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-200', '--ifx-font-size-12', 'font-size')
-          ], { file: 'insight-share.css', anatomy: 'bullet · text' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'bullet · text' }),
           item('ai-warning', 'AI Warning', 'item.ai.warning', 'ifx-item-ai-warning', 'user', 'ai-warning', [
             slot('icon', 'Warning', 'icon.alert', 'ti-alert-circle'),
             slot('message', 'Message', 'text.body', 'span')
@@ -371,11 +372,11 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('background', 'status.warning.soft', '--ifx-item-bg'),
             sem('color', 'status.warning', '--ifx-item-color')
-          ], { file: 'insight-share.css', anatomy: 'icon · message' }),
+          ], { file: 'foundation/share-action.css', anatomy: 'icon · message' }),
           item('ai-highlight', 'AI Highlight', 'item.ai.highlight', 'ifx-item-ai-highlight', 'user', 'ai-highlight', [
             slot('marker', 'Marker', 'badge.info', 'ix-badge'),
             slot('text', 'Highlight', 'text.body', 'span')
-          ], layoutProps(), { file: 'insight-share.css', anatomy: 'marker · text' })
+          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'marker · text' })
         ]
       },
       {

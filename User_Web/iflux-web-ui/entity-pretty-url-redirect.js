@@ -3,7 +3,16 @@
   'use strict';
 
   function redirectTo(path) {
-    global.location.replace(path);
+    if (global.IfluxHref && global.IfluxHref.navigate) {
+      global.IfluxHref.navigate(path, { replace: true });
+      return;
+    }
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(path, { replace: true });
+      return;
+    }
+    global.location.replace(global.IfluxHref ? global.IfluxHref.forCanonical(path) : path);
   }
 
   function parseEntity() {

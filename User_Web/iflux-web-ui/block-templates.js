@@ -1021,29 +1021,36 @@
   }
 
   /**
-   * TPL-FEED-CARD body — opts: { href, thumbHtml, title, time, excerpt, tagsHtml, authorHtml, statsHtml, showExcerpt }
+   * TPL-FEED-CARD body — opts: { href, thumbHtml, title, time, excerpt, tagsHtml, statsHtml, showExcerpt }
+   * Không render avatar/tác giả/nguồn trên card tin (chỉ trên bài chi tiết).
    */
   function renderFeedPostBody(opts) {
     opts = opts || {};
     var href = opts.href || '#';
     var thumbCls = opts.thumbClass ? ' ' + opts.thumbClass : '';
+    var footerHtml = '';
+    if (opts.time || opts.statsHtml) {
+      footerHtml =
+        '<div class="ifx-com-post__footer">' +
+          (opts.time
+            ? '<span class="ifx-com-post__time">' + esc(opts.time) + '</span>'
+            : '<span class="ifx-com-post__time" aria-hidden="true"></span>') +
+          (opts.statsHtml
+            ? '<div class="ifx-com-post__stats">' + opts.statsHtml + '</div>'
+            : '') +
+        '</div>';
+    }
     return (
       '<a class="ifx-com-post__thumb' + thumbCls + '" href="' + esc(href) + '">' + (opts.thumbHtml || '') + '</a>' +
       '<div class="ifx-com-post__body">' +
         '<div class="ifx-com-post__title-row">' +
           '<a class="ifx-com-post__title-text" href="' + esc(href) + '">' + esc(opts.title || 'Bài viết') + '</a>' +
-          (opts.time
-            ? '<span class="ifx-com-post__title-sep"> · </span><span class="ifx-com-post__time">' + esc(opts.time) + '</span>'
-            : '') +
         '</div>' +
         (opts.showExcerpt && opts.excerpt
           ? '<p class="ifx-com-post__excerpt">' + esc(opts.excerpt) + '</p>'
           : '') +
         (opts.tagsHtml ? '<div class="ifx-com-post__tags">' + opts.tagsHtml + '</div>' : '') +
-        '<div class="ifx-com-post__footer">' +
-          '<div class="ifx-com-post__author">' + (opts.authorHtml || '') + '</div>' +
-          (opts.statsHtml ? '<div class="ifx-com-post__stats">' + opts.statsHtml + '</div>' : '') +
-        '</div>' +
+        footerHtml +
       '</div>'
     );
   }

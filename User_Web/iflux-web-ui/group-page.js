@@ -5,10 +5,11 @@
   var currentSource = '';
   var currentId = '';
   var currentDetail = null;
-  var MOBILE_SHELL_MAX = 1023.98;
 
   function isMobileShell() {
-    return global.innerWidth <= MOBILE_SHELL_MAX;
+    return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
+      ? global.IfluxBreakpoint.isMobileShell()
+      : false;
   }
 
   function removeLeftColumn(root) {
@@ -35,7 +36,7 @@
   function mk() { return global.IfluxMockMarket; }
   function comStore() { return global.IfluxCommunityStore; }
   function comUi() { return global.IfluxCommunityUI; }
-  function chatUi() { return global.IfluxStockCommentsUI; }
+  function cta() { return global.IfluxCommentsCta; }
   function stockSt() { return global.IfluxStockStore; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
@@ -155,6 +156,17 @@
     return detail.kind + ':' + detail.id;
   }
 
+  function interactionTarget(detail) {
+    if (!detail) return null;
+    var kind = String(detail.kind || '').toLowerCase();
+    if (kind === 'cau-chuyen' || kind === 'chu-de' || kind === 'chu_de' || kind === 'story') {
+      return { type: 'story', id: String(detail.id || detail.slug || '') };
+    }
+    if (kind === 'sector') return { type: 'sector', id: String(detail.id || '') };
+    if (kind === 'family' || kind === 'ecosystem') return { type: 'family', id: String(detail.id || '') };
+    return { type: kind, id: String(detail.id || '') };
+  }
+
   function buildFeedSections(detail, newsState) {
     var tf = timelineFeed();
     var name = esc(detail.name);
@@ -197,16 +209,16 @@
     return { articlesSectionHtml: articlesSectionHtml, newsSectionHtml: newsSectionHtml };
   }
 
-  function commentCount(feedKey) {
-    return stockSt() ? stockSt().countActivity(feedKey) : 0;
+  function commentCount() {
+    return 0;
   }
 
   function renderCenter(detail, newsState) {
     newsState = newsState || {};
-    var feedKey = feedKeyForDetail(detail);
-    var commentsSectionHtml = chatUi()
-      ? chatUi().panelHtml(feedKey)
-      : '<div class="ifx-stock-empty">Bình luận</div>';
+    var target = interactionTarget(detail);
+    var commentsSectionHtml = cta() && target
+      ? cta().html({ target: target, count: null })
+      : '<div class="ifx-com-empty">Bình luận</div>';
 
     if (global.IfluxEntityDetailCenter) {
       return IfluxEntityDetailCenter.render({
@@ -215,7 +227,7 @@
         feedFilter: newsState.postsFilter || postsFilter(detail),
         storyBase: newsState.storyBase,
         commentsSectionHtml: commentsSectionHtml,
-        commentCount: commentCount(feedKey)
+        commentCount: commentCount()
       });
     }
 
@@ -242,10 +254,10 @@
   }
 
   function bindEvents(root, detail, newsState) {
-    if (chatUi()) chatUi().bind(root, feedKeyForDetail(detail));
+    var target = interactionTarget(detail);
+    if (cta() && target) cta().mount(root, target);
     if (timelineFeed() && newsState) timelineFeed().bind(root, newsState);
     if (global.IfluxEntityDetailCenter) {
-      var feedKey = feedKeyForDetail(detail);
       IfluxEntityDetailCenter.mount(root, {
         kind: detail.kind,
         detail: detail,
@@ -253,7 +265,7 @@
         storyBase: newsState && newsState.storyBase,
         onTab: function (key) {
           syncMobileLeftColumn(root, key, detail);
-          if (key === 'comments' && chatUi()) chatUi().refreshFeed(root, feedKey);
+          if (key === 'comments' && cta() && target) cta().mount(root, target);
         }
       });
     }
@@ -325,11 +337,11 @@
     if (source === 'story' || source === 'chu_de' || source === 'cau-chuyen') source = 'chu-de';
     var root = document.querySelector('[data-ifx-group-page]');
     if (!root) return;
+    if (global.IfluxStockStore && IfluxStockStore.purgeLocalComments) {
+      try { IfluxStockStore.purgeLocalComments(); } catch (e) { /* ignore */ }
+    }
     function boot() {
       render(root, source);
-      document.addEventListener('iflux-stock-comments-change', function () {
-        if (currentDetail && chatUi()) chatUi().refreshFeed(root, feedKeyForDetail(currentDetail));
-      });
     }
     var tax = global.IfluxWatchlistTaxonomy;
     if ((source === 'story' || source === 'chu-de' || source === 'chu_de' || source === 'cau-chuyen') && tax && tax.hydrateChuDeFromApi) {

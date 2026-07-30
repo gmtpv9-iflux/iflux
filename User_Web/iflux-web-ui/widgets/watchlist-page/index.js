@@ -13,13 +13,14 @@ var CORE_TIERS = [
   [ADMIN + 'iflux-admin-ui.js'],
   [ASSET + 'stock-mentions.js'],
   [
-    ASSET + 'watchlist-store.js?v=phaseBExit20260721b',
+    ASSET + 'watchlist-store.js?v=followFound20260724',
     ASSET + 'alert-store.js',
     ASSET + 'alert-ui.js',
-    ASSET + 'watchlist-ui.js?v=phaseBExit20260721b',
-    ASSET + 'watchlist-block.js?v=phaseBExit20260721b'
+    ADMIN + 'foundation/heart-action.js?v=followFound20260724',
+    ASSET + 'watchlist-ui.js?v=followFound20260724',
+    ASSET + 'watchlist-block.js?v=followFound20260724'
   ],
-  [ASSET + 'alert-page.js?v=phaseBExit20260721b', ASSET + 'watchlist-page.js?v=phaseBExit20260721b']
+  [ASSET + 'alert-page.js?v=followFound20260724', ASSET + 'watchlist-page.js?v=followFound20260724']
 ];
 
 function renderLayout(manifest) {

@@ -1,3 +1,16 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-004
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Runtime — Widget Loader (ESM)
  * Nạp widget theo Lazy Page Runtime SoT:
@@ -10,7 +23,7 @@
  *   export const meta = { id, title }     // tuỳ chọn
  */
 
-import { loadStyles } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadStyles } from './legacy-bridge.js?v=entStrip20260724';
 
 function esc(s) {
   return String(s == null ? '' : s)

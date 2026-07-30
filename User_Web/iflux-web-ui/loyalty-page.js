@@ -2,7 +2,14 @@
 (function (global) {
   'use strict';
 
-  var AFFILIATE_PROFILE = '/account/affiliate';
+  function consumerNavigate(canonical) {
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.navigate) {
+      W.navigate(canonical);
+      return;
+    }
+    global.location.href = canonical;
+  }
 
   function switchTab(tabId) {
     document.querySelectorAll('.ifx-loyalty-tab[data-ifx-loyalty-tab]').forEach(function (btn) {
@@ -17,7 +24,7 @@
     try {
       var tab = new URLSearchParams(location.search).get('tab');
       if (tab === 'affiliate') {
-        global.location.href = AFFILIATE_PROFILE;
+        consumerNavigate('/nha-cua-toi?tab=affiliate');
         return;
       }
     } catch (e) { /* ignore */ }
@@ -28,7 +35,7 @@
     document.querySelectorAll('[data-ifx-loyalty-goto]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var href = btn.getAttribute('data-ifx-loyalty-goto');
-        if (href) global.location.href = href;
+        if (href) consumerNavigate(href);
       });
     });
     document.querySelectorAll('[data-ifx-loyalty-tab]').forEach(function (btn) {

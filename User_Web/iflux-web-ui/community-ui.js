@@ -8,6 +8,10 @@
   function mk() { return global.IfluxMockMarket; }
   function seo() { return global.IfluxSeoUrl; }
 
+  function idHref(canonical) {
+    return global.IfluxHref ? IfluxHref.forCanonical(canonical) : canonical;
+  }
+
   function escHtml(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -102,8 +106,10 @@
   }
 
   function tickerArchiveUrl(ticker) {
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(ticker);
-    return '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
+    var c = global.IfluxSeoUrl
+      ? IfluxSeoUrl.stockHref(ticker)
+      : '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
+    return idHref(c);
   }
 
   function trendStatHtml(chg) {
@@ -138,10 +144,69 @@
     return html;
   }
 
-  function thumbHtml(post) {
+  /**
+   * Entity gắn bài — cùng SoT dữ liệu với sidebar (story_tags / tickers / aggregateMemberships).
+   * Atom UI: ix-chip* (Admin DS components.css) · biến thể loại khớp header-search entity chips.
+   */
+  function entityChipLinkHtml(href, chipClass, icon, label) {
+    return (
+      '<a class="ix-chip ix-chip-sm ' + chipClass + '" href="' + href + '">' +
+        '<i class="ti ' + icon + '" aria-hidden="true"></i> ' +
+        escHtml(label) +
+      '</a>'
+    );
+  }
+
+  function postEntityChipsHtml(post) {
+    var parts = [];
+    (post.story_tags || []).filter(function (t) {
+      return t.source === 'chu-de' || t.source === 'story' || !t.source;
+    }).forEach(function (story) {
+      parts.push(entityChipLinkHtml(
+        storyEntityLink(story.sourceId),
+        'ix-chip-warning',
+        'ti-book-2',
+        story.name
+      ));
+    });
+    aggregateMemberships(post, 'sector').forEach(function (g) {
+      var href = idHref(seo() ? seo().sectorHref(g.id) : '/nganh/' + encodeURIComponent(g.id));
+      parts.push(entityChipLinkHtml(href, 'ix-chip-info', 'ti-category', g.name));
+    });
+    (post.tickers || []).forEach(function (tk) {
+      parts.push(tickerTagHtml(tk));
+    });
+    aggregateMemberships(post, 'family').forEach(function (g) {
+      var href = idHref(seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id));
+      parts.push(entityChipLinkHtml(href, 'ix-chip-success', 'ti-users-group', g.name));
+    });
+    return parts.join('');
+  }
+
+  /** Ảnh hiển thị card/feed — từ cover/image_url (Feed DTO) hoặc seo.og_image (detail). Không ghi vào metadata. */
+  function resolvePostDisplayImage(post) {
+    post = post || {};
     var seo = post.seo || {};
-    if (seo.og_image) {
-      return '<img class="ifx-com-post__thumb-img" src="' + seo.og_image + '" alt="' + (seo.og_image_alt || post.title) + '" loading="lazy" onerror="this.remove()" />';
+    var cover = post.cover || {};
+    var meta = post.metadata || {};
+    var src =
+      (seo.og_image && String(seo.og_image).trim()) ||
+      (cover.url && String(cover.url).trim()) ||
+      (post.image_url && String(post.image_url).trim()) ||
+      (meta.image && String(meta.image).trim()) ||
+      '';
+    var alt =
+      (seo.og_image_alt && String(seo.og_image_alt).trim()) ||
+      (cover.alt && String(cover.alt).trim()) ||
+      (post.title && String(post.title).trim()) ||
+      '';
+    return { src: src, alt: alt };
+  }
+
+  function thumbHtml(post) {
+    var img = resolvePostDisplayImage(post);
+    if (img.src) {
+      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" loading="lazy" onerror="this.remove()" />';
     }
     var story = (post.story_tags && post.story_tags[0]) ? post.story_tags[0].name : '';
     var icon = 'ti-article';
@@ -154,10 +219,10 @@
   }
 
   function postStoryHref(post, opts) {
-    if (global.IfluxSeoUrl) {
-      return IfluxSeoUrl.postHref(post);
-    }
-    return '/cong-dong/bai-viet/' + encodeURIComponent(post.slug || post.id);
+    var c = global.IfluxSeoUrl
+      ? IfluxSeoUrl.postHref(post)
+      : '/cong-dong/bai-viet/' + encodeURIComponent(post.slug || post.id);
+    return idHref(c);
   }
 
   function postStats(post) {
@@ -171,14 +236,7 @@
     var thumbCls = opts.thumbClass || '';
     var timeStr = fmtPostCardTime(post.published_at || post.created_at);
     var stats = postStats(post);
-    var authorHtml =
-      (global.IfluxProfileLinks && post.author && post.author.id
-        ? IfluxProfileLinks.avatarLink(post.author.id, (post.author.display_name || 'M').charAt(0), 'ifx-com-card__avatar ifx-profile-link-avatar', { base: '../account/' })
-        : '<span class="ifx-com-card__avatar">' + ((post.author && post.author.display_name) || 'M').charAt(0) + '</span>') +
-      (global.IfluxProfileLinks && post.author && post.author.id
-        ? IfluxProfileLinks.nameLink(post.author.id, post.author.display_name || 'Thành viên', 'ifx-com-post__author-name', { base: '../account/' })
-        : '<span class="ifx-com-post__author-name">' + ((post.author && post.author.display_name) || 'Thành viên') + '</span>') +
-      tierBadge(post.author);
+    /* Avatar / tên / nguồn RSS không render trên card tin — chỉ trên bài chi tiết */
     var statsHtml =
       '<span><i class="ti ti-heart"></i> ' + (stats.likes || 0) + '</span>' +
       '<span><i class="ti ti-message"></i> ' + (stats.comments || 0) + '</span>' +
@@ -194,7 +252,6 @@
         excerpt: post.excerpt || '',
         showExcerpt: showExcerpt,
         tagsHtml: postTagsHtml(post),
-        authorHtml: authorHtml,
         statsHtml: statsHtml
       });
     }
@@ -204,15 +261,13 @@
       '<div class="ifx-com-post__body">' +
         '<div class="ifx-com-post__title-row">' +
           '<a class="ifx-com-post__title-text" href="' + href + '">' + (post.title || 'Bài viết') + '</a>' +
-          '<span class="ifx-com-post__title-sep"> · </span>' +
-          '<span class="ifx-com-post__time">' + timeStr + '</span>' +
         '</div>' +
         (showExcerpt
           ? '<p class="ifx-com-post__excerpt">' + (post.excerpt || '') + '</p>'
           : '') +
         '<div class="ifx-com-post__tags">' + postTagsHtml(post) + '</div>' +
         '<div class="ifx-com-post__footer">' +
-          '<div class="ifx-com-post__author">' + authorHtml + '</div>' +
+          '<span class="ifx-com-post__time">' + timeStr + '</span>' +
           '<div class="ifx-com-post__stats">' + statsHtml + '</div>' +
         '</div>' +
       '</div>'
@@ -281,32 +336,42 @@
     basePath = basePath || '../community/';
     var seo = post.seo || {};
     var geo = post.geo || {};
-    var pageUrl = location.href.split('#')[0];
-    var canonical = seo.canonical_url ||
-      (global.IfluxSeoUrl ? IfluxSeoUrl.postCanonical(post) : pageUrl);
+    /* Pipeline B: chỉ consume article.metadata — không derive / không defensive default. */
+    var meta = global.IfluxSeoUrl && IfluxSeoUrl.resolvePostShareMeta
+      ? IfluxSeoUrl.resolvePostShareMeta(post)
+      : (post.metadata || {});
+    if (!meta || !Object.keys(meta).length) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('[iFlux] article.metadata thiếu — bỏ qua applySeoToDocument');
+      }
+      return;
+    }
+    var canonical = meta.canonical || meta.url || null;
+    var ogUrl = meta.url || meta.canonical || null;
     if (global.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
       IfluxPageDefinition.applyPatch({
-        title: post.title,
-        intro: post.excerpt || '',
-        documentTitle: seo.meta_title || post.title,
+        title: meta.title,
+        intro: meta.description,
+        documentTitle: meta.documentTitle || meta.title,
         seo: {
-          description: seo.meta_description || post.excerpt,
+          description: meta.description,
           robots: seo.robots || 'index,follow',
           keywords: [seo.focus_keyword].concat(seo.secondary_keywords || []).concat(geo.geo_keywords || []).filter(Boolean).join(', '),
           canonical: canonical,
           'geo.region': geo.country === 'VN' ? 'VN' : geo.country,
           'geo.placename': geo.region || 'Việt Nam',
           language: geo.language || 'vi-VN',
-          'og:title': seo.og_title || post.title,
-          'og:description': seo.og_description || post.excerpt,
+          'og:site_name': meta.site_name || null,
+          'og:title': meta.title,
+          'og:description': meta.description,
           'og:type': 'article',
           'og:locale': geo.target_locale || 'vi_VN',
-          'og:image': seo.og_image || null,
-          'og:url': canonical,
-          'twitter:card': 'summary_large_image',
-          'twitter:title': seo.og_title || post.title,
-          'twitter:description': seo.og_description || post.excerpt,
-          'twitter:image': seo.og_image || null,
+          'og:image': meta.image || null,
+          'og:url': ogUrl,
+          'twitter:card': meta.twitter_card || null,
+          'twitter:title': meta.title,
+          'twitter:description': meta.description,
+          'twitter:image': meta.image || null,
           jsonLd: [{ id: 'ifx-com-jsonld', data: store().buildJsonLd(post, canonical) }]
         }
       });
@@ -336,15 +401,6 @@
     return u && u.id ? u.id : 'usr_local';
   }
 
-  function shareUrl(slug) {
-    var post = store().getPostBySlug(slug);
-    if (global.IfluxSeoUrl) {
-      if (post) return (location.origin || IfluxSeoUrl.PROD_ORIGIN) + IfluxSeoUrl.postSlugPath(post);
-      return (location.origin || IfluxSeoUrl.PROD_ORIGIN) + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
-    }
-    return (location.origin || '') + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
-  }
-
   function getPostStories(post) {
     var story = getPrimaryStory(post);
     return story ? [story] : [];
@@ -353,9 +409,12 @@
   /* Link chủ đề: market story → /chu-de/:slug; nếu là chủ đề cộng đồng → trang topic */
   function storyEntityLink(sourceId) {
     var s = seo();
-    if (s && s.chuDeHref) return s.chuDeHref(sourceId);
-    if (s && s.storyHref) return s.storyHref(sourceId);
-    return '/chu-de/' + encodeURIComponent(String(sourceId || ''));
+    var c = (s && s.chuDeHref)
+      ? s.chuDeHref(sourceId)
+      : ((s && s.storyHref)
+        ? s.storyHref(sourceId)
+        : '/chu-de/' + encodeURIComponent(String(sourceId || '')));
+    return idHref(c);
   }
 
   /* Gom ngành / hệ sinh thái duy nhất mà các mã CP trong bài thuộc về */
@@ -407,7 +466,7 @@
     }
     return groups.map(function (g) {
       var perf = getGroupPerformance('sector', g.id);
-      var href = seo() ? seo().sectorHref(g.id) : '/nganh/' + encodeURIComponent(g.id);
+      var href = idHref(seo() ? seo().sectorHref(g.id) : '/nganh/' + encodeURIComponent(g.id));
       return sideLinkRowHtml(href, 'ti-chart-dots-3', g.name, perf);
     }).join('');
   }
@@ -420,7 +479,7 @@
     }
     return groups.map(function (g) {
       var perf = getGroupPerformance('family', g.id);
-      var href = seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id);
+      var href = idHref(seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id));
       return sideLinkRowHtml(href, 'ti-hierarchy-2', g.name, perf);
     }).join('');
   }
@@ -483,7 +542,10 @@
           nameHtml +
           '<span>' + fmtRelative(c.created_at) + '</span>' +
         '</div>' +
-        '<p>' + String(c.body).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' +
+        '<p>' + String(c.body || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' +
+        (c.image && global.IfluxCommentComposer ? IfluxCommentComposer.imageHtml(c.image) : (c.image
+          ? '<div class="ifx-cmt-image"><img src="' + String(c.image).replace(/"/g, '&quot;') + '" alt="Ảnh bình luận" loading="lazy" /></div>'
+          : '')) +
         '<div class="ifx-com-comment__stats">' +
           '<span><i class="ti ti-heart"></i> ' + (c.likes || 0) + '</span>' +
           '<span><i class="ti ti-message"></i> ' + (c.replies || 0) + '</span>' +
@@ -495,8 +557,9 @@
 
   function applyStorySeoExtras(post) {
     applySeoToDocument(post);
-    var canonical = (post.seo && post.seo.canonical_url) ||
-      (global.IfluxSeoUrl ? IfluxSeoUrl.storyCanonical(post) : location.href.split('#')[0]);
+    var meta = post.metadata || {};
+    var canonical = meta.canonical || meta.url ||
+      (global.IfluxSeoUrl ? IfluxSeoUrl.postCanonical(post) : '');
     var communityUrl = global.IfluxSeoUrl
       ? IfluxSeoUrl.PROD_ORIGIN + '/cong-dong'
       : location.href.split('#')[0].replace(/story\.html.*/, 'index.html');
@@ -538,12 +601,12 @@
   }
 
   function articleHeroImageHtml(post) {
-    var seo = post.seo || {};
-    if (!seo.og_image) return '';
+    var img = resolvePostDisplayImage(post);
+    if (!img.src) return '';
     return (
       '<figure class="ifx-com-article__figure" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">' +
-        '<img src="' + seo.og_image + '" alt="' + (seo.og_image_alt || post.title) + '" itemprop="url" loading="eager" />' +
-        (seo.og_image_alt ? '<figcaption itemprop="caption">' + seo.og_image_alt + '</figcaption>' : '') +
+        '<img src="' + img.src + '" alt="' + (img.alt || '') + '" itemprop="url" loading="eager" />' +
+        (img.alt ? '<figcaption itemprop="caption">' + img.alt + '</figcaption>' : '') +
       '</figure>'
     );
   }
@@ -572,6 +635,7 @@
     featuredPostHtml: featuredPostHtml,
     compactPostHtml: compactPostHtml,
     postTagsHtml: postTagsHtml,
+    postEntityChipsHtml: postEntityChipsHtml,
     getPrimaryStory: getPrimaryStory,
     tickerArchiveUrl: tickerArchiveUrl,
     getGroupPerformance: getGroupPerformance,
@@ -589,7 +653,6 @@
     storyOptionsHtml: storyOptionsHtml,
     seoHint: seoHint,
     currentUserId: currentUserId,
-    shareUrl: shareUrl,
     tierBadge: tierBadge
   };
 })(window);

@@ -1,3 +1,19 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-001
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Watchlist
+Owner đích (map): Watchlist (heart helpers → shared/community nếu cần)
+Usage audit: ✓ (symbol scan)
+Dep động: Có thể
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: community.manifest css[] load nhầm Owner
+===== IFX-AUDIT-END ===== */
+
+/* IFX-AUDIT NOTE: Dual-copy heart → community.css (T5A-P2-DUAL-COPY-001); gốc giữ; Community vẫn load file này cho đến B6 */
 /* Watchlist — block Dashboard + trang đầy đủ */
 
 .ifx-wl-block { display: flex;
@@ -145,32 +161,23 @@
 .ifx-stock-row__actions { display: flex;
  align-items: stretch;
  flex-shrink: 0; }
-.ifx-stock-row__alert,
-.ifx-stock-row__heart { flex-shrink: 0;
- width: 40px;
- display: flex;
- align-items: center;
- justify-content: center;
- border: none;
- background: transparent;
- color: var(--ifx-color-violet-400);
- cursor: pointer;
- transition: color 0.12s, background 0.12s, transform 0.1s;
- border-radius: var(--ix-radius); }
+/* Heart UI → Admin Foundation heart-action.css (.ifx-heart) */
+.ifx-stock-row__alert {
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--ifx-color-violet-400);
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, transform 0.1s;
+  border-radius: var(--ix-radius);
+}
 .ifx-stock-row__alert:hover { color: var(--ifx-color-violet-400); transform: scale(1.06); }
 .ifx-stock-row__alert.is-active { color: var(--ifx-color-violet-400); }
-.ifx-stock-row__heart:hover:not(.is-readonly):not(.is-active) { color: var(--ifx-color-violet-400);
- transform: scale(1.08); }
-.ifx-stock-row__heart.is-active { color: var(--ifx-color-violet-400);
- background: transparent; }
-.ifx-stock-row-wrap:hover .ifx-stock-row__heart.is-active { color: var(--ifx-color-violet-400);
- background: transparent; }
-.ifx-stock-row__heart.is-readonly { cursor: default; }
-.ifx-stock-row__heart.is-readonly.is-active { color: var(--ifx-color-violet-400);
- background: transparent; }
-.ifx-stock-row__heart.is-readonly:hover { transform: none; }
 
-.ifx-heart-icon,
 .ifx-alert-icon {
   display: block;
   width: 18px;
@@ -178,10 +185,12 @@
   flex-shrink: 0;
   pointer-events: none;
 }
-.ifx-widget__body .ifx-heart-icon,
 .ifx-widget__body .ifx-alert-icon {
   width: 16px;
   height: 16px;
+}
+.ifx-stock-row__actions .ifx-heart {
+  width: 40px;
 }/* Modal chọn thư mục */
 .ix-modal-overlay[data-ifx-watchlist-modal],
 #ifxWatchlistModal { display: none; }
@@ -289,7 +298,7 @@
  cursor: not-allowed;
  pointer-events: none; }
 /* WatchlistRow compact dưới bp-md (768) của Breakpoint SoT. */
-@media (max-width: 767.98px) { .ifx-stock-row-wrap .ifx-stock-row {
+@media (max-width: 768px) { .ifx-stock-row-wrap .ifx-stock-row {
  grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
  gap: var(--ifx-space-4) 6px;
  padding: var(--ifx-space-8) 10px; }

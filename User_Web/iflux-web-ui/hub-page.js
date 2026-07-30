@@ -181,7 +181,11 @@
       }
     } catch (e) { /* ignore */ }
     try {
-      if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(document);
+      if (global.IfluxWatchlistUI && IfluxWatchlistUI.bindRowActions) {
+        IfluxWatchlistUI.bindRowActions(document);
+      } else if (global.IfluxHeartAction) {
+        IfluxHeartAction.bind(document);
+      }
     } catch (e) { /* ignore */ }
     try {
       if (global.IfluxDashboardEngine) IfluxDashboardEngine.init();

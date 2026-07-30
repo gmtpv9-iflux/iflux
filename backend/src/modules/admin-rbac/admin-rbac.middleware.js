@@ -18,16 +18,22 @@ function createRbacContext(config) {
       const email = req.admin && req.admin.email ? String(req.admin.email).toLowerCase() : '';
       let ctx = email ? await rbac.getContextCached(email) : null;
 
+      const isOwnerAllow = !!email && allow.includes(email);
+
       if (ctx) {
         if (ctx.status === 'locked') {
           return res.status(403).json({ error: { code: 'ACCOUNT_LOCKED', message: 'Tài khoản quản trị đã bị khóa.' } });
         }
         req.admin.id = ctx.id;
         req.admin.name = ctx.name;
-        req.admin.isSuper = ctx.isSuper;
+        /* Owner allowlist luôn Admin toàn quyền — không phụ thuộc cache/role lệch tạm thời. */
+        req.admin.isSuper = !!ctx.isSuper || isOwnerAllow;
         req.admin.roles = ctx.roles;
         req.admin._permSet = ctx.permissions;
-      } else if (allow.includes(email)) {
+        if (req.admin.isSuper && (!req.admin._permSet || !req.admin._permSet.size)) {
+          req.admin._permSet = ctx.permissions || new Set();
+        }
+      } else if (isOwnerAllow) {
         req.admin.isSuper = true;
         req.admin._permSet = new Set();
       } else {
@@ -56,4 +62,19 @@ function requirePermission() {
   };
 }
 
-module.exports = { createRbacContext, requirePermission };
+/** Chặn nếu thiếu hết — cần ÍT NHẤT 1 key trong danh sách. */
+function requireAnyPermission() {
+  const keys = Array.prototype.slice.call(arguments).filter(Boolean);
+  return function permAnyGuard(req, res, next) {
+    const admin = req.admin || {};
+    if (admin.isSuper) return next();
+    const set = admin._permSet || new Set();
+    const ok = keys.some((k) => set.has(k));
+    if (!ok) {
+      return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Bạn không có quyền thực hiện thao tác này.', requiredAny: keys } });
+    }
+    next();
+  };
+}
+
+module.exports = { createRbacContext, requirePermission, requireAnyPermission };

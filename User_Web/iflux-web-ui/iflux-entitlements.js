@@ -1,6 +1,17 @@
-/* iFlux User Web — resolve tier entitlements (guest · free · premium · elite) */
+/* iFlux User Web — resolve tier entitlements (guest · free · premium · elite)
+ * ABH E6 — consume published Plans Runtime Artifact only; no client normalize. */
 (function (global) {
   'use strict';
+
+  var PAGES = [
+    { key: 'market', label: 'Thị trường', menu: true, icon: 'ti-chart-candle', guestNever: false },
+    { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash', guestNever: false },
+    { key: 'community', label: 'Cộng đồng', menu: true, icon: 'ti-users', guestNever: false },
+    { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown', guestNever: false },
+    { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle', guestNever: false },
+    { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift', guestNever: false },
+    { key: 'dashboard', label: 'Nhà của tôi', menu: true, icon: 'ti-home', guestNever: true }
+  ];
 
   var FALLBACK_GUEST = {
     tier: 'guest',
@@ -20,21 +31,11 @@
 
   function getPlan(tier) {
     tier = tier != null ? String(tier).toLowerCase() : resolveTier();
-    if (global.PlansStore && PlansStore.getPlan) {
-      var p = PlansStore.getPlan(tier);
-      if (p) {
-        if (global.EntitlementCatalog && EntitlementCatalog.normalizePlan) {
-          return EntitlementCatalog.normalizePlan(p);
-        }
-        return p;
-      }
+    if (global.PlansRuntimeReader && PlansRuntimeReader.getPlan) {
+      var pr = PlansRuntimeReader.getPlan(tier);
+      if (pr) return pr;
     }
-    if (tier === 'guest') {
-      if (global.EntitlementCatalog && EntitlementCatalog.normalizePlan) {
-        return EntitlementCatalog.normalizePlan(FALLBACK_GUEST);
-      }
-      return FALLBACK_GUEST;
-    }
+    if (tier === 'guest') return FALLBACK_GUEST;
     return null;
   }
 
@@ -49,27 +50,24 @@
   }
 
   function hasAnyBlockOnPage(pageKey) {
-    if (global.EntitlementCatalog && EntitlementCatalog.blocksForPage) {
-      return EntitlementCatalog.blocksForPage(pageKey).length > 0;
-    }
-    if (global.WidgetLibraryCatalog && WidgetLibraryCatalog.widgetsForPage) {
-      return WidgetLibraryCatalog.widgetsForPage(pageKey).length > 0;
+    var L4 = global.L4RuntimeReader;
+    if (L4 && L4.widgetIdsForEntitlementDomain) {
+      return L4.widgetIdsForEntitlementDomain(pageKey).length > 0;
     }
     return false;
   }
 
   function canAccessPage(pageKey) {
     pageKey = String(pageKey || '').toLowerCase();
-    /* Chi tiết bài viết Tin tức = cùng quyền trang Cộng đồng (công khai với vãng lai). */
     if (pageKey === 'communitypost') pageKey = 'community';
+    if (pageKey === 'comments') pageKey = 'community';
     if (pageKey === 'dashboard' && isGuest()) return false;
     if (hasPage(pageKey)) return true;
     return hasAnyBlockOnPage(pageKey);
   }
 
   function visibleMenus() {
-    if (!global.EntitlementCatalog) return [];
-    return EntitlementCatalog.PAGES.filter(function (p) {
+    return PAGES.filter(function (p) {
       if (!p.menu) return false;
       if (p.guestNever && isGuest()) return false;
       return canAccessPage(p.key);
@@ -84,9 +82,6 @@
   function hasBlock(id) {
     var plan = currentPlan();
     if (!plan || !plan.blocks) return false;
-    if (global.EntitlementCatalog && EntitlementCatalog.resolveBlockEnabled) {
-      return EntitlementCatalog.resolveBlockEnabled(plan, id);
-    }
     return !!plan.blocks[id];
   }
 
@@ -105,15 +100,11 @@
   function canAccessWidget(meta) {
     if (!meta) return false;
     var type = meta.type || meta.widget_type;
-    /* Ngoài Tầng 4 → không thuộc Phân quyền sử dụng → luôn cho xem. */
     if (type && global.IfluxBlockGate && IfluxBlockGate.isPermissionScopedWidget) {
       if (!IfluxBlockGate.isPermissionScopedWidget(type)) return true;
-    } else if (type && global.EntitlementCatalog && EntitlementCatalog.isPermissionScopedWidget) {
-      if (!EntitlementCatalog.isPermissionScopedWidget(type)) return true;
     }
     var plan = currentPlan();
 
-    /* Phân quyền sử dụng (Admin matrix) là SoT cao hơn meta.tier */
     if (type && plan && plan.blocks && Object.prototype.hasOwnProperty.call(plan.blocks, type)) {
       return hasBlock(type);
     }
@@ -131,15 +122,18 @@
   }
 
   function enabledBlocks(page) {
-    if (!global.EntitlementCatalog) {
-      var plan = currentPlan();
-      var blocks = (plan && plan.blocks) || {};
-      return Object.keys(blocks).filter(function (id) { return blocks[id]; });
-    }
-    return EntitlementCatalog.BLOCKS.filter(function (b) {
-      if (page && b.page !== page) return false;
-      return hasBlock(b.id);
-    }).map(function (b) { return b.id; });
+    var plan = currentPlan();
+    var bmap = (plan && plan.blocks) || {};
+    return Object.keys(bmap).filter(function (id) {
+      if (!bmap[id]) return false;
+      if (!page) return true;
+      var L4 = global.L4RuntimeReader;
+      if (L4 && L4.entitlementMeta) {
+        var meta = L4.entitlementMeta(id);
+        if (meta && meta.pages && meta.pages.indexOf(page) >= 0) return true;
+      }
+      return false;
+    });
   }
 
   function isGuest() {

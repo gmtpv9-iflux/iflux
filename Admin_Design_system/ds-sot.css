@@ -150,7 +150,7 @@
   font-size: 13px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ds-sot-overview-grid { grid-template-columns: repeat(2, 1fr); }
   .ds-sot-studio { grid-template-columns: 1fr; }
 }
@@ -410,7 +410,7 @@
 .ds-spec-preview__chips { display: flex; flex-direction: column; gap: 2px; }
 .ds-spec-preview__chips .ix-chip { font-size: 8px; padding: 1px 4px; }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ds-spec-table__head { display: none; }
   .ds-spec-bundle { grid-template-columns: 1fr; }
   .ds-spec-bundle__identity {
@@ -909,7 +909,7 @@
   grid-row: unset !important;
 }
 .ds-item-preview .ds-preview-stock-wrap .ifx-stock-row__alert,
-.ds-item-preview .ds-preview-stock-wrap .ifx-stock-row__heart {
+.ds-item-preview .ds-preview-stock-wrap .ifx-heart {
   width: 32px;
   height: 32px;
   border: none;
@@ -1181,7 +1181,7 @@
   border-color: var(--ix-primary);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .ds-ref-table__head { display: none; }
   .ds-ref-bundle {
     grid-template-columns: 1fr;

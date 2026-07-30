@@ -91,7 +91,9 @@
   }
 
   function isMobileBar() {
-    return global.innerWidth <= 1023.98;
+    return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
+      ? global.IfluxBreakpoint.isMobileShell()
+      : false;
   }
 
   function bindPanelLinks(scope) {
@@ -204,7 +206,7 @@
       }
 
       btn.addEventListener('click', function (e) {
-        if (global.innerWidth <= 1023.98) return;
+        if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
         e.preventDefault();
         e.stopPropagation();
         cancelClose();
@@ -221,19 +223,19 @@
       });
 
       wrap.addEventListener('mouseenter', function () {
-        if (global.innerWidth <= 1023.98) return;
+        if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
         cancelClose();
         wrap.classList.add('open');
         openPanel();
       });
       wrap.addEventListener('mouseleave', function () {
-        if (global.innerWidth <= 1023.98) return;
+        if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
         scheduleClose();
       });
     });
 
     document.addEventListener('click', function (e) {
-      if (global.innerWidth <= 1023.98) return;
+      if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
       if (e.target.closest('.ifx-topnav-messages')) return;
       document.querySelectorAll('.ifx-topnav-messages.open').forEach(function (d) {
         d.classList.remove('open');

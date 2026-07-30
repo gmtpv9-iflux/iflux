@@ -36,10 +36,10 @@
 
 .ifx-admin-notif-item { align-items: flex-start !important; }
 
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .ifx-dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .ifx-dash-stats { grid-template-columns: 1fr; }
 }

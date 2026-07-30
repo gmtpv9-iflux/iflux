@@ -27,7 +27,7 @@ async function main() {
         subscription_tier, email_verified_at, account_status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), 'active')
        RETURNING id, email, subscription_tier`,
-      [email, hash, 'Nguyễn Văn Minh', 'Nguyễn Văn Minh', '+84912345678', 'MINH10', 'premium']
+      [email, hash, 'Nguyễn Văn Minh', 'Nguyễn Văn Minh', '+84912345678', 'IFLMVN10', 'premium']
     );
     console.log('INSERTED', JSON.stringify(r.rows[0]));
   }

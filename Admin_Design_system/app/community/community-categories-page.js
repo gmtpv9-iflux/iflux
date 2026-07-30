@@ -6,6 +6,10 @@
   var editingId = null;
   var viewOnly = false;
 
+  function canPerm(key) {
+    return !!(window.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;')
@@ -145,8 +149,18 @@
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(c.created_at)) + '</td>' +
         '<td style="white-space:nowrap">' +
           '<button type="button" class="ix-btn ix-btn-icon" data-cat-view="' + esc(c.id) + '" title="Xem"><i class="ti ti-eye"></i></button>' +
-          '<button type="button" class="ix-btn ix-btn-icon" data-cat-edit="' + esc(c.id) + '" title="Sửa"><i class="ti ti-pencil"></i></button>' +
-          '<button type="button" class="ix-btn ix-btn-icon" data-cat-del="' + esc(c.id) + '" title="Xóa"><i class="ti ti-trash"></i></button>' +
+          (canPerm('community.categories.edit')
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-cat-edit="' + esc(c.id) + '" title="Sửa"><i class="ti ti-pencil"></i></button>'
+            : '') +
+          (canPerm('community.categories.status_visible') && !c.is_visible
+            ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-cat-show="' + esc(c.id) + '">Hiện</button> '
+            : '') +
+          (canPerm('community.categories.status_hidden') && c.is_visible
+            ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-cat-hide="' + esc(c.id) + '">Ẩn</button> '
+            : '') +
+          (canPerm('community.categories.delete')
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-cat-del="' + esc(c.id) + '" title="Xóa"><i class="ti ti-trash"></i></button>'
+            : '') +
         '</td>' +
       '</tr>';
     }).join('');
@@ -234,19 +248,11 @@
       document.getElementById('com-cat-v-creator').textContent = item.created_by_name || '—';
       setFieldsDisabled(viewOnly);
     }
-    var modal = document.getElementById('com-cat-modal');
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.setAttribute('aria-hidden', 'false');
-    }
+    if (typeof window.ixOpenOffcanvas === 'function') window.ixOpenOffcanvas('offcanvas-com-cat');
   }
 
   function closeModal() {
-    var modal = document.getElementById('com-cat-modal');
-    if (modal) {
-      modal.style.display = 'none';
-      modal.setAttribute('aria-hidden', 'true');
-    }
+    if (typeof window.ixCloseOffcanvas === 'function') window.ixCloseOffcanvas('offcanvas-com-cat');
   }
 
   function readForm() {
@@ -333,19 +339,21 @@
     var tbody = document.getElementById('com-cat-tbody');
     if (tbody) {
       tbody.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-cat-view],[data-cat-edit],[data-cat-del]');
+        var btn = e.target.closest('[data-cat-view],[data-cat-edit],[data-cat-del],[data-cat-show],[data-cat-hide]');
         if (!btn) return;
         e.preventDefault();
         if (btn.hasAttribute('data-cat-view')) openModal('view', btn.getAttribute('data-cat-view'));
         else if (btn.hasAttribute('data-cat-edit')) openModal('edit', btn.getAttribute('data-cat-edit'));
         else if (btn.hasAttribute('data-cat-del')) deleteItem(btn.getAttribute('data-cat-del'));
-      });
-    }
-
-    var modal = document.getElementById('com-cat-modal');
-    if (modal) {
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) closeModal();
+        else if (btn.hasAttribute('data-cat-show')) {
+          request('/community/admin/categories/' + encodeURIComponent(btn.getAttribute('data-cat-show')) + '/status-visible', { method: 'POST', body: {} })
+            .then(function () { toast('Đã hiện danh mục', 'success'); return loadList(); })
+            .catch(function (err) { toast(err.message || 'Lỗi', 'danger'); });
+        } else if (btn.hasAttribute('data-cat-hide')) {
+          request('/community/admin/categories/' + encodeURIComponent(btn.getAttribute('data-cat-hide')) + '/status-hidden', { method: 'POST', body: {} })
+            .then(function () { toast('Đã ẩn danh mục', 'success'); return loadList(); })
+            .catch(function (err) { toast(err.message || 'Lỗi', 'danger'); });
+        }
       });
     }
   }

@@ -448,9 +448,9 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     persistCustomer(DEFAULT_USER);
   }
 
-  function getAffiliateContextCode() {
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      return IfluxAffiliateResolver.getCodeForIdentityCreation() || '';
+  function getActiveOwnerCode() {
+    if (global.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+      return IfluxIdentityContext.getActiveOwner() || '';
     }
     return '';
   }
@@ -473,7 +473,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
         IfluxLoyaltyAffiliateStore.isRefFromAffiliateLink());
 
     if (fromLink) {
-      var fromCtx = getAffiliateContextCode();
+      var fromCtx = getActiveOwnerCode();
       return fromForm || fromCtx;
     }
     return fromForm;
@@ -804,14 +804,19 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     var isAuthPage = R ? R.isAuthPage(path) : /\/auth\//.test(path);
 
     if (loggedIn && isAuthPage) {
-      global.location.replace(appHomePath());
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+        global.location.replace(appHomePath());
+      }
       return;
     }
     if (loggedIn && (R ? R.isGuestPage(path) : /\/guest\/?$/.test(path))) {
-      global.location.replace(appHomePath());
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+        global.location.replace(appHomePath());
+      }
       return;
     }
     if (!loggedIn && (R ? R.requiresAuth(path) : false) && document.querySelector('.ifx-app')) {
+      /* Auth zone entry — allowlist DQ-02: loginWithReturn, không Writer.navigate vào auth */
       global.location.replace(R ? R.loginWithReturn(path) : guestHomePath());
       return;
     }
@@ -1519,6 +1524,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     return true;
   }
 
+  /** P6-API-01 — thin alias only → IfluxShellUrlWriter.navigate */
   function shellNavigate(canonical, opts) {
     opts = opts || {};
     var W = global.IfluxShellUrlWriter;
@@ -1536,10 +1542,12 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     if (ret && ret.indexOf('auth') === -1) {
       var path = decodeURIComponent(ret);
       if (path.indexOf('http') === 0) {
+        /* Allowlist: absolute external / full URL hop */
         global.location.replace(path);
         return;
       }
       if (path.indexOf('../') === 0) {
+        /* Allowlist: legacy relative auth-zone file hop */
         global.location.replace(path);
         return;
       }
@@ -1553,12 +1561,14 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
         return;
       }
       if (!shellNavigate(canonical)) {
-        global.location.replace(R ? R.to(path) : canonical);
+        /* Dev/file fallback only when Writer missing */
+        global.location.replace(canonical);
       }
       return;
     }
-    if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
-      global.location.replace(defaultPath || appHomePath());
+    var homeCanonical = R ? R.to('community', { skipDecorate: true }) : '/cong-dong';
+    if (!shellNavigate(homeCanonical)) {
+      global.location.replace(defaultPath || homeCanonical);
     }
   }
 

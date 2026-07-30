@@ -1,13 +1,22 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-005
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Runtime — App Shell (ESM)
- * Chỉ chịu trách nhiệm bố cục: Header / Nav / Sidebar / Main / Footer.
+ * Chỉ chịu trách nhiệm bố cục: Header / Nav / Sidebar / Main / Footer / Runtime Host.
+ * Không quản lý Page Title/Description (đã bỏ Page Header / ifx-rt-page-head).
  * Không chứa nội dung nghiệp vụ (SoT Product Architecture).
  */
-
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 /**
  * Vùng chrome App Shell (đã có sẵn trong HTML tĩnh: header/nav/footer).
@@ -72,26 +81,5 @@ export function flowPanelForWidgetId(widgetId) {
   if (id === 'WGT-FLW-STAT_STOCK') return 'basic';
   if (id.indexOf('WGT-FLW-STAT_') === 0) return 'advanced';
   return 'basic';
-}
-
-/** Tiêu đề trang (optional — manifest.title). */
-export function renderPageHeader(root, manifest) {
-  if (!manifest || !manifest.title) return;
-  var intro = manifest.intro || '';
-  var isFlow = manifest.pageKey === 'flow';
-  var titleHtml = isFlow
-    ? ('<div class="ifx-flow-title-row">' +
-        '<h1 class="ix-page-title" data-ifx-page-def-title style="margin:0">' + esc(manifest.title) + '</h1>' +
-        '<span class="ifx-flow-exclusive"><i class="ti ti-sparkles"></i> Độc quyền iFlux</span>' +
-      '</div>')
-    : ('<h1 class="ix-page-title" data-ifx-page-def-title>' + esc(manifest.title) + '</h1>');
-  var html =
-    titleHtml +
-    '<p class="ifx-page-intro"' + (intro ? '' : ' hidden') + ' data-ifx-page-def-intro>' + esc(intro) + '</p>';
-  var head = document.createElement('div');
-  head.className = 'ifx-rt-page-head';
-  head.style.gridColumn = '1 / -1';
-  head.innerHTML = html;
-  root.insertBefore(head, root.firstChild);
 }
 

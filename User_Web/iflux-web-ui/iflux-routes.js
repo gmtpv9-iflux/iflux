@@ -72,6 +72,7 @@
   };
 
   function normalizePath(path) {
+    if (global.IfluxNormalizePath) return global.IfluxNormalizePath(path);
     path = String(path || '/').split('?')[0].split('#')[0];
     if (path.length > 1 && path.charAt(path.length - 1) === '/') {
       path = path.slice(0, -1);
@@ -123,7 +124,26 @@
       }).join('&');
       if (q) url += (url.indexOf('?') >= 0 ? '&' : '?') + q;
     }
+    if (!opts.skipDecorate && !opts.raw) {
+      if (global.IfluxHref && IfluxHref.forCanonical) {
+        url = IfluxHref.forCanonical(url);
+      } else {
+        var W = global.IfluxShellUrlWriter;
+        if (W && W.decorate) url = W.decorate(url);
+      }
+    }
     return url;
+  }
+
+  function href(canonical, opts) {
+    if (global.IfluxHref && IfluxHref.forCanonical) {
+      return IfluxHref.forCanonical(canonical, opts);
+    }
+    opts = opts || {};
+    if (opts.raw || opts.skipDecorate) return String(canonical || '/');
+    var W = global.IfluxShellUrlWriter;
+    if (W && W.decorate) return W.decorate(canonical);
+    return String(canonical || '/');
   }
 
   function siteRoot() {
@@ -165,7 +185,7 @@
 
   function loginWithReturn(returnPath) {
     var ret = normalizePath(returnPath || pathname());
-    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('market', { canonical: true });
+    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('market', { canonical: true, skipDecorate: true });
     return to('auth.login') + '?return=' + encodeURIComponent(ret);
   }
 
@@ -186,6 +206,7 @@
   global.IfluxRoutes = {
     ROUTES: ROUTES,
     to: to,
+    href: href,
     siteRoot: siteRoot,
     route: function (key) { var k = resolveKey(key); return k ? ROUTES[k] : null; },
     detectRoute: detectRoute,

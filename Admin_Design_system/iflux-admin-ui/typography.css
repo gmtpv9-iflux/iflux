@@ -81,6 +81,13 @@
   --ix-font-size-base: var(--ifx-font-size-14);
   --ix-font-size-card-title: var(--ifx-font-size-16);
 
+  /* Community feed card (Card nhỏ ~1/3) — semantic SoT
+   * Title: 14→15→16 (+2px) · Stats icon+số: 10→12 (+2px) · clamp 3 dòng
+   */
+  --ifx-com-feed-card-title-size: var(--ifx-font-size-lg);   /* 16px */
+  --ifx-com-feed-card-stats-size: var(--ifx-font-size-12);   /* 12px */
+  --ifx-com-feed-card-title-lines: 3;
+
   /* ── 4. Line Height (paired + named) ─────────────────────── */
   --ifx-line-height-10: 0.875rem;  /* 14px */
   --ifx-line-height-12: 1rem;      /* 16px */

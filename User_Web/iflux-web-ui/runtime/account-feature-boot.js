@@ -1,49 +1,51 @@
 /**
  * Phase A — Feature Tài khoản (sau App Shell Entry).
- * Shell do bootstrap.js → shell-boot; file này chỉ nạp Feature + init trang.
+ * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
 import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var ADMIN_APP = '/Admin_Design_system/';
+var VER = 'accountEarlyTab20260728';
 
-var FEATURE_SCRIPTS = [
+/** Own account — tab Affiliate · Thanh toán · Quyền riêng tư · Mật khẩu · sidebar */
+var CORE_SCRIPTS = [
+  ASSET + 'profile-local-scope.js?v=' + VER,
   ASSET + 'iflux-user-data-sync.js',
-  ADMIN + 'iflux-admin-ui.js',
-  ADMIN + 'pattern-user-profile.js',
-  /* W4: market seed/registry/mock/taxonomy/seo = Shell MARKET_PLATFORM (account) */
-  ASSET + 'stock-mentions.js',
-  ASSET + 'stock-store.js',
-  ASSET + 'stock-comments-ui.js',
-  ASSET + 'community-store.js',
-  ASSET + 'community-ui.js',
   ASSET + 'profile-users-store.js',
   ASSET + 'profile-links.js',
-  ASSET + 'profile-follow-store.js?v=chatGate20260708',
+  ASSET + 'profile-follow-store.js?v=' + VER,
+  ASSET + 'profile-avatar.js',
+  ASSET + 'profile-view.js?v=' + VER,
+  ASSET + 'iflux-plans-catalog.js?v=planPromo20260708',
+  ASSET + 'profile-bind.js?v=' + VER,
+  ASSET + 'loyalty-affiliate-store.js?v=' + VER,
+  ASSET + 'affiliate-payout-store.js?v=affP3_20260728',
+  ASSET + 'affiliate-payout-ui.js?v=affP3_20260728',
+  ASSET + 'profile-affiliate.js?v=' + VER,
+  ASSET + 'subscription-orders-store.js?v=affP1_20260728',
+  ASSET + 'profile-payment-store.js',
+  ASSET + 'profile-payment-page.js?v=ownP05_20260728',
+  ASSET + 'profile-privacy-store.js?v=chatGate20260708',
+  ASSET + 'notification-preference-store.js?v=notifD1rev_20260728',
+  ASSET + 'profile-privacy-page.js?v=notifPrefUi_20260728',
+  ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728',
+  ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728',
+  ASSET + 'profile-security-page.js?v=secRestore_20260728'
+];
+
+/** Public profile (?user=) — follow · block · chat gate · timeline */
+var PUBLIC_PROFILE_SCRIPTS = [
+  ADMIN + 'iflux-customers-store.js',
   ASSET + 'profile-friend-store.js?v=chatGate20260708',
   ASSET + 'profile-block-store.js',
-  ASSET + 'loyalty-affiliate-store.js',
   ASSET + 'profile-chat-access.js?v=chatGate20260708',
   ASSET + 'profile-chat-store.js',
-  ASSET + 'profile-chat-page.js?v=chatGate20260708',
-  ASSET + 'profile-avatar.js',
-  ASSET + 'profile-privacy-store.js?v=chatGate20260708',
-  ASSET + 'profile-privacy-page.js?v=chatGate20260708',
-  ASSET + 'system-notification-catalog.js',
-  ASSET + 'system-notification-templates-store.js',
-  ASSET + 'inapp-notifications.js',
-  ADMIN + 'iflux-customers-store.js',
-  ASSET + 'profile-affiliate.js',
-  ASSET + 'subscription-orders-store.js',
-  ASSET + 'profile-payment-store.js',
-  ASSET + 'profile-activity-store.js',
-  ASSET + 'profile-activity-page.js',
-  ASSET + 'profile-my-page.js',
-  ASSET + 'profile-view.js?v=chatGate20260708',
-  ASSET + 'profile-page.js',
-  ASSET + 'iflux-plans-catalog.js?v=planPromo20260708',
-  ASSET + 'profile-bind.js?v=planPromo20260708'
+  ASSET + 'stock-mentions.js',
+  ASSET + 'stock-store.js',
+  ASSET + 'community-store.js',
+  ASSET + 'community-ui.js',
+  ASSET + 'profile-page.js'
 ];
 
 function waitShellReady(pageKey) {
@@ -59,6 +61,176 @@ function waitShellReady(pageKey) {
   });
 }
 
+function consumerNavigate(canonical, opts) {
+  opts = opts || {};
+  if (opts.replace == null) opts.replace = true;
+  /* P6-API-01 — internal nav chỉ Writer.navigate */
+  var W = window.IfluxShellUrlWriter;
+  if (W && W.navigate) {
+    W.navigate(canonical, opts);
+    return;
+  }
+  location.replace(canonical);
+}
+
+function iconClass(icon) {
+  var ic = String(icon || '').trim();
+  if (!ic) return 'ti';
+  return ic.indexOf('ti ') === 0 ? ic : ('ti ' + ic);
+}
+
+function isAccountMobileNav() {
+  var bp = window.IfluxBreakpoint;
+  if (bp && bp.isMobileShell) return bp.isMobileShell();
+  if (bp && bp.belowSemantic) return bp.belowSemantic('mobile-shell');
+  return false;
+}
+
+function resolveAccountTabIdFromUrl() {
+  try {
+    var tab = new URLSearchParams(location.search).get('tab');
+    if (!tab) return 'tab-affiliate';
+    if (tab === 'personal' || tab === 'account') {
+      return isAccountMobileNav() ? 'tab-profile' : 'tab-affiliate';
+    }
+    var map = {
+      timeline: 'tab-affiliate',
+      affiliate: 'tab-affiliate',
+      payment: 'tab-payment',
+      billing: 'tab-payment',
+      privacy: 'tab-privacy',
+      security: 'tab-security',
+      profile: 'tab-profile'
+    };
+    if (map[tab]) return map[tab];
+    if (tab.indexOf('tab-') === 0) return tab;
+    return 'tab-' + tab;
+  } catch (e) {
+    return 'tab-affiliate';
+  }
+}
+
+function clearEarlyAccountShellHtmlState() {
+  var html = document.documentElement;
+  html.removeAttribute('data-ifx-account-tab');
+  html.removeAttribute('data-ifx-account-view');
+}
+
+function getActiveAccountTabIdFromResolver() {
+  var shell = window.IfluxAppShell;
+  if (shell && shell.resolveNavigationItems) {
+    var items = shell.resolveNavigationItems('accountProfile', shell.resolveNavigationContext());
+    var active = items.filter(function (it) { return it.active; })[0];
+    if (active) return active.tabId;
+  }
+  return resolveAccountTabIdFromUrl();
+}
+
+function activateAccountProfilePanel(tabId) {
+  document.querySelectorAll('.ix-profile-tab').forEach(function (b) {
+    b.classList.toggle('active', b.getAttribute('data-ix-profile-tab') === tabId);
+  });
+  if (tabId === 'tab-profile') {
+    document.querySelectorAll('.ix-tab-content').forEach(function (panel) {
+      panel.classList.remove('active');
+    });
+    return;
+  }
+  document.querySelectorAll('.ix-tab-content').forEach(function (panel) {
+    panel.classList.toggle('active', panel.id === tabId);
+  });
+}
+
+/** Mobile: sidebar chỉ trên tab Hồ sơ. Desktop: luôn hiện. */
+function syncAccountMobileLayout(tabId) {
+  tabId = tabId || getActiveAccountTabIdFromResolver();
+  var app = document.querySelector('.ifx-app');
+  if (!app) return;
+  if (!isAccountMobileNav()) {
+    app.removeAttribute('data-ifx-account-view');
+    return;
+  }
+  app.setAttribute('data-ifx-account-view', tabId === 'tab-profile' ? 'profile' : 'sub');
+}
+
+function profileSidebarBound() {
+  var sidebar = document.querySelector('[data-ifx-profile-sidebar]');
+  return !!(sidebar && sidebar.getAttribute('data-ifx-bound') === '1');
+}
+
+/** Desktop: bind lúc boot. Mobile: chỉ khi tab Hồ sơ. */
+function ensureProfileSidebar(tabId) {
+  tabId = tabId || getActiveAccountTabIdFromResolver();
+  if (!window.IfluxProfileSidebar) return;
+  if (profileSidebarBound()) return;
+  if (isAccountMobileNav()) {
+    if (tabId !== 'tab-profile') return;
+  }
+  IfluxProfileSidebar.init();
+}
+
+/** Mobile bottom + desktop tabs — switch panel + URL SoT (resolver active). */
+function switchAccountProfileTab(tabId) {
+  if (window.IfluxAppShell && IfluxAppShell.syncAccountProfileTabUrl) {
+    IfluxAppShell.syncAccountProfileTabUrl(tabId);
+  }
+  activateAccountProfilePanel(tabId);
+  syncAccountMobileLayout(tabId);
+  ensureProfileSidebar(tabId);
+  if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
+}
+
+/** Desktop consumer — mobile không hydrate tab row (bottom nav là consumer). */
+function renderAccountProfileTabs() {
+  var mount = document.querySelector('[data-ifx-account-profile-tabs]');
+  var shell = window.IfluxAppShell;
+  if (!mount || !shell || !shell.resolveNavigationItems) return;
+  if (isAccountMobileNav()) {
+    mount.replaceChildren();
+    syncAccountMobileLayout(getActiveAccountTabIdFromResolver());
+    return;
+  }
+  var ctx = shell.resolveNavigationContext();
+  var items = shell.resolveNavigationItems('accountProfile', ctx);
+  mount.replaceChildren();
+  items.forEach(function (it) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ix-profile-tab' + (it.active ? ' active' : '');
+    btn.setAttribute('data-ix-profile-tab', it.tabId);
+    var icon = document.createElement('i');
+    icon.className = iconClass(it.icon);
+    icon.style.fontSize = '14px';
+    btn.appendChild(icon);
+    btn.appendChild(document.createTextNode(' ' + it.label));
+    mount.appendChild(btn);
+  });
+  syncAccountMobileLayout(getActiveAccountTabIdFromResolver());
+  activateAccountProfilePanel(getActiveAccountTabIdFromResolver());
+}
+
+window.IfluxAccountProfileNav = {
+  switchTab: switchAccountProfileTab,
+  isMobileNav: isAccountMobileNav,
+  syncLayout: syncAccountMobileLayout
+};
+
+function queryProfileTargetId() {
+  try {
+    return (new URLSearchParams(location.search).get('user') ||
+      new URLSearchParams(location.search).get('id') || '').trim();
+  } catch (e) {
+    return '';
+  }
+}
+
+function isPublicProfileBoot() {
+  var targetId = queryProfileTargetId();
+  if (!targetId) return false;
+  var me = window.IfluxAuth && IfluxAuth.getUser();
+  return !(me && String(me.id) === String(targetId));
+}
+
 function bootAccountPage() {
   (function () {
     var p = new URLSearchParams(location.search);
@@ -67,66 +239,23 @@ function bootAccountPage() {
       var t = p.get('tab');
       if (t === 'messages') {
         var peer = p.get('with') || p.get('peer');
-        location.replace('/tin-nhan' + (peer ? '?with=' + encodeURIComponent(peer) : ''));
+        consumerNavigate('/tin-nhan' + (peer ? '?with=' + encodeURIComponent(peer) : ''));
         return;
       }
       if (t === 'following') {
-        location.replace('/tin-nhan/following');
+        consumerNavigate('/tin-nhan/following');
         return;
       }
     }
   })();
 
-  ['HPG', 'VCB', 'FPT'].forEach(function (tk) {
-    if (window.IfluxStockStore) IfluxStockStore.getComments(tk);
-  });
-
-  function activateTab(tabId) {
-    document.querySelectorAll('.ix-profile-tab').forEach(function (b) {
-      b.classList.toggle('active', b.getAttribute('data-ix-profile-tab') === tabId);
-    });
-    document.querySelectorAll('.ix-tab-content').forEach(function (panel) {
-      panel.classList.toggle('active', panel.id === tabId);
-    });
-  }
-
-  function populateSidebarInputs() {
-    var u = window.IfluxAuth && IfluxAuth.getUser();
-    document.querySelectorAll('[data-ifx-side-edit] [data-bind-input]').forEach(function (input) {
-      var key = input.getAttribute('data-bind-input');
-      input.value = (u && u[key] != null) ? u[key] : '';
-    });
-    if (window.IfluxProfileAvatar) IfluxProfileAvatar.initOwn();
-  }
-
-  function setSidebarEdit(edit) {
-    var viewEl = document.querySelector('[data-ifx-side-view]');
-    var editEl = document.querySelector('[data-ifx-side-edit]');
-    var heroEl = document.querySelector('[data-ifx-profile-hero]');
-    if (viewEl) viewEl.hidden = !!edit;
-    if (editEl) editEl.hidden = !edit;
-    if (heroEl) heroEl.classList.toggle('is-editing', !!edit);
-    if (edit) populateSidebarInputs();
-  }
-
-  function bindSidebarEdit() {
-    document.querySelectorAll('[data-ifx-side-edit-open]').forEach(function (btn) {
-      btn.addEventListener('click', function () { setSidebarEdit(true); });
-    });
-    document.querySelectorAll('[data-ifx-side-edit-cancel]').forEach(function (btn) {
-      btn.addEventListener('click', function () { setSidebarEdit(false); });
-    });
-  }
-
   function bindProfileGotoTab() {
     document.querySelectorAll('[data-ifx-goto-tab]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var tabId = btn.getAttribute('data-ifx-goto-tab');
-        var tabBtn = document.querySelector('[data-ix-profile-tab="' + tabId + '"]');
-        if (tabBtn) tabBtn.click();
-        else activateTab(tabId);
-        if (btn.getAttribute('data-ifx-goto-edit') === '1' && window.IfluxProfileMyPage) {
-          setTimeout(function () { IfluxProfileMyPage.enterEditMode(); }, 0);
+        switchAccountProfileTab(tabId);
+        if (btn.getAttribute('data-ifx-goto-edit') === '1' && window.IfluxProfileSidebar) {
+          setTimeout(function () { IfluxProfileSidebar.enterEditMode(); }, 0);
         }
       });
     });
@@ -135,70 +264,82 @@ function bootAccountPage() {
   function applyProfileUrlTab() {
     var params = new URLSearchParams(location.search);
     var tab = params.get('tab');
-    if (!tab) return;
+    if (!tab) {
+      switchAccountProfileTab('tab-affiliate');
+      clearEarlyAccountShellHtmlState();
+      return;
+    }
     if (tab === 'personal' || tab === 'account') {
+      if (isAccountMobileNav()) {
+        switchAccountProfileTab('tab-profile');
+      } else {
+        switchAccountProfileTab('tab-affiliate');
+      }
+      clearEarlyAccountShellHtmlState();
       if (params.get('edit') === '1') {
-        setTimeout(function () { setSidebarEdit(true); }, 0);
+        setTimeout(function () {
+          if (window.IfluxProfileSidebar) IfluxProfileSidebar.enterEditMode();
+        }, 0);
       }
       return;
     }
     var map = {
-      timeline: 'tab-timeline',
+      timeline: 'tab-affiliate',
       affiliate: 'tab-affiliate',
       payment: 'tab-payment', billing: 'tab-payment',
       privacy: 'tab-privacy',
-      security: 'tab-security'
+      security: 'tab-security',
+      profile: 'tab-profile'
     };
     var tabId = map[tab] || (tab.indexOf('tab-') === 0 ? tab : 'tab-' + tab);
-    var btn = document.querySelector('[data-ix-profile-tab="' + tabId + '"]');
-    if (btn && !btn.hidden) btn.click();
-    else activateTab(tabId);
+    switchAccountProfileTab(tabId);
+    clearEarlyAccountShellHtmlState();
+  }
+
+  function bindAccountTabUrlSync() {
+    var mount = document.querySelector('[data-ifx-account-profile-tabs]');
+    if (!mount || mount.dataset.ifxTabUrlSync === '1') return;
+    mount.dataset.ifxTabUrlSync = '1';
+    mount.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-ix-profile-tab]');
+      if (!btn) return;
+      var tabId = btn.getAttribute('data-ix-profile-tab');
+      switchAccountProfileTab(tabId);
+    });
+  }
+
+  if (!window.__ifxAccountProfileResizeBound) {
+    window.__ifxAccountProfileResizeBound = true;
+    window.addEventListener('resize', function () {
+      renderAccountProfileTabs();
+      ensureProfileSidebar(getActiveAccountTabIdFromResolver());
+      if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
+    });
   }
 
   var profileMode = window.IfluxProfileView ? IfluxProfileView.init() : 'own';
   if (profileMode !== 'own') return;
 
-  if (window.ProfileBind) ProfileBind.init();
-  if (window.IfluxProfileAvatar) IfluxProfileAvatar.initOwn();
-  if (window.PatternUserProfile) PatternUserProfile.init();
+  bindAccountTabUrlSync();
   bindProfileGotoTab();
-  if (window.IfluxProfilePage) IfluxProfilePage.init();
-  if (window.IfluxProfileMyPage) IfluxProfileMyPage.init();
-  if (window.IfluxProfileAffiliate) IfluxProfileAffiliate.init();
-  if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
-  if (window.IfluxProfilePrivacyPage) IfluxProfilePrivacyPage.init();
   applyProfileUrlTab();
-  bindSidebarEdit();
-
-  var saveBtn = document.getElementById('btn-save-profile');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', function () {
-      var patch = {};
-      document.querySelectorAll('[data-bind-input]').forEach(function (input) {
-        patch[input.getAttribute('data-bind-input')] = input.value;
-      });
-      if (window.IfluxAuth) IfluxAuth.updateUser(patch);
-      if (window.ProfileBind) ProfileBind.init();
-      if (window.IfluxProfileAvatar) IfluxProfileAvatar.initOwn();
-      if (window.IfluxProfileMyPage) IfluxProfileMyPage.refresh();
-      if (window.IfluxProfileActivityStore && window.IfluxAuth && IfluxAuth.getUser()) {
-        IfluxProfileActivityStore.log(IfluxAuth.getUser().id, {
-          type: 'profile',
-          icon: 'ti-user-edit',
-          iconClass: 'info',
-          title: 'Cập nhật tài khoản',
-          desc: 'Đã lưu thông tin tài khoản và hồ sơ.'
-        });
-      }
-      setSidebarEdit(false);
-      if (window.ixToast) ixToast('Đã lưu hồ sơ', 'success');
-    });
-  }
+  renderAccountProfileTabs();
+  if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
+  ensureProfileSidebar(getActiveAccountTabIdFromResolver());
+  if (window.IfluxProfileAffiliate) IfluxProfileAffiliate.init();
+  if (window.IfluxProfilePaymentPage) IfluxProfilePaymentPage.init();
+  if (window.IfluxProfilePrivacyPage) IfluxProfilePrivacyPage.init();
+  if (window.IfluxProfileSecurityPage) IfluxProfileSecurityPage.init();
+  if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
 }
 
 async function main() {
   await waitShellReady('account');
-  await loadScriptsSequential(FEATURE_SCRIPTS);
+  var scripts = CORE_SCRIPTS.slice();
+  if (isPublicProfileBoot()) {
+    scripts = scripts.concat(PUBLIC_PROFILE_SCRIPTS);
+  }
+  await loadScriptsSequential(scripts);
   bootAccountPage();
 }
 

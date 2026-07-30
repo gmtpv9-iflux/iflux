@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-005
+Priority: P1
+STATUS: Used
+OWNER (hiện tại): Market Registry
+Owner đích (map): iflux-market-registry-store.js
+Usage audit: ✓
+Dep động: Có
+Migration ROI: 2
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: requiresShell + header-search
+===== IFX-AUDIT-END ===== */
 /* Kho Market Intelligence — sandbox localStorage (ADM-MKT, GĐ1) */
 (function (global) {
   'use strict';

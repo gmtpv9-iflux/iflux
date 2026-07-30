@@ -117,13 +117,13 @@
         bundle('grid-gutter', 'Gutter', 'grid-gap', [prop('grid-gap', 'grid-gutter', '--ifx-grid-gutter')], 'ti-gutter')
       ]),
       g('Responsive', [
-        bundle('resp-xs', 'Small Mobile', 'breakpoint', [prop('breakpoint', 'bp-xs', '--ifx-bp-small-mobile')], 'ti-device-mobile'),
-        bundle('resp-mobile', 'Mobile', 'breakpoint', [prop('breakpoint', 'bp-sm', '--ifx-bp-mobile')], 'ti-device-mobile'),
-        bundle('resp-tablet', 'Tablet', 'breakpoint', [prop('breakpoint', 'bp-md', '--ifx-bp-tablet')], 'ti-device-tablet'),
-        bundle('resp-desktop', 'Desktop', 'breakpoint', [prop('breakpoint', 'bp-lg', '--ifx-bp-desktop')], 'ti-device-desktop'),
-        bundle('resp-wide', 'Wide', 'breakpoint', [prop('breakpoint', 'bp-xl', '--ifx-bp-wide')], 'ti-arrows-horizontal'),
-        bundle('resp-ultra', 'Ultra Wide', 'breakpoint', [prop('breakpoint', 'bp-2xl', '--ifx-bp-ultra')], 'ti-arrows-maximize'),
-        bundle('resp-3xl', 'xUltra Wide', 'breakpoint', [prop('breakpoint', 'bp-3xl', '--ifx-bp-x-ultra-wide')], 'ti-arrows-maximize')
+        bundle('resp-xs', 'Small Mobile', 'breakpoint', [prop('breakpoint', 'bp-xs', '--ifx-bp-xs')], 'ti-device-mobile'),
+        bundle('resp-mobile', 'Mobile', 'breakpoint', [prop('breakpoint', 'bp-sm', '--ifx-bp-sm')], 'ti-device-mobile'),
+        bundle('resp-tablet', 'Tablet', 'breakpoint', [prop('breakpoint', 'bp-md', '--ifx-bp-md')], 'ti-device-tablet'),
+        bundle('resp-desktop', 'Desktop', 'breakpoint', [prop('breakpoint', 'bp-lg', '--ifx-bp-lg')], 'ti-device-desktop'),
+        bundle('resp-wide', 'Wide', 'breakpoint', [prop('breakpoint', 'bp-xl', '--ifx-bp-xl')], 'ti-arrows-horizontal'),
+        bundle('resp-ultra', 'Ultra Wide', 'breakpoint', [prop('breakpoint', 'bp-2xl', '--ifx-bp-2xl')], 'ti-arrows-maximize'),
+        bundle('resp-3xl', 'xUltra Wide', 'breakpoint', [prop('breakpoint', 'bp-3xl', '--ifx-bp-3xl')], 'ti-arrows-maximize')
       ]),
       g('Spacing Rules', [
         bundle('space-section', 'Section Gap', 'spacing', [prop('spacing', 'space-96', '--ifx-space-section-gap')], 'ti-spacing-vertical'),
@@ -180,7 +180,15 @@
         bundle('ix-loading', 'Loading', 'motion', [prop('duration', 'duration-slow', '--ifx-ix-loading-duration')], 'ti-loader'),
         bundle('ix-drag', 'Drag', 'motion', [prop('duration', 'duration-normal', '--ifx-ix-drag-duration')], 'ti-hand-grab'),
         bundle('ix-drop', 'Drop', 'motion', [prop('duration', 'duration-normal', '--ifx-ix-drop-duration')], 'ti-hand-stop'),
-        bundle('ix-keyboard', 'Keyboard', 'guideline', [], 'ti-keyboard')
+        bundle('ix-keyboard', 'Keyboard', 'guideline', [], 'ti-keyboard'),
+        bundle('ix-follow', 'Follow Action', 'guideline', [
+          prop('color', 'color-violet-400', '--ifx-color-violet-400')
+        ], 'ti-bookmark'),
+        /* Alias đọc cũ — cùng Foundation Follow (không còn Heart cho Watchlist). */
+        bundle('ix-heart', 'Follow Action (alias)', 'guideline', [
+          prop('color', 'color-violet-400', '--ifx-color-violet-400')
+        ], 'ti-bookmark'),
+        bundle('ix-share', 'Share Action', 'guideline', [], 'ti-share-3')
       ]),
       g('Accessibility', [
         bundle('a11y-contrast', 'Contrast', 'guideline', [], 'ti-contrast'),

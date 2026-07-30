@@ -16,6 +16,7 @@
   }
 
   function navigate(canonical, opts) {
+    /* Thin alias → Writer (P6-API-01 entrypoint = IfluxShellUrlWriter.navigate) */
     opts = opts || {};
     var W = global.IfluxShellUrlWriter;
     if (W && W.navigate) {

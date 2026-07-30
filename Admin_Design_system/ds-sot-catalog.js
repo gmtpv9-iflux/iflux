@@ -151,7 +151,7 @@
       items: [
         { name: 'Comment / Thread', status: 'ok', cls: '.ifx-stock-cmt*', file: 'stock-comments-ui.js' },
         { name: 'Reaction Bar', status: 'partial', note: 'Inline community icons' },
-        { name: 'Share / Insight Card', status: 'partial', cls: '.ifx-insight-*', file: 'insight-share-ui.js' },
+        { name: 'Share / Insight Card', status: 'ok', cls: '.ifx-insight-*', file: 'foundation/share-action.js' },
         { name: 'Rich Text Editor', status: 'partial', file: 'community/write.html' },
         { name: 'Chat', status: 'ok', cls: '.ix-chat-*', file: 'patterns/chat.html' },
         { name: 'Mention / Tag', status: 'partial', file: 'stock-mentions.js' },
@@ -199,7 +199,7 @@
         { name: 'Plan Card', status: 'ok', cls: '.ix-plan-card, .ifx-hub-plan-card', preview: 'plan-card' },
         { name: 'Widget Shell (dashboard)', status: 'ok', cls: '.ifx-widget', file: 'widget-shell.css', preview: 'widget' },
         { name: 'Page block wrappers', status: 'ok', cls: '.ifx-block, .ifx-mkt-card, .ifx-flow-card', file: 'block-templates.css', note: 'SoT shell → §15 Block Templates' },
-        { name: 'Insight Share modal', status: 'partial', file: 'insight-share.css' },
+        { name: 'Insight Share modal', status: 'ok', file: 'foundation/share-action.css' },
         { name: 'Dashboard toolbar', status: 'ok', cls: '.ifx-dash-toolbar', file: 'widget-shell.css' },
         { name: 'Auth card', status: 'ok', cls: '.ix-auth-card', file: 'auth/login.html' },
         { name: 'Checkout summary', status: 'ok', file: 'account/checkout.html' }
@@ -290,7 +290,7 @@
       items: [
         { name: 'TPL-SHELL-CARD — Card shell (ifx-block)', status: 'ok', cls: '.ifx-block, .ifx-block-head > h3', file: 'block-templates.js', preview: 'block-shell-card', note: 'BLK-MKT-HEAT, BLK-FLW-NET-*, BLK-FLW-SCORE' },
         { name: 'TPL-SHELL-SIDEBAR — Sidebar shell', status: 'ok', cls: '.ifx-block--sidebar, .ifx-mkt-sidebar-widget', file: 'block-templates.js', preview: 'block-shell-sidebar', note: 'BLK-MKT-OVERVIEW, BLK-MKT-BREADTH, BLK-COM-*' },
-        { name: 'TPL-SHELL-WIDGET — Dashboard widget', status: 'ok', cls: '.ifx-widget', file: 'dashboard-engine.js', preview: 'widget' },
+        { name: 'TPL-SHELL-WIDGET — Dashboard host (layout only)', status: 'ok', cls: '.ifx-widget + .ifx-widget__surface', file: 'dashboard-engine.js', preview: 'widget', note: 'UI-001: host chrome-free; surface = TPL-SHELL-CARD fallback, demote khi body có Feature shell' },
         { name: 'TPL-BREADTH — Stat grid + ratio', status: 'ok', cls: '.ifx-breadth-stat, .ifx-breadth-ratio', file: 'block-templates.js', preview: 'tpl-breadth', note: 'IfluxBlockTemplates.renderBreadth()' },
         { name: 'TPL-TREEMAP — Heat / cap tile', status: 'ok', cls: '.ifx-treemap-tile, .ifx-mkt-heat-tile', file: 'block-templates.css', preview: 'tpl-treemap', note: 'Token: --ifx-market-*' },
         { name: 'TPL-RANK-BAR — Top 10 / rank bars', status: 'ok', cls: '.ifx-rank-bar, .ix-top10-market', file: 'block-templates.js', preview: 'tpl-rank-bar', note: 'renderRankBarList() + chart series tokens' },
@@ -361,9 +361,8 @@
       '<div class="ifx-flow-card__sub">Biểu đồ đối xứng theo entity</div></div>' +
       '<div class="ifx-flow-card__body" style="padding:12px;font-size:12px;color:var(--ix-text-muted)">Flow block mount</div></div>',
     'com-card': '<article class="ifx-com-card" style="max-width:360px;padding:12px;border:1px solid var(--ix-border);border-radius:12px">' +
-      '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><span class="ix-avatar ix-avatar-sm">NM</span>' +
-      '<div><strong style="font-size:13px">Nguyễn Minh</strong><div style="font-size:11px;color:var(--ix-text-muted)">HPG · 2 giờ trước</div></div></div>' +
-      '<p style="font-size:13px;margin:0;color:var(--ix-text-secondary)">Nhận định ngắn về dòng tiền HPG phiên sáng…</p></article>',
+      '<p style="font-size:var(--ifx-com-feed-card-title-size,16px);font-weight:600;margin:0 0 8px;line-height:1.4;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;color:var(--ix-text-primary)">Nhận định ngắn về dòng tiền HPG phiên sáng và thanh khoản ngành thép</p>' +
+      '<div class="ifx-com-post__stats" style="font-size:var(--ifx-com-feed-card-stats-size,12px);color:var(--ix-text-muted)"><span><i class="ti ti-heart"></i> 12</span> <span><i class="ti ti-message"></i> 4</span> <span><i class="ti ti-share"></i> 1</span></div></article>',
     'price-panel': '<div class="ifx-stock-head" style="max-width:360px;padding:12px;border:1px solid var(--ix-border);border-radius:12px">' +
       '<div style="font-size:22px;font-weight:700" class="is-up">28.50</div>' +
       '<div style="font-size:12px;color:var(--ix-text-muted)">HPG · Hòa Phát · +1.2%</div></div>',

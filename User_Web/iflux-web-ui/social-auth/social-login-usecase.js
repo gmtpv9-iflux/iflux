@@ -6,9 +6,9 @@
 (function (global) {
   'use strict';
 
-  function readAffiliateCodeOnce() {
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      return IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
+  function readActiveOwnerOnce() {
+    if (global.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+      return IfluxIdentityContext.getActiveOwner() || null;
     }
     return null;
   }
@@ -56,7 +56,7 @@
   function completeWithTokens(provider, tokens, pageOpts) {
     pageOpts = pageOpts || {};
     return ensureAuth().then(function () {
-      var referral_code = readAffiliateCodeOnce();
+      var referral_code = readActiveOwnerOnce();
       var opts = {
         remember_me: !!pageOpts.remember_me
       };

@@ -1,0 +1,48 @@
+{
+  "probe": {
+    "href": "https://iflux.vn/dang-nhap",
+    "typeof_IfluxAuthSocial": "object",
+    "typeof_initPage": "function",
+    "typeof_bindSocialButtons": "function",
+    "typeof_loginGoogle": "function",
+    "typeof_IfluxUserDataSync": "undefined",
+    "typeof_IfluxAuth": "object",
+    "btnExists": true,
+    "btnHref": "#",
+    "btnOuter": "<a class=\"ix-social-btn google\" href=\"#\" id=\"btn-google\" title=\"Google\"><i class=\"ti ti-brand-google-filled\"></i></a>",
+    "shellReady": "auth"
+  },
+  "listeners": [
+    {
+      "type": "click",
+      "once": false,
+      "scriptId": "23",
+      "lineNumber": 344,
+      "columnNumber": 44,
+      "handlerPreview": "function (e) {\n        e.preventDefault();\n        var run = map[provider];\n        var runOpts = {\n          referral_code: affiliateCodeForSocial(opts.referral_code),\n          remember_me: opts.remember_me\n        };\n        if (opts.onStart) opts.onStart(provider);\n        if (provider === 'google' && googleActivatorReady) {\n          startGoogleLoginFromUserGesture(runOpts)\n            .then(function (user) {\n              if (opts.onSuccess) opts.onSuccess(provider, user);\n            })\n            .catch(function (err) {\n              if (opts.onError) opts.onError(provider, err);\n            });\n          return;\n        }\n        run(runOpts)\n          .then(function (user) {\n            if (opts.onSuccess) opts.onSuccess(provider, user);\n          })\n          .catch(function (err) {\n            if (opts.onError) opts.onError(provider, err);\n          });\n      }"
+    }
+  ],
+  "after": {
+    "href": "https://iflux.vn/dang-nhap",
+    "title": "Đăng nhập · iFlux"
+  },
+  "cons": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o"
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o"
+    },
+    {
+      "type": "pageerror",
+      "text": "missing ) after argument list",
+      "stack": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    }
+  ]
+}

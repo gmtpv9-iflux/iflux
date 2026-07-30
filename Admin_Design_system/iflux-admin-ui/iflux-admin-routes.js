@@ -6,8 +6,6 @@
     "dashboard-index": { key: "dashboard-index", slug: "/admin/tong-quan", file: "dashboard/index.html" },
     "users-list": { key: "users-list", slug: "/admin/khach-hang/list", file: "users/list.html" },
     "users-export": { key: "users-export", slug: "/admin/khach-hang/export", file: "users/export.html" },
-    "access-roles": { key: "access-roles", slug: "/admin/quyen-han/roles", file: "access/roles.html" },
-    "access-permissions": { key: "access-permissions", slug: "/admin/quyen-han/permissions", file: "access/permissions.html" },
     "market-stocks": { key: "market-stocks", slug: "/admin/thi-truong/stocks", file: "market/stocks.html" },
     "market-ecosystems-index": { key: "market-ecosystems-index", slug: "/admin/thi-truong/ecosystems", file: "market/ecosystems/index.html" },
     "market-sectors-index": { key: "market-sectors-index", slug: "/admin/thi-truong/sectors", file: "market/sectors/index.html" },
@@ -25,11 +23,19 @@
     "data-dictionary": { key: "data-dictionary", slug: "/admin/du-lieu/dictionary", file: "data/dictionary.html" },
     "data-reconciliation": { key: "data-reconciliation", slug: "/admin/du-lieu/reconciliation", file: "data/reconciliation.html" },
     "subscription-plans": { key: "subscription-plans", slug: "/admin/goi-cuoc/plans", file: "subscription/plans.html" },
+    "subscription-plan-add": { key: "subscription-plan-add", slug: "/admin/goi-cuoc/plan-edit?plan=new", file: "subscription/plan-edit.html" },
     "subscription-entitlements": { key: "subscription-entitlements", slug: "/admin/goi-cuoc/entitlements", file: "subscription/entitlements.html" },
     "subscription-subscribers": { key: "subscription-subscribers", slug: "/admin/goi-cuoc/subscribers", file: "subscription/subscribers.html" },
-    "subscription-transactions": { key: "subscription-transactions", slug: "/admin/goi-cuoc/transactions", file: "subscription/transactions.html" },
-    "subscription-membership-intro": { key: "subscription-membership-intro", slug: "/admin/goi-cuoc/membership-intro", file: "subscription/membership-intro.html" },
-    "subscription-loyalty": { key: "subscription-loyalty", slug: "/admin/goi-cuoc/loyalty", file: "subscription/loyalty.html" },
+    "subscription-transactions": { key: "subscription-transactions", slug: "/admin/don-hang/list", file: "orders/list.html" },
+    "orders-list": { key: "orders-list", slug: "/admin/don-hang/list", file: "orders/list.html" },
+    "orders-add": { key: "orders-add", slug: "/admin/don-hang/add", file: "orders/add.html" },
+    "orders-edit": { key: "orders-edit", slug: "/admin/don-hang/edit", file: "orders/edit.html" },
+    "subscription-membership-intro": { key: "subscription-membership-intro", slug: "/admin/thanh-vien/membership", file: "loyalty/membership.html" },
+    "subscription-loyalty": { key: "subscription-loyalty", slug: "/admin/thanh-vien/membership", file: "loyalty/membership.html" },
+    "loyalty-promo-list": { key: "loyalty-promo-list", slug: "/admin/thanh-vien/ma-list", file: "loyalty/ma-list.html" },
+    "loyalty-promo-add": { key: "loyalty-promo-add", slug: "/admin/thanh-vien/ma-them", file: "loyalty/ma-them.html" },
+    "loyalty-promo-usage": { key: "loyalty-promo-usage", slug: "/admin/thanh-vien/ma-su-dung", file: "loyalty/ma-su-dung.html" },
+    "loyalty-membership-list": { key: "loyalty-membership-list", slug: "/admin/thanh-vien/membership", file: "loyalty/membership.html" },
     "notifications-push": { key: "notifications-push", slug: "/admin/thong-bao/push", file: "notifications/push.html" },
     "notifications-in-app": { key: "notifications-in-app", slug: "/admin/thong-bao/in-app", file: "notifications/in-app.html" },
     "notifications-email": { key: "notifications-email", slug: "/admin/thong-bao/email", file: "notifications/email.html" },
@@ -61,9 +67,13 @@
     "system-platform-layers": { key: "system-platform-layers", slug: "/admin/he-thong/platform-layers", file: "system/platform-layers.html" },
     "system-feature-flags": { key: "system-feature-flags", slug: "/admin/he-thong/feature-flags", file: "system/feature-flags.html" },
     "system-maintenance": { key: "system-maintenance", slug: "/admin/he-thong/maintenance", file: "system/maintenance.html" },
-    "system-roles": { key: "system-roles", slug: "/admin/he-thong/roles", file: "system/roles.html" },
+    "system-admin-list": { key: "system-admin-list", slug: "/admin/he-thong/admin-list", file: "system/admin-list.html" },
+    "system-admin-profile": { key: "system-admin-profile", slug: "/admin/he-thong/admin-profile", file: "system/admin-profile.html" },
+    "system-admin-roles": { key: "system-admin-roles", slug: "/admin/he-thong/admin-roles", file: "system/admin-roles.html" },
+    "system-admin-permissions": { key: "system-admin-permissions", slug: "/admin/he-thong/admin-permissions", file: "system/admin-permissions.html" },
+    "system-roles": { key: "system-roles", slug: "/admin/he-thong/admin-roles", file: "system/admin-roles.html" },
     "system-audit": { key: "system-audit", slug: "/admin/he-thong/audit", file: "system/audit.html" },
-    "system-admin-users": { key: "system-admin-users", slug: "/admin/he-thong/admin-users", file: "system/admin-users.html" },
+    "system-admin-users": { key: "system-admin-users", slug: "/admin/he-thong/admin-list", file: "system/admin-list.html" },
     "community-content-dashboard": { key: "community-content-dashboard", slug: "/admin/cong-dong/content/dashboard", file: "community/content/dashboard.html" },
     "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/danh-sach-bai-viet", file: "community/danh-sach-bai-viet.html" },
     "community-categories": { key: "community-categories", slug: "/admin/cong-dong/categories", file: "community/categories.html" },
@@ -73,7 +83,11 @@
     "community-comments": { key: "community-comments", slug: "/admin/cong-dong/comments", file: "community/comments.html" },
     "community-reports": { key: "community-reports", slug: "/admin/cong-dong/reports", file: "community/reports.html" },
     "community-experts": { key: "community-experts", slug: "/admin/cong-dong/experts", file: "community/experts.html" },
+    "community-rss-providers": { key: "community-rss-providers", slug: "/admin/cong-dong/nguon-rss", file: "community/nguon-rss.html" },
+    "community-rss-category-sync": { key: "community-rss-category-sync", slug: "/admin/cong-dong/dong-bo-danh-muc", file: "community/dong-bo-danh-muc.html" },
+    "community-rss-article-schema": { key: "community-rss-article-schema", slug: "/admin/cong-dong/dong-bo-cau-truc-bai-viet", file: "community/dong-bo-cau-truc-bai-viet.html" },
     "cau-chuyen-list": { key: "cau-chuyen-list", slug: "/admin/cau-chuyen/danh-sach", file: "chu-de/danh-sach-cau-chuyen.html" },
+    "cau-chuyen-detail": { key: "cau-chuyen-detail", slug: "/admin/cau-chuyen/chi-tiet", file: "chu-de/chi-tiet-cau-chuyen.html" },
     "chu-de-registry": { key: "chu-de-registry", slug: "/admin/cong-dong/danh-sach-chu-de", file: "community/danh-sach-chu-de.html" },
     "chu-de-detail": { key: "chu-de-detail", slug: "/admin/chu-de/detail", file: "chu-de/detail.html" },
     "chu-de-mapping": { key: "chu-de-mapping", slug: "/admin/chu-de/mapping", file: "chu-de/mapping.html" },
@@ -93,6 +107,7 @@
     "Admin-Design-system-patterns-form-add": { key: "Admin-Design-system-patterns-form-add", slug: "/Admin_Design_system/patterns/form-add.html", file: null },
     "Admin-Design-system-patterns-charts": { key: "Admin-Design-system-patterns-charts", slug: "/Admin_Design_system/patterns/charts.html", file: null },
     "req-partnership": { key: "req-partnership", slug: "/admin/yeu-cau/partnership", file: "requests/partnership.html" },
+    "req-withdrawals": { key: "req-withdrawals", slug: "/admin/yeu-cau/withdrawals", file: "requests/withdrawals.html" },
     "req-features": { key: "req-features", slug: "/admin/yeu-cau/features", file: "requests/features.html" },
     "req-bugs": { key: "req-bugs", slug: "/admin/yeu-cau/bugs", file: "requests/bugs.html" },
   };
@@ -119,6 +134,8 @@
     'van-hanh-du-lieu': 'market-ops',
     'du-lieu': 'data',
     'goi-cuoc': 'subscription',
+    'don-hang': 'orders',
+    'thanh-vien': 'loyalty',
     'thong-bao': 'notifications',
     'tham-so': 'metadata',
     'tiep-thi': 'marketing',
@@ -186,6 +203,18 @@
   function detectActiveKey() {
     var path = (global.location && global.location.pathname) || '';
     var hash = (global.location && global.location.hash) || '';
+    var search = (global.location && global.location.search) || '';
+    var pathOnly = String(path).split('?')[0];
+    if (/\/plan-edit(\.html)?$/.test(pathOnly) || /\/goi-cuoc\/plan-edit$/.test(pathOnly)) {
+      var plan = '';
+      try { plan = new URLSearchParams(search).get('plan') || ''; } catch (e) { plan = ''; }
+      if (plan === 'new') return 'subscription-plan-add';
+      /* Sửa gói → giữ highlight Danh sách Gói */
+      return 'subscription-plans';
+    }
+    if (/\/don-hang\/edit(\.html)?$/.test(pathOnly) || /\/orders\/edit(\.html)?$/.test(pathOnly)) {
+      return 'orders-list';
+    }
     return matchPath(path, hash);
   }
 

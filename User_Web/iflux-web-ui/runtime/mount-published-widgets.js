@@ -1,8 +1,21 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-010
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
 /**
  * Mount path helper — Host Tree → import(display.module) → mount(host, ctx).
  * Ctx chỉ: host (el), artifact, view model (config/slot) — không pageKey/route/section/layout.
  */
-import { loadStyles } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadStyles } from './legacy-bridge.js?v=feedCard20260723c';
 
 function stylesheetHrefs(widgetArt) {
   var deps = (widgetArt && widgetArt.dependencies) || [];

@@ -8,7 +8,7 @@
   function st() { return global.IfluxCommunityStore; }
   function mk() { return global.IfluxMockMarket; }
   function ui() { return global.IfluxCommunityUI; }
-  function wl() { return global.IfluxWatchlistUI; }
+  function heart() { return global.IfluxHeartAction; }
   function treemap() { return global.IfluxSquarifiedTreemap; }
 
   function fmtPct(n) {
@@ -120,7 +120,7 @@
     });
 
     var m = mk();
-    var heartFn = wl() && wl().heartButtonHtml;
+    var heartFn = heart() && heart().heartButtonHtml;
     var byTk = {};
     canvas.querySelectorAll('[data-ifx-cap-tile]').forEach(function (el) {
       byTk[el.getAttribute('data-ifx-cap-tile')] = el;
@@ -145,7 +145,9 @@
           var state = m && m.getStockPriceState ? m.getStockPriceState(tileKey) : 'ref';
           var heart = heartFn ? heartFn(tileKey) : '';
           el.innerHTML =
-            '<a class="ifx-cap-tile__link is-' + state + '" href="' + (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey)) + '"></a>' +
+            '<a class="ifx-cap-tile__link is-' + state + '" href="' + (global.IfluxHref
+              ? IfluxHref.forCanonical(global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey))
+              : (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tileKey) : '/co-phieu/' + encodeURIComponent(tileKey))) + '"></a>' +
             (heart ? '<div class="ifx-cap-tile__heart">' + heart + '</div>' : '');
         }
         canvas.appendChild(el);
@@ -177,7 +179,7 @@
       if (orphan.parentNode) orphan.parentNode.removeChild(orphan);
     });
 
-    if (wl() && wl().refreshHearts) wl().refreshHearts();
+    if (heart() && heart().refresh) heart().refresh();
   }
 
   /**
@@ -250,12 +252,12 @@
   }
 
   function storyEntityHref(it) {
-    if (it && it.href) return it.href;
+    if (it && it.href) return global.IfluxHref ? IfluxHref.forCanonical(it.href) : it.href;
     var id = it.id || it.name;
-    if (global.IfluxSeoUrl && IfluxSeoUrl.storyEntityHref) {
-      return IfluxSeoUrl.storyEntityHref(id);
-    }
-    return '/chu-de/' + encodeURIComponent(id);
+    var c = (global.IfluxSeoUrl && IfluxSeoUrl.storyEntityHref)
+      ? IfluxSeoUrl.storyEntityHref(id)
+      : '/chu-de/' + encodeURIComponent(id);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function storyWidgetMeta() {
@@ -264,7 +266,7 @@
       description: 'Top N Topic/Story theo điểm Interest trong cửa sổ Ngày|Tuần|Tháng.',
       limit: 10
     };
-    var P = global.PlatformLayersWidgets;
+    var P = global.L4RuntimeReader;
     if (!P) return fallback;
     var copy = P.resolveWidgetCopy ? P.resolveWidgetCopy('WGT-COM-CHUDE-TOP') : null;
     var w = P.getWidget ? P.getWidget('WGT-COM-CHUDE-TOP') : null;
@@ -290,7 +292,7 @@
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.'
     };
-    var P = global.PlatformLayersWidgets;
+    var P = global.L4RuntimeReader;
     if (!P) return fallback;
     var copy = P.resolveWidgetCopy ? P.resolveWidgetCopy('WGT-COM-001') : null;
     var w = P.getWidget ? P.getWidget('WGT-COM-001') : null;
@@ -304,7 +306,7 @@
     if (!items.length) {
       return '<div class="ifx-com-trending-empty">Chưa có chủ đề nổi bật.</div>';
     }
-    var storyHeartFn = wl() && wl().storyHeartButtonHtml;
+    var storyHeartFn = heart() && heart().storyHeartButtonHtml;
     return items.map(function (it, i) {
       var rank = i + 1;
       var heart = storyHeartFn ? storyHeartFn(it.id) : '';
@@ -412,7 +414,8 @@
     container.innerHTML = renderHtml(opts);
     var scope = container.querySelector('[data-ifx-trending-row]') || container;
     if (!opts.storyOnly) mountCapTreemap(scope);
-    if (wl() && wl().refreshHearts) wl().refreshHearts();
+    if (heart() && heart().bind) heart().bind(container);
+    else if (heart() && heart().refresh) heart().refresh();
     container.querySelectorAll('[data-ifx-stop-link]').forEach(function (wrap) {
       wrap.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); });
     });

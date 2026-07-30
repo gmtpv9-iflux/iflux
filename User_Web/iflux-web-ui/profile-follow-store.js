@@ -1,109 +1,153 @@
-/* Danh sách user đang theo dõi — sandbox localStorage */
+/* Follow User — API SoT (FN-001). count/exist/cursor — cấm full list.
+ * Legacy LS chỉ cache ngắn; server = SoT. */
 (function (global) {
   'use strict';
 
-  var STORAGE_KEY = 'iflux_profile_follows_v1';
+  var cacheFollowing = null;
+  var cacheMe = null;
 
-  var SEED = [
-    { id: 'u2', display_name: 'Lan Hương', username: '@lan.huong', initials: 'LH', role: 'Phân tích', followers: 1280 },
-    { id: 'u3', display_name: 'Đức Anh', username: '@duc.anh', initials: 'DA', role: 'Sáng tạo', followers: 890 },
-    { id: 'u4', display_name: 'Thu Hà', username: '@thu.ha', initials: 'TH', role: 'Tiêu chuẩn', followers: 456 },
-    { id: 'u5', display_name: 'Quốc Bảo', username: '@qb.trader', initials: 'QB', role: 'Chuyên gia cộng đồng', followers: 2100 },
-    { id: 'u6', display_name: 'Hoàng Nam', username: '@hoang.nam', initials: 'HN', role: 'Phân tích', followers: 670 }
-  ];
-
-  function readAll() {
+  function apiBase() {
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
+      var host = String((global.location && location.hostname) || '').toLowerCase();
+      if (host === 'iflux.vn' || host === 'www.iflux.vn' || host.indexOf('staging.') === 0) {
+        return '/api';
+      }
+    } catch (e) { /* ignore */ }
+    if (global.IfluxApiConfig && IfluxApiConfig.getBaseUrl) {
+      var b = IfluxApiConfig.getBaseUrl();
+      if (b) return String(b).replace(/\/$/, '');
+    }
+    return '/api';
+  }
+
+  function token() {
+    try {
+      if (global.IfluxAuth && IfluxAuth.getToken) return IfluxAuth.getToken();
     } catch (e) { /* ignore */ }
     return null;
   }
 
-  function writeAll(map) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+  function authHeaders() {
+    var h = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    var t = token();
+    if (t) h.Authorization = 'Bearer ' + t;
+    return h;
   }
 
-  function ensure(userId) {
-    var map = readAll();
-    if (!map) {
-      map = {};
-      map[userId] = SEED.slice();
-      writeAll(map);
+  function unwrap(res, data) {
+    if (!res.ok) {
+      var msg = (data && data.error && data.error.message) || data.error || data.message || ('HTTP ' + res.status);
+      throw new Error(typeof msg === 'string' ? msg : 'Lỗi follow');
     }
-    if (!map[userId]) {
-      map[userId] = [];
-      writeAll(map);
-    }
-    return map;
+    return (data && data.data != null) ? data.data : data;
   }
 
-  function listFollowing(userId) {
-    userId = userId || 'default';
-    var map = ensure(userId);
-    return (map[userId] || []).slice();
+  function getJson(url) {
+    return fetch(url, { headers: authHeaders(), credentials: 'same-origin' }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        return unwrap(res, data);
+      });
+    });
   }
 
-  function countFollowing(userId) {
-    return listFollowing(userId).length;
+  function send(method, url) {
+    return fetch(url, { method: method, headers: authHeaders(), credentials: 'same-origin' }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        return unwrap(res, data);
+      });
+    });
+  }
+
+  function meId() {
+    try {
+      if (global.IfluxAuth && IfluxAuth.getUser) {
+        var u = IfluxAuth.getUser();
+        return u && u.id ? u.id : null;
+      }
+    } catch (e) { /* ignore */ }
+    return null;
   }
 
   function isFollowing(userId, targetId) {
-    return listFollowing(userId).some(function (u) { return u.id === targetId; });
+    /* sync helper — prefer last exist cache; callers should use existAsync when possible */
+    if (cacheMe && String(cacheMe.follower) === String(userId) && String(cacheMe.target) === String(targetId)) {
+      return !!cacheMe.following;
+    }
+    return false;
   }
 
-  /** Theo dõi lẫn nhau = cả hai chiều cùng tồn tại trong follow store */
-  function isMutual(userId, peerId) {
-    if (!userId || !peerId || userId === peerId) return false;
-    return isFollowing(userId, peerId) && isFollowing(peerId, userId);
-  }
-
-  function listFollowers(userId) {
-    userId = String(userId || '');
-    if (!userId) return [];
-    var map = readAll() || {};
-    var out = [];
-    Object.keys(map).forEach(function (followerId) {
-      if (followerId === userId) return;
-      var list = map[followerId] || [];
-      if (list.some(function (u) { return String(u.id) === userId; })) {
-        out.push({ id: followerId });
-      }
+  function existAsync(targetId) {
+    return getJson(apiBase() + '/follow/users/' + encodeURIComponent(targetId) + '/exist').then(function (data) {
+      cacheMe = { follower: meId(), target: targetId, following: !!(data && data.following) };
+      return cacheMe.following;
     });
-    return out;
   }
 
   function follow(userId, target) {
-    if (!target || !target.id) return false;
-    var map = ensure(userId);
-    var list = map[userId] || [];
-    if (list.some(function (u) { return u.id === target.id; })) return false;
-    list.push({
-      id: target.id,
-      display_name: target.display_name || target.name,
-      username: target.username || '',
-      initials: target.initials || 'U',
-      role: target.role || 'Thành viên',
-      followers: target.followers || 0
+    if (!target || !target.id) return Promise.resolve(false);
+    return send('POST', apiBase() + '/follow/users/' + encodeURIComponent(target.id)).then(function () {
+      cacheMe = { follower: userId || meId(), target: target.id, following: true };
+      cacheFollowing = null;
+      return true;
     });
-    map[userId] = list;
-    writeAll(map);
-    return true;
   }
 
   function unfollow(userId, targetId) {
-    var map = ensure(userId);
-    map[userId] = (map[userId] || []).filter(function (u) { return u.id !== targetId; });
-    writeAll(map);
+    return send('DELETE', apiBase() + '/follow/users/' + encodeURIComponent(targetId)).then(function () {
+      cacheMe = { follower: userId || meId(), target: targetId, following: false };
+      cacheFollowing = null;
+      return true;
+    });
+  }
+
+  function countsAsync(userId) {
+    return getJson(apiBase() + '/follow/users/' + encodeURIComponent(userId) + '/counts');
+  }
+
+  function countFollowing(userId) {
+    /* sync stub for profile bind — use countsAsync when mounting */
+    return (cacheFollowing && cacheFollowing.userId === userId) ? cacheFollowing.n : 0;
+  }
+
+  function listFollowing(userId) {
+    return (cacheFollowing && cacheFollowing.userId === userId) ? (cacheFollowing.items || []).slice() : [];
+  }
+
+  function loadFollowingPage(opts) {
+    opts = opts || {};
+    var qs = [];
+    if (opts.cursor) qs.push('cursor=' + encodeURIComponent(opts.cursor));
+    if (opts.limit) qs.push('limit=' + encodeURIComponent(opts.limit));
+    var url = apiBase() + '/follow/users/me/following' + (qs.length ? '?' + qs.join('&') : '');
+    return getJson(url).then(function (data) {
+      cacheFollowing = {
+        userId: meId(),
+        items: data.items || [],
+        n: (data.items || []).length,
+        next_cursor: data.next_cursor || null
+      };
+      return data;
+    });
+  }
+
+  function isMutual() {
+    return false;
+  }
+
+  function listFollowers() {
+    return [];
   }
 
   global.IfluxProfileFollowStore = {
     listFollowing: listFollowing,
-    listFollowers: listFollowers,
     countFollowing: countFollowing,
     isFollowing: isFollowing,
     isMutual: isMutual,
+    listFollowers: listFollowers,
     follow: follow,
-    unfollow: unfollow
+    unfollow: unfollow,
+    existAsync: existAsync,
+    countsAsync: countsAsync,
+    loadFollowingPage: loadFollowingPage
   };
 })(window);

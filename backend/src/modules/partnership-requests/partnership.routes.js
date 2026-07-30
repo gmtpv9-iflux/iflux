@@ -13,6 +13,7 @@ const {
   getById,
   updateStatus
 } = require('./partnership.service');
+const { requireJwtPermission, requireAdminStatusPermission } = require('../admin-rbac/admin-perm-guard');
 
 const STATUSES = ['new', 'in_progress', 'done', 'rejected'];
 
@@ -20,7 +21,18 @@ function createPartnershipRouter(deps) {
   deps = deps || {};
   const { config, auth } = deps;
   const router = express.Router();
-  const adminGuard = auth && auth.authenticateAdmin;
+  const viewGuard = requireJwtPermission({ config, auth }, ['requests.partnership.view']);
+  const statusGuard = requireAdminStatusPermission(
+    { config, auth },
+    'requests.partnership',
+    {
+      in_progress: 'status_in_progress',
+      done: 'status_done',
+      rejected: 'status_rejected',
+      /* new = trạng thái mặc định khi tạo public; admin ít khi set lại */
+      new: 'view'
+    }
+  );
 
   const createSchema = z.object({
     body: z.object({
@@ -65,7 +77,7 @@ function createPartnershipRouter(deps) {
   });
 
   // ── ADMIN: danh sách + đếm theo trạng thái ──
-  router.get('/', adminGuard, async (req, res, next) => {
+  router.get('/', viewGuard, async (req, res, next) => {
     try {
       const requests = await listAdmin({
         status: req.query.status,
@@ -79,7 +91,7 @@ function createPartnershipRouter(deps) {
     }
   });
 
-  router.get('/:id', adminGuard, async (req, res, next) => {
+  router.get('/:id', viewGuard, async (req, res, next) => {
     try {
       const row = await getById(req.params.id);
       if (!row) return next(AppError.notFound('NOT_FOUND', 'Không tìm thấy yêu cầu'));
@@ -89,7 +101,7 @@ function createPartnershipRouter(deps) {
     }
   });
 
-  router.post('/:id/status', adminGuard, async (req, res, next) => {
+  router.post('/:id/status', statusGuard, async (req, res, next) => {
     try {
       const status = String((req.body && req.body.status) || '').trim();
       if (STATUSES.indexOf(status) < 0) {

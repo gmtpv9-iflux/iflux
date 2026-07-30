@@ -5,6 +5,10 @@
   var steps = [];
   var editingId = null;
 
+  function canPerm(key) {
+    return !!(window.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
   var WEB_TARGETS = [
     { id: 'home', label: 'Nhà của tôi' },
     { id: 'market', label: 'Thị trường' },
@@ -58,8 +62,12 @@
         '<td>' + (channel === 'web' ? esc(s.target_key || '—') : '—') + '</td>' +
         '<td>' + (s.is_active ? '<span class="ix-chip ix-chip-success">Bật</span>' : '<span class="ix-chip">Tắt</span>') + '</td>' +
         '<td style="white-space:nowrap">' +
-          '<button type="button" class="ix-btn ix-btn-ghost ix-btn-sm" data-ob-edit="' + s.id + '">Sửa</button> ' +
-          '<button type="button" class="ix-btn ix-btn-ghost ix-btn-sm" data-ob-del="' + s.id + '">Xóa</button>' +
+          (canPerm('marketing.onboarding.edit')
+            ? '<button type="button" class="ix-btn ix-btn-ghost ix-btn-sm" data-ob-edit="' + s.id + '">Sửa</button> '
+            : '') +
+          (canPerm('marketing.onboarding.edit')
+            ? '<button type="button" class="ix-btn ix-btn-ghost ix-btn-sm" data-ob-del="' + s.id + '">Xóa</button>'
+            : '') +
         '</td></tr>';
     }).join('');
 

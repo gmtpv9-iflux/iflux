@@ -158,7 +158,7 @@ export async function bootShell(pageKey) {
   await ensureParallel([
     { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=navSlice4ux_20260727' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=regSoT_20260728' }
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=p6Writer20260730' }
   ]);
   if (window.IfluxAppShellHeader && IfluxAppShellHeader.render) {
     try { IfluxAppShellHeader.render(); } catch (eChrome) { /* ignore */ }
@@ -208,7 +208,7 @@ export async function bootShell(pageKey) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=wp3Ggl20260728' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=p7ShareSheet20260730' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

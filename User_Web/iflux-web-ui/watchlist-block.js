@@ -22,8 +22,10 @@
 
   function stockHref(ticker) {
     ticker = String(ticker || '').toUpperCase();
-    if (global.IfluxSeoUrl) return IfluxSeoUrl.stockHref(ticker);
-    return '/co-phieu/' + encodeURIComponent(ticker);
+    var c = global.IfluxSeoUrl
+      ? IfluxSeoUrl.stockHref(ticker)
+      : '/co-phieu/' + encodeURIComponent(ticker);
+    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
   function renderFolderBar(block) {
@@ -125,7 +127,7 @@
       });
     }).join('');
 
-    if (uiMod) uiMod.refreshHearts();
+    if (uiMod && global.IfluxHeartAction) IfluxHeartAction.refresh();
     if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
   }
 

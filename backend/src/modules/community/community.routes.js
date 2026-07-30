@@ -6,34 +6,13 @@ const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
 const { AppError } = require('../../shared/exceptions/app-error');
 const { listPosts, createPost } = require('./community.service');
-const categories = require('./community-categories.service');
-const articles = require('./community-articles.service');
-
-function requireAdminKey(config) {
-  return function adminKeyGuard(req, res, next) {
-    const key = req.headers['x-admin-key'];
-    if (!key || key !== config.ADMIN_API_KEY) {
-      return next(AppError.forbidden('ADMIN_FORBIDDEN', 'Admin key required'));
-    }
-    next();
-  };
-}
-
-/** JWT admin Bearer HOẶC X-Admin-Key */
-function requireAdmin(deps) {
-  const keyGuard = requireAdminKey(deps.config || {});
-  const jwtGuard = deps.auth && deps.auth.authenticateAdmin;
-  return function adminGuard(req, res, next) {
-    const hasBearer = String(req.headers.authorization || '').startsWith('Bearer ');
-    if (jwtGuard && hasBearer) {
-      return jwtGuard(req, res, function (err) {
-        if (!err && req.admin) return next();
-        return keyGuard(req, res, next);
-      });
-    }
-    return keyGuard(req, res, next);
-  };
-}
+  const comments = require('./community-comments.service');
+  const categories = require('./community-categories.service');
+  const articles = require('./community-articles.service');
+  const interaction = require('./interaction.service');
+  const feed = require('./community-feed.service');
+  const rssProviders = require('./rss-providers.service');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 const categoryBodySchema = z.object({
   name: z.string().min(1).max(160),
@@ -56,8 +35,39 @@ function createCommunityRouter(deps) {
   const router = express.Router();
   const config = deps.config || {};
   const auth = deps.auth || {};
-  const adminGuard = requireAdmin({ config, auth });
+  const perm = function () {
+    return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
+  };
 
+  /**
+   * SoT FeedCard — semantic list (không đổi GET /posts legacy).
+   * GET /community/feed → FeedCard[] (Forbidden: body, body_html, …)
+   */
+  router.get('/feed', async (req, res, next) => {
+    try {
+      const data = await feed.listFeed({
+        content_type: req.query.type || req.query.content_type,
+        type: req.query.type,
+        limit: req.query.limit ? Number(req.query.limit) : 30,
+        offset: req.query.offset ? Number(req.query.offset) : 0,
+        ticker: req.query.ticker || null,
+        category_id: req.query.category_id || null,
+        chu_de_id: req.query.chu_de_id || null,
+        related_to: req.query.related_to || null
+      });
+      return success(res, {
+        cards: data.cards,
+        posts: data.cards,
+        total: data.total,
+        limit: data.limit,
+        offset: data.offset
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* Legacy list — giữ nguyên schema; FE Critical Path không còn gọi. */
   router.get('/posts', async (req, res, next) => {
     try {
       const posts = await listPosts({
@@ -69,6 +79,101 @@ function createCommunityRouter(deps) {
       next(err);
     }
   });
+
+  /* SoT bình luận — Server owns; User Web Store chỉ mirror runtime */
+  router.get('/posts/:idOrSlug/comments', async (req, res, next) => {
+    try {
+      const data = await comments.listComments(req.params.idOrSlug, {
+        limit: req.query.limit ? Number(req.query.limit) : 100
+      });
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* RC-API-01 — Interaction Summary counts-only (không comments[]) */
+  router.get('/interaction/summary', async (req, res, next) => {
+    try {
+      const data = await interaction.getSummary(req.query.type, req.query.id);
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  const mutateSchema = z.object({
+    body: z.object({
+      type: z.string().optional(),
+      action: z.enum(['like', 'unlike', 'favorite', 'unfavorite', 'share_bump'])
+    })
+  });
+
+  /* RC-API-03 — mutation; RC-API-07 client phải refresh projection sau success */
+  router.post(
+    '/interaction/:idOrSlug/mutate',
+    deps.auth.authenticate,
+    validate(mutateSchema),
+    async (req, res, next) => {
+      try {
+        const data = await interaction.mutate(
+          req.params.idOrSlug,
+          req.user,
+          req.validated.body.action
+        );
+        return success(res, data);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  const createCommentSchema = z.object({
+    body: z.object({
+      body: z.string().max(4000).optional().nullable(),
+      image: z.string().optional().nullable(),
+      image_url: z.string().optional().nullable()
+    })
+  });
+
+  router.post(
+    '/posts/:idOrSlug/comments',
+    deps.auth.authenticate,
+    validate(createCommentSchema),
+    async (req, res, next) => {
+      try {
+        const data = await comments.createComment(req.params.idOrSlug, req.user, req.validated.body);
+        return success(res, data, 201);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.get('/articles/:idOrSlug/comments', async (req, res, next) => {
+    try {
+      const data = await comments.listComments(req.params.idOrSlug, {
+        limit: req.query.limit ? Number(req.query.limit) : 100
+      });
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post(
+    '/articles/:idOrSlug/comments',
+    deps.auth.authenticate,
+    validate(createCommentSchema),
+    async (req, res, next) => {
+      try {
+        const data = await comments.createComment(req.params.idOrSlug, req.user, req.validated.body);
+        return success(res, data, 201);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
 
   const createSchema = z.object({
     body: z.object({
@@ -87,7 +192,7 @@ function createCommunityRouter(deps) {
       sectors: z.array(z.string()).optional(),
       ecosystems: z.array(z.string()).optional(),
       exchange: z.string().optional().nullable(),
-      status: z.enum(['draft', 'pending', 'published', 'scheduled']).optional(),
+      status: z.enum(['draft', 'pending', 'published', 'published_rss', 'scheduled']).optional(),
       seo: z.any().optional(),
       display: z.any().optional(),
       cover: z.any().optional()
@@ -164,7 +269,7 @@ function createCommunityRouter(deps) {
   });
 
   /* ── Admin categories CRUD ── */
-  router.get('/admin/categories', adminGuard, async (req, res, next) => {
+  router.get('/admin/categories', perm('community.categories.view'), async (req, res, next) => {
     try {
       const list = await categories.listCategories({
         q: req.query.q || null,
@@ -176,7 +281,7 @@ function createCommunityRouter(deps) {
     }
   });
 
-  router.get('/admin/categories/:id', adminGuard, async (req, res, next) => {
+  router.get('/admin/categories/:id', perm('community.categories.view'), async (req, res, next) => {
     try {
       const item = await categories.getCategory(req.params.id);
       if (!item) return res.status(404).json({ error: 'Không tìm thấy danh mục' });
@@ -188,7 +293,7 @@ function createCommunityRouter(deps) {
 
   router.post(
     '/admin/categories',
-    adminGuard,
+    perm('community.categories.create'),
     validate(z.object({ body: categoryBodySchema })),
     async (req, res, next) => {
       try {
@@ -203,7 +308,7 @@ function createCommunityRouter(deps) {
 
   router.put(
     '/admin/categories/:id',
-    adminGuard,
+    perm('community.categories.edit'),
     validate(z.object({ body: categoryBodySchema.partial() })),
     async (req, res, next) => {
       try {
@@ -215,10 +320,28 @@ function createCommunityRouter(deps) {
     }
   );
 
-  router.delete('/admin/categories/:id', adminGuard, async (req, res, next) => {
+  router.delete('/admin/categories/:id', perm('community.categories.delete'), async (req, res, next) => {
     try {
       const result = await categories.deleteCategory(req.params.id);
       return success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/categories/:id/status-visible', perm('community.categories.status_visible'), async (req, res, next) => {
+    try {
+      const item = await categories.updateCategory(req.params.id, { is_visible: true });
+      return success(res, { category: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/categories/:id/status-hidden', perm('community.categories.status_hidden'), async (req, res, next) => {
+    try {
+      const item = await categories.updateCategory(req.params.id, { is_visible: false });
+      return success(res, { category: item });
     } catch (err) {
       next(err);
     }
@@ -269,7 +392,7 @@ function createCommunityRouter(deps) {
       })
       .optional()
       .nullable(),
-    status: z.enum(['draft', 'pending', 'published', 'scheduled']).optional(),
+    status: z.enum(['draft', 'pending', 'published', 'published_rss', 'scheduled']).optional(),
     display: z
       .object({
         featured: z.boolean().optional(),
@@ -300,10 +423,57 @@ function createCommunityRouter(deps) {
     }
   });
 
+  /* Pipeline A: article → Metadata SoT → render (consume only). */
+  router.get('/articles/:idOrSlug/open-graph', async (req, res, next) => {
+    try {
+      const item = await articles.getArticle(req.params.idOrSlug);
+      if (!item) {
+        res.status(404).type('html').send(
+          '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8" /><title>Không tìm thấy · iFlux</title></head>' +
+          '<body><p>Không tìm thấy bài viết</p></body></html>'
+        );
+        return;
+      }
+      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
+      articles.attachArticleMetadata(item, origin);
+      res
+        .status(200)
+        .type('html')
+        .set('Cache-Control', 'public, max-age=300')
+        .send(articles.renderOpenGraphHtml(item.metadata));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* Pipeline B: SPA shell + cùng Metadata SoT head (Golden Reference tags). */
+  router.get('/articles/:idOrSlug/spa', async (req, res, next) => {
+    try {
+      const item = await articles.getArticle(req.params.idOrSlug);
+      if (!item) {
+        res.status(404).type('html').send(
+          '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8" /><title>Không tìm thấy · iFlux</title></head>' +
+          '<body><p>Không tìm thấy bài viết</p></body></html>'
+        );
+        return;
+      }
+      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
+      articles.attachArticleMetadata(item, origin);
+      res
+        .status(200)
+        .type('html')
+        .set('Cache-Control', 'public, max-age=60')
+        .send(articles.renderArticleSpaHtml(item.metadata));
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/articles/:idOrSlug', async (req, res, next) => {
     try {
       const item = await articles.getArticle(req.params.idOrSlug);
       if (!item) return res.status(404).json({ error: 'Không tìm thấy bài viết' });
+      articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn');
       return success(res, { article: item });
     } catch (err) {
       next(err);
@@ -356,7 +526,7 @@ function createCommunityRouter(deps) {
   });
 
   router.post('/chu-de', async (req, res, next) => {
-    /* Cho phép user đã đăng nhập HOẶC admin */
+    /* User đã đăng nhập HOẶC admin có quyền stories.registry.create */
     const hasBearer = String(req.headers.authorization || '').startsWith('Bearer ');
     const run = async function () {
       const item = await articles.createChuDeQuick(req.body && req.body.name);
@@ -368,13 +538,13 @@ function createCommunityRouter(deps) {
         run().catch(next);
       });
     }
-    return adminGuard(req, res, function (err) {
+    return perm('stories.registry.create')(req, res, function (err) {
       if (err) return next(err);
       run().catch(next);
     });
   });
 
-  router.get('/admin/articles', adminGuard, async (req, res, next) => {
+  router.get('/admin/articles', perm('community.articles.view'), async (req, res, next) => {
     try {
       const list = await articles.listArticles({
         include_all: true,
@@ -390,7 +560,7 @@ function createCommunityRouter(deps) {
     }
   });
 
-  router.get('/admin/chu-de', adminGuard, async (req, res, next) => {
+  router.get('/admin/chu-de', perm('community.stories.view'), async (req, res, next) => {
     try {
       const list = await articles.listChuDeAdmin({
         q: req.query.q,
@@ -403,7 +573,7 @@ function createCommunityRouter(deps) {
     }
   });
 
-  router.get('/admin/authors', adminGuard, async (req, res, next) => {
+  router.get('/admin/authors', perm('community.experts.view'), async (req, res, next) => {
     try {
       const list = await articles.listAuthorsAdmin({
         q: req.query.q,
@@ -415,7 +585,18 @@ function createCommunityRouter(deps) {
     }
   });
 
-  router.get('/admin/articles/:id', adminGuard, async (req, res, next) => {
+  router.post('/admin/rss-ingest/run', perm('community.rss_article_schema.execute'), async (req, res, next) => {
+    try {
+      const { runRssCommunityIngest } = require('./rss-ingest.service');
+      const limit = req.body && req.body.limitPerFeed != null ? Number(req.body.limitPerFeed) : undefined;
+      const out = await runRssCommunityIngest({ limitPerFeed: limit });
+      return success(res, out);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/admin/articles/:id', perm('community.articles.view'), async (req, res, next) => {
     try {
       const item = await articles.getArticle(req.params.id);
       if (!item) return res.status(404).json({ error: 'Không tìm thấy bài viết' });
@@ -427,7 +608,7 @@ function createCommunityRouter(deps) {
 
   router.post(
     '/admin/articles',
-    adminGuard,
+    perm('community.articles.create'),
     validate(z.object({ body: articleBodySchema })),
     async (req, res, next) => {
       try {
@@ -447,7 +628,7 @@ function createCommunityRouter(deps) {
 
   router.put(
     '/admin/articles/:id',
-    adminGuard,
+    perm('community.articles.edit'),
     validate(z.object({ body: articleBodySchema.partial().extend({ category_id: z.string().uuid().optional() }) })),
     async (req, res, next) => {
       try {
@@ -465,9 +646,183 @@ function createCommunityRouter(deps) {
     }
   );
 
-  router.delete('/admin/articles/:id', adminGuard, async (req, res, next) => {
+  router.delete('/admin/articles/:id', perm('community.articles.delete'), async (req, res, next) => {
     try {
       const result = await articles.deleteArticle(req.params.id);
+      return success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* ── community.stories (Kiểm duyệt chủ đề / story posts) — Phase C3 ── */
+
+  router.get('/admin/stories/posts', perm('community.stories.view'), async (req, res, next) => {
+    try {
+      const list = await articles.listArticles({
+        include_all: true,
+        status: req.query.status || undefined,
+        q: req.query.q,
+        chu_de_id: req.query.chu_de_id,
+        limit: req.query.limit ? Number(req.query.limit) : 100
+      });
+      return success(res, { posts: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.patch(
+    '/admin/stories/posts/:id',
+    perm('community.stories.edit'),
+    validate(z.object({
+      body: z.object({
+        title: z.string().min(1).optional(),
+        body_html: z.string().optional(),
+        excerpt: z.string().optional(),
+        status: z.enum(['draft', 'pending', 'published', 'published_rss', 'scheduled']).optional()
+      })
+    })),
+    async (req, res, next) => {
+      try {
+        const actor = {
+          id: (req.admin && req.admin.id) || 'admin',
+          name: (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
+        };
+        const item = await articles.editStoryPost(req.params.id, req.validated.body, actor);
+        return success(res, { post: item });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.delete('/admin/stories/posts/:id', perm('community.stories.delete'), async (req, res, next) => {
+    try {
+      const result = await articles.deleteArticle(req.params.id);
+      return success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  function storyModActor(req) {
+    return {
+      id: (req.admin && req.admin.id) || 'admin',
+      name: (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
+    };
+  }
+
+  router.post('/admin/stories/posts/:id/publish', perm('community.stories.publish'), async (req, res, next) => {
+    try {
+      const item = await articles.moderateStoryPost(req.params.id, 'publish', storyModActor(req));
+      return success(res, { post: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/stories/posts/:id/feature', perm('community.stories.feature_post'), async (req, res, next) => {
+    try {
+      const item = await articles.moderateStoryPost(req.params.id, 'feature', storyModActor(req));
+      return success(res, { post: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/stories/posts/:id/pin', perm('community.stories.pin_post'), async (req, res, next) => {
+    try {
+      const item = await articles.moderateStoryPost(req.params.id, 'pin', storyModActor(req));
+      return success(res, { post: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/admin/stories/posts/:id/lock', perm('community.stories.lock_post'), async (req, res, next) => {
+    try {
+      const item = await articles.moderateStoryPost(req.params.id, 'lock', storyModActor(req));
+      return success(res, { post: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* ── community.rss_providers (Nguồn RSS) — Phase C4 ── */
+
+  router.get('/admin/rss-providers', perm('community.rss_providers.view'), async (req, res, next) => {
+    try {
+      const list = await rssProviders.listProviders({
+        q: req.query.q,
+        status: req.query.status
+      });
+      return success(res, { providers: list, total: list.length });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/admin/rss-providers/:id', perm('community.rss_providers.view'), async (req, res, next) => {
+    try {
+      const item = await rssProviders.getProvider(req.params.id);
+      if (!item) throw AppError.notFound('Không tìm thấy nhà cung cấp');
+      return success(res, { provider: item });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post(
+    '/admin/rss-providers',
+    perm('community.rss_providers.create'),
+    validate(z.object({
+      body: z.object({
+        id: z.string().max(60).optional(),
+        name: z.string().min(1).max(200),
+        description: z.string().optional(),
+        website: z.string().optional(),
+        rss_index: z.string().optional(),
+        rssIndex: z.string().optional(),
+        status: z.enum(['active', 'warning', 'empty', 'inactive']).optional()
+      })
+    })),
+    async (req, res, next) => {
+      try {
+        const item = await rssProviders.createProvider(req.validated.body);
+        return success(res, { provider: item }, 201);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.patch(
+    '/admin/rss-providers/:id',
+    perm('community.rss_providers.edit'),
+    validate(z.object({
+      body: z.object({
+        name: z.string().min(1).max(200).optional(),
+        description: z.string().optional(),
+        website: z.string().optional(),
+        rss_index: z.string().optional(),
+        rssIndex: z.string().optional(),
+        status: z.enum(['active', 'warning', 'empty', 'inactive']).optional()
+      })
+    })),
+    async (req, res, next) => {
+      try {
+        const item = await rssProviders.updateProvider(req.params.id, req.validated.body);
+        return success(res, { provider: item });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.delete('/admin/rss-providers/:id', perm('community.rss_providers.delete'), async (req, res, next) => {
+    try {
+      const result = await rssProviders.deleteProvider(req.params.id);
       return success(res, result);
     } catch (err) {
       next(err);

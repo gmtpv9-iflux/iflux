@@ -224,7 +224,7 @@
 }
 .ds-gap-list li { margin-bottom: 6px; }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ds-sandbox-layout { grid-template-columns: 1fr; }
   .ds-sandbox-nav { position: static; max-height: none; }
   .ds-sandbox-stats { grid-template-columns: repeat(2, 1fr); }

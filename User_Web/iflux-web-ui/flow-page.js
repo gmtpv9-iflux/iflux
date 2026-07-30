@@ -26,7 +26,7 @@
     document.addEventListener('iflux-market-tick', function () {
       refreshSidebar();
     });
-    if (global.IfluxInsightShare) IfluxInsightShare.patchAll(document);
+    /* Share Action: Foundation lazy khi click .ifx-insight-share-btn — không preload trang. */
   }
 
   global.IfluxFlowPage = { init: init, SIDEBAR_DEDICATED: SIDEBAR_DEDICATED };

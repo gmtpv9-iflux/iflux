@@ -10,6 +10,7 @@
 const express = require('express');
 const fs = require('fs/promises');
 const path = require('path');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 var PAGE_KEY_RE = /^[a-z0-9][a-z0-9-]{0,60}$/;
 var MAX_BODY_BYTES = 200000;
@@ -53,9 +54,12 @@ function isValidManifest(m) {
   return true;
 }
 
-function createPageCompositionRouter({ config }) {
+function createPageCompositionRouter(deps) {
+  deps = deps || {};
+  const config = deps.config || {};
   const router = express.Router();
   const filePath = resolveStorePath(config);
+  const writeGuard = requireAdminPermission(deps, 'interface.page_settings.edit');
 
   router.get('/', async (req, res, next) => {
     try {
@@ -80,7 +84,7 @@ function createPageCompositionRouter({ config }) {
     }
   });
 
-  router.put('/:pageKey', async (req, res, next) => {
+  router.put('/:pageKey', writeGuard, async (req, res, next) => {
     try {
       const pageKey = String(req.params.pageKey || '').trim().toLowerCase();
       if (!PAGE_KEY_RE.test(pageKey)) {
@@ -104,7 +108,7 @@ function createPageCompositionRouter({ config }) {
     }
   });
 
-  router.delete('/:pageKey', async (req, res, next) => {
+  router.delete('/:pageKey', writeGuard, async (req, res, next) => {
     try {
       const pageKey = String(req.params.pageKey || '').trim().toLowerCase();
       if (!PAGE_KEY_RE.test(pageKey)) {

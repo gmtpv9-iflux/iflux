@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-001
+Priority: P1
+STATUS: Used|bundle
+OWNER (hiện tại): Admin DS atoms-extensions
+Owner đích (map): Admin DS atoms-extensions.css
+Usage audit: ✓
+Dep động: Không
+Migration ROI: 2
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Bundle iflux-admin-ui.css — không bỏ load từ Community
+===== IFX-AUDIT-END ===== */
 /**
  * iFlux Atoms — GĐ2 extensions (Shared Admin + User)
  * Chỉ token DS · class ix-* / ifx-* · import sau components.css

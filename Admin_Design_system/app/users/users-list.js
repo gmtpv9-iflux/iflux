@@ -68,6 +68,54 @@
     return null;
   }
 
+  function canPerm(key) {
+    return !!(global.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
+  }
+
+  function authHeaders() {
+    var h = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    var token = adminToken();
+    if (token) h.Authorization = 'Bearer ' + token;
+    return h;
+  }
+
+  function apiJson(path, opts) {
+    opts = opts || {};
+    return fetch(apiUrl() + path, {
+      method: opts.method || 'GET',
+      headers: authHeaders(),
+      body: opts.body,
+      cache: 'no-store'
+    }).then(function (res) {
+      if (res.status === 401 || res.status === 403) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          var m = data && data.error;
+          if (m && typeof m === 'object') m = m.message || JSON.stringify(m);
+          var err = new Error(m || ('HTTP ' + res.status));
+          err.status = res.status;
+          throw err;
+        });
+      }
+      if (!res.ok) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          var m = data && data.error;
+          if (m && typeof m === 'object') m = m.message || JSON.stringify(m);
+          throw new Error(m || ('HTTP ' + res.status));
+        });
+      }
+      if (res.status === 204) return null;
+      return res.json();
+    });
+  }
+
+  function openOffcanvas(id) {
+    var el = document.getElementById(id);
+    var overlay = document.getElementById(id + '-overlay') || document.getElementById('offcanvas-add-user-overlay');
+    if (el) el.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    if (typeof ixOpenOffcanvas === 'function') ixOpenOffcanvas(id);
+  }
+
   // Nguồn thật: bảng users qua API admin. localStorage chỉ để gộp khách do admin nhập tay (chưa vào DB).
   function reloadCustomers() {
     var merged = API_CUSTOMERS.slice();
@@ -335,7 +383,6 @@
     var email = (document.getElementById('add-field-email') || {}).value || '';
     var phoneRaw = (document.getElementById('add-field-phone') || {}).value || '';
     var affiliate = (document.getElementById('add-field-affiliate') || {}).value || '';
-    var role = (document.getElementById('add-field-role') || {}).value || 'Standard';
     var pkg = (document.getElementById('add-field-package') || {}).value || 'Free';
     var planType = (document.getElementById('add-field-plan') || {}).value || 'freemium';
 
@@ -351,42 +398,140 @@
       if (typeof ixToast === 'function') ixToast('Email không hợp lệ', 'danger');
       return;
     }
-    if (!isValidVnPhone(phoneRaw)) {
+    if (phoneRaw && !isValidVnPhone(phoneRaw)) {
       if (typeof ixToast === 'function') ixToast('Số điện thoại Việt Nam không hợp lệ (10 số, bắt đầu 03/05/07/08/09)', 'danger');
-      return;
-    }
-    if (CUSTOMERS.some(function (u) { return u.email === email; })) {
-      if (typeof ixToast === 'function') ixToast('Email đã tồn tại', 'danger');
       return;
     }
     if (pkg === 'Free') planType = 'freemium';
 
-    var record = {
-      name: name,
-      email: email,
-      phone: phone,
-      affiliate: affiliate,
-      initials: initialsFromName(name),
-      avatarCls: avatarClassFromName(name),
-      package: pkg,
-      planType: planType,
-      role: role,
-      expiresAt: planExpiry(planType),
-      billing: pkg === 'Free' ? '—' : 'Manual',
-      accountStatus: 'active',
-      source: 'admin'
-    };
+    var btn = document.getElementById('btn-submit-add-user');
+    if (btn) btn.disabled = true;
+    apiJson('', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone || undefined,
+        affiliate: affiliate || undefined,
+        package: pkg,
+        planType: planType
+      })
+    }).then(function (data) {
+      var c = data && data.customer;
+      if (c && global.IfluxCustomersStore) IfluxCustomersStore.upsertCustomer(Object.assign({}, c, { source: 'admin' }));
+      return loadFromApi().then(function () {
+        refresh();
+        if (typeof ixCloseOffcanvas === 'function') ixCloseOffcanvas('offcanvas-add-user');
+        var msg = 'Đã thêm khách hàng';
+        if (c && c.affiliate) msg += ' · Mã affiliate: ' + c.affiliate;
+        if (data && data.tempPassword) msg += ' · MK tạm: ' + data.tempPassword;
+        if (typeof ixToast === 'function') ixToast(msg, 'success');
+      });
+    }).catch(function (err) {
+      if (typeof ixToast === 'function') ixToast(err.message || 'Thêm thất bại', 'danger');
+    }).then(function () {
+      if (btn) btn.disabled = false;
+    });
+  }
 
-    if (global.IfluxCustomersStore) {
-      IfluxCustomersStore.upsertCustomer(record);
-      reloadCustomers();
-    } else {
-      CUSTOMERS.unshift(record);
+  function openEditUser(u) {
+    if (!u || !u.id) {
+      if (typeof ixToast === 'function') ixToast('Khách hàng chưa có trên server — không sửa được', 'warning');
+      return;
     }
+    var idEl = document.getElementById('edit-field-id');
+    var nameEl = document.getElementById('edit-field-name');
+    var emailEl = document.getElementById('edit-field-email');
+    var phoneEl = document.getElementById('edit-field-phone');
+    var statusEl = document.getElementById('edit-field-status');
+    if (idEl) idEl.value = u.id;
+    if (nameEl) nameEl.value = u.name || '';
+    if (emailEl) emailEl.value = u.email || '';
+    if (phoneEl) phoneEl.value = u.phone || '';
+    if (statusEl) statusEl.value = u.accountStatus === 'suspended' ? 'suspended' : 'active';
+    openOffcanvas('offcanvas-edit-user');
+  }
 
-    refresh();
-    if (typeof ixCloseOffcanvas === 'function') ixCloseOffcanvas('offcanvas-add-user');
-    if (typeof ixToast === 'function') ixToast('Đã thêm khách hàng · Mã affiliate: ' + affiliate, 'success');
+  function submitEditUser() {
+    var id = (document.getElementById('edit-field-id') || {}).value || '';
+    var name = ((document.getElementById('edit-field-name') || {}).value || '').trim();
+    var phoneRaw = (document.getElementById('edit-field-phone') || {}).value || '';
+    var status = (document.getElementById('edit-field-status') || {}).value || 'active';
+    if (!id) return;
+    if (!name) {
+      if (typeof ixToast === 'function') ixToast('Họ và tên là bắt buộc', 'danger');
+      return;
+    }
+    apiJson('/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      body: JSON.stringify({
+        name: name,
+        phone: phoneRaw || null,
+        account_status: status
+      })
+    }).then(function () {
+      return loadFromApi().then(function () {
+        refresh();
+        if (typeof ixCloseOffcanvas === 'function') ixCloseOffcanvas('offcanvas-edit-user');
+        if (typeof ixToast === 'function') ixToast('Đã lưu khách hàng', 'success');
+      });
+    }).catch(function (err) {
+      if (typeof ixToast === 'function') ixToast(err.message || 'Lưu thất bại', 'danger');
+    });
+  }
+
+  function grantPremiumUser(u) {
+    if (!u || !u.id) {
+      if (typeof ixToast === 'function') ixToast('Khách hàng chưa có trên server', 'warning');
+      return;
+    }
+    if (!confirm('Cấp Premium (30 ngày) cho ' + (u.email || u.name) + '?')) return;
+    apiJson('/' + encodeURIComponent(u.id) + '/grant-premium', {
+      method: 'POST',
+      body: JSON.stringify({ package: 'Premium', planType: 'monthly' })
+    }).then(function () {
+      return loadFromApi().then(function () {
+        refresh();
+        if (typeof ixToast === 'function') ixToast('Đã cấp Premium', 'success');
+      });
+    }).catch(function (err) {
+      if (typeof ixToast === 'function') ixToast(err.message || 'Cấp Premium thất bại', 'danger');
+    });
+  }
+
+  function bindExport() {
+    var btn = document.getElementById('adm-users-export');
+    if (!btn || btn._boundExport) return;
+    btn._boundExport = true;
+    btn.addEventListener('click', function () {
+      var token = adminToken();
+      if (!token) {
+        if (typeof ixToast === 'function') ixToast('Cần đăng nhập Admin', 'danger');
+        return;
+      }
+      var url = apiUrl() + '/export';
+      fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'text/csv' }, cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) {
+            return res.json().catch(function () { return {}; }).then(function (data) {
+              var m = data && data.error;
+              if (m && typeof m === 'object') m = m.message || JSON.stringify(m);
+              throw new Error(m || ('HTTP ' + res.status));
+            });
+          }
+          return res.blob().then(function (blob) {
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'khach-hang.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            if (typeof ixToast === 'function') ixToast('Đã xuất CSV', 'success');
+          });
+        })
+        .catch(function (err) {
+          if (typeof ixToast === 'function') ixToast(err.message || 'Xuất thất bại', 'danger');
+        });
+    });
   }
 
   function initAddUserForm() {
@@ -418,6 +563,17 @@
 
     var submitBtn = document.getElementById('btn-submit-add-user');
     if (submitBtn) submitBtn.addEventListener('click', submitAddUser);
+
+    var editPhone = document.getElementById('edit-field-phone');
+    if (editPhone) {
+      editPhone.addEventListener('input', function () {
+        editPhone.value = formatVnPhone(editPhone.value);
+      });
+    }
+    var editSubmit = document.getElementById('btn-submit-edit-user');
+    if (editSubmit) editSubmit.addEventListener('click', submitEditUser);
+
+    bindExport();
   }
 
   function formatRoleCell(role) {
@@ -483,8 +639,29 @@
         '<td><div style="display:flex;gap:4px">' +
           '<a href="detail.html?email=' + encodeURIComponent(u.email) + '" class="ix-btn ix-btn-icon" title="Chi tiết"><i class="ti ti-eye" style="font-size:14px"></i></a>' +
           '<a href="subscription.html?email=' + encodeURIComponent(u.email) + '" class="ix-btn ix-btn-icon" title="Thao tác gói"><i class="ti ti-credit-card" style="font-size:14px"></i></a>' +
+          (canPerm('users.list.edit') && u.id
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-user-edit="' + escapeHtml(u.id) + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>'
+            : '') +
+          (canPerm('users.list.grant_premium') && u.id && u.package === 'Free'
+            ? '<button type="button" class="ix-btn ix-btn-icon" data-user-grant="' + escapeHtml(u.id) + '" title="Cấp Premium"><i class="ti ti-crown" style="font-size:14px"></i></button>'
+            : '') +
         '</div></td></tr>';
     }).join('');
+
+    tbody.querySelectorAll('[data-user-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-user-edit');
+        var u = CUSTOMERS.find(function (c) { return String(c.id) === String(id); });
+        if (u) openEditUser(u);
+      });
+    });
+    tbody.querySelectorAll('[data-user-grant]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-user-grant');
+        var u = CUSTOMERS.find(function (c) { return String(c.id) === String(id); });
+        if (u) grantPremiumUser(u);
+      });
+    });
 
     return list;
   }

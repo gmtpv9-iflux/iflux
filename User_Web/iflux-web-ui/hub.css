@@ -46,10 +46,15 @@
 .ifx-hub-sidebar .ifx-widget__body {
   padding: 0;
 }
-.ifx-hub-sidebar .ifx-widget {
+.ifx-hub-sidebar .ifx-widget,
+.ifx-hub-sidebar .ifx-widget__surface {
   background: transparent;
   border: none;
   box-shadow: none;
+  border-radius: 0;
+}
+.ifx-hub-sidebar .ifx-widget__surface > .ifx-widget__body {
+  padding: 0;
 }
 .ifx-hub-sidebar .ifx-widget[data-widget-type^="WGT-PRF"] .ifx-widget__body {
   padding: 0;
@@ -67,7 +72,7 @@
 #tab-dashboard .ifx-dash-toolbar {
   margin-bottom: var(--ifx-space-16);
 }
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .ifx-hub-grid {
     grid-template-columns: 1fr;
   }

@@ -1,3 +1,17 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-003
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Watchlist
+Owner đích (map): Watchlist
+Usage audit: ✓ (symbol scan)
+Dep động: Có thể
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: feature modules[] — Owner sai trên Community
+===== IFX-AUDIT-END ===== */
 /* Watchlist — thư mục + membership (localStorage sandbox) */
 (function (global) {
   'use strict';

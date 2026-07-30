@@ -13,6 +13,7 @@ const {
   toggleLike,
   updateStatus
 } = require('./feature.service');
+const { requireJwtPermission, requireAdminStatusPermission } = require('../admin-rbac/admin-perm-guard');
 
 function voterId(req) {
   if (req.user && req.user.id) return 'user:' + req.user.id;
@@ -25,8 +26,18 @@ function createFeatureRequestsRouter(deps) {
   deps = deps || {};
   const { config, auth } = deps;
   const router = express.Router();
-  const adminGuard = auth && auth.authenticateAdmin;
   const optAuth = auth && auth.optionalAuth;
+  const viewGuard = requireJwtPermission({ config, auth }, ['requests.features.view']);
+  const statusGuard = requireAdminStatusPermission(
+    { config, auth },
+    'requests.features',
+    {
+      new: 'status_new',
+      accepted: 'status_accepted',
+      developing: 'status_developing',
+      released: 'status_released'
+    }
+  );
 
   const createSchema = z.object({
     body: z.object({
@@ -91,7 +102,7 @@ function createFeatureRequestsRouter(deps) {
     }
   });
 
-  router.get('/', adminGuard, async (req, res, next) => {
+  router.get('/', viewGuard, async (req, res, next) => {
     try {
       const items = await listAdmin({
         status: req.query.status,
@@ -105,7 +116,7 @@ function createFeatureRequestsRouter(deps) {
     }
   });
 
-  router.post('/:id/status', adminGuard, async (req, res, next) => {
+  router.post('/:id/status', statusGuard, async (req, res, next) => {
     try {
       const status = String((req.body && req.body.status) || '').trim();
       const row = await updateStatus(req.params.id, status, {

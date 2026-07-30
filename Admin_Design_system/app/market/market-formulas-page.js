@@ -84,6 +84,12 @@
     if (activateBtn) {
       activateBtn.disabled = f.status === 'active';
       activateBtn.dataset.formulaKey = f.key;
+      activateBtn.hidden = false;
+    }
+    var recalcBtn = document.getElementById('btn-adm-mkt-formula-recalc');
+    if (recalcBtn) {
+      recalcBtn.dataset.formulaKey = f.key;
+      recalcBtn.hidden = false;
     }
 
     renderTable();
@@ -94,12 +100,66 @@
     if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-formula-detail');
   }
 
+  function apiRequest(path, options) {
+    options = options || {};
+    function apiBase() {
+      if (global.IfluxAdminAuth && IfluxAdminAuth.apiBase) return IfluxAdminAuth.apiBase();
+      return '/api';
+    }
+    function token() {
+      if (global.IfluxAdminAuth && IfluxAdminAuth.getSession) {
+        var s = IfluxAdminAuth.getSession();
+        if (s && s.token) return s.token;
+      }
+      return null;
+    }
+    var h = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    var t = token();
+    if (t) h.Authorization = 'Bearer ' + t;
+    else h['X-Admin-Key'] = 'iflux-admin-local-dev';
+    return fetch(apiBase() + path, {
+      method: options.method || 'GET',
+      headers: h,
+      body: options.body != null ? JSON.stringify(options.body) : undefined
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) throw new Error(((data.error || {}).message) || data.message || ('HTTP ' + res.status));
+        return (data && data.data) ? data.data : data;
+      });
+    });
+  }
+
   function activateFormula(key) {
     if (!Store || !key) return;
     if (!confirm('Kích hoạt công thức "' + key + '"? Phiên bản hiện active cùng key sẽ chuyển sang deprecated.')) return;
     Store.setFormulaActive(key);
     renderDetail(key);
     toast('Đã kích hoạt công thức ' + key, 'success');
+    apiRequest('/admin/market-config/formulas').then(function (d) {
+      var list = d.formulas || [];
+      var hit = list.filter(function (f) { return f.code === key || f.name === key; })[0] || list[0];
+      if (!hit) return;
+      return apiRequest('/admin/market-config/formulas/' + encodeURIComponent(hit.id), {
+        method: 'PATCH', body: { status: 'active' }
+      });
+    }).catch(function () { /* local store đã OK */ });
+  }
+
+  function recalculateSelected() {
+    var key = selectedKey;
+    if (!key) return;
+    apiRequest('/admin/market-config/formulas').then(function (d) {
+      var list = d.formulas || [];
+      var hit = list.filter(function (f) { return f.code === key; })[0] || list[0];
+      if (!hit) throw new Error('Không tìm thấy công thức API');
+      return apiRequest('/admin/market-config/formulas/' + encodeURIComponent(hit.id) + '/recalculate', {
+        method: 'POST', body: {}
+      });
+    }).then(function () {
+      toast('Đã tính lại công thức', 'success');
+    }).catch(function (e) {
+      toast(e.message || 'Tính lại thất bại', 'danger');
+    });
   }
 
   function bindEvents() {
@@ -115,6 +175,10 @@
       activateBtn.addEventListener('click', function () {
         activateFormula(activateBtn.dataset.formulaKey);
       });
+    }
+    var recalcBtn = document.getElementById('btn-adm-mkt-formula-recalc');
+    if (recalcBtn) {
+      recalcBtn.addEventListener('click', recalculateSelected);
     }
 
     document.addEventListener('click', function (e) {

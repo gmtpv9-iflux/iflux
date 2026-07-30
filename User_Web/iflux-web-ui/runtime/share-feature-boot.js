@@ -1,14 +1,14 @@
 /**
  * Phase A — Feature /chia-se sau Shell bootstrap.
- * Hành vi hiện tại Production: attribution + redirect Nhà (giữ nguyên nghiệp vụ).
+ * P5 — path-only affiliate; không parse query ref/r.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptsSequential } from './legacy-bridge.js?v=shareAffP5_20260727';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
 var FEATURE = [
-  ASSET + 'loyalty-affiliate-store.js',
-  ASSET + 'insight-share-store.js'
+  ASSET + 'loyalty-affiliate-store.js?v=shareAffP5_20260727',
+  '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=p7ShareSheet20260730'
 ];
 
 function waitShell(pageKey) {
@@ -32,10 +32,12 @@ async function main() {
     Store.clearShareStorage();
     Store.registerUrlAttribution();
   }
-  var params = new URLSearchParams(location.search || '');
-  var ref = params.get('ref') || params.get('r') || '';
-  var dest = '/nha-cua-toi' + (ref ? '?ref=' + encodeURIComponent(ref) : '');
-  window.location.replace(dest);
+  /* P6-API-01 — internal nav chỉ Writer.navigate */
+  if (window.IfluxShellUrlWriter && window.IfluxShellUrlWriter.navigate) {
+    window.IfluxShellUrlWriter.navigate('/nha-cua-toi', { replace: true });
+  } else {
+    window.location.replace('/nha-cua-toi');
+  }
 }
 
 main().catch(function (err) {

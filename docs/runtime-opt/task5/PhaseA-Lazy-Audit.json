@@ -1,0 +1,302 @@
+{
+  "title": "Bảng Lazy — trang Cộng đồng (trigger cụ thể theo audit)",
+  "page": "/cong-dong",
+  "goal": "Giảm Critical Path lúc mở trang. Trigger rõ từng file. Không lazy tự ý. Chưa thi công cho đến khi Owner ra lệnh từng bước.",
+  "cutLoadThisStep": false,
+  "lazyImplementThisStep": false,
+  "auditedAt": "2026-07-22",
+  "updatedAt": "2026-07-22 — reviewer chốt trigger cụ thể",
+  "branch": "feat/task5-community-ui",
+  "criticalPathTarget": [
+    "bootstrap + shell-boot tối thiểu",
+    "platform-boot + api-bundle",
+    "auth-session tối thiểu (đến khi tách auth-full)",
+    "entitlements + guest-shell",
+    "community feature + widget above-fold"
+  ],
+  "triggerCatalog": [
+    { "trigger": "Focus input", "dungCho": "Search" },
+    { "trigger": "Ctrl+K / ⌘K", "dungCho": "Search" },
+    { "trigger": "Hover >200ms", "dungCho": "Avatar, Chuông, Tin nhắn" },
+    { "trigger": "Click", "dungCho": "Pricing, Insight, Watchlist, Geo AI, chuông, tin nhắn" },
+    { "trigger": "requestIdleCallback()", "dungCho": "Heart / Watchlist nhẹ sau khi Feed render" },
+    { "trigger": "IntersectionObserver", "dungCho": "Sidebar dưới màn hình, Widget cuối trang" },
+    { "trigger": "Login thành công", "dungCho": "iflux-web-ui (menu đã login)" },
+    { "trigger": "Mở modal", "dungCho": "Pricing, Onboarding" },
+    { "trigger": "Scroll tới section", "dungCho": "Widget chưa nhìn thấy" },
+    { "trigger": "Route chuyển trang", "dungCho": "Feature chỉ của trang mới (vd. Viết bài → geo-ai)" }
+  ],
+  "rows": [
+    {
+      "id": "L18",
+      "file": "community-geo-ai.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Click «Viết bài» / mở form Geo AI · hoặc route /cong-dong/viet-bai",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "Đang nằm modules[] feed Cộng đồng — hầu như không cần lúc mở feed",
+      "deXuat": "Gỡ khỏi boot /cong-dong. Chỉ import khi vào trang viết bài hoặc bấm mở Geo AI."
+    },
+    {
+      "id": "L07",
+      "file": "iflux-header-search.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có (sau stub ⌘K)",
+      "triggerLazy": "Focus ô tìm kiếm · Ctrl+K / ⌘K",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "init() gắn keydown ⌘K trên document — cần stub trước khi bỏ load sớm",
+      "deXuat": "Stub nhỏ lúc boot: focus/⌘K → import(header-search) → init(). Data market tiếp tục lazy trong ensureDeps."
+    },
+    {
+      "id": "L08a",
+      "file": "iflux-market-seed-data.js",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Header Search mở lần đầu · hoặc Widget cần mã CK",
+      "nenLam": "Rất nên",
+      "nhom": 2,
+      "sideEffect": "File rất nặng; hiện shell kéo vì MARKET_PLATFORM_PAGES.community",
+      "deXuat": "Ngừng kéo lúc mở Cộng đồng. Tải khi Search lần đầu hoặc widget cần."
+    },
+    {
+      "id": "L08b",
+      "file": "mock-market.js",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Search cần dữ liệu demo · hoặc Market Widget",
+      "nenLam": "Nên",
+      "nhom": 2,
+      "sideEffect": "Phụ thuộc Search / widget",
+      "deXuat": "Cùng chuỗi với Search / Widget — không boot Cộng đồng."
+    },
+    {
+      "id": "L08c",
+      "file": "iflux-market-registry-store.js",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Khi Search cần registry",
+      "nenLam": "Rất nên",
+      "nhom": 2,
+      "sideEffect": "ensureDeps của Search đã hướng tới",
+      "deXuat": "Tải cùng lần Search mở lần đầu."
+    },
+    {
+      "id": "L13a",
+      "file": "watchlist-ui.js",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "requestIdleCallback sau khi Feed render · hoặc click tim đầu tiên",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "community-page/daily-feed gọi bindHearts lúc mount",
+      "deXuat": "Ưu tiên idle sau Feed (tim kịp dùng). Phương án B: click tim lần đầu mới import (cần trạng thái chờ ngắn)."
+    },
+    {
+      "id": "L13b",
+      "file": "watchlist-store.js",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Lần đầu người dùng thao tác Watchlist / tim cần store",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "Store nặng hơn UI helpers",
+      "deXuat": "Import cùng hoặc ngay sau watchlist-ui khi trigger tim/Watchlist."
+    },
+    {
+      "id": "L13c",
+      "file": "watchlist.css",
+      "bootBatBuoc": "Không (đích)",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Cùng lúc import watchlist-ui.js",
+      "nenLam": "Nên",
+      "nhom": 1,
+      "sideEffect": "Đang trong community.manifest css[]",
+      "deXuat": "Bỏ khỏi css[] lúc mở. loadStyles khi lazy watchlist-ui. (CSS tim đã dual-copy community.css — hỗ trợ trước khi UI tới.)"
+    },
+    {
+      "id": "L12a",
+      "file": "inapp-notifications.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Click chuông · hoặc hover chuông >200ms",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "Hiện iflux-web-ui có thể prefetch sau login",
+      "deXuat": "Siết: chỉ import khi click/hover chuông, không prefetch cả chain lúc login nếu chưa cần."
+    },
+    {
+      "id": "L12b",
+      "file": "iflux-user-notifications-ui.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Click chuông",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "UI chuông",
+      "deXuat": "Import cùng hoặc sau inapp-notifications khi click chuông."
+    },
+    {
+      "id": "L12c",
+      "file": "iflux-header-messages.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có",
+      "triggerLazy": "Click tin nhắn · hoặc hover >200ms",
+      "nenLam": "Rất nên",
+      "nhom": 1,
+      "sideEffect": "Tương tự chuông",
+      "deXuat": "Chỉ import khi click/hover tin nhắn."
+    },
+    {
+      "id": "L11",
+      "file": "iflux-web-ui.js",
+      "bootBatBuoc": "Không (khách)",
+      "lazyDuoc": "Một phần — đã làm",
+      "triggerLazy": "Sau khi xác định đã đăng nhập (Login thành công / session sẵn)",
+      "nenLam": "Có thể tối ưu thêm",
+      "nhom": 1,
+      "sideEffect": "shell-boot chỉ nạp khi isLoggedIn()",
+      "deXuat": "Giữ gate login. Siết tiếp: chuông/tin nhắn không nằm trong lần tải đầu của iflux-web-ui nếu tách được."
+    },
+    {
+      "id": "L14a",
+      "file": "insight-share-ui.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có — đã đúng",
+      "triggerLazy": "Click Chia sẻ Insight",
+      "nenLam": "Đã đúng",
+      "nhom": "ok",
+      "sideEffect": "Tải động từ iflux-web-ui",
+      "deXuat": "Giữ. Không gắn vào boot Cộng đồng."
+    },
+    {
+      "id": "L14b",
+      "file": "insight-share.css",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có — đã đúng",
+      "triggerLazy": "Import cùng lúc UI chia sẻ",
+      "nenLam": "Đã đúng",
+      "nhom": "ok",
+      "sideEffect": "—",
+      "deXuat": "Giữ cùng bundle với insight-share-ui."
+    },
+    {
+      "id": "L09",
+      "file": "iflux-pricing-modal.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có — đã đúng",
+      "triggerLazy": "Click Premium / Paywall · mở modal",
+      "nenLam": "Đã đúng",
+      "nhom": "ok",
+      "sideEffect": "Tải động từ iflux-web-ui",
+      "deXuat": "Giữ."
+    },
+    {
+      "id": "L10",
+      "file": "iflux-onboarding.js",
+      "bootBatBuoc": "Không",
+      "lazyDuoc": "Có — đã đúng",
+      "triggerLazy": "Sau login + chưa onboarding · mở modal tour",
+      "nenLam": "Đã đúng",
+      "nhom": "ok",
+      "sideEffect": "Tải động từ iflux-web-ui",
+      "deXuat": "Giữ."
+    },
+    {
+      "id": "L15a",
+      "file": "block-templates.js",
+      "bootBatBuoc": "Một phần (hiện)",
+      "lazyDuoc": "Một phần",
+      "triggerLazy": "Chỉ khi Widget cần Template API",
+      "nenLam": "Sau này",
+      "nhom": 3,
+      "sideEffect": "Shell đang kéo sớm",
+      "deXuat": "Nhóm 3 — không làm MVP đầu."
+    },
+    {
+      "id": "L15b",
+      "file": "block-templates.css",
+      "bootBatBuoc": "Một phần",
+      "lazyDuoc": "Một phần",
+      "triggerLazy": "Chỉ giữ phần Widget đang render (IntersectionObserver / mount widget)",
+      "nenLam": "Sau này",
+      "nhom": 3,
+      "sideEffect": "Treemap cần ifx-cap-tile; ifx-com-* đã dual-copy community.css",
+      "deXuat": "Nhóm 3. Trước mắt giữ phần widget cần; không cắt mù."
+    },
+    {
+      "id": "L04",
+      "file": "auth.js",
+      "bootBatBuoc": "auth-session: Có · auth-full: Không",
+      "lazyDuoc": "auth-full: Có",
+      "triggerLazy": "Click Đăng nhập / vào trang auth — sau khi tách auth-session (boot) vs auth-full",
+      "nenLam": "Sau",
+      "nhom": 3,
+      "sideEffect": "File tự validate session lúc load; guest-shell cần isLoggedIn",
+      "deXuat": "Nhóm 3. Tách session nhẹ (boot) + full (login). Không lazy cả file một phát."
+    },
+    {
+      "id": "L19",
+      "file": "platform-layers-widgets.js",
+      "bootBatBuoc": "Có (hiện)",
+      "lazyDuoc": "Một phần",
+      "triggerLazy": "Chỉ nạp metadata widget của Community",
+      "nenLam": "Sau",
+      "nhom": 3,
+      "sideEffect": "File to",
+      "deXuat": "Nhóm 3 — subset metadata sau."
+    }
+  ],
+  "priorityGroups": {
+    "nhom1_ratDangLam": [
+      { "file": "iflux-header-search.js", "trigger": "Focus / Ctrl+K" },
+      { "file": "community-geo-ai.js", "trigger": "Click Viết bài / Geo AI" },
+      { "file": "inapp-notifications.js + user-notifications-ui", "trigger": "Hover 200ms / Click chuông" },
+      { "file": "header-messages", "trigger": "Hover 200ms / Click tin nhắn" },
+      { "file": "watchlist-ui (+ css/store)", "trigger": "Idle sau Feed render / click tim" }
+    ],
+    "nhom2": [
+      { "file": "market-seed-data.js", "trigger": "Search lần đầu hoặc Widget cần mã" },
+      { "file": "registry-store.js", "trigger": "Search cần" },
+      { "file": "mock-market.js", "trigger": "Search / Market Widget cần" }
+    ],
+    "nhom3_sau": [
+      { "file": "auth.js (tách full)", "trigger": "Login" },
+      { "file": "block-templates.js/css", "trigger": "Widget cần Template" },
+      { "file": "platform-layers-widgets.js", "trigger": "Subset metadata Community" }
+    ],
+    "daDung": [
+      "insight-share-ui/css — Click Chia sẻ",
+      "iflux-pricing-modal — Click Premium/Paywall",
+      "iflux-onboarding — Sau login + chưa onboarding"
+    ]
+  },
+  "recommendedOrder": [
+    { "step": 1, "file": "community-geo-ai.js", "trigger": "Click / route Viết bài", "lenhGoiY": "«Làm bước 1 — gỡ geo-ai»" },
+    { "step": 2, "file": "iflux-header-search.js", "trigger": "Focus / Ctrl+K", "lenhGoiY": "«Làm bước 2 — lazy ô tìm»" },
+    { "step": 3, "file": "watchlist-ui + css + store", "trigger": "Idle sau Feed / click tim", "lenhGoiY": "«Làm bước 3 — lazy watchlist/tim»" },
+    { "step": 4, "file": "notifications + messages", "trigger": "Hover 200ms / Click", "lenhGoiY": "«Làm bước 4 — lazy chuông/tin nhắn»" },
+    { "step": 5, "file": "market-seed + registry + mock", "trigger": "Search / Widget cần", "lenhGoiY": "«Làm bước 5 — lazy market data»" },
+    { "step": 6, "file": "auth tách session/full", "trigger": "Login", "lenhGoiY": "«Làm bước 6 — tách auth» (sau)" }
+  ],
+  "implementationStatus": {
+    "cutLoadThisStep": false,
+    "lazyImplementThisStep": true,
+    "done": [
+      { "step": 1, "file": "community-geo-ai.js", "note": "Gỡ khỏi features/community.manifest feed; giữ post-page + write-boot" },
+      { "step": 2, "file": "iflux-header-search.js", "note": "shell-boot stub Focus/⌘K → loadScript" },
+      { "step": 3, "file": "watchlist-ui/store/css", "note": "Gỡ khỏi feed modules + page css[]; idle/click tim → community-page ensureWatchlistLazy" }
+    ],
+    "pending": [
+      "Bước 4 chuông/tin nhắn",
+      "Bước 5 market seed/registry/mock khỏi boot Cộng đồng",
+      "Bước 6 tách auth"
+    ]
+  },
+  "ownerNextCommands": [
+    "Hard refresh /cong-dong · thử ô tìm / ⌘K · nút tim",
+    "«Làm bước 4 — lazy chuông»",
+    "«Làm bước 5 — lazy market data»"
+  ]
+}

@@ -6,7 +6,6 @@ export default {
   path: '/thanh-vien',
   title: 'Chương trình thành viên',
   documentTitle: 'Chương trình thành viên · iFlux',
-  renderPageHead: false,
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

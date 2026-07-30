@@ -44,7 +44,7 @@
             '<li><span class="ix-detail-label">Tham gia</span><span class="ix-detail-val"><span data-bind="joined_at">' + esc(user.joined_at || '—') + '</span></span></li>' +
             '<li><span class="ix-detail-label">Giới thiệu</span><span class="ix-detail-val" style="font-size:13px;line-height:1.5"><span data-bind="bio">' + esc(user.bio || '—') + '</span></span></li>' +
           '</ul>' +
-          '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" style="width:100%;margin-top:12px" data-ifx-goto-tab="tab-account" data-ifx-goto-subtab="mine-personal" data-ifx-goto-edit="1">' +
+          '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" style="width:100%;margin-top:12px" data-ifx-goto-tab="tab-profile" data-ifx-goto-edit="1">' +
             '<i class="ti ti-edit" style="font-size:13px"></i> Chỉnh sửa hồ sơ' +
           '</button>' +
         '</div>' +
@@ -102,7 +102,8 @@
       if (av) IfluxProfileAvatar.renderInto(av, Object.assign({}, user, { initials: initials(user.display_name) }));
     }
     if (global.ProfileBind) ProfileBind.init();
-    if (global.IfluxWatchlistUI) IfluxWatchlistUI.bindHearts(el);
+    if (global.IfluxHeartAction) IfluxHeartAction.bind(el);
+    if (global.IfluxAlertUI) IfluxAlertUI.bindAlerts(el);
     el.querySelectorAll('[data-ifx-goto-tab]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (global.IfluxHubPage) IfluxHubPage.switchTab(btn.getAttribute('data-ifx-goto-tab'));

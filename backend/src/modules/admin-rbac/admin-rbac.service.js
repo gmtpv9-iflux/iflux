@@ -6,9 +6,10 @@ const { flattenPermissions, MODULES } = require('./permission-catalog');
 
 /* ─────────────────────────── Seeding ─────────────────────────── */
 
-/** Upsert toàn bộ permission trong catalog vào DB (không xóa cái cũ). */
+/** Upsert permission trong catalog; xóa key không còn trong catalog (SoT — không giữ key thừa). */
 async function seedPermissions() {
   const perms = flattenPermissions();
+  const keys = perms.map((p) => p.key);
   for (const p of perms) {
     await query(
       `INSERT INTO admin_permissions (key, module, module_label, page, page_label, action, label, is_business, sort)
@@ -20,6 +21,9 @@ async function seedPermissions() {
          is_business = EXCLUDED.is_business, sort = EXCLUDED.sort`,
       [p.key, p.module, p.module_label, p.page, p.page_label, p.action, p.label, p.is_business, p.sort]
     );
+  }
+  if (keys.length) {
+    await query('DELETE FROM admin_permissions WHERE NOT (key = ANY($1::varchar[]))', [keys]);
   }
   return perms.length;
 }
@@ -322,6 +326,18 @@ async function createAccount({ email, name, password, roleIds }) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { const err = new Error('Email không hợp lệ.'); err.statusCode = 422; throw err; }
   const dup = await query('SELECT 1 FROM admin_accounts WHERE email = $1', [e]);
   if (dup.rowCount) { const err = new Error('Email đã tồn tại.'); err.statusCode = 409; throw err; }
+  const ids = Array.isArray(roleIds) ? roleIds.filter(Boolean) : [];
+  if (ids.length) {
+    const forbidden = await query(
+      'SELECT 1 FROM admin_roles WHERE id = ANY($1::uuid[]) AND is_super = TRUE LIMIT 1',
+      [ids]
+    );
+    if (forbidden.rowCount) {
+      const err = new Error('Không thể gán Role Admin cho tài khoản nhân viên. Chỉ Owner dùng tài khoản Admin.');
+      err.statusCode = 409;
+      throw err;
+    }
+  }
   const hash = password ? await bcrypt.hash(String(password), 10) : null;
   const ins = await query(
     `INSERT INTO admin_accounts (email, name, password_hash, is_super, status, provider)
@@ -329,7 +345,7 @@ async function createAccount({ email, name, password, roleIds }) {
     [e, String(name || e).trim(), hash]
   );
   const id = ins.rows[0].id;
-  await setAccountRoles(id, roleIds || []);
+  await setAccountRoles(id, ids);
   return id;
 }
 
@@ -340,6 +356,25 @@ async function updateAccount(accountId, { name }) {
 
 async function setAccountRoles(accountId, roleIds) {
   const ids = Array.isArray(roleIds) ? roleIds.filter(Boolean) : [];
+  if (ids.length) {
+    const forbidden = await query(
+      'SELECT code, name FROM admin_roles WHERE id = ANY($1::uuid[]) AND is_super = TRUE',
+      [ids]
+    );
+    if (forbidden.rowCount) {
+      const e = new Error('Không thể gán Role Admin cho tài khoản nhân viên. Chỉ Owner dùng tài khoản Admin.');
+      e.statusCode = 409;
+      throw e;
+    }
+  }
+  const acc = await query('SELECT is_super FROM admin_accounts WHERE id = $1', [accountId]);
+  if (!acc.rowCount) { const e = new Error('Không tìm thấy tài khoản.'); e.statusCode = 404; throw e; }
+  if (acc.rows[0].is_super && ids.length) {
+    /* Owner Admin: không gắn Role nhân viên — quyền đã full theo tài khoản Admin */
+    const e = new Error('Tài khoản Admin không gán Role. Quyền đã mặc định toàn quyền.');
+    e.statusCode = 409;
+    throw e;
+  }
   const client = await getPool().connect();
   try {
     await client.query('BEGIN');
@@ -347,7 +382,7 @@ async function setAccountRoles(accountId, roleIds) {
     if (ids.length) {
       await client.query(
         `INSERT INTO admin_account_roles (admin_id, role_id)
-         SELECT $1, id FROM admin_roles WHERE id = ANY($2::uuid[]) ON CONFLICT DO NOTHING`,
+         SELECT $1, id FROM admin_roles WHERE id = ANY($2::uuid[]) AND is_super = FALSE ON CONFLICT DO NOTHING`,
         [accountId, ids]
       );
     }
@@ -363,7 +398,7 @@ async function setAccountStatus(accountId, status) {
   const s = status === 'locked' ? 'locked' : 'active';
   const acc = await query('SELECT is_super FROM admin_accounts WHERE id = $1', [accountId]);
   if (!acc.rowCount) { const e = new Error('Không tìm thấy tài khoản.'); e.statusCode = 404; throw e; }
-  if (acc.rows[0].is_super && s === 'locked') { const e = new Error('Không thể khóa tài khoản super admin.'); e.statusCode = 409; throw e; }
+  if (acc.rows[0].is_super && s === 'locked') { const e = new Error('Không thể khóa tài khoản Admin.'); e.statusCode = 409; throw e; }
   await query('UPDATE admin_accounts SET status = $2, updated_at = NOW() WHERE id = $1', [accountId, s]);
 }
 
@@ -382,7 +417,7 @@ async function changeOwnPassword(email, currentPassword, newPassword) {
 async function deleteAccount(accountId) {
   const acc = await query('SELECT is_super FROM admin_accounts WHERE id = $1', [accountId]);
   if (!acc.rowCount) { const e = new Error('Không tìm thấy tài khoản.'); e.statusCode = 404; throw e; }
-  if (acc.rows[0].is_super) { const e = new Error('Không thể xóa tài khoản super admin.'); e.statusCode = 409; throw e; }
+  if (acc.rows[0].is_super) { const e = new Error('Không thể xóa tài khoản Admin.'); e.statusCode = 409; throw e; }
   await query('DELETE FROM admin_accounts WHERE id = $1', [accountId]);
 }
 

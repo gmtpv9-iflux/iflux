@@ -22,12 +22,15 @@ var DEPS_BY_WIDGET = {
   ],
   'WGT-COM-004': [
     [
-      ASSET + 'watchlist-store.js?v=phaseBExit20260721b',
+      ASSET + 'watchlist-store.js?v=followFound20260724',
       ASSET + 'profile-links.js',
       ASSET + 'community-top-watchlist-store.js'
     ],
-    [ASSET + 'watchlist-ui.js?v=phaseBExit20260721b'],
-    [ASSET + 'community-top-watchlist.js?v=phaseBExit20260721b']
+    [
+      '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724'
+    ],
+    [ASSET + 'watchlist-ui.js?v=followFound20260724'],
+    [ASSET + 'community-top-watchlist.js?v=followFound20260724']
   ]
 };
 

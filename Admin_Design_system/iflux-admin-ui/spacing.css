@@ -120,7 +120,7 @@
 }
 
 /* ── 12. Responsive (layout only) ───────────────────────────── */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   :root {
     --ifx-space-container: var(--ifx-space-16);
     --ifx-space-section: var(--ifx-space-48);

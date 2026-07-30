@@ -26,7 +26,7 @@ export async function mount(el, ctx) {
   await ensureSequence([
     { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
     /* W4: IfluxBlockTemplates = Shell — ensureSequence skip nếu đã có */
-    { global: 'IfluxMarketHeatmap', src: ASSET + 'market-heatmap.js' }
+    { global: 'IfluxMarketHeatmap', src: ASSET + 'market-heatmap.js?v=ui00120260723' }
   ]);
 
   var Heatmap = window.IfluxMarketHeatmap;

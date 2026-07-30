@@ -2,76 +2,30 @@
 <html lang="vi">
 <head>
   <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-COM-CNT-001 — Tổng quan nội dung · iFlux Admin</title>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-COM — Content Dashboard · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="../../../iflux-admin-ui/iflux-admin-ui.css" />
 </head>
 <body>
-<div class="ix-root">
-  <div class="ix-layout">
-    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
-      <div class="ix-brand">
-        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
-        <span class="ix-brand-name">iFlux Admin</span>
-      </div>
-      <nav class="ix-menu" data-ix-admin-nav></nav>
-    </aside>
-    <main class="ix-main">
-      <header class="ix-navbar" data-ix-admin-shell="header">
-        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
-        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
-      </header>
-            <div class="ix-content">
-        <h1 class="ix-page-title">Tổng quan nội dung</h1>
-        <div class="ix-breadcrumb ix-mb-24"><a href="../../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Cộng đồng</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Quản lý nội dung</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tổng quan nội dung</span></div>
-        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Dashboard quản lý nội dung iFlux — tin tức, phân tích, story và nội dung AI.</p>
-        
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:20px">
-          <a href="index.html" class="ix-btn ix-btn-outline"><i class="ti ti-list"></i> Danh sách nội dung</a>
-          <a href="edit.html" class="ix-btn ix-btn-primary"><i class="ti ti-plus"></i> Thêm nội dung</a>
-        </div>
-        <div class="ix-grid ix-grid-4 ix-mb-24">
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Tổng số bài viết</div><div class="ix-stat-value" id="cnt-stat-total">—</div></div><div class="ix-stat-icon accent"><i class="ti ti-article"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Đã xuất bản</div><div class="ix-stat-value" id="cnt-stat-published">—</div></div><div class="ix-stat-icon success"><i class="ti ti-world"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Bản nháp</div><div class="ix-stat-value" id="cnt-stat-draft">—</div></div><div class="ix-stat-icon warning"><i class="ti ti-pencil"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Chờ duyệt</div><div class="ix-stat-value" id="cnt-stat-pending">—</div></div><div class="ix-stat-icon info"><i class="ti ti-clock"></i></div></div>
-        </div>
-        <div class="ix-grid ix-grid-4 ix-mb-24">
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Lên lịch</div><div class="ix-stat-value" id="cnt-stat-scheduled">—</div></div><div class="ix-stat-icon info"><i class="ti ti-calendar"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Đã ẩn</div><div class="ix-stat-value" id="cnt-stat-hidden">—</div></div><div class="ix-stat-icon muted"><i class="ti ti-eye-off"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Tỷ lệ có tóm tắt AI</div><div class="ix-stat-value" id="cnt-stat-ai-rate">—</div></div><div class="ix-stat-icon accent"><i class="ti ti-brain"></i></div></div>
-          <div class="ix-stat-card-h"><div class="ix-stat-info"><div class="ix-stat-label">Liên kết đầy đủ iFlux</div><div class="ix-stat-value" id="cnt-stat-link-rate">—</div></div><div class="ix-stat-icon success"><i class="ti ti-link"></i></div></div>
-        </div>
-        <div class="ix-grid ix-grid-2 ix-mb-24">
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Nhiều lượt xem nhất</div></div><div class="ix-card-body" id="cnt-top-views"></div></div>
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Tác giả hoạt động nhiều nhất</div></div><div class="ix-card-body" id="cnt-top-authors"></div></div>
-        </div>
-        <div class="ix-grid ix-grid-2 ix-mb-24">
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Story được nhắc nhiều nhất</div></div><div class="ix-card-body" id="cnt-top-stories"></div></div>
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Ngành được nhắc nhiều nhất</div></div><div class="ix-card-body" id="cnt-top-sectors"></div></div>
-        </div>
-        <div class="ix-grid ix-grid-2">
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Hệ sinh thái được nhắc nhiều nhất</div></div><div class="ix-card-body" id="cnt-top-families"></div></div>
-          <div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Cổ phiếu được nhắc nhiều nhất</div></div><div class="ix-card-body" id="cnt-top-stocks"></div></div>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=20260716plat1"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=20260716plat1"></script>
+<div class="ix-root"><div class="ix-layout">
+<aside class="ix-sidebar" data-ix-admin-shell="sidebar"><div class="ix-brand"><div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div><span class="ix-brand-name">iFlux Admin</span></div><nav class="ix-menu" data-ix-admin-nav></nav></aside>
+<main class="ix-main">
+<header class="ix-navbar" data-ix-admin-shell="header"><button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button><div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." /></div><div class="ix-nav-actions"><div class="ix-avatar"></div></div></header>
+<div class="ix-content">
+<h1 class="ix-page-title">Tổng quan nội dung</h1>
+<div class="ix-breadcrumb ix-mb-24"><a href="../../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Cộng đồng</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tổng quan nội dung</span></div>
+<div id="adm-wd-dash"></div>
+</div></main></div></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=waveD20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=waveD20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
-<script src="../admin/admin-page-kit.js"></script>
-<script src="../admin/admin-screens-gd2.js"></script>
-<script>document.body.setAttribute('data-adm-screen','ADM-COM-001');AdminScreensGd2.boot();</script>
-</body>
-</html>
+<script src="../../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-wave-d-pages.js?v=waveD20260727"></script>
+<script>AdmWaveD.initContentDash();</script>
+</body></html>
