@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /Admin_Design_system/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://iflux.vn/sitemap.xml
