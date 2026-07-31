@@ -2,7 +2,9 @@
 
 **Date:** 2026-07-28  
 **Folder:** `docs/Product Backlog/270728_Community Media Library External Image Import/`  
-**Trạng thái:** 🟡 **SoT Proposed** — chờ Impact Analysis + Owner chốt LOCK
+**Trạng thái:** ⏸ **Superseded-as-authority bởi BRD** — chờ Owner ACCEPT [`BRD-COM-MEDIA-001`](../270730_Community_Media_Library/01-BRD-COM-MEDIA-001.md) rồi mới align SoT/Solution
+
+**Business Authority (mới):** [`docs/Product Backlog/270730_Community_Media_Library/`](../270730_Community_Media_Library/) — BRD-COM-MEDIA-001 v1.0 (+ SEO Asset Repository).
 
 ---
 
@@ -10,7 +12,7 @@
 
 Xây **Media Import Pipeline** cho Community: chuyển toàn bộ hình ảnh bên ngoài (RSS, Website, AI, Paste HTML) thành **Asset nội bộ iFlux** — một thao tác **Import hình ảnh** trên trang sửa bài viết.
 
-**Business outcome:** Không còn hotlink; media tập trung; tái sử dụng · audit · SEO.
+**Business outcome:** Không còn hotlink; media tập trung; tái sử dụng · audit · **SEO Asset Repository** (xem BRD §3 · §16 · BG-SEO-01).
 
 ---
 

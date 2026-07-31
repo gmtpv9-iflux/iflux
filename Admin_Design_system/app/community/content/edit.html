@@ -81,11 +81,22 @@
 
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
           <p style="font-size:13px;color:var(--ix-text-muted);margin:0;max-width:640px">Trường bài viết: tiêu đề · URL · danh mục · chủ đề · chủ thể · mô tả · nội dung · ảnh đại diện · SEO · trạng thái · ngày đăng · thiết lập hiển thị.</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <span class="ix-chip ix-chip-warning" id="media-status-chip" hidden>Ảnh</span>
+            <button type="button" class="ix-btn ix-btn-outline" id="btn-media-import" title="Tải toàn bộ ảnh ngoài vào Thư viện media và cập nhật bài viết — một thao tác.">Nhập vào Thư viện</button>
             <a href="/admin/cong-dong/danh-sach-bai-viet" class="ix-btn ix-btn-outline">Quay lại</a>
             <button type="button" class="ix-btn ix-btn-outline" id="btn-save-draft">Lưu nháp</button>
             <button type="button" class="ix-btn ix-btn-outline" id="btn-save-content">Lưu</button>
             <button type="button" class="ix-btn ix-btn-primary" id="btn-publish"><i class="ti ti-send"></i> Xuất bản</button>
+          </div>
+        </div>
+
+        <div class="ix-alert ix-alert-warning ix-mb-24" id="media-external-banner" hidden>
+          <div class="ix-alert-title" id="media-external-banner-title">Có hình ảnh ngoài · Chưa thuộc Thư viện media</div>
+          <div class="ix-alert-text" id="media-external-banner-text">Bấm «Nhập vào Thư viện» để tải ảnh về và cập nhật bài viết.</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" id="btn-media-retry" hidden>Thử lại ảnh lỗi</button>
+            <span class="ix-caption" id="media-import-progress" hidden></span>
           </div>
         </div>
 
@@ -218,8 +229,8 @@
 <script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=cmsRbacFix20260727" data-ix-rbac=""></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/dompurify/purify.min.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/tiptap/tiptap.bundle.js"></script>
-<script src="article-html-contract.js?v=cmsEd00120260725"></script>
-<script src="article-body-editor.js?v=cmsEd00120260725"></script>
-<script src="article-edit-page.js?v=cmsRbacFix20260727"></script>
+<script src="article-html-contract.js?v=mediaLib20260730"></script>
+<script src="article-body-editor.js?v=mediaLib20260730"></script>
+<script src="article-edit-page.js?v=mediaLib20260730"></script>
 </body>
 </html>
