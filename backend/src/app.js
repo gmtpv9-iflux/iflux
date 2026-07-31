@@ -96,6 +96,9 @@ function createApp(config) {
   app.use(`${config.LEGACY_API_PREFIX}/onboarding`, createOnboardingRouter({ config, auth: userAndAdminAuth }));
   app.use(`${config.LEGACY_API_PREFIX}/plans`, createPlansRouter({ config, auth: adminAuthMw }));
 
+  const { createSitemapRouter } = require('./modules/sitemap/sitemap.routes');
+  app.use('/api/internal/sitemap', createSitemapRouter({ config }));
+
   const { createDsSotRouter } = require('./modules/ds-sot/ds-sot.routes');
   app.use(`${config.LEGACY_API_PREFIX}/ds-sot`, createDsSotRouter({ config, auth: adminAuthMw }));
 
