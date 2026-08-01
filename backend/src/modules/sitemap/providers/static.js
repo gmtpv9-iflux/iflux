@@ -1,10 +1,25 @@
 'use strict';
 
-const PROD_ORIGIN = 'https://iflux.vn';
+const fs = require('fs');
+const path = require('path');
 
 class StaticSitemapProvider {
-  async getUrls() {
-    const today = new Date().toISOString().split('T')[0];
+  async getUrls(config) {
+    const origin = config.PUBLIC_SITE_URL || 'https://iflux.vn';
+    let lastmod = config.SEO_STATIC_LASTMOD;
+
+    if (!lastmod) {
+      try {
+        // Resolve path to backend root directory
+        const backendRoot = path.dirname(path.dirname(path.dirname(path.dirname(__dirname))));
+        const targetFile = path.join(backendRoot, 'User_Web', 'community', 'index.html');
+        const stats = fs.statSync(targetFile);
+        lastmod = stats.mtime.toISOString().split('T')[0];
+      } catch (err) {
+        lastmod = new Date().toISOString().split('T')[0];
+      }
+    }
+
     const pages = [
       '',
       '/cong-dong',
@@ -15,9 +30,9 @@ class StaticSitemapProvider {
       '/dong-tien'
     ];
 
-    return pages.map(path => ({
-      loc: `${PROD_ORIGIN}${path}`,
-      lastmod: today
+    return pages.map(pagePath => ({
+      loc: `${origin}${pagePath}`,
+      lastmod
     }));
   }
 }

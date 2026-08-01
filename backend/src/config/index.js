@@ -83,7 +83,9 @@ const envSchema = z.object({
     .transform((v) => v !== 'false' && v !== '0')
     .default('true'),
   MEDIA_IMPORT_BATCH_SIZE: z.coerce.number().int().positive().default(5),
-  MEDIA_IMPORT_MAX_RETRY: z.coerce.number().int().positive().default(3)
+  MEDIA_IMPORT_MAX_RETRY: z.coerce.number().int().positive().default(3),
+  PUBLIC_SITE_URL: z.string().url().default('https://iflux.vn'),
+  SEO_STATIC_LASTMOD: z.string().optional()
 });
 
 function loadConfig() {
