@@ -98,7 +98,7 @@
     if (!tbody) return;
 
     if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="ix-caption" style="text-align:center;padding:32px">Chưa có ngành.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="ix-caption" style="text-align:center;padding:32px">Chưa có ngành.</td></tr>';
       return;
     }
 
@@ -129,6 +129,7 @@
       return '<tr data-sector-id="' + esc(sec.id) + '">' +
         '<td><strong>' + esc(sec.name || sec.name_vi) + '</strong><div class="ix-caption">' + esc(sec.code || '') + '</div></td>' +
         '<td>' + esc(sec.stock_count || 0) + '</td>' +
+        '<td>' + esc(sec.post_count || 0) + '</td>' +
         '<td>' + divisorCell + '</td>' +
         '<td>' + statusChip(active) + '</td>' +
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(sec.updated_at)) + '</td>' +

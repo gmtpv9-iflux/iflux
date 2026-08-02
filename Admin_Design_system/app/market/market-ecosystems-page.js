@@ -103,7 +103,7 @@
     if (!tbody) return;
 
     if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="ix-caption" style="text-align:center;padding:32px">Chưa có hệ sinh thái.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="ix-caption" style="text-align:center;padding:32px">Chưa có hệ sinh thái.</td></tr>';
       return;
     }
 
@@ -119,7 +119,7 @@
       if (canEdit) {
         actions += '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-eco-edit="' + esc(eco.id) + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>';
       }
-      if (canToggle) {
+      if (canToggle || canEdit) {
         actions += '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-eco-toggle="' + esc(eco.id) + '" title="' + (active ? 'Tắt' : 'Bật') + '"><i class="ti ti-' + (active ? 'toggle-right' : 'toggle-left') + '" style="font-size:14px"></i></button>';
       }
       if (canDelete) {
@@ -129,6 +129,7 @@
       return '<tr data-eco-id="' + esc(eco.id) + '">' +
         '<td><strong>' + esc(eco.name || eco.name_vi) + '</strong><div class="ix-caption">' + esc(eco.code || '') + '</div></td>' +
         '<td>' + esc(eco.stock_count || (eco.tickers || []).length || 0) + ' mã</td>' +
+        '<td>' + esc(eco.post_count || 0) + ' bài</td>' +
         '<td>' + esc(eco.divisor) + '</td>' +
         '<td>' + statusChip(active) + '</td>' +
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(eco.updated_at)) + '</td>' +
@@ -249,8 +250,9 @@
         var cur = items.filter(function (x) { return String(x.id) === String(tid); })[0];
         if (!cur) return;
         var active = cur.status === 'active' || cur.is_active;
-        var path = '/admin/ecosystems/' + encodeURIComponent(tid) + (active ? '/deactivate' : '/activate');
-        request(path, { method: 'POST', body: {} })
+        var next = active ? 'inactive' : 'active';
+        var path = '/admin/ecosystems/' + encodeURIComponent(tid);
+        request(path, { method: 'PATCH', body: { status: next } })
           .then(function () {
             toast(active ? 'Đã tắt hệ sinh thái' : 'Đã bật hệ sinh thái', 'success');
             loadList();
