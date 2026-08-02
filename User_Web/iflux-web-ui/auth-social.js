@@ -13,13 +13,6 @@
   var googleButtonReady = false;
   var pageSocialOpts = null;
 
-  /* ===== LEGACY (commented — offscreen proxy + prompt-on-click) — không dùng =====
-  var googleActivatorReady = false;
-  function ensureOffscreenGoogleActivator(cfg) { ... }
-  function clickOffscreenGoogleActivator() { ... }
-  function startGoogleLoginFromUserGesture(opts) { ... prompt() after click ... }
-  ===== END LEGACY ===== */
-
   function resolveSocialApiBase() {
     if (global.IfluxApiConfig && IfluxApiConfig.isEnabled && IfluxApiConfig.isEnabled()) {
       return IfluxApiConfig.getBaseUrl();
@@ -308,7 +301,16 @@
   function bindSocialButtons(root, opts) {
     opts = opts || {};
     root = root || document;
-    /* Google: không bind — user click nút GIS renderButton */
+    
+    var googleSlot = root.getElementById('ifx-google-signin-btn');
+    if (googleSlot) {
+      googleSlot.addEventListener('click', function (e) {
+        if (!googleButtonReady) {
+          e.preventDefault();
+        }
+      });
+    }
+
     var map = {
       apple: loginApple,
       facebook: loginFacebook,

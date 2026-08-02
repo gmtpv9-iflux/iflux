@@ -332,8 +332,8 @@ async function upsertRssArticle(payload) {
     favorited_by: []
   });
   await query(
-    `INSERT INTO community_posts (id, user_id, content_type, status, payload, created_at, updated_at)
-     VALUES ($1, NULL, $2, $3, $4::jsonb, NOW(), NOW())`,
+    `INSERT INTO community_posts (id, user_id, content_type, status, media_status, payload, created_at, updated_at)
+     VALUES ($1, NULL, $2, $3, 'PENDING', $4::jsonb, NOW(), NOW())`,
     [id, 'article', desiredStatus, JSON.stringify(record)]
   );
   return { id, action: 'created', status: desiredStatus };

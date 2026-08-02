@@ -267,10 +267,10 @@
         }
         if (cmd === 'unlink') return run(function (c) { c.unsetLink().run(); });
         if (cmd === 'image') {
-          var src = promptUrl('URL ảnh (https / http)');
+          var src = promptUrl('URL ảnh (https / http / /media/…)');
           if (!src) return;
           if (!contract().isAllowedImgSrc(src)) {
-            toast('URL ảnh không hợp lệ (chỉ https/http)', 'warning');
+            toast('URL ảnh không hợp lệ (https/http hoặc /media/…)', 'warning');
             return;
           }
           return run(function (c) { c.setImage({ src: src }).run(); });

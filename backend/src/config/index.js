@@ -20,6 +20,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   STORAGE_DRIVER: z.enum(['local', 's3']).default('local'),
   STORAGE_LOCAL_PATH: z.string().default('./storage'),
+  MEDIA_PUBLIC_BASE_URL: z.string().optional().default('/media'),
   QUEUE_ENABLED: z
     .string()
     .optional()
@@ -75,7 +76,14 @@ const envSchema = z.object({
   DNSE_AUTH_URL: z.string().default('https://api.dnse.com.vn/auth-service/login'),
   DNSE_DATAFEED_HOST: z.string().default('datafeed-lts-krx.dnse.com.vn'),
   DNSE_DATAFEED_PORT: z.coerce.number().int().positive().default(443),
-  DNSE_DATAFEED_PATH: z.string().default('/wss')
+  DNSE_DATAFEED_PATH: z.string().default('/wss'),
+  MEDIA_IMPORT_AUTO_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v !== 'false' && v !== '0')
+    .default('true'),
+  MEDIA_IMPORT_BATCH_SIZE: z.coerce.number().int().positive().default(5),
+  MEDIA_IMPORT_MAX_RETRY: z.coerce.number().int().positive().default(3)
 });
 
 function loadConfig() {

@@ -70,6 +70,19 @@ async function bootstrap() {
     });
   }
 
+  /* Tự động hóa cơ chế kích hoạt Media Import (Task 270731_Automated_Media_Import_Trigger) */
+  if (config.MEDIA_IMPORT_AUTO_ENABLED !== false) {
+    const mediaCron = process.env.MEDIA_IMPORT_AUTO_CRON || '*/1 * * * *'; // mặc định quét mỗi phút
+    registerJob('media-auto-import', mediaCron, async () => {
+      try {
+        const { runAutoImportWorker } = require('./modules/media/media-trigger.worker');
+        await runAutoImportWorker(config);
+      } catch (err) {
+        logger.error({ err: err.message }, 'media-auto-import failed');
+      }
+    });
+  }
+
   // Seed RBAC (permissions catalog + super role + bootstrap admin). Không để lỗi làm sập server.
   try {
     const { bootstrapRbac } = require('./modules/admin-rbac/admin-rbac.service');

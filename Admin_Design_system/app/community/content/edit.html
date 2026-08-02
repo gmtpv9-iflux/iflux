@@ -81,11 +81,22 @@
 
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
           <p style="font-size:13px;color:var(--ix-text-muted);margin:0;max-width:640px">Trường bài viết: tiêu đề · URL · danh mục · chủ đề · chủ thể · mô tả · nội dung · ảnh đại diện · SEO · trạng thái · ngày đăng · thiết lập hiển thị.</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <span class="ix-chip ix-chip-warning" id="media-status-chip" hidden>Ảnh</span>
+            <button type="button" class="ix-btn ix-btn-outline" id="btn-media-import" title="Tải toàn bộ ảnh ngoài vào Thư viện media và cập nhật bài viết — một thao tác.">Nhập vào Thư viện</button>
             <a href="/admin/cong-dong/danh-sach-bai-viet" class="ix-btn ix-btn-outline">Quay lại</a>
             <button type="button" class="ix-btn ix-btn-outline" id="btn-save-draft">Lưu nháp</button>
             <button type="button" class="ix-btn ix-btn-outline" id="btn-save-content">Lưu</button>
             <button type="button" class="ix-btn ix-btn-primary" id="btn-publish"><i class="ti ti-send"></i> Xuất bản</button>
+          </div>
+        </div>
+
+        <div class="ix-alert ix-alert-warning ix-mb-24" id="media-external-banner" hidden>
+          <div class="ix-alert-title" id="media-external-banner-title">Có hình ảnh ngoài · Chưa thuộc Thư viện media</div>
+          <div class="ix-alert-text" id="media-external-banner-text">Bấm «Nhập vào Thư viện» để tải ảnh về và cập nhật bài viết.</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" id="btn-media-retry" hidden>Thử lại ảnh lỗi</button>
+            <span class="ix-caption" id="media-import-progress" hidden></span>
           </div>
         </div>
 
@@ -96,37 +107,6 @@
               <div class="ix-card-body">
                 <div class="ix-form-group"><label class="ix-label">Tiêu đề <span style="color:var(--ix-danger)">*</span></label><input type="text" class="ix-input" id="fld-title" placeholder="VD: Đầu tư công sẽ bùng nổ trong nửa cuối năm" /></div>
                 <div class="ix-form-group ix-mb-0"><label class="ix-label">URL</label><input type="text" class="ix-input" id="fld-slug" placeholder="tự tạo từ tiêu đề" /></div>
-              </div>
-            </div>
-            <div class="ix-card">
-              <div class="ix-card-header"><div class="ix-card-title">Danh mục <span class="ix-caption">(chọn đúng 1)</span></div></div>
-              <div class="ix-card-body">
-                <div class="ix-form-group ix-mb-0"><label class="ix-label">Danh mục <span style="color:var(--ix-danger)">*</span></label><select class="ix-select" id="fld-category"></select></div>
-              </div>
-            </div>
-            <div class="ix-card">
-              <div class="ix-card-header"><div class="ix-card-title">Chủ đề <span class="ix-caption">(tuỳ chọn)</span></div></div>
-              <div class="ix-card-body">
-                <div id="art-chude-selected" class="ix-mb-12"></div>
-                <div class="ix-form-group"><label class="ix-label">Tìm / tạo chủ đề</label><input type="text" class="ix-input" id="art-chude-q" placeholder="Gõ để tìm hoặc tạo chủ đề mới…" /></div>
-                <div id="art-chude-suggest"></div>
-                <div id="art-ticker-suggest" class="ix-mt-16"></div>
-              </div>
-            </div>
-            <div class="ix-card">
-              <div class="ix-card-header"><div class="ix-card-title">Chủ thể</div></div>
-              <div class="ix-card-body">
-                <p class="ix-caption ix-mb-12">Chỉ một nhóm: 0–5 mã CP · hoặc 0–3 ngành · hoặc 0–3 hệ sinh thái · hoặc 0–1 sàn.</p>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-                  <button type="button" class="ix-btn ix-btn-sm ix-btn-primary" data-entity-mode="tickers">Cổ phiếu</button>
-                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="sectors">Ngành</button>
-                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="ecosystems">Hệ sinh thái</button>
-                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="exchange">Sàn</button>
-                </div>
-                <div id="art-entity-tickers" class="ix-form-group ix-mb-0"><label class="ix-label">Mã cổ phiếu (tối đa 5)</label><input type="text" class="ix-input" id="fld-tickers" placeholder="VCG, HHV, C4G" /></div>
-                <div id="art-entity-sectors" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Ngành (tối đa 3)</label><input type="text" class="ix-input" id="fld-sectors" placeholder="ngan-hang, thep" /></div>
-                <div id="art-entity-ecosystems" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Hệ sinh thái (tối đa 3)</label><input type="text" class="ix-input" id="fld-ecosystems" placeholder="vin, masan" /></div>
-                <div id="art-entity-exchange" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Sàn (0–1)</label><select class="ix-select" id="fld-exchange"><option value="">— Không gắn —</option><option value="VNIndex">VNIndex</option><option value="HOSE">HOSE</option><option value="HNX">HNX</option><option value="UPCOM">UPCOM</option></select></div>
               </div>
             </div>
             <div class="ix-card">
@@ -165,15 +145,6 @@
               </div>
             </div>
             <div class="ix-card">
-              <div class="ix-card-header"><div class="ix-card-title">Ảnh đại diện</div></div>
-              <div class="ix-card-body">
-                <div class="ix-form-group"><label class="ix-label">URL ảnh</label><input type="url" class="ix-input" id="fld-cover-url" /></div>
-                <div class="ix-form-group"><label class="ix-label">Alt</label><input type="text" class="ix-input" id="fld-cover-alt" /></div>
-                <div class="ix-form-group"><label class="ix-label">Caption</label><input type="text" class="ix-input" id="fld-cover-caption" /></div>
-                <div class="ix-form-group ix-mb-0"><label class="ix-label">Credit</label><input type="text" class="ix-input" id="fld-cover-credit" /></div>
-              </div>
-            </div>
-            <div class="ix-card">
               <div class="ix-card-header"><div class="ix-card-title">Thiết lập SEO</div></div>
               <div class="ix-card-body">
                 <div class="ix-form-group"><label class="ix-label">SEO Title</label><input type="text" class="ix-input" id="fld-seo-title" /></div>
@@ -184,6 +155,46 @@
             </div>
           </div>
           <div class="ix-layout-side-col" style="display:flex;flex-direction:column;gap:24px">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Danh mục <span class="ix-caption">(chọn đúng 1)</span></div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">Danh mục <span style="color:var(--ix-danger)">*</span></label><select class="ix-select" id="fld-category"></select></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Chủ đề <span class="ix-caption">(tuỳ chọn)</span></div></div>
+              <div class="ix-card-body">
+                <div id="art-chude-selected" class="ix-mb-12"></div>
+                <div class="ix-form-group"><label class="ix-label">Tìm / tạo chủ đề</label><input type="text" class="ix-input" id="art-chude-q" placeholder="Gõ để tìm hoặc tạo chủ đề mới…" /></div>
+                <div id="art-chude-suggest"></div>
+                <div id="art-ticker-suggest" class="ix-mt-16"></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Chủ thể</div></div>
+              <div class="ix-card-body">
+                <p class="ix-caption ix-mb-12">Chỉ một nhóm: 0–5 mã CP · hoặc 0–3 ngành · hoặc 0–3 hệ sinh thái · hoặc 0–1 sàn.</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-primary" data-entity-mode="tickers">Cổ phiếu</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="sectors">Ngành</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="ecosystems">Hệ sinh thái</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="exchange">Sàn</button>
+                </div>
+                <div id="art-entity-tickers" class="ix-form-group ix-mb-0"><label class="ix-label">Mã cổ phiếu (tối đa 5)</label><input type="text" class="ix-input" id="fld-tickers" placeholder="VCG, HHV, C4G" /></div>
+                <div id="art-entity-sectors" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Ngành (tối đa 3)</label><input type="text" class="ix-input" id="fld-sectors" placeholder="ngan-hang, thep" /></div>
+                <div id="art-entity-ecosystems" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Hệ sinh thái (tối đa 3)</label><input type="text" class="ix-input" id="fld-ecosystems" placeholder="vin, masan" /></div>
+                <div id="art-entity-exchange" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Sàn (0–1)</label><select class="ix-select" id="fld-exchange"><option value="">— Không gắn —</option><option value="VNIndex">VNIndex</option><option value="HOSE">HOSE</option><option value="HNX">HNX</option><option value="UPCOM">UPCOM</option></select></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Ảnh đại diện</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">URL ảnh</label><input type="url" class="ix-input" id="fld-cover-url" /></div>
+                <div class="ix-form-group"><label class="ix-label">Alt</label><input type="text" class="ix-input" id="fld-cover-alt" /></div>
+                <div class="ix-form-group"><label class="ix-label">Caption</label><input type="text" class="ix-input" id="fld-cover-caption" /></div>
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">Credit</label><input type="text" class="ix-input" id="fld-cover-credit" /></div>
+              </div>
+            </div>
             <div class="ix-card">
               <div class="ix-card-header"><div class="ix-card-title">Trạng thái</div></div>
               <div class="ix-card-body">
@@ -218,8 +229,8 @@
 <script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=cmsRbacFix20260727" data-ix-rbac=""></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/dompurify/purify.min.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/tiptap/tiptap.bundle.js"></script>
-<script src="article-html-contract.js?v=cmsEd00120260725"></script>
-<script src="article-body-editor.js?v=cmsEd00120260725"></script>
-<script src="article-edit-page.js?v=cmsRbacFix20260727"></script>
+<script src="article-html-contract.js?v=mediaLib20260730"></script>
+<script src="article-body-editor.js?v=mediaLib20260730"></script>
+<script src="article-edit-page.js?v=mediaLib20260730"></script>
 </body>
 </html>

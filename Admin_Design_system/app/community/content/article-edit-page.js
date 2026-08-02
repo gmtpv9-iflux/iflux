@@ -8,6 +8,8 @@
   var entityMode = 'tickers'; /* tickers | sectors | ecosystems | exchange */
   var suggestTimer = null;
   var bodyEditor = null;
+  var mediaImportBusy = false;
+  var lastMediaCheck = { ok: true, external: [], missing_alt: [] };
 
   function canPerm(key) {
     return !!(window.IfluxAdminRbac && IfluxAdminRbac.hasPermission && IfluxAdminRbac.hasPermission(key));
@@ -18,7 +20,7 @@
     var need = id ? 'community.articles.edit' : 'community.articles.create';
     var loaded = !!(window.IfluxAdminRbac && IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded());
     var ok = loaded && canPerm(need);
-    ['btn-save-draft', 'btn-save-content', 'btn-publish'].forEach(function (bid) {
+    ['btn-save-draft', 'btn-save-content', 'btn-publish', 'btn-media-import'].forEach(function (bid) {
       var el = $(bid);
       if (el) el.style.display = ok ? '' : 'none';
     });
@@ -107,7 +109,11 @@
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (!res.ok) {
           var err = data.error;
-          var msg = (err && err.message) || data.message || ('HTTP ' + res.status);
+          var msg =
+            (typeof err === 'string' && err) ||
+            (err && err.message) ||
+            data.message ||
+            ('HTTP ' + res.status);
           throw new Error(msg);
         }
         return unwrap(data);
@@ -415,6 +421,7 @@
   }
 
   function save(statusOverride) {
+    var isPublish = statusOverride === 'published' || statusOverride === 'published_rss';
     var payload;
     try {
       payload = collectPayload(statusOverride);
@@ -422,20 +429,253 @@
       toast(e.message, 'warning');
       return;
     }
-    var req = editingId
-      ? request('/community/admin/articles/' + encodeURIComponent(editingId), { method: 'PUT', body: payload })
-      : request('/community/admin/articles', { method: 'POST', body: payload });
-    req.then(function (data) {
-      var art = data.article || data;
-      toast(editingId ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết', 'success');
-      if (!editingId && art && art.id) {
-        window.location.href = 'edit.html?id=' + encodeURIComponent(art.id);
-      } else if (art) {
-        fillForm(art);
-      }
-    }).catch(function (err) {
+
+    function doSave() {
+      var req = editingId
+        ? request('/community/admin/articles/' + encodeURIComponent(editingId), { method: 'PUT', body: payload })
+        : request('/community/admin/articles', { method: 'POST', body: payload });
+      return req.then(function (data) {
+        var art = data.article || data;
+        toast(editingId ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết', 'success');
+        if (!editingId && art && art.id) {
+          window.location.href = 'edit.html?id=' + encodeURIComponent(art.id);
+        } else if (art) {
+          fillForm(art);
+          return refreshMediaStatus();
+        }
+      });
+    }
+
+    if (isPublish) {
+      runPublishCheck(payload).then(function (check) {
+        applyMediaUi(check);
+        if (!check.ok) {
+          var n = (check.external || []).length;
+          var m = (check.missing_alt || []).length;
+          if (n) toast('Không xuất bản được: còn ' + n + ' ảnh ngoài. Hãy «Nhập vào Thư viện».', 'danger');
+          else if (m) toast('Không xuất bản được: còn ' + m + ' ảnh thiếu Alt.', 'danger');
+          else toast('Không xuất bản được: kiểm tra ảnh chưa đạt.', 'danger');
+          return;
+        }
+        return doSave();
+      }).catch(function (err) {
+        toast(err.message || 'Kiểm tra ảnh thất bại', 'danger');
+      });
+      return;
+    }
+
+    doSave().catch(function (err) {
       toast(err.message || 'Lưu thất bại', 'danger');
     });
+  }
+
+  function isMediaUrl(url) {
+    var u = String(url || '').trim();
+    if (!u) return false;
+    if (/^\/media\//i.test(u)) return true;
+    try {
+      var p = new URL(u, window.location.origin);
+      return p.pathname.indexOf('/media/') === 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function collectLocalExternal(payload) {
+    var items = [];
+    var seen = Object.create(null);
+    function add(url, loc) {
+      var u = String(url || '').trim();
+      if (!u || isMediaUrl(u)) return;
+      if (!/^https?:\/\//i.test(u) && u.charAt(0) !== '/') return;
+      if (seen[u]) return;
+      seen[u] = true;
+      items.push({ url: u, locations: [loc] });
+    }
+    var html = (payload && payload.body_html) || '';
+    var re = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
+    var m;
+    while ((m = re.exec(html))) add(m[1], 'body');
+    if (payload && payload.cover) add(payload.cover.url, 'cover');
+    if (payload && payload.seo) add(payload.seo.og_image, 'seo');
+    return items;
+  }
+
+  function applyMediaUi(check) {
+    lastMediaCheck = check || { ok: true, external: [], missing_alt: [] };
+    var external = lastMediaCheck.external || [];
+    var missing = lastMediaCheck.missing_alt || [];
+    var banner = $('media-external-banner');
+    var title = $('media-external-banner-title');
+    var text = $('media-external-banner-text');
+    var chip = $('media-status-chip');
+    var retry = $('btn-media-retry');
+    var progress = $('media-import-progress');
+
+    if (chip) {
+      chip.hidden = false;
+      chip.className = 'ix-chip';
+      if (mediaImportBusy) {
+        chip.className = 'ix-chip ix-chip-info';
+        chip.textContent = '⏳ Ảnh · Đang nhập…';
+      } else if (external.length) {
+        chip.className = 'ix-chip ix-chip-warning';
+        chip.textContent = '⚠ Ảnh · ' + external.length + ' ảnh ngoài';
+      } else if (missing.length) {
+        chip.className = 'ix-chip ix-chip-warning';
+        chip.textContent = '⚠ Ảnh · ' + missing.length + ' thiếu Alt';
+      } else {
+        chip.className = 'ix-chip ix-chip-success';
+        chip.textContent = '✓ Ảnh · Đã nội địa hóa';
+      }
+    }
+
+    if (banner) {
+      if (external.length || (lastMediaCheck._partial && lastMediaCheck._failed)) {
+        banner.hidden = false;
+        banner.className = 'ix-alert ix-alert-warning ix-mb-24';
+        if (title) {
+          title.textContent = external.length
+            ? ('Có ' + external.length + ' hình ảnh ngoài · Chưa thuộc Thư viện media')
+            : 'Một số ảnh nhập lỗi';
+        }
+        if (text) {
+          text.textContent = external.length
+            ? 'Bấm «Nhập vào Thư viện» để tải ảnh về và cập nhật bài viết.'
+            : 'Có thể thử lại ảnh lỗi.';
+        }
+      } else {
+        banner.hidden = true;
+      }
+    }
+    if (retry) retry.hidden = !(lastMediaCheck._failed > 0);
+    if (progress && !mediaImportBusy) progress.hidden = true;
+  }
+
+  function runPublishCheck(payload) {
+    var body = payload
+      ? {
+          article_id: editingId || undefined,
+          body_html: payload.body_html,
+          cover: payload.cover,
+          seo: payload.seo
+        }
+      : { article_id: editingId };
+    return request('/admin/media/publish-check', { method: 'POST', body: body }).then(function (data) {
+      return {
+        ok: !!(data && data.ok),
+        external: (data && data.external) || [],
+        missing_alt: (data && data.missing_alt) || []
+      };
+    });
+  }
+
+  function refreshMediaStatus() {
+    var payload;
+    try {
+      payload = collectPayload($('fld-status') ? $('fld-status').value : 'draft');
+    } catch (e) {
+      var local = collectLocalExternal({
+        body_html: bodyEditor ? bodyEditor.getBodyHtml() : '',
+        cover: {
+          url: ($('fld-cover-url') && $('fld-cover-url').value) || ''
+        }
+      });
+      applyMediaUi({ ok: !local.length, external: local, missing_alt: [] });
+      return Promise.resolve();
+    }
+    return runPublishCheck(payload)
+      .then(function (check) {
+        applyMediaUi(check);
+      })
+      .catch(function () {
+        var local = collectLocalExternal(payload);
+        applyMediaUi({ ok: !local.length, external: local, missing_alt: [] });
+      });
+  }
+
+  function setImportProgress(msg) {
+    var el = $('media-import-progress');
+    if (!el) return;
+    if (!msg) {
+      el.hidden = true;
+      el.textContent = '';
+      return;
+    }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+
+  function runMediaImport() {
+    if (mediaImportBusy) return;
+    if (!editingId) {
+      toast('Hãy lưu bài viết trước khi nhập ảnh vào Thư viện.', 'warning');
+      return;
+    }
+    var canEdit = canPerm('community.articles.edit');
+    if (window.IfluxAdminRbac && IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded() && !canEdit) {
+      toast('Bạn không có quyền sửa bài viết.', 'danger');
+      return;
+    }
+
+    var payload;
+    try {
+      payload = collectPayload($('fld-status') ? $('fld-status').value : 'draft');
+    } catch (e) {
+      toast(e.message, 'warning');
+      return;
+    }
+
+    mediaImportBusy = true;
+    applyMediaUi(lastMediaCheck);
+    setImportProgress('Đang lưu bài rồi nhập vào Thư viện…');
+    var importBtn = $('btn-media-import');
+    if (importBtn) importBtn.disabled = true;
+
+    request('/community/admin/articles/' + encodeURIComponent(editingId), { method: 'PUT', body: payload })
+      .then(function () {
+        setImportProgress('Đang nhập vào Thư viện…');
+        return request('/admin/media/import', {
+          method: 'POST',
+          body: { article_id: editingId }
+        });
+      })
+      .then(function (result) {
+        var found = (result && result.found) || 0;
+        var succeeded = (result && result.succeeded) || 0;
+        var reused = (result && result.reused) || 0;
+        var failed = (result && result.failed) || 0;
+        var status = (result && result.status) || '';
+        if (status === 'noop' || found === 0) {
+          toast('Không còn ảnh ngoài cần nhập.', 'success');
+        } else if (failed > 0) {
+          toast(
+            'Đã xử lý ' + (succeeded + reused) + ' / ' + found + ' ảnh (' +
+              succeeded + ' mới · ' + reused + ' tái sử dụng · ' + failed + ' lỗi)',
+            'warning'
+          );
+        } else {
+          toast(
+            'Đã xử lý ' + found + ' ảnh (' + succeeded + ' mới · ' + reused + ' tái sử dụng)',
+            'success'
+          );
+        }
+        lastMediaCheck._failed = failed;
+        lastMediaCheck._partial = status === 'partial';
+        return request('/community/admin/articles/' + encodeURIComponent(editingId)).then(function (data) {
+          fillForm(data.article || data);
+          return refreshMediaStatus();
+        });
+      })
+      .catch(function (err) {
+        toast(err.message || 'Nhập vào Thư viện thất bại', 'danger');
+      })
+      .then(function () {
+        mediaImportBusy = false;
+        if (importBtn) importBtn.disabled = false;
+        setImportProgress('');
+        applyMediaUi(lastMediaCheck);
+      });
   }
 
   function bind() {
@@ -477,6 +717,10 @@
     if (saveBtn) saveBtn.addEventListener('click', function () { save(); });
     var pubBtn = $('btn-publish');
     if (pubBtn) pubBtn.addEventListener('click', function () { save('published'); });
+    var importBtn = $('btn-media-import');
+    if (importBtn) importBtn.addEventListener('click', runMediaImport);
+    var retryBtn = $('btn-media-retry');
+    if (retryBtn) retryBtn.addEventListener('click', runMediaImport);
   }
 
   function mountBodyEditor() {
@@ -507,6 +751,7 @@
         }
         return request('/community/admin/articles/' + encodeURIComponent(id)).then(function (data) {
           fillForm(data.article || data);
+          return refreshMediaStatus();
         });
       }).catch(function (err) {
         toast(err.message || 'Không tải được dữ liệu', 'danger');

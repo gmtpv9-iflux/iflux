@@ -1,6 +1,6 @@
 'use strict';
 
-const { query } = require('../../core/database/connection');
+const { query, getPool } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 
 function slugifyCode(s) {
@@ -33,13 +33,18 @@ function mapRow(row) {
   return {
     id: row.id,
     code: row.code,
+    slug: row.slug || null,
     name: row.name_vi,
     name_vi: row.name_vi,
+    description: row.description || null,
+    display_order: Number(row.display_order) || 0,
+    icon_media_id: row.icon_media_id || null,
     divisor: Number(row.divisor),
     status: row.is_active ? 'active' : 'inactive',
     is_active: !!row.is_active,
     tickers: tickers,
     stock_count: Number(row.stock_count) || tickers.length,
+    post_count: Number(row.post_count) || 0,
     created_at: row.created_at,
     updated_at: row.updated_at || row.created_at
   };
@@ -52,7 +57,18 @@ const SELECT_BASE = `
          FROM stocks st WHERE st.ecosystem_id = e.id),
       ARRAY[]::varchar[]
     ) AS tickers,
-    (SELECT COUNT(*)::int FROM stocks st WHERE st.ecosystem_id = e.id) AS stock_count
+    (SELECT COUNT(*)::int FROM stocks st WHERE st.ecosystem_id = e.id) AS stock_count,
+    (
+      SELECT COUNT(*)::int 
+      FROM community_posts p 
+      WHERE (p.payload->>'ecosystem_id')::text = e.id::text 
+         OR (p.payload->>'ecosystem_code')::text = e.code
+         OR EXISTS (
+              SELECT 1 
+              FROM jsonb_array_elements_text(COALESCE(p.payload->'ecosystems', '[]'::jsonb)) elem 
+              WHERE elem = e.id::text OR elem = e.code OR elem = COALESCE(e.slug, '')
+            )
+    ) AS post_count
   FROM ecosystems e
 `;
 
@@ -60,12 +76,18 @@ async function listEcosystems(filters = {}) {
   const params = [];
   let sql = SELECT_BASE + ' WHERE 1=1';
   if (filters.q) {
-    params.push('%' + String(filters.q).trim().toLowerCase() + '%');
-    sql += ` AND (LOWER(e.code) LIKE $${params.length} OR LOWER(e.name_vi) LIKE $${params.length})`;
+    const qStr = String(filters.q).trim().toLowerCase();
+    params.push('%' + qStr + '%');
+    let qCond = `(LOWER(e.code) LIKE $${params.length} OR LOWER(e.name_vi) LIKE $${params.length} OR LOWER(COALESCE(e.slug, '')) LIKE $${params.length})`;
+    if (/^\d+$/.test(qStr)) {
+      params.push(Number(qStr));
+      qCond += ` OR e.id = $${params.length}`;
+    }
+    sql += ` AND ${qCond}`;
   }
   if (filters.status === 'active') sql += ' AND e.is_active = TRUE';
   if (filters.status === 'inactive') sql += ' AND e.is_active = FALSE';
-  sql += ' ORDER BY e.name_vi ASC';
+  sql += ' ORDER BY e.display_order ASC, e.name_vi ASC';
   const res = await query(sql, params);
   return (res.rows || []).map(mapRow);
 }
@@ -178,11 +200,58 @@ async function setEcosystemStatus(id, active) {
 }
 
 async function deleteEcosystem(id) {
-  const current = await getEcosystem(id);
-  if (!current) throw AppError.notFound('Không tìm thấy hệ sinh thái');
-  await query('UPDATE stocks SET ecosystem_id = NULL WHERE ecosystem_id = $1', [id]);
-  await query('DELETE FROM ecosystems WHERE id = $1', [id]);
-  return { deleted: true, id: Number(id) };
+  const client = await getPool().connect();
+  try {
+    await client.query('BEGIN');
+
+    const lockRes = await client.query(
+      'SELECT id, code, slug FROM ecosystems WHERE id = $1 FOR UPDATE',
+      [id]
+    );
+    if (!lockRes.rows[0]) {
+      throw AppError.notFound('Không tìm thấy hệ sinh thái');
+    }
+    const target = lockRes.rows[0];
+
+    const stockRes = await client.query(
+      'SELECT COUNT(*)::int AS count FROM stocks WHERE ecosystem_id = $1',
+      [id]
+    );
+    const stockCount = Number(stockRes.rows[0]?.count || 0);
+
+    const postRes = await client.query(
+      `SELECT COUNT(*)::int AS count
+       FROM community_posts p
+       WHERE (p.payload->>'ecosystem_id')::text = $1::text
+          OR (p.payload->>'ecosystem_code')::text = $2
+          OR EXISTS (
+               SELECT 1
+               FROM jsonb_array_elements_text(COALESCE(p.payload->'ecosystems', '[]'::jsonb)) elem
+               WHERE elem = $1::text 
+                  OR elem = $2
+                  OR elem = COALESCE($3, '')
+             )`,
+      [id, target.code, target.slug]
+    );
+    const postCount = Number(postRes.rows[0]?.count || 0);
+    const referenceCount = stockCount + postCount;
+
+    if (referenceCount > 0) {
+      throw AppError.badRequest(
+        'HAS_REFERENCES',
+        'Danh mục đang có cổ phiếu/bài viết liên kết. Không thể xóa, vui lòng chuyển sang trạng thái Inactive.'
+      );
+    }
+
+    await client.query('DELETE FROM ecosystems WHERE id = $1', [id]);
+    await client.query('COMMIT');
+    return { deleted: true, id: Number(id) };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 module.exports = {
@@ -193,3 +262,4 @@ module.exports = {
   setEcosystemStatus,
   deleteEcosystem
 };
+

@@ -12,7 +12,8 @@
   var ALLOWED_ATTR = [
     'href', 'title', 'rel', 'target',
     'src', 'alt',
-    'colspan', 'rowspan'
+    'colspan', 'rowspan',
+    'data-media-asset-id'
   ];
 
   function trimStr(s) {
@@ -28,12 +29,13 @@
     return false;
   }
 
-  /** IMG-A: https/http only */
+  /** IMG: https/http hoặc Public Media URL nội bộ (/media/…) */
   function isAllowedImgSrc(raw) {
     var v = trimStr(raw);
     if (!v) return false;
     if (/^(javascript|data|vbscript|blob):/i.test(v)) return false;
     if (/^https?:\/\//i.test(v)) return true;
+    if (/^\/media\//i.test(v)) return true;
     return false;
   }
 

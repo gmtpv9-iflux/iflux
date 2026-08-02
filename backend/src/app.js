@@ -10,10 +10,12 @@ const { createLegacyAuthRouter } = require('./modules/legacy-auth/auth.routes');
 const { createUserDataRouter } = require('./modules/user-data/user-data.routes');
 const { createSubscriptionsRouter } = require('./modules/subscriptions/subscriptions.routes');
 const { createMarketRouter } = require('./modules/market/market.routes');
-const { createCommunityRouter } = require('./modules/community/community.routes');
-const { createOnboardingRouter } = require('./modules/onboarding/onboarding.routes');
-const { createPlansRouter } = require('./modules/plans/plans.routes');
-const { AppError } = require('./shared/exceptions/app-error');
+  const { createCommunityRouter } = require('./modules/community/community.routes');
+  const { createMediaRouter } = require('./modules/media/media.routes');
+  const { mediaRoot } = require('./modules/media/media-util');
+  const { createOnboardingRouter } = require('./modules/onboarding/onboarding.routes');
+  const { createPlansRouter } = require('./modules/plans/plans.routes');
+  const { AppError } = require('./shared/exceptions/app-error');
 
 function legacyErrorAdapter(err, req, res, next) {
   if (err instanceof AppError) {
@@ -65,6 +67,8 @@ function createApp(config) {
 
   app.use(`${config.LEGACY_API_PREFIX}`, createMarketRouter());
   app.use(`${config.LEGACY_API_PREFIX}/community`, createCommunityRouter({ auth: userAndAdminAuth, config }));
+  app.use(`${config.LEGACY_API_PREFIX}/admin/media`, createMediaRouter({ config, auth: adminAuthMw }));
+  app.use('/media', express.static(mediaRoot(config), { fallthrough: true, maxAge: '7d', index: false }));
   const { createInteractionV1Router } = require('./modules/interaction/interaction.routes');
   app.use(`${config.LEGACY_API_PREFIX}/interaction/v1`, createInteractionV1Router({ auth: userAndAdminAuth, config }));
 

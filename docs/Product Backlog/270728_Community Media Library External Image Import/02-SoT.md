@@ -1,7 +1,15 @@
-# 02 — SoT · Community Media Asset Management
+**Status:** ⛔ **SUPERSEDED** — không còn Business Authority  
+
+**Authority mới:** [`../270730_Community_Media_Library/03-SoT-Community-Media-Library.md`](../270730_Community_Media_Library/03-SoT-Community-Media-Library.md) (**SoT-COM-MEDIA-001**) + BRD-COM-MEDIA-001.
+
+> File này lẫn chi tiết implementation (path · encode · hash…) — **không LOCK**. Giữ làm archive tham chiếu lịch sử thôi.
+
+---
+
+# 02 — SoT · Community Media Asset Management (ARCHIVE)
 
 **Date:** 2026-07-28  
-**Status:** **Proposed — Owner 2026-07-28**  
+**Status:** **SUPERSEDED 2026-07-30**  
 **Solution:** [`01-Solution.md`](01-Solution.md)  
 **README:** [`00-README.md`](00-README.md)
 
