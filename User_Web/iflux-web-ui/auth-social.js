@@ -112,12 +112,16 @@
     return IfluxAuth.loginWithSocial(provider, tokens || {}, opts || {});
   }
 
+  /** SoT V2 / AC-D8: Identity Creation đọc Active Owner — không gọi AR.getCodeForIdentityCreation (đã xóa). */
   function affiliateCodeForSocial(frozen) {
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      var fresh = IfluxAffiliateResolver.getCodeForIdentityCreation();
-      if (fresh) return fresh;
+    if (global.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+      var fromOwner = String(IfluxIdentityContext.getActiveOwner() || '')
+        .trim()
+        .toUpperCase();
+      if (fromOwner) return fromOwner;
     }
-    return frozen || null;
+    var fromFrozen = frozen != null ? String(frozen).trim().toUpperCase() : '';
+    return fromFrozen || null;
   }
 
   function buildGoogleRunOpts() {
@@ -286,10 +290,7 @@
     if (saved && state && saved !== state) {
       return Promise.reject(new Error('Zalo OAuth state không khớp.'));
     }
-    var ref = null;
-    if (global.IfluxAffiliateResolver && IfluxAffiliateResolver.getCodeForIdentityCreation) {
-      ref = IfluxAffiliateResolver.getCodeForIdentityCreation() || null;
-    }
+    var ref = affiliateCodeForSocial(null);
     return finishSocialLogin('zalo', { oauth_code: code }, { referral_code: ref }).then(function (user) {
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, '', window.location.pathname + window.location.hash);
