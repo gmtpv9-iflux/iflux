@@ -1,19 +1,14 @@
-/* Trang feed Cộng đồng — Cộng đồng · Tin tức · Chuyên gia · sidebar */
+/* Trang feed Cộng đồng — shell · featured tabs (ALL|UUID) · DailyFeed A/B */
 (function (global) {
   'use strict';
 
-  var NEWS_HERO_COUNT = 5;
-  var NEWS_PAGE_SIZE = 6;
-  var EXPERT_PAGE_SIZE = 12;
+  var FILTER_ALL = 'ALL';
 
   var state = {
-    newsOffset: 0,
-    newsLoading: false,
-    newsHasMore: true,
-    newsTotal: 0,
-    newsLoadSeq: 0,
-    expertLoaded: false,
-    shellReady: false
+    shellReady: false,
+    featuredCats: [],
+    /* '' = ALL (SOL-CAL-05) */
+    featuredCategoryId: ''
   };
 
   function st() { return global.IfluxCommunityStore; }
@@ -271,7 +266,99 @@
     if (f.sector) return { sectorId: f.sector };
     if (f.author) return { authorId: f.author, author: f.author };
     if (f.category) return { category: f.category, categoryId: f.category };
+    /* Tab nổi bật: lọc theo UUID (FeedCard có category_id, không có slug). */
+    if (state.featuredCategoryId) return { categoryId: state.featuredCategoryId };
     return {};
+  }
+
+  function categoryIconClass(icon) {
+    var s = String(icon || '').trim();
+    if (!s) return 'ti ti-category';
+    if (/^ti\s+ti-/.test(s)) return s;
+    if (s.indexOf('ti-') === 0) return 'ti ' + s;
+    return 'ti ti-category';
+  }
+
+  function fetchFeaturedCategories() {
+    function unwrap(res) {
+      var payload = (res && res.data) || res || {};
+      return payload.categories || [];
+    }
+    if (global.IfluxApiClient && IfluxApiClient.listCommunityCategories) {
+      return IfluxApiClient.listCommunityCategories({ featured: true })
+        .then(unwrap)
+        .catch(function () {
+          return fetchJson('/community/categories?featured=1').then(unwrap).catch(function () { return []; });
+        });
+    }
+    return fetchJson('/community/categories?featured=1').then(unwrap).catch(function () { return []; });
+  }
+
+  function tabIdFromState(activeId) {
+    return activeId ? String(activeId) : FILTER_ALL;
+  }
+
+  function stateIdFromTab(tabId) {
+    var id = String(tabId || '');
+    if (!id || id === FILTER_ALL) return '';
+    return id;
+  }
+
+  /** Tab Danh mục nổi bật + Tất cả — DS: .ix-tabs / .ix-tab / .active */
+  function featuredCatsTabsHtml(cats, activeId) {
+    var activeTab = tabIdFromState(activeId);
+    var allOn = activeTab === FILTER_ALL;
+    var tabs =
+      '<button type="button" class="ix-tab' + (allOn ? ' active' : '') + '" role="tab"' +
+        ' aria-selected="' + (allOn ? 'true' : 'false') + '"' +
+        ' data-ifx-com-cat-id="' + FILTER_ALL + '">' +
+        '<i class="ti ti-layout-grid" aria-hidden="true"></i> Tất cả' +
+      '</button>';
+    (cats || []).forEach(function (c) {
+      var id = String(c.id || '');
+      if (!id) return;
+      var on = id === activeTab;
+      tabs +=
+        '<button type="button" class="ix-tab' + (on ? ' active' : '') + '" role="tab"' +
+          ' aria-selected="' + (on ? 'true' : 'false') + '"' +
+          ' data-ifx-com-cat-id="' + esc(id) + '">' +
+          '<i class="' + esc(categoryIconClass(c.icon)) + '" aria-hidden="true"></i> ' +
+          esc(c.name || c.label || c.slug || '') +
+        '</button>';
+    });
+    return (
+      '<div class="ix-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
+        tabs +
+      '</div>'
+    );
+  }
+
+  function applyFeaturedTab(root, tabId) {
+    if (!root) return;
+    state.featuredCategoryId = stateIdFromTab(tabId);
+    var activeTab = tabIdFromState(state.featuredCategoryId);
+    root.querySelectorAll('[data-ifx-com-featured-cats] .ix-tab').forEach(function (btn) {
+      var on = btn.getAttribute('data-ifx-com-cat-id') === activeTab;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    /* Acquisition = DailyFeed (WP-0) — không loadFeed ở page */
+    mountDailyFeed(root);
+    syncEmptyHostChrome(root);
+  }
+
+  function bindFeaturedTabs(root) {
+    var rail = root && root.querySelector('[data-ifx-com-featured-cats]');
+    if (!rail || rail._ifxFeaturedBound) return;
+    rail._ifxFeaturedBound = true;
+    rail.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest('[data-ifx-com-cat-id]') : null;
+      if (!btn || !rail.contains(btn)) return;
+      var id = btn.getAttribute('data-ifx-com-cat-id');
+      if (id == null) return;
+      if (stateIdFromTab(id) === state.featuredCategoryId) return;
+      applyFeaturedTab(root, id);
+    });
   }
 
   function filterBannerHtml() {
@@ -392,7 +479,8 @@
             banner +
             '<div class="ifx-dash-grid ifx-com-dedicated-grid" data-ifx-section="main"></div>' +
           '</section>' +
-
+          /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host sidebar). */
+          '<div data-ifx-com-featured-cats-slot></div>' +
           /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
           '<div data-ifx-com-daily-feed></div>' +
         '</div>' +
@@ -409,197 +497,12 @@
     state.shellReady = true;
   }
 
-  function ensureMounts(root) {
-    return !!(root && root.querySelector('[data-ifx-com-news-grid]'));
-  }
-
-  function renderNewsHero(root, posts) {
-    var mount = root.querySelector('[data-ifx-com-news-hero-mount]');
-    if (!mount || !ui()) return;
-    if (!posts.length) {
-      mount.innerHTML = '';
-      return;
-    }
-    var featured = posts[0];
-    var side = posts.slice(1, NEWS_HERO_COUNT);
-    mount.innerHTML =
-      '<div class="ifx-com-hero">' +
-        '<div class="ifx-com-hero__featured">' + ui().featuredPostHtml(featured) + '</div>' +
-        '<div class="ifx-com-hero__side">' + side.map(function (p) { return ui().compactPostHtml(p); }).join('') + '</div>' +
-      '</div>';
-  }
-
-  function appendNewsGrid(root, posts, reset) {
-    var grid = root.querySelector('[data-ifx-com-news-grid]');
-    if (!grid || !ui()) return;
-    if (!posts.length && reset) {
-      var heroMount = root.querySelector('[data-ifx-com-news-hero-mount]');
-      var hasHero = heroMount && heroMount.innerHTML.trim();
-      if (!hasHero) {
-        grid.innerHTML = '<div class="ifx-com-empty">Chưa có tin tức.</div>';
-      } else {
-        grid.innerHTML = '';
-      }
-      return;
-    }
-    if (!posts.length) return;
-    var html = posts.map(function (p) { return ui().postCardHtml(p); }).join('');
-    if (reset) grid.innerHTML = html;
-    else grid.insertAdjacentHTML('beforeend', html);
-  }
-
-  function renderExpertGrid(root) {
-    var grid = root.querySelector('[data-ifx-com-expert-grid]');
-    var endEl = root.querySelector('[data-ifx-com-expert-end]');
-    if (!grid || !st() || !ui()) return;
-
-    var base = listFilterParams();
-    var result = st().getPosts(Object.assign({}, base, {
-      contentType: st().CONTENT_TYPE_EXPERT,
-      offset: 0,
-      limit: EXPERT_PAGE_SIZE,
-      returnMeta: true
-    }));
-
-    var countEl = root.querySelector('[data-ifx-com-expert-count]');
-    if (countEl) countEl.textContent = result.total + ' bài';
-
-    if (!result.items.length) {
-      grid.innerHTML = '';
-      if (endEl) endEl.hidden = false;
-      return;
-    }
-    if (endEl) endEl.hidden = true;
-    grid.innerHTML = result.items.map(function (p) { return ui().postCardHtml(p); }).join('');
-    state.expertLoaded = true;
-  }
-
-  function updateNewsCount(root, total) {
-    var el = root.querySelector('[data-ifx-com-news-count]');
-    if (el) el.textContent = total + ' bài';
-  }
-
-  function finishNewsLoad(root, seq) {
-    if (seq !== state.newsLoadSeq) return;
-    state.newsLoading = false;
-    var loadEl = root.querySelector('[data-ifx-com-load-more]');
-    var endEl = root.querySelector('[data-ifx-com-end]');
-    if (loadEl) loadEl.hidden = true;
-    if (endEl) endEl.hidden = state.newsHasMore || state.newsTotal === 0;
-  }
-
-  function applyNewsLoad(root, reset, seq) {
-    if (!ensureMounts(root) || !st() || !ui()) {
-      finishNewsLoad(root, seq);
-      return;
-    }
-
-    var base = listFilterParams();
-    var loadEl = root.querySelector('[data-ifx-com-load-more]');
-    var endEl = root.querySelector('[data-ifx-com-end]');
-    if (loadEl) loadEl.hidden = false;
-    if (endEl) endEl.hidden = true;
-
-    try {
-      if (reset) {
-        if (blockVisible('BLK-COM-TRENDING') || blockVisible('BLK-COM-CHUDE-TOP')) mountTrending(root);
-        if (blockVisible('BLK-COM-EXPERTS')) mountFeaturedExperts(root);
-        try {
-          document.dispatchEvent(new CustomEvent('iflux-community-remount-widgets'));
-        } catch (e) { /* ignore */ }
-
-        if (blockVisible('BLK-COM-NEWS')) {
-          var heroResult = st().getPosts(Object.assign({}, base, {
-            contentType: st().CONTENT_TYPE_NEWS,
-            offset: 0,
-            limit: NEWS_HERO_COUNT,
-            returnMeta: true
-          }));
-          state.newsTotal = heroResult.total;
-          updateNewsCount(root, heroResult.total);
-          renderNewsHero(root, heroResult.items);
-          state.newsHasMore = heroResult.total > NEWS_HERO_COUNT;
-          state.newsOffset = NEWS_HERO_COUNT;
-        } else {
-          state.newsTotal = 0;
-          state.newsHasMore = false;
-          state.newsOffset = 0;
-        }
-        state.expertLoaded = false;
-        if (blockVisible('BLK-COM-EXPERTS')) renderExpertGrid(root);
-      }
-
-      if (!blockVisible('BLK-COM-NEWS') || !state.newsHasMore) {
-        var emptyGrid = root.querySelector('[data-ifx-com-news-grid]');
-        if (emptyGrid) emptyGrid.innerHTML = '';
-      } else {
-        var result = st().getPosts(Object.assign({}, base, {
-          contentType: st().CONTENT_TYPE_NEWS,
-          offset: state.newsOffset,
-          limit: NEWS_PAGE_SIZE,
-          returnMeta: true
-        }));
-        appendNewsGrid(root, result.items, reset && state.newsOffset === NEWS_HERO_COUNT);
-        state.newsTotal = result.total;
-        updateNewsCount(root, result.total);
-        state.newsOffset += result.items.length;
-        state.newsHasMore = result.hasMore;
-      }
-    } catch (err) {
-      console.error('Community feed load failed', err);
-      var grid = root.querySelector('[data-ifx-com-news-grid]');
-      if (grid && reset) {
-        grid.innerHTML = '<div class="ifx-com-empty">Không tải được bài viết. Vui lòng tải lại trang.</div>';
-      }
-    }
-
-    finishNewsLoad(root, seq);
-  }
-
-  function loadNewsPage(root, reset) {
-    if (!root) return;
-
-    var seq = ++state.newsLoadSeq;
-
-    if (reset) {
-      state.newsOffset = NEWS_HERO_COUNT;
-      state.newsHasMore = true;
-      state.newsTotal = 0;
-    } else if (state.newsLoading || !state.newsHasMore) {
-      return;
-    }
-
-    state.newsLoading = true;
-
-    if (reset) {
-      applyNewsLoad(root, true, seq);
-      return;
-    }
-
-    setTimeout(function () {
-      applyNewsLoad(root, false, seq);
-    }, 280);
-  }
-
-  function refreshFeed(root) {
-    if (!root) return;
-    loadNewsPage(root, true);
-  }
-
-  function bindInfiniteScroll(root) {
-    if (root._ifxComScrollBound) return;
-    root._ifxComScrollBound = true;
-
-    function onScroll() {
-      if (state.newsLoading || !state.newsHasMore) return;
-      var rect = root.querySelector('[data-ifx-com-load-more]');
-      if (!rect) return;
-      var trigger = rect.getBoundingClientRect().top;
-      if (trigger < window.innerHeight + 120) loadNewsPage(root, false);
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  /** Bơm tab vào slot Main — không đụng feed-layout / sidebar host. */
+  function injectFeaturedTabs(root) {
+    var slot = root && root.querySelector('[data-ifx-com-featured-cats-slot]');
+    if (!slot) return;
+    slot.innerHTML = featuredCatsTabsHtml(state.featuredCats, state.featuredCategoryId);
+    bindFeaturedTabs(root);
   }
 
   function mountDailyFeed(root) {
@@ -625,8 +528,26 @@
       return;
     }
 
+    /* Shell đồng bộ trước — Layout Engine mount sidebar vào aside trong grid. */
     renderShell(root);
-    mountDailyFeed(root);
+
+    /* Default Filter State = ALL (SOL-CAL-05). URL/path filter → listFilterParams, không ép featured. */
+    var urlFilters = readListFilters();
+    var hasUrlFilter = !!(urlFilters.ticker || urlFilters.story || urlFilters.family ||
+      urlFilters.sector || urlFilters.author || urlFilters.category || readPathCollection());
+    state.featuredCategoryId = '';
+
+    fetchFeaturedCategories().then(function (cats) {
+      state.featuredCats = cats || [];
+      if (hasUrlFilter) state.featuredCategoryId = '';
+      injectFeaturedTabs(root);
+      mountDailyFeed(root);
+      syncEmptyHostChrome(root);
+    }).catch(function () {
+      injectFeaturedTabs(root);
+      mountDailyFeed(root);
+      syncEmptyHostChrome(root);
+    });
 
     document.addEventListener('iflux-watchlist-change', function () {
       ensureHeartLazy().then(function () {
@@ -648,8 +569,6 @@
 
   global.IfluxCommunityPage = {
     init: init,
-    syncEmptyHostChrome: syncEmptyHostChrome,
-    NEWS_PAGE_SIZE: NEWS_PAGE_SIZE,
-    NEWS_HERO_COUNT: NEWS_HERO_COUNT
+    syncEmptyHostChrome: syncEmptyHostChrome
   };
 })(window);

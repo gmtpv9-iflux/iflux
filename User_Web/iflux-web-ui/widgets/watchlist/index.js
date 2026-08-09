@@ -1,13 +1,13 @@
 /**
  * Widget WGT-WAT-001 — Watchlist (ESM lazy module, dedicated /home)
- * Nạp on-demand: watchlist store/ui/taxonomy/block + mock-market + renderers.
+ * Nạp on-demand: watchlist store/ui/taxonomy/block + Master/Quotes + renderers.
  * KHÔNG nạp dashboard-engine / chat / affiliate / community.
  */
 
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
 
 var ASSET = '/User_Web/iflux-web-ui/';
-var V = 'followFound20260724';
+var V = 'mockRmWp3_20260809';
 var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
 
 export const meta = { id: 'WGT-WAT-001', title: 'Theo dõi' };
@@ -15,7 +15,8 @@ export const meta = { id: 'WGT-WAT-001', title: 'Theo dõi' };
 export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js?v=' + V },
+    { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + V },
+    { global: 'IfluxMarketQuotes', src: ASSET + 'iflux-market-quotes.js?v=' + V },
     /* W1/OI-H2: IfluxBlockTemplates do Shell — skip list Feature */
     { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + V },
     { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=' + V },
@@ -23,7 +24,7 @@ export async function mount(el, ctx) {
     { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=' + V },
     { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=' + V },
     { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=' + V },
-    { global: 'IfluxWidgetRenderers', src: ASSET + 'widget-renderers.js?v=' + V }
+    { global: 'IfluxWidgetRenderers', src: ASSET + 'widget-renderers.js?v=mockRmWp4_20260809' }
   ]);
 
   try {

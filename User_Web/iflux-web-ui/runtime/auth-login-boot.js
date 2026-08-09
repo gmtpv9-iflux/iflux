@@ -16,11 +16,11 @@ var FEATURE = [
   ADMIN + 'iflux-customers-store.js',
   ADMIN + 'iflux-credentials-store.js?v=20260706',
   ASSET + 'loyalty-affiliate-store.js?v=regAffLock20260728',
-  ASSET + 'auth-social.js?v=gisBtnUi20260730',
+  ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=btnRace20260728',
   ADMIN + 'iflux-admin-ui.js',
   ASSET + 'iflux-web-ui.js?v=p6Writer20260730',
-  ASSET + 'auth-login-init.js?v=p6Writer20260730'
+  ASSET + 'auth-login-init.js?v=affOwnerRead20260808'
 ];
 
 async function main() {

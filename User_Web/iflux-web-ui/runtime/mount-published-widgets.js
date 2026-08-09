@@ -15,7 +15,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * Mount path helper — Host Tree → import(display.module) → mount(host, ctx).
  * Ctx chỉ: host (el), artifact, view model (config/slot) — không pageKey/route/section/layout.
  */
-import { loadStyles } from './legacy-bridge.js?v=feedCard20260723c';
+import { loadStyles } from './legacy-bridge.js?v=cssPin20260808';
 
 function stylesheetHrefs(widgetArt) {
   var deps = (widgetArt && widgetArt.dependencies) || [];

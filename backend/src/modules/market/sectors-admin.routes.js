@@ -45,7 +45,8 @@ function createSectorsAdminRouter(deps) {
         code: z.string().max(20).optional(),
         name: z.string().min(1).max(100).optional(),
         name_vi: z.string().min(1).max(100).optional(),
-        divisor: z.union([z.number(), z.string()]).transform(function (v) { return Number(v); }),
+        description: z.string().max(2000).optional().nullable(),
+        tickers: z.array(z.string()).optional(),
         status: z.enum(['active', 'inactive']).optional(),
         is_active: z.boolean().optional()
       }).refine(function (b) { return !!(b.name || b.name_vi); }, { message: 'Tên ngành bắt buộc' })
@@ -67,7 +68,8 @@ function createSectorsAdminRouter(deps) {
       body: z.object({
         name: z.string().min(1).max(100).optional(),
         name_vi: z.string().min(1).max(100).optional(),
-        divisor: z.union([z.number(), z.string()]).transform(function (v) { return Number(v); }).optional(),
+        description: z.string().max(2000).optional().nullable(),
+        tickers: z.array(z.string()).optional(),
         status: z.enum(['active', 'inactive']).optional(),
         is_active: z.boolean().optional()
       })
@@ -76,6 +78,27 @@ function createSectorsAdminRouter(deps) {
       try {
         const item = await sectors.updateSector(req.params.id, req.validated.body);
         return success(res, { sector: item });
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.put(
+    '/:id/tickers',
+    perm('market.sectors.edit'),
+    validate(z.object({
+      body: z.object({
+        tickers: z.array(z.string())
+      })
+    })),
+    async (req, res, next) => {
+      try {
+        const item = await sectors.getSector(req.params.id);
+        if (!item) throw AppError.notFound('Không tìm thấy ngành');
+        const sync = await sectors.syncTickers(req.params.id, req.validated.body.tickers);
+        const updated = await sectors.getSector(req.params.id);
+        return success(res, { sector: updated, sync });
       } catch (err) {
         next(err);
       }

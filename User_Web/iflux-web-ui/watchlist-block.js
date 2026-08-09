@@ -94,6 +94,40 @@
     document.querySelectorAll('[data-ifx-wl-block]').forEach(updateAlertsBtn);
   }
 
+  function masterStockRow(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    var mm = global.IfluxMarketMaster;
+    var stocks = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
+    var name = t;
+    var exchange = '';
+    if (stocks) {
+      for (var i = 0; i < stocks.length; i++) {
+        if (String((stocks[i] && stocks[i].ticker) || '').toUpperCase() !== t) continue;
+        name = stocks[i].name || stocks[i].short_name || t;
+        exchange = stocks[i].exchange || '';
+        break;
+      }
+    }
+    var q = global.IfluxMarketQuotes && typeof IfluxMarketQuotes.peekQuote === 'function'
+      ? IfluxMarketQuotes.peekQuote(t) : null;
+    var pct = null;
+    var price = null;
+    var volume = null;
+    if (q) {
+      price = q.price != null ? q.price : q.close;
+      pct = q.change_pct != null ? q.change_pct : q.pctChange;
+      volume = q.volume != null ? q.volume : null;
+    }
+    return {
+      ticker: t,
+      name: name,
+      exchange: exchange,
+      price: price,
+      change_pct: pct,
+      volume: volume
+    };
+  }
+
   function renderStockList(block) {
     var list = block.querySelector('[data-ifx-wl-stock-list]');
     if (!list) return;
@@ -108,18 +142,15 @@
     var folder = st.getFolder(activeId);
     var folderEditable = !(folder && st.isSystemFolder(folder));
     var tickers = st.getFolderTickers(activeId);
-    var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-    var stocks = snap && snap.entities ? snap.entities.stocks : {};
     if (!tickers.length) {
       list.innerHTML = '<div class="ifx-wl-empty">Chưa có mã trong thư mục này</div>';
       return;
     }
 
     list.innerHTML = tickers.map(function (t) {
-      var s = stocks[t];
-      if (!s || !uiMod) return '';
+      if (!uiMod) return '';
       var href = stockHref(t);
-      return uiMod.stockRowHtml(s, {
+      return uiMod.stockRowHtml(masterStockRow(t), {
         href: href,
         folderId: activeId,
         folderEditable: folderEditable,
@@ -129,6 +160,24 @@
 
     if (uiMod && global.IfluxHeartAction) IfluxHeartAction.refresh();
     if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
+
+    var mq = global.IfluxMarketQuotes;
+    if (mq && typeof mq.getQuotes === 'function') {
+      mq.getQuotes(tickers).then(function () {
+        if (getActiveFolderId(block) !== activeId) return;
+        list.innerHTML = tickers.map(function (t) {
+          if (!uiMod) return '';
+          return uiMod.stockRowHtml(masterStockRow(t), {
+            href: stockHref(t),
+            folderId: activeId,
+            folderEditable: folderEditable,
+            inFolder: st.isInFolder(t, activeId)
+          });
+        }).join('');
+        if (global.IfluxHeartAction) IfluxHeartAction.refresh();
+        if (global.IfluxAlertUI) IfluxAlertUI.refreshAlertButtons();
+      });
+    }
   }
 
   function renderBlock(block) {

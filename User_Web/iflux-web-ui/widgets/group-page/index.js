@@ -41,15 +41,16 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'watchlist-ui.js',
-    ASSET + 'community-ui.js',
+    ASSET + 'community-ui.js?v=mockRmWp1_20260809',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
     ASSET + 'entity-timeline-feed.js',
     ASSET + 'community-daily-feed.js?v=entFeed20260724',
-    ASSET + 'market-liquidity.js'
+    ASSET + 'iflux-market-quotes.js?v=mockRmWp2_20260809',
+    ASSET + 'market-liquidity.js?v=mockRmWp4_20260809'
   ],
   [
-    ASSET + 'entity-detail-center.js?v=entFeed20260724',
-    ASSET + 'group-page.js?v=entFeed20260724',
+    ASSET + 'entity-detail-center.js?v=mockRmWp2_20260809',
+    ASSET + 'group-page.js?v=mockRmWp2_20260809',
     ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
   ]
 ];

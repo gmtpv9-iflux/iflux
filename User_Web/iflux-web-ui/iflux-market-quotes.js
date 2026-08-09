@@ -1,22 +1,32 @@
-/* iFlux Market Quotes — nguồn giá + OHLC thật (VNDirect finfo, CORS *) dùng chung Admin & User Web.
- * KHÔNG chứa UI. Chỉ fetch + chuẩn hóa + cache. */
+/* iFlux Market Quotes — Internal API runtime proxy (BR-11A).
+ * FE không gọi host provider trực tiếp. Trace: meta.source_code. */
 (function (global) {
   'use strict';
 
-  var BASE = 'https://api-finfo.vndirect.com.vn/v4/stock_prices';
-  var QUOTE_TTL = 5 * 60 * 1000;   // 5 phút
-  var OHLC_TTL = 15 * 60 * 1000;   // 15 phút
+  var QUOTE_TTL = 5 * 60 * 1000;
+  var OHLC_TTL = 15 * 60 * 1000;
   var CHUNK = 40;
 
-  var quoteCache = {};   // ticker -> quote (+ _ts)
-  var ohlcCache = {};    // ticker|days -> { _ts, data }
-  var inflight = {};     // url -> Promise
+  var quoteCache = {};
+  var ohlcCache = {};
+  var inflight = {};
 
-  function norm(t) { return String(t == null ? '' : t).trim().toUpperCase(); }
+  function norm(t) {
+    return String(t == null ? '' : t).trim().toUpperCase();
+  }
 
-  function recentFromDate() {
-    var d = new Date(Date.now() - 21 * 86400000);
-    return d.toISOString().slice(0, 10);
+  function apiBase() {
+    try {
+      var host = String((global.location && location.hostname) || '').toLowerCase();
+      if (host === 'iflux.vn' || host === 'www.iflux.vn' || host.indexOf('staging.') === 0) {
+        return '/api';
+      }
+    } catch (e) { /* ignore */ }
+    if (global.IfluxApiConfig && IfluxApiConfig.getBaseUrl) {
+      var b = IfluxApiConfig.getBaseUrl();
+      if (b) return String(b).replace(/\/$/, '');
+    }
+    return '/api';
   }
 
   function priceState(close, ref, ceil, floor) {
@@ -28,36 +38,30 @@
     return 'ref';
   }
 
-  function normalizeRow(r) {
-    return {
-      ticker: r.code,
-      date: r.date,
-      price: r.close,
-      ref: r.basicPrice,
-      open: r.open,
-      high: r.high,
-      low: r.low,
-      close: r.close,
-      change: r.change,
-      pctChange: r.pctChange,
-      volume: r.nmVolume,
-      ceiling: r.ceilingPrice,
-      floor: r.floorPrice,
-      state: priceState(r.close, r.basicPrice, r.ceilingPrice, r.floorPrice)
-    };
+  function unwrap(data) {
+    if (data && data.data != null) return data.data;
+    return data || {};
   }
 
   function fetchJson(url) {
     if (inflight[url]) return inflight[url];
     var p = fetch(url, { headers: { Accept: 'application/json' } })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .catch(function () { return null; })
-      .then(function (data) { delete inflight[url]; return data; });
+      .then(function (res) {
+        return res.json().then(function (d) {
+          return { ok: res.ok, d: d };
+        });
+      })
+      .catch(function () {
+        return { ok: false, d: null };
+      })
+      .then(function (pack) {
+        delete inflight[url];
+        return pack;
+      });
     inflight[url] = p;
     return p;
   }
 
-  /* Lấy giá mới nhất cho nhiều mã (batch, cache). Trả Promise(map ticker -> quote). */
   function getQuotes(tickers) {
     var now = Date.now();
     var out = {};
@@ -66,7 +70,7 @@
       var t = norm(raw);
       if (!t) return;
       var c = quoteCache[t];
-      if (c && (now - c._ts) < QUOTE_TTL) out[t] = c;
+      if (c && now - c._ts < QUOTE_TTL) out[t] = c;
       else if (need.indexOf(t) < 0) need.push(t);
     });
     if (!need.length) return Promise.resolve(out);
@@ -74,49 +78,65 @@
     var chunks = [];
     var i;
     for (i = 0; i < need.length; i += CHUNK) chunks.push(need.slice(i, i + CHUNK));
-    var from = recentFromDate();
+    var base = apiBase();
 
-    return Promise.all(chunks.map(function (ch) {
-      var url = BASE + '?q=code:' + ch.join(',') + '~date:gte:' + from +
-        '&sort=date:desc&size=' + (ch.length * 10);
-      return fetchJson(url).then(function (d) {
-        var seen = {};
-        ((d && d.data) || []).forEach(function (r) {
-          if (seen[r.code]) return;   // đã sort desc → bản đầu là mới nhất
-          seen[r.code] = 1;
-          var q = normalizeRow(r);
-          q._ts = now;
-          quoteCache[r.code] = q;
-          out[r.code] = q;
+    return Promise.all(
+      chunks.map(function (ch) {
+        var url = base + '/market/runtime/quotes?tickers=' + encodeURIComponent(ch.join(','));
+        return fetchJson(url).then(function (pack) {
+          if (!pack.ok) return;
+          var map = unwrap(pack.d) || {};
+          var src =
+            (pack.d && pack.d.meta && pack.d.meta.source_code) || 'vndirect_finfo';
+          Object.keys(map).forEach(function (code) {
+            var q = map[code] || {};
+            q.ticker = q.ticker || code;
+            if (q.change_pct == null && q.pctChange != null) {
+              q.change_pct = Number(q.pctChange);
+            }
+            q._ts = now;
+            q.source_code = src;
+            quoteCache[code] = q;
+            out[code] = q;
+          });
         });
-      });
-    })).then(function () { return out; });
+      })
+    ).then(function () {
+      return out;
+    });
   }
 
   function getQuote(ticker) {
-    return getQuotes([ticker]).then(function (m) { return m[norm(ticker)] || null; });
+    return getQuotes([ticker]).then(function (m) {
+      return m[norm(ticker)] || null;
+    });
   }
 
-  /* Lấy chuỗi nến OHLC (ngày) tăng dần theo thời gian. */
   function getOHLC(ticker, days) {
     var t = norm(ticker);
     days = days || 160;
     var key = t + '|' + days;
     var now = Date.now();
     var c = ohlcCache[key];
-    if (c && (now - c._ts) < OHLC_TTL) return Promise.resolve(c.data);
-    var url = BASE + '?q=code:' + t + '&sort=date:desc&size=' + days;
-    return fetchJson(url).then(function (d) {
-      var rows = ((d && d.data) || []).map(normalizeRow);
-      rows.reverse(); // tăng dần theo ngày
+    if (c && now - c._ts < OHLC_TTL) return Promise.resolve(c.data);
+    var url = apiBase() + '/market/runtime/ohlc/' + encodeURIComponent(t) + '?days=' + encodeURIComponent(days);
+    return fetchJson(url).then(function (pack) {
+      if (!pack.ok) return [];
+      var body = unwrap(pack.d) || {};
+      var rows = body.data || [];
       ohlcCache[key] = { _ts: now, data: rows };
       return rows;
     });
   }
 
+  function peekQuote(ticker) {
+    return quoteCache[norm(ticker)] || null;
+  }
+
   global.IfluxMarketQuotes = {
     getQuote: getQuote,
     getQuotes: getQuotes,
+    peekQuote: peekQuote,
     getOHLC: getOHLC,
     priceState: priceState
   };

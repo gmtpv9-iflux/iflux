@@ -22,17 +22,15 @@ var manifest = {
   version: '1.0.0',
   pattern: 'A',
   class: ['Core'],
+  /* Identity = IfluxMarketMaster (SOL-IDENTITY / WP-0) — không qua mock producer cũ. */
   requiresShell: [
     'IfluxBlockTemplates',
     'IfluxApiClient',
     'IfluxAuth',
     'IfluxGuestShell',
     'IfluxWatchlistTaxonomy',
-    'IfluxMockMarket',
-    'IfluxSeoUrl',
-    'IfluxMarketSeedData',
-    'IfluxMarketEcosystemSeeds',
-    'IfluxMarketRegistryStore'
+    'IfluxMarketMaster',
+    'IfluxSeoUrl'
   ],
   requiresDefinition: true,
   requiresAPI: true,

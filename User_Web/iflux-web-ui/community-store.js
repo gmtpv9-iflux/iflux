@@ -43,39 +43,30 @@
     return new Date().toISOString();
   }
 
-  var FALLBACK_TICKERS = ['HPG', 'VCB', 'FPT', 'MWG', 'VHM', 'VIC', 'VND', 'STB', 'HCM', 'SSI'];
+  /* WP-9: FALLBACK_TICKERS / MockMarket không còn authority cho Detail auto-link.
+   * Giữ stub để caller cũ không vỡ — trả []. */
+  var FALLBACK_TICKERS = [];
 
   function getKnownTickers() {
-    var snap = global.IfluxMockMarket && global.IfluxMockMarket.getSnapshot();
-    var stocks = snap && snap.entities && snap.entities.stocks ? snap.entities.stocks : {};
-    var keys = Object.keys(stocks);
-    return keys.length ? keys : FALLBACK_TICKERS.slice();
+    return FALLBACK_TICKERS.slice();
   }
 
-  function extractTickersFromText(text) {
-    if (!text) return [];
-    var known = {};
-    getKnownTickers().forEach(function (t) { known[String(t).toUpperCase()] = true; });
-    var found = {};
-    var plain = String(text).replace(/<[^>]+>/g, ' ');
-    var re = /\b([A-Z]{2,5})\b/g;
-    var m;
-    while ((m = re.exec(plain))) {
-      if (known[m[1]]) found[m[1]] = true;
-    }
-    return Object.keys(found);
+  function stockHrefFor(sym) {
+    return global.IfluxHref
+      ? IfluxHref.forCanonical(global.IfluxSeoUrl
+        ? IfluxSeoUrl.stockHref(sym)
+        : '/co-phieu/' + encodeURIComponent(sym))
+      : (global.IfluxSeoUrl
+        ? IfluxSeoUrl.stockHref(sym)
+        : '/co-phieu/' + encodeURIComponent(sym));
   }
 
-  function extractTickersFromPost(title, excerpt, bodyHtml) {
-    var all = extractTickersFromText(title)
-      .concat(extractTickersFromText(excerpt))
-      .concat(extractTickersFromText(bodyHtml));
-    var seen = {};
-    return all.filter(function (t) {
-      if (seen[t]) return false;
-      seen[t] = true;
-      return true;
-    });
+  function extractTickersFromText() {
+    return [];
+  }
+
+  function extractTickersFromPost() {
+    return [];
   }
 
   function stripTickerLinks(html) {
@@ -85,27 +76,44 @@
     );
   }
 
-  function linkifyTickersInHtml(html, tickers) {
+  /**
+   * WP-6: presentation từ persisted membership + entity_occurrences.
+   * Không invent ticker ngoài post.tickers.
+   */
+  function linkifyTickersInHtml(html, tickers, occurrences) {
     if (!html) return html;
     html = stripTickerLinks(html);
-    var known = {};
-    getKnownTickers().forEach(function (t) { known[String(t).toUpperCase()] = true; });
     var toLink = {};
-    (tickers || []).forEach(function (t) { toLink[String(t).toUpperCase()] = true; });
-    extractTickersFromText(html).forEach(function (t) { toLink[t] = true; });
+    (tickers || []).forEach(function (t) {
+      var u = String(t || '').toUpperCase();
+      if (u) toLink[u] = true;
+    });
+    var nameOccs = (occurrences || []).filter(function (o) {
+      return o && o.entity_kind === 'stock' && o.presentation === 'name_ticker' && o.matched_text && o.code;
+    }).slice().sort(function (a, b) {
+      return String(b.matched_text).length - String(a.matched_text).length;
+    });
 
     return html.replace(/>([^<]+)</g, function (match, text) {
-      var linked = text.replace(/\b([A-Z]{2,5})\b/g, function (sym) {
-        if (!known[sym]) return sym;
+      var linked = text;
+      nameOccs.forEach(function (o) {
+        var code = String(o.code).toUpperCase();
+        if (!toLink[code]) return;
+        var name = String(o.matched_text);
+        var re;
+        try {
+          re = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        } catch (e) {
+          return;
+        }
+        linked = linked.replace(re, function (m) {
+          if (/\([A-Z]{2,5}\)\s*$/.test(m)) return m;
+          return m + ' (' + code + ')';
+        });
+      });
+      linked = linked.replace(/\b([A-Z]{2,5})\b/g, function (sym) {
         if (!toLink[sym]) return sym;
-        var symHref = global.IfluxHref
-          ? IfluxHref.forCanonical(global.IfluxSeoUrl
-            ? IfluxSeoUrl.stockHref(sym)
-            : '/co-phieu/' + encodeURIComponent(sym))
-          : (global.IfluxSeoUrl
-            ? IfluxSeoUrl.stockHref(sym)
-            : '/co-phieu/' + encodeURIComponent(sym));
-        return '<a class="ifx-ticker-link" href="' + symHref + '">' + sym + '</a>';
+        return '<a class="ifx-ticker-link" href="' + stockHrefFor(sym) + '">' + sym + '</a>';
       });
       return '>' + linked + '<';
     });
@@ -136,7 +144,8 @@
         ? CONTENT_TYPE_EXPERT
         : CONTENT_TYPE_NEWS;
     }
-    if (!post.author) post.author = { display_name: 'Thành viên', tier: 'premium', tier_label: 'Premium' };
+    /* WP-4/6: không invent author — omit khi thiếu display_name */
+    if (post.author && !post.author.display_name) post.author = null;
     if (!post.stats) {
       post.stats = {
         likes: 0,
@@ -150,17 +159,13 @@
     if (!post.title) post.title = 'Bài viết cộng đồng';
     post.chu_de_tags = normalizePrimaryStory(post.chu_de_tags || post.story_tags);
     post.story_tags = post.chu_de_tags;
-    var existingTickers = Array.isArray(post.tickers) ? post.tickers.slice() : [];
-    var extracted = extractTickersFromPost(post.title, post.excerpt, post.body_html || post.body);
-    var seenTk = {};
-    post.tickers = existingTickers.concat(extracted).filter(function (t) {
-      var u = String(t || '').toUpperCase();
-      if (!u || seenTk[u]) return false;
-      seenTk[u] = true;
-      return true;
-    });
+    /* Membership từ API/persist — không FE extract */
+    post.tickers = Array.isArray(post.tickers) ? post.tickers.slice() : [];
+    post.ecosystems = Array.isArray(post.ecosystems) ? post.ecosystems.slice() : [];
+    post.sectors = Array.isArray(post.sectors) ? post.sectors.slice() : [];
+    post.entity_occurrences = Array.isArray(post.entity_occurrences) ? post.entity_occurrences : [];
     if (!post.body_html && post.body) post.body_html = post.body;
-    post.body_html = linkifyTickersInHtml(post.body_html, post.tickers);
+    post.body_html = linkifyTickersInHtml(post.body_html, post.tickers, post.entity_occurrences);
     /* Metadata SoT chỉ từ API — CẤM migrate cover/seo → metadata hoặc tự sinh og_image. */
     if (global.IfluxCommunityGeoAi) {
       if (!post.geo_ai || !post.geo_ai.summary) {
@@ -432,6 +437,13 @@
       if (filter.includeDrafts) return true;
       return !p.status || p.status === 'published' || p.status === 'published_rss';
     });
+
+    if (filter.excludeId) {
+      var ex = String(filter.excludeId);
+      posts = posts.filter(function (p) {
+        return String(p.id || '') !== ex && String(p.slug || '') !== ex;
+      });
+    }
 
     if (filter.relatedTo) {
       var refPost = typeof filter.relatedTo === 'object'
@@ -1022,8 +1034,10 @@
     post.story_tags = normalizePrimaryStory(payload.chu_de_tags || payload.story_tags || []);
     post.chu_de_tags = post.story_tags;
     var rawBody = payload.body_html || '';
-    post.tickers = extractTickersFromPost(post.title, post.excerpt, rawBody);
-    post.body_html = linkifyTickersInHtml(rawBody, post.tickers);
+    post.tickers = Array.isArray(payload.tickers) ? payload.tickers.slice() : [];
+    post.ecosystems = Array.isArray(payload.ecosystems) ? payload.ecosystems.slice() : [];
+    post.entity_occurrences = Array.isArray(payload.entity_occurrences) ? payload.entity_occurrences : [];
+    post.body_html = linkifyTickersInHtml(rawBody, post.tickers, post.entity_occurrences);
     post.seo = Object.assign({}, post.seo || {}, payload.seo || {});
     post.geo = Object.assign({}, post.geo || {}, payload.geo || {});
     post.geo_ai = global.IfluxCommunityGeoAi
@@ -1070,7 +1084,8 @@
     if (!post) return;
     post.stats = post.stats || {};
     post.stats.views = (post.stats.views || 0) + 1;
-    writeAll(data);
+    /* silent: tránh iflux-community-change → remount trang chi tiết */
+    writeAll(data, { silent: true });
   }
 
   function toggleLike(slug, userId) {

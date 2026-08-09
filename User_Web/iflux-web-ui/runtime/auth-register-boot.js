@@ -10,7 +10,7 @@ var ALL = [
   ADMIN + 'iflux-customers-store.js',
   ADMIN + 'iflux-credentials-store.js?v=20260706',
   ASSET + 'loyalty-affiliate-store.js?v=regAffLock20260728',
-  ASSET + 'auth-social.js?v=gisBtnUi20260730',
+  ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=btnRace20260728',
   ADMIN + 'iflux-admin-ui.js',
   ASSET + 'iflux-web-ui.js?v=phaseA20260721c',

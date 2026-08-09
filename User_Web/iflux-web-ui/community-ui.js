@@ -5,7 +5,6 @@
   function store() { return global.IfluxCommunityStore; }
   function auth() { return global.IfluxAuth; }
   function tax() { return global.IfluxWatchlistTaxonomy; }
-  function mk() { return global.IfluxMockMarket; }
   function seo() { return global.IfluxSeoUrl; }
 
   function idHref(canonical) {
@@ -69,33 +68,118 @@
   }
 
   function getGroupPerformance(source, sourceId) {
-    var m = mk();
-    var t = tax();
-    if (source === 'sector' && m) {
-      var sp = m.getSectorPerf(sourceId);
-      if (sp && sp.pg != null) return sp.pg;
-    }
-    if (!t) return null;
-    var tickers = t.getGroupTickers(source, sourceId);
-    if (!tickers.length) return null;
-    var snap = m && m.getSnapshot();
-    var stocks = snap && snap.entities && snap.entities.stocks ? snap.entities.stocks : {};
-    var sum = 0;
-    var n = 0;
-    tickers.forEach(function (tk) {
-      var s = stocks[tk];
-      if (s && s.change_pct != null) {
-        sum += s.change_pct;
-        n += 1;
-      }
-    });
-    return n ? Math.round((sum / n) * 100) / 100 : null;
+    /* D1 / SOL-UNAVAIL: sector/eco/family/story aggregate không có runtime authority → UNAVAILABLE (null).
+     * Cấm getSectorPerf / avg mock change_pct / FE aggregate. */
+    return null;
   }
 
+  function quoteChangePct(q) {
+    if (!q) return null;
+    if (q.change_pct != null && !isNaN(Number(q.change_pct))) return Number(q.change_pct);
+    if (q.pctChange != null && !isNaN(Number(q.pctChange))) return Number(q.pctChange);
+    return null;
+  }
+
+  function quotePrice(q) {
+    if (!q) return null;
+    if (q.price != null && !isNaN(Number(q.price))) return Number(q.price);
+    if (q.close != null && !isNaN(Number(q.close))) return Number(q.close);
+    return null;
+  }
+
+  /**
+   * Quote hiển thị Community = runtime only (IfluxMarketQuotes).
+   * CẤM fallback IfluxMockMarket — seed lệch giá thật (TCB 28.9 mock vs 29.7 runtime).
+   */
   function getStockQuote(ticker) {
-    var snap = mk && mk() ? mk().getSnapshot() : null;
-    var stocks = snap && snap.entities && snap.entities.stocks ? snap.entities.stocks : {};
-    return stocks[(ticker || '').toUpperCase()] || null;
+    var t = String(ticker || '').toUpperCase();
+    if (!t) return null;
+    var mq = global.IfluxMarketQuotes;
+    if (!mq || typeof mq.peekQuote !== 'function') return null;
+    var rq = mq.peekQuote(t);
+    if (!rq) return null;
+    return {
+      ticker: t,
+      name: rq.name || null,
+      price: quotePrice(rq),
+      change_pct: quoteChangePct(rq)
+    };
+  }
+
+  /** Tên mã từ membership bài (entities.stocks) — không lấy từ Mock. */
+  function stockNameFromPost(post, ticker) {
+    var t = String(ticker || '').toUpperCase();
+    if (!t || !post) return null;
+    var stocks = (post.entities && post.entities.stocks) || [];
+    for (var i = 0; i < stocks.length; i++) {
+      var s = stocks[i];
+      var code = String((s && (s.code || s.ticker)) || '').toUpperCase();
+      if (code !== t) continue;
+      return (s.short_name || s.name || null);
+    }
+    return null;
+  }
+
+  function collectPostTickers(posts) {
+    var set = Object.create(null);
+    (posts || []).forEach(function (p) {
+      (p && p.tickers ? p.tickers : []).forEach(function (tk) {
+        var t = String(tk || '').toUpperCase();
+        if (t) set[t] = true;
+      });
+    });
+    return Object.keys(set);
+  }
+
+  function refreshTickerQuoteDom(elRoot, posts) {
+    (posts || []).forEach(function (p) {
+      if (!p || !p.slug) return;
+      var slugSel = String(p.slug).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      var card = elRoot.querySelector('[data-ifx-com-slug="' + slugSel + '"]');
+      if (card) {
+        var tags = card.querySelector('.ifx-com-post__tags');
+        if (tags) tags.innerHTML = postTagsHtml(p);
+      }
+    });
+    var articleTags = elRoot.querySelector('.ifx-com-article__tags');
+    if (articleTags && posts && posts[0]) {
+      articleTags.innerHTML = postTagsHtml(posts[0]);
+    }
+    var host = elRoot.querySelector('[data-ifx-com-ticker-rows]');
+    if (host && posts && posts[0]) {
+      host.innerHTML = sidebarTickerRowsInnerHtml(posts[0]);
+    }
+    var mobile = document.querySelector('[data-ifx-ix-article-entities]');
+    if (mobile && posts && posts[0] && typeof postEntityChipsHtml === 'function') {
+      var chips = postEntityChipsHtml(posts[0]);
+      if (chips) {
+        mobile.innerHTML = '<div class="ifx-com-pills ifx-com-pills--scroll">' + chips + '</div>';
+        mobile.removeAttribute('hidden');
+      }
+    }
+  }
+
+  /** Fetch runtime quotes rồi refresh chip/sidebar/mobile strip. */
+  function hydrateTickerQuotes(root, posts) {
+    var mq = global.IfluxMarketQuotes;
+    var tickers = collectPostTickers(posts);
+    if (!mq || typeof mq.getQuotes !== 'function' || !tickers.length) {
+      return Promise.resolve();
+    }
+    var elRoot = root && root.querySelector ? root : document;
+    return mq.getQuotes(tickers).then(function () {
+      refreshTickerQuoteDom(elRoot, posts);
+    }).catch(function () { /* keep empty — không fallback Mock */ });
+  }
+
+  /** Prefetch quotes vào cache trước paint (tránh flash Mock / trống). */
+  function prefetchTickerQuotes(posts) {
+    var mq = global.IfluxMarketQuotes;
+    var tickers = collectPostTickers(posts);
+    if (!mq || typeof mq.getQuotes !== 'function' || !tickers.length) {
+      return Promise.resolve();
+    }
+    return mq.getQuotes(tickers).catch(function () { /* ignore */ });
   }
 
   function getPrimaryStory(post) {
@@ -125,10 +209,12 @@
 
   function tickerTagHtml(ticker) {
     var q = getStockQuote(ticker);
-    var chg = q && q.change_pct;
+    var chg = quoteChangePct(q);
+    var price = quotePrice(q);
     return (
       '<a class="ix-chip ix-chip-sm ix-chip-outline" href="' + tickerArchiveUrl(ticker) + '">' +
         ticker +
+        (price != null ? ' ' + price : '') +
         trendStatHtml(chg) +
       '</a>'
     );
@@ -145,8 +231,8 @@
   }
 
   /**
-   * Entity gắn bài — cùng SoT dữ liệu với sidebar (story_tags / tickers / aggregateMemberships).
-   * Atom UI: ix-chip* (Admin DS components.css) · biến thể loại khớp header-search entity chips.
+   * Entity gắn bài — membership persist (tickers / ecosystems); Sector OUT auto-derive.
+   * Atom UI: ix-chip* (Admin DS components.css).
    */
   function entityChipLinkHtml(href, chipClass, icon, label) {
     return (
@@ -169,16 +255,27 @@
         story.name
       ));
     });
-    aggregateMemberships(post, 'sector').forEach(function (g) {
-      var href = idHref(seo() ? seo().sectorHref(g.id) : '/nganh/' + encodeURIComponent(g.id));
-      parts.push(entityChipLinkHtml(href, 'ix-chip-info', 'ti-category', g.name));
+    (post.sectors || []).forEach(function (s) {
+      var id = typeof s === 'object' ? (s.id || s.slug || s.code) : s;
+      var name = typeof s === 'object' ? (s.name || s.slug || id) : s;
+      if (!id) return;
+      var href = idHref(seo() ? seo().sectorHref(id) : '/nganh/' + encodeURIComponent(id));
+      parts.push(entityChipLinkHtml(href, 'ix-chip-info', 'ti-category', name));
     });
     (post.tickers || []).forEach(function (tk) {
       parts.push(tickerTagHtml(tk));
     });
-    aggregateMemberships(post, 'family').forEach(function (g) {
-      var href = idHref(seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id));
-      parts.push(entityChipLinkHtml(href, 'ix-chip-success', 'ti-users-group', g.name));
+    var ecos = (post.entities && post.entities.ecosystems) || [];
+    if (!ecos.length && (post.ecosystems || []).length) {
+      ecos = post.ecosystems.map(function (slug) {
+        return { id: slug, name: slug };
+      });
+    }
+    ecos.forEach(function (g) {
+      var id = g.id || g.slug || g.code;
+      if (!id) return;
+      var href = idHref(seo() ? seo().ecosystemHref(id) : '/he-sinh-thai/' + encodeURIComponent(id));
+      parts.push(entityChipLinkHtml(href, 'ix-chip-success', 'ti-users-group', g.name || id));
     });
     return parts.join('');
   }
@@ -449,63 +546,70 @@
     var stories = (post.story_tags || []).filter(function (t) {
       return t.source === 'chu-de' || t.source === 'story' || !t.source;
     });
-    if (!stories.length) {
-      return '<div class="ifx-com-side-empty">Bài chưa gắn chủ đề</div>';
-    }
+    if (!stories.length) return '';
     return stories.map(function (story) {
       var perf = getGroupPerformance('story', story.sourceId);
       return sideLinkRowHtml(storyEntityLink(story.sourceId), 'ti-bookmark', story.name, perf);
     }).join('');
   }
 
-  /* ── Ngành: suy ra từ các mã CP, bấm mở trang ngành ── */
+  /* ── Ngành: BR-AD-12 OUT — chỉ membership persist (thường rỗng); không taxonomy-derive ── */
   function sidebarSectorRowsHtml(post) {
-    var groups = aggregateMemberships(post, 'sector');
-    if (!groups.length) {
-      return '<div class="ifx-com-side-empty">Bài chưa gắn ngành</div>';
-    }
-    return groups.map(function (g) {
-      var perf = getGroupPerformance('sector', g.id);
-      var href = idHref(seo() ? seo().sectorHref(g.id) : '/nganh/' + encodeURIComponent(g.id));
-      return sideLinkRowHtml(href, 'ti-chart-dots-3', g.name, perf);
+    var sectors = post.sectors || [];
+    if (!sectors.length) return '';
+    return sectors.map(function (s) {
+      var id = typeof s === 'object' ? (s.id || s.slug || s.code) : s;
+      var name = typeof s === 'object' ? (s.name || s.slug || id) : s;
+      var href = idHref(seo() ? seo().sectorHref(id) : '/nganh/' + encodeURIComponent(id));
+      return sideLinkRowHtml(href, 'ti-chart-dots-3', name, null);
     }).join('');
   }
 
-  /* ── Hệ sinh thái (họ CP): suy ra từ các mã CP, bấm mở trang hệ sinh thái ── */
+  /* ── Hệ sinh thái: từ payload.ecosystems / entities.ecosystems (sau Eco ≥3) ── */
   function sidebarEcosystemRowsHtml(post) {
-    var groups = aggregateMemberships(post, 'family');
-    if (!groups.length) {
-      return '<div class="ifx-com-side-empty">Bài chưa gắn hệ sinh thái</div>';
+    var groups = (post.entities && post.entities.ecosystems) || [];
+    if (!groups.length && (post.ecosystems || []).length) {
+      groups = post.ecosystems.map(function (slug) {
+        return { id: slug, slug: slug, name: slug };
+      });
     }
+    if (!groups.length) return '';
     return groups.map(function (g) {
-      var perf = getGroupPerformance('family', g.id);
-      var href = idHref(seo() ? seo().ecosystemHref(g.id) : '/he-sinh-thai/' + encodeURIComponent(g.id));
-      return sideLinkRowHtml(href, 'ti-hierarchy-2', g.name, perf);
+      var id = g.id || g.slug || g.code;
+      var perf = getGroupPerformance('family', id);
+      var href = idHref(seo() ? seo().ecosystemHref(id) : '/he-sinh-thai/' + encodeURIComponent(id));
+      return sideLinkRowHtml(href, 'ti-hierarchy-2', g.name || g.slug || id, perf);
     }).join('');
   }
 
-  /* ── Cổ phiếu: bấm mở trang cổ phiếu tương ứng ── */
-  function sidebarTickerRowsHtml(post) {
+  /* ── Cổ phiếu: membership persist ── */
+  function sidebarTickerRowsInnerHtml(post) {
     var tickers = post.tickers || [];
-    if (!tickers.length) {
-      return '<div class="ifx-com-side-empty">Chưa nhắc mã CP trong bài</div>';
-    }
+    if (!tickers.length) return '';
     return tickers.map(function (tk) {
       var q = getStockQuote(tk);
-      var chg = q && q.change_pct;
+      var chg = quoteChangePct(q);
+      var price = quotePrice(q);
+      var name = (q && q.name) || stockNameFromPost(post, tk);
       var cls = 'ifx-com-side-row' + (dirClass(chg) ? ' ' + dirClass(chg) : '');
       return (
         '<a class="' + cls + '" href="' + tickerArchiveUrl(tk) + '">' +
           '<span class="ifx-com-side-row__name"><strong>' + escHtml(tk) + '</strong>' +
-            (q && q.name ? '<small>' + escHtml(q.name) + '</small>' : '') +
+            (name ? '<small>' + escHtml(name) + '</small>' : '') +
           '</span>' +
           '<span class="ifx-com-side-row__val">' +
-            (q && q.price != null ? q.price + ' ' : '') +
-            (chg != null ? fmtPct(chg) : '') +
+            (price != null ? price + ' ' : '') +
+            (chg != null ? fmtPct(chg) : (price != null ? '' : '—')) +
           '</span>' +
         '</a>'
       );
     }).join('');
+  }
+
+  function sidebarTickerRowsHtml(post) {
+    var inner = sidebarTickerRowsInnerHtml(post);
+    if (!inner) return '';
+    return '<div data-ifx-com-ticker-rows="1">' + inner + '</div>';
   }
 
   function sortComments(comments, mode) {
@@ -644,6 +748,8 @@
     sidebarSectorRowsHtml: sidebarSectorRowsHtml,
     sidebarEcosystemRowsHtml: sidebarEcosystemRowsHtml,
     sidebarTickerRowsHtml: sidebarTickerRowsHtml,
+    hydrateTickerQuotes: hydrateTickerQuotes,
+    prefetchTickerQuotes: prefetchTickerQuotes,
     sortComments: sortComments,
     commentItemHtml: commentItemHtml,
     applySeoToDocument: applySeoToDocument,

@@ -298,26 +298,14 @@ Note: Chạy khi mở search — không P1 PASS
     document.body.appendChild(s);
   }
 
-  function adminBase() {
-    /* Lấy base thật từ <script> admin đang tải trên trang (mọi trang đều có
-       iflux-admin-ui.js) — không suy đoán path qua string-replace. */
-    var scripts = document.getElementsByTagName('script');
-    var i;
-    for (i = scripts.length - 1; i >= 0; i--) {
-      var src = scripts[i].src || '';
-      var idx = src.indexOf('Admin_Design_system/iflux-admin-ui/');
-      if (idx >= 0) {
-        return src.slice(0, idx) + 'Admin_Design_system/iflux-admin-ui/';
-      }
-    }
-    return webUiBase() + '../../Admin_Design_system/iflux-admin-ui/';
-  }
-
   /* Data requirement của Header Search = App Shell feature TỰ sở hữu, nạp LAZY
    * khi user mở search lần đầu. KHÔNG eager ở tầng Page (landing như Gói cước
-   * không tải market data lúc load). Trang đã eager-load sẵn → chain skip toàn bộ. */
+   * không tải market data lúc load). Trang đã eager-load sẵn → chain skip toàn bộ.
+   * Identity = IfluxMarketMaster (SOL-IDENTITY / WP-0) — không qua mock producer cũ. */
   function marketDataReady() {
-    return !!(global.IfluxMockMarket && global.IfluxStockMentions && global.IfluxWatchlistTaxonomy);
+    var mm = global.IfluxMarketMaster;
+    var masterLoaded = !!(mm && typeof mm.getMasterStocks === 'function' && mm.getMasterStocks() !== null);
+    return !!(masterLoaded && global.IfluxStockMentions && global.IfluxWatchlistTaxonomy);
   }
 
   var depsState = 'idle'; // idle | loading | ready
@@ -334,24 +322,27 @@ Note: Chạy khi mở search — không P1 PASS
     depsState = 'loading';
 
     var web = webUiBase();
-    var adm = adminBase();
-    /* Giữ đúng thứ tự phụ thuộc như boot cũ:
-       seed → ecosystem → registry-store → mock-market → taxonomy → stock-mentions */
     var chain = [
-      { g: 'IfluxMarketSeedData', src: adm + 'iflux-market-seed-data.js' },
-      { g: 'IfluxMarketEcosystemSeeds', src: adm + 'iflux-market-ecosystem-seeds.js' },
-      { g: 'IfluxMarketRegistryStore', src: adm + 'iflux-market-registry-store.js' },
-      { g: 'IfluxMockMarket', src: web + 'mock-market.js' },
+      { g: 'IfluxMarketMaster', src: web + 'iflux-market-master.js' },
       { g: 'IfluxWatchlistTaxonomy', src: web + 'watchlist-taxonomy.js' },
       { g: 'IfluxStockMentions', src: web + 'stock-mentions.js' }
     ];
 
+    function finish() {
+      depsState = 'ready';
+      var ws = depsWaiters.slice();
+      depsWaiters = [];
+      ws.forEach(function (fn) { try { fn(); } catch (e) {} });
+    }
+
     function next(i) {
       if (i >= chain.length) {
-        depsState = 'ready';
-        var ws = depsWaiters.slice();
-        depsWaiters = [];
-        ws.forEach(function (fn) { try { fn(); } catch (e) {} });
+        var mm = global.IfluxMarketMaster;
+        if (mm && typeof mm.ensureMasterReady === 'function') {
+          mm.ensureMasterReady().then(finish).catch(finish);
+        } else {
+          finish();
+        }
         return;
       }
       var step = chain[i];

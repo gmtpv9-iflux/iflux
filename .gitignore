@@ -58,3 +58,11 @@ tabler-icons-3.44.0/
 29a5ebde-*.jpeg
 Generated Image*.png
 iflux-insight-*.png
+
+# Production deploy env (secrets)
+infra/staging/deploy-production.env
+
+# Local agent/temp artifacts
+.tmp/
+.agents/
++OUT+

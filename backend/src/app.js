@@ -140,6 +140,14 @@ function createApp(config) {
   const { createMarketStocksWaveFRouter } = require('./modules/market/market-wave-f.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/market/stocks`, createMarketStocksWaveFRouter({ config, auth: adminAuthMw }));
 
+  const { createMarketMdmRouter } = require('./modules/market/market-mdm.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/market/mdm`, createMarketMdmRouter({ config, auth: adminAuthMw }));
+  const { createMarketPriceSyncRouter } = require('./modules/market/market-price-sync.routes');
+  app.use(
+    `${config.LEGACY_API_PREFIX}/admin/market/price-sync`,
+    createMarketPriceSyncRouter({ config, auth: adminAuthMw })
+  );
+
   const { createAiAdminRouter, createNotificationsAdminRouter } = require('./modules/ai/ai-notif-admin.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/ai`, createAiAdminRouter({ config, auth: adminAuthMw }));
   app.use(`${config.LEGACY_API_PREFIX}/admin/notifications`, createNotificationsAdminRouter({ config, auth: adminAuthMw }));

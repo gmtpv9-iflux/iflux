@@ -24,14 +24,14 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=feedCover20260725',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=calFeedFix20260808',
       /* Page Feature CSS (feed sở hữu). market-components.css đã chuyển về
          Widget Manifest của WGT-MKT-006 — không nạp ở tầng Page nữa. */
       css: [
         '/User_Web/iflux-web-ui/widget-shell.css?v=ui00120260723',
         '/User_Web/iflux-web-ui/block-templates.css?v=ui00120260723',
         /* Heart CSS = Admin Foundation (iflux-admin-ui.css → foundation/heart-action.css) */
-        '/User_Web/iflux-web-ui/community.css?v=feedCard20260723c'
+        '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809'
       ]
     }
   ]

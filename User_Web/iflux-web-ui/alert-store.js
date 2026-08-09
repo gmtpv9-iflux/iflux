@@ -34,7 +34,6 @@
   };
 
   function tax() { return global.IfluxWatchlistTaxonomy; }
-  function mkt() { return global.IfluxMockMarket; }
 
   function uid() {
     return 'alr_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
@@ -90,9 +89,8 @@
   }
 
   function getCurrentSrPct(alert) {
-    var mk = mkt();
-    if (!mk || !alert.ticker || !alert.levelType || !alert.sessions) return null;
-    return mk.getPriceVsSrPct(alert.ticker, alert.levelType, alert.sessions);
+    /* SOL-UNAVAIL / WP-3: SR LIVE UI nhưng không có runtime authority → luôn null. */
+    return null;
   }
 
   function evaluateRankTriggered(alert) {
@@ -236,11 +234,6 @@
     }
     if (levelType === 'resistance' && pctThreshold < 0) {
       throw new Error('Kháng cự: ngưỡng % thường dương (VD: +3)');
-    }
-
-    var mk = mkt();
-    if (!mk || !mk.getSrLevels(ticker, sessions)) {
-      throw new Error('Không có dữ liệu Hỗ trợ/Kháng cự cho mã này');
     }
 
     var state = read();

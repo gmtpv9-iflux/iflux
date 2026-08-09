@@ -1,10 +1,8 @@
-/* Widget content renderers — map registry type → DOM */
+/* Widget content renderers — map registry type → DOM.
+ * WP-4: bỏ phụ thuộc module mock thị trường. Nhóm/breadth/movers/sector/flow không có runtime authority (D1) → UNAVAILABLE.
+ */
 (function (global) {
   'use strict';
-
-  function snap() {
-    return global.IfluxMockMarket ? IfluxMockMarket.getSnapshot() : null;
-  }
 
   function fmtPct(n) {
     if (n == null || isNaN(n)) return '—';
@@ -24,9 +22,9 @@
     }
     if (!global.IfluxStockStore || !IfluxStockStore.getComments) return;
     var tickers = ['HPG', 'FPT', 'VCB', 'VHM', 'SSI', 'MWG', 'STB', 'VIC'];
-    if (global.IfluxMockMarket && IfluxMockMarket.getSnapshot) {
-      var snap = IfluxMockMarket.getSnapshot();
-      var stocks = snap && snap.entities && snap.entities.stocks ? Object.keys(snap.entities.stocks) : [];
+    if (global.IfluxMarketMaster && IfluxMarketMaster.getMasterStocks) {
+      var master = IfluxMarketMaster.getMasterStocks();
+      var stocks = (master || []).map(function (s) { return s.ticker; }).filter(Boolean);
       if (stocks.length) tickers = stocks.slice(0, 8);
     }
     tickers.forEach(function (tk) {
@@ -119,22 +117,7 @@
         IfluxBreadthBlock.mount(el, config || {});
         return;
       }
-      var data = snap();
-      if (!data) return;
-      var m = data.entities.market;
-      var up = m.breadth_up || 0;
-      var down = m.breadth_down || 0;
-      var total = up + down || 1;
-      var upPct = Math.round((up / total) * 100);
-      el.innerHTML =
-        '<div class="ifx-breadth-visual">' +
-          '<div class="ifx-breadth-stat is-up"><div class="ifx-breadth-stat__num">' + up + '</div><div class="ifx-breadth-stat__label">Mã tăng</div></div>' +
-          '<div class="ifx-breadth-stat is-down"><div class="ifx-breadth-stat__num">' + down + '</div><div class="ifx-breadth-stat__label">Mã giảm</div></div>' +
-        '</div>' +
-        '<div class="ifx-breadth-ratio" title="Tỷ lệ tăng ' + upPct + '%">' +
-          '<div class="ifx-breadth-ratio__up" style="width:' + upPct + '%"></div>' +
-          '<div class="ifx-breadth-ratio__down" style="width:' + (100 - upPct) + '%"></div>' +
-        '</div>';
+      el.innerHTML = '<div class="ifx-wl-empty">Đang tải dữ liệu thị trường…</div>';
     },
 
     'WGT-WAT-001': function (el, config) {
@@ -170,64 +153,29 @@
 
     /*
      * TMP-RANK-PERF runtime producer.
-     * Widget quyết định dữ liệu/sắp xếp; Template chỉ render nhãn + chỉ số theo vị trí.
+     * WP-4: xếp hạng tăng/giảm mạnh nhất (movers) KHÔNG có runtime authority (D1) → UNAVAILABLE.
      */
-    'WGT-MKT-RANK-PERF': function (el, config) {
-      var data = snap();
-      if (!data) return;
-      var mode = (config && config.mode) || 'gainers';
-      var ids = data.movers[mode] || [];
-      var items = ids.map(function (id) {
-        var stock = data.entities.stocks[id];
-        return stock ? { name: stock.ticker, perf: Number(stock.change_pct) || 0 } : null;
-      }).filter(Boolean);
+    'WGT-MKT-RANK-PERF': function (el) {
       if (!global.IfluxBlockTemplates || !IfluxBlockTemplates.renderRankBarList) {
-        el.innerHTML = '<div class="ifx-mkt-empty">Template xếp hạng chưa sẵn sàng</div>';
+        el.innerHTML = '<div class="ifx-mkt-empty">Chưa có dữ liệu biến động</div>';
         return;
       }
       el.innerHTML = IfluxBlockTemplates.renderRankBarList({
-        items: items,
+        items: [],
         headLabel: 'Mã cổ phiếu',
         headValue: '% thay đổi',
         emptyMsg: 'Chưa có dữ liệu biến động'
       });
     },
 
+    /* WP-4: PG (hiệu suất) ngành KHÔNG có runtime authority (D1) → UNAVAILABLE. */
     'WGT-SEC-001': function (el) {
-      var data = snap();
-      if (!data) return;
-      var items = Object.keys(data.entities.sectors).map(function (k) { return data.entities.sectors[k]; });
-      items.sort(function (a, b) { return (a.rank || 99) - (b.rank || 99); });
-      el.innerHTML = '<div class="ifx-sector-grid">' + items.slice(0, 4).map(function (sec) {
-        return (
-          '<a class="ifx-sector-card" href="' + (global.IfluxHref
-            ? IfluxHref.forCanonical(global.IfluxSeoUrl ? IfluxSeoUrl.sectorHref(sec.id) : '/nganh/' + encodeURIComponent(sec.id))
-            : (global.IfluxSeoUrl ? IfluxSeoUrl.sectorHref(sec.id) : '/nganh/' + encodeURIComponent(sec.id))) + '">' +
-            '<div class="ifx-sector-card__head"><span class="ifx-sector-card__name">' + sec.name + '</span>' +
-            '<span class="ifx-sector-card__rank">#' + sec.rank + '</span></div>' +
-            '<div class="ifx-sector-card__metrics">' +
-              '<div class="ifx-sector-card__metric"><span>PG</span><strong class="' + dirClass(sec.pg) + '">' + fmtPct(sec.pg) + '</strong></div>' +
-            '</div></a>'
-        );
-      }).join('') + '</div>';
+      el.innerHTML = '<div class="ifx-mkt-empty">Chưa có dữ liệu động lượng ngành</div>';
     },
 
+    /* WP-4: dòng tiền thông minh (NN/Tự doanh/Cá nhân) KHÔNG có runtime authority (D1) → UNAVAILABLE. */
     'WGT-FLW-001': function (el) {
-      var data = snap();
-      if (!data) return;
-      var flowMap = data.entities.flow;
-      var order = ['foreign', 'institutional', 'proprietary', 'retail'];
-      el.innerHTML = order.filter(function (k) { return flowMap[k]; }).map(function (key) {
-        var f = flowMap[key];
-        var netUp = f.net_label && f.net_label.indexOf('+') === 0;
-        return (
-          '<div class="ifx-flow-panel">' +
-            '<div class="ifx-flow-panel__head"><span class="ifx-flow-panel__label">' + f.label + '</span>' +
-            '<span class="ifx-flow-panel__net ' + (netUp ? 'is-up' : 'is-down') + '">' + f.net_label + '</span></div>' +
-            '<div class="ifx-flow-bar"><div class="ifx-flow-bar__buy" style="width:' + f.buy_pct + '%"></div>' +
-            '<div class="ifx-flow-bar__sell" style="width:' + f.sell_pct + '%"></div></div></div>'
-        );
-      }).join('');
+      el.innerHTML = '<div class="ifx-wl-empty">Chưa có dữ liệu dòng tiền</div>';
     },
 
     'WGT-FLW-MKT-SIDE': function (el, config) {

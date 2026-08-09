@@ -103,7 +103,7 @@
     if (!tbody) return;
 
     if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="ix-caption" style="text-align:center;padding:32px">Chưa có hệ sinh thái.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="ix-caption" style="text-align:center;padding:32px">Chưa có hệ sinh thái.</td></tr>';
       return;
     }
 
@@ -130,7 +130,6 @@
         '<td><strong>' + esc(eco.name || eco.name_vi) + '</strong><div class="ix-caption">' + esc(eco.code || '') + '</div></td>' +
         '<td>' + esc(eco.stock_count || (eco.tickers || []).length || 0) + ' mã</td>' +
         '<td>' + esc(eco.post_count || 0) + ' bài</td>' +
-        '<td>' + esc(eco.divisor) + '</td>' +
         '<td>' + statusChip(active) + '</td>' +
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(eco.updated_at)) + '</td>' +
         '<td><div style="display:flex;gap:4px;flex-wrap:wrap">' + actions + '</div></td>' +
@@ -143,9 +142,11 @@
     var nameEl = document.getElementById('adm-mkt-eco-name');
     var tickersEl = document.getElementById('adm-mkt-eco-tickers');
     var statusEl = document.getElementById('adm-mkt-eco-status');
+    var descEl = document.getElementById('adm-mkt-eco-desc');
     if (nameEl) nameEl.value = '';
     if (tickersEl) tickersEl.value = '';
     if (statusEl) statusEl.value = 'active';
+    if (descEl) descEl.value = '';
     var title = document.getElementById('adm-mkt-eco-modal-title');
     if (title) title.textContent = 'Thêm hệ sinh thái';
   }
@@ -162,19 +163,22 @@
       var nameEl = document.getElementById('adm-mkt-eco-name');
       var tickersEl = document.getElementById('adm-mkt-eco-tickers');
       var statusEl = document.getElementById('adm-mkt-eco-status');
+      var descEl = document.getElementById('adm-mkt-eco-desc');
       if (nameEl) nameEl.value = eco.name || eco.name_vi || '';
       if (tickersEl) tickersEl.value = (eco.tickers || []).join(', ');
       if (statusEl) statusEl.value = eco.status || (eco.is_active ? 'active' : 'inactive');
+      if (descEl) descEl.value = eco.description || '';
       var title = document.getElementById('adm-mkt-eco-modal-title');
       if (title) title.textContent = 'Sửa hệ sinh thái';
     }
-    if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-eco-form');
+    if (typeof global.ixOpenOffcanvas === 'function') global.ixOpenOffcanvas('offcanvas-eco-form');
   }
 
   function saveModal() {
     var name = ((document.getElementById('adm-mkt-eco-name') || {}).value || '').trim();
     var tickers = parseTickers((document.getElementById('adm-mkt-eco-tickers') || {}).value);
     var status = (document.getElementById('adm-mkt-eco-status') || {}).value || 'active';
+    var description = ((document.getElementById('adm-mkt-eco-desc') || {}).value || '').trim();
 
     if (!name) {
       toast('Tên hệ sinh thái là bắt buộc', 'danger');
@@ -185,14 +189,14 @@
       name: name,
       tickers: tickers,
       status: status,
-      divisor: Math.max(tickers.length, 1)
+      description: description
     };
     var req = editingId
       ? request('/admin/ecosystems/' + encodeURIComponent(editingId), { method: 'PATCH', body: body })
       : request('/admin/ecosystems', { method: 'POST', body: body });
 
     req.then(function () {
-      if (typeof global.ixCloseModal === 'function') global.ixCloseModal('modal-eco-form');
+      if (typeof global.ixCloseOffcanvas === 'function') global.ixCloseOffcanvas('offcanvas-eco-form');
       toast(editingId ? 'Đã cập nhật hệ sinh thái' : 'Đã thêm hệ sinh thái', 'success');
       editingId = null;
       loadList();

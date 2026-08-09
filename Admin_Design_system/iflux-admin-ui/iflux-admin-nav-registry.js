@@ -153,7 +153,6 @@
     /* 8. Hệ thống */
     { type: 'group', label: "Cài đặt hệ thống" },
     { type: 'item', key: "system-sla", routeKey: "system-sla", label: "Bảng SLA", icon: "ti-activity", badge: "···" },
-    { type: 'item', key: "system-core-setup", routeKey: "system-core-setup", label: "Thiết lập core", icon: "ti-adjustments" },
     { type: 'item', key: "system-platform-layers", routeKey: "system-platform-layers", label: "Kiến trúc 4 tầng", icon: "ti-layers-intersect" },
     { type: 'item', key: "system-feature-flags", routeKey: "system-feature-flags", label: "Cờ tính năng", icon: "ti-toggle-left", badge: "···" },
     { type: 'item', key: "system-maintenance", routeKey: "system-maintenance", label: "Chế độ bảo trì", icon: "ti-construction", badge: "···" },
@@ -186,6 +185,19 @@
     { type: 'item', key: "market-ecosystems-index", routeKey: "market-ecosystems-index", label: "Hệ sinh thái", icon: "ti-hierarchy-2", badge: "···" },
     { type: 'item', key: "market-sectors-index", routeKey: "market-sectors-index", label: "Quản lý ngành", icon: "ti-chart-dots-3", badge: "···" },
     { type: 'item', key: "market-lot-threshold", routeKey: "market-lot-threshold", label: "Ngưỡng lô", icon: "ti-coins", badge: "···" },
+    { type: 'item', key: "market-cau-hinh-thoi-gian", routeKey: "market-cau-hinh-thoi-gian", label: "Cấu hình thời gian", icon: "ti-calendar-time" },
+    {
+      type: 'parent',
+      key: "market-data-mgmt",
+      routeKey: "data-sources",
+      label: "Quản lý Nguồn Dữ liệu",
+      icon: "ti-database",
+      children: [
+        { type: 'item', key: "data-sources", routeKey: "data-sources", label: "Nguồn Market data", icon: "ti-plug" },
+        { type: 'item', key: "market-stock-schema", routeKey: "market-stock-schema", label: "Đồng bộ cấu trúc cổ phiếu", icon: "ti-table" },
+        { type: 'item', key: "market-sync-history", routeKey: "market-sync-history", label: "Lịch sử đồng bộ", icon: "ti-history" }
+      ]
+    },
     { type: 'item', key: "market-ranking", routeKey: "market-ranking", label: "Cấu hình xếp hạng", icon: "ti-tournament", badge: "···" },
     { type: 'item', key: "market-formulas", routeKey: "market-formulas", label: "Công thức", icon: "ti-math-function", badge: "···" },
     { type: 'group', label: "Vận hành dữ liệu" },
@@ -194,7 +206,6 @@
     { type: 'item', key: "market-ops-missing-ticks", routeKey: "market-ops-missing-ticks", label: "Giám sát tick thiếu", icon: "ti-alert-triangle", badge: "···" },
     { type: 'item', key: "market-ops-corrections", routeKey: "market-ops-corrections", label: "Sửa thủ công", icon: "ti-tool", badge: "···" },
     { type: 'group', label: "Quản trị dữ liệu" },
-    { type: 'item', key: "data-sources", routeKey: "data-sources", label: "Nguồn dữ liệu", icon: "ti-database", badge: "···" },
     { type: 'item', key: "data-etl-jobs", routeKey: "data-etl-jobs", label: "Tác vụ ETL", icon: "ti-refresh", badge: "···" },
     { type: 'item', key: "data-pipeline", routeKey: "data-pipeline", label: "Giám sát pipeline", icon: "ti-git-branch", badge: "···" },
     { type: 'item', key: "data-quality", routeKey: "data-quality", label: "Chất lượng DL", icon: "ti-shield-check", badge: "···" },

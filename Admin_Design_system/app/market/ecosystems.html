@@ -7,7 +7,7 @@
   <title>ADM-MKT-001 — Hệ sinh thái · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
   <style>
     .ix-modal-overlay { display: none; }
     .ix-offcanvas { transform: translateX(100%); }
@@ -33,7 +33,7 @@
       <div class="ix-content">
         <h1 class="ix-page-title">Hệ sinh thái</h1>
         <div class="ix-breadcrumb ix-mb-24">
-          <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
           <span>Thị trường</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
           <span>Hệ sinh thái</span>
         </div>
@@ -66,7 +66,6 @@
                   <th>Tên</th>
                   <th>Số CP</th>
                   <th>Số bài viết</th>
-                  <th>Divisor</th>
                   <th>Trạng thái</th>
                   <th>Cập nhật</th>
                   <th>Thao tác</th>
@@ -82,13 +81,19 @@
 </div>
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
 
-<div class="ix-modal-overlay" id="modal-eco-form">
-  <div class="ix-modal-box" style="max-width:480px">
-    <button type="button" class="ix-modal-close" data-ix-dismiss="modal"><i class="ti ti-x"></i></button>
-    <div class="ix-modal-title" id="adm-mkt-eco-modal-title">Thêm hệ sinh thái</div>
-    <div class="ix-form-group" style="margin-top:16px">
+<div class="ix-offcanvas" id="offcanvas-eco-form">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title" id="adm-mkt-eco-modal-title">Thêm hệ sinh thái</span>
+    <button type="button" class="ix-offcanvas-close" data-ix-dismiss="offcanvas"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-form-group">
       <label class="ix-label">Tên hệ sinh thái</label>
       <input type="text" class="ix-input" id="adm-mkt-eco-name" placeholder="VD: Họ Hòa Phát" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mô tả</label>
+      <textarea class="ix-input" id="adm-mkt-eco-desc" rows="3"></textarea>
     </div>
     <div class="ix-form-group">
       <label class="ix-label">Danh sách mã (phân cách bằng dấu phẩy)</label>
@@ -101,10 +106,7 @@
         <option value="inactive">Tắt</option>
       </select>
     </div>
-    <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
-      <button type="button" class="ix-btn ix-btn-primary" id="btn-adm-mkt-eco-save" data-ix-perm="market.ecosystems.edit">Lưu</button>
-    </div>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-adm-mkt-eco-save" data-ix-perm="market.ecosystems.edit">Lưu</button>
   </div>
 </div>
 
@@ -113,10 +115,10 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=ecoC620260727"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
-<script src="market-ecosystems-page.js?v=ecoC620260727"></script>
+<script src="/Admin_Design_system/app/market/market-ecosystems-page.js?v=ecoC620260727"></script>
 <script>AdmMarketEcosystems.init();</script>
 </body>
 </html>

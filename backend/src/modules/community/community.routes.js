@@ -60,7 +60,8 @@ function createCommunityRouter(deps) {
         posts: data.cards,
         total: data.total,
         limit: data.limit,
-        offset: data.offset
+        offset: data.offset,
+        has_more: data.has_more === true
       });
     } catch (err) {
       next(err);
@@ -546,15 +547,27 @@ function createCommunityRouter(deps) {
 
   router.get('/admin/articles', perm('community.articles.view'), async (req, res, next) => {
     try {
-      const list = await articles.listArticles({
+      const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+      const limit = Math.max(1, parseInt(req.query.limit, 10) || 50);
+      const result = await articles.listArticles({
         include_all: true,
         status: req.query.status || undefined,
         q: req.query.q,
         category_id: req.query.category_id,
         chu_de_id: req.query.chu_de_id,
-        limit: req.query.limit ? Number(req.query.limit) : 100
+        page,
+        limit,
+        withTotal: true
       });
-      return success(res, { articles: list, total: list.length });
+      const list = Array.isArray(result) ? result : (result.articles || []);
+      const total = typeof result === 'object' && result.total != null ? result.total : list.length;
+      return success(res, {
+        articles: list,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1
+      });
     } catch (err) {
       next(err);
     }
@@ -590,6 +603,19 @@ function createCommunityRouter(deps) {
       const { runRssCommunityIngest } = require('./rss-ingest.service');
       const limit = req.body && req.body.limitPerFeed != null ? Number(req.body.limitPerFeed) : undefined;
       const out = await runRssCommunityIngest({ limitPerFeed: limit });
+      return success(res, out);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* WP-10 — backfill entity resolve (Stock + Eco ≥3) trên bài đã có body */
+  router.post('/admin/articles/entity-backfill', perm('community.rss_article_schema.execute'), async (req, res, next) => {
+    try {
+      const { backfillArticleEntities } = require('./rss-ingest.service');
+      const limit = req.body && req.body.limit != null ? Number(req.body.limit) : 50;
+      const offset = req.body && req.body.offset != null ? Number(req.body.offset) : 0;
+      const out = await backfillArticleEntities({ limit: limit, offset: offset });
       return success(res, out);
     } catch (err) {
       next(err);

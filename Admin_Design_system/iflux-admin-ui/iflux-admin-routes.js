@@ -16,7 +16,11 @@
     "market-ops-sessions": { key: "market-ops-sessions", slug: "/admin/van-hanh-du-lieu/sessions", file: "market-ops/sessions.html" },
     "market-ops-missing-ticks": { key: "market-ops-missing-ticks", slug: "/admin/van-hanh-du-lieu/missing-ticks", file: "market-ops/missing-ticks.html" },
     "market-ops-corrections": { key: "market-ops-corrections", slug: "/admin/van-hanh-du-lieu/corrections", file: "market-ops/corrections.html" },
-    "data-sources": { key: "data-sources", slug: "/admin/du-lieu/sources", file: "data/sources.html" },
+    "data-sources": { key: "data-sources", slug: "/admin/thi-truong/data-sources", file: "data/sources.html" },
+    "market-stock-schema": { key: "market-stock-schema", slug: "/admin/thi-truong/dong-bo-cau-truc-co-phieu", file: "data/dong-bo-cau-truc-co-phieu.html" },
+    "market-price-data": { key: "market-cau-hinh-thoi-gian", slug: "/admin/thi-truong/cau-hinh-thoi-gian", file: "market/cau-hinh-thoi-gian.html" },
+    "market-sync-history": { key: "market-sync-history", slug: "/admin/thi-truong/lich-su-dong-bo", file: "data/lich-su-dong-bo.html" },
+    "data-sources-legacy": { key: "data-sources", slug: "/admin/du-lieu/sources", file: "data/sources.html" },
     "data-etl-jobs": { key: "data-etl-jobs", slug: "/admin/du-lieu/etl-jobs", file: "data/etl-jobs.html" },
     "data-pipeline": { key: "data-pipeline", slug: "/admin/du-lieu/pipeline", file: "data/pipeline.html" },
     "data-quality": { key: "data-quality", slug: "/admin/du-lieu/quality", file: "data/quality.html" },
@@ -63,7 +67,10 @@
     "system-ds-studio-12": { key: "system-ds-studio-12", slug: "/admin/he-thong/ds-studio#page-business-objects", file: "system/ds-studio.html" },
     "system-ds-studio-13": { key: "system-ds-studio-13", slug: "/admin/he-thong/ds-studio#page-user-flows", file: "system/ds-studio.html" },
     "system-sla": { key: "system-sla", slug: "/admin/he-thong/sla", file: "system/sla.html" },
-    "system-core-setup": { key: "system-core-setup", slug: "/admin/he-thong/core-setup", file: "system/core-setup.html" },
+    "market-cau-hinh-thoi-gian": { key: "market-cau-hinh-thoi-gian", slug: "/admin/thi-truong/cau-hinh-thoi-gian", file: "market/cau-hinh-thoi-gian.html" },
+    /* legacy bookmark → cùng trang Thị trường */
+    "system-core-setup": { key: "market-cau-hinh-thoi-gian", slug: "/admin/thi-truong/cau-hinh-thoi-gian", file: "market/cau-hinh-thoi-gian.html" },
+    "system-core-setup-legacy": { key: "system-core-setup-legacy", slug: "/admin/he-thong/core-setup", file: "system/core-setup.html" },
     "system-platform-layers": { key: "system-platform-layers", slug: "/admin/he-thong/platform-layers", file: "system/platform-layers.html" },
     "system-feature-flags": { key: "system-feature-flags", slug: "/admin/he-thong/feature-flags", file: "system/feature-flags.html" },
     "system-maintenance": { key: "system-maintenance", slug: "/admin/he-thong/maintenance", file: "system/maintenance.html" },
@@ -75,6 +82,7 @@
     "system-audit": { key: "system-audit", slug: "/admin/he-thong/audit", file: "system/audit.html" },
     "system-admin-users": { key: "system-admin-users", slug: "/admin/he-thong/admin-list", file: "system/admin-list.html" },
     "community-content-dashboard": { key: "community-content-dashboard", slug: "/admin/cong-dong/content/dashboard", file: "community/content/dashboard.html" },
+    "community-content-edit": { key: "community-content-edit", slug: "/admin/cong-dong/content/edit", file: "community/content/edit.html" },
     "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/danh-sach-bai-viet", file: "community/danh-sach-bai-viet.html" },
     "community-categories": { key: "community-categories", slug: "/admin/cong-dong/categories", file: "community/categories.html" },
     "community-chu-de-list": { key: "community-chu-de-list", slug: "/admin/cong-dong/danh-sach-chu-de", file: "community/danh-sach-chu-de.html" },
@@ -123,7 +131,14 @@
 
   function hrefFor(key) {
     var p = PAGES[key];
-    return p && p.slug ? p.slug : '#';
+    if (p && p.slug) return p.slug;
+    /* Alias: object key ≠ value.key (vd. market-price-data → market-cau-hinh-thoi-gian). */
+    var k;
+    for (k in PAGES) {
+      if (!Object.prototype.hasOwnProperty.call(PAGES, k)) continue;
+      if (PAGES[k] && PAGES[k].key === key && PAGES[k].slug) return PAGES[k].slug;
+    }
+    return '#';
   }
 
   var VI_DIR = {
@@ -151,6 +166,10 @@
 
   function fileFromAdminPath(pathname) {
     if (pathname === '/admin/tong-quan') return 'dashboard/index.html';
+    /* BR-11 — MDM under Thị trường → data/* */
+    if (pathname === '/admin/thi-truong/data-sources') return 'data/sources.html';
+    if (pathname === '/admin/thi-truong/dong-bo-cau-truc-co-phieu') return 'data/dong-bo-cau-truc-co-phieu.html';
+    if (pathname === '/admin/thi-truong/lich-su-dong-bo') return 'data/lich-su-dong-bo.html';
     var m = pathname.match(/^\/admin\/([^/]+)(?:\/(.+))?$/);
     if (!m) return null;
     var dir = VI_DIR[m[1]];

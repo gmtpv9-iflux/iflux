@@ -73,31 +73,6 @@
     '/auth/verify-otp': '/User_Web/auth/'
   };
 
-  var ADMIN_DIR = {
-    'tong-quan': 'dashboard',
-    'dang-nhap': 'login',
-    'khach-hang': 'users',
-    'quyen-han': 'access',
-    'thi-truong': 'market',
-    'van-hanh-du-lieu': 'market-ops',
-    'du-lieu': 'data',
-    'goi-cuoc': 'subscription',
-    'thong-bao': 'notifications',
-    'tham-so': 'metadata',
-    'tiep-thi': 'marketing',
-    'he-thong': 'system',
-    'cong-dong': 'community',
-    'chu-de': 'chu-de',
-    'trung-tam-ai': 'ai',
-    'phan-tich': 'analytics',
-    'yeu-cau': 'requests'
-  };
-
-  function adminDir(seg) {
-    var s = String(seg || '').toLowerCase();
-    return ADMIN_DIR[s] || s;
-  }
-
   function detectPhysicalBase(path) {
     path = normalizePath(path);
     loadSlugsSyncHint();
@@ -111,19 +86,10 @@
       return '/Admin_Design_system/' + rest.replace(/\/[^/]+$/, '/');
     }
 
-    if (path === '/admin' || path === '/admin/tong-quan' || path === '/admin/tong-quan') {
-      return '/Admin_Design_system/app/dashboard/';
-    }
-    if (path === '/admin/dang-nhap' || path === '/admin/dang-nhap') {
-      return '/Admin_Design_system/auth/';
-    }
-    var adm2 = path.match(/^\/admin\/([^/]+)\/([^/]+)$/);
-    if (adm2) return '/Admin_Design_system/app/' + adminDir(adm2[1]) + '/';
-    var adm1 = path.match(/^\/admin\/([^/]+)$/);
-    if (adm1) {
-      if (adm1[1] === 'dang-nhap' || adm1[1] === 'login') return '/Admin_Design_system/auth/';
-      return '/Admin_Design_system/app/' + adminDir(adm1[1]) + '/';
-    }
+    /* Admin clean URL (/admin/...) — KHÔNG gắn <base> theo thư mục vật lý.
+       <base> .../app/market/ làm a[href="#"] → /Admin_Design_system/app/market/# (404).
+       Asset Admin phải dùng path tuyệt đối /Admin_Design_system/... */
+    if (/^\/admin(\/|$)/i.test(path)) return null;
 
     if (EXACT[path]) return EXACT[path];
 

@@ -4,9 +4,9 @@
  * Phase C W3: Feature Manifest + Runtime (NOT_LOADED→READY→DISPOSED).
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=feedCover20260725';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=feedCover20260725';
-import featureManifest from '../../features/community.manifest.js?v=b4Href20260727';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=calFeedFix20260808';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=calFeedFix20260808';
+import featureManifest from '../../features/community.manifest.js?v=calFeedFix20260808';
 
 export const meta = { id: 'WGT-COM-PAGE', title: 'Cộng đồng' };
 
@@ -58,13 +58,7 @@ export async function mount(el) {
     }
   });
 
-  /* Data Provider → Store (SoT). Không còn Store.hydrateFromApi. */
-  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadFeed) {
-    await IfluxCommunityApiBridge.loadFeed({ limit: 36 });
-  } else if (window.IfluxCommunityProvider && IfluxCommunityProvider.loadFeed) {
-    await IfluxCommunityProvider.loadFeed({ limit: 36 });
-  }
-
+  /* WP-0: không hydrate limit=36 ở đây — Initial Acquisition = IfluxDailyFeed */
   var indexOnly = isCollectionIndexPath();
   function onPlans() {
     applyCommunity(el);

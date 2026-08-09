@@ -18,7 +18,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG tải Shell deps · KHÔNG apply Definition · KHÔNG preload lazyChildren.
  */
 
-import { loadScript, loadStyle } from './legacy-bridge.js?v=feedCard20260723c';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=cssPin20260808';
 
 var STATES = {
   NOT_LOADED: 'NOT_LOADED',
@@ -35,6 +35,7 @@ var SHELL_SRC_BLOCKLIST = [
   /\/auth\.js$/i,
   /\/iflux-guest-shell\.js$/i,
   /\/watchlist-taxonomy\.js$/i,
+  /\/iflux-market-master\.js$/i,
   /\/mock-market\.js$/i,
   /\/seo-url\.js$/i,
   /\/iflux-market-seed-data\.js$/i,

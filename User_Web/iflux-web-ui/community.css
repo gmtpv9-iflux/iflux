@@ -188,6 +188,10 @@
   gap: var(--ifx-space-24);
   align-items: start;
 }
+/* WP-7: không aside content → một cột */
+.ifx-com-story-layout--no-aside {
+  grid-template-columns: minmax(0, 1fr);
+}
 .ifx-com-story-main { min-width: 0; }
 
 .ifx-com-article {
@@ -298,7 +302,6 @@
   line-height: 1.8;
   color: var(--ix-text-primary);
   padding: var(--ifx-space-container) 32px 32px;
-  max-width: 72ch; /* desktop đọc dễ — mobile bỏ ở media bên dưới */
 }
 .ifx-com-article__body h2 {
   font-size: var(--ifx-font-size-20);
@@ -1368,6 +1371,19 @@
   color: var(--ix-text-muted);
   margin-bottom: var(--ifx-space-8);
 }
+/* Tab danh mục nổi bật (Community Main) — cách dưới danh sách tin */
+[data-ifx-com-featured-cats] {
+  margin-bottom: var(--ifx-space-16);
+}
+/* Mobile only: tách icon khỏi nhãn — desktop giữ inline như hiện tại */
+@media (max-width: 768px) {
+  [data-ifx-com-featured-cats] .ix-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ifx-space-8);
+  }
+}
+
 .ifx-com-pills {
   display: flex;
   flex-wrap: wrap;
@@ -1960,9 +1976,6 @@
   .ifx-main.ifx-main--community-post .ifx-com-story-aside {
     display: none !important;
   }
-  .ifx-main.ifx-main--community-post .ifx-com-article__body {
-    max-width: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -1984,7 +1997,7 @@
   .ifx-com-article__title { font-size: 26px; }
   /* UI-002: inset owner = header/body — không pad thêm lên .ifx-com-article */
   .ifx-com-article__header { padding: var(--ifx-space-16) var(--ifx-space-16) 0; }
-  .ifx-com-article__body { padding: var(--ifx-space-16); max-width: none; }
+  .ifx-com-article__body { padding: var(--ifx-space-16); }
   /* Entity: mobile = row trên bottom IX; desktop sidebar ẩn trùng */
   .ifx-com-side-card--entities {
     display: none;

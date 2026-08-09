@@ -83,6 +83,15 @@ async function bootstrap() {
     });
   }
 
+  /* Market Data Sync Cycle — Sync Clock (interval từ market_price_sync_config) */
+  try {
+    const priceSync = require('./modules/market/market-price-sync.service');
+    priceSync.startSyncClock(logger);
+    logger.info('market-data-sync-clock started');
+  } catch (err) {
+    logger.error({ err: err.message }, 'market-data-sync-clock failed to start');
+  }
+
   // Seed RBAC (permissions catalog + super role + bootstrap admin). Không để lỗi làm sập server.
   try {
     const { bootstrapRbac } = require('./modules/admin-rbac/admin-rbac.service');
@@ -108,6 +117,9 @@ async function bootstrap() {
   async function shutdown(signal) {
     logger.info({ signal }, 'Shutting down');
     server.close(async () => {
+      try {
+        require('./modules/market/market-price-sync.service').stopSyncClock();
+      } catch (_e) { /* ignore */ }
       stopAll();
       await closeRedis();
       await closePool();

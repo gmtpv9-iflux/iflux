@@ -147,16 +147,25 @@
     }).join('');
   }
 
+  function masterStockName(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    var mm = global.IfluxMarketMaster;
+    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
+    if (!list) return t;
+    for (var i = 0; i < list.length; i++) {
+      if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) {
+        return list[i].name || list[i].short_name || t;
+      }
+    }
+    return t;
+  }
+
   function openModal(ticker) {
     var st = store();
     if (!st) return;
     modalTicker = ticker;
     var modal = ensureModal();
-    var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-    var name = ticker;
-    if (snap && snap.entities && snap.entities.stocks && snap.entities.stocks[ticker]) {
-      name = snap.entities.stocks[ticker].name || ticker;
-    }
+    var name = masterStockName(ticker);
     modal.querySelector('[data-ifx-wl-ticker-sub]').textContent = ticker + ' · ' + name;
     modal.querySelector('[data-ifx-wl-new-name]').value = '';
     renderFolderChecks();

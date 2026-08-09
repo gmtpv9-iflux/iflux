@@ -5,8 +5,10 @@ alwaysApply: true
 
 # Engineering Change Governance (Cursor)
 
-SoT đầy đủ: [`docs/SoT — Engineering Change Governance.md`](docs/SoT — Engineering Change Governance.md) (v1.1.1).  
+SoT đầy đủ: [`docs/SoT — Engineering Change Governance.md`](docs/SoT — Engineering Change Governance.md) (v1.1.1). 
 Product SoT: [`docs/SoT — iFlux Product Architecture (V2).md`](docs/SoT — iFlux Product Architecture (V2).md).
+
+**Hàng đầu (Owner LOCK):** xem [`modify-first-no-new-code.mdc`](modify-first-no-new-code.mdc) — CẤM ép code mới; ưu tiên sửa / thay / dọn hardcode trên chỗ đang hỏng.
 
 ## Cấm ngay
 

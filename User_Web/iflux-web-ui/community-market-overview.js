@@ -1,8 +1,7 @@
-/* Overview thị trường — TPL-INDEX-GRID + sidebar shell (Design Sandbox SoT) */
+/* Overview thị trường — WP-1: index/breadth không có runtime authority → UNAVAILABLE. */
 (function (global) {
   'use strict';
 
-  function mk() { return global.IfluxMockMarket; }
   function tpl() { return global.IfluxBlockTemplates; }
 
   function libraryCopy(widgetId) {
@@ -12,15 +11,15 @@
     return { title: 'Tổng quan thị trường', description: '' };
   }
 
+  function unavailBody() {
+    return '<div class="ifx-wl-empty">Chưa có dữ liệu thị trường</div>';
+  }
+
   function mount(container, options) {
     if (!container) return;
     var T = tpl();
-    if (!mk()) {
-      container.innerHTML = '<div class="ifx-wl-empty">Thiếu mock market data</div>';
-      return;
-    }
-    if (!T) {
-      container.innerHTML = '<div class="ifx-wl-empty">Thiếu block-templates.js</div>';
+    if (!T || typeof T.renderOverviewShell !== 'function') {
+      container.innerHTML = unavailBody();
       return;
     }
 
@@ -33,57 +32,44 @@
     container.innerHTML = T.renderOverviewShell({
       title: title,
       description: description,
-      status: 'Đang giao dịch',
-      exchanges: mk().getExchanges(),
-      includeBreadth: options.includeBreadth !== false,
+      status: '—',
+      exchanges: [],
+      includeBreadth: false,
       sidebar: options.sidebar !== false,
       marketSidebar: options.marketSidebar,
       hideHead: options.hideHead === true
     });
-
-    if (options.includeBreadth !== false) {
-      var breadthMount = container.querySelector('[data-ifx-com-breadth-mount]');
-      if (breadthMount && global.IfluxBreadthBlock) {
-        IfluxBreadthBlock.mountInner(breadthMount);
-      }
-    }
+    var indices = container.querySelector('.ifx-com-overview__indices');
+    if (indices) indices.innerHTML = unavailBody();
   }
 
   function mountBreadthSidebar(container, opts) {
     if (!container) return;
     var T = tpl();
-    if (!T) return;
     opts = opts || {};
     var copy = libraryCopy('WGT-MKT-002');
-    var attrs = opts.attrs || '';
-    if (opts.entBlock) {
-      attrs = (attrs ? attrs + ' ' : '') + 'data-ifx-ent-block="' + opts.entBlock + '"';
+    var title = opts.title != null ? opts.title : copy.title;
+    var desc = opts.description != null ? opts.description : copy.description;
+    if (T && T.renderSidebarShell) {
+      container.innerHTML = T.renderSidebarShell({
+        title: title,
+        icon: 'ti ti-chart-dots-3',
+        desc: desc,
+        body: unavailBody(),
+        shellClass: 'ifx-com-breadth-sidebar',
+        attrs: opts.attrs || ''
+      });
+      return;
     }
-    container.innerHTML = T.renderSidebarShell({
-      title: opts.title != null ? opts.title : copy.title,
-      icon: 'ti ti-chart-dots-3',
-      desc: opts.description != null ? opts.description : copy.description,
-      body: '<div data-ifx-com-breadth-mount></div>',
-      shellClass: 'ifx-com-breadth-sidebar',
-      attrs: attrs
-    });
-    var breadthMount = container.querySelector('[data-ifx-com-breadth-mount]');
-    if (breadthMount && global.IfluxBreadthBlock) {
-      IfluxBreadthBlock.mountInner(breadthMount);
-    }
+    container.innerHTML = unavailBody();
   }
 
   function refresh(container) {
     if (!container) return;
-    var T = tpl();
-    var grid = container.querySelector('.ifx-com-ex-grid');
-    if (grid && T && mk()) {
-      grid.outerHTML = T.renderIndexGrid(mk().getExchanges());
-    }
+    var indices = container.querySelector('.ifx-com-overview__indices');
+    if (indices) indices.innerHTML = unavailBody();
     var status = container.querySelector('.ifx-com-overview__status');
-    if (status) status.textContent = 'Đang giao dịch';
-    var breadth = container.querySelector('[data-ifx-breadth-block]');
-    if (breadth && global.IfluxBreadthBlock) IfluxBreadthBlock.render(breadth);
+    if (status) status.textContent = '—';
   }
 
   global.IfluxCommunityMarketOverview = {

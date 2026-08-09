@@ -5,8 +5,8 @@
   <title>ADM-DASH — Dashboard · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
-  <link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/app/dashboard/dashboard.css" />
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
   <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 </head>
@@ -28,7 +28,7 @@
       </header>
       <div class="ix-content">
         <h1 class="ix-page-title">Tổng quan</h1>
-        <div class="ix-breadcrumb ix-mb-24"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-DASH</span></div>
+        <div class="ix-breadcrumb ix-mb-24"><a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-DASH</span></div>
         <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Tổng quan vận hành iFlux — người dùng, gói đăng ký, feed và hệ thống.</p>
 
         <!-- KPI stat cards (Analytics style) -->
@@ -74,7 +74,7 @@
                 <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Đơn hàng mới nhất</div>
                 <div style="font-size:12px;color:var(--ix-text-muted)">20 đơn gần nhất · <span id="dash-orders-pending-count">0</span> chờ duyệt CK</div>
               </div>
-              <a href="../subscription/transactions.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-receipt"></i> Xem tất cả</a>
+              <a href="/Admin_Design_system/app/subscription/transactions.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-receipt"></i> Xem tất cả</a>
             </div>
             <div class="ix-table-responsive ifx-dash-orders-scroll">
               <table class="ix-table" id="dash-orders-table">
@@ -121,7 +121,7 @@
                 <div class="ix-card-title">Feed latency</div>
                 <div class="ix-card-subtitle">Phiên hôm nay</div>
               </div>
-              <a href="../market-ops/feed-health.html" class="ix-btn ix-btn-ghost ix-btn-sm">Chi tiết</a>
+              <a href="/Admin_Design_system/app/market-ops/feed-health.html" class="ix-btn ix-btn-ghost ix-btn-sm">Chi tiết</a>
             </div>
             <div class="ix-card-body"><div id="dashFeedArea"></div></div>
           </div>
@@ -131,21 +131,21 @@
     </main>
   </div>
 </div>
-<script src="../../iflux-admin-ui/iflux-admin-notifications.js"></script>
-<script src="../../iflux-admin-ui/admin-charts.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-notifications.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-charts.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="../subscription/plans-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
-<script src="../../../User_Web/iflux-web-ui/subscription-orders-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/loyalty-affiliate-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/inapp-notifications.js"></script>
-<script src="../../iflux-admin-ui/iflux-customers-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/subscription/plans-store.js"></script>
+<script src="/User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
+<script src="/User_Web/iflux-web-ui/subscription-orders-store.js"></script>
+<script src="/User_Web/iflux-web-ui/loyalty-affiliate-store.js"></script>
+<script src="/User_Web/iflux-web-ui/inapp-notifications.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-customers-store.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
-<script src="dashboard-stats.js"></script>
-<script src="dashboard-page.js"></script>
+<script src="/Admin_Design_system/app/dashboard/dashboard-stats.js"></script>
+<script src="/Admin_Design_system/app/dashboard/dashboard-page.js"></script>
 </body></html>

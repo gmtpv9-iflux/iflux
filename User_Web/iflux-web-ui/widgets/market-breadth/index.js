@@ -12,9 +12,9 @@ export const meta = {
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
+  /* WP-4: bỏ module mock thị trường — độ rộng thị trường không còn phụ thuộc mock (UNAVAILABLE). */
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxBreadthBlock', src: ASSET + 'breadth-block.js' }
+    { global: 'IfluxBreadthBlock', src: ASSET + 'breadth-block.js?v=mockRmWp4_20260809' }
   ]);
 
   var Breadth = window.IfluxBreadthBlock;

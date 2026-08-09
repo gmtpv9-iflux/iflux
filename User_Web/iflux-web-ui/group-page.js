@@ -33,13 +33,12 @@
     else removeLeftColumn(root);
   }
 
-  function mk() { return global.IfluxMockMarket; }
   function comStore() { return global.IfluxCommunityStore; }
   function comUi() { return global.IfluxCommunityUI; }
   function cta() { return global.IfluxCommentsCta; }
-  function stockSt() { return global.IfluxStockStore; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
+  function taxApi() { return global.IfluxWatchlistTaxonomy; }
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -50,61 +49,9 @@
     return (n >= 0 ? '+' : '') + Number(n).toFixed(2) + '%';
   }
 
-  function fmtChgAbs(n) {
-    if (n == null || isNaN(n)) return '';
-    return (n >= 0 ? '+' : '') + Number(n).toFixed(2);
-  }
-
   function quoteStateClass(state) {
     if (state === 'ceiling' || state === 'floor' || state === 'up' || state === 'down') return 'is-' + state;
     return 'is-ref';
-  }
-
-  function chartColor(state) {
-    if (global.IfluxBlockTemplates && IfluxBlockTemplates.marketDirColor) {
-      return IfluxBlockTemplates.marketDirColor(state);
-    }
-    var map = { up: '#22c55e', down: '#ef4444', ref: '#f59e0b', ceiling: '#a855f7', floor: '#03c3ec' };
-    return map[state] || map.ref;
-  }
-
-  function valueToY(v, yMin, yMax, plotH) {
-    if (yMax === yMin) return plotH / 2;
-    return plotH - ((v - yMin) / (yMax - yMin)) * plotH;
-  }
-
-  function buildPath(prices, yMin, yMax, plotW, plotH) {
-    var step = prices.length > 1 ? plotW / (prices.length - 1) : 0;
-    return prices.map(function (v, i) {
-      var x = i * step;
-      var y = valueToY(v, yMin, yMax, plotH);
-      return (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
-    }).join(' ');
-  }
-
-  function chartSvgHtml(chart, state, title) {
-    if (!chart || !chart.prices || !chart.prices.length) {
-      return '<div class="ifx-stock-empty">Chưa có dữ liệu biểu đồ</div>';
-    }
-    var prices = chart.prices;
-    var yMin = Math.min.apply(null, prices);
-    var yMax = Math.max.apply(null, prices);
-    var pad = (yMax - yMin) * 0.08 || 0.5;
-    yMin -= pad;
-    yMax += pad;
-    var plotW = 320;
-    var plotH = 200;
-    var color = chartColor(state);
-    var path = buildPath(prices, yMin, yMax, plotW, plotH);
-    var refY = valueToY(prices[0], yMin, yMax, plotH);
-    return (
-      '<div class="ifx-stock-chart">' +
-        '<svg viewBox="0 0 ' + plotW + ' ' + plotH + '" preserveAspectRatio="none" role="img" aria-label="Biểu đồ hiệu suất ' + esc(title) + '">' +
-          '<line x1="0" y1="' + refY.toFixed(2) + '" x2="' + plotW + '" y2="' + refY.toFixed(2) + '" stroke="var(--ix-border)" stroke-width="1" stroke-dasharray="4 4"/>' +
-          '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
-        '</svg>' +
-      '</div>'
-    );
   }
 
   function kindIcon(kind) {
@@ -112,6 +59,33 @@
     if (kind === 'family') return 'ti-users-group';
     if (kind === 'story' || kind === 'chu-de' || kind === 'cau-chuyen') return 'ti-book-2';
     return 'ti-chart-dots';
+  }
+
+  /** Identity = taxonomy/Master. Group perf/chart = UNAVAILABLE (D1). */
+  function buildGroupDetail(source, id) {
+    var tax = taxApi();
+    if (!tax || !id) return null;
+    var group = tax.getGroup(source, id);
+    if (!group) return null;
+    var tickers = tax.getGroupTickers(source, id) || [];
+    var isChuDe = source === 'story' || source === 'chu-de' || source === 'chu_de' || source === 'cau-chuyen';
+    if (!tickers.length && isChuDe) {
+      tickers = (group.tickers || []).slice();
+    }
+    if (!tickers.length && !isChuDe) return null;
+    return {
+      kind: isChuDe ? 'chu-de' : source,
+      id: group.id,
+      name: group.name,
+      type_label: tax.sourceLabel(source),
+      tickers: tickers,
+      ticker: tickers[0] || '',
+      member_count: tickers.length,
+      change_pct: null,
+      price_state: 'ref',
+      chart: null,
+      net_flow: null
+    };
   }
 
   function renderHeader(detail) {
@@ -124,8 +98,8 @@
           '</div>' +
           '<div class="ifx-stock-head__co">' + detail.member_count + ' mã · hiệu suất nhóm</div>' +
         '</div>' +
-        '<div class="ifx-stock-head__quote ' + quoteStateClass(detail.price_state) + '">' +
-          '<div class="ifx-stock-head__price">' + fmtPct(detail.change_pct) + '</div>' +
+        '<div class="ifx-stock-head__quote ' + quoteStateClass('ref') + '">' +
+          '<div class="ifx-stock-head__price">' + fmtPct(null) + '</div>' +
           '<div class="ifx-stock-head__chg">' +
             '<span class="ifx-stock-head__chg-abs">Chỉ số tổng hợp</span>' +
           '</div>' +
@@ -140,7 +114,7 @@
         '<div data-ifx-section="sidebar" data-section="sidebar"></div>' +
         '<section class="ifx-stock-panel">' +
           renderHeader(detail) +
-          chartSvgHtml(detail.chart, detail.price_state, detail.name) +
+          '<div class="ifx-stock-chart"><div class="ifx-stock-empty">Chưa có dữ liệu biểu đồ</div></div>' +
         '</section>' +
       '</div>'
     );
@@ -290,7 +264,7 @@
   function render(root, source) {
     currentSource = source;
     currentId = parseGroupId(source);
-    currentDetail = mk() ? mk().getGroupDetail(source, currentId) : null;
+    currentDetail = buildGroupDetail(source, currentId);
     var typeLabel = global.IfluxWatchlistTaxonomy ? IfluxWatchlistTaxonomy.sourceLabel(source) : source;
 
     if (!currentDetail) {

@@ -7,7 +7,7 @@ import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 var P4_VER = 'phase4Pub20260716b';
-var ELP_VER = 'codeChoXoa20260720';
+var ELP_VER = 'mockRmWp2_20260809';
 export const meta = { id: 'WGT-ELP-PAGE', title: 'Danh sách entity' };
 
 var KIND_BY_PAGE = {
@@ -34,9 +34,8 @@ var CORE_TIERS = [
     ASSET + 'watchlist-ui.js',
     ASSET + 'alert-ui.js',
     ASSET + 'stock-mentions.js',
-    ASSET + 'squarified-treemap.js',
-    ASSET + 'market-heatmap.js',
-    ASSET + 'market-rankings.js',
+    ASSET + 'market-heatmap.js?v=mockRmWp4_20260809',
+    ASSET + 'market-rankings.js?v=mockRmWp4_20260809',
     ASSET + 'stock-scroll-feed.js'
   ],
   [

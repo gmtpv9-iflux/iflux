@@ -14,8 +14,22 @@ function slugifyCode(s) {
     .slice(0, 20);
 }
 
+function normTickers(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  const seen = new Set();
+  list.forEach(function (t) {
+    const x = String(t || '').trim().toUpperCase();
+    if (!x || seen.has(x)) return;
+    seen.add(x);
+    out.push(x);
+  });
+  return out;
+}
+
 function mapRow(row) {
   if (!row) return null;
+  const tickers = Array.isArray(row.tickers) ? row.tickers.filter(Boolean) : [];
   return {
     id: row.id,
     code: row.code,
@@ -25,27 +39,56 @@ function mapRow(row) {
     description: row.description || null,
     display_order: Number(row.display_order) || 0,
     icon_media_id: row.icon_media_id || null,
-    divisor: Number(row.divisor),
     status: row.is_active ? 'active' : 'inactive',
     is_active: !!row.is_active,
-    stock_count: Number(row.stock_count) || 0,
+    tickers: tickers,
+    stock_count: Number(row.stock_count) || tickers.length,
     post_count: Number(row.post_count) || 0,
     created_at: row.created_at,
     updated_at: row.updated_at || row.created_at
   };
 }
 
-const SELECT_BASE = `
+/* List: stock_count + tickers; post_count via one-pass join (no per-row jsonb_array scan) */
+const SELECT_LIST = `
   SELECT s.*,
+    COALESCE(
+      (SELECT array_agg(st.ticker ORDER BY st.ticker)
+         FROM stocks st WHERE st.sector_id = s.id),
+      ARRAY[]::varchar[]
+    ) AS tickers,
+    (SELECT COUNT(*)::int FROM stocks st WHERE st.sector_id = s.id) AS stock_count,
+    COALESCE(pc.post_count, 0)::int AS post_count
+  FROM sectors s
+  LEFT JOIN (
+    SELECT key, COUNT(*)::int AS post_count
+    FROM (
+      SELECT payload->>'sector_id' AS key FROM community_posts
+        WHERE payload ? 'sector_id' AND COALESCE(payload->>'sector_id','') <> ''
+      UNION ALL
+      SELECT payload->>'sector_code' AS key FROM community_posts
+        WHERE payload ? 'sector_code' AND COALESCE(payload->>'sector_code','') <> ''
+    ) x
+    GROUP BY key
+  ) pc ON pc.key = s.id::text OR pc.key = s.code
+`;
+
+const SELECT_DETAIL = `
+  SELECT s.*,
+    COALESCE(
+      (SELECT array_agg(st.ticker ORDER BY st.ticker)
+         FROM stocks st WHERE st.sector_id = s.id),
+      ARRAY[]::varchar[]
+    ) AS tickers,
     (SELECT COUNT(*)::int FROM stocks st WHERE st.sector_id = s.id) AS stock_count,
     (
-      SELECT COUNT(*)::int 
-      FROM community_posts p 
-      WHERE (p.payload->>'sector_id')::text = s.id::text 
+      SELECT COUNT(*)::int
+      FROM community_posts p
+      WHERE (p.payload->>'sector_id')::text = s.id::text
          OR (p.payload->>'sector_code')::text = s.code
          OR EXISTS (
-              SELECT 1 
-              FROM jsonb_array_elements_text(COALESCE(p.payload->'sectors', '[]'::jsonb)) elem 
+              SELECT 1
+              FROM jsonb_array_elements_text(COALESCE(p.payload->'sectors', '[]'::jsonb)) elem
               WHERE elem = s.id::text OR elem = s.code OR elem = COALESCE(s.slug, '')
             )
     ) AS post_count
@@ -54,7 +97,7 @@ const SELECT_BASE = `
 
 async function listSectors(filters = {}) {
   const params = [];
-  let sql = SELECT_BASE + ' WHERE 1=1';
+  let sql = SELECT_LIST + ' WHERE 1=1';
   if (filters.q) {
     const qStr = String(filters.q).trim().toLowerCase();
     params.push('%' + qStr + '%');
@@ -73,8 +116,29 @@ async function listSectors(filters = {}) {
 }
 
 async function getSector(id) {
-  const res = await query(SELECT_BASE + ' WHERE s.id = $1', [id]);
+  const res = await query(SELECT_DETAIL + ' WHERE s.id = $1', [id]);
   return mapRow(res.rows[0] || null);
+}
+
+async function syncTickers(sectorId, tickers) {
+  const list = normTickers(tickers);
+  await query('UPDATE stocks SET sector_id = NULL WHERE sector_id = $1', [sectorId]);
+  if (!list.length) return { linked: 0, missing: [] };
+
+  const found = await query(
+    'SELECT ticker FROM stocks WHERE ticker = ANY($1::varchar[])',
+    [list]
+  );
+  const foundSet = new Set((found.rows || []).map(function (r) { return r.ticker; }));
+  const missing = list.filter(function (t) { return !foundSet.has(t); });
+  const linked = list.filter(function (t) { return foundSet.has(t); });
+  if (linked.length) {
+    await query(
+      'UPDATE stocks SET sector_id = $1 WHERE ticker = ANY($2::varchar[])',
+      [sectorId, linked]
+    );
+  }
+  return { linked: linked.length, missing };
 }
 
 async function createSector(input) {
@@ -86,28 +150,28 @@ async function createSector(input) {
   else code = slugifyCode(code);
   if (!code) throw AppError.badRequest('VALIDATION', 'Mã ngành không hợp lệ');
 
-  const divisor = Number(input && input.divisor);
-  if (!Number.isFinite(divisor) || divisor < 1) {
-    throw AppError.badRequest('VALIDATION', 'Divisor phải ≥ 1');
-  }
-
   let isActive = true;
   if (input && input.status != null) {
     isActive = String(input.status) !== 'inactive';
   } else if (input && input.is_active != null) {
     isActive = !!input.is_active;
   }
+  const description =
+    input && input.description != null ? String(input.description).trim() || null : null;
 
   const dup = await query('SELECT id FROM sectors WHERE code = $1', [code]);
   if (dup.rows[0]) throw AppError.conflict('DUPLICATE', 'Mã ngành đã tồn tại');
 
   const res = await query(
-    `INSERT INTO sectors (code, name_vi, divisor, is_active, updated_at)
+    `INSERT INTO sectors (code, name_vi, description, is_active, updated_at)
      VALUES ($1, $2, $3, $4, NOW())
      RETURNING *`,
-    [code, name, divisor, isActive]
+    [code, name, description, isActive]
   );
-  return getSector(res.rows[0].id);
+  const id = res.rows[0].id;
+  const tickers = normTickers(input && input.tickers);
+  if (tickers.length) await syncTickers(id, tickers);
+  return getSector(id);
 }
 
 async function updateSector(id, input) {
@@ -120,24 +184,24 @@ async function updateSector(id, input) {
       : current.name;
   if (!name) throw AppError.badRequest('VALIDATION', 'Tên ngành bắt buộc');
 
-  let divisor = current.divisor;
-  if (input.divisor != null) {
-    divisor = Number(input.divisor);
-    if (!Number.isFinite(divisor) || divisor < 1) {
-      throw AppError.badRequest('VALIDATION', 'Divisor phải ≥ 1');
-    }
-  }
-
   let isActive = current.is_active;
   if (input.status != null) isActive = String(input.status) !== 'inactive';
   else if (input.is_active != null) isActive = !!input.is_active;
 
+  let description = current.description;
+  if (input && Object.prototype.hasOwnProperty.call(input, 'description')) {
+    description = input.description != null ? String(input.description).trim() || null : null;
+  }
+
   await query(
     `UPDATE sectors
-     SET name_vi = $2, divisor = $3, is_active = $4, updated_at = NOW()
+     SET name_vi = $2, description = $3, is_active = $4, updated_at = NOW()
      WHERE id = $1`,
-    [id, name, divisor, isActive]
+    [id, name, description, isActive]
   );
+  if (Object.prototype.hasOwnProperty.call(input || {}, 'tickers')) {
+    await syncTickers(id, input.tickers);
+  }
   return getSector(id);
 }
 
@@ -201,6 +265,7 @@ module.exports = {
   getSector,
   createSector,
   updateSector,
-  deleteSector
+  deleteSector,
+  syncTickers
 };
 

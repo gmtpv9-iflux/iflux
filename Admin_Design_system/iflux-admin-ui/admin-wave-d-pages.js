@@ -223,31 +223,9 @@
         root.innerHTML = '<div class="ix-grid ix-grid-3">' + cards + '</div>';
       }).catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
     },
-    initRssSync: function () {
-      crudPage({
-        listPath: '/admin/community-ops/rss-category-sync', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
-        editPerm: 'community.rss_category_sync.edit', execPerm: 'community.rss_category_sync.execute',
-        buildEdit: function () {
-          var name = prompt('Tên job:'); return name ? { name: name } : null;
-        },
-        rowHtml: function (r, actions) {
-          return '<tr><td><strong>' + esc(r.name) + '</strong><div class="ix-caption">' + esc(r.code) +
-            '</div></td><td>' + esc(r.status) + '</td><td>' + actions + '</td></tr>';
-        }
-      });
-    },
-    initRssSchema: function () {
-      crudPage({
-        listPath: '/admin/community-ops/rss-article-schema', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
-        editPerm: 'community.rss_article_schema.edit',
-        buildEdit: function () {
-          var name = prompt('Tên schema:'); return name ? { name: name } : null;
-        },
-        rowHtml: function (r, actions) {
-          return '<tr><td><strong>' + esc(r.name) + '</strong><div class="ix-caption">' + esc(r.code) +
-            '</div></td><td>' + actions + '</td></tr>';
-        }
-      });
-    }
+    /* DEAD — Wave D stub RSS UI đã bị khôi phục catalog (ADM-COM-RSS). Không call-site HTML.
+    initRssSync: function () { ... },
+    initRssSchema: function () { ... },
+    */
   };
 })(window);

@@ -238,17 +238,6 @@
     return 'wgt_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
   }
 
-  function formatDataAsOfTime(value) {
-    if (value == null) return null;
-    var iso = '';
-    if (typeof value === 'string') iso = value;
-    else if (typeof value === 'number') iso = new Date(value).toISOString();
-    else if (value instanceof Date) iso = value.toISOString();
-    else iso = String(value);
-    if (iso.length >= 19) return iso.slice(11, 19);
-    return iso.slice(-8) || null;
-  }
-
   function ent() { return global.IfluxEntitlements; }
 
   function getTier() {
@@ -717,10 +706,9 @@
             removeBtn + '</div>' +
         '</div>' +
         '<div class="ifx-widget__body"></div>' +
-        '<div class="ifx-widget__footer">' +
-          '<span data-ifx-widget-ts>Cập nhật: dữ liệu mẫu</span>' +
-          (meta.footerHref ? '<a href="' + meta.footerHref + '">' + footerLabel + ' →</a>' : '') +
-        '</div>' +
+        (meta.footerHref
+          ? '<div class="ifx-widget__footer"><a href="' + meta.footerHref + '">' + footerLabel + ' →</a></div>'
+          : '') +
       '</div>';
 
     var body = node.querySelector('.ifx-widget__body');
@@ -740,15 +728,6 @@
         if (global.console && console.error) console.error('Widget render failed:', instance.widget_type, err);
       }
     }
-
-    try {
-      var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-      if (snap && snap.meta && snap.meta.data_as_of != null) {
-        var timeLabel = formatDataAsOfTime(snap.meta.data_as_of);
-        var ts = node.querySelector('[data-ifx-widget-ts]');
-        if (ts && timeLabel) ts.textContent = 'Cập nhật: ' + timeLabel;
-      }
-    } catch (tsErr) { /* không chặn render widget */ }
 
     if (widgetScope(instance) === SCOPES.dashboard) {
       applyWidthToNode(node, getWidgetWidth(instance));

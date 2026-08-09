@@ -9,6 +9,7 @@
 const { query } = require('../../core/database/connection');
 const categories = require('./community-categories.service');
 const { MAPPINGS, PROVIDER_NAMES } = require('./rss-mappings');
+const entityResolve = require('./community-entity-resolve.service');
 
 function slugify(s) {
   return String(s || '')
@@ -240,19 +241,7 @@ function enrichFromHtml(providerId, html, seed) {
   const bodyText = stripTags(bodyHtml);
   const excerpt = (description || bodyText).slice(0, 500);
 
-  /* Tickers heuristic từ keywords/title */
-  const tickers = [];
-  const blob = (title + ' ' + keywords + ' ' + excerpt).toUpperCase();
-  const dict = [
-    'FPT', 'HPG', 'VCB', 'SSI', 'MWG', 'VIC', 'VHM', 'GAS', 'TCB', 'MBB', 'ACB', 'VNM', 'MSN',
-    'CTR', 'CMG', 'NLG', 'HSG', 'ELC', 'BID', 'CTG', 'VPB', 'TPB', 'STB', 'HDB', 'LPB'
-  ];
-  dict.forEach(function (t) {
-    if (new RegExp('\\b' + t + '\\b').test(blob) && tickers.indexOf(t) < 0 && tickers.length < 5) {
-      tickers.push(t);
-    }
-  });
-
+  /* Entity resolve chuyển sang Master tại processFeed (không còn RSS dict authority). */
   return {
     title: stripTags(title).slice(0, 300) || seed.title,
     excerpt,
@@ -266,7 +255,7 @@ function enrichFromHtml(providerId, html, seed) {
     author_name: author.slice(0, 160),
     published_at: parseIsoOrRssDate(published) || parseIsoOrRssDate(seed.pubDate),
     updated_at: parseIsoOrRssDate(modified),
-    tickers
+    tickers: []
   };
 }
 
@@ -385,6 +374,12 @@ async function processFeed(mapping, limit) {
       }
 
       const slugBase = slugify(enriched.title) || 'bai-rss';
+      const resolved = await entityResolve.resolveArticleEntities({
+        title: enriched.title,
+        excerpt: enriched.excerpt || '',
+        body_html: enriched.body_html || enriched.body || ''
+      });
+      const attr = entityResolve.normalizeAttribution(enriched.author_name, providerName);
       const payload = {
         title: enriched.title,
         slug: slugBase + '-' + Date.now().toString(36).slice(-4),
@@ -397,9 +392,11 @@ async function processFeed(mapping, limit) {
         chu_de_id: null,
         chu_de_slug: '',
         chu_de_name: '',
-        tickers: enriched.tickers || [],
+        tickers: resolved.tickers || [],
         sectors: [],
-        ecosystems: [],
+        ecosystems: resolved.ecosystems || [],
+        entity_occurrences: resolved.entity_occurrences || [],
+        entities: resolved.entities || { stocks: [], ecosystems: [] },
         exchange: null,
         cover: {
           url: enriched.cover_url || '',
@@ -429,12 +426,10 @@ async function processFeed(mapping, limit) {
         origin: 'rss',
         from_rss: true,
         rss_mapping_id: mapping.id,
-        author: {
-          id: 'rss:' + mapping.providerId,
-          display_name: enriched.author_name || providerName,
-          tier: 'rss',
-          tier_label: providerName
-        },
+        author: attr.author,
+        publisher: attr.publisher,
+        provider: attr.provider,
+        vendor: attr.vendor,
         source: {
           type: 'rss',
           id: mapping.providerId,
@@ -493,8 +488,70 @@ async function runRssCommunityIngest(opts) {
   };
 }
 
+/**
+ * WP-10 — Backfill: re-resolve entity membership + attribution trên bài RSS/đã có body.
+ * Idempotent: ghi đè tickers/ecosystems/occurrences theo cùng pipeline WP-2/3.
+ */
+async function backfillArticleEntities(opts) {
+  opts = opts || {};
+  const limit = Math.min(Math.max(Number(opts.limit) || 50, 1), 500);
+  const offset = Math.max(Number(opts.offset) || 0, 0);
+  const res = await query(
+    `SELECT id, status, payload FROM community_posts
+     WHERE payload->>'body_html' IS NOT NULL
+       AND length(payload->>'body_html') > 40
+     ORDER BY updated_at DESC NULLS LAST
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+  let updated = 0;
+  const errors = [];
+  for (let i = 0; i < res.rows.length; i++) {
+    const row = res.rows[i];
+    try {
+      const p = row.payload || {};
+      const resolved = await entityResolve.resolveArticleEntities({
+        title: p.title,
+        excerpt: p.excerpt,
+        body_html: p.body_html || p.body
+      });
+      const providerName =
+        (p.source && p.source.name) ||
+        p.source_name ||
+        (p.provider && p.provider.name) ||
+        '';
+      const authorName =
+        (p.author && p.author.display_name) ||
+        (p.vendor && p.vendor.name) ||
+        '';
+      const attr = entityResolve.normalizeAttribution(authorName, providerName);
+      const merged = Object.assign({}, p, {
+        tickers: resolved.tickers,
+        sectors: [],
+        ecosystems: resolved.ecosystems,
+        entity_occurrences: resolved.entity_occurrences,
+        entities: resolved.entities,
+        author: attr.author,
+        publisher: attr.publisher || p.publisher || (providerName ? { name: providerName } : null),
+        provider: attr.provider || p.provider,
+        vendor: attr.vendor,
+        updated_at: new Date().toISOString()
+      });
+      await query(
+        `UPDATE community_posts SET payload = $2::jsonb, updated_at = NOW() WHERE id = $1`,
+        [row.id, JSON.stringify(merged)]
+      );
+      updated += 1;
+    } catch (err) {
+      errors.push({ id: row.id, error: err.message });
+    }
+  }
+  return { ok: true, scanned: res.rows.length, updated: updated, errors: errors.slice(0, 10) };
+}
+
 module.exports = {
   runRssCommunityIngest,
   processFeed,
+  backfillArticleEntities,
   MAPPINGS
 };

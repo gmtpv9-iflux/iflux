@@ -43,7 +43,6 @@
     else removeLeftColumn(root);
   }
 
-  function mk() { return global.IfluxMockMarket; }
   function comStore() { return global.IfluxCommunityStore; }
   function comUi() { return global.IfluxCommunityUI; }
   function cta() { return global.IfluxCommentsCta; }
@@ -52,6 +51,7 @@
   function auth() { return global.IfluxAuth; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
+  function master() { return global.IfluxMarketMaster; }
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -124,16 +124,39 @@
     }
   }
 
+  function quoteChangePct(q) {
+    if (!q) return null;
+    if (q.change_pct != null && !isNaN(Number(q.change_pct))) return Number(q.change_pct);
+    if (q.pctChange != null && !isNaN(Number(q.pctChange))) return Number(q.pctChange);
+    return null;
+  }
+
+  function quotePrice(q) {
+    if (!q) return null;
+    if (q.price != null && !isNaN(Number(q.price))) return Number(q.price);
+    if (q.close != null && !isNaN(Number(q.close))) return Number(q.close);
+    return null;
+  }
+
+  function quoteState(q) {
+    if (!q) return 'ref';
+    var mq = quotes();
+    if (mq && typeof mq.priceState === 'function') {
+      return mq.priceState(quotePrice(q), q.ref, q.ceiling, q.floor);
+    }
+    return q.state || 'ref';
+  }
+
   /* Cập nhật header (giá / tăng-giảm / trạng thái màu) từ quote thật. */
   function applyQuoteToHeader(root, q) {
     if (!root || !q) return;
     var quoteEl = root.querySelector('.ifx-stock-head__quote');
-    if (quoteEl) quoteEl.className = 'ifx-stock-head__quote ' + quoteStateClass(q.state);
+    if (quoteEl) quoteEl.className = 'ifx-stock-head__quote ' + quoteStateClass(quoteState(q));
     var priceEl = root.querySelector('.ifx-stock-head__price');
-    if (priceEl) priceEl.textContent = fmtPrice(q.price);
+    if (priceEl) priceEl.textContent = fmtPrice(quotePrice(q));
     var chgEl = root.querySelector('.ifx-stock-head__chg');
     if (chgEl) {
-      chgEl.innerHTML = fmtPct(q.pctChange) +
+      chgEl.innerHTML = fmtPct(quoteChangePct(q)) +
         '<span class="ifx-stock-head__chg-abs">' + fmtChgAbs(q.change) + '</span>';
     }
   }
@@ -147,6 +170,50 @@
         mountOhlcChart(chartEl, rows);
       });
     });
+  }
+
+  function normalizeExchange(ex) {
+    ex = String(ex || '').toUpperCase();
+    if (ex === 'HOSE') return 'HSX';
+    return ex || '';
+  }
+
+  /** Identity = Master; VALUE = runtime quote (peek) hoặc UNAVAILABLE. Cấm getStockDetail mock. */
+  function resolveStockDetail(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    var detail = {
+      ticker: t,
+      exchange: '',
+      short_name: t,
+      name: t,
+      price: null,
+      change_pct: null,
+      change_abs: null,
+      price_state: 'ref',
+      chart: null,
+      net_flow: null
+    };
+    var mm = master();
+    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
+    if (list && list.length) {
+      for (var i = 0; i < list.length; i++) {
+        var s = list[i];
+        if (String((s && s.ticker) || '').toUpperCase() !== t) continue;
+        detail.name = s.name || t;
+        detail.short_name = s.short_name || s.name || t;
+        detail.exchange = normalizeExchange(s.exchange);
+        break;
+      }
+    }
+    var mq = quotes();
+    var q = mq && typeof mq.peekQuote === 'function' ? mq.peekQuote(t) : null;
+    if (q) {
+      detail.price = quotePrice(q);
+      detail.change_pct = quoteChangePct(q);
+      detail.change_abs = q.change != null ? Number(q.change) : null;
+      detail.price_state = quoteState(q);
+    }
+    return detail;
   }
 
   function renderHeader(detail) {
@@ -302,31 +369,16 @@
     }
   }
 
-  function render(root) {
-    currentTicker = (global.IfluxSeoUrl && IfluxSeoUrl.parseStockTicker
+  function parseTicker() {
+    var t = (global.IfluxSeoUrl && IfluxSeoUrl.parseStockTicker
       ? IfluxSeoUrl.parseStockTicker()
       : new URLSearchParams(location.search).get('ticker')) || 'VHM';
-    currentTicker = String(currentTicker).toUpperCase();
-    var detail = mk() ? mk().getStockDetail(currentTicker) : null;
+    return String(t).toUpperCase();
+  }
 
-    if (!detail) {
-      if (!quotes()) {
-        root.innerHTML = renderNotFound(currentTicker);
-        return;
-      }
-      detail = {
-        ticker: currentTicker,
-        exchange: '',
-        short_name: '',
-        name: currentTicker,
-        price: null,
-        change_pct: null,
-        change_abs: null,
-        price_state: 'ref',
-        chart: null,
-        net_flow: null
-      };
-    }
+  function render(root) {
+    currentTicker = parseTicker();
+    var detail = resolveStockDetail(currentTicker);
 
     var posts = comStore() ? comStore().getPosts({ ticker: currentTicker }) : [];
     if (global.IfluxSeoUrl) {
@@ -366,13 +418,30 @@
     }
   }
 
+  function hydrateThenRender(root) {
+    var ticker = parseTicker();
+    var tasks = [];
+    var mm = master();
+    if (mm && typeof mm.ensureMasterReady === 'function') {
+      tasks.push(mm.ensureMasterReady().catch(function () { return null; }));
+    }
+    if (quotes() && typeof quotes().getQuote === 'function') {
+      tasks.push(quotes().getQuote(ticker).catch(function () { return null; }));
+    }
+    if (!tasks.length) {
+      render(root);
+      return;
+    }
+    Promise.all(tasks).then(function () { render(root); });
+  }
+
   function init() {
     var root = document.querySelector('[data-ifx-stock-page]');
     if (!root) return;
     if (global.IfluxStockStore && IfluxStockStore.purgeLocalComments) {
       try { IfluxStockStore.purgeLocalComments(); } catch (e) { /* ignore */ }
     }
-    render(root);
+    hydrateThenRender(root);
   }
 
   global.IfluxStockPage = { init: init };

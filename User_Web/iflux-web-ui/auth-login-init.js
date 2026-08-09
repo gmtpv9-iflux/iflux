@@ -145,9 +145,10 @@
   }
 
   function affiliateReferralCodeForIdentity() {
-    var AR = window.IfluxAffiliateResolver;
-    if (AR && AR.getCodeForIdentityCreation) {
-      var code = AR.getCodeForIdentityCreation();
+    if (window.IfluxIdentityContext && IfluxIdentityContext.getActiveOwner) {
+      var code = String(IfluxIdentityContext.getActiveOwner() || '')
+        .trim()
+        .toUpperCase();
       return code || undefined;
     }
     return undefined;

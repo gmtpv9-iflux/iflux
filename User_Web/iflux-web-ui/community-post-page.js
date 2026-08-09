@@ -116,24 +116,41 @@
           ui().articleHeroImageHtml(post) +
 
           '<div class="ifx-com-article__byline">' +
-            '<div class="ifx-com-article__author" itemprop="author" itemscope itemtype="https://schema.org/Person">' +
-              (global.IfluxProfileLinks && post.author && post.author.id
-                ? IfluxProfileLinks.avatarLink(post.author.id, (post.author.display_name || 'M').charAt(0), 'ifx-com-card__avatar ifx-profile-link-avatar', { base: '../account/' })
-                : '<span class="ifx-com-card__avatar" aria-hidden="true">' + (post.author.display_name || 'M').charAt(0) + '</span>') +
-              '<div>' +
-                (global.IfluxProfileLinks && post.author && post.author.id
-                  ? IfluxProfileLinks.nameLink(post.author.id, post.author.display_name || 'Thành viên', 'ifx-profile-link', { base: '../account/', itemprop: 'name' })
-                  : '<span itemprop="name">' + esc(post.author.display_name || 'Thành viên') + '</span>') + ' ' +
-                ui().tierBadge(post.author) +
-                '<div class="ifx-com-article__dates">' +
-                  '<time itemprop="datePublished" datetime="' + published + '">Đăng ' + ui().fmtDate(published) + '</time>' +
-                  '<time itemprop="dateModified" datetime="' + modified + '"> · Cập nhật ' + ui().fmtDate(modified) + '</time>' +
-                '</div>' +
-              '</div>' +
+            (post.author && post.author.display_name
+              ? ('<div class="ifx-com-article__author" itemprop="author" itemscope itemtype="https://schema.org/Person">' +
+                  (global.IfluxProfileLinks && post.author.id
+                    ? IfluxProfileLinks.avatarLink(post.author.id, post.author.display_name.charAt(0), 'ifx-com-card__avatar ifx-profile-link-avatar', { base: '../account/' })
+                    : '<span class="ifx-com-card__avatar" aria-hidden="true">' + esc(post.author.display_name.charAt(0)) + '</span>') +
+                  '<div>' +
+                    (global.IfluxProfileLinks && post.author.id
+                      ? IfluxProfileLinks.nameLink(post.author.id, post.author.display_name, 'ifx-profile-link', { base: '../account/', itemprop: 'name' })
+                      : '<span itemprop="name">' + esc(post.author.display_name) + '</span>') + ' ' +
+                    ui().tierBadge(post.author) +
+                  '</div>' +
+                '</div>')
+              : '') +
+            '<div class="ifx-com-article__dates">' +
+              (published
+                ? '<time itemprop="datePublished" datetime="' + published + '">Đăng ' + ui().fmtDate(published) + '</time>'
+                : '') +
+              (modified
+                ? '<time itemprop="dateModified" datetime="' + modified + '">' + (published ? ' · ' : '') + 'Cập nhật ' + ui().fmtDate(modified) + '</time>'
+                : '') +
             '</div>' +
-            '<div class="ifx-com-article__publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">' +
-              '<meta itemprop="name" content="iFlux" />' +
-            '</div>' +
+            (function () {
+              var pubName =
+                (post.publisher && (post.publisher.name || post.publisher.display_name)) ||
+                (post.provider && (post.provider.name || post.provider.display_name)) ||
+                (post.source && post.source.name) ||
+                '';
+              if (!pubName) return '';
+              return (
+                '<div class="ifx-com-article__publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">' +
+                  '<meta itemprop="name" content="' + esc(pubName) + '" />' +
+                  '<span class="ifx-com-article__publisher-label">' + esc(pubName) + '</span>' +
+                '</div>'
+              );
+            })() +
           '</div>' +
 
           '<div class="ifx-com-article__tags" aria-label="Thẻ bài viết">' + ui().postTagsHtml(post) + '</div>' +
@@ -194,53 +211,40 @@
     );
   }
 
+  function entitySideCard(title, icon, sub, rowsHtml) {
+    if (!rowsHtml) return '';
+    return (
+      '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
+        '<h2 class="ifx-com-side-card__title"><i class="ti ' + icon + '"></i> ' + title + '</h2>' +
+        '<p class="ifx-com-side-card__sub">' + sub + '</p>' +
+        '<div class="ifx-com-side-list">' + rowsHtml + '</div>' +
+      '</section>'
+    );
+  }
+
   function renderSidebar(post, tocHeadings, presentation) {
+    var entityBlocks =
+      entitySideCard('Chủ đề', 'ti-bookmark', 'Chủ đề được nhắc trong bài — bấm để mở', ui().sidebarStoryRowsHtml(post)) +
+      entitySideCard('Ngành', 'ti-chart-dots-3', 'Ngành liên quan — bấm để mở trang ngành', ui().sidebarSectorRowsHtml(post)) +
+      entitySideCard('Cổ phiếu', 'ti-chart-line', 'Bấm mã để mở trang cổ phiếu', ui().sidebarTickerRowsHtml(post)) +
+      entitySideCard('Hệ sinh thái', 'ti-hierarchy-2', 'Hệ sinh thái liên quan — bấm để mở', ui().sidebarEcosystemRowsHtml(post));
+    var toc = renderTocHtml(tocHeadings) || '';
+    var comments = renderCommentsSideCard(post) || '';
+    if (!entityBlocks && !toc && !comments) return '';
     return (
       '<aside class="ifx-com-story-aside" aria-label="Thông tin liên quan">' +
-        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
-          '<h2 class="ifx-com-side-card__title"><i class="ti ti-bookmark"></i> Chủ đề</h2>' +
-          '<p class="ifx-com-side-card__sub">Chủ đề được nhắc trong bài — bấm để mở</p>' +
-          '<div class="ifx-com-side-list">' + ui().sidebarStoryRowsHtml(post) + '</div>' +
-        '</section>' +
-
-        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
-          '<h2 class="ifx-com-side-card__title"><i class="ti ti-chart-dots-3"></i> Ngành</h2>' +
-          '<p class="ifx-com-side-card__sub">Ngành liên quan — bấm để mở trang ngành</p>' +
-          '<div class="ifx-com-side-list">' + ui().sidebarSectorRowsHtml(post) + '</div>' +
-        '</section>' +
-
-        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
-          '<h2 class="ifx-com-side-card__title"><i class="ti ti-chart-line"></i> Cổ phiếu</h2>' +
-          '<p class="ifx-com-side-card__sub">Bấm mã để mở trang cổ phiếu</p>' +
-          '<div class="ifx-com-side-list">' + ui().sidebarTickerRowsHtml(post) + '</div>' +
-        '</section>' +
-
-        '<section class="ifx-com-side-card ifx-com-side-card--entities">' +
-          '<h2 class="ifx-com-side-card__title"><i class="ti ti-hierarchy-2"></i> Hệ sinh thái</h2>' +
-          '<p class="ifx-com-side-card__sub">Hệ sinh thái liên quan — bấm để mở</p>' +
-          '<div class="ifx-com-side-list">' + ui().sidebarEcosystemRowsHtml(post) + '</div>' +
-        '</section>' +
-
-        renderTocHtml(tocHeadings) +
-        renderCommentsSideCard(post) +
+        entityBlocks + toc + comments +
       '</aside>'
     );
   }
 
-  /* Cùng danh mục (ưu tiên) — fallback liên quan thực thể nếu thiếu category. */
+  /* WP-8: Related = related_to only (+ exclude current). */
   function relatedFilterFor(post) {
     if (!post) return { relatedTo: post };
-    var cat = post.category_id
-      || (post.category && (post.category.id || post.category.slug || post.category.name))
-      || post.category_slug
-      || post.category_name;
-    if (cat) {
-      return {
-        categoryId: cat,
-        excludeId: post.id || post.slug
-      };
-    }
-    return { relatedTo: post };
+    return {
+      relatedTo: post,
+      excludeId: post.id || post.slug
+    };
   }
 
   /* Khối "Bài viết liên quan" — cấu trúc section giống trang chủ Cộng đồng (DailyFeed). */
@@ -264,9 +268,11 @@
   function mountRelatedFeed(root, post) {
     var mount = root.querySelector('[data-ifx-com-related-feed]');
     if (!mount || !global.IfluxDailyFeed) return;
-    /* Giống trang chủ: Tin tức + Chuyên gia nổi bật + Bài viết chuyên gia */
+    /* Giống trang chủ: Tin tức + Chuyên gia nổi bật + Bài viết chuyên gia.
+     * mergeStore: không replace toàn bộ CommunityStore (tránh xóa bài đang xem + không kích loop). */
     global.IfluxDailyFeed.mount(mount, {
       filter: relatedFilterFor(post),
+      mergeStore: true,
       showNews: true,
       showExperts: true,
       showExpertPosts: true,
@@ -492,22 +498,7 @@
     return st().getPostById(ref) || st().getPostBySlug(ref);
   }
 
-  function render(root) {
-    if (!root || !st()) return;
-
-    var ref = global.IfluxSeoUrl
-      ? IfluxSeoUrl.parsePostRef()
-      : (new URLSearchParams(location.search).get('id') || new URLSearchParams(location.search).get('slug'));
-    if (!ref) {
-      root.innerHTML = '<div class="ifx-com-empty">Thiếu tham chiếu bài viết.</div>';
-      return;
-    }
-
-    var post = resolvePost(ref);
-    if (!post) {
-      root.innerHTML = '<div class="ifx-com-empty">Không tìm thấy bài viết.</div>';
-      return;
-    }
+  function paintPost(root, post) {
     var slug = post.slug;
     currentSlug = slug;
 
@@ -532,20 +523,56 @@
         '<span class="ifx-com-breadcrumb__sep">/</span>' +
         '<span class="ifx-com-breadcrumb__current">' + esc(post.title) + '</span>' +
       '</nav>' +
-      '<div class="ifx-com-story-layout">' +
-        '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
-        renderSidebar(post, bodyPrep.headings, presentation) +
-      '</div>' +
+      (function () {
+        var asideHtml = renderSidebar(post, bodyPrep.headings, presentation);
+        var layoutCls = 'ifx-com-story-layout' + (asideHtml ? '' : ' ifx-com-story-layout--no-aside');
+        return (
+          '<div class="' + layoutCls + '">' +
+            '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
+            asideHtml +
+          '</div>'
+        );
+      })() +
       renderRelatedFeed(post);
 
     bindEvents(root, post, slug);
     bindTocLinks(root);
     mountRelatedFeed(root, post);
     mountInteractionHosts(root, post);
+    if (ui() && typeof ui().hydrateTickerQuotes === 'function') {
+      ui().hydrateTickerQuotes(root, [post]);
+    }
     scrollToHashHeading(root);
     try {
       document.dispatchEvent(new CustomEvent('iflux-context-ready'));
     } catch (e) { /* ignore */ }
+  }
+
+  function render(root) {
+    if (!root || !st()) return;
+
+    var ref = global.IfluxSeoUrl
+      ? IfluxSeoUrl.parsePostRef()
+      : (new URLSearchParams(location.search).get('id') || new URLSearchParams(location.search).get('slug'));
+    if (!ref) {
+      root.innerHTML = '<div class="ifx-com-empty">Thiếu tham chiếu bài viết.</div>';
+      return;
+    }
+
+    var post = resolvePost(ref);
+    if (!post) {
+      root.innerHTML = '<div class="ifx-com-empty">Không tìm thấy bài viết.</div>';
+      return;
+    }
+
+    /* Prefetch runtime quotes trước paint — tránh hiện Mock seed / trống HDB·CMC */
+    var ready = ui() && typeof ui().prefetchTickerQuotes === 'function'
+      ? ui().prefetchTickerQuotes([post])
+      : Promise.resolve();
+    Promise.resolve(ready).then(function () {
+      if (!root.isConnected) return;
+      paintPost(root, post);
+    });
   }
 
   function init() {
@@ -573,7 +600,27 @@
       run();
     }
 
-    document.addEventListener('iflux-community-change', function () { render(root); });
+    /*
+     * CẤM full render trên mọi iflux-community-change:
+     * Related DailyFeed → setFeed → change → render → remount IX → "Đang tải" ↔ "Chưa có" (vòng lặp).
+     * Chỉ render lại khi chưa có bài / đổi bài.
+     */
+    document.addEventListener('iflux-community-change', function onCommunityChange() {
+      if (!root || !root.isConnected) {
+        document.removeEventListener('iflux-community-change', onCommunityChange);
+        return;
+      }
+      var ref = global.IfluxSeoUrl
+        ? IfluxSeoUrl.parsePostRef()
+        : (new URLSearchParams(location.search).get('id') || new URLSearchParams(location.search).get('slug'));
+      var post = resolvePost(ref);
+      if (!post) return;
+      if (currentSlug && root.querySelector('.ifx-com-article') &&
+          (String(post.slug) === String(currentSlug) || String(post.id) === String(currentSlug))) {
+        return;
+      }
+      render(root);
+    });
   }
 
   global.IfluxCommunityPostPage = { init: init };

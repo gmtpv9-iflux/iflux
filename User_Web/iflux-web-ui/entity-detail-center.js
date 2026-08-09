@@ -4,8 +4,10 @@
 (function (global) {
   'use strict';
 
-  function mk() { return global.IfluxMockMarket; }
   function seo() { return global.IfluxSeoUrl; }
+  function master() { return global.IfluxMarketMaster; }
+  function quotes() { return global.IfluxMarketQuotes; }
+  function tax() { return global.IfluxWatchlistTaxonomy; }
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -28,38 +30,50 @@
   }
 
   function pctCell(n) {
-    if (n == null || isNaN(n)) return '<td>—</td>';
+    if (n == null || isNaN(n)) return '<td data-ec-chg>—</td>';
     var cls = n > 0 ? 'ix-typo-status-positive' : (n < 0 ? 'ix-typo-status-negative' : '');
-    return '<td class="' + cls + '">' + fmtPct(n) + '</td>';
+    return '<td class="' + cls + '" data-ec-chg>' + fmtPct(n) + '</td>';
   }
 
-  /* ── Biểu đồ line nhỏ (P/E, P/B) — SVG, dùng token màu DS ── */
-  function lineChartSvg(values, labels, strokeVar, ariaLabel) {
-    if (!values || !values.length) {
-      return '<div class="ifx-stock-empty">Chưa có dữ liệu</div>';
+  function quoteChangePct(q) {
+    if (!q) return null;
+    if (q.change_pct != null && !isNaN(Number(q.change_pct))) return Number(q.change_pct);
+    if (q.pctChange != null && !isNaN(Number(q.pctChange))) return Number(q.pctChange);
+    return null;
+  }
+
+  function quotePrice(q) {
+    if (!q) return null;
+    if (q.price != null && !isNaN(Number(q.price))) return Number(q.price);
+    if (q.close != null && !isNaN(Number(q.close))) return Number(q.close);
+    return null;
+  }
+
+  function masterStock(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    var list = master() && typeof master().getMasterStocks === 'function' ? master().getMasterStocks() : null;
+    if (!list) return null;
+    for (var i = 0; i < list.length; i++) {
+      if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) return list[i];
     }
-    var yMin = Math.min.apply(null, values);
-    var yMax = Math.max.apply(null, values);
-    var pad = (yMax - yMin) * 0.12 || 0.5;
-    yMin -= pad; yMax += pad;
-    var plotW = 320, plotH = 160;
-    var step = values.length > 1 ? plotW / (values.length - 1) : 0;
-    var path = values.map(function (v, i) {
-      var x = i * step;
-      var y = (yMax === yMin) ? plotH / 2 : plotH - ((v - yMin) / (yMax - yMin)) * plotH;
-      return (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
-    }).join(' ');
-    var first = labels && labels.length ? labels[0] : '';
-    var last = labels && labels.length ? labels[labels.length - 1] : '';
-    var cur = values[values.length - 1];
-    return (
-      '<div class="ifx-stock-chart">' +
-        '<svg viewBox="0 0 ' + plotW + ' ' + plotH + '" preserveAspectRatio="none" role="img" aria-label="' + esc(ariaLabel) + '">' +
-          '<path d="' + path + '" fill="none" stroke="' + strokeVar + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
-        '</svg>' +
-        '<div class="ifx-stock-flow-hint"><span>' + esc(first) + '</span> · hiện tại <strong>' + esc(cur) + '</strong> · <span>' + esc(last) + '</span></div>' +
-      '</div>'
-    );
+    return null;
+  }
+
+  function stockIdentity(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    var s = masterStock(t);
+    var sectorName = '';
+    var tx = tax();
+    if (tx && typeof tx.getTickerMemberships === 'function') {
+      var mem = tx.getTickerMemberships(t) || {};
+      if (mem.sector && mem.sector.name) sectorName = mem.sector.name;
+    }
+    return {
+      ticker: t,
+      name: (s && (s.name || s.short_name)) || t,
+      exchange: (s && s.exchange) || '',
+      sector_name: sectorName
+    };
   }
 
   /* ── Panel Thông tin ── */
@@ -68,35 +82,24 @@
   }
 
   function stockInfoPanel(ticker) {
-    var info = mk() ? mk().getStockInfo(ticker) : null;
-    if (!info) return '<section class="ifx-stock-panel"><div class="ifx-stock-empty">Chưa có thông tin công ty.</div></section>';
+    var info = stockIdentity(ticker);
+    var q = quotes() && typeof quotes().peekQuote === 'function' ? quotes().peekQuote(ticker) : null;
     var rows =
-      infoRow('Sàn niêm yết', esc(info.exchange)) +
+      infoRow('Sàn niêm yết', esc(info.exchange || '—')) +
       (info.sector_name ? infoRow('Ngành', esc(info.sector_name)) : '') +
-      infoRow('Giá hiện tại', fmtPrice(info.price)) +
-      infoRow('Vốn hóa', esc(info.market_cap_label)) +
-      infoRow('KLGD', num(info.volume)) +
-      infoRow('EPS', num(info.eps) + ' đ') +
-      infoRow('Giá trị sổ sách (BVPS)', num(info.bvps) + ' đ') +
-      infoRow('KLCP lưu hành', num(info.shares_outstanding)) +
-      infoRow('P/E', info.pe != null ? info.pe : '—') +
-      infoRow('P/B', info.pb != null ? info.pb : '—');
-
-    var val = mk() ? mk().getStockValuationSeries(ticker, 22) : null;
-    var charts = '';
-    if (val) {
-      charts =
-        '<div class="ifx-stock-news-head" style="margin-top:var(--ifx-space-16)"><h2 class="ifx-stock-panel__title"><i class="ti ti-chart-line"></i> Biểu đồ P/E</h2></div>' +
-        lineChartSvg(val.pe, val.labels, 'var(--ix-primary)', 'Biểu đồ P/E ' + ticker) +
-        '<div class="ifx-stock-news-head" style="margin-top:var(--ifx-space-16)"><h2 class="ifx-stock-panel__title"><i class="ti ti-chart-line"></i> Biểu đồ P/B</h2></div>' +
-        lineChartSvg(val.pb, val.labels, 'var(--ix-info)', 'Biểu đồ P/B ' + ticker);
-    }
+      infoRow('Giá hiện tại', '<span data-ec-price>' + fmtPrice(quotePrice(q)) + '</span>') +
+      infoRow('Vốn hóa', '—') +
+      infoRow('KLGD', '<span data-ec-vol>' + (q && q.volume != null ? num(q.volume) : '—') + '</span>') +
+      infoRow('EPS', '—') +
+      infoRow('Giá trị sổ sách (BVPS)', '—') +
+      infoRow('KLCP lưu hành', '—') +
+      infoRow('P/E', '—') +
+      infoRow('P/B', '—');
 
     return (
-      '<section class="ifx-stock-panel">' +
+      '<section class="ifx-stock-panel" data-ec-stock-info="' + esc(info.ticker) + '">' +
         '<div class="ifx-stock-news-head"><h1>Thông tin công ty · ' + esc(info.name || ticker) + '</h1></div>' +
         '<table class="ix-table"><tbody>' + rows + '</tbody></table>' +
-        charts +
       '</section>'
     );
   }
@@ -110,34 +113,25 @@
     if (!detail) return '<section class="ifx-stock-panel"><div class="ifx-stock-empty">Chưa có thông tin.</div></section>';
     var tickers = detail.tickers || [];
     var rows = '';
-    var sumPe = 0, nPe = 0, sumPb = 0, nPb = 0;
     tickers.forEach(function (tk) {
-      var info = mk() ? mk().getStockInfo(tk) : null;
-      var stock = mk() ? mk().getStock(tk) : null;
-      var chg = stock ? stock.change_pct : null;
-      var pe = info ? info.pe : null;
-      var pb = info ? info.pb : null;
-      if (pe != null) { sumPe += pe; nPe++; }
-      if (pb != null) { sumPb += pb; nPb++; }
+      var s = masterStock(tk);
+      var name = (s && (s.name || s.short_name)) || '';
+      var q = quotes() && typeof quotes().peekQuote === 'function' ? quotes().peekQuote(tk) : null;
       rows +=
-        '<tr>' +
+        '<tr data-ec-mem-ticker="' + esc(tk) + '">' +
           '<td><a class="ix-chip ix-chip-sm" href="' + memberHref(tk) + '">' + esc(tk) + '</a></td>' +
-          '<td>' + esc(info ? info.name : (stock ? stock.name : '')) + '</td>' +
-          pctCell(chg) +
-          '<td>' + (pe != null ? pe : '—') + '</td>' +
-          '<td>' + (pb != null ? pb : '—') + '</td>' +
+          '<td>' + esc(name) + '</td>' +
+          pctCell(quoteChangePct(q)) +
+          '<td>—</td>' +
+          '<td>—</td>' +
         '</tr>';
     });
-    var avgPe = nPe ? Math.round((sumPe / nPe) * 10) / 10 : null;
-    var avgPb = nPb ? Math.round((sumPb / nPb) * 100) / 100 : null;
 
     return (
-      '<section class="ifx-stock-panel">' +
+      '<section class="ifx-stock-panel" data-ec-group-info>' +
         '<div class="ifx-stock-news-head">' +
           '<h1>Thông tin · ' + esc(detail.name) + '</h1>' +
-          '<p>' + detail.member_count + ' mã · Hiệu suất nhóm ' + fmtPct(detail.change_pct) +
-            (avgPe != null ? ' · P/E TB ' + avgPe : '') +
-            (avgPb != null ? ' · P/B TB ' + avgPb : '') + '</p>' +
+          '<p>' + detail.member_count + ' mã · Hiệu suất nhóm —</p>' +
         '</div>' +
         '<table class="ix-table"><thead><tr>' +
           '<th>Mã</th><th>Tên</th><th>%±</th><th>P/E</th><th>P/B</th>' +
@@ -146,32 +140,16 @@
     );
   }
 
-  /* ── Panel Lịch sự kiện (chỉ CP) ── */
+  /* ── Panel Lịch sự kiện (chỉ CP) — không mock sandbox ── */
   function eventsPanel(ticker) {
-    var events = mk() ? mk().getStockEvents(ticker) : [];
-    var body;
-    if (!events.length) {
-      body = '<div class="ifx-stock-empty">Chưa có lịch sự kiện cho <strong>' + esc(ticker) + '</strong>.</div>';
-    } else {
-      var rows = events.map(function (ev) {
-        var chipCls = ev.upcoming ? 'ix-chip ix-chip-sm ix-chip-primary' : 'ix-chip ix-chip-sm';
-        return '<tr>' +
-          '<td>' + esc(ev.date_label) + '</td>' +
-          '<td><span class="' + chipCls + '">' + esc(ev.type_label) + '</span></td>' +
-          '<td>' + esc(ev.title) + (ev.detail ? ' <span style="color:var(--ix-text-muted)">· ' + esc(ev.detail) + '</span>' : '') + '</td>' +
-        '</tr>';
-      }).join('');
-      body = '<table class="ix-table"><thead><tr><th>Ngày</th><th>Sự kiện</th><th>Nội dung</th></tr></thead><tbody>' + rows + '</tbody></table>';
-    }
     return (
       '<section class="ifx-stock-panel">' +
         '<div class="ifx-stock-news-head"><h1>Lịch sự kiện · ' + esc(ticker) + '</h1></div>' +
-        body +
+        '<div class="ifx-stock-empty">Chưa có lịch sự kiện cho <strong>' + esc(ticker) + '</strong>.</div>' +
       '</section>'
     );
   }
 
-  /* ── Render toàn bộ cột giữa ── */
   /* Consumer thuần: tab context lấy từ IfluxAppShell.getContextTabs(entityType)
    * (SoT = IfluxNavRegistry.context). Renderer KHÔNG tự khai báo danh sách tab. */
   function tabsBar(opts) {
@@ -195,17 +173,6 @@
     return '<div class="ix-tab-content' + (active ? ' active' : '') + '" data-ec-panel="' + key + '">' + html + '</div>';
   }
 
-  /**
-   * ctx: {
-   *   kind: 'stock'|'sector'|'family'|'story',
-   *   ticker,               // khi kind==='stock'
-   *   detail,               // group detail khi kind!=='stock'
-   *   postsSectionHtml,     // Bài viết (chuyên gia) — dựng sẵn ở caller
-   *   newsSectionHtml,      // Tin tức — dựng sẵn ở caller
-   *   commentsSectionHtml,  // Bình luận (panel chat) — dựng sẵn ở caller
-   *   commentCount          // số bình luận hiển thị trên tab
-   * }
-   */
   function render(ctx) {
     ctx = ctx || {};
     var isStock = ctx.kind === 'stock';
@@ -222,12 +189,47 @@
   }
 
   function mountDailyFeed(col, ctx) {
-    var mount = col.querySelector('[data-ec-daily-feed]');
-    if (!mount || !global.IfluxDailyFeed || !ctx.feedFilter) return;
-    global.IfluxDailyFeed.mount(mount, {
+    var mountEl = col.querySelector('[data-ec-daily-feed]');
+    if (!mountEl || !global.IfluxDailyFeed || !ctx.feedFilter) return;
+    global.IfluxDailyFeed.mount(mountEl, {
       filter: ctx.feedFilter,
       storyBase: ctx.storyBase || '../community/',
       expertTitle: 'Phân tích của chuyên gia'
+    });
+  }
+
+  function hydrateStockInfo(col, ticker) {
+    var mq = quotes();
+    if (!mq || !ticker) return;
+    var panelEl = col.querySelector('[data-ec-stock-info]');
+    if (!panelEl) return;
+    mq.getQuote(ticker).then(function (q) {
+      if (!q) return;
+      var p = panelEl.querySelector('[data-ec-price]');
+      if (p) p.textContent = fmtPrice(quotePrice(q));
+      var v = panelEl.querySelector('[data-ec-vol]');
+      if (v) v.textContent = q.volume != null ? num(q.volume) : '—';
+    });
+  }
+
+  function hydrateGroupMemberQuotes(col, detail) {
+    var mq = quotes();
+    if (!mq || !detail || !detail.tickers || !detail.tickers.length) return;
+    mq.getQuotes(detail.tickers).then(function (res) {
+      col.querySelectorAll('[data-ec-mem-ticker]').forEach(function (tr) {
+        var tk = tr.getAttribute('data-ec-mem-ticker');
+        var q = res && res[tk];
+        var cell = tr.querySelector('[data-ec-chg]');
+        if (!cell) return;
+        var pct = quoteChangePct(q);
+        if (pct == null || isNaN(pct)) {
+          cell.className = '';
+          cell.textContent = '—';
+          return;
+        }
+        cell.className = pct > 0 ? 'ix-typo-status-positive' : (pct < 0 ? 'ix-typo-status-negative' : '');
+        cell.textContent = fmtPct(pct);
+      });
     });
   }
 
@@ -237,6 +239,8 @@
     if (!col) return;
 
     mountDailyFeed(col, ctx);
+    if (ctx.kind === 'stock') hydrateStockInfo(col, ctx.ticker);
+    else hydrateGroupMemberQuotes(col, ctx.detail);
 
     var tabsWrap = col.querySelector('[data-ec-tabs]');
     if (!tabsWrap) return;

@@ -6,7 +6,7 @@ import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=pha
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
-var V = 'followFound20260724';
+var V = 'mockRmWp1_20260809';
 
 export const meta = {
   id: 'WGT-COM-001',
@@ -25,7 +25,8 @@ export async function mount(el, ctx) {
   ]);
 
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
+    { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + V },
+    { global: 'IfluxMarketQuotes', src: ASSET + 'iflux-market-quotes.js?v=' + V },
     { global: 'IfluxCommunityStore', src: ASSET + 'community-store.js' },
     { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=' + V },
     { global: 'IfluxHeartAction', src: FOUNDATION + 'heart-action.js?v=' + V },

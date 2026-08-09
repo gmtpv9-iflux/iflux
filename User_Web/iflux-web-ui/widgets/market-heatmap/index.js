@@ -24,9 +24,9 @@ function resolveSource(ctx) {
 export async function mount(el, ctx) {
   ctx = ctx || {};
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    /* W4: IfluxBlockTemplates = Shell — ensureSequence skip nếu đã có */
-    { global: 'IfluxMarketHeatmap', src: ASSET + 'market-heatmap.js?v=ui00120260723' }
+    /* W4: IfluxBlockTemplates = Shell — ensureSequence skip nếu đã có.
+       WP-4: bỏ module mock thị trường — heatmap không còn phụ thuộc mock. */
+    { global: 'IfluxMarketHeatmap', src: ASSET + 'market-heatmap.js?v=mockRmWp4_20260809' }
   ]);
 
   var Heatmap = window.IfluxMarketHeatmap;

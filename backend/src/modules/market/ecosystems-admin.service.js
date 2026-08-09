@@ -39,7 +39,6 @@ function mapRow(row) {
     description: row.description || null,
     display_order: Number(row.display_order) || 0,
     icon_media_id: row.icon_media_id || null,
-    divisor: Number(row.divisor),
     status: row.is_active ? 'active' : 'inactive',
     is_active: !!row.is_active,
     tickers: tickers,
@@ -50,7 +49,30 @@ function mapRow(row) {
   };
 }
 
-const SELECT_BASE = `
+const SELECT_LIST = `
+  SELECT e.*,
+    COALESCE(
+      (SELECT array_agg(st.ticker ORDER BY st.ticker)
+         FROM stocks st WHERE st.ecosystem_id = e.id),
+      ARRAY[]::varchar[]
+    ) AS tickers,
+    (SELECT COUNT(*)::int FROM stocks st WHERE st.ecosystem_id = e.id) AS stock_count,
+    COALESCE(pc.post_count, 0)::int AS post_count
+  FROM ecosystems e
+  LEFT JOIN (
+    SELECT key, COUNT(*)::int AS post_count
+    FROM (
+      SELECT payload->>'ecosystem_id' AS key FROM community_posts
+        WHERE payload ? 'ecosystem_id' AND COALESCE(payload->>'ecosystem_id','') <> ''
+      UNION ALL
+      SELECT payload->>'ecosystem_code' AS key FROM community_posts
+        WHERE payload ? 'ecosystem_code' AND COALESCE(payload->>'ecosystem_code','') <> ''
+    ) x
+    GROUP BY key
+  ) pc ON pc.key = e.id::text OR pc.key = e.code
+`;
+
+const SELECT_DETAIL = `
   SELECT e.*,
     COALESCE(
       (SELECT array_agg(st.ticker ORDER BY st.ticker)
@@ -59,13 +81,13 @@ const SELECT_BASE = `
     ) AS tickers,
     (SELECT COUNT(*)::int FROM stocks st WHERE st.ecosystem_id = e.id) AS stock_count,
     (
-      SELECT COUNT(*)::int 
-      FROM community_posts p 
-      WHERE (p.payload->>'ecosystem_id')::text = e.id::text 
+      SELECT COUNT(*)::int
+      FROM community_posts p
+      WHERE (p.payload->>'ecosystem_id')::text = e.id::text
          OR (p.payload->>'ecosystem_code')::text = e.code
          OR EXISTS (
-              SELECT 1 
-              FROM jsonb_array_elements_text(COALESCE(p.payload->'ecosystems', '[]'::jsonb)) elem 
+              SELECT 1
+              FROM jsonb_array_elements_text(COALESCE(p.payload->'ecosystems', '[]'::jsonb)) elem
               WHERE elem = e.id::text OR elem = e.code OR elem = COALESCE(e.slug, '')
             )
     ) AS post_count
@@ -74,7 +96,7 @@ const SELECT_BASE = `
 
 async function listEcosystems(filters = {}) {
   const params = [];
-  let sql = SELECT_BASE + ' WHERE 1=1';
+  let sql = SELECT_LIST + ' WHERE 1=1';
   if (filters.q) {
     const qStr = String(filters.q).trim().toLowerCase();
     params.push('%' + qStr + '%');
@@ -93,7 +115,7 @@ async function listEcosystems(filters = {}) {
 }
 
 async function getEcosystem(id) {
-  const res = await query(SELECT_BASE + ' WHERE e.id = $1', [id]);
+  const res = await query(SELECT_DETAIL + ' WHERE e.id = $1', [id]);
   return mapRow(res.rows[0] || null);
 }
 
@@ -128,10 +150,6 @@ async function createEcosystem(input) {
   if (!code) throw AppError.badRequest('VALIDATION', 'Mã không hợp lệ');
 
   const tickers = normTickers(input && input.tickers);
-  let divisor = Number(input && input.divisor);
-  if (!Number.isFinite(divisor) || divisor < 1) {
-    divisor = Math.max(tickers.length, 1);
-  }
 
   let isActive = true;
   if (input && input.status != null) {
@@ -139,15 +157,17 @@ async function createEcosystem(input) {
   } else if (input && input.is_active != null) {
     isActive = !!input.is_active;
   }
+  const description =
+    input && input.description != null ? String(input.description).trim() || null : null;
 
   const dup = await query('SELECT id FROM ecosystems WHERE code = $1', [code]);
   if (dup.rows[0]) throw AppError.conflict('DUPLICATE', 'Mã hệ sinh thái đã tồn tại');
 
   const res = await query(
-    `INSERT INTO ecosystems (code, name_vi, divisor, is_active, updated_at)
+    `INSERT INTO ecosystems (code, name_vi, description, is_active, updated_at)
      VALUES ($1, $2, $3, $4, NOW())
      RETURNING id`,
-    [code, name, divisor, isActive]
+    [code, name, description, isActive]
   );
   const id = res.rows[0].id;
   if (tickers.length) await syncTickers(id, tickers);
@@ -164,23 +184,20 @@ async function updateEcosystem(id, input) {
       : current.name;
   if (!name) throw AppError.badRequest('VALIDATION', 'Tên hệ sinh thái bắt buộc');
 
-  let divisor = current.divisor;
-  if (input.divisor != null) {
-    divisor = Number(input.divisor);
-    if (!Number.isFinite(divisor) || divisor < 1) {
-      throw AppError.badRequest('VALIDATION', 'Divisor phải ≥ 1');
-    }
-  }
-
   let isActive = current.is_active;
   if (input.status != null) isActive = String(input.status) !== 'inactive';
   else if (input.is_active != null) isActive = !!input.is_active;
 
+  let description = current.description;
+  if (input && Object.prototype.hasOwnProperty.call(input, 'description')) {
+    description = input.description != null ? String(input.description).trim() || null : null;
+  }
+
   await query(
     `UPDATE ecosystems
-     SET name_vi = $2, divisor = $3, is_active = $4, updated_at = NOW()
+     SET name_vi = $2, description = $3, is_active = $4, updated_at = NOW()
      WHERE id = $1`,
-    [id, name, divisor, isActive]
+    [id, name, description, isActive]
   );
 
   if (Object.prototype.hasOwnProperty.call(input || {}, 'tickers')) {

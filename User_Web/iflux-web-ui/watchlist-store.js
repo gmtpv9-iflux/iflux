@@ -65,10 +65,6 @@ Note: feature modules[] — Owner sai trên Community
     if (localStorage.getItem(store.scopedKey(STORAGE_KEY))) return;
 
     var tickers = [];
-    if (global.IfluxMockMarket) {
-      var snap = IfluxMockMarket.getSnapshot();
-      if (snap && snap.watchlist) tickers = snap.watchlist.slice();
-    }
     if (!tickers.length) return;
     tickers.forEach(function (t) {
       state.memberships[t] = [DEFAULT_FOLDER_ID];
@@ -347,10 +343,6 @@ Note: feature modules[] — Owner sai trên Community
     var state = read();
     if (Object.keys(state.memberships || {}).length) return;
     var tickers = ['HPG', 'FPT', 'VCB', 'MWG', 'SSI'];
-    if (global.IfluxMockMarket) {
-      var snap = IfluxMockMarket.getSnapshot();
-      if (snap && snap.watchlist && snap.watchlist.length) tickers = snap.watchlist.slice();
-    }
     tickers.forEach(function (t) {
       state.memberships[String(t).toUpperCase()] = [DEFAULT_FOLDER_ID];
     });

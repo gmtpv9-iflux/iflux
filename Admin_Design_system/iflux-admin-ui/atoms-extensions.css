@@ -98,7 +98,8 @@ Note: Bundle iflux-admin-ui.css — không bỏ load từ Community
   color: var(--color-text-primary);
 }
 
-.ix-caption,
+/* :not(td/th) — tránh display:block phá table-cell khi gắn .ix-caption lên ô bảng */
+.ix-caption:not(td):not(th),
 .ix-helper-text,
 .ix-field-title { display: block; }
 

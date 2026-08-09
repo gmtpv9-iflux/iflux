@@ -40,14 +40,10 @@ export async function mount(el, ctx) {
   var metric = resolveMetric(ctx, widgetId);
 
   await loadStyles(CSS);
+  /* WP-4: bỏ module mock thị trường + ApexCharts — thanh khoản UNAVAILABLE (không có runtime authority), không còn vẽ chart. */
   await ensureSequence([
-    {
-      global: 'ApexCharts',
-      src: 'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
-    },
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
     { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=entEntity20260720' },
-    { global: 'IfluxMarketLiquidity', src: ASSET + 'market-liquidity.js' }
+    { global: 'IfluxMarketLiquidity', src: ASSET + 'market-liquidity.js?v=mockRmWp4_20260809' }
   ]);
 
   if (!window.IfluxMarketLiquidity || typeof window.IfluxMarketLiquidity.mountBlock !== 'function') {
