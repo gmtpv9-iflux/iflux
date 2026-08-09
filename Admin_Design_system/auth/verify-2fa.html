@@ -5,7 +5,7 @@
   <title>ADM-AUTH — Xác thực 2FA · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../iflux-admin-ui/iflux-admin-ui.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
 </head>
 <body>
 <div class="ix-auth-root">
@@ -23,19 +23,19 @@
       <p style="font-size:12px;color:var(--ix-text-muted);margin:8px 0 0">Mã làm mới mỗi 30 giây. Không chia sẻ mã với bất kỳ ai.</p>
     </div>
 
-    <a href="../app/dashboard/index.html" class="ix-btn ix-btn-primary" id="otp-submit" style="width:100%;margin-bottom:16px;text-align:center">Xác nhận</a>
+    <a href="/Admin_Design_system/app/dashboard/index.html" class="ix-btn ix-btn-primary" id="otp-submit" style="width:100%;margin-bottom:16px;text-align:center">Xác nhận</a>
 
     <div class="ix-auth-footer">
-      <a href="login.html">Quay lại đăng nhập</a>
+      <a href="/Admin_Design_system/auth/login.html">Quay lại đăng nhập</a>
     </div>
 
-    <a href="../hub.html" class="ix-auth-back" style="margin-top:20px">
+    <a href="/Admin_Design_system/hub.html" class="ix-auth-back" style="margin-top:20px">
       <i class="ti ti-chevron-left" style="font-size:13px"></i>
       Về Hub checklist
     </a>
   </div>
 </div>
-<script src="../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
 <script>
 document.getElementById('otp-submit').addEventListener('click', function (e) {
   var code = (document.getElementById('otp-code').value || '').trim();

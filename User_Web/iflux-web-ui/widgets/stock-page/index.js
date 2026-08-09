@@ -4,7 +4,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-import featureManifest from '../../features/stock.manifest.js?v=feedDto20260724';
+import featureManifest from '../../features/stock.manifest.js?v=mdmShell20260808';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;

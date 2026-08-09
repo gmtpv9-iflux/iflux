@@ -6,6 +6,7 @@ const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
 const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 const svc = require('./wave-e-admin.service');
+const timeCfg = require('../market/market-time-config.service');
 
 function permFactory(deps) {
   return function perm() {
@@ -77,22 +78,44 @@ function createSystemWaveERouter(deps) {
   const perm = permFactory(deps || {});
 
   router.get('/core-setup', perm('system.core_setup.view'), async (req, res, next) => {
-    try { return success(res, { item: await svc.getKv('core_setup') }); }
-    catch (e) { next(e); }
+    try {
+      const item = await svc.getKv('core_setup');
+      const normalized = timeCfg.mergeTimeIntoPayload(item.payload || {}, {});
+      return success(res, {
+        item: Object.assign({}, item, { payload: normalized }),
+        time_config: timeCfg.extractTimeFields(normalized)
+      });
+    } catch (e) { next(e); }
   });
   router.patch('/core-setup', perm('system.core_setup.edit'), validate(z.object({
     body: z.object({ payload: z.record(z.any()) })
   })), async (req, res, next) => {
-    try { return success(res, { item: await svc.setKv('core_setup', req.validated.body.payload) }); }
-    catch (e) { next(e); }
+    try {
+      const cur = await svc.getKv('core_setup');
+      const payload = timeCfg.mergeTimeIntoPayload(cur.payload || {}, req.validated.body.payload || {});
+      const item = await svc.setKv('core_setup', payload);
+      return success(res, {
+        item: item,
+        time_config: timeCfg.extractTimeFields(payload)
+      });
+    } catch (e) { next(e); }
   });
   router.post('/core-setup/configure', perm('system.core_setup.configure'), validate(z.object({
     body: z.object({ payload: z.record(z.any()).optional() })
   })), async (req, res, next) => {
     try {
       const cur = await svc.getKv('core_setup');
-      const payload = Object.assign({}, cur.payload || {}, (req.validated.body && req.validated.body.payload) || {}, { configured_at: new Date().toISOString() });
-      return success(res, { item: await svc.setKv('core_setup', payload) });
+      const payload = timeCfg.mergeTimeIntoPayload(
+        cur.payload || {},
+        Object.assign({}, (req.validated.body && req.validated.body.payload) || {}, {
+          configured_at: new Date().toISOString()
+        })
+      );
+      payload.configured_at = new Date().toISOString();
+      return success(res, {
+        item: await svc.setKv('core_setup', payload),
+        time_config: timeCfg.extractTimeFields(payload)
+      });
     } catch (e) { next(e); }
   });
 

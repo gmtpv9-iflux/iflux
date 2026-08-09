@@ -22,7 +22,7 @@ var DEPS_TIERS = [
     '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724'
   ],
   [
-    ASSET + 'community-trending.js?v=followFound20260724'
+    ASSET + 'community-trending.js?v=mockRmWp1_20260809'
   ]
 ];
 

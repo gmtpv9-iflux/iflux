@@ -197,7 +197,8 @@ async function fetchCommunityRows(filters) {
 
   sql += ` ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC`;
 
-  const limit = Math.min(Math.max(Number(filters.limit) || 30, 1), 50);
+  /* Cho phép 51 khi listFeed hỏi L+1 (FEED_PAGE_SIZE max trả client vẫn 50) */
+  const limit = Math.min(Math.max(Number(filters.limit) || 30, 1), 51);
   const offset = Math.max(Number(filters.offset) || 0, 0);
   params.push(limit);
   sql += ` LIMIT $${params.length}`;
@@ -263,20 +264,20 @@ async function listFeed(filters) {
 
   if (filters.related_to) {
     const seed = await resolveRelatedSeed(filters.related_to);
-    if (!seed) return { cards: [], total: 0, limit, offset };
+    if (!seed) return { cards: [], total: 0, limit, offset, has_more: false };
 
     let cards = [];
     if (seed.category_id) {
       cards = await fetchCommunityRows({
-        limit: limit,
+        limit: limit + 1,
         offset: 0,
         category_id: seed.category_id,
         exclude_id: seed.id
       });
     }
-    if (cards.length < limit && seed.chu_de_id) {
+    if (cards.length < limit + 1 && seed.chu_de_id) {
       const more = await fetchCommunityRows({
-        limit: limit,
+        limit: limit + 1,
         offset: 0,
         chu_de_id: seed.chu_de_id,
         exclude_id: seed.id
@@ -290,9 +291,9 @@ async function listFeed(filters) {
         }
       });
     }
-    if (cards.length < limit && seed.tickers && seed.tickers.length) {
+    if (cards.length < limit + 1 && seed.tickers && seed.tickers.length) {
       const more = await fetchCommunityRows({
-        limit: limit,
+        limit: limit + 1,
         offset: 0,
         ticker: seed.tickers[0],
         exclude_id: seed.id
@@ -306,9 +307,9 @@ async function listFeed(filters) {
         }
       });
     }
-    if (cards.length < limit) {
+    if (cards.length < limit + 1) {
       const more = await fetchCommunityRows({
-        limit: limit,
+        limit: limit + 1,
         offset: 0,
         exclude_id: seed.id
       });
@@ -321,12 +322,14 @@ async function listFeed(filters) {
         }
       });
     }
+    const has_more = cards.length > limit;
     cards = cards.slice(0, limit);
-    return { cards: cards, total: cards.length, limit: limit, offset: 0 };
+    return { cards: cards, total: cards.length, limit: limit, offset: 0, has_more: has_more };
   }
 
+  /* L+1 → has_more; cùng filter + ORDER BY deterministic (fetchCommunityRows) */
   const communityCards = await fetchCommunityRows({
-    limit: limit,
+    limit: limit + 1,
     offset: offset,
     ticker: filters.ticker,
     category_id: filters.category_id,
@@ -334,29 +337,33 @@ async function listFeed(filters) {
     content_type: filters.content_type || filters.type || null
   });
 
-  /* Trộn Content Engine chỉ khi feed tổng (không ticker/entity filter) */
-  let cards = communityCards.slice();
+  let has_more = communityCards.length > limit;
+  let cards = communityCards.slice(0, limit);
+
+  /* Trộn Content Engine chỉ khi feed tổng (không ticker/entity filter) · page 0 */
   if (!filters.ticker && !filters.category_id && !filters.chu_de_id && offset === 0) {
     if (!filters.content_type || filters.content_type === 'news' || filters.type === 'news') {
-      const external = await mergeContentEngineCards(limit);
+      const external = await mergeContentEngineCards(limit + 1);
+      const pool = communityCards.slice();
       const seen = {};
-      cards.forEach(function (c) { if (c && c.id) seen[c.id] = true; });
+      pool.forEach(function (c) { if (c && c.id) seen[c.id] = true; });
       external.forEach(function (c) {
         if (c && c.id && !seen[c.id]) {
           seen[c.id] = true;
-          cards.push(c);
+          pool.push(c);
         }
       });
-      cards.sort(function (a, b) {
+      pool.sort(function (a, b) {
         const ta = new Date(a.published_at || a.created_at || 0).getTime();
         const tb = new Date(b.published_at || b.created_at || 0).getTime();
         return tb - ta;
       });
-      cards = cards.slice(0, limit);
+      has_more = pool.length > limit || has_more;
+      cards = pool.slice(0, limit);
     }
   }
 
-  return { cards: cards, total: cards.length, limit: limit, offset: offset };
+  return { cards: cards, total: cards.length, limit: limit, offset: offset, has_more: !!has_more };
 }
 
 module.exports = {

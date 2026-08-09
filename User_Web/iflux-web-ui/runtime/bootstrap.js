@@ -22,9 +22,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=entStrip20260724';
+import { bootPage } from './page-runtime.js?v=cssPin20260808';
 import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
-import { bootShell } from './shell-boot.js?v=abhE520260727';
+import { bootShell } from './shell-boot.js?v=mdmFix20260808';
 
 var VER = '?v=phaseCW5gate20260721';
 var P4 = '?v=phaseCW5gate20260721';
@@ -33,15 +33,15 @@ var B2 = '?v=phaseB220260721a';
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
-  flow: function () { return import('../pages/flow.manifest.js' + VER); },
-  community: function () { return import('../pages/community.manifest.js?v=b4Href20260727'); },
+  flow: function () { return import('../pages/flow.manifest.js?v=mdmShell20260808'); },
+  community: function () { return import('../pages/community.manifest.js?v=catIconGap20260808'); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js' + VER); },
   sectors: function () { return import('../pages/sectors.manifest.js' + VER); },
   ecosystems: function () { return import('../pages/ecosystems.manifest.js' + VER); },
   chuDe: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
   cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
-  stock: function () { return import('../pages/stock.manifest.js' + VER); },
+  stock: function () { return import('../pages/stock.manifest.js?v=mdmShell20260808'); },
   sector: function () { return import('../pages/sector.manifest.js' + VER); },
   family: function () { return import('../pages/family.manifest.js' + VER); },
   chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + VER); },
@@ -51,7 +51,7 @@ var MANIFEST_MAP = {
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
   messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  communityPost: function () { return import('../pages/community-post.manifest.js?v=b5ixFlat20260727'); },
+  communityPost: function () { return import('../pages/community-post.manifest.js?v=cmtLoopFix20260808'); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
   communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },

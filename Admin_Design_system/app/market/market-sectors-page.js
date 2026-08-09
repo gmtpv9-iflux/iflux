@@ -4,7 +4,7 @@
 
   var items = [];
   var editingId = null;
-  var inlineEditId = null;
+  var stocksSectorId = null;
   var searchTimer = null;
 
   function canPerm(key) {
@@ -98,27 +98,18 @@
     if (!tbody) return;
 
     if (!items.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="ix-caption" style="text-align:center;padding:32px">Chưa có ngành.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="ix-caption" style="text-align:center;padding:32px">Chưa có ngành.</td></tr>';
       return;
     }
 
     tbody.innerHTML = items.map(function (sec) {
       var active = sec.status === 'active' || sec.is_active;
-      var isInline = inlineEditId === sec.id;
       var canEdit = canPerm('market.sectors.edit');
       var canDelete = canPerm('market.sectors.delete');
 
-      var divisorCell = isInline && canEdit
-        ? '<input type="number" class="ix-input" style="width:80px" id="adm-mkt-sector-inline-' + sec.id + '" value="' + esc(sec.divisor) + '" min="1" max="99" />' +
-          ' <button type="button" class="ix-btn ix-btn-success ix-btn-sm" data-adm-mkt-sector-inline-save="' + sec.id + '"><i class="ti ti-check"></i></button>' +
-          ' <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-adm-mkt-sector-inline-cancel="' + sec.id + '"><i class="ti ti-x"></i></button>'
-        : '<span style="font-weight:600">' + esc(sec.divisor) + '</span> ' +
-          (canEdit
-            ? '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-sector-inline-edit="' + sec.id + '" title="Sửa divisor"><i class="ti ti-pencil" style="font-size:13px"></i></button>'
-            : '');
-
       var actions = '';
       if (canEdit) {
+        actions += '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-sector-stocks="' + sec.id + '" title="Thêm cổ phiếu"><i class="ti ti-list-details" style="font-size:14px"></i></button>';
         actions += '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-sector-edit="' + sec.id + '" title="Sửa"><i class="ti ti-edit" style="font-size:14px"></i></button>';
         actions += '<button type="button" class="ix-btn ix-btn-icon" data-adm-mkt-sector-toggle="' + sec.id + '" title="' + (active ? 'Tắt' : 'Bật') + '"><i class="ti ti-' + (active ? 'toggle-right' : 'toggle-left') + '" style="font-size:14px"></i></button>';
       }
@@ -130,7 +121,6 @@
         '<td><strong>' + esc(sec.name || sec.name_vi) + '</strong><div class="ix-caption">' + esc(sec.code || '') + '</div></td>' +
         '<td>' + esc(sec.stock_count || 0) + '</td>' +
         '<td>' + esc(sec.post_count || 0) + '</td>' +
-        '<td>' + divisorCell + '</td>' +
         '<td>' + statusChip(active) + '</td>' +
         '<td style="font-size:12px;color:var(--ix-text-muted)">' + esc(fmtDate(sec.updated_at)) + '</td>' +
         '<td><div style="display:flex;gap:4px">' + actions + '</div></td>' +
@@ -141,11 +131,11 @@
   function resetModal() {
     editingId = null;
     var nameEl = document.getElementById('adm-mkt-sector-name');
-    var divEl = document.getElementById('adm-mkt-sector-divisor');
     var statusEl = document.getElementById('adm-mkt-sector-status');
+    var descEl = document.getElementById('adm-mkt-sector-desc');
     if (nameEl) nameEl.value = '';
-    if (divEl) divEl.value = '5';
     if (statusEl) statusEl.value = 'active';
+    if (descEl) descEl.value = '';
     var title = document.getElementById('adm-mkt-sector-modal-title');
     if (title) title.textContent = 'Thêm ngành';
   }
@@ -160,63 +150,83 @@
       }
       editingId = sec.id;
       var nameEl = document.getElementById('adm-mkt-sector-name');
-      var divEl = document.getElementById('adm-mkt-sector-divisor');
       var statusEl = document.getElementById('adm-mkt-sector-status');
+      var descEl = document.getElementById('adm-mkt-sector-desc');
       if (nameEl) nameEl.value = sec.name || sec.name_vi || '';
-      if (divEl) divEl.value = sec.divisor || 5;
       if (statusEl) statusEl.value = sec.status || (sec.is_active ? 'active' : 'inactive');
+      if (descEl) descEl.value = sec.description || '';
       var title = document.getElementById('adm-mkt-sector-modal-title');
       if (title) title.textContent = 'Sửa ngành';
     }
-    if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-sector-form');
+    if (typeof global.ixOpenOffcanvas === 'function') global.ixOpenOffcanvas('offcanvas-sector-form');
+  }
+
+  function openStocksDrawer(id) {
+    var sec = items.filter(function (x) { return String(x.id) === String(id); })[0];
+    if (!sec) {
+      toast('Không tìm thấy ngành', 'danger');
+      return;
+    }
+    stocksSectorId = sec.id;
+    var title = document.getElementById('adm-mkt-sector-stocks-title');
+    if (title) title.textContent = 'Cổ phiếu · ' + (sec.name || sec.name_vi || '');
+    var ta = document.getElementById('adm-mkt-sector-tickers');
+    if (ta) ta.value = (sec.tickers || []).join(', ');
+    if (typeof global.ixOpenOffcanvas === 'function') {
+      global.ixOpenOffcanvas('offcanvas-sector-stocks');
+    }
+  }
+
+  function parseTickers(raw) {
+    return String(raw || '')
+      .split(/[\s,;]+/)
+      .map(function (t) { return t.trim().toUpperCase(); })
+      .filter(Boolean);
+  }
+
+  function saveStocks() {
+    if (!stocksSectorId) return;
+    var tickers = parseTickers((document.getElementById('adm-mkt-sector-tickers') || {}).value);
+    request('/admin/sectors/' + encodeURIComponent(stocksSectorId) + '/tickers', {
+      method: 'PUT',
+      body: { tickers: tickers }
+    }).then(function (data) {
+      var missing = (data.sync && data.sync.missing) || [];
+      if (missing.length) {
+        toast('Đã lưu. Mã chưa có trong Master: ' + missing.join(', '), 'warning');
+      } else {
+        toast('Đã cập nhật danh sách mã ngành', 'success');
+      }
+      if (typeof global.ixCloseOffcanvas === 'function') global.ixCloseOffcanvas('offcanvas-sector-stocks');
+      stocksSectorId = null;
+      loadList();
+    }).catch(function (e) {
+      toast(e.message || 'Lưu danh sách mã thất bại', 'danger');
+    });
   }
 
   function saveModal() {
     var name = ((document.getElementById('adm-mkt-sector-name') || {}).value || '').trim();
-    var divisor = Number((document.getElementById('adm-mkt-sector-divisor') || {}).value);
     var status = (document.getElementById('adm-mkt-sector-status') || {}).value || 'active';
+    var description = ((document.getElementById('adm-mkt-sector-desc') || {}).value || '').trim();
 
     if (!name) {
       toast('Tên ngành là bắt buộc', 'danger');
       return;
     }
-    if (!divisor || divisor < 1) {
-      toast('Divisor phải ≥ 1', 'danger');
-      return;
-    }
 
-    var body = { name: name, divisor: divisor, status: status };
+    var body = { name: name, status: status, description: description };
     var req = editingId
       ? request('/admin/sectors/' + encodeURIComponent(editingId), { method: 'PATCH', body: body })
       : request('/admin/sectors', { method: 'POST', body: body });
 
     req.then(function () {
-      if (typeof global.ixCloseModal === 'function') global.ixCloseModal('modal-sector-form');
+      if (typeof global.ixCloseOffcanvas === 'function') global.ixCloseOffcanvas('offcanvas-sector-form');
       toast(editingId ? 'Đã cập nhật ngành' : 'Đã thêm ngành mới', 'success');
       editingId = null;
       loadList();
     }).catch(function (e) {
       toast(e.message || 'Lưu thất bại', 'danger');
-    });
-  }
-
-  function saveInline(id) {
-    var input = document.getElementById('adm-mkt-sector-inline-' + id);
-    if (!input) return;
-    var divisor = Number(input.value);
-    if (!divisor || divisor < 1) {
-      toast('Divisor phải ≥ 1', 'danger');
-      return;
-    }
-    request('/admin/sectors/' + encodeURIComponent(id), {
-      method: 'PATCH',
-      body: { divisor: divisor }
-    }).then(function () {
-      inlineEditId = null;
-      toast('Đã cập nhật divisor', 'success');
-      loadList();
-    }).catch(function (e) {
-      toast(e.message || 'Cập nhật thất bại', 'danger');
     });
   }
 
@@ -239,6 +249,8 @@
 
     var saveBtn = document.getElementById('btn-adm-mkt-sector-save');
     if (saveBtn) saveBtn.addEventListener('click', saveModal);
+    var stocksSave = document.getElementById('btn-adm-mkt-sector-stocks-save');
+    if (stocksSave) stocksSave.addEventListener('click', saveStocks);
 
     var search = document.getElementById('adm-mkt-sector-search');
     if (search) {
@@ -249,6 +261,12 @@
     }
 
     document.addEventListener('click', function (e) {
+      var stocksBtn = e.target.closest('[data-adm-mkt-sector-stocks]');
+      if (stocksBtn) {
+        e.preventDefault();
+        openStocksDrawer(stocksBtn.getAttribute('data-adm-mkt-sector-stocks'));
+        return;
+      }
       var editBtn = e.target.closest('[data-adm-mkt-sector-edit]');
       if (editBtn) {
         e.preventDefault();
@@ -287,27 +305,6 @@
             toast(err.message || 'Xóa thất bại', 'danger');
           });
         return;
-      }
-      var inlineEdit = e.target.closest('[data-adm-mkt-sector-inline-edit]');
-      if (inlineEdit) {
-        e.preventDefault();
-        inlineEditId = Number(inlineEdit.getAttribute('data-adm-mkt-sector-inline-edit'));
-        renderTable();
-        var inp = document.getElementById('adm-mkt-sector-inline-' + inlineEditId);
-        if (inp) inp.focus();
-        return;
-      }
-      var inlineSave = e.target.closest('[data-adm-mkt-sector-inline-save]');
-      if (inlineSave) {
-        e.preventDefault();
-        saveInline(Number(inlineSave.getAttribute('data-adm-mkt-sector-inline-save')));
-        return;
-      }
-      var inlineCancel = e.target.closest('[data-adm-mkt-sector-inline-cancel]');
-      if (inlineCancel) {
-        e.preventDefault();
-        inlineEditId = null;
-        renderTable();
       }
     });
   }

@@ -7,9 +7,9 @@
   <title>ADM-USR-002 — User Detail · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/stock.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/profile.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/stock.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/profile.css" />
 </head>
 <body>
 <div class="ix-root">
@@ -30,15 +30,15 @@
       <div class="ix-content">
         <h1 id="adm-user-title">Chi tiết khách hàng</h1>
         <div class="ix-breadcrumb ix-mb-24">
-          <a href="list.html">Danh sách KH</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <a href="/Admin_Design_system/app/users/list.html">Danh sách KH</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
           <span id="adm-user-crumb-email">…</span>
         </div>
 
         <div id="adm-user-missing" class="ix-card" hidden>
           <div class="ix-card-body" style="text-align:center;padding:48px 24px">
             <i class="ti ti-user-off" style="font-size:40px;color:var(--ix-text-muted);margin-bottom:12px"></i>
-            <p style="color:var(--ix-text-secondary);margin:0 0 16px">Không tìm thấy khách hàng. Mở từ <a href="list.html">danh sách KH</a>.</p>
-            <a href="list.html" class="ix-btn ix-btn-primary ix-btn-sm">Quay lại danh sách</a>
+            <p style="color:var(--ix-text-secondary);margin:0 0 16px">Không tìm thấy khách hàng. Mở từ <a href="/Admin_Design_system/app/users/list.html">danh sách KH</a>.</p>
+            <a href="/Admin_Design_system/app/users/list.html" class="ix-btn ix-btn-primary ix-btn-sm">Quay lại danh sách</a>
           </div>
         </div>
 
@@ -67,7 +67,7 @@
                   <li><span class="ix-detail-label">Thanh toán</span><span class="ix-detail-val" id="adm-user-billing">—</span></li>
                   <li><span class="ix-detail-label">Nguồn</span><span class="ix-detail-val" id="adm-user-source">—</span></li>
                 </ul>
-                <a href="subscription.html" id="adm-link-subscription" class="ix-btn ix-btn-outline" style="width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px">
+                <a href="/Admin_Design_system/app/users/subscription.html" id="adm-link-subscription" class="ix-btn ix-btn-outline" style="width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px">
                   <i class="ti ti-credit-card" style="font-size:13px"></i> Thao tác gói
                 </a>
               </div>
@@ -176,17 +176,17 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
-<script src="../../iflux-admin-ui/pattern-user-profile.js"></script>
-<script src="../../iflux-admin-ui/iflux-customers-store.js"></script>
-<script src="../../iflux-admin-ui/iflux-credentials-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/watchlist-taxonomy.js"></script>
-<script src="../../../User_Web/iflux-web-ui/stock-mentions.js"></script>
-<script src="../../../User_Web/iflux-web-ui/stock-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/stock-comments-ui.js"></script>
-<script src="../../../User_Web/iflux-web-ui/profile-follow-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/profile-page.js"></script>
-<script src="users-detail.js?v=noep2users20260726"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/pattern-user-profile.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-customers-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-taxonomy.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-mentions.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-store.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-comments-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-follow-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-page.js"></script>
+<script src="/Admin_Design_system/app/users/users-detail.js?v=noep2users20260726"></script>
 <script>UsersDetail.init();</script>
   <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
 </body>

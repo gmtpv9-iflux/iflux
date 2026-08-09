@@ -32,7 +32,14 @@ function createMarketStocksWaveFRouter(deps) {
       ticker: z.string().min(1),
       name: z.string().optional(),
       exchange: z.string().optional(),
-      status: z.string().optional()
+      status: z.string().optional(),
+      sector_id: z.number().nullable().optional(),
+      ecosystem_id: z.number().nullable().optional(),
+      shares_outstanding: z.number().optional(),
+      description: z.string().optional(),
+      cap_group: z.string().optional(),
+      cap_tier: z.string().optional(),
+      market_cap: z.union([z.number(), z.string()]).optional()
     })).min(1) })
   })), async (req, res, next) => {
     try {
@@ -45,7 +52,14 @@ function createMarketStocksWaveFRouter(deps) {
       ticker: z.string().min(1).max(20),
       name: z.string().min(1).max(200),
       exchange: z.string().max(20).optional(),
-      status: z.string().max(20).optional()
+      status: z.string().max(20).optional(),
+      sector_id: z.number().nullable().optional(),
+      ecosystem_id: z.number().nullable().optional(),
+      shares_outstanding: z.number().optional(),
+      description: z.string().optional(),
+      cap_group: z.string().optional(),
+      cap_tier: z.string().optional(),
+      market_cap: z.union([z.number(), z.string()]).optional()
     })
   })), async (req, res, next) => {
     try {
@@ -57,11 +71,19 @@ function createMarketStocksWaveFRouter(deps) {
     body: z.object({
       name: z.string().min(1).max(200).optional(),
       exchange: z.string().max(20).optional(),
-      status: z.string().max(20).optional()
+      status: z.string().max(20).optional(),
+      sector_id: z.number().nullable().optional(),
+      ecosystem_id: z.number().nullable().optional(),
+      shares_outstanding: z.number().optional(),
+      description: z.string().optional(),
+      cap_group: z.string().optional(),
+      cap_tier: z.string().optional(),
+      market_cap: z.union([z.number(), z.string(), z.null()]).optional()
     })
   })), async (req, res, next) => {
     try {
-      return success(res, { item: await svc.updateStock(req.params.id, req.validated.body) });
+      const adminId = req.admin && req.admin.id ? req.admin.id : null;
+      return success(res, { item: await svc.updateStock(req.params.id, req.validated.body, adminId) });
     } catch (err) { next(err); }
   });
 

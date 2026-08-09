@@ -71,21 +71,21 @@ function normalizeArticleInput(input, actor) {
   const chuDeName = input.chu_de_name || (input.chu_de && (input.chu_de.name || input.chu_de.label)) || '';
   /* Chủ đề tuỳ chọn — bài không gắn chủ đề không đóng góp Topic Engine / Story */
 
-  const tickers = uniqUpper(input.tickers, 5);
-  const sectors = uniqSlug(input.sectors, 3);
-  const ecosystems = uniqSlug(input.ecosystems, 3);
+  /* WP-1 / Amd B: cho phép tickers ∪ ecosystems; Sector không gắn kèm multi-membership.
+   * Exchange vẫn exclusive (không trộn với entity groups). */
+  const tickers = uniqUpper(input.tickers, 20);
+  let sectors = uniqSlug(input.sectors, 3);
+  const ecosystems = uniqSlug(input.ecosystems, 10);
   let exchange = input.exchange != null ? String(input.exchange).trim() : '';
   if (exchange) exchange = exchange.toUpperCase() === 'VNINDEX' ? 'VNIndex' : exchange;
 
-  const attachedKinds =
-    (tickers.length ? 1 : 0) +
-    (sectors.length ? 1 : 0) +
-    (ecosystems.length ? 1 : 0) +
-    (exchange ? 1 : 0);
-  if (attachedKinds > 1) {
+  if (sectors.length && (tickers.length || ecosystems.length)) {
+    sectors = [];
+  }
+  if (exchange && (tickers.length || ecosystems.length || sectors.length)) {
     throw AppError.badRequest(
       'ARTICLE_ENTITY_XOR',
-      'Chỉ gắn một nhóm: cổ phiếu (0–5) hoặc ngành (0–3) hoặc hệ sinh thái (0–3) hoặc sàn (0–1)'
+      'Sàn (exchange) không gắn cùng cổ phiếu / ngành / hệ sinh thái'
     );
   }
 
@@ -111,6 +111,11 @@ function normalizeArticleInput(input, actor) {
     tickers,
     sectors,
     ecosystems,
+    entity_occurrences: Array.isArray(input.entity_occurrences) ? input.entity_occurrences : [],
+    entities: input.entities && typeof input.entities === 'object' ? input.entities : { stocks: [], ecosystems: [] },
+    publisher: input.publisher != null ? input.publisher : null,
+    provider: input.provider != null ? input.provider : null,
+    vendor: input.vendor != null ? input.vendor : null,
     exchange: exchange || null,
     cover: {
       url: String(cover.url || input.cover_url || '').trim(),
@@ -224,33 +229,53 @@ async function bumpChuDeStats(chuDe, tickers) {
 async function listArticles(filters) {
   filters = filters || {};
   const params = [];
-  let sql = 'SELECT * FROM community_posts WHERE 1=1';
+  let whereSql = ' WHERE 1=1';
   if (filters.status) {
     params.push(filters.status);
-    sql += ` AND status = $${params.length}`;
+    whereSql += ` AND status = $${params.length}`;
   } else if (!filters.include_all) {
-    sql += ` AND status IN ('published', 'published_rss')`;
+    whereSql += ` AND status IN ('published', 'published_rss')`;
   }
   if (filters.q) {
     params.push('%' + String(filters.q).trim().toLowerCase() + '%');
-    sql += ` AND (LOWER(payload->>'title') LIKE $${params.length} OR LOWER(payload->>'slug') LIKE $${params.length})`;
+    whereSql += ` AND (LOWER(payload->>'title') LIKE $${params.length} OR LOWER(payload->>'slug') LIKE $${params.length})`;
   }
   if (filters.category_id) {
     params.push(filters.category_id);
-    sql += ` AND payload->>'category_id' = $${params.length}`;
+    whereSql += ` AND payload->>'category_id' = $${params.length}`;
   }
   if (filters.chu_de_id) {
     params.push(filters.chu_de_id);
-    sql += ` AND payload->>'chu_de_id' = $${params.length}`;
+    whereSql += ` AND payload->>'chu_de_id' = $${params.length}`;
   }
+
+  const countRes = await query(`SELECT COUNT(*)::int AS total FROM community_posts${whereSql}`, params);
+  const total = countRes.rows[0] ? Number(countRes.rows[0].total) : 0;
+
+  let sql = `SELECT * FROM community_posts${whereSql}`;
   sql += ' ORDER BY COALESCE((payload->>\'published_at\')::timestamptz, created_at) DESC';
-  if (filters.limit) {
-    params.push(Number(filters.limit));
-    sql += ` LIMIT $${params.length}`;
+
+  const queryParams = [...params];
+  const limitVal = filters.limit ? Number(filters.limit) : 50;
+  queryParams.push(limitVal);
+  sql += ` LIMIT $${queryParams.length}`;
+
+  if (filters.offset != null || filters.page != null) {
+    const pageVal = filters.page ? Math.max(1, Number(filters.page)) : 1;
+    const offsetVal = filters.offset != null ? Number(filters.offset) : (pageVal - 1) * limitVal;
+    queryParams.push(offsetVal);
+    sql += ` OFFSET $${queryParams.length}`;
   }
-  const res = await query(sql, params);
-  return res.rows.map(rowToArticle);
+
+  const res = await query(sql, queryParams);
+  const list = res.rows.map(rowToArticle);
+
+  if (filters.withTotal || filters.page != null) {
+    return { articles: list, total };
+  }
+  return list;
 }
+
 
 /** ArticleDetail — có body_html; vẫn CẤM dump comments[] / liked_by / rss / display. */
 const ARTICLE_DETAIL_PAYLOAD_SQL = `(

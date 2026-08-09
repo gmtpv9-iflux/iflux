@@ -136,10 +136,8 @@
   }
 
   function editHref(id) {
-    var base = /\/content\//.test(location.pathname) || /\/content\/index\.html$/.test(location.pathname)
-      ? 'edit.html'
-      : 'content/edit.html';
-    return base + '?id=' + encodeURIComponent(id);
+    /* Clean Admin URL — cấm relative …/edit.html (nginx từng rewrite thành edit.html.html → 404) */
+    return '/admin/cong-dong/content/edit?id=' + encodeURIComponent(id);
   }
 
   /** Trang xem: đã xuất bản (Admin/RSS) → User Web; còn lại → URL nguồn nếu có */
@@ -164,10 +162,15 @@
     return canPerm('community.articles.edit');
   }
 
-  function render(list) {
+  var currentPage = 1;
+  var perPage = 50;
+  var totalCount = 0;
+  var totalPages = 1;
+
+  function render(list, total) {
     var tbody = document.getElementById('art-tbody');
     var count = document.getElementById('art-count');
-    if (count) count.textContent = String(list.length);
+    if (count) count.textContent = String(total != null ? total : list.length);
     if (!tbody) return;
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ix-text-muted);font-size:13px">Chưa có bài viết.</td></tr>';
@@ -202,19 +205,101 @@
     }).join('');
   }
 
-  function load() {
+  function renderPagination(total, page, pages) {
+    var pager = document.getElementById('art-pagination');
+    if (!pager) return;
+    pager.innerHTML = '';
+    if (!total || pages <= 1) return;
+
+    var start = (page - 1) * perPage + 1;
+    var end = Math.min(page * perPage, total);
+
+    var info = document.createElement('span');
+    info.className = 'ix-page-info';
+    info.style.marginLeft = '0';
+    info.textContent = 'Hiển thị ' + start + '–' + end + ' / ' + total + ' bài viết';
+
+    var nav = document.createElement('div');
+    nav.style.display = 'flex';
+    nav.style.gap = '4px';
+    nav.style.alignItems = 'center';
+    nav.style.marginLeft = 'auto';
+
+    function makeBtn(label, targetPage, disabled, isActive) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ix-page-btn' + (isActive ? ' active' : '');
+      b.textContent = label;
+      b.disabled = !!disabled;
+      if (!disabled && !isActive && typeof targetPage === 'number') {
+        b.addEventListener('click', function () {
+          load(targetPage);
+        });
+      }
+      return b;
+    }
+
+    // First & Prev
+    nav.appendChild(makeBtn('«', 1, page === 1, false));
+    nav.appendChild(makeBtn('‹', page - 1, page === 1, false));
+
+    // Page numbers range
+    var range = [];
+    var delta = 2;
+    for (var i = 1; i <= pages; i++) {
+      if (i === 1 || i === pages || (i >= page - delta && i <= page + delta)) {
+        range.push(i);
+      } else if (range[range.length - 1] !== '...') {
+        range.push('...');
+      }
+    }
+
+    range.forEach(function (p) {
+      if (p === '...') {
+        var ellipsis = document.createElement('span');
+        ellipsis.style.padding = '0 4px';
+        ellipsis.style.color = 'var(--ix-text-muted)';
+        ellipsis.style.fontSize = '13px';
+        ellipsis.textContent = '...';
+        nav.appendChild(ellipsis);
+      } else {
+        nav.appendChild(makeBtn(String(p), p, false, p === page));
+      }
+    });
+
+    // Next & Last
+    nav.appendChild(makeBtn('›', page + 1, page === pages, false));
+    nav.appendChild(makeBtn('»', pages, page === pages, false));
+
+    pager.appendChild(info);
+    pager.appendChild(nav);
+  }
+
+  function load(p) {
+    if (typeof p === 'number') currentPage = p;
+    else currentPage = 1;
+
     var q = ((document.getElementById('art-q') || {}).value || '').trim();
     var st = ((document.getElementById('art-status') || {}).value || '');
-    var path = '/community/admin/articles?limit=200';
+    var path = '/community/admin/articles?page=' + currentPage + '&limit=' + perPage;
     if (q) path += '&q=' + encodeURIComponent(q);
     if (st) path += '&status=' + encodeURIComponent(st);
+
     request(path).then(function (data) {
-      render(data.articles || []);
+      var list = data.articles || (Array.isArray(data) ? data : []);
+      totalCount = typeof data.total === 'number' ? data.total : list.length;
+      totalPages = typeof data.totalPages === 'number' ? data.totalPages : Math.ceil(totalCount / perPage) || 1;
+      currentPage = typeof data.page === 'number' ? data.page : currentPage;
+
+      render(list, totalCount);
+      renderPagination(totalCount, currentPage, totalPages);
     }).catch(function (err) {
       var tbody = document.getElementById('art-tbody');
       if (tbody) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ix-danger);font-size:13px">' + esc(err.message) + '</td></tr>';
       }
+      var pager = document.getElementById('art-pagination');
+      if (pager) pager.innerHTML = '';
     });
   }
 
@@ -237,17 +322,17 @@
       q.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
           e.preventDefault();
-          load();
+          load(1);
         }
       });
       q.addEventListener('input', function () {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(load, 320);
+        searchTimer = setTimeout(function () { load(1); }, 320);
       });
     }
-    if (st) st.addEventListener('change', load);
+    if (st) st.addEventListener('change', function () { load(1); });
     var btn = document.getElementById('art-reload');
-    if (btn) btn.addEventListener('click', load);
+    if (btn) btn.addEventListener('click', function () { load(currentPage); });
     document.addEventListener('click', function (e) {
       var del = e.target.closest('[data-art-del]');
       if (!del) return;
@@ -255,10 +340,10 @@
       if (!id) return;
       if (!confirm('Xóa bài viết này? Thao tác không hoàn tác.')) return;
       request('/community/admin/articles/' + encodeURIComponent(id), { method: 'DELETE' })
-        .then(function () { load(); })
+        .then(function () { load(currentPage); })
         .catch(function (err) { alert(err.message || 'Không xóa được bài viết.'); });
     });
-    whenRbacReady(load);
+    whenRbacReady(function () { load(1); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

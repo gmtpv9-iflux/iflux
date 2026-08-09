@@ -57,8 +57,8 @@
     var sub = document.getElementById('adm-mkt-eco-detail-sub');
     if (title) title.textContent = eco.name || 'Chi tiết họ CP';
     if (sub) {
-      sub.innerHTML = 'Divisor hiện tại: <strong>' + (eco.divisor != null ? eco.divisor : draftTickers.length) + '</strong> · ' +
-        draftTickers.length + ' thành viên';
+      sub.innerHTML = 'Số thành viên (derived): <strong>' + Math.max(draftTickers.length, 1) + '</strong> · ' +
+        draftTickers.length + ' mã';
     }
   }
 
@@ -156,8 +156,7 @@
       id: ecoId,
       name: eco.name,
       tickers: draftTickers.slice(),
-      status: eco.status,
-      divisor: lastPreview && lastPreview.divisorNew != null ? lastPreview.divisorNew : draftTickers.length
+      status: eco.status
     });
 
     previewed = false;

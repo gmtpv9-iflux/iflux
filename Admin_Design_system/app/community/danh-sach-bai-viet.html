@@ -7,7 +7,7 @@
   <title>ADM-COM-CNT — Danh sách bài viết · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-  <link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
 </head>
 <body>
 <div class="ix-root">
@@ -28,7 +28,7 @@
       <div class="ix-content">
         <h1 class="ix-page-title">Danh sách bài viết</h1>
         <div class="ix-breadcrumb ix-mb-24">
-          <a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
+          <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
           <span>Cộng đồng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
           <span>Danh sách bài viết</span>
         </div>
@@ -47,7 +47,7 @@
                 <option value="scheduled">Đã lên lịch</option>
               </select>
               <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-reload"><i class="ti ti-refresh"></i> Làm mới</button>
-              <a href="content/edit.html" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-perm="community.articles.create"><i class="ti ti-plus"></i> Tạo bài viết</a>
+              <a href="/admin/cong-dong/content/edit" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-perm="community.articles.create"><i class="ti ti-plus"></i> Tạo bài viết</a>
             </div>
           </div>
           <div class="ix-table-responsive">
@@ -69,6 +69,7 @@
               </tbody>
             </table>
           </div>
+          <div class="ix-pagination" id="art-pagination"></div>
         </div>
       </div>
     </main>
@@ -80,10 +81,10 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=artListFix20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
-<script src="../../iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=cmsRbacFix20260727" data-ix-rbac=""></script>
-<script src="content/article-list-page.js?v=cmsRbacFix20260727"></script>
+<script src="/Admin_Design_system/app/community/content/article-list-page.js?v=cmsRbacFix20260727"></script>
 </body>
 </html>

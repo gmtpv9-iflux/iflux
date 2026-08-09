@@ -45,7 +45,7 @@ function createEcosystemsAdminRouter(deps) {
         code: z.string().max(20).optional(),
         name: z.string().min(1).max(100).optional(),
         name_vi: z.string().min(1).max(100).optional(),
-        divisor: z.union([z.number(), z.string()]).optional(),
+        description: z.string().max(2000).optional().nullable(),
         tickers: z.array(z.string()).optional(),
         status: z.enum(['active', 'inactive']).optional(),
         is_active: z.boolean().optional()
@@ -68,7 +68,7 @@ function createEcosystemsAdminRouter(deps) {
       body: z.object({
         name: z.string().min(1).max(100).optional(),
         name_vi: z.string().min(1).max(100).optional(),
-        divisor: z.union([z.number(), z.string()]).optional(),
+        description: z.string().max(2000).optional().nullable(),
         tickers: z.array(z.string()).optional(),
         status: z.enum(['active', 'inactive']).optional(),
         is_active: z.boolean().optional()

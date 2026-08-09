@@ -23,8 +23,8 @@ import {
   applyHubLayout
 } from './app-shell.js?v=noPageHead20260722';
 import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
-import { loadWidget } from './widget-loader.js?v=entStrip20260724';
-import { loadScript } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadWidget } from './widget-loader.js?v=cssPin20260808';
+import { loadScript } from './legacy-bridge.js?v=cssPin20260808';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=phase4Pub20260716b';

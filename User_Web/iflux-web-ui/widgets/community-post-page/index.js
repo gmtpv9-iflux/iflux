@@ -13,18 +13,19 @@ var CORE_TIERS = [
   [ADMIN + 'iflux-admin-ui.js'],
   [ASSET + 'stock-mentions.js'],
   [
-    ASSET + 'community-store.js?v=metaSotB20260725',
-    ASSET + 'iflux-community-api-bridge.js?v=feedDto20260724',
+    ASSET + 'community-store.js?v=cmtLoopFix20260808',
+    ASSET + 'iflux-community-api-bridge.js?v=calFeedFix20260808',
     ASSET + 'profile-users-store.js',
     ASSET + 'profile-links.js'
   ],
   [
+    ASSET + 'iflux-market-quotes.js?v=comQuoteRuntime20260809',
     ASSET + 'watchlist-store.js?v=followFound20260724',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724',
-    ASSET + 'community-ui.js?v=b5wp1_20260727',
-    ASSET + 'community-daily-feed.js?v=entFeed20260724',
+    ASSET + 'community-ui.js?v=comQuoteRuntime20260809',
+    ASSET + 'community-daily-feed.js?v=comQuoteRuntime20260809',
     ASSET + 'interaction/boot.js?v=b5ixFlat20260727',
-    ASSET + 'community-post-page.js?v=b5ixFlat20260727'
+    ASSET + 'community-post-page.js?v=comQuoteRuntime20260809'
   ]
 ];
 

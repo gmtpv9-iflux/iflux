@@ -632,7 +632,12 @@ body {
 }
 .ix-table tbody tr:last-child td { border-bottom: none; }
 .ix-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-.ix-table-responsive { overflow-x: auto; }
+.ix-table-wrap,
+.ix-table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
 
 /* -----------------------------------------------------------------
    14. PROGRESS BAR

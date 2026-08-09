@@ -94,6 +94,20 @@
     if (!host || host._ixSubmenuBound) return;
     host._ixSubmenuBound = true;
     host.addEventListener('click', function (e) {
+      /* SoT nav: luôn đi theo routeKey → slug /admin/... (không phụ thuộc <base> / href="#"). */
+      var link = e.target && e.target.closest
+        ? e.target.closest('a.ix-menu-item[data-ix-route]')
+        : null;
+      if (link && host.contains(link) && !link.hasAttribute('data-ix-submenu')) {
+        var routeKey = link.getAttribute('data-ix-route');
+        var shell = global.IfluxAdminAppShell;
+        var sotHref = shell && shell.hrefFor ? shell.hrefFor(routeKey) : '';
+        if (sotHref && sotHref.charAt(0) === '/') {
+          e.preventDefault();
+          global.location.assign(sotHref);
+          return;
+        }
+      }
       var item = e.target && e.target.closest
         ? e.target.closest('.ix-menu-item[data-ix-submenu]')
         : null;

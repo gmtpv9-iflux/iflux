@@ -3,11 +3,13 @@
  * Điểm duy nhất sinh IO feed/article phía User Web.
  * → API /community/feed | /community/articles/{id}
  * → IfluxCommunityStore.setFeed / setArticle (Store không IO).
+ * SOL-CAL: FEED_PAGE_SIZE=50 · has_more · offset continuation.
  */
 (function (global) {
   'use strict';
 
-  var DEFAULT_FEED_LIMIT = 36;
+  var FEED_PAGE_SIZE = 50;
+  var DEFAULT_FEED_LIMIT = FEED_PAGE_SIZE;
   var RELATED_LIMIT = 10;
   var ENTITY_LIMIT = 20;
 
@@ -68,9 +70,14 @@
       var body = (res && res.data) || res || {};
       var cards = body.cards || body.posts || [];
       if (!Array.isArray(cards)) cards = [];
+      var limit = body.limit != null ? Number(body.limit) : (params && params.limit) || DEFAULT_FEED_LIMIT;
+      var hasMore = body.has_more === true;
       return {
         cards: cards,
-        total: body.total != null ? body.total : cards.length
+        total: body.total != null ? body.total : cards.length,
+        limit: limit,
+        offset: body.offset != null ? Number(body.offset) : (params && params.offset) || 0,
+        has_more: hasMore
       };
     });
   }
@@ -89,12 +96,14 @@
     return global.IfluxCommunityStore;
   }
 
-  /** Community list — FeedCard, không /posts?limit=100 */
+  /** Community list — FeedCard + has_more (SOL-CAL-01/02) */
   function loadFeed(opts) {
     opts = opts || {};
+    var limit = opts.limit != null ? opts.limit : DEFAULT_FEED_LIMIT;
+    var offset = opts.offset != null ? opts.offset : 0;
     return fetchFeed({
-      limit: opts.limit != null ? opts.limit : DEFAULT_FEED_LIMIT,
-      offset: opts.offset || 0,
+      limit: limit,
+      offset: offset,
       type: opts.type || undefined,
       ticker: opts.ticker || undefined,
       category_id: opts.category_id || undefined,
@@ -102,15 +111,31 @@
     })
       .then(function (out) {
         var st = store();
-        if (st && st.setFeed) st.setFeed(out.cards, { replace: opts.replace !== false });
-        return { ok: true, cards: out.cards, total: out.total };
+        if (st && st.setFeed) {
+          st.setFeed(out.cards, {
+            replace: opts.replace === true,
+            merge: opts.replace !== true
+          });
+        }
+        return {
+          ok: true,
+          cards: out.cards,
+          total: out.total,
+          limit: out.limit,
+          offset: out.offset,
+          has_more: out.has_more === true
+        };
       })
       .catch(function (err) {
-        return { ok: false, reason: (err && err.message) || 'feed_fail', cards: [] };
+        return {
+          ok: false,
+          reason: (err && err.message) || 'feed_fail',
+          cards: [],
+          has_more: false
+        };
       });
   }
 
-  /** Entity stock — theo ticker; group/khác: FeedCard limit nhỏ, filter FE như cũ */
   function loadEntityFeed(opts) {
     opts = opts || {};
     return loadFeed({
@@ -121,7 +146,6 @@
     });
   }
 
-  /** Post detail — 1 article + related ≤10 FeedCard */
   function loadPostPage(opts) {
     opts = opts || {};
     var idOrSlug = opts.idOrSlug || opts.slug || opts.id;
@@ -150,9 +174,8 @@
       });
   }
 
-  /** Alias cũ — không còn hydrate Store; chuyển sang loadFeed */
   function hydrate(opts) {
-    return loadFeed(opts || { limit: DEFAULT_FEED_LIMIT });
+    return loadFeed(opts || { limit: DEFAULT_FEED_LIMIT, replace: true });
   }
 
   global.IfluxCommunityApiBridge = {
@@ -160,10 +183,10 @@
     loadEntityFeed: loadEntityFeed,
     loadPostPage: loadPostPage,
     hydrate: hydrate,
+    FEED_PAGE_SIZE: FEED_PAGE_SIZE,
     DEFAULT_FEED_LIMIT: DEFAULT_FEED_LIMIT,
     RELATED_LIMIT: RELATED_LIMIT,
     ENTITY_LIMIT: ENTITY_LIMIT
   };
-  /* Alias SoT “Data Provider” — cùng object, không file thứ hai */
   global.IfluxCommunityProvider = global.IfluxCommunityApiBridge;
 })(window);

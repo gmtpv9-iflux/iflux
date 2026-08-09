@@ -4,7 +4,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-import featureManifest from '../../features/flow.manifest.js?v=phaseCW5gate20260721';
+import featureManifest from '../../features/flow.manifest.js?v=mockRmWp5_20260809';
 
 var featureRt = null;
 

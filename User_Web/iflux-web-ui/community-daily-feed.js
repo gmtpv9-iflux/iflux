@@ -1,12 +1,18 @@
-/* Daily Feed — khối tin theo ngày (Tin tức + Chuyên gia nổi bật + Bài viết chuyên gia)
-   Dùng chung cho trang Cộng đồng và trang chi tiết (CP / Ngành / Hệ sinh thái / Chủ đề).
-   Chỉ dùng class/token có sẵn trong Design System User Web (ifx-com-*, --ifx-*, --ix-*). */
+/* Community Article List — Section A/B Composer + buffered progressive acquisition
+   SOL-CAL-03/04/08 · Plan WP-3/4/5. DS: ifx-com-*, --ifx-*, --ix-*. */
 (function (global) {
   'use strict';
+
+  var FEED_PAGE_SIZE = 50;
+  var BATCH_A = 5;
+  var BATCH_B = 6;
 
   function st() { return global.IfluxCommunityStore; }
   function ui() { return global.IfluxCommunityUI; }
   function profiles() { return global.IfluxProfileUsersStore; }
+  function bridge() {
+    return global.IfluxCommunityApiBridge || global.IfluxCommunityProvider;
+  }
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -32,8 +38,6 @@
   }
 
   function resolveUser(row) {
-    /* Dữ liệu tác giả bài viết (row) là nguồn chuẩn cho tên + cấp thành viên;
-       thư mục hồ sơ công khai chỉ dùng để bổ khuyết khi row thiếu. */
     var name = row.displayName;
     var tierLabel = row.tierLabel;
     if ((!name || String(name).trim().length < 2) && profiles() && profiles().getPublic) {
@@ -44,112 +48,37 @@
     return { displayName: name || 'Chuyên gia', tierLabel: tierLabel || 'Elite' };
   }
 
-  /* ── Nhóm bài theo ngày (đăng) ────────────────────────── */
-  function startOfDay(iso) {
-    var d = new Date(iso);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }
-
-  function dayKey(iso) {
-    var d = new Date(iso);
-    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-  }
-
-  function dayLabel(iso) {
-    var start = startOfDay(iso);
-    var today = startOfDay(Date.now());
-    var oneDay = 86400000;
-    if (start === today) return 'Hôm nay';
-    if (start === today - oneDay) return 'Hôm qua';
-    try {
-      return new Date(iso).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-    } catch (e) {
-      return dayKey(iso);
-    }
-  }
-
-  function sortDesc(a, b) {
-    return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at);
-  }
-
-  function buildDays(filter) {
-    if (!st()) return [];
-    var out = [];
-    var map = {};
-    function add(list, type) {
-      list.forEach(function (p) {
-        var iso = p.published_at || p.created_at;
-        var k = dayKey(iso);
-        if (!map[k]) {
-          map[k] = { key: k, label: dayLabel(iso), ts: startOfDay(iso), news: [], expert: [] };
-          out.push(map[k]);
-        }
-        map[k][type].push(p);
-      });
-    }
-    add(st().getPosts(Object.assign({}, filter, { contentType: st().CONTENT_TYPE_NEWS })), 'news');
-    add(st().getPosts(Object.assign({}, filter, { contentType: st().CONTENT_TYPE_EXPERT })), 'expert');
-    out.sort(function (a, b) { return b.ts - a.ts; });
-    out.forEach(function (d) { d.news.sort(sortDesc); d.expert.sort(sortDesc); });
-    return out;
-  }
-
-  /* ── Tin/bài nổi bật trong ngày ───────────────────────── */
-  function likeCount(p) { return (p.stats && p.stats.likes) || 0; }
-
-  function pickFeatured(list, preferAdminFlag) {
-    if (!list || !list.length) return null;
-    var pool = list;
-    if (preferAdminFlag) {
-      var flagged = list.filter(function (p) { return p.is_featured || p.featured; });
-      if (flagged.length) pool = flagged;
-    }
-    var best = pool[0];
-    var bestLikes = likeCount(best);
-    pool.forEach(function (p) {
-      var l = likeCount(p);
-      if (l > bestLikes) { best = p; bestLikes = l; }
-    });
-    return best;
-  }
-
-  /* ── Section: nổi bật (trái) + còn lại (phải) + lưới 3/row (dưới) ── */
-  function heroGridSection(opts) {
-    var list = opts.list || [];
-    if (!list.length) return '';
-    if (!ui() || !ui().featuredPostHtml) return '';
-    var featured = opts.featured || list[0];
-    var rest = list.filter(function (p) { return p !== featured; });
-    var side = rest.slice(0, 4);
-    var grid = rest.slice(4);
-
+  /* ── Section A: ≤5 · featured + compact side (no empty placeholder) ── */
+  function sectionAHtml(items) {
+    if (!items || !items.length || !ui() || !ui().featuredPostHtml) return '';
+    var featured = items[0];
+    var side = items.slice(1, BATCH_A);
     var sideHtml = side.length
       ? side.map(function (p) { return ui().compactPostHtml(p); }).join('')
-      : '<div class="ifx-com-side-empty">Chưa có tin khác trong ngày.</div>';
-
-    var heroHtml =
-      '<div class="ifx-com-hero">' +
-        '<div class="ifx-com-hero__featured">' + ui().featuredPostHtml(featured) + '</div>' +
-        '<div class="ifx-com-hero__side">' + sideHtml + '</div>' +
-      '</div>';
-
-    var gridHtml = grid.length
-      ? '<div class="ifx-com-feed-grid">' + grid.map(function (p) { return ui().postCardHtml(p); }).join('') + '</div>'
       : '';
-
     return (
-      '<section class="ifx-com-list-section ' + (opts.sectionMod || '') + '">' +
-        '<div class="ifx-com-list-head">' +
-          '<h2 class="ifx-com-list-title"><i class="ti ' + opts.icon + '"></i> ' + esc(opts.title) + '</h2>' +
-          '<span class="ifx-com-section-hint">' + list.length + ' bài</span>' +
+      '<section class="ifx-com-list-section ifx-com-list-section--news" data-ifx-com-section="A">' +
+        '<div class="ifx-com-hero">' +
+          '<div class="ifx-com-hero__featured">' + ui().featuredPostHtml(featured) + '</div>' +
+          (sideHtml ? '<div class="ifx-com-hero__side">' + sideHtml + '</div>' : '') +
         '</div>' +
-        heroHtml + gridHtml +
       '</section>'
     );
   }
 
-  /* ── Chuyên gia nổi bật: spotlight (1/3) + list (2/3) ──── */
+  /* ── Section B: ≤6 · 3×2 grid ── */
+  function sectionBHtml(items) {
+    if (!items || !items.length || !ui() || !ui().postCardHtml) return '';
+    var list = items.slice(0, BATCH_B);
+    return (
+      '<section class="ifx-com-list-section ifx-com-list-section--grid" data-ifx-com-section="B">' +
+        '<div class="ifx-com-feed-grid">' +
+          list.map(function (p) { return ui().postCardHtml(p); }).join('') +
+        '</div>' +
+      '</section>'
+    );
+  }
+
   function starsHtml(rating) {
     var full = Math.floor(rating);
     var half = (rating - full) >= 0.5;
@@ -220,148 +149,378 @@
     var rest = rows.slice(1);
     var listHtml = rest.length
       ? rest.map(function (r, i) { return richRowHtml(r, i + 1); }).join('')
-      : '<div class="ifx-com-side-empty">Chưa có chuyên gia khác.</div>';
+      : '';
     return (
-      '<section class="ifx-com-experts-leaders">' +
+      '<section class="ifx-com-experts-leaders" data-ifx-com-experts-sibling>' +
         '<div class="ifx-com-list-head">' +
           '<h2 class="ifx-com-list-title"><i class="ti ti-award"></i> Chuyên gia nổi bật</h2>' +
           '<span class="ifx-com-section-hint">Xếp theo tổng lượt thích bài viết</span>' +
         '</div>' +
         '<div class="ifx-com-experts-layout">' +
           '<div class="ifx-com-experts-layout__spot">' + spotlightHtml(spotlight) + '</div>' +
-          '<div class="ifx-com-expert-list ifx-com-experts-layout__list">' + listHtml + '</div>' +
+          (listHtml
+            ? '<div class="ifx-com-expert-list ifx-com-experts-layout__list">' + listHtml + '</div>'
+            : '') +
         '</div>' +
       '</section>'
     );
   }
 
-  function dayHeadHtml(day) {
-    return (
-      '<div class="ifx-com-day-head">' +
-        '<span class="ifx-com-day-head__label"><i class="ti ti-calendar-event"></i> ' + esc(day.label) + '</span>' +
-        '<span class="ifx-com-day-head__line"></span>' +
-      '</div>'
-    );
+  function feedQueryFromFilter(filter) {
+    filter = filter || {};
+    var q = {};
+    if (filter.categoryId) q.category_id = filter.categoryId;
+    if (filter.ticker) q.ticker = filter.ticker;
+    if (filter.taxSource === 'chu-de' && filter.taxGroupId) q.chu_de_id = filter.taxGroupId;
+    return q;
   }
 
-  function dayBlockHtml(day, opts, isFirst) {
-    var parts = '';
-    if (!isFirst) parts += dayHeadHtml(day);
-
-    if (opts.showNews !== false) {
-      parts += heroGridSection({
-        title: 'Tin tức',
-        icon: 'ti-news',
-        sectionMod: 'ifx-com-list-section--news',
-        list: day.news,
-        featured: pickFeatured(day.news, true)
-      });
-    }
-
-    /* Chuyên gia nổi bật là bảng xếp hạng luỹ kế → chỉ hiển thị 1 lần ở ngày mới nhất */
-    if (isFirst && opts.showExperts !== false) {
-      parts += expertsSection(opts.filter);
-    }
-
-    if (opts.showExpertPosts !== false) {
-      parts += heroGridSection({
-        title: opts.expertTitle || 'Bài viết của chuyên gia',
-        icon: 'ti-certificate',
-        sectionMod: 'ifx-com-list-section--expert',
-        list: day.expert,
-        featured: pickFeatured(day.expert, false)
-      });
-    }
-
-    if (!parts) return '';
-    return '<div class="ifx-com-day-block">' + parts + '</div>';
+  function newSession(opts) {
+    return {
+      opts: opts || {},
+      filter: (opts && opts.filter) || {},
+      generation: 0,
+      buffer: [],
+      bufferIds: {},
+      composed: 0,
+      offset: 0,
+      hasMore: true,
+      acquiring: false,
+      batchLoading: false,
+      emptyAcquireStreak: 0,
+      loadError: false,
+      expertsDone: false,
+      ended: false,
+      initialDone: false
+    };
   }
 
-  /* ── Controller: render + lazy-load theo ngày ─────────── */
-  function toggleEnd(container, ended) {
-    var end = container.querySelector('[data-ifx-daily-end]');
+  function updateSentinel(container) {
+    var s = container._ifxFeed;
     var more = container.querySelector('[data-ifx-daily-more]');
-    var s = container._ifxDaily;
-    var hasContent = !!(s && s.rendered > 0);
-    if (more) more.hidden = ended || !hasContent;
-    if (end) end.hidden = !ended || !hasContent;
-  }
-
-  function renderNextDay(container) {
-    var s = container._ifxDaily;
+    var end = container.querySelector('[data-ifx-daily-end]');
+    var err = container.querySelector('[data-ifx-daily-error]');
     if (!s) return;
-    if (s.rendered >= s.days.length) { toggleEnd(container, true); return; }
-    var mount = container.querySelector('[data-ifx-daily]');
-    if (!mount) return;
-    var day = s.days[s.rendered];
-    var isFirst = s.rendered === 0;
-    mount.insertAdjacentHTML('beforeend', dayBlockHtml(day, s.opts, isFirst));
-    s.rendered += 1;
-    toggleEnd(container, s.rendered >= s.days.length);
-    if (global.IfluxHeartAction) IfluxHeartAction.bind(container);
-    /* Share: Foundation lazy — click .ifx-insight-share-btn (App Shell stub), không preload feed. */
-  }
-
-  function renderReset(container) {
-    var s = container._ifxDaily;
-    if (!s) return;
-    s.days = buildDays(s.opts.filter);
-    s.rendered = 0;
-    var mount = container.querySelector('[data-ifx-daily]');
-    if (mount) mount.innerHTML = '';
-    if (!s.days.length) {
-      if (mount) mount.innerHTML = '<div class="ifx-com-empty">Chưa có tin tức hoặc bài viết chuyên gia.</div>';
-      toggleEnd(container, true);
-      return;
+    var hasContent = s.composed > 0 || !!(container.querySelector('[data-ifx-com-section]'));
+    var canMore = s.initialDone && !s.loadError && !s.ended &&
+      (s.hasMore || s.composed < s.buffer.length);
+    if (err) {
+      err.hidden = !s.loadError;
     }
-    renderNextDay(container);
-  }
-
-  function bindScroll(container) {
-    if (container._ifxDailyScroll) return;
-    container._ifxDailyScroll = true;
-    function onScroll() {
-      var s = container._ifxDaily;
-      if (!s || s.rendered >= s.days.length) return;
-      var more = container.querySelector('[data-ifx-daily-more]');
-      if (!more) return;
-      if (more.getBoundingClientRect().top < window.innerHeight + 200) {
-        renderNextDay(container);
+    if (more) {
+      more.hidden = !canMore;
+      if (!more.hidden) {
+        if (s.acquiring || s.batchLoading) {
+          more.innerHTML = '<span class="ifx-com-spinner"></span> Đang tải thêm…';
+        } else {
+          more.innerHTML = 'Cuộn để xem thêm';
+        }
       }
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    container._ifxDailyOnScroll = onScroll;
-    onScroll();
+    if (end) {
+      end.hidden = !s.ended || !hasContent;
+    }
   }
 
-  function bindChange(container) {
-    if (container._ifxDailyChange) return;
-    container._ifxDailyChange = true;
-    var timer = null;
-    document.addEventListener('iflux-community-change', function () {
-      if (!document.body.contains(container)) return;
-      clearTimeout(timer);
-      timer = setTimeout(function () { renderReset(container); }, 120);
+  function appendBatchHtml(container, html) {
+    var mount = container.querySelector('[data-ifx-daily]');
+    if (!mount || !html) return;
+    mount.insertAdjacentHTML('beforeend', html);
+    if (global.IfluxHeartAction) IfluxHeartAction.bind(container);
+  }
+
+  function composeOneBatch(container) {
+    var s = container._ifxFeed;
+    if (!s || s.opts.showNews === false) return false;
+    var remain = s.buffer.length - s.composed;
+    if (remain <= 0) return false;
+    var start = s.composed;
+    var aItems = s.buffer.slice(start, start + BATCH_A);
+    var bStart = start + aItems.length;
+    var bItems = s.buffer.slice(bStart, bStart + BATCH_B);
+    if (!ui() || !ui().featuredPostHtml) {
+      s.loadError = true;
+      updateSentinel(container);
+      return false;
+    }
+    var html = sectionAHtml(aItems) + (bItems.length ? sectionBHtml(bItems) : '');
+    if (!html) return false;
+    /* Chỉ tăng composed khi đã append HTML — tránh “nuốt” buffer khi render rỗng */
+    s.composed = start + aItems.length + bItems.length;
+    appendBatchHtml(container, html);
+    var batchPosts = aItems.concat(bItems);
+    /* Runtime quotes only — hydrate ghi thị giá/% lên chip (không Mock) */
+    if (ui() && typeof ui().hydrateTickerQuotes === 'function') {
+      ui().hydrateTickerQuotes(container, batchPosts);
+    }
+    if (!s.hasMore && s.composed >= s.buffer.length) {
+      s.ended = true;
+    }
+    updateSentinel(container);
+    return true;
+  }
+
+  function ensureExpertsSibling(container) {
+    var s = container._ifxFeed;
+    if (!s || s.expertsDone || s.opts.showExperts === false) return;
+    var mount = container.querySelector('[data-ifx-daily]');
+    if (!mount) return;
+    var html = expertsSection(s.filter);
+    if (html) {
+      /* Experts sibling trước article stream — chỉ khi mount còn trống batches */
+      if (!mount.querySelector('[data-ifx-com-section]')) {
+        mount.insertAdjacentHTML('afterbegin', html);
+      }
+    }
+    s.expertsDone = true;
+  }
+
+  function acquirePage(container) {
+    var s = container._ifxFeed;
+    var b = bridge();
+    if (!s || !b || !b.loadFeed) return Promise.resolve({ ok: false });
+    if (s.acquiring) return Promise.resolve({ ok: true, skipped: true });
+    if (!s.hasMore) return Promise.resolve({ ok: true, skipped: true, noMore: true });
+    var gen = s.generation;
+    s.acquiring = true;
+    updateSentinel(container);
+    var q = feedQueryFromFilter(s.filter);
+    var reqOffset = s.offset;
+    /* mergeStore (related trên bài viết): luôn merge — CẤM replace wipe bài đang xem */
+    var doReplace = !s.opts.mergeStore && reqOffset === 0;
+    return b.loadFeed({
+      limit: FEED_PAGE_SIZE,
+      offset: reqOffset,
+      category_id: q.category_id,
+      ticker: q.ticker,
+      chu_de_id: q.chu_de_id,
+      replace: doReplace
+    }).then(function (out) {
+      if (!container._ifxFeed || container._ifxFeed.generation !== gen) {
+        return { ok: false, stale: true };
+      }
+      s.acquiring = false;
+      if (!out || !out.ok) {
+        s.loadError = true;
+        updateSentinel(container);
+        return { ok: false };
+      }
+      var cards = out.cards || [];
+      var before = s.buffer.length;
+      cards.forEach(function (c) {
+        if (!c || !c.id || s.bufferIds[c.id]) return;
+        s.bufferIds[c.id] = true;
+        s.buffer.push(c);
+      });
+      var netNew = s.buffer.length - before;
+      /* Luôn tiến offset theo số card API trả — tránh kẹt cùng offset */
+      s.offset = reqOffset + cards.length;
+      s.hasMore = out.has_more === true;
+      if (cards.length === 0) {
+        s.hasMore = false;
+      }
+      if (netNew === 0) {
+        s.emptyAcquireStreak += 1;
+        if (s.emptyAcquireStreak >= 2 || !s.hasMore) {
+          s.hasMore = false;
+          if (s.composed >= s.buffer.length) s.ended = true;
+        }
+      } else {
+        s.emptyAcquireStreak = 0;
+      }
+      if (!s.hasMore && s.composed >= s.buffer.length) s.ended = true;
+      updateSentinel(container);
+      return { ok: true, cards: cards, netNew: netNew };
+    }).catch(function () {
+      if (container._ifxFeed && container._ifxFeed.generation === gen) {
+        container._ifxFeed.acquiring = false;
+        container._ifxFeed.loadError = true;
+        updateSentinel(container);
+      }
+      return { ok: false };
+    });
+  }
+
+  /** Acquire tối thiểu cho 1 Batch (≤11) — không preload hết has_more */
+  function ensureBufferForBatch(container) {
+    var s = container._ifxFeed;
+    if (!s) return Promise.resolve();
+    var want = BATCH_A + BATCH_B;
+    function need() {
+      return (s.buffer.length - s.composed) < want && s.hasMore && !s.loadError;
+    }
+    function step() {
+      if (!need()) return Promise.resolve();
+      return acquirePage(container).then(function (r) {
+        if (!r || r.stale) return;
+        if (r.skipped) return; /* đang acquire bởi call khác — không recurse */
+        if (!r.ok) return;
+        if (need()) return step();
+      });
+    }
+    return step();
+  }
+
+  function loadNextBatch(container) {
+    var s = container._ifxFeed;
+    if (!s || s.batchLoading || s.acquiring || s.loadError || s.ended) return;
+    if (!s.initialDone) return;
+    if (s.opts.showNews === false) {
+      s.ended = true;
+      updateSentinel(container);
+      return;
+    }
+    var gen = s.generation;
+    s.batchLoading = true;
+    updateSentinel(container);
+    ensureBufferForBatch(container).then(function () {
+      if (!container._ifxFeed || container._ifxFeed.generation !== gen) return;
+      s.batchLoading = false;
+      if (s.loadError) {
+        updateSentinel(container);
+        return;
+      }
+      var did = composeOneBatch(container);
+      if (!did) {
+        if (!s.hasMore || s.composed >= s.buffer.length) {
+          s.ended = true;
+        }
+      }
+      updateSentinel(container);
+    }).catch(function () {
+      if (container._ifxFeed && container._ifxFeed.generation === gen) {
+        container._ifxFeed.batchLoading = false;
+        container._ifxFeed.loadError = true;
+        updateSentinel(container);
+      }
+    });
+  }
+
+  function bindSentinel(container) {
+    if (container._ifxFeedIo) return;
+    var more = container.querySelector('[data-ifx-daily-more]');
+    if (!more || typeof IntersectionObserver === 'undefined') {
+      container._ifxFeedIo = true;
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var s = container._ifxFeed;
+        if (!s || !s.initialDone || s.loadError || s.ended || s.acquiring || s.batchLoading) return;
+        loadNextBatch(container);
+      });
+    }, { root: null, rootMargin: '240px', threshold: 0 });
+    io.observe(more);
+    container._ifxFeedIo = io;
+  }
+
+  function bindErrorRetry(container) {
+    if (container._ifxFeedErrBound) return;
+    container._ifxFeedErrBound = true;
+    container.addEventListener('click', function (e) {
+      var t = e.target && e.target.closest ? e.target.closest('[data-ifx-daily-retry]') : null;
+      if (!t || !container.contains(t)) return;
+      var s = container._ifxFeed;
+      if (!s) return;
+      s.loadError = false;
+      updateSentinel(container);
+      loadNextBatch(container);
+    });
+  }
+
+  function resetAndInitial(container) {
+    var s = container._ifxFeed;
+    if (!s) return;
+    s.generation += 1;
+    var gen = s.generation;
+    s.buffer = [];
+    s.bufferIds = {};
+    s.composed = 0;
+    s.offset = 0;
+    s.hasMore = true;
+    s.acquiring = false;
+    s.batchLoading = false;
+    s.emptyAcquireStreak = 0;
+    s.loadError = false;
+    s.expertsDone = false;
+    s.ended = false;
+    s.initialDone = false;
+    var mount = container.querySelector('[data-ifx-daily]');
+    if (mount) mount.innerHTML = '';
+    updateSentinel(container);
+    if (s.opts.showNews === false) {
+      ensureExpertsSibling(container);
+      if (mount && !mount.querySelector('[data-ifx-com-experts-sibling]')) {
+        mount.innerHTML = '<div class="ifx-com-empty">Chưa có tin tức hoặc bài viết.</div>';
+      }
+      s.ended = true;
+      s.initialDone = true;
+      updateSentinel(container);
+      return;
+    }
+    s.batchLoading = true;
+    ensureBufferForBatch(container).then(function () {
+      if (!container._ifxFeed || container._ifxFeed.generation !== gen) return;
+      s.batchLoading = false;
+      /* Experts sibling trước article batches */
+      ensureExpertsSibling(container);
+      if (s.loadError && !s.buffer.length) {
+        s.initialDone = true;
+        updateSentinel(container);
+        return;
+      }
+      if (!s.buffer.length) {
+        var m = container.querySelector('[data-ifx-daily]');
+        if (m && !m.querySelector('[data-ifx-com-section],[data-ifx-com-experts-sibling]')) {
+          m.insertAdjacentHTML('beforeend', '<div class="ifx-com-empty">Chưa có tin tức hoặc bài viết.</div>');
+        }
+        s.ended = true;
+        s.initialDone = true;
+        updateSentinel(container);
+        return;
+      }
+      composeOneBatch(container);
+      s.initialDone = true;
+      updateSentinel(container);
+      /* Nếu sentinel đã trong viewport — lấy batch 2 một lần (không loop) */
+      var more = container.querySelector('[data-ifx-daily-more]');
+      if (more && !more.hidden && !s.ended) {
+        loadNextBatch(container);
+      }
+    }).catch(function () {
+      if (container._ifxFeed && container._ifxFeed.generation === gen) {
+        container._ifxFeed.batchLoading = false;
+        container._ifxFeed.loadError = true;
+        container._ifxFeed.initialDone = true;
+        updateSentinel(container);
+      }
     });
   }
 
   function mount(container, opts) {
-    if (!container || !st() || !ui()) return;
+    if (!container || !ui()) return;
     opts = opts || {};
     opts.filter = opts.filter || {};
-    container._ifxDaily = { days: [], rendered: 0, opts: opts };
+    container._ifxFeed = newSession(opts);
     container.innerHTML =
       '<div class="ifx-com-daily" data-ifx-daily></div>' +
-      '<div class="ifx-com-load-more" data-ifx-daily-more hidden><span class="ifx-com-spinner"></span> Cuộn để xem ngày trước</div>' +
-      '<div class="ifx-com-end" data-ifx-daily-end hidden>Đã xem hết tin tức &amp; bài viết chuyên gia</div>';
-    renderReset(container);
-    bindScroll(container);
-    bindChange(container);
+      '<div class="ifx-com-load-more" data-ifx-daily-more hidden>' +
+        '<span class="ifx-com-spinner"></span> Cuộn để xem thêm' +
+      '</div>' +
+      '<div class="ifx-com-load-more ifx-com-load-more--error" data-ifx-daily-error hidden>' +
+        'Không tải thêm được. ' +
+        '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-ifx-daily-retry>Thử lại</button>' +
+      '</div>' +
+      '<div class="ifx-com-end" data-ifx-daily-end hidden>Đã xem hết bài viết</div>';
+    bindSentinel(container);
+    bindErrorRetry(container);
+    resetAndInitial(container);
   }
 
   global.IfluxDailyFeed = {
     mount: mount,
-    buildDays: buildDays,
-    expertsSectionHtml: expertsSection
+    expertsSectionHtml: expertsSection,
+    FEED_PAGE_SIZE: FEED_PAGE_SIZE
   };
 })(window);

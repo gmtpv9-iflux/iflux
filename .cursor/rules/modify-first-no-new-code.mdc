@@ -1,0 +1,39 @@
+---
+description: HÀNG ĐẦU — CẤM ép code mới; ưu tiên sửa/thay/dọn hardcode trên code hiện có
+alwaysApply: true
+---
+
+# Modify-First — CẤM ép code mới (Owner LOCK · hàng đầu)
+
+**Cao hơn thói quen “viết thêm cho chắc”. Xung đột với phản xạ thêm file/helper/nhánh mới → tuân rule này.**
+
+## Bắt buộc trước mọi diff
+
+1. **Tìm chỗ đang sai** trong code/CSS/HTML hiện có.
+2. **Sửa / thay / xóa** đúng chỗ đó.
+3. **Không** thêm abstraction, helper, nhánh guard, attribute, comment-lock, file mới chỉ vì vừa tìm ra bug.
+
+## Thứ tự bắt buộc
+
+```
+Sửa chỗ hỏng → Thay hardcode bằng binding đã có → Xóa chết
+→ (hiếm) mới được tạo capability mới — phải trả lời “why cannot modify?”
+```
+
+## Cấm
+
+- Biết root cause ở 1 dòng CSS/JS mà vẫn viết lại cả module / thêm render path song song.
+- Thêm `if (Array.isArray)` / normalize / `data-*` / wrapper chỉ để “phòng lỗi” khi chưa chứng minh cần.
+- Tạo class/file/API mới khi chỉ cần bỏ class sai, sửa selector, hoặc xóa hardcode.
+- Giữ bản cũ + bản mới (`display:none`, `v2_`, song song).
+
+## Đúng
+
+- Sai class trên `<td>` → **bỏ class / sửa rule CSS hiện có** — xong.
+- Hardcode nhãn → **đổ từ Registry/API đã có** — xóa chuỗi cứng.
+- Text thừa / ban thừa / helper 1 call-site → **xóa trong cùng task**.
+
+## Kiểm trước khi báo xong
+
+- Diff có **+ nhiều hơn −** mà không giải trình Ownership? → cắt phần thêm.
+- Có file/hàm mới? → bắt buộc: Existing owner / Why cannot modify / Removal plan.
