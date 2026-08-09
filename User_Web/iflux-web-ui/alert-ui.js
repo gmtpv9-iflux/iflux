@@ -191,24 +191,19 @@
   function syncSrPreview() {
     var modal = ensureModal();
     var preview = modal.querySelector('[data-ifx-alert-sr-preview]');
-    var mk = global.IfluxMockMarket;
     var st = ast();
-    if (!preview || !mk || !st || !modalTicker) return;
+    if (!preview || !st || !modalTicker) return;
 
     var levelType = modal.querySelector('[data-ifx-alert-sr-type]').value;
     var sessions = parseInt(modal.querySelector('[data-ifx-alert-sr-sessions]').value, 10);
-    var levels = mk.getSrLevels(modalTicker, sessions);
-    var pct = mk.getPriceVsSrPct(modalTicker, levelType, sessions);
     var levelLabel = levelType === 'support' ? 'Hỗ trợ' : 'Kháng cự';
-    var levelVal = levels ? (levelType === 'support' ? levels.support : levels.resistance) : '—';
     var hasDup = st.getSrAlertsForTicker(modalTicker).some(function (a) {
       return a.levelType === levelType && a.sessions === sessions;
     });
 
     preview.innerHTML =
-      '<div class="ifx-alert-sr-preview__line">Mức ' + levelLabel + ' ' + sessions + ' phiên: <strong>' + levelVal + '</strong></div>' +
-      '<div class="ifx-alert-sr-preview__line">Chênh lệch hiện tại: <strong>' +
-        (pct != null ? st.fmtPct(pct) : '—') + '</strong></div>' +
+      '<div class="ifx-alert-sr-preview__line">Mức ' + levelLabel + ' ' + sessions + ' phiên: <strong>—</strong></div>' +
+      '<div class="ifx-alert-sr-preview__line">Chênh lệch hiện tại: <strong>—</strong></div>' +
       (hasDup ? '<div class="ifx-alert-sr-preview__warn">Đã có cảnh báo cho loại + số phiên này</div>' : '');
   }
 
@@ -350,13 +345,36 @@
     if (!st) return;
     modalTicker = ticker;
     var modal = ensureModal();
-    var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-    var sub = ticker;
-    if (snap && snap.entities && snap.entities.stocks && snap.entities.stocks[ticker]) {
-      var s = snap.entities.stocks[ticker];
-      sub = ticker + ' · ' + (s.name || '') + ' · Giá: ' + (s.price != null ? s.price : '—');
+    var t = String(ticker || '').toUpperCase();
+    var name = t;
+    var mm = global.IfluxMarketMaster;
+    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
+    if (list) {
+      for (var i = 0; i < list.length; i++) {
+        if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) {
+          name = list[i].name || list[i].short_name || t;
+          break;
+        }
+      }
     }
-    modal.querySelector('[data-ifx-alert-sub]').textContent = sub;
+    var priceLabel = '—';
+    var mq = global.IfluxMarketQuotes;
+    var q = mq && typeof mq.peekQuote === 'function' ? mq.peekQuote(t) : null;
+    if (q) {
+      var px = q.price != null ? q.price : q.close;
+      if (px != null && !isNaN(Number(px))) priceLabel = Number(px);
+    }
+    modal.querySelector('[data-ifx-alert-sub]').textContent =
+      t + ' · ' + name + ' · Giá: ' + priceLabel;
+    if (mq && typeof mq.getQuote === 'function') {
+      mq.getQuote(t).then(function (rq) {
+        if (modalTicker !== ticker) return;
+        var px2 = rq ? (rq.price != null ? rq.price : rq.close) : null;
+        var label = (px2 != null && !isNaN(Number(px2))) ? Number(px2) : '—';
+        modal.querySelector('[data-ifx-alert-sub]').textContent =
+          t + ' · ' + name + ' · Giá: ' + label;
+      });
+    }
     switchTab('rank');
     renderRankPanel();
     renderSrPanel();

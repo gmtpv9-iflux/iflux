@@ -93,20 +93,9 @@
   }
 
   function tickerReturnSinceAdd(ticker, addedAt, windowStart, userId) {
-    var mk = global.IfluxMockMarket;
-    var stock = mk ? mk.getStock(ticker) : null;
-    if (!stock || stock.price == null) return null;
-
-    var added = new Date(addedAt);
-    var start = added.getTime() > windowStart.getTime() ? added : windowStart;
-    var days = (Date.now() - start.getTime()) / 86400000;
-    if (days < 0.5) return null;
-
-    var h = hashStr(userId + ':' + ticker + ':' + addedAt);
-    var bias = ((h % 280) / 10) - 8;
-    var dailyDrift = ((stock.change_pct || 0) / 100) * 0.35 + bias / 365;
-    var ret = (Math.pow(1 + dailyDrift, days) - 1) * 100;
-    return Math.round(ret * 100) / 100;
+    /* WP-1 / D1: không có authority multi-day portfolio return → UNAVAILABLE.
+     * Cấm mock getStock + hash invent. */
+    return null;
   }
 
   function portfolioPerformance(entry, periodKey) {

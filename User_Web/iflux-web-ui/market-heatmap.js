@@ -1,155 +1,20 @@
-/* Heatmap treemap — Ngành / Họ CP / Chủ đề */
+/* Heatmap treemap — Ngành / Họ CP / Chủ đề / Cổ phiếu.
+   WP-4: xếp hạng Top N theo GTGD KHÔNG có runtime authority (BR-03/04/13, D1) → UNAVAILABLE.
+   Không còn phụ thuộc module mock thị trường. */
 (function (global) {
   'use strict';
-
-  var GUTTER = 2;
-
-  function mk() { return global.IfluxMockMarket; }
-  function treemap() { return global.IfluxSquarifiedTreemap; }
-
-  function fmtPct(n) {
-    if (n == null || isNaN(n)) return '—';
-    return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-  }
 
   function esc(s) {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function perfClass(p) {
-    if (global.IfluxBlockTemplates) return IfluxBlockTemplates.perfDirection(p);
-    if (p > 0.08) return 'up';
-    if (p < -0.08) return 'down';
-    return 'ref';
+  function emptyHtml() {
+    return '<div class="ifx-mkt-empty">Chưa có dữ liệu</div>';
   }
 
-  function tierFor(w, h) {
-    var area = w * h;
-    if (area < 900 || w < 32 || h < 24) return 'tiny';
-    if (w < 48 || h < 32) return 'small';
-    if (area >= 8000) return 'large';
-    if (area >= 2500) return 'medium';
-    return 'small';
-  }
-
-  function hrefFor(source, id) {
-    var c;
-    if (global.IfluxSeoUrl) {
-      if (source === 'stock') c = IfluxSeoUrl.stockHref(id);
-      else if (source === 'sector') c = IfluxSeoUrl.sectorHref(id);
-      else if (source === 'family') c = IfluxSeoUrl.ecosystemHref(id);
-      else c = IfluxSeoUrl.storyEntityHref(id);
-    } else if (source === 'stock') c = '/co-phieu/' + encodeURIComponent(id);
-    else if (source === 'sector') c = '/nganh/' + encodeURIComponent(id);
-    else if (source === 'family') c = '/he-sinh-thai/' + encodeURIComponent(id);
-    else c = '/chu-de/' + encodeURIComponent(id);
-    return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
-  }
-
-  function isRemainder(item) {
-    return treemap() && treemap().isHeatmapRemainder
-      ? treemap().isHeatmapRemainder(item)
-      : !!(item && item.isRemainder);
-  }
-
-  function paint(canvas, source) {
-    if (!canvas || !treemap() || !mk()) return;
-    var groups = mk().getHeatmapGroups(source);
-    if (!groups.length) {
-      canvas.innerHTML = '<div class="ifx-mkt-empty">Chưa có dữ liệu</div>';
-      return;
-    }
-
-    /* getHeatmapGroups đã Top 10 theo GTGD — không gộp đuôi "..." */
-    var items = groups.map(function (g) {
-      return { id: g.id, name: g.name, perf: g.perf, weight: Math.max(g.weight, 1) };
-    });
-
-    var w = canvas.clientWidth;
-    var h = canvas.clientHeight;
-    if (w < 40 || h < 40) return;
-
-    var layouts = treemap().layout(items, w, h).map(function (r) {
-      return {
-        x: r.x + GUTTER / 2,
-        y: r.y + GUTTER / 2,
-        width: Math.max(0, r.width - GUTTER),
-        height: Math.max(0, r.height - GUTTER),
-        item: r.item
-      };
-    });
-
-    var byId = {};
-    canvas.querySelectorAll('[data-ifx-heat-id]').forEach(function (el) {
-      byId[el.getAttribute('data-ifx-heat-id')] = el;
-    });
-
-    layouts.forEach(function (rect) {
-      var item = rect.item;
-      var tier = tierFor(rect.width, rect.height);
-      var remainder = isRemainder(item);
-      var cls = remainder ? 'is-remainder' : 'is-' + perfClass(item.perf);
-      var el = byId[item.id];
-      if (!el) {
-        el = document.createElement('div');
-        el.className = 'ifx-mkt-heat-tile';
-        el.setAttribute('data-ifx-heat-id', item.id);
-        if (remainder) {
-          el.innerHTML = '<span class="ifx-mkt-heat-tile__remainder ' + cls + '" aria-hidden="true">...</span>';
-        } else {
-          el.innerHTML = '<a class="ifx-mkt-heat-tile__link ' + cls + '" href="' + esc(hrefFor(source, item.id)) + '"></a>';
-        }
-        canvas.appendChild(el);
-      } else {
-        delete byId[item.id];
-        if (remainder) {
-          var rem = el.querySelector('.ifx-mkt-heat-tile__remainder');
-          if (!rem) {
-            el.innerHTML = '<span class="ifx-mkt-heat-tile__remainder ' + cls + '" aria-hidden="true">...</span>';
-          } else {
-            rem.className = 'ifx-mkt-heat-tile__remainder ' + cls;
-          }
-        } else {
-          var link = el.querySelector('.ifx-mkt-heat-tile__link');
-          if (!link) {
-            el.innerHTML = '<a class="ifx-mkt-heat-tile__link ' + cls + '" href="' + esc(hrefFor(source, item.id)) + '"></a>';
-            link = el.querySelector('.ifx-mkt-heat-tile__link');
-          } else {
-            link.className = 'ifx-mkt-heat-tile__link ' + cls;
-          }
-        }
-      }
-
-      el.className = 'ifx-mkt-heat-tile ifx-mkt-heat-tile--' + tier + (remainder ? ' ifx-mkt-heat-tile--remainder' : '');
-      el.style.left = rect.x + 'px';
-      el.style.top = rect.y + 'px';
-      el.style.width = rect.width + 'px';
-      el.style.height = rect.height + 'px';
-
-      if (remainder) return;
-
-      var link = el.querySelector('.ifx-mkt-heat-tile__link');
-      if (link) {
-        link.href = hrefFor(source, item.id);
-        link.title = item.name + ' · ' + fmtPct(item.perf);
-        var kind = source === 'sector' ? 'sector'
-          : (source === 'family' ? 'family'
-            : ((source === 'chu-de' || source === 'story') ? 'cau-chuyen' : 'stock'));
-        var nameHtml = global.IfluxBlockTemplates && IfluxBlockTemplates.entityName
-          ? (tier === 'tiny'
-            ? IfluxBlockTemplates.entityName(item.name, kind, { className: 'ifx-mkt-heat-tile__name', tiny: true })
-            : IfluxBlockTemplates.entityName(item.name, kind, { className: 'ifx-mkt-heat-tile__name' }))
-          : ('<span class="ifx-mkt-heat-tile__name">' + esc(tier === 'tiny' ? item.name.split(' ')[0] : item.name) + '</span>');
-        link.innerHTML = tier === 'tiny'
-          ? nameHtml
-          : nameHtml + '<span class="ifx-mkt-heat-tile__perf">' + fmtPct(item.perf) + '</span>';
-      }
-    });
-
-    Object.keys(byId).forEach(function (id) {
-      var orphan = byId[id];
-      if (orphan.parentNode) orphan.parentNode.removeChild(orphan);
-    });
+  function paint(canvas) {
+    if (!canvas) return;
+    canvas.innerHTML = emptyHtml();
   }
 
   function resolveWidgetCopy(widgetId) {
@@ -218,21 +83,7 @@
         '<div class="ifx-mkt-heatmap" data-ifx-mkt-heatmap="' + source + '"></div>' +
       '</div>';
     var canvas = el.querySelector('[data-ifx-mkt-heatmap]');
-
-    function refresh() {
-      paint(canvas, source);
-    }
-
-    refresh();
-    if (typeof ResizeObserver !== 'undefined') {
-      var ro = new ResizeObserver(refresh);
-      ro.observe(canvas);
-    } else {
-      window.addEventListener('resize', refresh);
-    }
-    if (!canvas.clientWidth || !canvas.clientHeight) {
-      setTimeout(refresh, 60);
-    }
+    paint(canvas);
   }
 
   global.IfluxMarketHeatmap = { mount: mount, paint: paint };

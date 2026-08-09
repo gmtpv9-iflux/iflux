@@ -1,4 +1,5 @@
-/* Xếp hạng Top 10 — TPL-RANK-BAR (Design Sandbox SoT) */
+/* Xếp hạng Top 10 — TPL-RANK-BAR (Design Sandbox SoT).
+   WP-4: xếp hạng hiệu suất KHÔNG có runtime authority (D1) → UNAVAILABLE. */
 (function (global) {
   'use strict';
 
@@ -10,12 +11,12 @@
   };
 
   function tpl() { return global.IfluxBlockTemplates; }
-  function mk() { return global.IfluxMockMarket; }
 
   function render(el, source) {
-    if (!el || !mk()) return;
+    if (!el) return;
     var T = tpl();
-    var items = mk().getTop10Today(source);
+    /* Không có runtime authority cho xếp hạng hiệu suất — UNAVAILABLE (rỗng, không mock). */
+    var items = [];
     if (T) {
       el.innerHTML = T.renderRankBarList({
         items: items,

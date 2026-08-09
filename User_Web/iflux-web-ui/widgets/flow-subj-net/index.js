@@ -20,8 +20,7 @@ export async function mount(el, ctx) {
   );
 
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxFlowNetTop', src: ASSET + 'flow-net-top.js' }
+    { global: 'IfluxFlowNetTop', src: ASSET + 'flow-net-top.js?v=mockRmWp5_20260809' }
   ]);
 
   if (window.IfluxFlowNetTop && IfluxFlowNetTop.mount) {

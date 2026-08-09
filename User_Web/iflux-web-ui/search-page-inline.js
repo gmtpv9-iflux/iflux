@@ -13,6 +13,29 @@ function entityHref(e) {
   return '#';
 }
 
+/* Identity = IfluxMarketMaster (SOL-IDENTITY). Giá/%/KL không có ở đây
+   → null, template hiện "—" (SOL-QUOTE: chỉ IfluxMarketQuotes mới là authority giá). */
+function masterStock(ticker) {
+  var mm = global.IfluxMarketMaster;
+  if (!mm || typeof mm.getMasterStocks !== 'function') return null;
+  var list = mm.getMasterStocks();
+  if (!list) return null;
+  var t = String(ticker || '').toUpperCase();
+  for (var i = 0; i < list.length; i++) {
+    if (String(list[i].ticker || '').toUpperCase() === t) {
+      return {
+        ticker: t,
+        name: list[i].name || t,
+        short_name: list[i].short_name || list[i].name || t,
+        price: null,
+        change_pct: null,
+        volume: null
+      };
+    }
+  }
+  return null;
+}
+
 function renderSearch(q) {
   var el = document.getElementById('ifx-search-results');
   var hits = IfluxStockMentions.matchEntity(q);
@@ -51,8 +74,7 @@ function renderSearch(q) {
       groups[type].map(function (e) {
         var href = entityHref(e);
         if (type === 'ticker') {
-          var snap = IfluxMockMarket.getSnapshot();
-          var s = snap.entities.stocks[e.id];
+          var s = masterStock(e.id);
           return s ? IfluxWatchlistUI.stockRowHtml(s, { href: href }) : '';
         }
         return '<a href="' + href + '" class="ifx-follow-card" style="text-decoration:none;margin-bottom:8px">' +

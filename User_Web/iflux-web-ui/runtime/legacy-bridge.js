@@ -14,7 +14,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 /**
  * iFlux Runtime — Legacy Bridge (ESM)
  * Bắc cầu giữa runtime ES module mới và các lib cũ dạng IIFE gán vào window
- * (mock-market, block-templates...). Cho phép nạp script/CSS ON-DEMAND, đúng
+ * (market-master, block-templates...). Cho phép nạp script/CSS ON-DEMAND, đúng
  * nguyên tắc Lazy Page Runtime: chỉ tải khi widget cần, không nhồi ở boot.
  *
  * KHÔNG import implementation của widget ở đây — chỉ nạp động theo yêu cầu.
@@ -27,7 +27,7 @@ var stylePromises = {};
 function normalizeStyleHref(href) {
   var s = String(href || '');
   if (/\/User_Web\/iflux-web-ui\/community\.css(\?|$)/.test(s)) {
-    return '/User_Web/iflux-web-ui/community.css?v=ixUiOwn20260724';
+    return '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809';
   }
   return s;
 }
@@ -118,7 +118,7 @@ export function loadStyles(list) {
 
 /**
  * Đảm bảo một global (window[name]) tồn tại; nếu chưa thì nạp script nguồn.
- * @param {string} name  Tên biến global (vd 'IfluxMockMarket')
+ * @param {string} name  Tên biến global (vd 'IfluxMarketMaster')
  * @param {string} src   Đường dẫn script cung cấp global đó
  */
 export async function ensureGlobal(name, src) {
@@ -144,7 +144,7 @@ export async function loadScriptsSequential(srcs) {
 var SHELL_PLATFORM_SKIP = [
   { re: /\/block-templates\.js$/i, global: 'IfluxBlockTemplates' },
   { re: /\/watchlist-taxonomy\.js$/i, global: 'IfluxWatchlistTaxonomy' },
-  { re: /\/mock-market\.js$/i, global: 'IfluxMockMarket' },
+  { re: /\/iflux-market-master\.js$/i, global: 'IfluxMarketMaster' },
   { re: /\/seo-url\.js$/i, global: 'IfluxSeoUrl' },
   { re: /\/iflux-market-seed-data\.js$/i, global: 'IfluxMarketSeedData' },
   { re: /\/iflux-market-ecosystem-seeds\.js$/i, global: 'IfluxMarketEcosystemSeeds' },

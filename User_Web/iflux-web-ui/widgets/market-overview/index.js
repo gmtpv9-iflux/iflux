@@ -1,7 +1,8 @@
 /**
  * Widget WGT-MKT-001 — Tổng quan thị trường (ESM lazy module)
  * Export mount(el, ctx) — bọc IfluxCommunityMarketOverview qua legacy-bridge.
- * Chỉ nạp deps on-demand: mock-market + block-templates (không heatmap/rankings/...).
+ * Chỉ nạp deps on-demand: community-market-overview + block-templates (không heatmap/rankings/...).
+ * WP-4: bỏ module mock thị trường khỏi dep chain.
  */
 
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
@@ -15,9 +16,9 @@ export const meta = {
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
+  /* WP-4: bỏ module mock thị trường — community-market-overview.js đã migrate (WP-1, UNAVAILABLE). */
   await ensureSequence([
-    { global: 'IfluxMockMarket', src: ASSET + 'mock-market.js' },
-    { global: 'IfluxCommunityMarketOverview', src: ASSET + 'community-market-overview.js' }
+    { global: 'IfluxCommunityMarketOverview', src: ASSET + 'community-market-overview.js?v=mockRmWp4_20260809' }
   ]);
 
   var Overview = window.IfluxCommunityMarketOverview;

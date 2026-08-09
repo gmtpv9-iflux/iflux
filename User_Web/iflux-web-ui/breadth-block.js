@@ -1,5 +1,5 @@
-/* TMP-BREADTH / TPL-BREADTH — mount + tương tác tab sàn.
- * HTML producer: IfluxBlockTemplates.renderBreadth*
+/* TMP-BREADTH / TPL-BREADTH — mount.
+ * WP-4: độ rộng thị trường KHÔNG có runtime authority (D1) → UNAVAILABLE.
  * CSS owner: block-templates.css (TPL-BREADTH)
  */
 (function (global) {
@@ -8,21 +8,15 @@
   function tpl() { return global.IfluxBlockTemplates; }
 
   function render(root) {
-    var m = global.IfluxMockMarket;
     var T = tpl();
-    if (!root || !m || !T) return;
-
-    var exchange = root.getAttribute('data-exchange') || 'vnindex';
-    var data = m.getBreadth(exchange);
-    if (!data) return;
+    if (!root || !T) return;
 
     var inner = root.querySelector('[data-ifx-breadth-inner]');
     if (!inner) {
       root.innerHTML = '<div data-ifx-breadth-inner></div>';
       inner = root.querySelector('[data-ifx-breadth-inner]');
     }
-    inner.innerHTML = T.renderBreadthContent({ exchange: exchange, data: data });
-    root.setAttribute('data-exchange', exchange);
+    inner.innerHTML = '<div class="ifx-mkt-empty">Chưa có dữ liệu độ rộng thị trường</div>';
   }
 
   function bind(root) {

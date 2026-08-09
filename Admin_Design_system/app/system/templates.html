@@ -6,14 +6,14 @@
   <title>ADM-SYS-012 — Mẫu giao diện · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="../../iflux-admin-ui/iflux-admin-ui.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/market.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/market-components.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/flow.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/community.css?v=topwlHead20260708" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/watchlist.css" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/widget-shell.css?v=stripTabTopN20260718" />
-  <link rel="stylesheet" href="../../../User_Web/iflux-web-ui/block-templates.css?v=srHist20260720" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market-components.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/flow.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/community.css?v=topwlHead20260708" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/watchlist.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/widget-shell.css?v=stripTabTopN20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/block-templates.css?v=srHist20260720" />
   <style>
     .ifx-wl-empty { padding:20px; text-align:center; color:var(--ix-text-muted); font-size:12px; }
     .tpl-hint { font-size:13px; color:var(--ix-text-muted); margin:0 0 16px; line-height:1.6; }
@@ -80,10 +80,10 @@
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
           <div>
             <h1 class="ix-page-title" style="margin-bottom:4px">Mẫu giao diện</h1>
-            <div class="ix-breadcrumb"><a href="../../hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Giao diện</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-SYS-012</span></div>
+            <div class="ix-breadcrumb"><a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Giao diện</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>ADM-SYS-012</span></div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <a href="platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
+            <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
             <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="tpl-reset"><i class="ti ti-restore"></i> Khôi phục mặc định</button>
           </div>
         </div>
@@ -104,47 +104,47 @@
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
 <!-- Renderer THẬT của User Web — preview template = giao diện thật, không vẽ lại -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
-<script src="../../../User_Web/iflux-web-ui/mock-market.js"></script>
-<script src="../../../User_Web/iflux-web-ui/watchlist-taxonomy.js"></script>
-<script src="../../../User_Web/iflux-web-ui/block-templates.js?v=srHist20260720"></script>
-<script src="../../../User_Web/iflux-web-ui/breadth-block.js?v=stripTabTopN20260718"></script>
-<script src="../../../User_Web/iflux-web-ui/community-market-overview.js"></script>
-<script src="../../../User_Web/iflux-web-ui/top10-market-block.js"></script>
-<script src="../../../User_Web/iflux-web-ui/squarified-treemap.js"></script>
-<script src="../../../User_Web/iflux-web-ui/market-heatmap.js"></script>
-<script src="../../../User_Web/iflux-web-ui/market-liquidity.js"></script>
-<script src="../../../User_Web/iflux-web-ui/flow-net-top.js"></script>
-<script src="../../../User_Web/iflux-web-ui/flow-score-top-mock.js"></script>
-<script src="../../../User_Web/iflux-web-ui/flow-score-top.js?v=sigLabel20260717"></script>
-<script src="../../../User_Web/iflux-web-ui/flow-market-sidebar.js"></script>
-<script src="../../../User_Web/iflux-web-ui/stock-mentions.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/profile-users-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/profile-links.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-ui.js"></script>
-<script src="../../../User_Web/iflux-web-ui/stock-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-trending.js?v=tplHead20260714"></script>
-<script src="../../../User_Web/iflux-web-ui/community-featured-experts.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-active-members.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-top-watchlist-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/community-top-watchlist.js?v=topwlHead20260708"></script>
-<script src="../../../User_Web/iflux-web-ui/watchlist-store.js"></script>
-<script src="../../../User_Web/iflux-web-ui/watchlist-ui.js"></script>
-<script src="../../../User_Web/iflux-web-ui/watchlist-block.js"></script>
-<script src="../../../User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
-<script src="../../../User_Web/iflux-web-ui/widget-renderers.js?v=stripTabTopN20260718"></script>
-<script src="templates-catalog.js?v=srHist20260720"></script>
-<script src="templates-store.js?v=tplEdit20260717"></script>
-<script src="template-web-implementations.js?v=wave2320260722"></script>
-<script src="templates-preview.js?v=ui001tpl20260723"></script>
+<script src="/User_Web/iflux-web-ui/iflux-market-master.js?v=mockRmWp6_20260809"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-taxonomy.js?v=mockRmWp6_20260809"></script>
+<script src="/User_Web/iflux-web-ui/block-templates.js?v=srHist20260720"></script>
+<script src="/User_Web/iflux-web-ui/breadth-block.js?v=stripTabTopN20260718"></script>
+<script src="/User_Web/iflux-web-ui/community-market-overview.js"></script>
+<script src="/User_Web/iflux-web-ui/top10-market-block.js"></script>
+<script src="/User_Web/iflux-web-ui/squarified-treemap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-heatmap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-liquidity.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-net-top.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top-mock.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top.js?v=sigLabel20260717"></script>
+<script src="/User_Web/iflux-web-ui/flow-market-sidebar.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-mentions.js"></script>
+<script src="/User_Web/iflux-web-ui/community-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-users-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-links.js"></script>
+<script src="/User_Web/iflux-web-ui/community-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-trending.js?v=tplHead20260714"></script>
+<script src="/User_Web/iflux-web-ui/community-featured-experts.js"></script>
+<script src="/User_Web/iflux-web-ui/community-active-members.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist.js?v=topwlHead20260708"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-block.js"></script>
+<script src="/User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/User_Web/iflux-web-ui/widget-renderers.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/templates-catalog.js?v=srHist20260720"></script>
+<script src="/Admin_Design_system/app/system/templates-store.js?v=tplEdit20260717"></script>
+<script src="/Admin_Design_system/app/system/template-web-implementations.js?v=wave2320260722"></script>
+<script src="/Admin_Design_system/app/system/templates-preview.js?v=ui001tpl20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
-<script src="../../iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
-<script src="templates-page.js?v=wave2320260722"></script>
+<script src="/Admin_Design_system/app/system/templates-page.js?v=wave2320260722"></script>
 <script>TemplatesPage.init();</script>
 </body>
 </html>

@@ -35,8 +35,49 @@ Note: requiresShell IfluxWatchlistTaxonomy
     ];
   }
 
-  /* ── Ngành THẬT từ Admin registry (map ticker → sectorId) ── */
+  /* ── Ngành từ Market Master API (PG SoT) — IfluxMarketMaster (WP-0) ── */
+  function masterApi() {
+    return global.IfluxMarketMaster || null;
+  }
+
+  function masterSectors() {
+    var mk = masterApi();
+    if (!mk || typeof mk.getMasterSectors !== 'function' || typeof mk.getMasterStocks !== 'function') return null;
+    try {
+      var sectors = mk.getMasterSectors();
+      var stocks = mk.getMasterStocks();
+      if (!sectors || !sectors.length || !stocks) return null;
+      var bySector = {};
+      stocks.forEach(function (s) {
+        var sid = String(s.sector_id == null ? '' : s.sector_id);
+        if (!sid) return;
+        (bySector[sid] = bySector[sid] || []).push(String(s.ticker || '').toUpperCase());
+      });
+      return sectors.map(function (s) {
+        var id = String(s.id);
+        return {
+          id: id,
+          slug: slugifyLocal(s.name || s.name_vi),
+          name: s.name || s.name_vi,
+          tickers: bySector[id] || []
+        };
+      }).filter(function (g) { return g.tickers.length > 0; });
+    } catch (e) { return null; }
+  }
+
+  function isProdHost() {
+    try {
+      var host = String((global.location && location.hostname) || '').toLowerCase();
+      return host === 'iflux.vn' || host === 'www.iflux.vn';
+    } catch (e) {
+      return false;
+    }
+  }
+
   function registrySectors() {
+    var fromMaster = masterSectors();
+    if (fromMaster && fromMaster.length) return fromMaster;
+    if (isProdHost()) return fromMaster || [];
     var reg = global.IfluxMarketRegistryStore;
     if (!reg || typeof reg.listSectors !== 'function' || typeof reg.listStocks !== 'function') return null;
     try {
@@ -45,7 +86,7 @@ Note: requiresShell IfluxWatchlistTaxonomy
       var stocks = reg.listStocks({ status: 'active' }) || [];
       var bySector = {};
       stocks.forEach(function (s) {
-        var sid = String(s.sectorId == null ? '' : s.sectorId);
+        var sid = String(s.sectorId == null ? (s.sector_id == null ? '' : s.sector_id) : s.sectorId);
         if (!sid) return;
         (bySector[sid] = bySector[sid] || []).push(String(s.ticker || '').toUpperCase());
       });
@@ -56,8 +97,28 @@ Note: requiresShell IfluxWatchlistTaxonomy
     } catch (e) { return null; }
   }
 
-  /* ── Hệ sinh thái THẬT từ Admin registry (ecosystems) ── */
+  /* ── Hệ sinh thái từ Market Master API — IfluxMarketMaster (WP-0) ── */
+  function masterFamilies() {
+    var mk = masterApi();
+    if (!mk || typeof mk.getMasterEcosystems !== 'function') return null;
+    try {
+      var list = mk.getMasterEcosystems();
+      if (!list || !list.length) return null;
+      return list.map(function (e) {
+        return {
+          id: e.id,
+          slug: slugifyLocal(e.name || e.name_vi),
+          name: e.name || e.name_vi,
+          tickers: (e.tickers || []).map(function (t) { return String(t).toUpperCase(); })
+        };
+      }).filter(function (g) { return g.tickers.length > 0; });
+    } catch (e) { return null; }
+  }
+
   function registryFamilies() {
+    var fromMaster = masterFamilies();
+    if (fromMaster && fromMaster.length) return fromMaster;
+    if (isProdHost()) return fromMaster || [];
     var reg = global.IfluxMarketRegistryStore;
     if (!reg || typeof reg.listEcosystems !== 'function') return null;
     try {
@@ -84,11 +145,36 @@ Note: requiresShell IfluxWatchlistTaxonomy
   ];
 
   var GROUPS = {
-    sector: registrySectors() || SECTOR_FALLBACK,
-    family: registryFamilies() || familyGroups(),
+    sector: SECTOR_FALLBACK.slice(),
+    family: familyGroups(),
     'chu-de': CHU_DE_FALLBACK.slice()
   };
   GROUPS.story = GROUPS['chu-de'];
+
+  function refreshMasterGroups() {
+    var sec = registrySectors();
+    if (sec && sec.length) GROUPS.sector = sec;
+    var fam = registryFamilies();
+    if (fam && fam.length) GROUPS.family = fam;
+    return {
+      sector: GROUPS.sector.slice(),
+      family: GROUPS.family.slice()
+    };
+  }
+
+  function ensureMasterGroups() {
+    var mk = masterApi();
+    if (mk && typeof mk.ensureMasterReady === 'function') {
+      return mk.ensureMasterReady().then(function () {
+        return refreshMasterGroups();
+      }).catch(function () {
+        return refreshMasterGroups();
+      });
+    }
+    return Promise.resolve(refreshMasterGroups());
+  }
+
+  try { ensureMasterGroups(); } catch (e) { /* ignore */ }
 
   var SOURCE_LABELS = {
     sector: 'Ngành',
@@ -98,9 +184,19 @@ Note: requiresShell IfluxWatchlistTaxonomy
   };
 
   function knownTickers() {
-    var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-    if (!snap || !snap.entities || !snap.entities.stocks) return null;
-    return snap.entities.stocks;
+    var mm = global.IfluxMarketMaster;
+    if (mm && typeof mm.getMasterStocks === 'function') {
+      var list = mm.getMasterStocks();
+      if (list && list.length) {
+        var map = {};
+        list.forEach(function (s) {
+          var t = String(s.ticker || '').toUpperCase();
+          if (t) map[t] = s;
+        });
+        return map;
+      }
+    }
+    return null;
   }
 
   function filterAvailable(tickers) {
@@ -111,6 +207,7 @@ Note: requiresShell IfluxWatchlistTaxonomy
 
   function getGroups(source) {
     source = normalizeSource(source);
+    if (source === 'sector' || source === 'family') refreshMasterGroups();
     return (GROUPS[source] || []).slice();
   }
 
@@ -304,6 +401,8 @@ Note: requiresShell IfluxWatchlistTaxonomy
     getTickerGroupRank: getTickerGroupRank,
     sourceLabel: sourceLabel,
     filterAvailable: filterAvailable,
-    hydrateChuDeFromApi: hydrateChuDeFromApi
+    hydrateChuDeFromApi: hydrateChuDeFromApi,
+    ensureMasterGroups: ensureMasterGroups,
+    refreshMasterGroups: refreshMasterGroups
   };
 })(window);

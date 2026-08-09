@@ -6,10 +6,30 @@
   var activeStoryPeriod = 'week';
 
   function st() { return global.IfluxCommunityStore; }
-  function mk() { return global.IfluxMockMarket; }
   function ui() { return global.IfluxCommunityUI; }
   function heart() { return global.IfluxHeartAction; }
   function treemap() { return global.IfluxSquarifiedTreemap; }
+  function mq() { return global.IfluxMarketQuotes; }
+
+  function peekQuote(tk) {
+    var m = mq();
+    if (!m || typeof m.peekQuote !== 'function') return null;
+    return m.peekQuote(String(tk || '').toUpperCase());
+  }
+
+  function quoteChangePct(q) {
+    if (!q) return null;
+    if (q.change_pct != null && !isNaN(Number(q.change_pct))) return Number(q.change_pct);
+    if (q.pctChange != null && !isNaN(Number(q.pctChange))) return Number(q.pctChange);
+    return null;
+  }
+
+  function quotePriceState(q) {
+    var m = mq();
+    if (!q || !m || typeof m.priceState !== 'function') return 'ref';
+    var close = q.price != null ? q.price : q.close;
+    return m.priceState(close, q.ref, q.ceiling, q.floor);
+  }
 
   function fmtPct(n) {
     if (n == null || isNaN(n)) return '—';
@@ -41,40 +61,26 @@
 
   var HEATMAP_LIMIT = 10;
 
-  /* WGT-COM-001 — CHỈ cổ phiếu cộng đồng đang quan tâm (trending), KHÔNG phải toàn thị trường.
-     Diện tích ô = mức độ quan tâm (score); màu = hiệu suất phiên của mã. Top 10. */
+  /* WGT-COM-001 — CHỈ cổ phiếu cộng đồng đang quan tâm (trending).
+     Diện tích = interest score; màu/% = runtime quote (SOL-QUOTE). Missing → UNAVAILABLE (—), cấm perf:0. */
   function buildHeatmapItems() {
-    var m = mk();
     var store = st();
     var items = [];
-
     var trending = (store && store.getTrendingTickers) ? (store.getTrendingTickers(HEATMAP_LIMIT) || []) : [];
     if (trending.length) {
       items = trending.map(function (t) {
         var tk = String(t.ticker).toUpperCase();
-        var stock = m && m.getStock ? m.getStock(tk) : null;
+        var q = peekQuote(tk);
         var interest = Math.max(t.score || t.comments || 1, 1);
         return {
           ticker: tk,
           marketCap: interest,
           weight: interest,
-          stock: stock,
-          perf: stock ? stock.change_pct : (t.perf != null ? t.perf : 0)
-        };
-      });
-    } else if (m && m.getHeatmapGroups) {
-      var groups = m.getHeatmapGroups('stock') || [];
-      items = groups.map(function (g) {
-        return {
-          ticker: String(g.id).toUpperCase(),
-          marketCap: Math.max(g.weight, 1),
-          weight: Math.max(g.weight, 1),
-          stock: m.getStock ? m.getStock(g.id) : null,
-          perf: g.perf
+          change_pct: quoteChangePct(q),
+          quote: q
         };
       });
     }
-
     return items.slice(0, HEATMAP_LIMIT);
   }
 
@@ -88,8 +94,7 @@
   }
 
   function cellContent(item, tier) {
-    var stock = item.stock;
-    var chg = stock && stock.change_pct;
+    var chg = item.change_pct;
     var html = '<span class="ifx-cap-tile__tk">' + esc(item.ticker) + '</span>';
     if (tier !== 'tiny') {
       html += '<span class="ifx-cap-tile__chg">' + fmtPct(chg) + '</span>';
@@ -119,7 +124,6 @@
       return insetRect(r, GUTTER);
     });
 
-    var m = mk();
     var heartFn = heart() && heart().heartButtonHtml;
     var byTk = {};
     canvas.querySelectorAll('[data-ifx-cap-tile]').forEach(function (el) {
@@ -142,7 +146,7 @@
         if (remainder) {
           el.innerHTML = '<span class="ifx-cap-tile__remainder is-remainder" aria-hidden="true">...</span>';
         } else {
-          var state = m && m.getStockPriceState ? m.getStockPriceState(tileKey) : 'ref';
+          var state = quotePriceState(item.quote);
           var heart = heartFn ? heartFn(tileKey) : '';
           el.innerHTML =
             '<a class="ifx-cap-tile__link is-' + state + '" href="' + (global.IfluxHref
@@ -164,11 +168,11 @@
 
       if (remainder) return;
 
-      var state = m && m.getStockPriceState ? m.getStockPriceState(tileKey) : 'ref';
-      var title = tileKey + ' · ' + fmtPct(item.stock && item.stock.change_pct);
+      var state2 = quotePriceState(item.quote);
+      var title = tileKey + ' · ' + fmtPct(item.change_pct);
       var link = el.querySelector('.ifx-cap-tile__link');
       if (link) {
-        link.className = 'ifx-cap-tile__link is-' + state;
+        link.className = 'ifx-cap-tile__link is-' + state2;
         link.title = title;
         link.innerHTML = cellContent(item, tier);
       }
@@ -212,43 +216,50 @@
     var canvas = row.querySelector('[data-ifx-cap-treemap]');
     if (!canvas) return;
 
-    var items = buildHeatmapItems();
-    if (!items.length) {
-      canvas.outerHTML = '<div class="ifx-com-trending-empty">Chưa đủ dữ liệu CP.</div>';
-      return;
-    }
+    var store = st();
+    var trending = (store && store.getTrendingTickers) ? (store.getTrendingTickers(HEATMAP_LIMIT) || []) : [];
+    var tickers = trending.map(function (t) { return String(t.ticker).toUpperCase(); }).filter(Boolean);
+    var m = mq();
+    var ready = (m && typeof m.getQuotes === 'function' && tickers.length)
+      ? m.getQuotes(tickers).catch(function () { return {}; })
+      : Promise.resolve({});
 
-    /* Cùng pattern preview heatmap / Widget host: đợi container có bề rộng thật rồi mới layout. */
-    function paint(tries) {
-      tries = tries || 0;
-      syncCanvasHeight(row);
-      var el = row.querySelector('[data-ifx-cap-treemap]');
-      if (!el || !el.isConnected) return;
-      var w = el.clientWidth;
-      var h = el.clientHeight;
-      if ((w < 40 || h < 40) && tries < 40) {
-        setTimeout(function () { paint(tries + 1); }, 80);
+    ready.then(function () {
+      var el0 = row.querySelector('[data-ifx-cap-treemap]');
+      if (!el0 || !el0.isConnected) return;
+      var items = buildHeatmapItems();
+      if (!items.length) {
+        el0.outerHTML = '<div class="ifx-com-trending-empty">Chưa đủ dữ liệu CP.</div>';
         return;
       }
-      if (w < 40 || h < 40) return;
-      paintTreemap(el, items);
-    }
 
-    paint(0);
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { paint(0); });
+      function paint(tries) {
+        tries = tries || 0;
+        syncCanvasHeight(row);
+        var el = row.querySelector('[data-ifx-cap-treemap]');
+        if (!el || !el.isConnected) return;
+        var w = el.clientWidth;
+        var h = el.clientHeight;
+        if ((w < 40 || h < 40) && tries < 40) {
+          setTimeout(function () { paint(tries + 1); }, 80);
+          return;
+        }
+        if (w < 40 || h < 40) return;
+        paintTreemap(el, items);
+      }
+
+      paint(0);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { paint(0); });
+      });
+
+      if (typeof ResizeObserver !== 'undefined') {
+        if (row.__ifxCapRo) row.__ifxCapRo.disconnect();
+        var ro = new ResizeObserver(function () { paint(0); });
+        ro.observe(row);
+        row.__ifxCapRo = ro;
+      }
     });
-
-    if (typeof ResizeObserver !== 'undefined') {
-      if (row.__ifxCapRo) row.__ifxCapRo.disconnect();
-      var ro = new ResizeObserver(function () { paint(0); });
-      ro.observe(row);
-      var stories = row.querySelector('[data-ifx-trending-stories]');
-      if (stories) ro.observe(stories);
-      row.__ifxCapRo = ro;
-    } else {
-      global.addEventListener('resize', function () { paint(0); });
-    }
   }
 
   function storyEntityHref(it) {

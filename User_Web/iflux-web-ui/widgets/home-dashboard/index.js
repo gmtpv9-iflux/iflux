@@ -22,10 +22,11 @@ export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' : '?v=' + V) }; }
 
 var BASE = [
-  /* W4: mock-market + seo-url = Shell MARKET_CORE (home) — seed registry lazy theo widget */
+  /* W4: seo-url = Shell MARKET_CORE (home) — seed registry lazy theo widget.
+     WP-4: widget-renderers/dashboard-engine bỏ module mock thị trường — bump cache riêng. */
   dep('IfluxWidgetRegistry', 'widget-registry.js'),
-  dep('IfluxWidgetRenderers', 'widget-renderers.js'),
-  dep('IfluxDashboardEngine', 'dashboard-engine.js')
+  dep('IfluxWidgetRenderers', 'widget-renderers.js?v=mockRmWp4_20260809'),
+  dep('IfluxDashboardEngine', 'dashboard-engine.js?v=mockRmWp4_20260809')
 ];
 
 var LAYOUT_HTML =

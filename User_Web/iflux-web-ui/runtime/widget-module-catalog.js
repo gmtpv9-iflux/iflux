@@ -114,18 +114,18 @@ export const WIDGET_RUNTIME_MODULES = {
   'WGT-COM-001': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=phaseCW120260721',
     css: [
-      '/User_Web/iflux-web-ui/community.css?v=feedCard20260723c',
+      '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809',
       '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723',
       '/User_Web/iflux-web-ui/watchlist.css'
     ]
   },
   'WGT-COM-CHUDE-TOP': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=phaseCW120260721',
-    css: ['/User_Web/iflux-web-ui/community.css?v=feedCard20260723c', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
+    css: ['/User_Web/iflux-web-ui/community.css?v=bodyFill20260809', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
   },
   'WGT-COM-002': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-active/index.js?v=bpPhaseD20260716',
-    css: ['/User_Web/iflux-web-ui/community.css?v=feedCard20260723c']
+    css: ['/User_Web/iflux-web-ui/community.css?v=bodyFill20260809']
   }
 };
 
@@ -151,9 +151,9 @@ export const WIDGET_DASHBOARD_DEPS = {
     dashDep('IfluxWatchlistBlock', 'watchlist-block.js?v=followFound20260724')
   ],
   'WGT-MKT-001': [dashDep('IfluxCommunityMarketOverview', 'community-market-overview.js')],
-  'WGT-MKT-002': [dashDep('IfluxBreadthBlock', 'breadth-block.js')],
-  'WGT-MKT-HEAT': [dashDep('IfluxMarketHeatmap', 'market-heatmap.js')],
-  'WGT-MKT-LIQ': [dashDep('IfluxMarketLiquidity', 'market-liquidity.js')],
+  'WGT-MKT-002': [dashDep('IfluxBreadthBlock', 'breadth-block.js?v=mockRmWp4_20260809')],
+  'WGT-MKT-HEAT': [dashDep('IfluxMarketHeatmap', 'market-heatmap.js?v=mockRmWp4_20260809')],
+  'WGT-MKT-LIQ': [dashDep('IfluxMarketLiquidity', 'market-liquidity.js?v=mockRmWp4_20260809')],
   'WGT-FLW-MKT-SIDE': [
     dashDep('IfluxFlowNetTop', 'flow-net-top.js'),
     dashDep('IfluxFlowMarketSidebar', 'flow-market-sidebar.js')
@@ -169,7 +169,7 @@ export const WIDGET_DASHBOARD_DEPS = {
     dashDep('IfluxCommunityStore', 'community-store.js'),
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=followFound20260724'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
-    dashDep('IfluxCommunityTrending', 'community-trending.js?v=followFound20260724')
+    dashDep('IfluxCommunityTrending', 'community-trending.js?v=mockRmWp1_20260809')
   ],
   'WGT-COM-ACTIVE': [
     dashDep('IfluxCommunityStore', 'community-store.js'),

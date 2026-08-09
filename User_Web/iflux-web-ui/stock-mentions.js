@@ -28,12 +28,14 @@
     return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
   }
 
+  /* Identity = IfluxMarketMaster (SOL-IDENTITY / WP-0) — không qua mock producer cũ. */
   function buildIndex() {
     var list = [];
-    var snap = global.IfluxMockMarket && IfluxMockMarket.getSnapshot();
-    var stocks = snap && snap.entities && snap.entities.stocks ? snap.entities.stocks : {};
-    Object.keys(stocks).forEach(function (tk) {
-      var s = stocks[tk];
+    var mm = global.IfluxMarketMaster;
+    var stocks = (mm && typeof mm.getMasterStocks === 'function' && mm.getMasterStocks()) || [];
+    stocks.forEach(function (s) {
+      var tk = String((s && s.ticker) || '').toUpperCase();
+      if (!tk) return;
       list.push({
         type: 'ticker',
         id: tk,

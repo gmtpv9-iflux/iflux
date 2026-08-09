@@ -60,10 +60,6 @@
 
   function mount(root, opts) {
     if (!root) return;
-    if (!global.IfluxMockMarket) {
-      root.innerHTML = '<div class="ifx-wl-empty">Thiếu mock market data</div>';
-      return;
-    }
     var T = tpl();
     if (!T) {
       root.innerHTML = '<div class="ifx-wl-empty">Thiếu block-templates.js</div>';
@@ -91,17 +87,12 @@
     refresh(root);
   }
 
+  /* Không có nguồn xác thực runtime cho dòng tiền mua/bán ròng — UNAVAIL
+     (SOL-UNAVAIL). Giữ chrome (tiêu đề, tab chủ thể), body hiện empty state. */
   function refresh(root) {
-    if (!root || !global.IfluxMockMarket) return;
-    var T = tpl();
-    var opts = root._flowOpts || { subject: 'retail', scope: 'stock' };
-    var data = IfluxMockMarket.getFlowTopNetList({
-      subject: opts.subject,
-      scope: opts.scope,
-      count: 10
-    });
+    if (!root) return;
     var body = root.querySelector('[data-ifx-flow-split-body]');
-    if (body && T) body.innerHTML = T.renderFlowSplitBody(data);
+    if (body) body.innerHTML = '<div class="ifx-wl-empty">Chưa có dữ liệu dòng tiền mua/bán ròng</div>';
   }
 
   function setFilters(root, patch) {

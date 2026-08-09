@@ -498,7 +498,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (global.IfluxMarketStatusBar) return;
     if (!document.querySelector('.ifx-topnav')) return;
     var s = document.createElement('script');
-    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=ctxbar20260712';
+    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=mockRmWp5_20260809';
     s.async = true;
     document.head.appendChild(s);
   }
