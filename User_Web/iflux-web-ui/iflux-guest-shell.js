@@ -107,27 +107,34 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     brand.setAttribute('href', global.IfluxHref ? IfluxHref.forCanonical(href) : href);
   }
 
+  var plansListenerBound = false;
+  var currentPageKey = '';
+  var currentInitFn = null;
+
   function bootstrapPage(pageKey, initFn) {
     pageKey = String(pageKey || '').toLowerCase();
+    currentPageKey = pageKey;
+    currentInitFn = typeof initFn === 'function' ? initFn : null;
 
     function applyEntitlements() {
-      if (global.IfluxBlockGate) IfluxBlockGate.apply(pageKey);
+      if (global.IfluxBlockGate) IfluxBlockGate.apply(currentPageKey);
     }
 
     /* Paint nav sync ngay khi đã có session — không chờ PlansStore.hydrate */
     if (isLoggedIn()) {
-      renderGuestNav(pageKey);
+      renderGuestNav(currentPageKey);
       syncBrandHref();
     }
 
     function run() {
       var proceed = true;
+      var pk = currentPageKey;
       if (isLoggedIn()) {
         if (!IfluxAuth.requireAuth()) {
           /* Đang chuyển tới login — vẫn resolve callback để shell-boot không treo. */
           proceed = false;
         } else {
-          renderGuestNav(pageKey);
+          renderGuestNav(pk);
           /* Đã login: bỏ hardcode «Đăng nhập» còn sót trong HTML (vd Outline cũ). */
           document.querySelectorAll('[data-ifx-guest-actions] > a.ix-btn[href*="dang-nhap"], [data-ifx-guest-actions] > a.ifx-guest-auth-btn').forEach(function (el) {
             if (el && el.parentNode) el.parentNode.removeChild(el);
@@ -138,11 +145,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
           });
         }
       } else {
-        if (!IfluxEntitlements.canAccessPage(pageKey)) {
+        if (!IfluxEntitlements.canAccessPage(pk)) {
           consumerNavigate(firstGuestPageUrl());
           proceed = false;
         } else {
-          renderGuestNav(pageKey);
+          renderGuestNav(pk);
           renderGuestActions();
         }
       }
@@ -151,21 +158,24 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
       if (proceed) applyEntitlements();
       /* Luôn gọi initFn — shell-boot await Promise dựa vào đây; thiếu = treo trang. */
-      if (typeof initFn === 'function') initFn();
+      if (typeof currentInitFn === 'function') currentInitFn();
 
-      document.addEventListener('iflux-plans-updated', function () {
-        if (!isLoggedIn()) {
-          if (!IfluxEntitlements.canAccessPage(pageKey)) {
-            consumerNavigate(firstGuestPageUrl());
-            return;
+      if (!plansListenerBound) {
+        plansListenerBound = true;
+        document.addEventListener('iflux-plans-updated', function () {
+          if (!isLoggedIn()) {
+            if (!IfluxEntitlements.canAccessPage(currentPageKey)) {
+              consumerNavigate(firstGuestPageUrl());
+              return;
+            }
+            renderGuestNav(currentPageKey);
+            renderGuestActions();
           }
-          renderGuestNav(pageKey);
-          renderGuestActions();
-        }
-        syncBrandHref();
-        applyEntitlements();
-        if (typeof initFn === 'function') initFn();
-      });
+          syncBrandHref();
+          applyEntitlements();
+          if (typeof currentInitFn === 'function') currentInitFn();
+        });
+      }
     }
 
     if (global.PlansRuntimeReader && PlansRuntimeReader.load) {

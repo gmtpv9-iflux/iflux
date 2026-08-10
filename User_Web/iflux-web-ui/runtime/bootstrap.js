@@ -22,9 +22,10 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=cssPin20260808';
-import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
-import { bootShell } from './shell-boot.js?v=mdmFix20260808';
+import { bootPage } from './page-runtime.js?v=softNavLayoutFix20260810';
+import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
+import { bootShell } from './shell-boot.js?v=softNavP1_20260810';
+import { installSoftNavigation } from './soft-navigation.js?v=softNavP1_20260810';
 
 var VER = '?v=phaseCW5gate20260721';
 var P4 = '?v=phaseCW5gate20260721';
@@ -51,7 +52,7 @@ var MANIFEST_MAP = {
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
   messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  communityPost: function () { return import('../pages/community-post.manifest.js?v=cmtLoopFix20260808'); },
+  communityPost: function () { return import('../pages/community-post.manifest.js?v=tickerNoDup20260810'); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
   communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },
@@ -64,6 +65,34 @@ var MANIFEST_MAP = {
 var PUBLISH_KEY_ALIAS = {
   home: 'dashboard'
 };
+
+/** Runtime pageKey → Site SEO page_key (catalog). */
+var SEO_KEY_ALIAS = {
+  home: 'dashboard',
+  cauChuyen: 'cau-chuyen',
+  chuDe: 'cau-chuyen',
+  cauChuyenDetail: 'cau-chuyen-detail',
+  chuDeDetail: 'cau-chuyen-detail',
+  stock: 'stock-detail',
+  sector: 'sector-detail',
+  family: 'eco-detail',
+  loyalty: 'membership',
+  comAuthor: 'com-author',
+  comCat: 'com-cat'
+};
+
+/** Path-specific SEO catalog key (author/category detail under community runtime). */
+function seoCatalogKey(pageKey) {
+  var path = '';
+  try {
+    path = String((window.IfluxNormalizePath && IfluxNormalizePath(location.pathname)) || location.pathname || '').toLowerCase();
+  } catch (e) {
+    path = String(location.pathname || '').toLowerCase();
+  }
+  if (/\/cong-dong\/tac-gia\/[^/]+/.test(path)) return 'com-author';
+  if (/\/cong-dong\/danh-muc\/[^/]+/.test(path)) return 'com-cat';
+  return SEO_KEY_ALIAS[pageKey] || PUBLISH_KEY_ALIAS[pageKey] || pageKey;
+}
 
 /** Trang slot dùng PagePublished (mount path Phase 4). */
 var PAGE_PUBLISHED = {
@@ -222,7 +251,8 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
   }
 }
 
-async function resolveManifest(pageKey) {
+async function resolveManifest(pageKey, opts) {
+  opts = opts || {};
   var staticManifest = await loadStaticManifest(pageKey);
   if (!staticManifest) return null;
   var manifest = staticManifest;
@@ -233,11 +263,104 @@ async function resolveManifest(pageKey) {
   if (manifest && window.IfluxEntityDefinition && IfluxEntityDefinition.enrichDefinitionWithEntity) {
     manifest = IfluxEntityDefinition.enrichDefinitionWithEntity(manifest, pageKey);
   }
+  if (manifest) {
+    manifest = await enrichManifestWithSiteSeo(manifest, pageKey, opts.seo || null);
+  }
+  return manifest;
+}
+
+/**
+ * PL-07: consume public effective SEO. Hardcode title/favicon chỉ còn khi API trống (fallback tạm).
+ * Soft-nav: bindLogo=false — giữ DOM logo (Owner lock).
+ */
+async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
+  seoOpts = seoOpts || {};
+  var bindLogo = seoOpts.bindLogo !== false;
+  var base = apiBase();
+  if (!base || !manifest) return manifest;
+  var seoKey = seoCatalogKey(pageKey);
+  try {
+    var res = await fetch(base + '/seo/effective?pageKey=' + encodeURIComponent(seoKey), {
+      credentials: 'omit'
+    });
+    if (!res || !res.ok) return manifest;
+    var payload = await res.json();
+    var data = payload && payload.data ? payload.data : payload;
+    var eff = (data && data.effective) || {};
+    var siteName = String(eff.site_name || '').trim() || 'iFlux';
+    var title = String(eff.title || '').trim();
+    var description = String(eff.description || '').trim();
+    var titleTemplate = String(eff.title_template || '').trim();
+    var descriptionTemplate = String(eff.description_template || '').trim();
+    /* Unresolved placeholder must never become document.title */
+    if (/\{[^}]+\}/.test(title)) title = '';
+    if (/\{[^}]+\}/.test(description)) description = '';
+    var ogImage = String(eff.og_image || '').trim();
+    var socialImage = String(eff.social_image || '').trim() || ogImage;
+    var favicon = String(eff.favicon_url || '').trim();
+    var logoUrl = String(eff.logo_url || '').trim();
+
+    var documentTitle = manifest.documentTitle || '';
+    if (title) {
+      documentTitle = title;
+    }
+
+    var seo = Object.assign({}, manifest.seo || {});
+    if (description) seo.description = description;
+    if (title) {
+      seo['og:title'] = title;
+      seo['twitter:title'] = title;
+    }
+    if (description) {
+      seo['og:description'] = description;
+      seo['twitter:description'] = description;
+    }
+    if (ogImage) {
+      seo['og:image'] = ogImage;
+      seo['twitter:card'] = 'summary_large_image';
+    }
+    if (socialImage) seo['twitter:image'] = socialImage;
+    if (siteName) seo['og:site_name'] = siteName;
+    if (favicon) seo.favicon = favicon;
+
+    /* Keep templates for entity-ready resolve (IfluxSeoTitle). */
+    eff = Object.assign({}, eff, {
+      title_template: titleTemplate || null,
+      description_template: descriptionTemplate || null
+    });
+
+    manifest = Object.assign({}, manifest, {
+      documentTitle: documentTitle || manifest.documentTitle,
+      seo: seo,
+      siteSeo: eff,
+      seoPageKey: seoKey
+    });
+
+    /* Header logo — sole owner = Foundation /seo/effective logo_url. No text brand.
+     * Soft-nav: không clear/rebind logo (persistent shell). */
+    if (bindLogo) {
+      var logoEl =
+        document.querySelector('.ifx-topnav-brand [data-ifx-seo-logo]') ||
+        document.querySelector('.ifx-topnav-brand img.ix-brand-logo');
+      if (logoEl) {
+        if (logoUrl) {
+          logoEl.setAttribute('src', logoUrl);
+          logoEl.removeAttribute('hidden');
+        } else {
+          logoEl.removeAttribute('src');
+          logoEl.setAttribute('hidden', '');
+        }
+      }
+    }
+  } catch (e) {
+    /* fallback tạm — giữ manifest hardcode */
+  }
   return manifest;
 }
 
 export async function start(opts) {
   opts = opts || {};
+  var soft = !!opts.soft;
   var pageKey = opts.pageKey || detectPageKey();
   if (!pageKey) {
     if (window.console && console.warn) console.warn('[Runtime] Không xác định được pageKey');
@@ -249,10 +372,12 @@ export async function start(opts) {
     IfluxEntityDefinition.applyEarlyDocumentTitle();
   }
 
-  var shell = await bootShell(pageKey);
+  var shell = await bootShell(pageKey, { soft: soft });
   if (shell === null) return null;
 
-  var manifest = await resolveManifest(pageKey);
+  var manifest = await resolveManifest(pageKey, {
+    seo: { bindLogo: !soft }
+  });
   if (!manifest) {
     if (window.console && console.warn) console.warn('[Runtime] Chưa có manifest/PagePublished cho:', pageKey);
     return null;
@@ -273,8 +398,19 @@ export async function start(opts) {
     return null;
   }
 
-  return bootPage(manifest, mountEl);
+  var page = await bootPage(manifest, mountEl);
+  window.__ifxPageRuntime = {
+    pageKey: pageKey,
+    widgets: (page && page.widgets) || []
+  };
+  return page;
 }
+
+installSoftNavigation({
+  startSoft: function (softOpts) {
+    return start(Object.assign({}, softOpts || {}, { soft: true }));
+  }
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function () {

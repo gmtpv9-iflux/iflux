@@ -133,20 +133,77 @@ function installHeaderSearchLazy(scriptSrc) {
   document.addEventListener('touchstart', onSearchIntent, true);
 }
 
-export async function bootShell(pageKey) {
+var AUTH_PAGES = {
+  home: 1, dashboard: 1,
+  stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
+  stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
+  watchlist: 1, messages: 1, search: 1,
+  account: 1, checkout: 1, communityWrite: 1, stockComment: 1
+};
+
+async function ensureMarketLibs(pageKey) {
+  if (MARKET_PLATFORM_PAGES[pageKey]) {
+    var host = String((typeof location !== 'undefined' && location.hostname) || '').toLowerCase();
+    var isProdHost = host === 'iflux.vn' || host === 'www.iflux.vn';
+    var marketPlatformLibs = [
+      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
+      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoTitleTpl20260810' }
+    ];
+    if (!isProdHost) {
+      marketPlatformLibs = [
+        { global: 'IfluxMarketSeedData', src: ADMIN_UI + 'iflux-market-seed-data.js?v=' + MARKET_PLATFORM_VER },
+        { global: 'IfluxMarketEcosystemSeeds', src: ADMIN_UI + 'iflux-market-ecosystem-seeds.js?v=' + MARKET_PLATFORM_VER },
+        { global: 'IfluxMarketRegistryStore', src: ADMIN_UI + 'iflux-market-registry-store.js?v=' + MARKET_PLATFORM_VER }
+      ].concat(marketPlatformLibs);
+    }
+    await ensureParallel(marketPlatformLibs);
+  } else if (MARKET_CORE_PAGES[pageKey]) {
+    await ensureParallel([
+      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
+      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoTitleTpl20260810' }
+    ]);
+  }
+}
+
+async function rebootstrapGuest(pageKey) {
+  if (!(window.IfluxGuestShell && IfluxGuestShell.bootstrapPage)) return;
+  await new Promise(function (resolve) {
+    var done = false;
+    function finish() { if (!done) { done = true; resolve(); } }
+    try {
+      IfluxGuestShell.bootstrapPage(pageKey, finish);
+    } catch (e) { finish(); }
+    setTimeout(finish, 4000);
+  });
+}
+
+export async function bootShell(pageKey, opts) {
+  opts = opts || {};
+  var soft = !!opts.soft;
+
   /* Nếu module còn booted nhưng window globals đã mất (soft-nav) → boot lại. */
   if (booted && !(window.IfluxGuestShell && window.PlansRuntimeReader && window.IfluxRoutes)) {
     booted = null;
   }
+
+  /* Soft path: không re-chrome; nạp lib thiếu + GuestShell + active nav. */
+  if (booted && soft && window.IfluxGuestShell) {
+    await ensureMarketLibs(pageKey);
+    if (AUTH_PAGES[pageKey]) {
+      if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
+    }
+    await rebootstrapGuest(pageKey);
+    if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) {
+      try { IfluxWebUI.syncMobileTabbar(); } catch (eTbSoft) { /* ignore */ }
+    }
+    booted = { pageKey: pageKey };
+    return booted;
+  }
+
   if (booted && booted.pageKey === pageKey && window.IfluxGuestShell) {
-    await new Promise(function (resolve) {
-      var done = false;
-      function finish() { if (!done) { done = true; resolve(); } }
-      try {
-        IfluxGuestShell.bootstrapPage(pageKey, finish);
-      } catch (e) { finish(); }
-      setTimeout(finish, 4000);
-    });
+    await rebootstrapGuest(pageKey);
     return booted;
   }
 
@@ -174,7 +231,7 @@ export async function bootShell(pageKey) {
     { global: 'IfluxWidgetShell', src: ASSET + 'iflux-widget-shell.js?v=entShell20260720' },
     { global: 'IfluxBlockPaywall', src: ASSET + 'iflux-block-paywall.js?v=entShell20260720' },
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=abhE620260727' },
-    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=b4w3_20260727' }
+    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=softNavP1_20260810' }
   ]);
   /* Legacy ABH E4/E5 removed — không boot Admin Store / EntitlementCatalog trên User Web shell:
   { global: 'EntitlementCatalog', src: ADMIN + 'app/subscription/entitlement-catalog.js' },
@@ -182,31 +239,7 @@ export async function bootShell(pageKey) {
   { global: 'PlansStore', src: ADMIN + 'app/subscription/plans-store.js' },
   */
 
-  /* Prod: Master identity (IfluxMarketMaster) + taxonomy. Mock producer đã gỡ (WP-6). */
-  if (MARKET_PLATFORM_PAGES[pageKey]) {
-    var host = String((typeof location !== 'undefined' && location.hostname) || '').toLowerCase();
-    var isProdHost = host === 'iflux.vn' || host === 'www.iflux.vn';
-    var marketPlatformLibs = [
-      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=b5wp1_20260727' }
-    ];
-    if (!isProdHost) {
-      marketPlatformLibs = [
-        { global: 'IfluxMarketSeedData', src: ADMIN_UI + 'iflux-market-seed-data.js?v=' + MARKET_PLATFORM_VER },
-        { global: 'IfluxMarketEcosystemSeeds', src: ADMIN_UI + 'iflux-market-ecosystem-seeds.js?v=' + MARKET_PLATFORM_VER },
-        { global: 'IfluxMarketRegistryStore', src: ADMIN_UI + 'iflux-market-registry-store.js?v=' + MARKET_PLATFORM_VER }
-      ].concat(marketPlatformLibs);
-    }
-    await ensureParallel(marketPlatformLibs);
-  } else if (MARKET_CORE_PAGES[pageKey]) {
-    /* Community + Nhà: Master identity; không load mock. */
-    await ensureParallel([
-      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=b5wp1_20260727' }
-    ]);
-  }
+  await ensureMarketLibs(pageKey);
 
   /* AS-SEARCH — Task5 Lazy L07 */
   if (document.querySelector('[data-ifx-header-search]')) {
@@ -240,13 +273,6 @@ export async function bootShell(pageKey) {
     } catch (e) { /* ignore */ }
   }
 
-  var AUTH_PAGES = {
-    home: 1, dashboard: 1,
-    stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
-    stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
-    watchlist: 1, messages: 1, search: 1,
-    account: 1, checkout: 1, communityWrite: 1, stockComment: 1
-  };
   if (AUTH_PAGES[pageKey]) {
     if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
   }
@@ -257,14 +283,7 @@ export async function bootShell(pageKey) {
   }
 
   if (window.IfluxGuestShell && IfluxGuestShell.bootstrapPage) {
-    await new Promise(function (resolve) {
-      var done = false;
-      function finish() { if (!done) { done = true; resolve(); } }
-      try {
-        IfluxGuestShell.bootstrapPage(pageKey, finish);
-      } catch (e) { finish(); }
-      setTimeout(finish, 4000);
-    });
+    await rebootstrapGuest(pageKey);
   } else if (pageKey === 'dashboard' || pageKey === 'home') {
     if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
   }

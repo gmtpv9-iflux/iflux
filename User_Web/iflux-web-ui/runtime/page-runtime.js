@@ -22,7 +22,7 @@ import {
   applyMarketLayout,
   applyHubLayout
 } from './app-shell.js?v=noPageHead20260722';
-import { applyDefinitionToDocument } from './page-definition.js?v=noPageHead20260722';
+import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=cssPin20260808';
 import { loadScript } from './legacy-bridge.js?v=cssPin20260808';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
@@ -43,6 +43,10 @@ export async function bootPage(m, mountEl) {
   }
 
   mountEl.innerHTML = '';
+  /* Soft-nav: innerHTML không gỡ class layout trên mount root.
+   * ifx-mkt-layout / ifx-hub-grid + CSS còn từ trang trước → 1 section community
+   * bị nhét cột sidebar (~1fr) — chỉ còn sidebar. Flow/pricing không add class nên OK. */
+  mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid');
   mountEl.classList.add('ifx-rt-page');
 
   var sectionMap = ensureSections(mountEl, m);

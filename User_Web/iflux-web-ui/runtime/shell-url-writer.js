@@ -118,6 +118,32 @@
     opts = opts || {};
     var parts = splitPathQueryHash(canonical);
     var url = decorateCanonical(parts.path) + (opts.query || parts.query || '') + (opts.hash != null ? opts.hash : parts.hash || '');
+
+    /* Soft-nav P1 — optional; default hard giữ nguyên. */
+    if (opts.soft) {
+      var SN = global.IfluxSoftNav;
+      if (SN && typeof SN.navigate === 'function') {
+        try {
+          var softResult = SN.navigate(url, {
+            replace: opts.replace !== false
+          });
+          if (softResult && typeof softResult.then === 'function') {
+            softResult.then(function (ok) {
+              if (ok === false) {
+                if (opts.replace !== false) global.location.replace(url);
+                else global.location.assign(url);
+              }
+            }).catch(function () {
+              if (opts.replace !== false) global.location.replace(url);
+              else global.location.assign(url);
+            });
+            return;
+          }
+          if (softResult !== false) return;
+        } catch (eSoft) { /* fall through hard */ }
+      }
+    }
+
     if (opts.replace !== false) global.location.replace(url);
     else global.location.assign(url);
   }
