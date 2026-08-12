@@ -46,7 +46,7 @@ coverage/
 *.log
 tmp/
 temp/
-storage/
+/storage/
 
 # Large vendor mirrors (không phải SoT sản phẩm)
 tabler-icons-3.44.0/
