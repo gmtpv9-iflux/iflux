@@ -112,18 +112,30 @@ Mỗi Phase kết thúc bằng 1 **Exit Gate** — không sang Phase kế nếu 
 4. **GitHub Environment `production`:** **có** Required Reviewer = Owner. Đây là lớp bảo vệ thứ 2, độc lập với branch protection (đúng chỉ đạo C.4 "2 lớp").
 5. Environment Secrets: tạo 2 bộ secret riêng (Staging/Production) — chưa điền giá trị thật ở bước này (chỉ tạo khung), giá trị thật điền ở Phase 4/6 khi có credential deploy thật.
 
-### Exit Gate Phase 3
+### Exit Gate Phase 3 — ✅ PASS (2026-08-12)
 
-- [ ] `production` branch có branch protection rule hiển thị đúng trên GitHub Settings (verify bằng cách agent liệt kê rule qua API/`gh`, hoặc Owner xác nhận qua UI nếu Agent không có quyền Administration).
-- [ ] `production` Environment có Required Reviewer = Owner (verify tương tự).
-- [ ] `staging` Environment không có Required Reviewer (đúng thiết kế auto-deploy).
-- [ ] Chưa deploy gì thật — vẫn chỉ là cấu hình khung.
+- [x] `production` branch có branch protection rule hiển thị đúng trên GitHub Settings — Agent không có quyền Administration/API (không dùng PAT theo quyết định Owner) nên verify theo đúng dự phòng của Plan: Owner xác nhận trực tiếp qua UI (Require PR + 1 approval, block force-push).
+- [x] `production` Environment có Required Reviewer = Owner (`gmtpv9-iflux`) — Owner xác nhận qua UI, kèm Prevent self-review = ON, Allow administrators to bypass = OFF (tăng cường thêm, không mâu thuẫn Plan).
+- [x] `staging` Environment không có Required Reviewer (đúng thiết kế auto-deploy) — Owner xác nhận qua UI, scope đúng branch `staging`.
+- [x] Chưa deploy gì thật — vẫn chỉ là cấu hình khung. Environment Secrets/Variables chưa tạo (đúng Plan — giá trị thật điền ở Phase 4/6).
+- [x] `Allow auto-merge` = OFF — Owner xác nhận qua UI (2026-08-12).
+- [x] SHA `staging` và `production` trên GitHub == baseline `bb9512acc8e8d3746e863d565050abd773851c25` — Agent tự verify qua `git ls-remote` (read-only).
+- [x] GitLab không bị đụng, không tạo workflow, không deploy, không đổi runtime trong suốt Phase 3.
 
 ---
 
 ## Phase 4 — Staging Isolation (BR-23) — **PHẢI PASS trước khi Staging được công nhận là release gate**
 
 **Điều kiện vào:** Phase 3 Exit Gate PASS. **Đây là Phase nặng nhất và bắt buộc theo BR-23 — không được bỏ qua hoặc làm sau CI/CD.**
+
+> **STATUS: ⏸ BLOCKED (2026-08-12) tại bước 1 (migration schema-only)** — `npm run migrate` trên `iflux_staging` fail ở `053_sectors_vnd_l2_catalog.sql` (thiếu cột `sectors.display_order`). Audit schema reconciliation đầy đủ + Owner Decision: [`09 - Schema Reconciliation Audit (Production vs Migrations).md`](09%20-%20Schema%20Reconciliation%20Audit%20%28Production%20vs%20Migrations%29.md).
+>
+> **STATUS: ✅ Migration schema reconciliation HOÀN TẤT (2026-08-12).** `057` (sectors/ecosystems) + `054/055/056` (page_seo_configs, media_usages, community_rss_schema) đã chạy PASS trên `iflux_staging` qua one-off controlled procedure (không dùng `npm run migrate` trực tiếp — đã audit `migration-runner.js` xác nhận runner sort theo tên file sẽ chạm `053_sectors_vnd_l2_catalog.sql` chưa tracking trước, nên dùng transaction targeted đúng semantics thay thế). `053_sectors_vnd_l2_catalog.sql` **chủ động SKIP** (Owner quyết định defer seed 19 ngành). Full schema diff cuối: **Production 461 object / Staging 461 object — 0 khác biệt; 100/100 bảng khớp cột hoàn toàn.** Chi tiết đầy đủ: [`09 - Schema Reconciliation Audit (Production vs Migrations).md`](09%20-%20Schema%20Reconciliation%20Audit%20%28Production%20vs%20Migrations%29.md).
+>
+> Còn lại của Phase 4: PM2 `iflux-api-staging` + nginx staging + dual verification (agent + Owner). Seed 19 ngành (`053`) và `schema_migrations` 16/56 tracking debt trên Production: **deferred**, xử lý ở quyết định/task riêng, không block phần còn lại của Phase 4.
+>
+> **STATUS: ✅ PM2 + Nginx staging runtime HOÀN TẤT (2026-08-12).** `iflux-api-staging` chạy bằng user `iflux-app` (không root, không `iflux-deploy`), port `3002`, PM2 riêng (`pm2_home=/home/iflux-app/.pm2`, tách hoàn toàn khỏi PM2 root của Production). Root cause 1 lỗi runtime đã fix tại chỗ, không phải vấn đề bảo mật: (1) PM2 daemon fork kế thừa `cwd` phiên gọi — nếu gọi từ `/root` (không có quyền cho `iflux-app`) daemon spawn fail `EACCES`; fix = luôn `cd` vào thư mục `iflux-app` có quyền trước khi chạy lệnh bằng user này. (2) Ecosystem config đặt `EMAIL_PROVIDER=''` để cách ly email thật nhưng schema Zod (`z.enum(['resend','smtp']).optional()`) không nhận `''`; fix = bỏ hẳn key này khỏi env (undefined hợp lệ, không phải thêm code mới).
+> Nginx: sửa `proxy_pass` `/api/`, `/media/` từ `127.0.0.1:3001` → `127.0.0.1:3002` trong đúng file `iflux-staging.conf` hiện có (không tạo file mới). Phát hiện thêm 1 lỗ hổng routing thật cần sửa trong cùng phạm vi: domain `staging.iflux.vn` (qua Cloudflare) trước đó **chưa có server block khớp tên** ở port 80/443 nên fallback về đúng nội dung Production — đã vá bằng cách thêm `listen 80` / `listen 443 ssl` (cert riêng `certbot --webroot -d staging.iflux.vn`, không đụng cert `iflux.vn`) vào **cùng** server block `staging.iflux.vn` sẵn có (không tạo block song song). Đã verify qua domain thật: `https://staging.iflux.vn` trả `X-IFlux-Env: staging` + data từ `iflux_staging` (19 ngành, `slug=null`, `stock_count=0` — baseline chưa enrich), còn `https://iflux.vn` (Production) không đổi, vẫn trả data thật, PM2 `iflux-api` (pid root, uptime 6h+) không restart trong suốt quá trình.
 
 ### Bước thực hiện (theo đúng bảng B.1 trong `06`)
 
@@ -134,18 +146,18 @@ Mỗi Phase kết thúc bằng 1 **Exit Gate** — không sang Phase kế nếu 
 5. Email: cấu hình Staging ở **log-only / không gửi thật** (tuỳ khả năng provider — SMTP có thể trỏ tới dịch vụ test/log; Resend nếu có sandbox key thì dùng, nếu không thì tắt gửi thật bằng flag/provider log-only).
 6. DNSE: để trống credential ở Staging (code đã tự tắt qua `isConfigured()`, không cần code mới).
 7. Scheduler: quyết định `SCHEDULER_ENABLED` cho Staging (khuyến nghị tắt ban đầu, giảm side-effect ngoài trùng lặp — Owner có thể bật lại nếu cần test ingest).
-8. Khởi tạo PM2 process thứ 2: `iflux-api-staging`, chạy bằng deployment identity/runtime user theo quyết định C.2 (KHÔNG chạy bằng root, KHÔNG tự động dùng chung user `iflux-deploy` cho runtime — cần xác nhận user runtime riêng, có thể là 1 user thứ 3, ví dụ `iflux-app`, khác cả `root` và `iflux-deploy` — **đây là điểm cần Owner xác nhận thêm tên/số lượng user runtime, đề xuất mặc định ở Phase 4 step 8 nếu Owner không phản hồi khác**).
-9. Sửa nginx `iflux-staging.conf`: `/api/` và `/media/` trỏ `http://127.0.0.1:<PORT_STAGING>` thay vì `127.0.0.1:3001`.
+8. [x] Khởi tạo PM2 process thứ 2: `iflux-api-staging`, chạy bằng deployment identity/runtime user theo quyết định C.2 (KHÔNG chạy bằng root, KHÔNG tự động dùng chung user `iflux-deploy` cho runtime). **User runtime riêng đã dùng: `iflux-app`** (uid 998, `nologin` shell, đã tồn tại sẵn từ chuẩn bị trước đó) — khác cả `root` (chạy `iflux-api` Production) và `iflux-deploy` (uid 997, dành cho CI/CD Phase 5). PM2 daemon riêng theo user (`pm2_home=/home/iflux-app/.pm2`), `pm2 save` đã chạy để lưu process list.
+9. [x] Sửa nginx `iflux-staging.conf`: `/api/` và `/media/` trỏ `http://127.0.0.1:3002` thay vì `127.0.0.1:3001`. Bổ sung `listen 80` / `listen 443 ssl` (cert riêng) cho `server_name staging.iflux.vn` trong cùng file — không tạo file/block song song — để domain thật route đúng vào Staging thay vì fallback về Production.
 
 ### Dual Verification (bắt buộc, theo đúng khuôn mẫu Sidebar Foundation trước đây)
 
-- **Agent verify (source/evidence):** curl trực tiếp `staging.iflux.vn/api/...` → xác nhận response đến từ `iflux_staging` DB (ví dụ query 1 bảng test, hoặc xem log PM2 `iflux-api-staging`), xác nhận **không** có ghi nào chạm DB `iflux` (Production) trong lúc test.
-- **Owner verify (UI thật):** Owner tự thao tác 1 luồng có side-effect trên `staging.iflux.vn` (ví dụ đăng ký test, tạo payout request test) → xác nhận **không** nhận được email thật, và Admin Production **không** thấy payout request giả xuất hiện trong hàng đợi thật.
+- [x] **Agent verify (source/evidence):** curl trực tiếp `https://staging.iflux.vn/api/market/master/sectors` → trả 19 ngành baseline (`slug=null`, `stock_count=0`, đúng data `iflux_staging` sau migration reconciliation, KHÁC hoàn toàn data thật của `https://iflux.vn` cùng route — chứng minh Staging đọc đúng DB riêng, không chạm `iflux` Production). Header `X-IFlux-Env: staging` xác nhận đúng nginx block. PM2 `iflux-api` (Production, pid root) giữ nguyên uptime/pid suốt quá trình test — không restart, không log lỗi liên quan.
+- [ ] **Owner verify (UI thật):** Owner tự thao tác 1 luồng có side-effect trên `https://staging.iflux.vn` (ví dụ đăng ký test, tạo payout request test) → xác nhận **không** nhận được email thật, và Admin Production **không** thấy payout request giả xuất hiện trong hàng đợi thật. **PENDING — chờ Owner tự thực hiện.**
 
 ### Exit Gate Phase 4 (= Exit Gate cho BR-23)
 
-- [ ] Staging có DB, credential, storage, PM2 process hoàn toàn riêng — verify bằng bằng chứng cụ thể (không suy đoán).
-- [ ] Test side-effect trên Staging **không** chạm Production (DB, email, storage) — có bằng chứng cả 2 phía (Agent + Owner).
+- [x] Staging có DB, credential, storage, PM2 process hoàn toàn riêng — verify bằng bằng chứng cụ thể (không suy đoán).
+- [ ] Test side-effect trên Staging **không** chạm Production (DB, email, storage) — có bằng chứng cả 2 phía (Agent ✅ + Owner ⏳ pending).
 - [ ] **Chỉ sau khi Exit Gate này PASS, Staging mới được coi là "release gate hợp lệ"** cho các Phase sau.
 
 ---

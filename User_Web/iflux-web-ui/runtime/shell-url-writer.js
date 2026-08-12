@@ -119,22 +119,24 @@
     var parts = splitPathQueryHash(canonical);
     var url = decorateCanonical(parts.path) + (opts.query || parts.query || '') + (opts.hash != null ? opts.hash : parts.hash || '');
 
-    /* Soft-nav P1 — optional; default hard giữ nguyên. */
-    if (opts.soft) {
+    var doReplace = opts.replace !== false;
+    /* Soft Persistent Shell khi route allow — giữ header/logo; hard fallback. */
+    var preferSoft = opts.soft !== false;
+    if (preferSoft) {
       var SN = global.IfluxSoftNav;
-      if (SN && typeof SN.navigate === 'function') {
+      if (SN && typeof SN.canSoftNavigate === 'function' && SN.canSoftNavigate(url) && typeof SN.navigate === 'function') {
         try {
           var softResult = SN.navigate(url, {
-            replace: opts.replace !== false
+            replace: doReplace
           });
           if (softResult && typeof softResult.then === 'function') {
             softResult.then(function (ok) {
               if (ok === false) {
-                if (opts.replace !== false) global.location.replace(url);
+                if (doReplace) global.location.replace(url);
                 else global.location.assign(url);
               }
             }).catch(function () {
-              if (opts.replace !== false) global.location.replace(url);
+              if (doReplace) global.location.replace(url);
               else global.location.assign(url);
             });
             return;
@@ -144,7 +146,7 @@
       }
     }
 
-    if (opts.replace !== false) global.location.replace(url);
+    if (doReplace) global.location.replace(url);
     else global.location.assign(url);
   }
 

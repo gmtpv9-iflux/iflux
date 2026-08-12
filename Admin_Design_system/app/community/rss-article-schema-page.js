@@ -1,6 +1,6 @@
 /* ADM-COM-RSS-003 — Đồng bộ cấu trúc bài viết
- * SoT: GET /admin/community-ops/rss-article-schema → community_rss_schema
- * (fields = đúng key community_posts). CẤM hardcode field list trên client.
+ * SoT: GET /admin/metadata/rss-article-schema → community_rss_schema (fields = key DB community_posts)
+ * CẤM hardcode ARTICLE_FIELD_MAP trên client.
  */
 (function () {
   'use strict';

@@ -66,3 +66,16 @@ infra/staging/deploy-production.env
 .tmp/
 .agents/
 +OUT+
+
+# Generated SEO/runtime pages (build/cronjob output, không phải source thủ công)
+# Quyết định: 12 - Production → GitHub → New Staging Reconstruction Plan.md, mục 3
+User_Web/sectors/
+User_Web/stocks/
+User_Web/cong-dong/
+User_Web/ecosystems/
+User_Web/topics/
+User_Web/data/iflux-plans-v1.json
+User_Web/data/iflux-routes.json
+User_Web/tests/test-results/
+Admin_Design_system/**/*.bak-*
+User_Web/**/*.bak-*

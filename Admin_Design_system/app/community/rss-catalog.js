@@ -256,7 +256,7 @@
    * ARTICLE_FIELD_MAP — ĐÃ GỠ (2026-08-10).
    * SoT schema bài = community_rss_schema (DB) qua GET /admin/metadata/rss-article-schema.
    * Contract key: backend/src/modules/community/community-article-schema-fields.js
-   * Trang: rss-article-schema-page.js → GET /admin/community-ops/rss-article-schema
+   * Trang: rss-article-schema-page.js (không hardcode field list).
    */
 
   function statusLabel(code) {
