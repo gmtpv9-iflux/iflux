@@ -24,6 +24,9 @@ infra/staging/staging.env
 *.key
 *credentials*
 *secret*
+# Ngoại lệ: file source frontend thật (store module UI), không phải secret.
+# Bị *credentials* ở trên chặn nhầm → gãy chuỗi load JS trang đăng nhập (Google login).
+!Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js
 
 # Python / backend
 **/.venv/
