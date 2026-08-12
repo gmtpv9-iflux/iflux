@@ -69,11 +69,13 @@ infra/staging/deploy-production.env
 
 # Generated SEO/runtime pages (build/cronjob output, không phải source thủ công)
 # Quyết định: 12 - Production → GitHub → New Staging Reconstruction Plan.md, mục 3
-User_Web/sectors/
-User_Web/stocks/
-User_Web/cong-dong/
-User_Web/ecosystems/
-User_Web/topics/
+# CHỈ ignore các sub-folder theo entity (ticker/ngành/topic) — KHÔNG ignore
+# index.html cấp cha (SPA shell source, cần cho route /co-phieu /nganh /he-sinh-thai).
+User_Web/sectors/*/
+User_Web/stocks/*/
+User_Web/cong-dong/*/
+User_Web/ecosystems/*/
+User_Web/topics/*/
 User_Web/data/iflux-plans-v1.json
 User_Web/data/iflux-routes.json
 User_Web/tests/test-results/
