@@ -81,6 +81,20 @@ function setCanonical(href) {
   link.href = href;
 }
 
+function setFavicon(href) {
+  var link = document.querySelector('link[rel="icon"]');
+  if (!href) {
+    if (link && link.parentNode) link.parentNode.removeChild(link);
+    return;
+  }
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+  }
+  link.href = href;
+}
+
 function clearJsonLd(ids) {
   (ids || []).forEach(function (id) {
     var el = document.getElementById(id);
@@ -108,6 +122,7 @@ function applySeo(definition) {
   if (!seo) {
     META_FIELDS.forEach(function (entry) { setMeta(entry[0], null, entry[1]); });
     setCanonical(null);
+    setFavicon(null);
     setJsonLdEntries([]);
     return;
   }
@@ -115,6 +130,7 @@ function applySeo(definition) {
     setMeta(entry[0], seo[entry[0]], entry[1]);
   });
   setCanonical(seo.canonical || null);
+  setFavicon(seo.favicon || seo.icon || null);
   setJsonLdEntries(seo.jsonLd || []);
 }
 

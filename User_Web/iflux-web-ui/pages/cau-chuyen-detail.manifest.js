@@ -2,13 +2,13 @@
  * Page Manifest — Chi tiết câu chuyện (/cau-chuyen/:slug)
  * Giao diện tái dùng group-page (trước đây /chu-de/:slug).
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR04_20260811';
 
 export default {
   pageKey: 'cauChuyenDetail',
   path: '/cau-chuyen',
   title: '',
-  documentTitle: 'Câu chuyện · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }
@@ -28,7 +28,7 @@ export default {
       '/User_Web/iflux-web-ui/watchlist.css',
       '/User_Web/iflux-web-ui/community.css',
       '/User_Web/iflux-web-ui/block-templates.css',
-      '/User_Web/iflux-web-ui/stock.css'
+      '/User_Web/iflux-web-ui/stock.css?v=sidebarVR04_20260811'
     ]
   }]
 };

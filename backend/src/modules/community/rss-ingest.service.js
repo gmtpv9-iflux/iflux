@@ -379,7 +379,9 @@ async function processFeed(mapping, limit) {
         excerpt: enriched.excerpt || '',
         body_html: enriched.body_html || enriched.body || ''
       });
-      const attr = entityResolve.normalizeAttribution(enriched.author_name, providerName);
+      const rssAuthor =
+        entityResolve.resolveRssAuthor(mapping.providerId) ||
+        entityResolve.resolveRssAuthor(providerName);
       const payload = {
         title: enriched.title,
         slug: slugBase + '-' + Date.now().toString(36).slice(-4),
@@ -408,7 +410,7 @@ async function processFeed(mapping, limit) {
           title: enriched.seo_title || enriched.title,
           description: enriched.seo_description || enriched.excerpt || '',
           keywords: enriched.seo_keywords || '',
-          canonical: enriched.canonical || item.url,
+          canonical: '',
           meta_title: enriched.seo_title || enriched.title,
           meta_description: enriched.seo_description || enriched.excerpt || '',
           og_title: enriched.seo_title || enriched.title,
@@ -426,10 +428,10 @@ async function processFeed(mapping, limit) {
         origin: 'rss',
         from_rss: true,
         rss_mapping_id: mapping.id,
-        author: attr.author,
-        publisher: attr.publisher,
-        provider: attr.provider,
-        vendor: attr.vendor,
+        author: rssAuthor,
+        publisher: null,
+        provider: null,
+        vendor: null,
         source: {
           type: 'rss',
           id: mapping.providerId,
@@ -515,26 +517,24 @@ async function backfillArticleEntities(opts) {
         excerpt: p.excerpt,
         body_html: p.body_html || p.body
       });
-      const providerName =
+      const providerId =
+        (p.source && p.source.id) ||
+        p.source_id ||
         (p.source && p.source.name) ||
         p.source_name ||
         (p.provider && p.provider.name) ||
         '';
-      const authorName =
-        (p.author && p.author.display_name) ||
-        (p.vendor && p.vendor.name) ||
-        '';
-      const attr = entityResolve.normalizeAttribution(authorName, providerName);
+      const rssAuthor = entityResolve.resolveRssAuthor(providerId);
       const merged = Object.assign({}, p, {
         tickers: resolved.tickers,
         sectors: [],
         ecosystems: resolved.ecosystems,
         entity_occurrences: resolved.entity_occurrences,
         entities: resolved.entities,
-        author: attr.author,
-        publisher: attr.publisher || p.publisher || (providerName ? { name: providerName } : null),
-        provider: attr.provider || p.provider,
-        vendor: attr.vendor,
+        author: rssAuthor || p.author || null,
+        publisher: null,
+        provider: null,
+        vendor: null,
         updated_at: new Date().toISOString()
       });
       await query(

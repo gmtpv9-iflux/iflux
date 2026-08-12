@@ -2,7 +2,7 @@
  * TMP-TREND-LINE — ESM Widget module (Publish display.module).
  * WGT-MKT-007 KLGD · WGT-MKT-008 GTGD → IfluxMarketLiquidity.mountBlock
  */
-import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

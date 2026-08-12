@@ -4,39 +4,55 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
 import featureManifest from '../../features/flow.manifest.js?v=mockRmWp5_20260809';
 
 var featureRt = null;
 
 export const meta = { id: 'WGT-FLW-PAGE', title: 'Dòng tiền' };
 
+/* AppShell Foundation VR-01 (100826): Left Sidebar host phải qua ensureSections()
+ * canonical (giống Home/Market) — không tự dựng <aside> bằng HTML cứng. */
 var LAYOUT_HTML =
   '<div class="ifx-flow-title-row">' +
     '<h1 class="ix-page-title" style="margin:0">Dòng tiền</h1>' +
     '<span class="ifx-flow-exclusive"><i class="ti ti-sparkles"></i> Độc quyền iFlux</span>' +
   '</div>' +
   '<p class="ifx-page-intro">Top 10 sức mạnh dòng tiền và thống kê mua/bán ròng theo cổ phiếu, ngành, hệ sinh thái, chủ đề.</p>' +
-  '<div class="ifx-flow-page-layout">' +
-    '<aside class="ifx-flow-market-sidebar" aria-label="Widget đặc thù dòng tiền" data-ifx-section="sidebar" data-section="sidebar"></aside>' +
-    '<div class="ifx-flow-main-col">' +
-      '<div class="ifx-flow-score-wrap" data-ifx-ent-block="BLK-FLW-SCORE-BASIC">' +
-        '<div class="ix-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
-          '<button type="button" class="ix-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê cơ bản</button>' +
-          '<button type="button" class="ix-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Thống kê nâng cao</button>' +
-          '<button type="button" class="ix-tab ifx-topnav-link--exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-topnav-link__stack"><span class="ifx-topnav-chip">Đột phá</span><span class="ifx-topnav-link__label">Độc quyền</span></span></button>' +
-        '</div>' +
-        '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
-          '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
-        '</div>' +
-        '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-ADV">' +
-          '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
-        '</div>' +
-        '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-EX">' +
-          '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
-        '</div>' +
+  '<div class="ifx-flow-page-layout"></div>';
+
+var MAIN_COL_HTML =
+  '<div class="ifx-flow-main-col">' +
+    '<div class="ifx-flow-score-wrap" data-ifx-ent-block="BLK-FLW-SCORE-BASIC">' +
+      '<div class="ix-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
+        '<button type="button" class="ix-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê cơ bản</button>' +
+        '<button type="button" class="ix-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Thống kê nâng cao</button>' +
+        '<button type="button" class="ix-tab ifx-topnav-link--exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-topnav-link__stack"><span class="ifx-topnav-chip">Đột phá</span><span class="ifx-topnav-link__label">Độc quyền</span></span></button>' +
+      '</div>' +
+      '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
+        '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
+      '</div>' +
+      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-ADV">' +
+        '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
+      '</div>' +
+      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-EX">' +
+        '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
       '</div>' +
     '</div>' +
   '</div>';
+
+/** VR-01 CONVERGE: dựng Left Sidebar qua ensureSections() canonical, giữ class
+ * layout cũ (ifx-flow-market-sidebar) trên section để không đổi CSS 2-cột hiện có
+ * — cùng pattern applyMarketLayout/applyHubLayout (canonical section + page-family class). */
+function buildFlowLayout(el) {
+  el.innerHTML = LAYOUT_HTML;
+  var layoutRoot = el.querySelector('.ifx-flow-page-layout');
+  var sections = ensureSections(layoutRoot, {
+    sections: [{ key: 'sidebar', label: 'Widget đặc thù dòng tiền' }]
+  });
+  if (sections.sidebar) sections.sidebar.classList.add('ifx-flow-market-sidebar');
+  layoutRoot.insertAdjacentHTML('beforeend', MAIN_COL_HTML);
+}
 
 async function mountFromHostTree(root) {
   if (!root || !window.IfluxPageLayoutEngine) {
@@ -89,7 +105,7 @@ function applyFlow(root) {
 }
 
 export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+  buildFlowLayout(el);
   featureRt = createFeatureRuntime(featureManifest);
   await featureRt.boot({
     init: function () {

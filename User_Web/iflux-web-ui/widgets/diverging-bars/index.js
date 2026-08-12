@@ -2,7 +2,7 @@
  * TMP-DIVERGING-BARS — ESM Widget module (Publish display.module).
  * Render qua IfluxBlockTemplates.renderDivergingBars (Design System).
  */
-import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

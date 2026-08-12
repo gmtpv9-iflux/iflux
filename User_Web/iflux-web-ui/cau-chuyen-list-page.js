@@ -99,8 +99,8 @@
     }
     if (window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
       IfluxPageDefinition.applyPatch({
-        title: 'Danh sách câu chuyện',
-        documentTitle: 'Danh sách câu chuyện · iFlux'
+        title: 'Danh sách câu chuyện'
+        /* documentTitle từ Thiết lập SEO — cấm hardcode · iFlux */
       });
     }
     if (!mount) return;

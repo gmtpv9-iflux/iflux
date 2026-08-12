@@ -2,7 +2,7 @@
  * TMP-FLOW-SUMMARY — ESM (Publish display.module).
  * Markup khớp classic WGT-FLW-001 / Admin preview flow-summary.
  */
-import { loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { templateId: 'TMP-FLOW-SUMMARY', title: 'Dòng tiền thông minh (tóm tắt)' };

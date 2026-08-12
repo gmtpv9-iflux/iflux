@@ -22,37 +22,37 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=softNavLayoutFix20260810';
+import { bootPage } from './page-runtime.js?v=stickyRefactor20260811';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { bootShell } from './shell-boot.js?v=softNavP1_20260810';
-import { installSoftNavigation } from './soft-navigation.js?v=softNavP1_20260810';
+import { installSoftNavigation } from './soft-navigation.js?v=stickyRefactor20260811';
 
 var VER = '?v=phaseCW5gate20260721';
-var P4 = '?v=phaseCW5gate20260721';
+var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
-  flow: function () { return import('../pages/flow.manifest.js?v=mdmShell20260808'); },
-  community: function () { return import('../pages/community.manifest.js?v=catIconGap20260808'); },
+  flow: function () { return import('../pages/flow.manifest.js?v=sidebarVR01_20260811'); },
+  community: function () { return import('../pages/community.manifest.js?v=stickyRefactor20260811'); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
-  stocks: function () { return import('../pages/stocks.manifest.js' + VER); },
-  sectors: function () { return import('../pages/sectors.manifest.js' + VER); },
-  ecosystems: function () { return import('../pages/ecosystems.manifest.js' + VER); },
-  chuDe: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
-  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js' + VER); },
-  stock: function () { return import('../pages/stock.manifest.js?v=mdmShell20260808'); },
-  sector: function () { return import('../pages/sector.manifest.js' + VER); },
-  family: function () { return import('../pages/family.manifest.js' + VER); },
-  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + VER); },
-  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + VER); },
+  stocks: function () { return import('../pages/stocks.manifest.js?v=sidebarVR03_20260811'); },
+  sectors: function () { return import('../pages/sectors.manifest.js?v=sidebarVR03_20260811'); },
+  ecosystems: function () { return import('../pages/ecosystems.manifest.js?v=sidebarVR03_20260811'); },
+  chuDe: function () { return import('../pages/cau-chuyen.manifest.js?v=sidebarVR03_20260811'); },
+  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js?v=sidebarVR03_20260811'); },
+  stock: function () { return import('../pages/stock.manifest.js?v=sidebarVR04_20260811'); },
+  sector: function () { return import('../pages/sector.manifest.js?v=sidebarVR04_20260811'); },
+  family: function () { return import('../pages/family.manifest.js?v=sidebarVR04_20260811'); },
+  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=sidebarVR04_20260811'); },
+  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=sidebarVR04_20260811'); },
   faq: function () { return import('../pages/faq.manifest.js' + VER); },
   loyalty: function () { return import('../pages/loyalty.manifest.js' + VER); },
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
   messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  communityPost: function () { return import('../pages/community-post.manifest.js?v=tickerNoDup20260810'); },
+  communityPost: function () { return import('../pages/community-post.manifest.js?v=scrollWave4early_20260811'); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
   communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },
@@ -271,7 +271,8 @@ async function resolveManifest(pageKey, opts) {
 
 /**
  * PL-07: consume public effective SEO. Hardcode title/favicon chỉ còn khi API trống (fallback tạm).
- * Soft-nav: bindLogo=false — giữ DOM logo (Owner lock).
+ * Logo rebind mọi lần nav (hard + soft) — Owner-approved 20260811: logo phải fresh
+ * trong 1 session dài nếu Admin đổi logo_url; logo_url là GLOBAL nên rebind không gây churn theo trang.
  */
 async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
   seoOpts = seoOpts || {};
@@ -323,6 +324,22 @@ async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
     if (siteName) seo['og:site_name'] = siteName;
     if (favicon) seo.favicon = favicon;
 
+    /* Clean Public URL cho canonical + og:url (BR-45.5, L5-TC-12) — để human-DOM khớp bot-pipeline.
+     * Ưu tiên eff.canonical_path (server trả, dùng chung PAGE_KEY_TO_PATH với bot pipeline — đúng cả
+     * alias route như "/" → "/cong-dong"); fallback IfluxNormalizePath(location) cho path không có
+     * trong bảng tĩnh. Không override nếu page entity/article đã tự set seo.canonical riêng. */
+    if (!seo.canonical && window.location) {
+      var canonicalPath = String(eff.canonical_path || '').trim();
+      if (!canonicalPath && window.IfluxNormalizePath) {
+        canonicalPath = window.IfluxNormalizePath(window.location.pathname);
+      }
+      if (canonicalPath) {
+        var cleanUrl = window.location.origin + canonicalPath;
+        seo.canonical = cleanUrl;
+        seo['og:url'] = cleanUrl;
+      }
+    }
+
     /* Keep templates for entity-ready resolve (IfluxSeoTitle). */
     eff = Object.assign({}, eff, {
       title_template: titleTemplate || null,
@@ -337,7 +354,7 @@ async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
     });
 
     /* Header logo — sole owner = Foundation /seo/effective logo_url. No text brand.
-     * Soft-nav: không clear/rebind logo (persistent shell). */
+     * Rebind mọi lần nav (hard + soft) — xem comment enrichManifestWithSiteSeo. */
     if (bindLogo) {
       var logoEl =
         document.querySelector('.ifx-topnav-brand [data-ifx-seo-logo]') ||
@@ -375,9 +392,7 @@ export async function start(opts) {
   var shell = await bootShell(pageKey, { soft: soft });
   if (shell === null) return null;
 
-  var manifest = await resolveManifest(pageKey, {
-    seo: { bindLogo: !soft }
-  });
+  var manifest = await resolveManifest(pageKey);
   if (!manifest) {
     if (window.console && console.warn) console.warn('[Runtime] Chưa có manifest/PagePublished cho:', pageKey);
     return null;

@@ -30,6 +30,7 @@
     var layout = root.querySelector('.ifx-stock-layout');
     if (!layout || layout.querySelector('.ifx-stock-col--left') || !detail) return;
     layout.insertAdjacentHTML('afterbegin', renderLeft(detail));
+    mountSidebarHost(layout.querySelector('.ifx-stock-col--left'));
     enrichRealtime(root, ticker);
     document.dispatchEvent(new CustomEvent('iflux-knowledge-remount-widgets'));
   }
@@ -189,9 +190,7 @@
       price: null,
       change_pct: null,
       change_abs: null,
-      price_state: 'ref',
-      chart: null,
-      net_flow: null
+      price_state: 'ref'
     };
     var mm = master();
     var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
@@ -242,13 +241,28 @@
   function renderLeft(detail) {
     return (
       '<div class="ifx-stock-col ifx-stock-col--left">' +
-        '<div data-ifx-section="sidebar" data-section="sidebar"></div>' +
         '<section class="ifx-stock-panel">' +
           renderHeader(detail) +
           '<div class="ifx-stock-chart" data-ifx-ohlc-chart></div>' +
         '</section>' +
       '</div>'
     );
+  }
+
+  /* AppShell Foundation VR-04 (100826): Left Sidebar Widget Host phải qua ensureSections()
+   * canonical (giống Home/Market/Flow/Community/ELP) — không tự dựng <div data-ifx-section>
+   * bằng HTML cứng. Host phải nằm TRƯỚC candlestick panel (page-specific data, giữ nguyên
+   * trong Main, không lồng vào Section) → dùng insertBefore thay vì ensureSections append. */
+  function mountSidebarHost(leftEl) {
+    if (!leftEl) return;
+    var sectionApi = global.IfluxRuntimeSections;
+    if (!sectionApi || !sectionApi.ensureSections) return;
+    var sections = sectionApi.ensureSections(leftEl, {
+      sections: [{ key: 'sidebar', label: 'Widget đặc thù cổ phiếu' }]
+    });
+    if (sections && sections.sidebar && leftEl.firstChild !== sections.sidebar) {
+      leftEl.insertBefore(sections.sidebar, leftEl.firstChild);
+    }
   }
 
   function buildFeedSections(entityName, newsState) {
@@ -403,6 +417,7 @@
         renderLeft(detail) +
         renderCenter(currentTicker, detail, newsState) +
       '</div>';
+    mountSidebarHost(root.querySelector('.ifx-stock-col--left'));
 
     bindEvents(root, currentTicker, detail, newsState);
     enrichRealtime(root, currentTicker);

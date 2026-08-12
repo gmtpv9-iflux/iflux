@@ -106,7 +106,11 @@
         } catch (e) {
           return;
         }
-        linked = linked.replace(re, function (m) {
+        linked = linked.replace(re, function (m, offset, full) {
+          /* Đã có (CODE) ngay sau tên trong body (RSS) → không append trùng */
+          var after = String(full || '').slice(offset + m.length);
+          var already = new RegExp('^\\s*\\(' + code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\)', 'i');
+          if (already.test(after)) return m;
           if (/\([A-Z]{2,5}\)\s*$/.test(m)) return m;
           return m + ' (' + code + ')';
         });
@@ -144,8 +148,20 @@
         ? CONTENT_TYPE_EXPERT
         : CONTENT_TYPE_NEWS;
     }
-    /* WP-4/6: không invent author — omit khi thiếu display_name */
+    /* WP-4/6 + Wave C SoT: byline chỉ author.display_name — không invent / không fallback vendor */
     if (post.author && !post.author.display_name) post.author = null;
+    if (post.author && post.author.display_name) {
+      post.author = {
+        id: post.author.id || null,
+        display_name: post.author.display_name,
+        tier: post.author.tier || null,
+        tier_label: post.author.tier_label || null
+      };
+    }
+    /* Không dùng publisher/provider/vendor làm tên hiển thị */
+    post.publisher = null;
+    post.provider = null;
+    post.vendor = null;
     if (!post.stats) {
       post.stats = {
         likes: 0,

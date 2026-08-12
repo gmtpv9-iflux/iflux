@@ -1,3 +1,5 @@
+CẤM KHÔNG ĐƯỢC MỞ FILE TRONG QUÁ TRÌNH LÀM. CẤM KHÔNG DÙNG LỆNH $ open
+
 # BRD — Website SEO Metadata Management & SEO Platform
 
 |                |                                                                                     |
@@ -6,8 +8,208 @@
 | **Task Type**  | Epic / Platform-level Business Requirement                                          |
 | **Product**    | iFlux                                                                               |
 | **Scope**      | Toàn bộ public website, page, article và public entity                              |
-| **Status**     | **BRD — Owner Draft / Implementation LOCKED**                                       |
+| **Status**     | 🔒 **OWNER LOCKED** (2026-08-09) — BR Checklist §0 + Amendment Reviewer MUST (HTTP Status · Conflict Resolution · Singleton) **đã khóa** · Implementation **NOT AUTHORIZED** · SoT / Solution = Owner đang kiểm tra absorb |
 | **Governance** | **Business Requirement → Mandatory Audit → SoT → Solution & Plan → Implementation** |
+| **Amendment**  | **2026-08-09** — khóa Clean Public URL (SEO) ≠ Public Identity / Affiliate URL; **2026-08-09** — đánh số BR Checklist Registry (§0); **2026-08-09** — Reviewer MUST: HTTP Status trong SEO Contract (§10); Conflict Resolution giữa SEO signals (§14/§33); Duplicate/Singleton metadata (§38) · **LOCKED cùng ngày** |
+
+---
+
+# 0. BR Checklist Registry (KHÓA)
+
+> Registry này **thuộc tầng BRD** (Product Backlogs Governance §2.1).  
+> Chữ requirement **không diễn giải lại** — chỉ **đánh số** map từ §5–§50 / §45.  
+> §41 / §42 / §51 = cửa **Audit deliverable**, không tạo product BR mới.  
+> Audit / SoT / Solution / Plan / Verification **MUST** trả lời **đủ mọi dòng** dưới đây.
+
+### 0.1 Map § → BR
+
+| BR | § BRD | Tên ngắn |
+|----|-------|----------|
+| BR-01 | §5 | Automatic SEO by Default |
+| BR-02 | §6 | Field Ownership Classification |
+| BR-03 | §7 | Global Website SEO |
+| BR-04 | §8 | Website Identity |
+| BR-05 | §9 | Favicon / Site Icon |
+| BR-06 | §10 | Page SEO Contract (+ HTTP Status / coherent URL policy) |
+| BR-07 | §11 | Coverage — Mandatory |
+| BR-08 | §12 | Dynamic Entity SEO |
+| BR-09 | §13 | SEO Template Engine |
+| BR-10 | §14 | SEO Rule Engine (+ Conflict Resolution) |
+| BR-11 | §15 | Canonical — Automatic |
+| BR-12 | §16 | Canonical Edge Cases |
+| BR-13 | §17 | Robots — Automatic |
+| BR-14 | §18 | Sitemap — Automatic |
+| BR-15 | §19 | OpenGraph — Automatic |
+| BR-16 | §20 | Twitter/X — Derived |
+| BR-17 | §21 | Default Image Fallback |
+| BR-18 | §22 | Image SEO |
+| BR-19 | §23 | Description Automation |
+| BR-20 | §24 | Title Automation |
+| BR-21 | §25 | Structured Data |
+| BR-22 | §26 | Breadcrumb |
+| BR-23 | §27 | Internal Linking |
+| BR-24 | §28 | Slug & URL |
+| BR-25 | §29 | Redirect Management |
+| BR-26 | §30 | Pagination |
+| BR-27 | §31 | Multi-language Readiness |
+| BR-28 | §32 | SEO Preview |
+| BR-29 | §33 | SEO Health / Quality Gate |
+| BR-30 | §34 | SEO Versioning |
+| BR-31 | §35 | SEO Source Traceability |
+| BR-32 | §36 | SEO CMS |
+| BR-33 | §37 | SEO Permission |
+| BR-34 | §38 | SEO Source of Truth — Mandatory (+ Singleton metadata) |
+| BR-35 | §39 | Human vs Crawler Consistency |
+| BR-36 | §40 | Search Engine / SERP Representation |
+| BR-37 | §44 | SEO-ready by Default |
+| BR-45 | §45 | SEO vs Affiliate / Public Identity Boundary |
+| BR-46 | §46 | Compatibility Requirements |
+| BR-47 | §47 | Reuse Requirement |
+| BR-48 | §48 | Non-Functional Requirements |
+| BR-SC | §50 | Success Criteria (verification index) |
+
+### 0.2 Atomic Req ID (bất biến)
+
+| BR | Req ID | Requirement (chữ BRD) | § |
+|----|--------|------------------------|---|
+| BR-01 | BR-01.1 | Automatic by Default — Manual Override by Exception | §5 |
+| BR-01 | BR-01.2 | Metadata deterministic từ Site/Page/URL/Entity/Content/Taxonomy/Author/Image/Template/Rule → MUST auto-sinh | §5 |
+| BR-01 | BR-01.3 | Không bắt Editor/Admin nhập thủ công chỉ vì chưa có auto-resolution | §5 |
+| BR-01 | BR-01.4 | Manual chỉ cho editorial / business / campaign / exception / explicit override | §5 |
+| BR-02 | BR-02.A | Phân loại Fully Automatic (URL, Canonical, OG URL, Breadcrumb URL, Sitemap eligibility, normalization, Structured Data identity, Site identity, entity URL, fallback image, system robots…) | §6.A |
+| BR-02 | BR-02.B | Phân loại Automatic + Manual Override (SEO Title, Description, OG/Twitter fields, Slug, Robots exception…) | §6.B |
+| BR-02 | BR-02.C | Phân loại Manual / Editorial (SEO đặc biệt, Featured SEO Image, ALT, campaign, explicit noindex…) | §6.C |
+| BR-02 | BR-02.D | Phân loại System Only (resolution/canonical/sitemap engines, rendering contract, normalization, schema identity, source/version…) | §6.D |
+| BR-03 | BR-03.1 | Quản lý tập trung Global Website SEO fields (Name, Title Template, Description, Domain, Logo, Favicon, icons, Default OG/Social, robots policy, theme, manifest, verification…) | §7 |
+| BR-03 | BR-03.2 | Phân biệt Brand Name / Site Name / Homepage Title / Organization Name / Canonical Domain | §7 |
+| BR-04 | BR-04.1 | Website Identity là SoT riêng (Brand, Site, Org, Homepage, Logo, Favicon, Canonical Domain, Org URL) | §8 |
+| BR-04 | BR-04.2 | Machine-readable identity đủ để Google hiểu website/entity/URL chính | §8 |
+| BR-05 | BR-05.1 | Favicon thuộc Website Identity; bao phủ favicon.ico, PNG, link rel=icon, Apple Touch, Manifest, MIME, HTTP, cache, crawler access, prod consistency | §9 |
+| BR-05 | BR-05.2 | Khi SERP icon sai: audit Declared → Crawler-visible → Google Cached → SERP Icon | §9 |
+| BR-06 | BR-06.1 | Mỗi public URL resolve được SEO Contract gồm tối thiểu: HTTP Status, URL, Page Identity, Page Type, SEO Title, Meta Description, Canonical, Robots, OG Title/Description/Image/URL, Twitter Metadata, Structured Data, Breadcrumb, Sitemap Eligibility, Language, Alternate Language | §10 |
+| BR-06 | BR-06.2 | Không public page thiếu SEO / metadata mâu thuẫn / hardcode rời / ownership không rõ | §10 |
+| BR-06 | BR-06.3 | SEO Contract MUST include HTTP response state/status so that HTTP status, indexability, canonical, robots and sitemap eligibility form one coherent URL policy | §10 |
+| BR-06 | BR-06.4 | HTTP↔SEO coherence: 200 → normal SEO resolution; 301/302 → redirect policy; 404 → not indexable; 410 → not indexable. MUST NOT allow contradictory states (vd. HTTP 404 + index,follow + sitemap eligible) | §10 |
+| BR-07 | BR-07.HOME | Coverage `/` | §11 |
+| BR-07 | BR-07.STATIC | Coverage Static Pages | §11 |
+| BR-07 | BR-07.COM | Coverage Community | §11 |
+| BR-07 | BR-07.ARTICLE | Coverage Community Article | §11 |
+| BR-07 | BR-07.MARKET | Coverage Market | §11 |
+| BR-07 | BR-07.FLOW | Coverage Money Flow | §11 |
+| BR-07 | BR-07.MEMBER | Coverage Membership | §11 |
+| BR-07 | BR-07.FAQ | Coverage FAQ | §11 |
+| BR-07 | BR-07.WATCH | Coverage Watchlist/public nếu indexable | §11 |
+| BR-07 | BR-07.STOCK | Coverage Stock | §11 |
+| BR-07 | BR-07.SECTOR | Coverage Sector | §11 |
+| BR-07 | BR-07.ECO | Coverage Ecosystem | §11 |
+| BR-07 | BR-07.AUTHOR | Coverage Author | §11 |
+| BR-07 | BR-07.TAG | Coverage Tag | §11 |
+| BR-07 | BR-07.COLL | Coverage Collection | §11 |
+| BR-07 | BR-07.SEARCH | Coverage Search/Listing | §11 |
+| BR-07 | BR-07.PAGE | Coverage Pagination | §11 |
+| BR-07 | BR-07.FUTURE | Coverage Future Entity | §11 |
+| BR-07 | BR-07.REDIR | Coverage Redirect | §11 |
+| BR-07 | BR-07.404 | Coverage 404 | §11 |
+| BR-07 | BR-07.410 | Coverage 410 | §11 |
+| BR-07 | BR-07.QUERY | Coverage Query URLs | §11 |
+| BR-07 | BR-07.REF | Coverage Referral URLs | §11 |
+| BR-07 | BR-07.PID | Coverage Public Identity URLs | §11 |
+| BR-08 | BR-08.ARTICLE | Dynamic SEO Article template | §12 |
+| BR-08 | BR-08.STOCK | Dynamic SEO Stock template | §12 |
+| BR-08 | BR-08.SECTOR | Dynamic SEO Sector template | §12 |
+| BR-08 | BR-08.AUTHOR | Dynamic SEO Author template | §12 |
+| BR-08 | BR-08.TMPL | Template có fallback, validation, override, version, ownership | §12 |
+| BR-09 | BR-09.1 | Template Engine — không hardcode từng page; hỗ trợ Global / Page Type / Entity Type / Specific Entity / Override / Fallback | §13 |
+| BR-09 | BR-09.2 | Đổi template tác động toàn bộ entity dùng template | §13 |
+| BR-10 | BR-10.1 | Rule Engine quyết định indexability và metadata behavior | §14 |
+| BR-10 | BR-10.2 | SEO Platform MUST enforce deterministic conflict-resolution across HTTP status, redirect, canonical, robots/indexability, sitemap eligibility, OG URL, structured-data URL and internal SEO targets; invalid contradictory states MUST be prevented or surfaced as SEO Health ERROR | §14 |
+| BR-11 | BR-11.1 | Canonical MUST tự động resolve trong workflow thông thường | §15 |
+| BR-11 | BR-11.2 | Canonical từ Canonical Domain + Route + Entity Identity + URL Policy | §15 |
+| BR-12 | BR-12.1 | Edge policy: query, pagination, sort, filter, referral, public identity, case, slash, slug change, duplicate, legacy, redirect, migration | §16 |
+| BR-12 | BR-12.2 | `?ref=` / `?r=` / `/{publicId}/...` và decorator Affiliate **không** thành SEO canonical identity | §16 |
+| BR-12 | BR-12.3 | MUST NOT refactor Affiliate/Public Identity trong Epic trừ defect SEO-boundary + Owner approve | §16 |
+| BR-13 | BR-13.1 | Robots rule-driven; không bắt Editor chọn index/follow từng content bình thường | §17 |
+| BR-14 | BR-14.1 | Sitemap Automatic — eligibility tự động; phản ánh đúng indexable URLs | §18 |
+| BR-15 | BR-15.1 | OpenGraph Automatic | §19 |
+| BR-16 | BR-16.1 | Twitter/X Derived từ OG/contract | §20 |
+| BR-17 | BR-17.1 | Default Image Fallback | §21 |
+| BR-18 | BR-18.1 | Image SEO (dimensions, ALT governance…) | §22 |
+| BR-19 | BR-19.1 | Description Automation | §23 |
+| BR-20 | BR-20.1 | Title Automation | §24 |
+| BR-21 | BR-21.1 | Structured Data (JSON-LD) | §25 |
+| BR-22 | BR-22.1 | Breadcrumb | §26 |
+| BR-23 | BR-23.1 | Internal Linking SEO-facing | §27 |
+| BR-24 | BR-24.1 | Slug & URL governance | §28 |
+| BR-25 | BR-25.1 | Redirect Management | §29 |
+| BR-26 | BR-26.1 | Pagination SEO policy | §30 |
+| BR-27 | BR-27.1 | Multi-language Readiness | §31 |
+| BR-28 | BR-28.1 | SEO Preview (Google + Social) | §32 |
+| BR-29 | BR-29.1 | SEO Health / Quality Gate | §33 |
+| BR-29 | BR-29.2 | SEO Health MUST detect conflicting SEO signals (HTTP vs robots vs sitemap vs canonical vs redirect vs OG/SD URL) as ERROR when correctness bị ảnh hưởng | §33 |
+| BR-29 | BR-29.3 | Duplicate singleton SEO tags trong một rendered document (title, meta description, canonical, robots, og:url/title/description, primary OG image, Twitter primary) MUST be SEO Health ERROR khi ảnh hưởng correctness | §33 |
+| BR-30 | BR-30.1 | SEO Versioning | §34 |
+| BR-31 | BR-31.1 | SEO Source Traceability | §35 |
+| BR-32 | BR-32.1 | SEO CMS (platform quản trị SEO) | §36 |
+| BR-33 | BR-33.1 | SEO Permission / RBAC | §37 |
+| BR-34 | BR-34.1 | Một SEO Source of Truth duy nhất | §38 |
+| BR-34 | BR-34.2 | FE/BE/SPA/SSR/HTML/JS/Nginx MUST NOT tự tạo/ghi đè metadata ngoài governed pipeline | §38 |
+| BR-34 | BR-34.3 | Mọi rendering pipeline consume cùng SEO contract | §38 |
+| BR-34 | BR-34.4 | For each rendered public document, SEO singleton fields MUST resolve to exactly one authoritative instance unless the relevant standard explicitly permits multiple values | §38 |
+| BR-35 | BR-35.1 | Consistency Browser / Googlebot / Social / Other crawlers; không giả định Pipeline A = Pipeline B | §39 |
+| BR-36 | BR-36.1 | Đủ machine-readable cho SERP; audit được Declared → Crawler-visible → Indexed → SERP | §40 |
+| BR-37 | BR-37.1 | Publish workflow SEO-ready by default; Editor chỉ Preview / Health / Optional Override | §44 |
+| BR-45 | BR-45.0 | SEO MUST NOT treat Affiliate/Public Identity URLs as indexable SEO URLs | §45 |
+| BR-45 | BR-45.1 | Clean Public URL = SEO identity duy nhất (canonical / index / sitemap / OG URL / structured-data URL / internal SEO target) | §45.1 |
+| BR-45 | BR-45.2 | Public Identity / Affiliate URL ≠ SEO identity; không index riêng | §45.2 |
+| BR-45 | BR-45.3 | Attribution vẫn hoạt động; không sitemap; không canonical; không OG/SD identity riêng; mặc định noindex nếu crawler truy cập được; không tạo SEO entity riêng | §45.3 |
+| BR-45 | BR-45.4 | SEO MUST NOT preempt Affiliate/Public Identity Resolver; thứ tự Request → Resolver → Content → SEO Contract Clean URL | §45.4 |
+| BR-45 | BR-45.5 | Sau resolve: metadata theo Clean Public representation; MUST NOT dùng URL mang publicId/referral làm canonical/og:url/SD/sitemap | §45.5 |
+| BR-45 | BR-45.6 | Mandatory Audit MUST có URL variant matrix (Clean / publicId / ?ref= / ?r= / decorator khác) | §45.6 |
+| BR-45 | BR-45.7 | Không refactor Affiliate/Public Identity trong Epic SEO trừ defect SEO-boundary + Owner | §45.7 |
+| BR-46 | BR-46.1 | SEO MUST NOT phá compatibility requirements (kể cả Affiliate/Public Identity ngoài §45) | §46 |
+| BR-47 | BR-47.1 | Reuse existing architecture/capabilities; không chiếm sửa Affiliate resolvers trừ §45.7 | §47 |
+| BR-48 | BR-48.CONSIST | NFR Consistency — một URL một SEO result; variant Affiliate resolve về cùng Clean canonical | §48 |
+| BR-48 | BR-48.DETERM | NFR Determinism | §48 |
+| BR-48 | BR-48.PERF | NFR Performance — không bottleneck; không chặn attribution | §48 |
+| BR-48 | BR-48.REL | NFR Reliability — SEO fail không crash page / không mất attribution | §48 |
+| BR-48 | BR-48.OBS | NFR Observability (URL→…→Renderer + Affiliate variant chain) | §48 |
+| BR-48 | BR-48.SEC | NFR Security — SEO config chịu RBAC | §48 |
+| BR-48 | BR-48.AUDIT | NFR Auditability | §48 |
+| BR-48 | BR-48.ROLL | NFR Rollback | §48 |
+| BR-SC | SC-01 | 100% public URL types có SEO Contract | §50.1 |
+| BR-SC | SC-02 | Có một SEO Source of Truth | §50.2 |
+| BR-SC | SC-03 | Không còn uncontrolled metadata ownership | §50.3 |
+| BR-SC | SC-04 | Canonical tự động resolve | §50.4 |
+| BR-SC | SC-05 | Robots tự động resolve | §50.5 |
+| BR-SC | SC-06 | Sitemap eligibility tự động resolve | §50.6 |
+| BR-SC | SC-07 | OG/Twitter tự động resolve | §50.7 |
+| BR-SC | SC-08 | Structured Data tự động resolve | §50.8 |
+| BR-SC | SC-09 | Breadcrumb tự động resolve | §50.9 |
+| BR-SC | SC-10 | Default image fallback hoạt động | §50.10 |
+| BR-SC | SC-11 | Title/Description automatic generation | §50.11 |
+| BR-SC | SC-12 | Manual override được governance | §50.12 |
+| BR-SC | SC-13 | Favicon/site identity được governance | §50.13 |
+| BR-SC | SC-14 | Human/Crawler metadata thống nhất | §50.14 |
+| BR-SC | SC-15 | Có SEO Preview | §50.15 |
+| BR-SC | SC-16 | Có SEO Health | §50.16 |
+| BR-SC | SC-17 | Có versioning | §50.17 |
+| BR-SC | SC-18 | Có rollback | §50.18 |
+| BR-SC | SC-19 | Có RBAC | §50.19 |
+| BR-SC | SC-20 | Có source traceability | §50.20 |
+| BR-SC | SC-21 | Không phá Affiliate/Public Identity (§45) | §50.21 |
+| BR-SC | SC-22 | Clean Public URL = SEO identity duy nhất (§45.1) | §50.22 |
+| BR-SC | SC-23 | PublicId/Affiliate: không sitemap/canonical/OG-SD riêng; có noindex policy (§45.3) | §50.23 |
+| BR-SC | SC-24 | Mandatory Audit có URL variant matrix (§45.6) | §50.24 |
+| BR-SC | SC-25 | Không cần developer sửa code cho SEO operation thông thường | §50.25 |
+| BR-SC | SC-26 | Google có đủ machine-readable representation | §50.26 |
+| BR-SC | SC-27 | Có Mandatory Audit evidence trước implementation | §50.27 |
+| BR-SC | SC-28 | Có SoT documentation sau Audit | §50.28 |
+| BR-SC | SC-29 | Documentation đủ cho task SEO tương lai | §50.29 |
+| BR-SC | SC-30 | SEO Contract gồm HTTP Status; HTTP ↔ robots ↔ canonical ↔ sitemap coherent (§10.1) | §50.30 |
+| BR-SC | SC-31 | Conflict-resolution deterministic giữa SEO signals; invalid states prevented hoặc Health ERROR (§14.1) | §50.31 |
+| BR-SC | SC-32 | Singleton SEO tags trên mỗi rendered document; duplicate = Health ERROR khi ảnh hưởng correctness (§38.1) | §50.32 |
+
+**Đếm:** product/atomic rows trong §0.2 ≈ **115+** (kể cả BR-SC). Audit Checklist phải cover **mọi Req ID** (BR-SC = verification index — Audit ghi hiện trạng phục vụ SC, không PASS epic).
 
 ---
 
@@ -155,7 +357,7 @@ SEO Platform phải đạt các mục tiêu:
 16. Có versioning.
 17. Có rollback.
 18. Có RBAC.
-19. Không phá Public Identity/Affiliate architecture.
+19. Không phá Public Identity/Affiliate architecture — và **không** biến Public Identity / Affiliate URL thành SEO identity (xem §45).
 20. Không yêu cầu developer sửa code cho SEO operation thông thường.
 
 ---
@@ -355,9 +557,12 @@ Không được chỉ sửa frontend mà không xác định nguyên nhân.
 
 Mỗi public URL phải resolve được một SEO Contract.
 
+SEO không chỉ là `<head>`. **HTTP response cũng là một phần SEO Contract.**
+
 Tối thiểu:
 
 ```text
+HTTP Status
 URL
 Page Identity
 Page Type
@@ -375,6 +580,36 @@ Breadcrumb
 Sitemap Eligibility
 Language
 Alternate Language
+```
+
+### 10.1 HTTP Status trong SEO Contract — Mandatory
+
+SEO Contract **MUST** include HTTP response state/status so that HTTP status, indexability, canonical, robots and sitemap eligibility form **one coherent URL policy**.
+
+Nguyên tắc khóa:
+
+```text
+200        → normal SEO resolution
+301 / 302  → redirect policy
+404        → not indexable
+410        → not indexable
+```
+
+**MUST NOT** để HTTP status nói một chuyện và SEO metadata nói chuyện khác.
+
+Ví dụ trạng thái **invalid** (cấm / MUST prevent hoặc SEO Health ERROR):
+
+```text
+HTTP 404
++ index, follow
++ sitemap = eligible
+```
+
+Cùng họ invalid:
+
+```text
+HTTP 410 + indexable / sitemap eligible
+HTTP 301/302 + canonical/sitemap/OG/SD vẫn chỉ identity của URL nguồn như thể vẫn là trang indexable độc lập (trái redirect policy)
 ```
 
 Không được có public page ở trạng thái:
@@ -534,6 +769,66 @@ Duplicate URL
 
 Rules phải được governance, không để từng page tự quyết định.
 
+### 14.1 Conflict Resolution giữa SEO signals — Mandatory
+
+BRD đã quy định nhiều signal cùng mô tả một URL:
+
+```text
+HTTP status
+canonical
+robots / indexability
+sitemap eligibility
+redirect
+OG URL
+structured-data URL
+internal SEO targets
+```
+
+SEO Platform **MUST** enforce a **deterministic conflict-resolution policy** across:
+
+* HTTP status
+* redirect
+* canonical
+* robots / indexability
+* sitemap eligibility
+* OG URL
+* structured-data URL
+* internal SEO targets
+
+**Invalid contradictory states MUST be prevented or surfaced as SEO Health errors.**
+
+Ví dụ xung đột **không được để tồn tại im lặng**:
+
+```text
+HTTP 301
++ canonical = old URL
++ sitemap = old URL
+```
+
+```text
+noindex
++ sitemap eligible
+```
+
+```text
+canonical = A
++ structured-data url = B
+```
+
+```text
+redirect → B
++ canonical → C
+```
+
+```text
+HTTP 404
++ index, follow
++ sitemap eligible
+```
+
+Thứ tự ưu tiên cụ thể / bảng thắng thua chi tiết = **SoT / Solution** (phải deterministic, audit được).  
+BRD khóa **bắt buộc có policy + phải phát hiện/ngăn invalid** — không để mỗi layer tự suy.
+
 ---
 
 # 15. Canonical — Automatic
@@ -590,11 +885,20 @@ Phải tự động xử lý policy cho:
 
 ```text
 ?ref=
+?r=
+/{publicId}/...
 ```
 
-và Public Identity decorator **không được tự động trở thành SEO canonical identity** nếu trái với canonical policy hiện hữu.
+và mọi Public Identity / Affiliate decorator **không được trở thành SEO canonical identity**.
 
-SEO Platform phải tương thích với Affiliate/Public Identity architecture.
+**SoT boundary (LOCKED — chi tiết §45):**
+
+```text
+Clean Public URL        → canonical / index / sitemap / OG / structured data
+PublicId / Affiliate URL → attribution / identity / navigation only → NOT SEO
+```
+
+SEO Platform phải tương thích với Affiliate/Public Identity architecture và **MUST NOT** refactor architecture đó trong Epic này trừ khi Mandatory Audit chứng minh defect thuộc SEO boundary (Owner approval).
 
 ---
 
@@ -987,6 +1291,7 @@ Trước publish phải có automatic validation.
 Tối thiểu:
 
 ```text
+HTTP Status
 Title
 Description
 Canonical
@@ -997,6 +1302,8 @@ Structured Data
 Breadcrumb
 Sitemap
 Image
+Signal Coherence
+Singleton Tags
 ```
 
 Phát hiện:
@@ -1017,6 +1324,8 @@ Phát hiện:
 * 410
 * Redirect Loop
 * Redirect Chain
+* **Conflicting SEO signals** (HTTP vs robots vs sitemap vs canonical vs redirect vs OG/SD URL) — **ERROR** khi ảnh hưởng correctness
+* **Duplicate singleton tags** trong một rendered document — **ERROR** khi ảnh hưởng correctness
 
 Phải phân biệt:
 
@@ -1169,6 +1478,52 @@ Future Renderer
 
 tất cả phải consume cùng một SEO metadata contract.
 
+### 38.1 Duplicate / Singleton Metadata — Mandatory
+
+Một SoT duy nhất **chưa đủ** nếu một rendered document vẫn emit nhiều bản SEO tag cùng vai trò.
+
+Architecture hiện tại có nhiều pipeline (HTML + JS + SPA + Node + Nginx) nên rủi ro thực tế:
+
+```text
+<title>...</title>
+<title>...</title>
+```
+
+```text
+<meta name="description" ...>
+<meta name="description" ...>
+```
+
+```text
+hai canonical
+```
+
+**Khóa:**
+
+> For each rendered public document, SEO singleton fields MUST resolve to exactly one authoritative instance unless the relevant standard explicitly permits multiple values.
+
+Tối thiểu **singleton** (một instance authoritative):
+
+```text
+<title>                  → 1
+meta description         → 1
+canonical                → 1
+robots                   → governed (không duplicate mâu thuẫn)
+og:url                   → 1
+og:title                 → 1
+og:description           → 1
+primary OG image         → governed
+Twitter primary fields   → governed
+```
+
+Duplicate singleton tags **MUST** là:
+
+```text
+SEO Health = ERROR
+```
+
+nếu ảnh hưởng correctness.
+
 ---
 
 # 39. Human vs Crawler Consistency
@@ -1294,6 +1649,36 @@ Phải xác định:
 * Google có rewrite không?
 * Có duplicate URL không?
 
+### SEO vs Affiliate / Public Identity URL Variants (BẮT BUỘC — §45)
+
+Mandatory Audit **MUST** kiểm tra toàn bộ URL variants (ít nhất):
+
+* Clean Public URL
+* `/{publicId}/...`
+* `?ref=`
+* `?r=`
+* các referral / decorator khác nếu tồn tại trên Production
+
+và chứng minh rõ matrix:
+
+```text
+URL Variant
+→ Attribution Behavior
+→ SEO Eligibility
+→ Canonical
+→ Sitemap Eligibility
+→ Robots
+```
+
+Audit **MUST** xác nhận:
+
+* Affiliate / Public Identity Resolver hoàn tất attribution **trước** mọi SEO redirect/normalize;
+* SEO metadata sau resolve trỏ **Clean Public URL** (không theo `publicId`/referral decorator);
+* Public Identity / Affiliate URL **không** vào sitemap, **không** làm canonical, **không** tạo OG/Structured Data identity riêng;
+* request Affiliate/Public Identity có khả năng crawler truy cập → policy `noindex` (hoặc tương đương đã chứng minh).
+
+Nếu phát hiện vấn đề cross-domain ngoài SEO boundary → ghi **finding/dependency riêng**, **không** tự refactor Affiliate/Public Identity trong Epic SEO.
+
 ---
 
 # 42. SEO SERP Gap Report
@@ -1388,7 +1773,142 @@ Optional Override
 
 ---
 
-# 45. Compatibility Requirements
+# 45. SEO vs Affiliate / Public Identity Boundary — LOCKED
+
+> **SEO Platform MUST NOT treat Affiliate/Public Identity URLs as indexable SEO URLs. SEO applies to the canonical clean public representation of content, while Affiliate/Public Identity URLs remain an attribution/navigation mechanism only.**
+
+Mục tiêu cuối cùng (khóa):
+
+```text
+Clean Public URL
+→ SEO / Index / Canonical / Sitemap / OG / Structured Data / Internal SEO target
+
+PublicId / Affiliate URL
+→ Attribution / Identity / Navigation
+→ NOT SEO
+```
+
+Epic SEO **MUST NOT** làm hỏng Affiliate attribution hoặc Public Identity resolution. Boundary này là **BẮT BUỘC** trước SoT / Solution / Plan / Implementation.
+
+---
+
+## 45.1 Clean Public URL = SEO identity duy nhất
+
+**Clean Public URL** là SEO identity chính của nội dung và là URL **duy nhất** được phép trở thành:
+
+* canonical
+* indexable URL
+* sitemap URL
+* OG URL (`og:url` và tương đương)
+* structured-data URL (JSON-LD `@id` / `url` / `mainEntityOfPage` trỏ nội dung)
+* internal SEO target (internal linking SEO-facing)
+
+Không được có hai SEO identity song song cho cùng một content (Clean URL **và** PublicId/Affiliate URL).
+
+---
+
+## 45.2 Public Identity / Affiliate URL ≠ SEO identity
+
+Public Identity / Affiliate URL có dạng:
+
+* `/{publicId}/...`
+* referral / decorator URL phục vụ attribution (ví dụ `?ref=`, `?r=`, và decorator khác nếu tồn tại)
+
+là **attribution / identity / navigation mechanism**, **không phải SEO identity**, và **không được SEO/index riêng**.
+
+Chúng **không** tạo ra một SEO page/entity riêng.
+
+---
+
+## 45.3 Hành vi bắt buộc của Public Identity / Affiliate URL
+
+Public Identity / Affiliate URL phải:
+
+| Yêu cầu | Policy |
+|---------|--------|
+| Attribution | Vẫn hoạt động bình thường |
+| Public Identity | Vẫn resolve được |
+| Affiliate context | Vẫn giữ attribution / context (cookie/context theo SoT Affiliate hiện hữu) |
+| Sitemap | **Không** được đưa vào sitemap |
+| Canonical | **Không** được trở thành canonical |
+| OG / Structured Data | **Không** tạo OG / Structured Data identity riêng theo URL có `publicId`/referral |
+| Robots | Mặc định phải có policy **`noindex`** nếu request có khả năng được crawler truy cập |
+| SEO entity | **Không** tạo SEO page/entity riêng |
+
+---
+
+## 45.4 Thứ tự resolution — SEO không được preempt Affiliate
+
+SEO layer **MUST NOT**:
+
+* can thiệp, redirect, hoặc normalize Public Identity / Affiliate URL **trước khi** Affiliate / Public Identity Resolver **hoàn tất** attribution resolution;
+* xóa, làm mất, hoặc thay đổi `publicId`, referral context, attribution cookie/context, hoặc Affiliate behavior;
+* “làm sạch” URL theo SEO policy theo cách phá attribution path.
+
+Thứ tự bắt buộc (logic nghiệp vụ):
+
+```text
+Request (có thể có publicId / ?ref= / ?r= / decorator)
+        ↓
+Affiliate / Public Identity Resolver
+  (capture attribution + resolve identity — KHÔNG bị SEO preempt)
+        ↓
+Content / Entity resolved
+        ↓
+SEO Contract resolve theo Clean Public URL (canonical representation)
+        ↓
+canonical / robots / sitemap eligibility / OG / structured data
+```
+
+---
+
+## 45.5 SEO metadata sau khi resolve content
+
+Khi request Affiliate / Public Identity đã được resolve thành content thật:
+
+* SEO metadata **MUST** được tạo theo **canonical clean public representation**;
+* **MUST NOT** lấy URL đang mang `publicId` / referral decorator làm canonical, `og:url`, structured-data URL, hay sitemap entry.
+
+---
+
+## 45.6 Mandatory Audit — URL variant matrix
+
+Mandatory Audit (§41) **MUST** kiểm tra tối thiểu các variant:
+
+* clean URL
+* `/{publicId}/...`
+* `?ref=`
+* `?r=`
+* referral / decorator khác nếu tồn tại trên Production
+
+và chứng minh:
+
+```text
+URL Variant
+→ Attribution Behavior
+→ SEO Eligibility
+→ Canonical
+→ Sitemap Eligibility
+→ Robots
+```
+
+Không đủ audit nếu chỉ kiểm tra Clean Public URL.
+
+---
+
+## 45.7 Không refactor Affiliate / Public Identity trong Epic SEO
+
+**Không được** thay đổi hoặc refactor Affiliate / Public Identity architecture trong Epic SEO này nếu Mandatory Audit **không** chứng minh có defect **trực tiếp thuộc SEO boundary**.
+
+Nếu phát hiện vấn đề cross-domain:
+
+1. Ghi nhận thành **finding / dependency riêng**.
+2. **Chờ Owner approval** trước mọi thay đổi Affiliate / Public Identity.
+3. Không tự suy diễn “sửa SEO tiện thể sửa Affiliate”.
+
+---
+
+# 46. Compatibility Requirements
 
 SEO Platform MUST NOT tự ý phá:
 
@@ -1402,13 +1922,13 @@ SEO Platform MUST NOT tự ý phá:
 * Existing routing
 * Existing product architecture
 
-Đặc biệt:
+Đặc biệt — ngoài §45:
 
-> Affiliate/referral data không được đưa vào Article Metadata, canonical hoặc OG nếu trái với canonical/affiliate policy hiện hữu.
+> Affiliate / referral / `publicId` **không** được đưa vào Article Metadata, canonical, OG, sitemap, structured-data URL, hoặc indexable SEO identity. Affiliate data thuộc Share / Affiliate / Public Identity foundation — không thuộc SEO Platform ownership.
 
 ---
 
-# 46. Reuse Requirement
+# 47. Reuse Requirement
 
 Trước khi tạo implementation mới phải audit existing:
 
@@ -1423,6 +1943,7 @@ Trước khi tạo implementation mới phải audit existing:
 * image utilities
 * Design System
 * shared foundations
+* Affiliate / Public Identity / Share resolvers *(đọc ownership — **không** chiếm sửa trừ §45.7)*
 
 Nếu foundation hiện hữu có thể reuse thì phải reuse.
 
@@ -1430,11 +1951,12 @@ Nếu một utility có giá trị dùng chung lâu dài, phải đánh giá vi�
 
 ---
 
-# 47. Non-Functional Requirements
+# 48. Non-Functional Requirements
 
 ## Consistency
 
-Một URL phải có một resolved SEO result.
+Một URL phải có một resolved SEO result.  
+Public Identity / Affiliate URL variant của cùng content **MUST** resolve SEO về **cùng** Clean Public canonical representation (sau attribution), không tạo SEO identity thứ hai.
 
 ## Determinism
 
@@ -1442,11 +1964,13 @@ Cùng URL + cùng data state → cùng SEO metadata.
 
 ## Performance
 
-SEO resolution không được tạo bottleneck đáng kể.
+SEO resolution không được tạo bottleneck đáng kể.  
+SEO resolution không được chặn hoặc làm mất attribution capture.
 
 ## Reliability
 
-SEO failure không được làm page crash.
+SEO failure không được làm page crash.  
+SEO failure không được làm mất Affiliate attribution.
 
 ## Observability
 
@@ -1460,6 +1984,15 @@ URL
 → Rule
 → Resolved Metadata
 → Renderer
+```
+
+và với Affiliate/Public Identity variants:
+
+```text
+Request URL Variant
+→ Attribution resolved?
+→ Clean Public URL
+→ SEO Contract
 ```
 
 ## Security
@@ -1476,7 +2009,7 @@ Phải có rollback.
 
 ---
 
-# 48. Out of Scope
+# 49. Out of Scope
 
 BRD này không mặc định yêu cầu:
 
@@ -1484,17 +2017,17 @@ BRD này không mặc định yêu cầu:
 * thay đổi business logic
 * thay đổi Market Data
 * thay đổi Money Flow
-* thay đổi Affiliate architecture
-* thay đổi Public Identity architecture
+* thay đổi Affiliate architecture *(trừ defect SEO-boundary đã Owner approve — §45.7)*
+* thay đổi Public Identity architecture *(cùng điều kiện §45.7)*
 * thay đổi authentication
 * thay đổi frontend framework
 * thay đổi Node.js architecture nếu Audit không chứng minh cần thiết
 
-SEO implementation chỉ được thay đổi những phần cần thiết để đáp ứng SEO requirements.
+SEO implementation chỉ được thay đổi những phần cần thiết để đáp ứng SEO requirements **mà không phá** boundary §45.
 
 ---
 
-# 49. Success Criteria
+# 50. Success Criteria
 
 Epic chỉ PASS khi:
 
@@ -1518,28 +2051,34 @@ Epic chỉ PASS khi:
 18. Có rollback.
 19. Có RBAC.
 20. Có source traceability.
-21. Không phá Affiliate/Public Identity.
-22. Không phá canonical policy.
-23. Không cần developer sửa code cho SEO operation thông thường.
-24. Google/Search Engine có đầy đủ machine-readable representation.
-25. Có Mandatory Audit evidence trước implementation.
-26. Có SoT documentation sau Audit.
-27. Có documentation đủ để developer/AI tuân thủ architecture trong các task SEO tương lai.
+21. Không phá Affiliate/Public Identity — kể cả attribution, `publicId`, referral context (§45).
+22. Không phá canonical policy — Clean Public URL là SEO identity duy nhất (§45.1).
+23. Public Identity / Affiliate URL **không** vào sitemap; **không** làm canonical; **không** tạo OG/structured-data identity riêng; có `noindex` (hoặc policy tương đương đã chứng minh) khi crawler có thể truy cập (§45.3).
+24. Mandatory Audit có matrix URL Variant → Attribution → SEO Eligibility → Canonical → Sitemap → Robots (§45.6 / §41).
+25. Không cần developer sửa code cho SEO operation thông thường.
+26. Google/Search Engine có đầy đủ machine-readable representation.
+27. Có Mandatory Audit evidence trước implementation.
+28. Có SoT documentation sau Audit.
+29. Có documentation đủ để developer/AI tuân thủ architecture trong các task SEO tương lai.
+30. SEO Contract gồm **HTTP Status**; HTTP status, indexability, canonical, robots và sitemap eligibility tạo **một URL policy nhất quán** (§10.1).
+31. Có **conflict-resolution deterministic** giữa SEO signals; trạng thái mâu thuẫn bị ngăn hoặc SEO Health ERROR (§14.1).
+32. Mỗi rendered public document có **singleton** SEO tags; duplicate singleton = SEO Health ERROR khi ảnh hưởng correctness (§38.1).
 
 ---
 
-# 50. Governance Sequence
+# 51. Governance Sequence
 
 BRD này khóa **Business Requirement**, không khóa implementation.
 
 Quy trình bắt buộc:
 
 ```text
-01 — Business Requirement
+01 — Business Requirement (BRD)  ← §0 BR Checklist Registry · §45 SEO↔Affiliate Boundary LOCKED
         ↓
-02 — Mandatory Audit
+02 — Mandatory Audit  ← artifact: `02-Mandatory-Audit.md`
+     (gồm URL variant matrix §45.6 / §41 · SERP Gap §42)
         ↓
-03 — Audit PASS
+03 — Audit PASS (Owner APPROVE)
         ↓
 04 — SEO Source of Truth
         ↓
@@ -1554,11 +2093,13 @@ Quy trình bắt buộc:
 09 — Production SEO Audit
 ```
 
-Không được bỏ qua Mandatory Audit.
+Không được bỏ qua Mandatory Audit.  
+Không được Implementation trước khi Audit chứng minh boundary §45.  
+**Hiện trạng (2026-08-09):** `02-Mandatory-Audit.md` = **DRAFT** · Implementation **NOT AUTHORIZED**.
 
 ---
 
-# 51. Final Owner Mandate
+# 52. Final Owner Mandate
 
 > **Không xây một bộ metadata riêng cho Community.**
 >
@@ -1573,6 +2114,10 @@ Không được bỏ qua Mandatory Audit.
 > **Không chỉ tối ưu HTML mà bỏ qua Google SERP/indexing.**
 >
 > **Không implementation trước khi biết chính xác metadata hiện đang được sinh ở đâu.**
+>
+> **Không biến Public Identity / Affiliate URL thành indexable SEO URL. SEO chỉ áp dụng cho Clean Public URL; Affiliate/Public Identity chỉ là attribution/navigation.**
+>
+> **Không refactor Affiliate / Public Identity trong Epic SEO nếu Audit không chứng minh defect thuộc SEO boundary — cross-domain finding phải chờ Owner.**
 
 ### Requirement cuối cùng
 
@@ -1582,6 +2127,8 @@ Không được bỏ qua Mandatory Audit.
 >
 > **Mọi metadata phải truy nguyên được nguồn, template, rule, override và version. Mọi rendering pipeline phải consume cùng SEO contract và không được tự ý tạo/ghi đè metadata.**
 >
-> **Trước mọi implementation phải thực hiện Mandatory Audit để xác định hiện trạng metadata ownership, rendering pipeline, hardcode, cache, crawler/human differences, Google indexing và SERP gaps.**
+> **Clean Public URL là SEO identity duy nhất (canonical / index / sitemap / OG / structured data). Public Identity / Affiliate URL giữ attribution và navigation — NOT SEO.**
 >
-> **Mục tiêu cuối cùng là biến SEO thành một platform capability của iFlux — không phải một tập hợp các bản sửa SEO riêng lẻ cho từng page.**
+> **Trước mọi implementation phải thực hiện Mandatory Audit để xác định hiện trạng metadata ownership, rendering pipeline, hardcode, cache, crawler/human differences, Google indexing, SERP gaps, và URL variant matrix SEO↔Affiliate.**
+>
+> **Mục tiêu cuối cùng là biến SEO thành một platform capability của iFlux — không phải một tập hợp các bản sửa SEO riêng lẻ cho từng page — và không được phá Affiliate / Public Identity architecture.**

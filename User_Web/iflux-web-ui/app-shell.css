@@ -109,24 +109,6 @@ body.ifx-user-web *::-webkit-scrollbar {
   text-decoration: none;
   flex-shrink: 0;
 }
-.ifx-topnav-brand .ix-brand-logo {
-  display: none !important;
-}
-.ifx-topnav-brand .ifx-topnav-name {
-  display: inline-block !important;
-  padding: 2px 6px;
-  font-size: 21px;
-  font-weight: var(--ifx-font-weight-bold);
-  color: #fff;
-  background: #575aff;
-  border-radius: 30%;
-  line-height: 1.25;
-}
-.ifx-topnav-name {
-  font-size: var(--ifx-font-size-18);
-  font-weight: var(--ifx-font-weight-bold);
-  color: var(--ix-text-primary);
-}
 .ifx-topnav-menu {
   display: flex;
   align-items: center;
@@ -266,6 +248,7 @@ body.ifx-user-web *::-webkit-scrollbar {
 
 .ifx-guest-auth-btn {
   display: inline-flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 6px;
   font-size: 13px;
@@ -276,6 +259,7 @@ body.ifx-user-web *::-webkit-scrollbar {
 .ifx-guest-auth-btn i {
   font-size: 16px;
   line-height: 1;
+  transform: scaleX(-1);
 }
 
 .ifx-auth-tabs { margin-bottom: 20px; width: 100%; }
@@ -893,9 +877,6 @@ body.ifx-nav-drawer-open {
     justify-content: flex-start;
     pointer-events: auto;
   }
-  .ifx-topnav-brand .ifx-topnav-name {
-    pointer-events: auto;
-  }
   .ifx-topnav-actions {
     position: relative;
     z-index: 2;
@@ -903,20 +884,8 @@ body.ifx-nav-drawer-open {
     gap: 4px;
     margin-left: auto;
   }
-  .ifx-guest-auth-btn {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    padding: 0;
-    justify-content: center;
-    border-radius: var(--ix-radius);
-  }
-  .ifx-guest-auth-btn__label {
-    display: none;
-  }
   .ifx-guest-auth-btn i {
-    font-size: 20px;
-    margin: 0;
+    display: none;
   }
   .ifx-topnav-search-wrap {
     display: none;

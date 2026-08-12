@@ -217,7 +217,17 @@
     { type: 'item', key: "metadata-themes", routeKey: "metadata-themes", label: "Kho giao diện", icon: "ti-palette", badge: "GĐ2" },
     { type: 'item', key: "metadata-chu-de-lifecycle", routeKey: "metadata-chu-de-lifecycle", label: "Vòng đời chủ đề", icon: "ti-timeline", badge: "GĐ2" },
     { type: 'group', label: "Marketing" },
-    { type: 'item', key: "marketing-brand-identity", routeKey: "marketing-brand-identity", label: "Nhận diện thương hiệu", icon: "ti-brand-apple" },
+    {
+      type: 'parent',
+      key: "marketing-seo",
+      routeKey: "marketing-seo-system",
+      label: "Thiết lập SEO",
+      icon: "ti-world-www",
+      children: [
+        { type: 'item', key: "marketing-seo-system", routeKey: "marketing-seo-system", label: "Thiết lập SEO hệ thống", icon: "ti-settings" },
+        { type: 'item', key: "marketing-seo-pages", routeKey: "marketing-seo-pages", label: "Thiết lập SEO từng trang", icon: "ti-file-text" }
+      ]
+    },
     { type: 'item', key: "marketing-onboarding", routeKey: "marketing-onboarding", label: "Thiết lập nội dung Onboarding", icon: "ti-route" },
     { type: 'group', label: "Trung tâm AI" },
     { type: 'item', key: "ai-prompts", routeKey: "ai-prompts", label: "Danh mục prompt", icon: "ti-brain", badge: "GĐ2" },

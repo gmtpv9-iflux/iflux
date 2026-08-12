@@ -4,6 +4,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR04_20260811';
 import featureManifest from '../../features/stock.manifest.js?v=mdmShell20260808';
 
 var PUBLISH_KEY = 'stock-detail';
@@ -50,6 +51,9 @@ export async function mount(el) {
       await IfluxCommunityApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
     } catch (eHyd) { /* seed fallback */ }
   }
+  /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho
+   * stock-page.js (legacy IIFE) dựng Left Sidebar Widget Host canonical trong render(). */
+  window.IfluxRuntimeSections = { ensureSections: ensureSections };
   if (window.IfluxStockPage) IfluxStockPage.init();
   function onRemount() {
     mountFromHostTree(el);

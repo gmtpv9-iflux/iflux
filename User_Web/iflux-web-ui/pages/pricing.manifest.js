@@ -2,7 +2,7 @@ export default {
   pageKey: 'pricing',
   path: '/goi-cuoc',
   title: '',
-  documentTitle: 'Gói cước · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

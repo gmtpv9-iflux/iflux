@@ -5,7 +5,7 @@ export default {
   pageKey: 'watchlist',
   path: '/theo-doi',
   title: 'Danh sách theo dõi',
-  documentTitle: 'Theo dõi · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

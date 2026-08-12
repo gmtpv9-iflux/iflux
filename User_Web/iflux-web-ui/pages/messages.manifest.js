@@ -5,7 +5,7 @@ export default {
   pageKey: 'messages',
   path: '/tin-nhan',
   title: 'Tin nhắn',
-  documentTitle: 'Tin nhắn · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

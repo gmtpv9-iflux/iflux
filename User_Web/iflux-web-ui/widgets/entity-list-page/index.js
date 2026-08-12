@@ -1,13 +1,14 @@
 /**
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR03_20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 var P4_VER = 'phase4Pub20260716b';
-var ELP_VER = 'mockRmWp2_20260809';
+var ELP_VER = 'sidebarVR03_20260811';
 export const meta = { id: 'WGT-ELP-PAGE', title: 'Danh sách entity' };
 
 var KIND_BY_PAGE = {
@@ -45,16 +46,28 @@ var CORE_TIERS = [
   ]
 ];
 
+/* AppShell Foundation VR-03 (100826): Left Sidebar host phải qua ensureSections()
+ * canonical (giống Home/Market/Flow/Community) — không tự dựng <aside> bằng HTML cứng. */
 var LAYOUT_HTML =
   '<h1 class="ix-page-title" data-elp-title></h1>' +
   '<p class="ifx-page-intro" data-elp-intro></p>' +
-  '<div class="ifx-mkt-layout">' +
-    '<aside class="ifx-mkt-sidebar" data-ifx-section="sidebar" data-section="sidebar" aria-label="Tổng quan chủ thể"></aside>' +
-    '<div class="ifx-mkt-main">' +
-      '<div data-ifx-section="main" data-section="main" data-layout="grid-12"></div>' +
-      '<div data-elp-main></div>' +
-    '</div>' +
+  '<div class="ifx-mkt-layout"></div>';
+
+var MAIN_COL_HTML =
+  '<div class="ifx-mkt-main">' +
+    '<div data-ifx-section="main" data-section="main" data-layout="grid-12"></div>' +
+    '<div data-elp-main></div>' +
   '</div>';
+
+function buildElpLayout(el) {
+  el.innerHTML = LAYOUT_HTML;
+  var layoutRoot = el.querySelector('.ifx-mkt-layout');
+  var sections = ensureSections(layoutRoot, {
+    sections: [{ key: 'sidebar', label: 'Tổng quan chủ thể' }]
+  });
+  if (sections.sidebar) sections.sidebar.classList.add('ifx-mkt-sidebar');
+  layoutRoot.insertAdjacentHTML('beforeend', MAIN_COL_HTML);
+}
 
 function resolveKind(ctx) {
   var slot = (ctx && ctx.slot) || {};
@@ -89,7 +102,7 @@ async function mountFromHostTree(root, publishKey) {
 export async function mount(el, ctx) {
   var kind = resolveKind(ctx);
   var publishKey = publishKeyForKind(kind);
-  el.innerHTML = LAYOUT_HTML;
+  buildElpLayout(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();

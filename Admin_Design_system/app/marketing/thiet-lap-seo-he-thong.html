@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thiết lập SEO hệ thống · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root"><div class="ix-layout">
+<aside class="ix-sidebar" data-ix-admin-shell="sidebar"><div class="ix-brand"><img class="ix-brand-logo" alt="iFlux" hidden /><span class="ix-brand-name">iFlux Admin</span></div><nav class="ix-menu" data-ix-admin-nav></nav></aside>
+<main class="ix-main">
+<header class="ix-navbar" data-ix-admin-shell="header"><button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button><div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." /></div><div class="ix-nav-actions"><div class="ix-avatar"></div></div></header>
+<div class="ix-content">
+<h1 class="ix-page-title">Thiết lập SEO hệ thống</h1>
+<div class="ix-breadcrumb ix-mb-24"><a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tiếp thị</span><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Thiết lập SEO hệ thống</span></div>
+
+<div class="ix-card" style="max-width:720px;padding:20px">
+  <div class="ix-form-group">
+    <label class="ix-label">Tên site</label>
+    <input class="ix-input" id="seo-g-siteName" />
+    <div class="ix-caption" id="seo-g-src-siteName"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Mô tả site</label>
+    <textarea class="ix-input" id="seo-g-siteDescription" rows="2"></textarea>
+    <div class="ix-caption" id="seo-g-src-siteDescription"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Tiêu đề SEO mặc định</label>
+    <input class="ix-input" id="seo-g-defaultSeoTitle" />
+    <div class="ix-caption" id="seo-g-src-seoTitle"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Meta description mặc định</label>
+    <textarea class="ix-input" id="seo-g-defaultMetaDescription" rows="3"></textarea>
+    <div class="ix-caption" id="seo-g-src-metaDescription"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Favicon URL</label>
+    <div class="ix-flex" style="gap:8px;align-items:center">
+      <input class="ix-input" id="seo-g-faviconUrl" style="flex:1" />
+      <input type="file" accept="image/*" id="seo-g-favicon-file" hidden />
+      <button type="button" class="ix-btn ix-btn-outline" id="seo-g-favicon-upload" data-ix-perm="marketing.seo_system.edit">Tải lên</button>
+    </div>
+    <input type="hidden" id="seo-g-faviconAssetId" />
+    <div class="ix-caption" id="seo-g-src-faviconUrl"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Logo URL</label>
+    <div class="ix-flex" style="gap:8px;align-items:center">
+      <input class="ix-input" id="seo-g-logoUrl" style="flex:1" />
+      <input type="file" accept="image/*" id="seo-g-logo-file" hidden />
+      <button type="button" class="ix-btn ix-btn-outline" id="seo-g-logo-upload" data-ix-perm="marketing.seo_system.edit">Tải lên</button>
+    </div>
+    <input type="hidden" id="seo-g-logoAssetId" />
+    <div class="ix-caption" id="seo-g-src-logoUrl"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">OG image mặc định</label>
+    <div class="ix-flex" style="gap:8px;align-items:center">
+      <input class="ix-input" id="seo-g-defaultOgImageUrl" style="flex:1" />
+      <input type="file" accept="image/*" id="seo-g-og-file" hidden />
+      <button type="button" class="ix-btn ix-btn-outline" id="seo-g-og-upload" data-ix-perm="marketing.seo_system.edit">Tải lên</button>
+    </div>
+    <input type="hidden" id="seo-g-defaultOgImageAssetId" />
+    <div class="ix-caption" id="seo-g-src-ogImageUrl"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">ALT ảnh OG</label>
+    <input class="ix-input" id="seo-g-defaultOgImageAlt" maxlength="500" placeholder="" />
+    <div class="ix-caption">Tuỳ chọn — để trống = hệ thống tự resolve (title → rỗng). Không bắt buộc.</div>
+    <div class="ix-caption" id="seo-g-src-ogImageAlt"></div>
+  </div>
+  <div class="ix-form-group">
+    <label class="ix-label">Social image mặc định</label>
+    <div class="ix-flex" style="gap:8px;align-items:center">
+      <input class="ix-input" id="seo-g-defaultSocialImageUrl" style="flex:1" />
+      <input type="file" accept="image/*" id="seo-g-social-file" hidden />
+      <button type="button" class="ix-btn ix-btn-outline" id="seo-g-social-upload" data-ix-perm="marketing.seo_system.edit">Tải lên</button>
+    </div>
+    <input type="hidden" id="seo-g-defaultSocialImageAssetId" />
+    <div class="ix-caption">Để trống = dùng chung OG image</div>
+    <div class="ix-caption" id="seo-g-src-socialImageUrl"></div>
+  </div>
+  <button type="button" class="ix-btn ix-btn-primary" id="seo-g-save" data-ix-perm="marketing.seo_system.edit">Lưu</button>
+</div>
+</div></main></div></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=waveD20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-wave-d-pages.js?v=seoOgImageAlt20260811"></script>
+<script>AdmWaveD.initSeoSystem();</script>
+</body></html>

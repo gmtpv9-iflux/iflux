@@ -8,7 +8,7 @@ export default {
   path: '/thi-truong',
   title: 'Thị trường',
   intro: 'Tổng quan thị trường.',
-  documentTitle: 'Thị trường · iFlux',
+  documentTitle: '',
   sections: [
     { key: 'sidebar', label: 'Sidebar thị trường', visible: true, layout: 'stack' },
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'grid-12' }

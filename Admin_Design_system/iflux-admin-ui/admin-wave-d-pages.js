@@ -170,23 +170,277 @@
         }
       });
     },
+    /* Owner 2026-08-10: UI Nhận diện thương hiệu removed — use initSeoSystem / Thiết lập SEO.
+       Keep stub so old HTML script tags do not throw. */
     initBrand: function () {
-      request('/admin/marketing/brand-identity').then(function (d) {
-        var p = (d.brand && d.brand.payload) || {};
-        var nameEl = document.getElementById('adm-brand-name');
-        var tagEl = document.getElementById('adm-brand-tagline');
-        if (nameEl) nameEl.value = p.name || '';
-        if (tagEl) tagEl.value = p.tagline || '';
-      }).catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
-      var save = document.getElementById('btn-adm-brand-save');
+      try {
+        location.replace('/admin/tiep-thi/thiet-lap-seo-he-thong');
+      } catch (e) { /* ignore */ }
+    },
+    initSeoSystem: function () {
+      function val(id) {
+        var el = document.getElementById(id);
+        return el ? String(el.value || '').trim() : '';
+      }
+      function setVal(id, v) {
+        var el = document.getElementById(id);
+        if (el) el.value = v == null ? '' : String(v);
+      }
+      function setSrc(fieldKey, fields) {
+        var el = document.getElementById('seo-g-src-' + fieldKey);
+        if (!el || !fields || !fields[fieldKey]) return;
+        var f = fields[fieldKey];
+        var bits = [(f.state || '') + (f.source ? ' · ' + f.source : '')];
+        if (f.value) bits.push('Hiệu lực: ' + f.value);
+        el.textContent = bits.filter(Boolean).join(' · ');
+      }
+      function applyAltHint(fields) {
+        var el = document.getElementById('seo-g-defaultOgImageAlt');
+        if (!el || !fields || !fields.ogImageAlt) return;
+        var resolved = fields.ogImageAlt.value || '';
+        el.placeholder = resolved && !val('seo-g-defaultOgImageAlt') ? resolved : 'Tuỳ chọn — để trống nếu title đủ';
+      }
+      function registerUsage(assetId, fieldRef) {
+        if (!assetId) return Promise.resolve();
+        return request('/admin/media/usages', {
+          method: 'POST',
+          body: { asset_id: assetId, scope: 'GLOBAL', owner_ref: 'primary', field_ref: fieldRef }
+        }).catch(function () { /* audit-first — không chặn lưu */ });
+      }
+      function uploadTo(fileInputId, urlId, assetIdId, fieldRef) {
+        var fileEl = document.getElementById(fileInputId);
+        if (!fileEl) return;
+        fileEl.addEventListener('change', function () {
+          var file = fileEl.files && fileEl.files[0];
+          if (!file) return;
+          var fd = new FormData();
+          fd.append('file', file);
+          var h = authHeaders();
+          delete h['Content-Type'];
+          fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })
+            .then(function (res) {
+              return res.json().catch(function () { return {}; }).then(function (data) {
+                if (!res.ok) throw new Error(((data.error || {}).message) || data.message || ('HTTP ' + res.status));
+                return (data && data.data) ? data.data : data;
+              });
+            })
+            .then(function (d) {
+              var asset = d.asset || {};
+              setVal(urlId, asset.public_url || asset.url || '');
+              setVal(assetIdId, asset.id || '');
+              return registerUsage(asset.id, fieldRef);
+            })
+            .then(function () { toast('Đã tải ảnh', 'success'); })
+            .catch(function (e) { toast(e.message || 'Lỗi tải ảnh', 'danger'); });
+          fileEl.value = '';
+        });
+      }
+      function bindUploadBtn(btnId, fileId) {
+        var btn = document.getElementById(btnId);
+        var file = document.getElementById(fileId);
+        if (btn && file) btn.addEventListener('click', function () { file.click(); });
+      }
+      bindUploadBtn('seo-g-favicon-upload', 'seo-g-favicon-file');
+      bindUploadBtn('seo-g-logo-upload', 'seo-g-logo-file');
+      bindUploadBtn('seo-g-og-upload', 'seo-g-og-file');
+      bindUploadBtn('seo-g-social-upload', 'seo-g-social-file');
+      uploadTo('seo-g-favicon-file', 'seo-g-faviconUrl', 'seo-g-faviconAssetId', 'favicon');
+      uploadTo('seo-g-logo-file', 'seo-g-logoUrl', 'seo-g-logoAssetId', 'logo');
+      uploadTo('seo-g-og-file', 'seo-g-defaultOgImageUrl', 'seo-g-defaultOgImageAssetId', 'og');
+      uploadTo('seo-g-social-file', 'seo-g-defaultSocialImageUrl', 'seo-g-defaultSocialImageAssetId', 'social');
+
+      function load() {
+        return Promise.all([
+          request('/admin/seo/global'),
+          request('/admin/seo/preview')
+        ]).then(function (pair) {
+          var d = pair[0] || {};
+          var preview = pair[1] || {};
+          var p = d.payload || {};
+          setVal('seo-g-siteName', p.name || p.siteName || '');
+          setVal('seo-g-siteDescription', p.siteDescription || '');
+          setVal('seo-g-defaultSeoTitle', p.defaultSeoTitle || '');
+          setVal('seo-g-defaultMetaDescription', p.defaultMetaDescription || '');
+          setVal('seo-g-faviconUrl', p.faviconUrl || '');
+          setVal('seo-g-faviconAssetId', p.faviconAssetId || '');
+          setVal('seo-g-logoUrl', p.logoUrl || '');
+          setVal('seo-g-logoAssetId', p.logoAssetId || '');
+          setVal('seo-g-defaultOgImageUrl', p.defaultOgImageUrl || '');
+          setVal('seo-g-defaultOgImageAssetId', p.defaultOgImageAssetId || '');
+          setVal('seo-g-defaultOgImageAlt', p.defaultOgImageAlt || '');
+          setVal('seo-g-defaultSocialImageUrl', p.defaultSocialImageUrl || '');
+          setVal('seo-g-defaultSocialImageAssetId', p.defaultSocialImageAssetId || '');
+          ['siteName', 'siteDescription', 'seoTitle', 'metaDescription', 'faviconUrl', 'logoUrl', 'ogImageUrl', 'ogImageAlt', 'socialImageUrl'].forEach(function (k) {
+            setSrc(k, preview.fields);
+          });
+          applyAltHint(preview.fields);
+        }).catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
+      }
+      load();
+      var save = document.getElementById('seo-g-save');
       if (save) {
         save.addEventListener('click', function () {
-          var payload = {
-            name: (document.getElementById('adm-brand-name') || {}).value || '',
-            tagline: (document.getElementById('adm-brand-tagline') || {}).value || ''
+          var body = {
+            siteName: val('seo-g-siteName'),
+            siteDescription: val('seo-g-siteDescription'),
+            defaultSeoTitle: val('seo-g-defaultSeoTitle'),
+            defaultMetaDescription: val('seo-g-defaultMetaDescription'),
+            faviconUrl: val('seo-g-faviconUrl'),
+            faviconAssetId: val('seo-g-faviconAssetId') || null,
+            logoUrl: val('seo-g-logoUrl'),
+            logoAssetId: val('seo-g-logoAssetId') || null,
+            defaultOgImageUrl: val('seo-g-defaultOgImageUrl'),
+            defaultOgImageAssetId: val('seo-g-defaultOgImageAssetId') || null,
+            defaultOgImageAlt: val('seo-g-defaultOgImageAlt'),
+            defaultSocialImageUrl: val('seo-g-defaultSocialImageUrl'),
+            defaultSocialImageAssetId: val('seo-g-defaultSocialImageAssetId') || null
           };
-          request('/admin/marketing/brand-identity', { method: 'PATCH', body: { payload: payload } })
-            .then(function () { toast('Đã lưu thương hiệu', 'success'); })
+          request('/admin/seo/global', { method: 'PATCH', body: body })
+            .then(function () {
+              return Promise.all([
+                registerUsage(body.faviconAssetId, 'favicon'),
+                registerUsage(body.logoAssetId, 'logo'),
+                registerUsage(body.defaultOgImageAssetId, 'og'),
+                registerUsage(body.defaultSocialImageAssetId, 'social')
+              ]);
+            })
+            .then(function () { toast('Đã lưu SEO hệ thống', 'success'); return load(); })
+            .catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
+        });
+      }
+    },
+    initSeoPages: function () {
+      function val(id) {
+        var el = document.getElementById(id);
+        return el ? String(el.value || '').trim() : '';
+      }
+      function setVal(id, v) {
+        var el = document.getElementById(id);
+        if (el) el.value = v == null ? '' : String(v);
+      }
+      function setSrc(fieldKey, fields) {
+        var el = document.getElementById('seo-p-src-' + fieldKey);
+        if (!el || !fields || !fields[fieldKey]) { if (el) el.textContent = ''; return; }
+        var f = fields[fieldKey];
+        var bits = [(f.state || '') + (f.source ? ' · ' + f.source : '')];
+        if (f.value) bits.push('Hiệu lực: ' + f.value);
+        el.textContent = bits.filter(Boolean).join(' · ');
+      }
+      function applyAltHint(fields) {
+        var el = document.getElementById('seo-p-ogImageAlt');
+        if (!el || !fields || !fields.ogImageAlt) return;
+        var resolved = fields.ogImageAlt.value || '';
+        el.placeholder = resolved && !val('seo-p-ogImageAlt') ? resolved : 'Tuỳ chọn — để trống = kế thừa';
+      }
+      function registerUsage(assetId, pageKey, fieldRef) {
+        if (!assetId || !pageKey) return Promise.resolve();
+        return request('/admin/media/usages', {
+          method: 'POST',
+          body: { asset_id: assetId, scope: 'PAGE', owner_ref: pageKey, field_ref: fieldRef }
+        }).catch(function () {});
+      }
+      function uploadTo(fileInputId, urlId, assetIdId, fieldRef) {
+        var fileEl = document.getElementById(fileInputId);
+        if (!fileEl) return;
+        fileEl.addEventListener('change', function () {
+          var file = fileEl.files && fileEl.files[0];
+          if (!file) return;
+          var pageKey = val('seo-p-pageKey');
+          var fd = new FormData();
+          fd.append('file', file);
+          var h = authHeaders();
+          delete h['Content-Type'];
+          fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })
+            .then(function (res) {
+              return res.json().catch(function () { return {}; }).then(function (data) {
+                if (!res.ok) throw new Error(((data.error || {}).message) || data.message || ('HTTP ' + res.status));
+                return (data && data.data) ? data.data : data;
+              });
+            })
+            .then(function (d) {
+              var asset = d.asset || {};
+              setVal(urlId, asset.public_url || asset.url || '');
+              setVal(assetIdId, asset.id || '');
+              return registerUsage(asset.id, pageKey, fieldRef);
+            })
+            .then(function () { toast('Đã tải ảnh', 'success'); })
+            .catch(function (e) { toast(e.message || 'Lỗi tải ảnh', 'danger'); });
+          fileEl.value = '';
+        });
+      }
+      function bindUploadBtn(btnId, fileId) {
+        var btn = document.getElementById(btnId);
+        var file = document.getElementById(fileId);
+        if (btn && file) btn.addEventListener('click', function () { file.click(); });
+      }
+      bindUploadBtn('seo-p-og-upload', 'seo-p-og-file');
+      bindUploadBtn('seo-p-social-upload', 'seo-p-social-file');
+      uploadTo('seo-p-og-file', 'seo-p-ogImageUrl', 'seo-p-ogImageAssetId', 'og');
+      uploadTo('seo-p-social-file', 'seo-p-socialImageUrl', 'seo-p-socialImageAssetId', 'social');
+
+      var sel = document.getElementById('seo-p-pageKey');
+      if (sel && global.PageSettingsCatalog) {
+        var cat = PageSettingsCatalog;
+        /* pricing nằm PLATFORM_PAGES — cần trong Thiết lập SEO (Owner 2026-08-10) */
+        var pages = [].concat(
+          cat.DEFAULT_PAGES || [],
+          (cat.PLATFORM_PAGES || []).filter(function (p) { return p && p.key === 'pricing'; }),
+          cat.KNOWLEDGE_PAGES || [],
+          cat.COMMUNITY_PAGES || []
+        );
+        sel.innerHTML = pages.map(function (p) {
+          return '<option value="' + esc(p.key) + '">' + esc(p.title || p.key) + ' (' + esc(p.key) + ')</option>';
+        }).join('');
+      }
+
+      function loadPage() {
+        var pageKey = val('seo-p-pageKey');
+        if (!pageKey) return;
+        return Promise.all([
+          request('/admin/seo/pages/' + encodeURIComponent(pageKey)),
+          request('/admin/seo/preview?pageKey=' + encodeURIComponent(pageKey))
+        ]).then(function (pair) {
+          var d = pair[0] || {};
+          var preview = pair[1] || {};
+          var p = d.payload || {};
+          setVal('seo-p-seoTitle', p.seoTitle || '');
+          setVal('seo-p-metaDescription', p.metaDescription || '');
+          setVal('seo-p-ogImageUrl', p.ogImageUrl || '');
+          setVal('seo-p-ogImageAssetId', p.ogImageAssetId || '');
+          setVal('seo-p-ogImageAlt', p.ogImageAlt || '');
+          setVal('seo-p-socialImageUrl', p.socialImageUrl || '');
+          setVal('seo-p-socialImageAssetId', p.socialImageAssetId || '');
+          ['seoTitle', 'metaDescription', 'ogImageUrl', 'ogImageAlt', 'socialImageUrl'].forEach(function (k) {
+            setSrc(k, preview.fields);
+          });
+          applyAltHint(preview.fields);
+        }).catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
+      }
+      if (sel) sel.addEventListener('change', loadPage);
+      loadPage();
+
+      var save = document.getElementById('seo-p-save');
+      if (save) {
+        save.addEventListener('click', function () {
+          var pageKey = val('seo-p-pageKey');
+          if (!pageKey) return;
+          var body = {
+            seoTitle: val('seo-p-seoTitle'),
+            metaDescription: val('seo-p-metaDescription'),
+            ogImageUrl: val('seo-p-ogImageUrl'),
+            ogImageAssetId: val('seo-p-ogImageAssetId') || null,
+            ogImageAlt: val('seo-p-ogImageAlt'),
+            socialImageUrl: val('seo-p-socialImageUrl'),
+            socialImageAssetId: val('seo-p-socialImageAssetId') || null
+          };
+          request('/admin/seo/pages/' + encodeURIComponent(pageKey), { method: 'PUT', body: body })
+            .then(function () {
+              return Promise.all([
+                registerUsage(body.ogImageAssetId, pageKey, 'og'),
+                registerUsage(body.socialImageAssetId, pageKey, 'social')
+              ]);
+            })
+            .then(function () { toast('Đã lưu SEO trang', 'success'); return loadPage(); })
             .catch(function (e) { toast(e.message || 'Lỗi', 'danger'); });
         });
       }

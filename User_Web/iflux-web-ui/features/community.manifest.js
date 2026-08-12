@@ -40,13 +40,13 @@ var manifest = {
     m('profile-links', 'js', ASSET + 'profile-links.js', 'IfluxProfileLinks'),
     /* Task5: Heart = Foundation (click / widget mount). Không boot watchlist-ui trên feed. */
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=' + P4, 'IfluxPageLayoutEngine'),
-    m('community-store', 'store', ASSET + 'community-store.js?v=b4Href20260727', 'IfluxCommunityStore'),
+    m('community-store', 'store', ASSET + 'community-store.js?v=tickerNoDup20260810', 'IfluxCommunityStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-community-api-bridge.js?v=calFeed20260808', 'IfluxCommunityApiBridge'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=mockRmWp1_20260809', 'IfluxMarketQuotes'),
     m('community-ui', 'js', ASSET + 'community-ui.js?v=mockRmWp1_20260809', 'IfluxCommunityUI'),
     m('community-daily-feed', 'js', ASSET + 'community-daily-feed.js?v=mockRmWp1_20260809', 'IfluxDailyFeed'),
-    m('community-page', 'js', ASSET + 'community-page.js?v=calFeed20260808', 'IfluxCommunityPage'),
-    m('community-css', 'css', ASSET + 'community.css?v=bodyFill20260809', null)
+    m('community-page', 'js', ASSET + 'community-page.js?v=stickyRefactor20260811', 'IfluxCommunityPage'),
+    m('community-css', 'css', ASSET + 'community.css?v=stickyRefactor20260811', null)
   ],
   lazyChildren: [
     'WGT-COM-001',

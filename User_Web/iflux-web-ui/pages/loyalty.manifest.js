@@ -5,7 +5,7 @@ export default {
   pageKey: 'loyalty',
   path: '/thanh-vien',
   title: 'Chương trình thành viên',
-  documentTitle: 'Chương trình thành viên · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [{ key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }],
   widgets: [{

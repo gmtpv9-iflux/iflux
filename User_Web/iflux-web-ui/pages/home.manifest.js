@@ -9,7 +9,7 @@
 
 var VER = '?v=phaseCW120260721';
 var CSS_HUB = [
-  '/User_Web/iflux-web-ui/hub.css?v=ui00120260723',
+  '/User_Web/iflux-web-ui/hub.css?v=stickyRefactor20260811',
   '/User_Web/iflux-web-ui/profile.css'
 ];
 var CSS_DASH = [
@@ -23,7 +23,7 @@ export default {
   pageKey: 'home',
   path: '/nha-cua-toi',
   title: '',
-  documentTitle: 'Nhà của tôi · iFlux',
+  documentTitle: '',
   sections: [
     { key: 'sidebar', label: 'Thông tin cá nhân', visible: true, layout: 'stack' },
     { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }

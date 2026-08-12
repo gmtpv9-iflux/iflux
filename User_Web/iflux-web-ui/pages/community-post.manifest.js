@@ -16,9 +16,9 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-post-page/index.js?v=comQuoteRuntime20260809',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/community-post-page/index.js?v=scrollWave4early_20260811',
     css: [
-      '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809',
+      '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811',
       '/User_Web/iflux-web-ui/block-templates.css'
     ]
   }]

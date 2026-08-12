@@ -671,10 +671,18 @@
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Cộng đồng', item: communityUrl },
-        { '@type': 'ListItem', position: 2, name: (post.tickers && post.tickers[0]) || 'Thị trường',
-          item: global.IfluxSeoUrl ? IfluxSeoUrl.stockCanonical((post.tickers && post.tickers[0]) || '') : '' },
-        { '@type': 'ListItem', position: 3, name: post.title, item: canonical }
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Trang chủ',
+          item: communityUrl
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: post.title,
+          item: canonical
+        }
       ]
     };
     var scriptId = 'ifx-com-breadcrumb-ld';

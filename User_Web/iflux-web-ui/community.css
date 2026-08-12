@@ -248,7 +248,7 @@
 }
 .ifx-com-article__byline {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--ifx-space-12);
   flex-wrap: wrap;
@@ -256,17 +256,33 @@
   border-bottom: 1px solid var(--ix-border);
   margin-bottom: 14px;
 }
+.ifx-com-article__byline-main {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  min-width: 0;
+}
 .ifx-com-article__author {
   display: flex;
   align-items: center;
   gap: var(--ifx-inline-md);
 }
 .ifx-com-article__dates {
+  display: inline;
   font-size: var(--ifx-font-size-12);
   color: var(--ix-text-muted);
-  margin-top: var(--ifx-space-4);
+  margin-top: 0;
 }
 .ifx-com-article__dates time { display: inline; }
+.ifx-com-article__byline .ifx-com-article__tags {
+  margin-bottom: 0;
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-8);
+  justify-content: flex-end;
+}
 .ifx-com-article__tags {
   margin-bottom: 14px;
 }
@@ -1375,12 +1391,16 @@
 [data-ifx-com-featured-cats] {
   margin-bottom: var(--ifx-space-16);
 }
-/* Mobile only: tách icon khỏi nhãn — desktop giữ inline như hiện tại */
-@media (max-width: 768px) {
+/* SYNC:mobile-shell → bp-lg Foundation layout.css --ifx-bp-lg = 1024px
+   Mobile: icon trên chữ; desktop giữ icon ngang với text (inline mặc định). */
+@media (max-width: 1024px) {
   [data-ifx-com-featured-cats] .ix-tab {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--ifx-space-8);
+    justify-content: center;
+    gap: var(--ifx-space-4);
+    text-align: center;
   }
 }
 

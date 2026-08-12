@@ -2,7 +2,7 @@
  * WGT-COM-001 — Heatmap cổ phiếu cộng đồng (ESM)
  * Heart = Foundation; Store = Watchlist data — không load watchlist-ui.
  */
-import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence, loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';

@@ -2,8 +2,9 @@
  * WGT-GROUP-PAGE — Composite chi tiết nhóm (ngành / họ CP / chủ đề)
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR04_20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -50,7 +51,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'entity-detail-center.js?v=mockRmWp2_20260809',
-    ASSET + 'group-page.js?v=mockRmWp2_20260809',
+    ASSET + 'group-page.js?v=sidebarVR04_20260811',
     ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
   ]
 ];
@@ -97,6 +98,9 @@ export async function mount(el, ctx) {
       await IfluxCommunityApiBridge.loadFeed({ limit: 36 });
     } catch (eHyd) { /* seed fallback */ }
   }
+  /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho
+   * group-page.js (legacy IIFE) dựng Left Sidebar Widget Host canonical trong render(). */
+  window.IfluxRuntimeSections = { ensureSections: ensureSections };
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);
   function onRemount() {
     mountFromHostTree(el, publishKey);

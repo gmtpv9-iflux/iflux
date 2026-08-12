@@ -21,10 +21,10 @@ import {
   ensureSections,
   applyMarketLayout,
   applyHubLayout
-} from './app-shell.js?v=noPageHead20260722';
+} from './app-shell.js?v=sidebarVR02_20260811';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=cssPin20260808';
-import { loadScript } from './legacy-bridge.js?v=cssPin20260808';
+import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=phase4Pub20260716b';

@@ -5,17 +5,32 @@
  */
 import { unloadWidget } from './widget-loader.js?v=cssPin20260808';
 
-var SOFT_VER = 'softNavP1_20260810';
-var HUB_CSS = '/User_Web/iflux-web-ui/hub.css?v=ui00120260723';
+var SOFT_VER = 'softNavP1_20260811';
+var HUB_CSS = '/User_Web/iflux-web-ui/hub.css?v=stickyRefactor20260811';
+var COMMUNITY_CSS = '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811';
 
-var ALLOW_KEYS = { home: 1, market: 1, flow: 1, community: 1, pricing: 1 };
+var ALLOW_KEYS = {
+  home: 1,
+  market: 1,
+  flow: 1,
+  community: 1,
+  pricing: 1,
+  stock: 1,
+  sector: 1,
+  family: 1,
+  communityPost: 1
+};
 
 var MAIN_CLASS = {
   home: 'ifx-main--hub',
   market: 'ifx-main--market',
   flow: 'ifx-main--flow',
   community: 'ifx-main--community',
-  pricing: 'ifx-main--pricing'
+  pricing: 'ifx-main--pricing',
+  stock: 'ifx-main--stock',
+  sector: 'ifx-main--stock',
+  family: 'ifx-main--stock',
+  communityPost: 'ifx-main--community-post'
 };
 
 var ALL_MAIN = [
@@ -23,7 +38,9 @@ var ALL_MAIN = [
   'ifx-main--market',
   'ifx-main--flow',
   'ifx-main--community',
-  'ifx-main--pricing'
+  'ifx-main--pricing',
+  'ifx-main--stock',
+  'ifx-main--community-post'
 ];
 
 var installed = false;
@@ -42,9 +59,19 @@ function normalizePath(pathname) {
   return (path || '/').toLowerCase();
 }
 
-/** P1: chỉ index outlet pages — không entity / write / post / collection. */
+/** Soft P1 allowlist — hub + entity detail / bài viết (cùng pipeline). */
 function pageKeyFromPath(pathname) {
   var path = normalizePath(pathname);
+  if (/\/(cong-dong|community)\/(bai-viet|posts?|story)(\/|$)/.test(path)) return 'communityPost';
+  if (/^\/co-phieu\/[^/]+$/.test(path) || /^\/stocks\/[^/]+$/.test(path)) return 'stock';
+  if (/^\/nganh\/[^/]+$/.test(path) || /^\/sectors\/[^/]+$/.test(path)) return 'sector';
+  if (
+    /^\/he-sinh-thai\/[^/]+$/.test(path) ||
+    /^\/ho-co-phieu\/[^/]+$/.test(path) ||
+    /^\/ecosystems\/[^/]+$/.test(path)
+  ) {
+    return 'family';
+  }
   if (path === '/nha-cua-toi' || path === '/home') return 'home';
   if (path === '/thi-truong' || path === '/market') return 'market';
   if (path === '/dong-tien' || path === '/flow') return 'flow';
@@ -116,6 +143,9 @@ function syncHomeGreet(pageKey) {
     }
   } else if (greet) {
     greet.hidden = true;
+  }
+  if (pageKey === 'communityPost' || pageKey === 'community') {
+    ensureStylesheet(COMMUNITY_CSS);
   }
 }
 

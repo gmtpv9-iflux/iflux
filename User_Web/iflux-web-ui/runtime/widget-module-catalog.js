@@ -114,18 +114,18 @@ export const WIDGET_RUNTIME_MODULES = {
   'WGT-COM-001': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=phaseCW120260721',
     css: [
-      '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809',
+      '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811',
       '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723',
       '/User_Web/iflux-web-ui/watchlist.css'
     ]
   },
   'WGT-COM-CHUDE-TOP': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=phaseCW120260721',
-    css: ['/User_Web/iflux-web-ui/community.css?v=bodyFill20260809', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
+    css: ['/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
   },
   'WGT-COM-002': {
     lazyModule: '/User_Web/iflux-web-ui/widgets/community-active/index.js?v=bpPhaseD20260716',
-    css: ['/User_Web/iflux-web-ui/community.css?v=bodyFill20260809']
+    css: ['/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811']
   }
 };
 

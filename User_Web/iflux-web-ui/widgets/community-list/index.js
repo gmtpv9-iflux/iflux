@@ -2,7 +2,7 @@
  * TMP-COMMUNITY-LIST — ESM Widget module (Publish display.module).
  * Cùng Template SoT #3; phân nhánh theo widgetId (ViewModel / legacy mount).
  */
-import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

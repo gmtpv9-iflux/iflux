@@ -58,7 +58,8 @@ async function normalizeAndVariants(buf) {
       fingerprint: fp,
       original: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
       delivery: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
-      thumbnail: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) }
+      thumbnail: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
+      social: null
     };
   }
 
@@ -82,6 +83,26 @@ async function normalizeAndVariants(buf) {
     .toBuffer();
   const thumbMeta = await sharp(thumbBuf).metadata();
 
+  // PD-20 / SOL-IMG (2026-08-11): Zalo/Facebook/Twitter crawlers need a JPEG/PNG og:image —
+  // WebP support is inconsistent. If the source isn't already jpeg/png, derive one
+  // "social" variant so resolveSocialCompatibleImage() always has a compatible URL to pick.
+  const originalFormat = String(originalMeta.format || '').toLowerCase();
+  let social = null;
+  if (originalFormat !== 'jpeg' && originalFormat !== 'jpg' && originalFormat !== 'png') {
+    const socialBuf = await sharp(originalBuf)
+      .flatten({ background: '#ffffff' })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+    const socialMeta = await sharp(socialBuf).metadata();
+    social = {
+      buffer: socialBuf,
+      mime: 'image/jpeg',
+      width: socialMeta.width || null,
+      height: socialMeta.height || null,
+      ext: 'jpg'
+    };
+  }
+
   return {
     fingerprint: fingerprint(originalBuf),
     original: {
@@ -104,7 +125,8 @@ async function normalizeAndVariants(buf) {
       width: thumbMeta.width || null,
       height: thumbMeta.height || null,
       ext: 'webp'
-    }
+    },
+    social: social
   };
 }
 

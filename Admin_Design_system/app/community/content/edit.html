@@ -64,7 +64,7 @@
   <div class="ix-layout">
     <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
       <div class="ix-brand">
-        <div class="ix-brand-logo"><svg width="18" height="18" viewBox="0 0 32 22" fill="white"><path fill-rule="evenodd" d="M0 0v6.85c0 0-.13 2.16 1.98 3.99L13.69 22l6.09-.08L18.8 9.88l-2.31-2.71L9.24 0H0z"/><path fill-rule="evenodd" d="M7.7 16.44L23.66 0H32v6.88c0 0-.17 2.29-1.34 3.52L19.78 22h-6.09L7.7 16.44z"/></svg></div>
+        <img class="ix-brand-logo" alt="iFlux" hidden />
         <span class="ix-brand-name">iFlux Admin</span>
       </div>
       <nav class="ix-menu" data-ix-admin-nav></nav>
@@ -106,7 +106,7 @@
               <div class="ix-card-header"><div class="ix-card-title">Tiêu đề &amp; URL</div></div>
               <div class="ix-card-body">
                 <div class="ix-form-group"><label class="ix-label">Tiêu đề <span style="color:var(--ix-danger)">*</span></label><input type="text" class="ix-input" id="fld-title" placeholder="VD: Đầu tư công sẽ bùng nổ trong nửa cuối năm" /></div>
-                <div class="ix-form-group ix-mb-0"><label class="ix-label">URL</label><input type="text" class="ix-input" id="fld-slug" placeholder="tự tạo từ tiêu đề" /></div>
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">URL <span class="ix-caption">(tự tạo từ tiêu đề)</span></label><input type="text" class="ix-input" id="fld-slug" readonly placeholder="tự tạo từ tiêu đề" /></div>
               </div>
             </div>
             <div class="ix-card">
@@ -150,7 +150,16 @@
                 <div class="ix-form-group"><label class="ix-label">SEO Title</label><input type="text" class="ix-input" id="fld-seo-title" /></div>
                 <div class="ix-form-group"><label class="ix-label">SEO Description</label><textarea class="ix-textarea" id="fld-seo-desc" rows="2"></textarea></div>
                 <div class="ix-form-group"><label class="ix-label">SEO Keywords</label><input type="text" class="ix-input" id="fld-seo-keywords" /></div>
-                <div class="ix-form-group ix-mb-0"><label class="ix-label">Canonical URL</label><input type="url" class="ix-input" id="fld-seo-canonical" /></div>
+                <div class="ix-form-group">
+                  <label class="ix-label">ALT ảnh OG</label>
+                  <input type="text" class="ix-input" id="fld-seo-og-alt" maxlength="500" />
+                  <p class="ix-caption ix-mt-8" style="margin:0">Tuỳ chọn — để trống = dùng Alt ảnh đại diện hoặc tiêu đề. Không bắt buộc.</p>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Canonical URL <span class="ix-caption">(tự động)</span></label>
+                  <input type="text" class="ix-input" id="fld-seo-canonical" readonly />
+                  <p class="ix-caption ix-mt-8" style="margin:0">Hệ thống tạo từ tiêu đề → URL. Đổi tiêu đề sẽ đổi link; link cũ tự chuyển về link mới.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -190,7 +199,7 @@
               <div class="ix-card-header"><div class="ix-card-title">Ảnh đại diện</div></div>
               <div class="ix-card-body">
                 <div class="ix-form-group"><label class="ix-label">URL ảnh</label><input type="url" class="ix-input" id="fld-cover-url" /></div>
-                <div class="ix-form-group"><label class="ix-label">Alt</label><input type="text" class="ix-input" id="fld-cover-alt" /></div>
+                <div class="ix-form-group"><label class="ix-label">Alt</label><input type="text" class="ix-input" id="fld-cover-alt" /><p class="ix-caption ix-mt-8" style="margin:0">Tuỳ chọn — để trống = hệ thống dùng tiêu đề / ALT SEO.</p></div>
                 <div class="ix-form-group"><label class="ix-label">Caption</label><input type="text" class="ix-input" id="fld-cover-caption" /></div>
                 <div class="ix-form-group ix-mb-0"><label class="ix-label">Credit</label><input type="text" class="ix-input" id="fld-cover-credit" /></div>
               </div>
@@ -218,19 +227,19 @@
   </div>
 </div>
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=reqMenu20260723"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=menuFix20260725"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
-<script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=cmsRbacFix20260727" data-ix-rbac=""></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=seoLogoOnly20260810" data-ix-rbac=""></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/dompurify/purify.min.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/vendor/tiptap/tiptap.bundle.js"></script>
 <script src="/Admin_Design_system/app/community/content/article-html-contract.js?v=mediaLib20260730"></script>
 <script src="/Admin_Design_system/app/community/content/article-body-editor.js?v=mediaLib20260730"></script>
-<script src="/Admin_Design_system/app/community/content/article-edit-page.js?v=mediaLib20260730"></script>
+<script src="/Admin_Design_system/app/community/content/article-edit-page.js?v=seoOgImageAlt20260811"></script>
 </body>
 </html>

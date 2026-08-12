@@ -1,13 +1,13 @@
 /**
  * Page Manifest — Chi tiết ngành (/nganh/:id)
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR04_20260811';
 
 export default {
   pageKey: 'sector',
   path: '/nganh',
   title: '',
-  documentTitle: 'Ngành · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }
@@ -27,7 +27,7 @@ export default {
       '/User_Web/iflux-web-ui/watchlist.css',
       '/User_Web/iflux-web-ui/community.css',
       '/User_Web/iflux-web-ui/block-templates.css',
-      '/User_Web/iflux-web-ui/stock.css'
+      '/User_Web/iflux-web-ui/stock.css?v=sidebarVR04_20260811'
     ]
   }]
 };

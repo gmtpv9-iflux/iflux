@@ -12,17 +12,11 @@
 }
 
 .ifx-stock-col--left,
-.ifx-stock-col--center,
-.ifx-stock-col--right {
+.ifx-stock-col--center {
   min-width: 0;
 }
 
 .ifx-stock-col--left {
-  position: sticky;
-  top: calc(var(--ifx-topnav-h) + 12px);
-}
-
-.ifx-stock-col--right {
   position: sticky;
   top: calc(var(--ifx-topnav-h) + 12px);
 }
@@ -853,8 +847,7 @@ a.ifx-mention:hover {
     grid-column: 1 / -1;
     order: -1;
   }
-  .ifx-stock-col--left,
-  .ifx-stock-col--right {
+  .ifx-stock-col--left {
     position: static;
   }
   .ifx-stock-panel--chat {

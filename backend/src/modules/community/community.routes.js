@@ -424,19 +424,39 @@ function createCommunityRouter(deps) {
     }
   });
 
-  /* Pipeline A: article → Metadata SoT → render (consume only). */
+  /* Pipeline A: article → SEO Contract → one Head Renderer. */
   router.get('/articles/:idOrSlug/open-graph', async (req, res, next) => {
     try {
-      const item = await articles.getArticle(req.params.idOrSlug);
+      const idOrSlug = req.params.idOrSlug;
+      const item = await articles.getArticle(idOrSlug);
+      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
+      const requestUri = String(req.headers['x-original-uri'] || req.headers['x-iflux-request-uri'] || '');
       if (!item) {
-        res.status(404).type('html').send(
-          '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8" /><title>Không tìm thấy · iFlux</title></head>' +
-          '<body><p>Không tìm thấy bài viết</p></body></html>'
-        );
+        const seoPlatform = require('../seo-platform/seo-platform.service');
+        const path = '/cong-dong/bai-viet/' + encodeURIComponent(idOrSlug);
+        const out = await seoPlatform.renderHttpErrorShell({
+          path: path,
+          pageKey: 'community',
+          httpStatus: 404,
+          requestUri: requestUri || path,
+          origin: origin
+        });
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        res.status(404).type('html').send(out.html);
         return;
       }
-      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
-      articles.attachArticleMetadata(item, origin);
+      if (idOrSlug !== item.id && idOrSlug !== item.slug) {
+        res.redirect(301, articles.articlePublicPath(item.slug));
+        return;
+      }
+      await articles.attachArticleMetadata(item, origin, {
+        requestUri: requestUri || undefined,
+        search: req.url && req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?')) : undefined
+      });
+      if (item.seoContract && item.seoContract.indexability &&
+          String(item.seoContract.indexability.robots || '').indexOf('noindex') >= 0) {
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      }
       res
         .status(200)
         .type('html')
@@ -447,19 +467,39 @@ function createCommunityRouter(deps) {
     }
   });
 
-  /* Pipeline B: SPA shell + cùng Metadata SoT head (Golden Reference tags). */
+  /* Pipeline B: SPA shell + Contract head (singleton). */
   router.get('/articles/:idOrSlug/spa', async (req, res, next) => {
     try {
-      const item = await articles.getArticle(req.params.idOrSlug);
+      const idOrSlug = req.params.idOrSlug;
+      const item = await articles.getArticle(idOrSlug);
+      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
+      const requestUri = String(req.headers['x-original-uri'] || req.headers['x-iflux-request-uri'] || '');
       if (!item) {
-        res.status(404).type('html').send(
-          '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8" /><title>Không tìm thấy · iFlux</title></head>' +
-          '<body><p>Không tìm thấy bài viết</p></body></html>'
-        );
+        const seoPlatform = require('../seo-platform/seo-platform.service');
+        const path = '/cong-dong/bai-viet/' + encodeURIComponent(idOrSlug);
+        const out = await seoPlatform.renderHttpErrorShell({
+          path: path,
+          pageKey: 'community',
+          httpStatus: 404,
+          requestUri: requestUri || path,
+          origin: origin
+        });
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+        res.status(404).type('html').send(out.html);
         return;
       }
-      const origin = articles.PUBLIC_ORIGIN || 'https://iflux.vn';
-      articles.attachArticleMetadata(item, origin);
+      if (idOrSlug !== item.id && idOrSlug !== item.slug) {
+        res.redirect(301, articles.articlePublicPath(item.slug));
+        return;
+      }
+      await articles.attachArticleMetadata(item, origin, {
+        requestUri: requestUri || undefined,
+        search: req.url && req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?')) : undefined
+      });
+      if (item.seoContract && item.seoContract.indexability &&
+          String(item.seoContract.indexability.robots || '').indexOf('noindex') >= 0) {
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      }
       res
         .status(200)
         .type('html')
@@ -472,9 +512,17 @@ function createCommunityRouter(deps) {
 
   router.get('/articles/:idOrSlug', async (req, res, next) => {
     try {
-      const item = await articles.getArticle(req.params.idOrSlug);
+      const idOrSlug = req.params.idOrSlug;
+      const item = await articles.getArticle(idOrSlug);
       if (!item) return res.status(404).json({ error: 'Không tìm thấy bài viết' });
-      articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn');
+      if (idOrSlug !== item.id && idOrSlug !== item.slug) {
+        res.redirect(301, articles.articlePublicPath(item.slug));
+        return;
+      }
+      const requestUri = String(req.headers['x-original-uri'] || req.headers['x-iflux-request-uri'] || '');
+      await articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn', {
+        requestUri: requestUri || undefined
+      });
       return success(res, { article: item });
     } catch (err) {
       next(err);

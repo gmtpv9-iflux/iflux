@@ -1,7 +1,7 @@
 /**
  * Slice 4.5 — stock-comment URL cũ: chỉ redirect → /binh-luan (không nạp LS UI).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptsSequential } from './legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var V = '?v=b4w3_20260727';

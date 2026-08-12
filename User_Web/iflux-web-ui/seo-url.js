@@ -478,16 +478,129 @@
     return STOCK_DOC_TITLE_NAMES[ticker] || detail.name || detail.short_name || ticker;
   }
 
+  /* ── Admin page SEO title templates (VI placeholders) ── */
+
+  function hasSeoPlaceholder(s) {
+    return /\{[^}]+\}/.test(String(s || ''));
+  }
+
+  function applySeoTemplate(pattern, vars) {
+    var out = String(pattern || '');
+    Object.keys(vars || {}).forEach(function (k) {
+      out = out.split('{' + k + '}').join(String(vars[k] == null ? '' : vars[k]).trim() || '');
+    });
+    return out.replace(/\s{2,}/g, ' ').replace(/\(\s*\)/g, '').trim();
+  }
+
+  function buildSeoPlaceholderVars(input) {
+    input = input || {};
+    var ticker = String(input.ticker || input['Mã'] || '').trim();
+    var stockName = String(input.stockName || input['Tên cổ phiếu'] || '').trim();
+    var sectorName = String(input.sectorName || input['Tên ngành'] || '').trim();
+    var ecoName = String(input.ecoName || input['Tên hệ sinh thái'] || '').trim();
+    var authorName = String(input.authorName || input['Tên tác giả'] || '').trim();
+    var storyName = String(input.storyName || input['Tên câu chuyện'] || '').trim();
+    var categoryName = String(input.categoryName || input['Tên danh mục'] || '').trim();
+    var v = {};
+    if (ticker) {
+      v['Mã'] = ticker;
+      v.ticker = ticker;
+    }
+    if (stockName) {
+      v['Tên cổ phiếu'] = stockName;
+      v.name = stockName;
+    }
+    if (sectorName) {
+      v['Tên ngành'] = sectorName;
+      if (!v.name) v.name = sectorName;
+    }
+    if (ecoName) {
+      v['Tên hệ sinh thái'] = ecoName;
+      if (!v.name) v.name = ecoName;
+    }
+    if (authorName) {
+      v['Tên tác giả'] = authorName;
+      if (!v.name) v.name = authorName;
+    }
+    if (storyName) {
+      v['Tên câu chuyện'] = storyName;
+      if (!v.name) v.name = storyName;
+    }
+    if (categoryName) v['Tên danh mục'] = categoryName;
+    return v;
+  }
+
+  function resolveSeoTitleTemplate(template, inputVars) {
+    var tpl = String(template || '').trim();
+    if (!tpl) return { title: '', unresolved: false, template: '' };
+    if (!hasSeoPlaceholder(tpl)) return { title: tpl, unresolved: false, template: tpl };
+    var resolved = applySeoTemplate(tpl, buildSeoPlaceholderVars(inputVars));
+    if (!resolved || hasSeoPlaceholder(resolved)) {
+      return { title: '', unresolved: true, template: tpl };
+    }
+    return { title: resolved, unresolved: false, template: tpl };
+  }
+
+  function siteSeoFromManifest() {
+    var def = pageDefinition() && pageDefinition().getCurrent && pageDefinition().getCurrent();
+    return (def && def.siteSeo) || {};
+  }
+
+  /**
+   * Sole writer for Admin SEO page title on dynamic detail pages.
+   * Resolved Admin template > fallbackTitle. Never publishes unresolved {…}.
+   */
+  function applySeoPageTitle(opts) {
+    opts = opts || {};
+    var siteSeo = opts.siteSeo || siteSeoFromManifest();
+    var template = String(
+      opts.template != null
+        ? opts.template
+        : siteSeo.title_template || ''
+    ).trim();
+    var fallback = String(opts.fallbackTitle || '').trim();
+    var resolved = resolveSeoTitleTemplate(template, opts.vars || {});
+    var title = resolved.title || fallback;
+    if (!title || hasSeoPlaceholder(title)) return null;
+
+    if (pageDefinition() && pageDefinition().applyPatch) {
+      var patch = {
+        documentTitle: title,
+        seo: {
+          'og:title': title,
+          'twitter:title': title
+        }
+      };
+      if (opts.patch) {
+        if (opts.patch.title != null) patch.title = opts.patch.title;
+        if (opts.patch.intro != null) patch.intro = opts.patch.intro;
+        if (opts.patch.seo) patch.seo = Object.assign({}, opts.patch.seo, patch.seo);
+      }
+      pageDefinition().applyPatch(patch);
+    } else {
+      try {
+        document.title = title;
+      } catch (e) { /* ignore */ }
+    }
+    return title;
+  }
+
   function applyStockSeoToDocument(detail, opts) {
     if (!detail) return;
     opts = opts || {};
     var ticker = String(detail.ticker || '').toUpperCase();
     var company = stockDocCompanyName(detail);
     var canonical = stockCanonical(ticker);
-    /* Tab/SEO title kiểu FireAnt: «SHB - Ngân hàng TMCP Sài Gòn - Hà Nội» */
-    var docTitle = ticker + ' - ' + company;
-    var desc = 'Theo dõi ' + ticker + ' (' + (detail.exchange || 'HSX') + '): thị giá ' +
-      (detail.price != null ? detail.price : '—') + ', giao dịch ròng theo chủ thể, tin tức cộng đồng và bình luận trên iFlux.';
+    var fallbackTitle = ticker + ' - ' + company;
+    var siteSeo = siteSeoFromManifest();
+    var descTpl = String(siteSeo.description_template || '').trim();
+    var descResolved = descTpl
+      ? resolveSeoTitleTemplate(descTpl, { ticker: ticker, stockName: company })
+      : { title: '' };
+    var desc =
+      descResolved.title ||
+      String(siteSeo.description || '').trim() ||
+      ('Theo dõi ' + ticker + ' (' + (detail.exchange || 'HSX') + ') trên iFlux.');
     var keywords = [ticker, company, detail.name, detail.short_name, 'cổ phiếu ' + ticker, detail.exchange, 'chứng khoán Việt Nam']
       .filter(Boolean).join(', ');
 
@@ -502,11 +615,12 @@
       provider: { '@type': 'Organization', name: 'iFlux', url: PROD_ORIGIN }
     };
 
-    if (pageDefinition() && pageDefinition().applyPatch) {
-      pageDefinition().applyPatch({
-        title: docTitle,
+    var docTitle = applySeoPageTitle({
+      vars: { ticker: ticker, stockName: company },
+      fallbackTitle: fallbackTitle,
+      patch: {
+        title: fallbackTitle,
         intro: desc,
-        documentTitle: docTitle,
         seo: {
           description: desc,
           keywords: keywords,
@@ -515,20 +629,19 @@
           'geo.region': 'VN',
           'geo.placename': 'Việt Nam',
           language: 'vi-VN',
-          'og:title': docTitle,
           'og:description': desc,
           'og:type': 'website',
           'og:locale': 'vi_VN',
           'og:url': canonical,
           jsonLd: [{ id: 'ifx-stock-jsonld', data: jsonLd }]
         }
-      });
-      if (opts.newsCount != null) {
-        setMeta('iflux:news-count', String(opts.newsCount));
       }
-      return;
+    }) || fallbackTitle;
+
+    if (opts.newsCount != null) {
+      setMeta('iflux:news-count', String(opts.newsCount));
     }
-    /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
+    return docTitle;
   }
 
   function stockSlugPath(ticker) {
@@ -683,6 +796,16 @@
     resolvePostShareMeta: resolvePostShareMeta,
     applyPostSeoToDocument: applyPostSeoToDocument,
     applyStorySeoToDocument: applyStorySeoToDocument,
-    applyStockSeoToDocument: applyStockSeoToDocument
+    applyStockSeoToDocument: applyStockSeoToDocument,
+    resolveSeoTitleTemplate: resolveSeoTitleTemplate,
+    applySeoPageTitle: applySeoPageTitle,
+    buildSeoPlaceholderVars: buildSeoPlaceholderVars
+  };
+
+  global.IfluxSeoTitle = {
+    resolve: resolveSeoTitleTemplate,
+    apply: applySeoPageTitle,
+    buildVars: buildSeoPlaceholderVars,
+    hasPlaceholder: hasSeoPlaceholder
   };
 })(window);

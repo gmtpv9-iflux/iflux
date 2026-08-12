@@ -11,6 +11,97 @@
 const marketMaster = require('../market/market-master.service');
 
 const VENDOR_AUTHOR_RE = /^(vccorp\.?vn|vccorp)$/i;
+
+/** SoT attribution — 3 nhà cung cấp RSS (Owner LOCK). */
+const RSS_AUTHOR_BY_PROVIDER = {
+  cafef: { id: 'cafef', display_name: 'CafeF' },
+  vietstock: { id: 'vietstock', display_name: 'VietStock' },
+  baodautu: { id: 'baodautu', display_name: 'Báo Đầu Tư' }
+};
+
+function normalizeProviderId(providerIdOrName) {
+  const raw = String(providerIdOrName || '').trim().toLowerCase();
+  if (!raw) return '';
+  if (raw === 'cafef' || raw === 'cafe f' || raw.indexOf('cafef') >= 0) return 'cafef';
+  if (raw === 'vietstock' || raw.indexOf('vietstock') >= 0) return 'vietstock';
+  if (
+    raw === 'baodautu' ||
+    raw === 'bao-dau-tu' ||
+    raw.indexOf('baodautu') >= 0 ||
+    raw.indexOf('báo đầu tư') >= 0 ||
+    raw.indexOf('bao dau tu') >= 0
+  ) {
+    return 'baodautu';
+  }
+  if (raw === 'rss:cafef' || raw.indexOf('rss:cafef') >= 0) return 'cafef';
+  if (raw === 'rss:vietstock') return 'vietstock';
+  if (raw === 'rss:baodautu') return 'baodautu';
+  return raw;
+}
+
+/**
+ * RSS → { id, display_name } SoT. Không dùng meta author / VCCorp làm byline.
+ * @param {string} providerIdOrName
+ */
+function resolveRssAuthor(providerIdOrName) {
+  const id = normalizeProviderId(providerIdOrName);
+  const hit = RSS_AUTHOR_BY_PROVIDER[id];
+  if (!hit) return null;
+  return {
+    id: hit.id,
+    display_name: hit.display_name,
+    tier: 'rss',
+    tier_label: null
+  };
+}
+
+/**
+ * Bài Admin Xuất bản → author = actor đăng nhập.
+ * @param {object|null} actor
+ */
+function resolveAdminAuthor(actor) {
+  const id =
+    (actor && (actor.id || actor.user_id || actor.admin_id)) ||
+    'admin';
+  const displayName =
+    (actor && (actor.name || actor.display_name || actor.email)) ||
+    'Admin';
+  return {
+    id: String(id),
+    display_name: String(displayName).slice(0, 160),
+    tier: (actor && actor.tier) || 'admin',
+    tier_label: (actor && (actor.tier_label || actor.role_label)) || 'Admin'
+  };
+}
+
+function isLegacyRssAuthorId(id) {
+  const s = String(id || '').toLowerCase();
+  return (
+    s === 'rss-author' ||
+    s.indexOf('rss:') === 0 ||
+    s === 'cafef' ||
+    s === 'vietstock' ||
+    s === 'baodautu'
+  );
+}
+
+function looksLikeVccorp(name) {
+  return VENDOR_AUTHOR_RE.test(String(name || '').trim());
+}
+
+/**
+ * @deprecated Dùng resolveRssAuthor(providerId). Giữ export để caller cũ không vỡ;
+ * luôn trả author SoT theo provider — không map byline người / VCCorp → author.
+ */
+function normalizeAttribution(authorName, providerName) {
+  const author = resolveRssAuthor(providerName);
+  return {
+    author: author,
+    publisher: null,
+    provider: null,
+    vendor: null
+  };
+}
 const TICKER_LIKE_RE = /^[A-Z]{2,5}$/;
 
 let _cache = null;
@@ -280,31 +371,6 @@ async function resolveArticleEntities(article) {
   };
 }
 
-function normalizeAttribution(authorName, providerName) {
-  const raw = String(authorName || '').trim();
-  const provider = String(providerName || '').trim();
-  const isVendor = !raw || VENDOR_AUTHOR_RE.test(raw);
-  return {
-    author: isVendor
-      ? null
-      : {
-          id: 'rss-author',
-          display_name: raw.slice(0, 160),
-          tier: 'rss',
-          tier_label: null
-        },
-    publisher: provider
-      ? { name: provider }
-      : null,
-    provider: provider
-      ? { name: provider }
-      : null,
-    vendor: isVendor && raw
-      ? { name: raw.slice(0, 160) }
-      : null
-  };
-}
-
 function clearMasterCache() {
   _cache = null;
   _cacheAt = 0;
@@ -313,6 +379,12 @@ function clearMasterCache() {
 module.exports = {
   resolveArticleEntities,
   normalizeAttribution,
+  resolveRssAuthor,
+  resolveAdminAuthor,
+  normalizeProviderId,
+  isLegacyRssAuthorId,
+  looksLikeVccorp,
+  RSS_AUTHOR_BY_PROVIDER,
   clearMasterCache,
   loadMaster
 };

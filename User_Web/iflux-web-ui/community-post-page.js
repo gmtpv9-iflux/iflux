@@ -116,44 +116,52 @@
           ui().articleHeroImageHtml(post) +
 
           '<div class="ifx-com-article__byline">' +
-            (post.author && post.author.display_name
-              ? ('<div class="ifx-com-article__author" itemprop="author" itemscope itemtype="https://schema.org/Person">' +
-                  (global.IfluxProfileLinks && post.author.id
-                    ? IfluxProfileLinks.avatarLink(post.author.id, post.author.display_name.charAt(0), 'ifx-com-card__avatar ifx-profile-link-avatar', { base: '../account/' })
-                    : '<span class="ifx-com-card__avatar" aria-hidden="true">' + esc(post.author.display_name.charAt(0)) + '</span>') +
-                  '<div>' +
-                    (global.IfluxProfileLinks && post.author.id
-                      ? IfluxProfileLinks.nameLink(post.author.id, post.author.display_name, 'ifx-profile-link', { base: '../account/', itemprop: 'name' })
-                      : '<span itemprop="name">' + esc(post.author.display_name) + '</span>') + ' ' +
-                    ui().tierBadge(post.author) +
-                  '</div>' +
-                '</div>')
-              : '') +
-            '<div class="ifx-com-article__dates">' +
+            '<div class="ifx-com-article__byline-main">' +
+              (function () {
+                var author = post.author;
+                if (!author || !author.display_name) return '';
+                var name = author.display_name;
+                var aid = String(author.id || '');
+                var isBrand =
+                  aid === 'cafef' || aid === 'vietstock' || aid === 'baodautu';
+                var authorHref = isBrand
+                  ? '/cong-dong/tac-gia/' + encodeURIComponent(aid)
+                  : '';
+                var nameHtml = authorHref
+                  ? ('<a class="ifx-profile-link" href="' +
+                      esc(authorHref) +
+                      '" itemprop="name">' +
+                      esc(name) +
+                      '</a>')
+                  : global.IfluxProfileLinks && aid
+                    ? IfluxProfileLinks.nameLink(aid, name, 'ifx-profile-link', {
+                        base: '../account/',
+                        itemprop: 'name'
+                      })
+                    : '<span itemprop="name">' + esc(name) + '</span>';
+                return (
+                  '<span itemprop="author" itemscope itemtype="https://schema.org/Person">' +
+                    nameHtml +
+                  '</span>'
+                );
+              })() +
               (published
-                ? '<time itemprop="datePublished" datetime="' + published + '">Đăng ' + ui().fmtDate(published) + '</time>'
+                ? '<meta itemprop="datePublished" content="' + esc(published) + '" />'
                 : '') +
-              (modified
-                ? '<time itemprop="dateModified" datetime="' + modified + '">' + (published ? ' · ' : '') + 'Cập nhật ' + ui().fmtDate(modified) + '</time>'
-                : '') +
+              '<div class="ifx-com-article__dates">' +
+                (modified
+                  ? '<time itemprop="dateModified" datetime="' +
+                    esc(modified) +
+                    '"> - Cập nhật ' +
+                    ui().fmtDate(modified) +
+                    '</time>'
+                  : '') +
+              '</div>' +
             '</div>' +
-            (function () {
-              var pubName =
-                (post.publisher && (post.publisher.name || post.publisher.display_name)) ||
-                (post.provider && (post.provider.name || post.provider.display_name)) ||
-                (post.source && post.source.name) ||
-                '';
-              if (!pubName) return '';
-              return (
-                '<div class="ifx-com-article__publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">' +
-                  '<meta itemprop="name" content="' + esc(pubName) + '" />' +
-                  '<span class="ifx-com-article__publisher-label">' + esc(pubName) + '</span>' +
-                '</div>'
-              );
-            })() +
+            '<div class="ifx-com-article__tags" aria-label="Thẻ bài viết">' +
+              ui().postTagsHtml(post) +
+            '</div>' +
           '</div>' +
-
-          '<div class="ifx-com-article__tags" aria-label="Thẻ bài viết">' + ui().postTagsHtml(post) + '</div>' +
           /* Entity mobile = slot trên bottom IX (Shell); desktop = sidebar. CẤM strip trên thân bài. */
         '</header>' +
 
@@ -482,6 +490,22 @@
     });
   }
 
+  /* Sidebar Widget Host (100826_Scroll — Owner request 2026-08-11): Widget Host canonical
+   * qua ensureSections() giống Community/Stock/Group — chèn TRƯỚC 6 block đặc thù (Chủ đề/
+   * Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận), không promote toàn bộ aside cũ. */
+  function mountSidebarWidgetHost(root) {
+    var aside = root.querySelector('.ifx-com-story-aside');
+    if (!aside) return;
+    var sectionApi = global.IfluxRuntimeSections;
+    if (!sectionApi || !sectionApi.ensureSections) return;
+    var sections = sectionApi.ensureSections(aside, {
+      sections: [{ key: 'sidebar-right', label: 'Widget đặc thù bài viết' }]
+    });
+    if (sections && sections['sidebar-right'] && aside.firstChild !== sections['sidebar-right']) {
+      aside.insertBefore(sections['sidebar-right'], aside.firstChild);
+    }
+  }
+
   function bindEvents(root, post, slug) {
     /* Like / fav / share / comment → Interaction Host sidebar (không CommunityStore.stats++) */
     document.addEventListener('iflux-ix-projection', function onProj(ev) {
@@ -518,8 +542,8 @@
     }
 
     root.innerHTML =
-      '<nav class="ifx-com-breadcrumb" aria-label="Breadcrumb">' +
-        '<a href="' + esc(routeUrl('community')) + '"><i class="ti ti-arrow-left"></i> Cộng đồng</a>' +
+      '<nav class="ifx-com-breadcrumb" aria-label="Đường dẫn">' +
+        '<a href="' + esc(routeUrl('community')) + '">Trang chủ</a>' +
         '<span class="ifx-com-breadcrumb__sep">/</span>' +
         '<span class="ifx-com-breadcrumb__current">' + esc(post.title) + '</span>' +
       '</nav>' +
@@ -535,6 +559,7 @@
       })() +
       renderRelatedFeed(post);
 
+    mountSidebarWidgetHost(root);
     bindEvents(root, post, slug);
     bindTocLinks(root);
     mountRelatedFeed(root, post);

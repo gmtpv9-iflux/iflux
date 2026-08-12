@@ -33,11 +33,14 @@ export function ensureSections(root, manifest) {
   sections.forEach(function (sec) {
     if (!sec || !sec.key || sec.visible === false) return;
     if (SHELL_CHROME_KEYS[sec.key] || sec.kind === 'shell') return;
-    var el = document.createElement(sec.key === 'sidebar' ? 'aside' : 'div');
+    /* AppShell Foundation §13 (100826): sidebar-right dùng chung bán kính <aside>+aria-label
+     * với sidebar (Left) — cả 2 đều là AppShell Sidebar capability, khác nhau ở vị trí. */
+    var isSidebar = sec.key === 'sidebar' || sec.key === 'sidebar-right';
+    var el = document.createElement(isSidebar ? 'aside' : 'div');
     el.className = 'ifx-rt-section ifx-rt-section--' + sec.key;
     el.setAttribute('data-section', sec.key);
     el.setAttribute('data-ifx-section', sec.key);
-    if (sec.key === 'sidebar') {
+    if (isSidebar) {
       el.setAttribute('aria-label', sec.label || 'Sidebar');
     }
     if (sec.layout) {

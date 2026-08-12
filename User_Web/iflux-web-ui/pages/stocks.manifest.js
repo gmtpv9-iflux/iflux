@@ -2,13 +2,13 @@
  * Page Manifest — Danh sách cổ phiếu (/co-phieu)
  * Composite: Page Feature entity-list (kind=stocks).
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR03_20260811';
 
 export default {
   pageKey: 'stocks',
   path: '/co-phieu',
   title: '',
-  documentTitle: 'Danh sách cổ phiếu · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

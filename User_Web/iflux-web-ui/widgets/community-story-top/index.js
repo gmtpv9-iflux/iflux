@@ -2,7 +2,7 @@
  * WGT-COM-CHUDE-TOP — Chủ đề tích cực hàng đầu (ESM lazy Widget module)
  * User Web phải mount module Widget này (không render thẳng Template).
  */
-import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

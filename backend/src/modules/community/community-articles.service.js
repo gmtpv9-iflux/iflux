@@ -3,6 +3,7 @@
 const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 const categories = require('./community-categories.service');
+const entityResolve = require('./community-entity-resolve.service');
 
 const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'scheduled'];
 
@@ -90,12 +91,30 @@ function normalizeArticleInput(input, actor) {
   }
 
   const status = STATUSES.indexOf(input.status) >= 0 ? input.status : 'draft';
-  const slug = slugify(input.slug || title) || 'bai-viet-' + Date.now();
+  /* BR-11 Owner lock: identity slug = slugify(title); không lấy canonical RSS/editor. */
+  const slug = slugify(title) || 'bai-viet-' + Date.now();
   const excerpt = String(input.excerpt || '').trim();
   const bodyHtml = String(input.body_html || input.body || '').trim();
   const seo = input.seo || {};
   const display = input.display || {};
   const cover = input.cover || {};
+
+  let author;
+  if (status === 'published') {
+    author = entityResolve.resolveAdminAuthor(actor);
+  } else if (status === 'published_rss') {
+    author =
+      entityResolve.resolveRssAuthor(input.source_id) ||
+      entityResolve.resolveRssAuthor(input.source_name) ||
+      (input.source && entityResolve.resolveRssAuthor(input.source.id || input.source.name)) ||
+      entityResolve.resolveRssAuthor(
+        input.author && (input.author.id || input.author.display_name)
+      ) ||
+      input.author ||
+      null;
+  } else {
+    author = input.author || entityResolve.resolveAdminAuthor(actor);
+  }
 
   return {
     title,
@@ -113,9 +132,9 @@ function normalizeArticleInput(input, actor) {
     ecosystems,
     entity_occurrences: Array.isArray(input.entity_occurrences) ? input.entity_occurrences : [],
     entities: input.entities && typeof input.entities === 'object' ? input.entities : { stocks: [], ecosystems: [] },
-    publisher: input.publisher != null ? input.publisher : null,
-    provider: input.provider != null ? input.provider : null,
-    vendor: input.vendor != null ? input.vendor : null,
+    publisher: null,
+    provider: null,
+    vendor: null,
     exchange: exchange || null,
     cover: {
       url: String(cover.url || input.cover_url || '').trim(),
@@ -127,12 +146,14 @@ function normalizeArticleInput(input, actor) {
       title: String(seo.title || seo.seo_title || '').trim() || title,
       description: String(seo.description || seo.seo_description || '').trim() || excerpt,
       keywords: String(seo.keywords || seo.seo_keywords || '').trim(),
-      canonical: String(seo.canonical || seo.canonical_url || '').trim(),
+      /* System-only Clean Public URL — không persist RSS/editor canonical */
+      canonical: '',
       meta_title: String(seo.meta_title || seo.og_title || seo.title || seo.seo_title || '').trim() || title,
       meta_description: String(seo.meta_description || seo.og_description || seo.description || seo.seo_description || '').trim() || excerpt,
       og_title: String(seo.og_title || seo.meta_title || seo.title || seo.seo_title || '').trim() || title,
       og_description: String(seo.og_description || seo.meta_description || seo.description || seo.seo_description || '').trim() || excerpt,
-      og_image: String(seo.og_image || cover.url || input.cover_url || '').trim()
+      og_image: String(seo.og_image || cover.url || input.cover_url || '').trim(),
+      og_image_alt: String(seo.og_image_alt || seo.ogImageAlt || '').trim()
     },
     status,
     display: {
@@ -143,12 +164,7 @@ function normalizeArticleInput(input, actor) {
     },
     scheduled_at: status === 'scheduled' ? (input.scheduled_at || input.publish_at || null) : null,
     published_at: isLivePublished(status) ? (input.published_at || new Date().toISOString()) : null,
-    author: input.author || {
-      id: actor && actor.id ? actor.id : 'admin',
-      display_name: (actor && (actor.name || actor.email)) || 'Admin',
-      tier: (actor && actor.tier) || 'admin',
-      tier_label: (actor && actor.tier_label) || 'Admin'
-    }
+    author
   };
 }
 
@@ -296,11 +312,51 @@ async function getArticle(idOrSlug) {
     `SELECT ${cols} FROM community_posts WHERE payload->>'slug' = $1 LIMIT 1`,
     [idOrSlug]
   );
-  return rowToArticle(bySlug.rows[0]);
+  if (bySlug.rows[0]) return rowToArticle(bySlug.rows[0]);
+  /* BR-12 slug change: former slug → current article (caller 301 nếu param ≠ slug) */
+  const byFormer = await query(
+    `SELECT ${cols} FROM community_posts
+     WHERE COALESCE(payload->'former_slugs', '[]'::jsonb) ? $1
+     LIMIT 1`,
+    [idOrSlug]
+  );
+  return rowToArticle(byFormer.rows[0]);
+}
+
+/** Đảm bảo slug không trùng bài khác (current slug). */
+async function ensureUniqueSlug(baseSlug, excludeId) {
+  let slug = String(baseSlug || '').trim() || 'bai-viet';
+  const exclude = excludeId || '';
+  for (let n = 0; n < 50; n++) {
+    const candidate = n === 0 ? slug : slug.slice(0, 140) + '-' + n;
+    const res = await query(
+      `SELECT id FROM community_posts
+       WHERE payload->>'slug' = $1 AND id <> $2
+       LIMIT 1`,
+      [candidate, exclude]
+    );
+    if (!res.rows[0]) return candidate;
+  }
+  return slug.slice(0, 120) + '-' + Date.now().toString(36);
+}
+
+function mergeFormerSlugs(currentFormer, oldSlug, newSlug) {
+  const out = [];
+  const seen = {};
+  function push(s) {
+    const v = String(s || '').trim();
+    if (!v || v === newSlug || seen[v]) return;
+    seen[v] = true;
+    out.push(v);
+  }
+  push(oldSlug);
+  (Array.isArray(currentFormer) ? currentFormer : []).forEach(push);
+  return out.slice(0, 30);
 }
 
 async function createArticle(input, actor) {
   const normalized = normalizeArticleInput(input, actor);
+  normalized.slug = await ensureUniqueSlug(normalized.slug, null);
   const cat = await categories.getCategory(normalized.category_id);
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
@@ -320,6 +376,7 @@ async function createArticle(input, actor) {
   const now = new Date().toISOString();
   const record = Object.assign({}, normalized, {
     id,
+    former_slugs: [],
     chu_de: chuDe,
     chu_de_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
     story_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
@@ -389,6 +446,7 @@ async function updateArticle(id, input, actor) {
   });
 
   const normalized = normalizeArticleInput(merged, actor || current.author);
+  normalized.slug = await ensureUniqueSlug(normalized.slug, current.id);
   const cat = await categories.getCategory(normalized.category_id);
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
@@ -396,8 +454,17 @@ async function updateArticle(id, input, actor) {
   const chuDe = await ensureChuDe(normalized);
   const now = new Date().toISOString();
   const wasPublished = isLivePublished(current.status);
+  const oldSlug = String(current.slug || '').trim();
+  const newSlug = String(normalized.slug || '').trim();
+  const former =
+    oldSlug && newSlug && oldSlug !== newSlug
+      ? mergeFormerSlugs(current.former_slugs, oldSlug, newSlug)
+      : Array.isArray(current.former_slugs)
+        ? current.former_slugs.slice(0, 30)
+        : [];
   const record = Object.assign({}, current, normalized, {
     id: current.id,
+    former_slugs: former,
     chu_de: chuDe,
     chu_de_id: chuDe ? chuDe.id : null,
     chu_de_slug: chuDe ? chuDe.slug : '',
@@ -697,96 +764,113 @@ function escapeHtmlAttr(value) {
 }
 
 /**
- * Article Metadata SoT — một nơi sinh metadata cho mọi pipeline (A share / B SPA).
- * Renderer chỉ consume; không tự suy field.
+ * Article Metadata — P4: consume SEO Platform Contract + one Head Renderer.
+ * Foundation effective is input to Contract (PD-02); no second head engine.
  */
-function resolveArticleMetadata(article, origin) {
-  const item = article || {};
-  const seo = item.seo || {};
-  const cover = item.cover || {};
-  const base = origin || PUBLIC_ORIGIN;
-  const title = String(
-    seo.og_title ||
-    seo.meta_title ||
-    seo.title ||
-    item.title ||
-    'iFlux'
-  ).trim();
-  const description = String(
-    seo.og_description ||
-    seo.meta_description ||
-    seo.description ||
-    item.excerpt ||
-    ''
-  ).trim();
-  const image = absoluteAssetUrl(
-    seo.og_image || cover.url || firstHtmlImage(item.body_html || item.body) || '',
-    base
+async function attachArticleMetadata(article, origin, opts) {
+  if (!article) return article;
+  opts = opts || {};
+  const seoPlatform = require('../seo-platform/seo-platform.service');
+  const headRenderer = require('../seo-platform/head-renderer');
+  const contract = await seoPlatform.resolveArticleContract(article, {
+    origin: origin || PUBLIC_ORIGIN,
+    requestUri: opts.requestUri,
+    search: opts.search,
+    requestedUrl: opts.requestedUrl,
+    httpStatus: opts.httpStatus
+  });
+  article.seoContract = contract;
+  article.metadata = seoPlatform.metadataFromContract(contract);
+  article.metadata._singleton = headRenderer.detectSingletonViolations(
+    '<head>\n' + article.metadata._headHtml + '</head>'
   );
+  return article;
+}
+
+/**
+ * Head tags — P4: always from Contract renderer when `_headHtml` present.
+ * Legacy meta bag path kept only as defensive fallback (commented authority removed).
+ */
+function buildArticleMetadataHeadHtml(meta) {
+  const m = meta && typeof meta === 'object' ? meta : {};
+  if (m._headHtml) return m._headHtml;
+  // Defensive fallback for callers without Contract attach — still one renderer shape.
+  const headRenderer = require('../seo-platform/head-renderer');
+  return headRenderer.renderHeadFromContract(
+    {
+      http: { httpClass: 'indexable_success' },
+      document: {
+        title: m.title || 'iFlux',
+        documentTitle: m.documentTitle || m.title || 'iFlux',
+        description: m.description || ''
+      },
+      identity: {
+        canonicalUrl: m.canonical || m.url || PUBLIC_ORIGIN,
+        seoIdentityUrl: m.url || m.canonical || PUBLIC_ORIGIN
+      },
+      indexability: { robots: m.robots || 'index,follow', indexUniverse: true },
+      social: {
+        og: {
+          title: m.title || 'iFlux',
+          description: m.description || '',
+          image: m.image || '',
+          url: m.url || m.canonical || PUBLIC_ORIGIN,
+          type: 'article',
+          site_name: m.site_name || 'iFlux'
+        },
+        twitter: {
+          card: m.twitter_card || 'summary',
+          title: m.title || 'iFlux',
+          description: m.description || '',
+          image: m.image || ''
+        }
+      },
+      assets: { faviconUrl: m.favicon || '', ogImageUrl: m.image || '' }
+    },
+    { includeJsonLd: false, forceImage: true, schemaType: 'Article' }
+  );
+}
+
+/** @deprecated sync path — prefer attachArticleMetadata (async Contract). */
+function resolveArticleMetadata(article, origin, globalPayload) {
+  /* Kept for rare sync callers; does not rebuild Foundation authority.
+   * Prefer attachArticleMetadata → SEO Contract. */
+  const item = article || {};
+  const base = origin || PUBLIC_ORIGIN;
+  const seoResolver = require('../site-seo/site-seo-resolver');
+  const resolved = seoResolver.resolveEffectiveConfig({
+    global: globalPayload || {},
+    page: {},
+    article: item,
+    fallback: { siteName: 'iFlux' }
+  });
+  const pub = resolved.public;
+  const title = String(pub.title || item.title || 'iFlux').trim();
+  const description = String(pub.description || '').trim();
+  const image = absoluteAssetUrl(pub.og_image || pub.social_image || '', base);
   const slug = item.slug || item.id || '';
-  /* Chia sẻ link iFlux → url / canonical luôn URL iFlux (không dùng canonical RSS ngoài). */
   const canonical = base + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
-  const documentTitle = title.indexOf('iFlux') >= 0 ? title : title + ' · iFlux';
+  const siteName = String(pub.site_name || 'iFlux').trim() || 'iFlux';
+  const documentTitle = title.indexOf(siteName) >= 0 ? title : title + ' · ' + siteName;
   return {
     title,
     description,
     image,
     url: canonical,
     canonical,
-    site_name: 'iFlux',
+    site_name: siteName,
+    favicon: String(pub.favicon_url || '').trim(),
+    robots: 'index,follow',
     twitter_card: image ? 'summary_large_image' : 'summary',
-    documentTitle
+    documentTitle,
+    _fieldStates: resolved.fields,
+    _legacySync: true
   };
 }
 
-/** @deprecated alias — dùng resolveArticleMetadata (SoT). Pipeline A không gọi trực tiếp. */
+/** @deprecated alias — dùng attachArticleMetadata (Contract). */
 function resolveOpenGraphMeta(article, origin) {
   return resolveArticleMetadata(article, origin);
-}
-
-function attachArticleMetadata(article, origin) {
-  if (!article) return article;
-  article.metadata = resolveArticleMetadata(article, origin || PUBLIC_ORIGIN);
-  return article;
-}
-
-/**
- * Head tags từ Article Metadata SoT — một builder cho Pipeline A và B (CG-001/002).
- * Chỉ consume meta; không đọc article/seo/cover.
- * Defensive default (A/B shell) được phép; không suy từ nguồn bài viết.
- */
-function buildArticleMetadataHeadHtml(meta) {
-  const m = meta && typeof meta === 'object' ? meta : {};
-  const title = escapeHtmlAttr(m.title || 'iFlux');
-  const documentTitle = escapeHtmlAttr(m.documentTitle || m.title || 'iFlux');
-  const description = escapeHtmlAttr(m.description || '');
-  const image = escapeHtmlAttr(m.image || '');
-  const canonical = escapeHtmlAttr(m.canonical || m.url || PUBLIC_ORIGIN);
-  const siteName = escapeHtmlAttr(m.site_name || 'iFlux');
-  const twitterCard = escapeHtmlAttr(m.twitter_card || 'summary');
-  const ogUrl = escapeHtmlAttr(m.url || m.canonical || PUBLIC_ORIGIN);
-  let imageMeta = '';
-  if (image) {
-    imageMeta =
-      '  <meta property="og:image" content="' + image + '" />\n' +
-      '  <meta property="og:image:secure_url" content="' + image + '" />\n' +
-      '  <meta name="twitter:image" content="' + image + '" />\n';
-  }
-  return (
-    '  <title>' + documentTitle + '</title>\n' +
-    '  <meta name="description" content="' + description + '" />\n' +
-    '  <link rel="canonical" href="' + canonical + '" />\n' +
-    '  <meta property="og:site_name" content="' + siteName + '" />\n' +
-    '  <meta property="og:type" content="article" />\n' +
-    '  <meta property="og:locale" content="vi_VN" />\n' +
-    '  <meta property="og:title" content="' + title + '" />\n' +
-    '  <meta property="og:description" content="' + description + '" />\n' +
-    '  <meta property="og:url" content="' + ogUrl + '" />\n' +
-    imageMeta +
-    '  <meta name="twitter:card" content="' + twitterCard + '" />\n' +
-    '  <meta name="twitter:title" content="' + title + '" />\n' +
-    '  <meta name="twitter:description" content="' + description + '" />\n'
-  );
 }
 
 /**
@@ -796,11 +880,12 @@ function buildArticleMetadataHeadHtml(meta) {
 function renderOpenGraphHtml(meta) {
   const m = meta && typeof meta === 'object' ? meta : {};
   const canonical = escapeHtmlAttr(m.canonical || m.url || PUBLIC_ORIGIN);
+  const head = buildArticleMetadataHeadHtml(meta);
   return '<!DOCTYPE html>\n' +
     '<html lang="vi">\n' +
     '<head>\n' +
     '  <meta charset="utf-8" />\n' +
-    buildArticleMetadataHeadHtml(meta) +
+    head +
     '  <meta http-equiv="refresh" content="0;url=' + canonical + '" />\n' +
     '</head>\n' +
     '<body>\n' +
@@ -833,14 +918,18 @@ function renderArticleSpaHtml(meta) {
     throw new AppError('Không đọc được shell bài viết', 500, 'SPA_SHELL_MISSING');
   }
   const head = buildArticleMetadataHeadHtml(meta);
-  /* Bỏ title placeholder trong template — thay bằng SoT head (có <title>). */
+  /* Bỏ title placeholder trong template — thay bằng Contract head (có <title>). */
   html = html.replace(/<title>[^<]*<\/title>\s*/i, '');
   html = html.replace(/<!-- Title \+ OG[\s\S]*?-->\s*/i, '');
-  /* Gỡ meta SoT cũ nếu inject lại (idempotent). */
+  /* Gỡ meta SoT cũ nếu inject lại (idempotent) — singleton guarantee. */
   html = html.replace(/\s*<meta name="description"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<meta name="robots"[^>]*>\s*/gi, '\n');
   html = html.replace(/\s*<link rel="canonical"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<link rel="icon"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<link rel="apple-touch-icon"[^>]*>\s*/gi, '\n');
   html = html.replace(/\s*<meta property="og:[^"]+"[^>]*>\s*/gi, '\n');
   html = html.replace(/\s*<meta name="twitter:[^"]+"[^>]*>\s*/gi, '\n');
+  html = html.replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>\s*/gi, '\n');
   /* Inject sớm sau charset/viewport — crawler đọc head đầu trang. */
   if (/<meta charset="utf-8"[^>]*>\s*<meta name="viewport"[^>]*>/i.test(html)) {
     html = html.replace(
@@ -852,7 +941,16 @@ function renderArticleSpaHtml(meta) {
   } else {
     html = head + html;
   }
+  const headRenderer = require('../seo-platform/head-renderer');
+  const singleton = headRenderer.detectSingletonViolations(html);
+  if (!singleton.ok && meta && typeof meta === 'object') {
+    meta._singleton = singleton;
+  }
   return html;
+}
+
+function articlePublicPath(slug) {
+  return '/cong-dong/bai-viet/' + encodeURIComponent(String(slug || '').trim());
 }
 
 module.exports = {
@@ -877,5 +975,7 @@ module.exports = {
   listChuDeAdmin,
   listAuthorsAdmin,
   STATUSES,
-  isLivePublished
+  isLivePublished,
+  ensureUniqueSlug,
+  articlePublicPath
 };

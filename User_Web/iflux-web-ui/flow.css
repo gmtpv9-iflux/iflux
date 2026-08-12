@@ -46,11 +46,6 @@
   flex-direction: column;
   gap: var(--ifx-space-16);
 }
-#ifx-flow-market-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ifx-space-20);
-}
 .ifx-flow-main-col {
   min-width: 0;
 }
@@ -91,9 +86,6 @@
 .ifx-flow-card > .ifx-widget__header > h3 i {
   margin-right: var(--ifx-inline-sm);
 }
-.ifx-flow-card--zone > .ifx-widget__header > h3 i { color: var(--ix-accent); }
-.ifx-flow-card--risk > .ifx-widget__header > h3 i { color: var(--ix-warning); }
-.ifx-flow-card--subject > .ifx-widget__header > h3 i { color: var(--ix-info); }
 .ifx-flow-card__sub {
   margin-top: 0;
   font-size: var(--ifx-font-size-12);
@@ -110,16 +102,6 @@
 .ifx-flow-summary .ifx-flow-panel:last-child {
   border-bottom: none;
   padding-bottom: 0;
-}
-.ifx-flow-summary--sidebar {
-  display: flex;
-  flex-direction: column;
-}
-.ifx-flow-summary--sidebar .ifx-flow-panel {
-  padding: 10px 0;
-}
-.ifx-flow-summary--sidebar .ifx-flow-panel:first-child {
-  padding-top: 0;
 }
 .ifx-flow-toolbar {
   display: flex;

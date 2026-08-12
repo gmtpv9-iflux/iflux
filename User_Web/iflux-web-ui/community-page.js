@@ -202,15 +202,15 @@
     if (global.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
       IfluxPageDefinition.applyPatch({
         title: meta.title,
-        intro: meta.intro,
-        documentTitle: meta.title + ' · iFlux'
+        intro: meta.intro
+        /* documentTitle: chỉ từ Thiết lập SEO /seo/effective — cấm hardcode · iFlux */
       });
     }
     root.innerHTML =
       '<div class="ifx-com-feed-layout">' +
         '<div class="ifx-com-feed-main">' +
           '<div class="ifx-com-breadcrumb">' +
-            '<a href="' + esc(routeUrl('community')) + '">Cộng đồng</a>' +
+            '<a href="' + esc(routeUrl('community')) + '">Trang chủ</a>' +
             '<span class="ifx-com-breadcrumb__sep">/</span>' +
             '<span class="ifx-com-breadcrumb__current">' + esc(meta.title) + '</span>' +
           '</div>' +
@@ -412,24 +412,6 @@
   /**
    * Sidebar Page Feature hooks — hosts Published Widget do Layout Engine dựng.
    */
-  function mountSidebar(root) {
-    /* Entitlement: BlockGate.apply sau khi Layout Engine tạo host. */
-    void root;
-  }
-
-  function mountTrending(root) {
-    /* Phase 3: hosts main section = Layout Engine từ placements — không hardcode widgetId. */
-    void root;
-  }
-
-  function mountFeaturedExperts(root) {
-    if (!blockVisible('BLK-COM-EXPERTS')) return;
-    var mount = root.querySelector('[data-ifx-com-experts-mount]');
-    if (mount && global.IfluxCommunityFeaturedExperts) {
-      IfluxCommunityFeaturedExperts.mount(mount);
-    }
-  }
-
   function hostHasWidgets(host) {
     if (!host) return false;
     if (host.querySelector('[data-widget-id], .ifx-rt-widget')) return true;
@@ -465,35 +447,42 @@
     }
   }
 
+  /* AppShell Foundation VR-02 (100826): Right Sidebar host phải qua ensureSections()
+   * canonical (giống Home/Market/Flow) — không tự dựng <aside> bằng HTML cứng. */
   function renderShell(root) {
     if (!root) return;
     var banner = filterBannerHtml();
 
-    root.innerHTML =
-      '<div class="ifx-com-feed-layout">' +
-        '<div class="ifx-com-feed-main">' +
-          '<section class="ifx-com-list-section ifx-com-list-section--community" hidden>' +
-            '<div class="ifx-com-list-head" hidden>' +
-              '<h2 class="ifx-com-list-title"><i class="ti ti-layout-grid"></i> Tổng quan</h2>' +
-            '</div>' +
-            banner +
-            '<div class="ifx-dash-grid ifx-com-dedicated-grid" data-ifx-section="main"></div>' +
-          '</section>' +
-          /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host sidebar). */
-          '<div data-ifx-com-featured-cats-slot></div>' +
-          /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
-          '<div data-ifx-com-daily-feed></div>' +
-        '</div>' +
-        '<aside class="ifx-com-feed-sidebar" aria-label="Cộng đồng" data-ifx-section="sidebar-right" hidden>' +
-        '</aside>' +
-      '</div>';
+    root.innerHTML = '<div class="ifx-com-feed-layout"></div>';
+    var layout = root.querySelector('.ifx-com-feed-layout');
+    layout.insertAdjacentHTML('beforeend',
+      '<div class="ifx-com-feed-main">' +
+        '<section class="ifx-com-list-section ifx-com-list-section--community" hidden>' +
+          '<div class="ifx-com-list-head" hidden>' +
+            '<h2 class="ifx-com-list-title"><i class="ti ti-layout-grid"></i> Tổng quan</h2>' +
+          '</div>' +
+          banner +
+          '<div class="ifx-dash-grid ifx-com-dedicated-grid" data-ifx-section="main"></div>' +
+        '</section>' +
+        /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host sidebar). */
+        '<div data-ifx-com-featured-cats-slot></div>' +
+        /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
+        '<div data-ifx-com-daily-feed></div>' +
+      '</div>'
+    );
+
+    var sectionApi = global.IfluxRuntimeSections;
+    var sections = sectionApi && sectionApi.ensureSections
+      ? sectionApi.ensureSections(layout, { sections: [{ key: 'sidebar-right', label: 'Cộng đồng' }] })
+      : null;
+    if (sections && sections['sidebar-right']) {
+      sections['sidebar-right'].classList.add('ifx-com-feed-sidebar');
+      sections['sidebar-right'].hidden = true;
+    }
 
     applyBlockGate(root);
-    mountSidebar(root);
-    mountTrending(root);
     /* Chưa mount Placement → tạm 1 cột; syncEmptyHostChrome chỉnh lại sau. */
-    var layout = root.querySelector('.ifx-com-feed-layout');
-    if (layout) layout.style.gridTemplateColumns = 'minmax(0, 1fr)';
+    layout.style.gridTemplateColumns = 'minmax(0, 1fr)';
     state.shellReady = true;
   }
 
@@ -533,8 +522,83 @@
 
     /* Default Filter State = ALL (SOL-CAL-05). URL/path filter → listFilterParams, không ép featured. */
     var urlFilters = readListFilters();
+    var pathColl = readPathCollection();
     var hasUrlFilter = !!(urlFilters.ticker || urlFilters.story || urlFilters.family ||
-      urlFilters.sector || urlFilters.author || urlFilters.category || readPathCollection());
+      urlFilters.sector || urlFilters.author || urlFilters.category || pathColl);
+
+    /* Author / category / topic detail — Admin SEO template (com-author / com-cat / com-topic). */
+    if (pathColl && pathColl.type === 'author' && global.IfluxSeoTitle && IfluxSeoTitle.apply) {
+      var authorId = pathColl.id;
+      loadCollectionIndex('author').then(function (items) {
+        var hit = null;
+        (items || []).some(function (it) {
+          var key = String(it.username || it.id || it.display_name || '');
+          if (key === authorId || String(it.id) === authorId) {
+            hit = it;
+            return true;
+          }
+          return false;
+        });
+        var authorName = (hit && (hit.display_name || hit.name)) || authorId;
+        IfluxSeoTitle.apply({
+          vars: { authorName: authorName },
+          fallbackTitle: 'iFlux | ' + authorName,
+          patch: { title: authorName }
+        });
+      }).catch(function () {
+        IfluxSeoTitle.apply({
+          vars: { authorName: authorId },
+          fallbackTitle: 'iFlux | ' + authorId
+        });
+      });
+    } else if (pathColl && pathColl.type === 'category' && global.IfluxSeoTitle && IfluxSeoTitle.apply) {
+      var catId = pathColl.id;
+      loadCollectionIndex('category').then(function (items) {
+        var hit = null;
+        (items || []).some(function (it) {
+          if (String(it.slug || '') === catId || String(it.id || '') === catId) {
+            hit = it;
+            return true;
+          }
+          return false;
+        });
+        var categoryName = (hit && (hit.name || hit.label)) || catId;
+        IfluxSeoTitle.apply({
+          vars: { categoryName: categoryName },
+          fallbackTitle: 'iFlux | ' + categoryName,
+          patch: { title: categoryName }
+        });
+      }).catch(function () {
+        IfluxSeoTitle.apply({
+          vars: { categoryName: catId },
+          fallbackTitle: 'iFlux | ' + catId
+        });
+      });
+    } else if (pathColl && pathColl.type === 'topic' && global.IfluxSeoTitle && IfluxSeoTitle.apply) {
+      var topicId = pathColl.id;
+      loadCollectionIndex('topic').then(function (items) {
+        var hit = null;
+        (items || []).some(function (it) {
+          if (String(it.slug || '') === topicId || String(it.id || '') === topicId) {
+            hit = it;
+            return true;
+          }
+          return false;
+        });
+        var topicName = (hit && (hit.label || hit.name)) || topicId;
+        IfluxSeoTitle.apply({
+          vars: { storyName: topicName, name: topicName, title: topicName },
+          fallbackTitle: 'iFlux | ' + topicName,
+          patch: { title: topicName }
+        });
+      }).catch(function () {
+        IfluxSeoTitle.apply({
+          vars: { storyName: topicId, name: topicId },
+          fallbackTitle: 'iFlux | ' + topicId
+        });
+      });
+    }
+
     state.featuredCategoryId = '';
 
     fetchFeaturedCategories().then(function (cats) {

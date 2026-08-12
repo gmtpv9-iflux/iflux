@@ -145,10 +145,63 @@
     bindSubmenu(host);
   }
 
-  global.IfluxAdminAppShellSidebar = { render: render };
+  /**
+   * Brand logo — sole owner = Thiết lập SEO hệ thống (logo_url).
+   * Đồng bộ: xóa SVG/hardcode ngay (tránh chớp logo cũ) → rồi gắn img từ /api/seo/effective.
+   */
+  function clearHardcodedBrandLogo() {
+    var slot = document.querySelector('.ix-sidebar .ix-brand-logo, .ix-brand > .ix-brand-logo');
+    if (!slot) return null;
+    if (slot.tagName === 'IMG') {
+      slot.removeAttribute('src');
+      slot.setAttribute('hidden', '');
+      slot.setAttribute('alt', 'iFlux');
+      return slot;
+    }
+    var img = document.createElement('img');
+    img.className = 'ix-brand-logo';
+    img.alt = 'iFlux';
+    img.setAttribute('hidden', '');
+    if (slot.parentNode) slot.parentNode.replaceChild(img, slot);
+    return img;
+  }
+
+  function applyBrandLogoFromSeo() {
+    var img = clearHardcodedBrandLogo();
+    if (!img) return;
+    var origin = (global.location && global.location.origin) || '';
+    if (!origin || origin.indexOf('http') !== 0) return;
+    fetch(origin + '/api/seo/effective?pageKey=dashboard', { credentials: 'omit' })
+      .then(function (res) {
+        if (!res || !res.ok) return null;
+        return res.json();
+      })
+      .then(function (payload) {
+        if (!payload) return;
+        var data = payload.data || payload;
+        var eff = (data && data.effective) || {};
+        var url = String(eff.logo_url || '').trim();
+        if (!url) {
+          img.removeAttribute('src');
+          img.setAttribute('hidden', '');
+          return;
+        }
+        img.src = url;
+        img.removeAttribute('hidden');
+      })
+      .catch(function () { /* slot đã clear — không khôi phục SVG */ });
+  }
+
+  global.IfluxAdminAppShellSidebar = {
+    render: render,
+    applyBrandLogoFromSeo: applyBrandLogoFromSeo,
+    clearHardcodedBrandLogo: clearHardcodedBrandLogo
+  };
 
   function boot() {
+    clearHardcodedBrandLogo();
     render();
+    applyBrandLogoFromSeo();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

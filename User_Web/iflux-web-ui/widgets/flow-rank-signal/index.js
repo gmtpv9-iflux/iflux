@@ -1,7 +1,7 @@
 /**
  * TMP-FLOW-RANK-SIGNAL — ESM (Publish display.module).
  */
-import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { templateId: 'TMP-FLOW-RANK-SIGNAL', title: 'Ranking · Dòng tiền thông minh' };

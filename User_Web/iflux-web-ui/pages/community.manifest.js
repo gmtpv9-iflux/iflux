@@ -10,7 +10,7 @@ export default {
   path: '/cong-dong',
   title: 'Cộng đồng',
   intro: 'Tin tức, bài viết chuyên gia và thảo luận từ cộng đồng nhà đầu tư — cập nhật theo mã, ngành và chủ đề bạn quan tâm.',
-  documentTitle: 'Cộng đồng · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }
@@ -24,14 +24,14 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=calFeedFix20260808',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=stickyRefactor20260811',
       /* Page Feature CSS (feed sở hữu). market-components.css đã chuyển về
          Widget Manifest của WGT-MKT-006 — không nạp ở tầng Page nữa. */
       css: [
         '/User_Web/iflux-web-ui/widget-shell.css?v=ui00120260723',
         '/User_Web/iflux-web-ui/block-templates.css?v=ui00120260723',
         /* Heart CSS = Admin Foundation (iflux-admin-ui.css → foundation/heart-action.css) */
-        '/User_Web/iflux-web-ui/community.css?v=bodyFill20260809'
+        '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811'
       ]
     }
   ]

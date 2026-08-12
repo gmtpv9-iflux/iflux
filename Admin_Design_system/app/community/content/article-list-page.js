@@ -57,52 +57,14 @@
     scheduled: { label: 'Đã lên lịch', chip: 'ix-chip ix-chip-info' }
   };
 
-  var SOURCE_NAME = {
-    cafef: 'CafeF',
-    vietstock: 'VietStock',
-    baodautu: 'Báo Đầu Tư',
-    'bao-dau-tu': 'Báo Đầu Tư'
-  };
-
-  /** Nguồn: bài iFlux → Role; bài RSS → tên nhà cung cấp */
+  /**
+   * Nguồn (SoT Wave B): chỉ author.display_name.
+   * CẤM fallback source_name / provider / vendor / tier_label.
+   */
   function nguonLabel(a) {
     var author = a.author || {};
-    var rawSrc =
-      a.source_name ||
-      a.source_label ||
-      a.source_code ||
-      a.provider_name ||
-      a.provider ||
-      (typeof a.source === 'string' ? a.source : null) ||
-      (a.source && (a.source.name || a.source.label || a.source.code || a.source.id)) ||
-      a.source_id ||
-      '';
-    rawSrc = String(rawSrc || '').trim();
-
-    var isRss = !!(
-      a.external_url ||
-      a.ingest_source ||
-      a.from_rss ||
-      (a.origin && String(a.origin).toLowerCase() === 'rss') ||
-      (a.content_origin && /rss|crawl|ingest/i.test(String(a.content_origin))) ||
-      (a.source && (a.source.type === 'rss' || a.source.provider)) ||
-      (rawSrc && /cafef|vietstock|bao.?d[aà]u.?t[uư]|rss/i.test(rawSrc))
-    );
-
-    if (isRss) {
-      var key = rawSrc.toLowerCase().replace(/\s+/g, '');
-      if (SOURCE_NAME[key]) return SOURCE_NAME[key];
-      if (rawSrc) return rawSrc;
-      return 'RSS';
-    }
-
-    return (
-      author.tier_label ||
-      author.role_label ||
-      author.role ||
-      author.tier ||
-      'iFlux'
-    );
+    var name = author.display_name || author.name || '';
+    return String(name || '').trim() || '—';
   }
 
   function chuTheLabel(a) {

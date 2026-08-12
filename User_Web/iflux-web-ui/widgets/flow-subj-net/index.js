@@ -2,7 +2,7 @@
  * WGT-FLW-SUBJ-* — Sidebar dòng tiền mua/bán ròng (ESM)
  * Chỉ nạp dependency của khối này — không kéo seed Admin / registry thị trường.
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

@@ -2,7 +2,7 @@
  * Phase A — Feature Viết bài Cộng đồng sau App Shell Entry.
  * Hiện tạm đóng UI viết bài (entitlement communityWrite = false toàn hệ thống).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptsSequential } from './legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

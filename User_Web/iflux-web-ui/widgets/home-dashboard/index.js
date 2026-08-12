@@ -11,7 +11,7 @@
  * User override lưu IfluxUserStorage (dashboard-engine).
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=phaseBExit20260721c';
 
 var A = '/User_Web/iflux-web-ui/';

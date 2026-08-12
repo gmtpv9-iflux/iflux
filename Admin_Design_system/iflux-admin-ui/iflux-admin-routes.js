@@ -49,7 +49,11 @@
     "metadata-enums": { key: "metadata-enums", slug: "/admin/tham-so/enums", file: "metadata/enums.html" },
     "metadata-themes": { key: "metadata-themes", slug: "/admin/tham-so/themes", file: "metadata/themes.html" },
     "metadata-chu-de-lifecycle": { key: "metadata-chu-de-lifecycle", slug: "/admin/tham-so/chu-de-lifecycle", file: "metadata/chu-de-lifecycle.html" },
-    "marketing-brand-identity": { key: "marketing-brand-identity", slug: "/admin/tiep-thi/brand-identity", file: "marketing/brand-identity.html" },
+    /* Owner 2026-08-10: Nhận diện thương hiệu UI removed — SEO hệ thống owns name/logo/favicon.
+       Keep key as alias → Thiết lập SEO hệ thống (bookmark/redirect). */
+    "marketing-brand-identity": { key: "marketing-brand-identity", slug: "/admin/tiep-thi/brand-identity", file: "marketing/thiet-lap-seo-he-thong.html" },
+    "marketing-seo-system": { key: "marketing-seo-system", slug: "/admin/tiep-thi/thiet-lap-seo-he-thong", file: "marketing/thiet-lap-seo-he-thong.html" },
+    "marketing-seo-pages": { key: "marketing-seo-pages", slug: "/admin/tiep-thi/thiet-lap-seo-tung-trang", file: "marketing/thiet-lap-seo-tung-trang.html" },
     "marketing-onboarding": { key: "marketing-onboarding", slug: "/admin/tiep-thi/onboarding", file: "marketing/onboarding.html" },
     "system-page-settings": { key: "system-page-settings", slug: "/admin/he-thong/page-settings", file: "system/page-settings.html" },
     "system-templates": { key: "system-templates", slug: "/admin/he-thong/templates", file: "system/templates.html" },

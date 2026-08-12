@@ -1,13 +1,13 @@
 /**
  * Page Manifest — Danh sách hệ sinh thái (/he-sinh-thai)
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR03_20260811';
 
 export default {
   pageKey: 'ecosystems',
   path: '/he-sinh-thai',
   title: '',
-  documentTitle: 'Danh sách hệ sinh thái · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

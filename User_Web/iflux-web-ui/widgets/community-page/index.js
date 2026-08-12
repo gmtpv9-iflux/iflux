@@ -6,6 +6,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=calFeedFix20260808';
 import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=calFeedFix20260808';
+import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
 import featureManifest from '../../features/community.manifest.js?v=calFeedFix20260808';
 
 export const meta = { id: 'WGT-COM-PAGE', title: 'Cộng đồng' };
@@ -50,6 +51,9 @@ function applyCommunity(root) {
 
 export async function mount(el) {
   el.innerHTML = '<div data-ifx-community-feed></div>';
+  /* AppShell Foundation VR-02 (100826): bridge ensureSections() ESM cho
+   * community-page.js (legacy IIFE) dựng Right Sidebar canonical trong renderShell(). */
+  window.IfluxRuntimeSections = { ensureSections: ensureSections };
   featureRt = createFeatureRuntime(featureManifest);
   await featureRt.boot({
     init: function () {
@@ -69,19 +73,6 @@ export async function mount(el) {
   }
   applyCommunity(el);
   if (!indexOnly) await mountFromHostTree(el);
-  if (indexOnly) {
-    setTimeout(function () {
-      var path = String(location.pathname || '').replace(/\/+$/, '');
-      var titles = {
-        '/cong-dong/chu-de': 'Danh sách chủ đề · iFlux',
-        '/cong-dong/tac-gia': 'Danh sách tác giả · iFlux',
-        '/cong-dong/danh-muc': 'Danh sách danh mục · iFlux'
-      };
-      if (titles[path] && window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
-        IfluxPageDefinition.applyPatch({ documentTitle: titles[path] });
-      }
-    }, 0);
-  }
   document.addEventListener('iflux-plans-updated', onPlans);
   document.addEventListener('iflux-community-remount-widgets', onRemount);
   return {

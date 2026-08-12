@@ -59,6 +59,8 @@
     'com-topic': ['main', 'sidebar-right'],
     'com-cat': ['main', 'sidebar-right'],
     'com-author': ['main', 'sidebar-right'],
+    // Chi tiết bài viết — Main là nội dung bài viết (không composable), chỉ Sidebar phải là Widget Host
+    'com-post-detail': ['sidebar-right'],
     // Runtime Flow đã có đúng 4 host này. Main là Page Feature, không phải Widget Area.
     flow: ['sidebar', 'basic', 'advanced', 'exclusive'],
     membership: ['main'],
@@ -245,7 +247,8 @@
     sectors: 'knowledge', 'sector-detail': 'knowledge',
     ecosystems: 'knowledge', 'eco-detail': 'knowledge',
     'cau-chuyen': 'knowledge', 'cau-chuyen-detail': 'knowledge',
-    'com-topic': 'community', 'com-cat': 'community', 'com-author': 'community'
+    'com-topic': 'community', 'com-cat': 'community', 'com-author': 'community',
+    'com-post-detail': 'community'
   };
 
   /**
@@ -327,9 +330,16 @@
     )
   ];
 
-  /** Community utilities — không composable Bố cục (chưa Widget Host riêng). */
+  /** Community utilities — Viết bài chưa composable Bố cục. */
   var COMMUNITY_UTILITY_PAGES = [
-    { id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/cong-dong/bai-viet/:id', dynamic: true, status: 'active' },
+    {
+      id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/cong-dong/bai-viet/:id',
+      order: 40 + COMMUNITY_PAGE_ORDER++, navVisible: false, status: 'active', userCustomizable: false, group: 'Community', dynamic: true,
+      description: 'Trang chi tiết bài viết. Main: nội dung bài viết (không composable) · Sidebar phải: Widget Host riêng, chèn trước các block đặc thù (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận).',
+      sections: cloneSections([
+        { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
+      ])
+    },
     { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/cong-dong/viet-bai', status: 'inactive' }
   ];
 
@@ -546,10 +556,15 @@
     return page;
   }
 
+  /* Utility page composable (có sections) → hiện trong Bố cục/Widget Placement giống
+   * page thường (vd com-post-detail sau khi có Sidebar phải Widget Host). Utility page
+   * chưa composable (vd com-write, chưa có sections) → chỉ hiện ở tab Sitemap. */
+  var COMMUNITY_UTILITY_COMPOSABLE = COMMUNITY_UTILITY_PAGES.filter(function (p) { return !!(p && p.sections); });
+
   function buildModel(storeData) {
     storeData = storeData || {};
     var pagesStore = storeData.pages || {};
-    return DEFAULT_PAGES.concat(KNOWLEDGE_PAGES).concat(COMMUNITY_PAGES).map(function (base) {
+    return DEFAULT_PAGES.concat(KNOWLEDGE_PAGES).concat(COMMUNITY_PAGES).concat(COMMUNITY_UTILITY_COMPOSABLE).map(function (base) {
       return mergePage(base, pagesStore[base.key] || pagesStore[base.id]);
     }).sort(function (a, b) { return a.order - b.order; });
   }

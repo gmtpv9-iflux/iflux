@@ -100,27 +100,44 @@ async function listAssets(filters) {
 
 async function listUsages(assetId) {
   const res = await query(
-    `SELECT id, asset_id, article_id, field_ref, created_at
+    `SELECT id, asset_id, article_id, scope, owner_ref, field_ref, created_at
      FROM media_usages WHERE asset_id = $1 ORDER BY created_at DESC`,
     [assetId]
   );
   return res.rows;
 }
 
+/** ARTICLE path — preserved for existing callers */
 async function upsertUsage(assetId, articleId, fieldRef) {
+  return upsertUsageScoped(assetId, 'ARTICLE', String(articleId || ''), fieldRef, articleId);
+}
+
+/**
+ * Scoped usage for GLOBAL / PAGE / ARTICLE.
+ * ARTICLE keeps article_id; GLOBAL/PAGE set article_id NULL.
+ */
+async function upsertUsageScoped(assetId, scope, ownerRef, fieldRef, articleId) {
   const id = newId('usu');
+  const sc = String(scope || 'ARTICLE').toUpperCase();
+  const owner = String(ownerRef || '').trim();
+  const field = fieldRef || 'body';
+  let art = null;
+  if (sc === 'ARTICLE') {
+    art = articleId != null ? String(articleId) : owner;
+    if (!art) throw AppError.badRequest('BAD_REQUEST', 'Thiếu article_id cho usage ARTICLE');
+  }
   await query(
-    `INSERT INTO media_usages (id, asset_id, article_id, field_ref)
-     VALUES ($1,$2,$3,$4)
-     ON CONFLICT (asset_id, article_id, field_ref) DO NOTHING`,
-    [id, assetId, articleId, fieldRef || 'body']
+    `INSERT INTO media_usages (id, asset_id, article_id, scope, owner_ref, field_ref)
+     VALUES ($1,$2,$3,$4,$5,$6)
+     ON CONFLICT (asset_id, scope, owner_ref, field_ref) DO NOTHING`,
+    [id, assetId, art, sc, owner || art || 'global', field]
   );
 }
 
 async function softDeleteAsset(assetId) {
   const uc = await query(`SELECT COUNT(*)::int AS c FROM media_usages WHERE asset_id = $1`, [assetId]);
   if (uc.rows[0] && uc.rows[0].c > 0) {
-    throw AppError.conflict('MEDIA_IN_USE', 'Ảnh đang được bài viết sử dụng — không thể xóa');
+    throw AppError.conflict('MEDIA_IN_USE', 'Ảnh đang được sử dụng — không thể xóa');
   }
   await query(
     `UPDATE media_assets SET status = 'deleted_soft', updated_at = NOW() WHERE id = $1`,
@@ -159,6 +176,9 @@ async function createAssetFromBuffer(config, buf, opts) {
     { role: 'delivery', pack: variantsPack.delivery },
     { role: 'thumbnail', pack: variantsPack.thumbnail }
   ];
+  if (variantsPack.social) {
+    roles.push({ role: 'social', pack: variantsPack.social });
+  }
 
   const written = [];
   for (let i = 0; i < roles.length; i++) {
@@ -267,15 +287,96 @@ async function getJob(jobId) {
   return res.rows[0] || null;
 }
 
+var MIME_BY_FORMAT = { webp: 'image/webp', jpeg: 'image/jpeg', jpg: 'image/jpeg', png: 'image/png' };
+
+function formatToMime(format) {
+  return MIME_BY_FORMAT[String(format || '').toLowerCase()] || '';
+}
+
+/**
+ * PD-20 / SOL-IMG: prefer JPEG/PNG public URL for OG/social (delivery is often WebP);
+ * also returns real width/height/mime from media_variants so callers can emit
+ * og:image:width|height|type instead of a bare URL (BR-05 social preview gap, 2026-08-11).
+ * Looks up media_variants by delivery public_url; returns original jpeg/png when present.
+ */
+async function resolveSocialCompatibleImage(url) {
+  var raw = String(url || '').trim();
+  if (!raw) return { url: '', width: null, height: null, mime: '' };
+  var pathOnly = raw;
+  try {
+    if (/^https?:\/\//i.test(raw)) {
+      pathOnly = new URL(raw).pathname || raw;
+    }
+  } catch (e) {
+    pathOnly = raw.split('?')[0];
+  }
+  pathOnly = String(pathOnly || '').split('?')[0];
+  if (pathOnly.indexOf('/media/') !== 0) {
+    return { url: raw, width: null, height: null, mime: '' };
+  }
+  try {
+    if (/\.webp$/i.test(pathOnly)) {
+      const swap = await query(
+        `SELECT v.public_url, v.format, v.width, v.height
+         FROM media_variants d
+         JOIN media_variants v ON v.asset_id = d.asset_id
+         WHERE d.public_url = $1 AND d.role = 'delivery'
+           AND v.role IN ('social', 'original')
+           AND lower(v.format) IN ('jpeg','jpg','png')
+         ORDER BY CASE WHEN v.role = 'social' THEN 0 ELSE 1 END
+         LIMIT 1`,
+        [pathOnly]
+      );
+      var swapped = swap.rows[0];
+      if (swapped && swapped.public_url) {
+        var swappedUrl = swapped.public_url;
+        if (/^https?:\/\//i.test(raw)) {
+          try {
+            var u = new URL(raw);
+            u.pathname = swappedUrl;
+            u.search = '';
+            swappedUrl = u.toString();
+          } catch (e2) {
+            /* keep bare path */
+          }
+        }
+        return {
+          url: swappedUrl,
+          width: swapped.width || null,
+          height: swapped.height || null,
+          mime: formatToMime(swapped.format)
+        };
+      }
+    }
+    const own = await query(
+      `SELECT format, width, height FROM media_variants WHERE public_url = $1 LIMIT 1`,
+      [pathOnly]
+    );
+    if (own.rows[0]) {
+      return {
+        url: raw,
+        width: own.rows[0].width || null,
+        height: own.rows[0].height || null,
+        mime: formatToMime(own.rows[0].format)
+      };
+    }
+  } catch (e) {
+    /* keep raw, no metadata */
+  }
+  return { url: raw, width: null, height: null, mime: '' };
+}
+
 module.exports = {
   getAsset,
   listAssets,
   listUsages,
   upsertUsage,
+  upsertUsageScoped,
   softDeleteAsset,
   updateAlt,
   createAssetFromBuffer,
   findByFingerprint,
+  resolveSocialCompatibleImage,
   createJob,
   finishJob,
   getJob,

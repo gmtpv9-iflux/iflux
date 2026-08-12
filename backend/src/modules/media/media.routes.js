@@ -2,7 +2,7 @@
 
 const express = require('express');
 const multer = require('multer');
-const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
+const { requireAdminPermission, requireAdminAnyPermission } = require('../admin-rbac/admin-perm-guard');
 const { AppError } = require('../../shared/exceptions/app-error');
 const mediaService = require('./media.service');
 const mediaImport = require('./media-import.service');
@@ -26,6 +26,16 @@ function createMediaRouter(deps) {
   function perm() {
     return requireAdminPermission({ config: config, auth: auth }, Array.prototype.slice.call(arguments));
   }
+
+  function permAny() {
+    return requireAdminAnyPermission({ config: config, auth: auth }, Array.prototype.slice.call(arguments));
+  }
+
+  var mediaWriteAny = permAny(
+    'community.articles.edit',
+    'marketing.seo_system.edit',
+    'marketing.seo_pages.edit'
+  );
 
   storage.ensureMediaRoot(config);
 
@@ -91,7 +101,24 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.post('/upload', perm('community.articles.edit'), upload.single('file'), async function (
+  router.post('/usages', mediaWriteAny, async function (req, res, next) {
+    try {
+      const body = req.body || {};
+      const assetId = body.asset_id;
+      if (!assetId) throw AppError.badRequest('MEDIA_USAGE', 'Thiếu asset_id');
+      const scope = String(body.scope || 'ARTICLE').toUpperCase();
+      const ownerRef = body.owner_ref != null ? String(body.owner_ref) : '';
+      const fieldRef = body.field_ref || 'body';
+      const articleId = body.article_id;
+      await mediaService.upsertUsageScoped(assetId, scope, ownerRef || articleId, fieldRef, articleId);
+      const usages = await mediaService.listUsages(assetId);
+      return success(res, { usages: usages });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/upload', mediaWriteAny, upload.single('file'), async function (
     req,
     res,
     next

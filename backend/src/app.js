@@ -159,6 +159,15 @@ function createApp(config) {
   } = require('./modules/metadata/wave-d-admin.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/metadata`, createMetadataAdminRouter({ config, auth: adminAuthMw }));
   app.use(`${config.LEGACY_API_PREFIX}/admin/marketing`, createMarketingBrandRouter({ config, auth: adminAuthMw }));
+  const { createSiteSeoAdminRouter, createSiteSeoPublicRouter } = require('./modules/site-seo/site-seo.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/admin/seo`, createSiteSeoAdminRouter({ config, auth: adminAuthMw }));
+  app.use(`${config.LEGACY_API_PREFIX}/seo`, createSiteSeoPublicRouter());
+  const {
+    createSeoPlatformApiRouter,
+    mountSeoPlatformPublicRoots
+  } = require('./modules/seo-platform/seo-platform.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/seo/platform`, createSeoPlatformApiRouter());
+  mountSeoPlatformPublicRoots(app);
   app.use(`${config.LEGACY_API_PREFIX}/admin/community-ops`, createCommunityOpsAdminRouter({ config, auth: adminAuthMw }));
 
   const {

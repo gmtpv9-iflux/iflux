@@ -1,7 +1,7 @@
 /* Trang Danh sách Entity — Cổ phiếu / Ngành / Họ CP / Câu chuyện
  * Bản chất: danh sách cổ phiếu nhóm theo tab (sàn / ngành / họ / câu chuyện).
- * Sidebar 1/4: Heatmap + Thống kê theo chủ thể + Top 10 hiệu suất (theo chủ thể của trang).
- * Main 3/4: tabs + danh sách cổ phiếu (heart = watchlist, bell = cảnh báo, có trạng thái).
+ * Sidebar = AppShell Left Sidebar canonical (Widget Host, Admin Widget Placement).
+ * Main: tabs + danh sách cổ phiếu (heart = watchlist, bell = cảnh báo, có trạng thái).
  * Chỉ dùng class/component có sẵn trong Design System — không tự chế CSS.
  */
 (function (global) {
@@ -20,31 +20,19 @@
   var META = {
     stocks: {
       title: 'Danh sách cổ phiếu',
-      intro: 'Toàn bộ cổ phiếu nhóm theo sàn giao dịch. Theo dõi (tim) và đặt cảnh báo (chuông) ngay trên từng mã.',
-      heatIcon: 'ti ti-layout-grid',
-      top10Icon: 'ti ti-trophy',
-      top10Title: 'Top 10 cổ phiếu hiệu suất'
+      intro: 'Toàn bộ cổ phiếu nhóm theo sàn giao dịch. Theo dõi (tim) và đặt cảnh báo (chuông) ngay trên từng mã.'
     },
     sectors: {
       title: 'Danh sách ngành',
-      intro: 'Cổ phiếu nhóm theo ngành. Chọn tab ngành để xem danh sách mã và trạng thái theo dõi / cảnh báo.',
-      heatIcon: 'ti ti-layout-grid',
-      top10Icon: 'ti ti-trophy',
-      top10Title: 'Top 10 ngành hiệu suất'
+      intro: 'Cổ phiếu nhóm theo ngành. Chọn tab ngành để xem danh sách mã và trạng thái theo dõi / cảnh báo.'
     },
     ecosystems: {
       title: 'Danh sách hệ sinh thái',
-      intro: 'Cổ phiếu nhóm theo họ cổ phiếu (hệ sinh thái). Chọn tab để xem danh sách mã trong từng họ.',
-      heatIcon: 'ti ti-layout-grid',
-      top10Icon: 'ti ti-trophy',
-      top10Title: 'Top 10 hệ sinh thái hiệu suất'
+      intro: 'Cổ phiếu nhóm theo họ cổ phiếu (hệ sinh thái). Chọn tab để xem danh sách mã trong từng họ.'
     },
     stories: {
       title: 'Danh sách câu chuyện',
-      intro: 'Cổ phiếu nhóm theo câu chuyện thị trường. Chọn tab để xem danh sách mã theo từng câu chuyện.',
-      heatIcon: 'ti ti-layout-grid',
-      top10Icon: 'ti ti-trophy',
-      top10Title: 'Top 10 câu chuyện hiệu suất'
+      intro: 'Cổ phiếu nhóm theo câu chuyện thị trường. Chọn tab để xem danh sách mã theo từng câu chuyện.'
     }
   };
   META['chu-de'] = META.stories;
@@ -374,12 +362,10 @@
     if (window.IfluxPageDefinition && IfluxPageDefinition.applyPatch) {
       IfluxPageDefinition.applyPatch({
         title: meta.title,
-        intro: meta.intro,
-        documentTitle: meta.title + ' · iFlux'
+        intro: meta.intro
       });
     }
 
-    var sidebar = document.querySelector('[data-elp-sidebar]');
     var main = document.querySelector('[data-elp-main]');
     if (!main) return;
 

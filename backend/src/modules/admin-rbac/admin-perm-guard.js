@@ -54,6 +54,33 @@ function requireAdminPermission(deps, keys) {
   };
 }
 
+/** JWT/Key + RBAC + ÍT NHẤT 1 permission trong danh sách. */
+function requireAdminAnyPermission(deps, keys) {
+  deps = deps || {};
+  const config = deps.config || {};
+  const auth = deps.auth || {};
+  const keyList = Array.isArray(keys) ? keys : Array.prototype.slice.call(arguments, 1);
+  const keyGuard = requireAdminKey(config);
+  const jwtGuard = auth.authenticateAdmin;
+  const ctx = createRbacContext(config);
+  const perm = requireAnyPermission.apply(null, keyList);
+
+  return function adminAnyPermGuard(req, res, next) {
+    const hasBearer = String(req.headers.authorization || '').startsWith('Bearer ');
+    if (jwtGuard && hasBearer) {
+      return jwtGuard(req, res, function (err) {
+        if (err) return next(err);
+        if (!req.admin) return keyGuard(req, res, next);
+        return ctx(req, res, function (err2) {
+          if (err2) return next(err2);
+          return perm(req, res, next);
+        });
+      });
+    }
+    return keyGuard(req, res, next);
+  };
+}
+
 /** JWT-only (không X-Admin-Key) + RBAC + permission. */
 function requireJwtPermission(deps, keys) {
   deps = deps || {};
@@ -137,6 +164,7 @@ function requireAdminStatusPermission(deps, prefix, statusToAction) {
 module.exports = {
   requireAdminKey,
   requireAdminPermission,
+  requireAdminAnyPermission,
   requireJwtPermission,
   requireAdminStatusPermission,
   requirePermission,

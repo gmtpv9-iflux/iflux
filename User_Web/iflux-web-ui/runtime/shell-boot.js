@@ -17,7 +17,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG nạp widget implementation.
  */
 
-import { loadScript } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
@@ -148,7 +148,7 @@ async function ensureMarketLibs(pageKey) {
     var marketPlatformLibs = [
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoTitleTpl20260810' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoEntityPricing20260810' }
     ];
     if (!isProdHost) {
       marketPlatformLibs = [
@@ -162,7 +162,7 @@ async function ensureMarketLibs(pageKey) {
     await ensureParallel([
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoTitleTpl20260810' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoEntityPricing20260810' }
     ]);
   }
 }

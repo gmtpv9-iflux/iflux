@@ -1,7 +1,7 @@
 /**
  * Feature /binh-luan — Slice 4.5: API-only Host (không dual-read LS).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptsSequential } from './legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';

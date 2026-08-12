@@ -1,7 +1,7 @@
 /**
  * WGT-COM-002 — Thành viên tích cực (ESM lazy Widget module)
  */
-import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

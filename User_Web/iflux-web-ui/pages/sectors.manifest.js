@@ -1,13 +1,13 @@
 /**
  * Page Manifest — Danh sách ngành (/nganh)
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR03_20260811';
 
 export default {
   pageKey: 'sectors',
   path: '/nganh',
   title: '',
-  documentTitle: 'Danh sách ngành · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

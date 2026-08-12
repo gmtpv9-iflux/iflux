@@ -1,7 +1,7 @@
 /**
  * TMP-RANK-PERF — ESM (Publish display.module).
  */
-import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { loadScriptTiers, loadStyles } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { templateId: 'TMP-RANK-PERF', title: 'Bảng xếp hạng theo chỉ số' };

@@ -225,7 +225,9 @@ const MODULES = [
     key: 'marketing',
     pages: [
       { key: 'onboarding', actions: ['view', 'edit'] },
-      { key: 'brand_identity', actions: ['view', 'edit'] }
+      { key: 'brand_identity', actions: ['view', 'edit'] },
+      { key: 'seo_system', actions: ['view', 'edit'] },
+      { key: 'seo_pages', actions: ['view', 'edit'] }
     ]
   },
   {

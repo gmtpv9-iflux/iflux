@@ -62,25 +62,16 @@
     var key = pageKey || definition.pageKey || '';
     var params = resolveRouteParams(key, loc);
     if (key === 'stock' && params.symbol) {
-      var docTitle = stockDocumentTitle(params.symbol);
-      definition.documentTitle = docTitle;
-      definition.title = docTitle;
+      /* documentTitle: Thiết lập SEO stock-detail template via IfluxSeoTitle — không hardcode */
+      definition.title = params.symbol;
       definition.routeParams = params;
     }
     return definition;
   }
 
-  /** Gọi sync khi script load — trước module bootstrap. */
+  /** Early title disabled — Admin SEO / IfluxSeoTitle owns document.title after boot. */
   function applyEarlyDocumentTitle(loc) {
-    var path = ((loc || global.location || {}).pathname || '').toLowerCase();
-    if (/\/stock\/comment/.test(path)) return null;
-    var ticker = parseStockTicker(loc);
-    if (!ticker) return null;
-    var docTitle = stockDocumentTitle(ticker);
-    if (docTitle && global.document) {
-      global.document.title = docTitle;
-    }
-    return docTitle;
+    return null;
   }
 
   var earlyTitle = applyEarlyDocumentTitle();

@@ -132,6 +132,19 @@
       .slice(0, 160);
   }
 
+  var PUBLIC_ORIGIN = 'https://iflux.vn';
+
+  function syncSlugAndCanonicalFromTitle() {
+    var title = ($('fld-title') && $('fld-title').value) || '';
+    var slug = slugify(title);
+    if ($('fld-slug')) $('fld-slug').value = slug;
+    if ($('fld-seo-canonical')) {
+      $('fld-seo-canonical').value = slug
+        ? PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(slug)
+        : '';
+    }
+  }
+
   function qs(name) {
     return new URLSearchParams(window.location.search).get(name);
   }
@@ -323,7 +336,7 @@
 
     return {
       title: title,
-      slug: ($('fld-slug').value || '').trim() || slugify(title),
+      slug: slugify(title),
       excerpt: excerpt,
       body_html: bodyEditor
         ? bodyEditor.getBodyHtml()
@@ -346,7 +359,8 @@
         title: seoTitle || title,
         description: seoDesc || excerpt,
         keywords: ($('fld-seo-keywords').value || '').trim(),
-        canonical: ($('fld-seo-canonical').value || '').trim()
+        og_image_alt: ($('fld-seo-og-alt') && $('fld-seo-og-alt').value || '').trim(),
+        canonical: ''
       },
       status: status,
       display: {
@@ -366,7 +380,15 @@
     $('cnt-bc-title').textContent = 'Sửa bài';
     $('cnt-page-title').textContent = 'Sửa bài viết';
     $('fld-title').value = item.title || '';
-    $('fld-slug').value = item.slug || '';
+    syncSlugAndCanonicalFromTitle();
+    /* Nếu slug hiện tại khác slugify(title) (RSS suffix…), vẫn hiện slug đang live tới khi Admin đổi tiêu đề / lưu */
+    if (item.slug && $('fld-slug')) {
+      $('fld-slug').value = item.slug;
+      if ($('fld-seo-canonical')) {
+        $('fld-seo-canonical').value =
+          PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(item.slug);
+      }
+    }
     $('fld-excerpt').value = item.excerpt || '';
     if (bodyEditor) bodyEditor.setBodyHtml(item.body_html || '');
     else if ($('fld-body')) $('fld-body').value = item.body_html || '';
@@ -387,7 +409,17 @@
     $('fld-seo-title').value = seo.title || '';
     $('fld-seo-desc').value = seo.description || '';
     $('fld-seo-keywords').value = seo.keywords || '';
-    $('fld-seo-canonical').value = seo.canonical || '';
+    if ($('fld-seo-og-alt')) {
+      $('fld-seo-og-alt').value = seo.og_image_alt || seo.ogImageAlt || '';
+      var autoAlt = (cover.alt || seo.title || item.title || '').trim();
+      $('fld-seo-og-alt').placeholder = !$('fld-seo-og-alt').value && autoAlt
+        ? autoAlt
+        : 'Tuỳ chọn — để trống nếu title/alt đủ';
+    }
+    if ($('fld-seo-canonical') && item.slug) {
+      $('fld-seo-canonical').value =
+        PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(item.slug);
+    }
     $('fld-status').value = item.status || 'draft';
     var pubAt = item.scheduled_at || item.published_at || '';
     if ($('fld-publish-at') && pubAt) {
@@ -682,19 +714,11 @@
     var titleEl = $('fld-title');
     if (titleEl) {
       titleEl.addEventListener('input', function () {
-        if (!$('fld-slug').dataset.touched) {
-          $('fld-slug').value = slugify(titleEl.value);
-        }
+        syncSlugAndCanonicalFromTitle();
         clearTimeout(suggestTimer);
         suggestTimer = setTimeout(function () {
           suggestChuDe(titleEl.value);
         }, 280);
-      });
-    }
-    var slugEl = $('fld-slug');
-    if (slugEl) {
-      slugEl.addEventListener('input', function () {
-        slugEl.dataset.touched = '1';
       });
     }
     var qEl = $('art-chude-q');

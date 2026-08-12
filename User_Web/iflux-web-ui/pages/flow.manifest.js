@@ -9,7 +9,7 @@ export default {
   pageKey: 'flow',
   path: '/dong-tien',
   title: '',
-  documentTitle: 'Dòng tiền · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }
@@ -23,10 +23,10 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=mdmShell20260808',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=sidebarVR01_20260811',
       css: [
         '/User_Web/iflux-web-ui/market-components.css',
-        '/User_Web/iflux-web-ui/flow.css',
+        '/User_Web/iflux-web-ui/flow.css?v=stickyRefactor20260811',
         '/User_Web/iflux-web-ui/block-templates.css'
       ]
     }

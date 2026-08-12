@@ -2,7 +2,7 @@ export default {
   pageKey: 'comments',
   path: '/binh-luan',
   title: 'Bình luận',
-  documentTitle: 'Bình luận · iFlux',
+  documentTitle: '',
   seo: {
     description: 'Thảo luận và bình luận trên iFlux.',
     robots: 'noindex,follow'

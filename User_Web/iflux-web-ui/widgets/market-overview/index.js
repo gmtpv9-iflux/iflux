@@ -5,7 +5,7 @@
  * WP-4: bỏ module mock thị trường khỏi dep chain.
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

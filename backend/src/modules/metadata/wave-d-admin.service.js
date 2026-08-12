@@ -36,7 +36,63 @@ const listLifecycle = crudList('meta_story_lifecycle', 'sort_order ASC, code ASC
 const listComments = crudList('community_admin_comments', 'updated_at DESC');
 const listReports = crudList('community_admin_reports', 'updated_at DESC');
 const listRssSync = crudList('community_rss_sync_jobs', 'code ASC');
-const listRssSchema = crudList('community_rss_schema', 'code ASC');
+
+const articleSchemaFields = require('../community/community-article-schema-fields');
+
+function enrichRssSchemaRow(row) {
+  if (!row) return row;
+  const mapping =
+    row.mapping_json && typeof row.mapping_json === 'object' ? row.mapping_json : {};
+  const fields = articleSchemaFields.resolveFields(mapping);
+  return Object.assign({}, row, {
+    fields,
+    field_count: fields.length,
+    schema_version: articleSchemaFields.SCHEMA_VERSION
+  });
+}
+
+async function ensureDefaultArticleSchema() {
+  const code = articleSchemaFields.SCHEMA_CODE;
+  const existing = await query(
+    `SELECT * FROM community_rss_schema WHERE code = $1 LIMIT 1`,
+    [code]
+  );
+  const row = existing.rows[0] || null;
+  const mapping = row && row.mapping_json ? row.mapping_json : null;
+  if (row && !articleSchemaFields.needsSchemaUpgrade(mapping)) {
+    return enrichRssSchemaRow(row);
+  }
+
+  const next = {
+    version: articleSchemaFields.SCHEMA_VERSION,
+    fields: articleSchemaFields.resolveFields(mapping)
+  };
+
+  if (row) {
+    const res = await query(
+      `UPDATE community_rss_schema
+       SET name = $2, mapping_json = $3::jsonb, updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [row.id, 'Schema bài viết Cộng đồng (community_posts)', JSON.stringify(next)]
+    );
+    return enrichRssSchemaRow(res.rows[0]);
+  }
+
+  const ins = await query(
+    `INSERT INTO community_rss_schema (code, name, mapping_json)
+     VALUES ($1, $2, $3::jsonb)
+     RETURNING *`,
+    [code, 'Schema bài viết Cộng đồng (community_posts)', JSON.stringify(next)]
+  );
+  return enrichRssSchemaRow(ins.rows[0]);
+}
+
+async function listRssSchema() {
+  await ensureDefaultArticleSchema();
+  const rows = (await query(`SELECT * FROM community_rss_schema ORDER BY code ASC`)).rows || [];
+  return rows.map(enrichRssSchemaRow);
+}
 
 async function createEnum(input) {
   return crudCreate('meta_enums', ['code', 'name', 'values_text'], [
@@ -116,15 +172,22 @@ async function getBrand() {
 }
 
 async function updateBrand(payload) {
+  const cur = await getBrand();
+  const prev =
+    cur.payload && typeof cur.payload === 'object' && !Array.isArray(cur.payload)
+      ? cur.payload
+      : {};
+  const patch = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+  const next = Object.assign({}, prev, patch);
   const res = await query(
     `UPDATE marketing_brand_identity SET payload=$1::jsonb, updated_at=NOW()
      WHERE code='primary' RETURNING *`,
-    [JSON.stringify(payload || {})]
+    [JSON.stringify(next)]
   );
   if (!res.rows[0]) {
     return crudCreate('marketing_brand_identity', ['code', 'payload'], [
       'primary',
-      JSON.stringify(payload || {})
+      JSON.stringify(next)
     ]);
   }
   return res.rows[0];
@@ -188,16 +251,23 @@ async function executeRssSync(id) {
 async function updateRssSchema(id, input) {
   const cur = await crudGet('community_rss_schema', id);
   if (!cur) throw AppError.notFound('Không tìm thấy schema');
+  let mappingJson = input.mapping_json != null ? input.mapping_json : cur.mapping_json;
+  if (mappingJson && Array.isArray(mappingJson.fields)) {
+    mappingJson = {
+      version: articleSchemaFields.SCHEMA_VERSION,
+      fields: articleSchemaFields.resolveFields(mappingJson)
+    };
+  }
   const res = await query(
     `UPDATE community_rss_schema SET name=$2, mapping_json=$3::jsonb, updated_at=NOW()
      WHERE id=$1 RETURNING *`,
     [
       id,
       input.name != null ? String(input.name).trim() : cur.name,
-      JSON.stringify(input.mapping_json != null ? input.mapping_json : cur.mapping_json)
+      JSON.stringify(mappingJson)
     ]
   );
-  return res.rows[0];
+  return enrichRssSchemaRow(res.rows[0]);
 }
 
 module.exports = {
@@ -224,5 +294,6 @@ module.exports = {
   updateRssSync,
   executeRssSync,
   listRssSchema,
-  updateRssSchema
+  updateRssSchema,
+  ensureDefaultArticleSchema
 };

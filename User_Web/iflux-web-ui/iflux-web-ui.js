@@ -26,19 +26,13 @@
     return false;
   }
 
-  /* Nhận diện thương hiệu = chữ iFlux (ix-auth-brand-name), không dùng logo SVG tự tạo */
+  /* Auth pages: chữ thương hiệu (không đụng header User Web — logo = SEO only). */
   function patchTextBrand() {
     document.querySelectorAll('.ifx-brand-auth-logo').forEach(function (el) {
       el.remove();
     });
     document.querySelectorAll('.ix-auth-brand-name').forEach(function (el) {
       el.style.display = '';
-      if (!String(el.textContent || '').trim()) el.textContent = 'iFlux';
-    });
-    document.querySelectorAll('.ifx-topnav-brand .ix-brand-logo').forEach(function (el) {
-      el.remove();
-    });
-    document.querySelectorAll('.ifx-topnav-name').forEach(function (el) {
       if (!String(el.textContent || '').trim()) el.textContent = 'iFlux';
     });
   }
@@ -1330,7 +1324,6 @@
       var titleEl = header.querySelector('[data-ifx-comments-title]');
       if (!titleEl) {
         titleEl = document.createElement('span');
-        titleEl.className = 'ifx-topnav-name';
         titleEl.setAttribute('data-ifx-comments-title', '');
         if (backBtn) backBtn.insertAdjacentElement('afterend', titleEl);
         else header.insertBefore(titleEl, header.querySelector('.ifx-topnav-actions'));

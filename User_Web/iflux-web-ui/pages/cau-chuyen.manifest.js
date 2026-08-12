@@ -2,13 +2,13 @@
  * Page Manifest — Danh sách câu chuyện (/cau-chuyen)
  * Entity core: cùng layout với /co-phieu, /nganh, /he-sinh-thai.
  */
-var VER = '?v=phaseCW120260721';
+var VER = '?v=sidebarVR03_20260811';
 
 export default {
   pageKey: 'cauChuyen',
   path: '/cau-chuyen',
   title: '',
-  documentTitle: 'Danh sách câu chuyện · iFlux',
+  documentTitle: '',
   composite: true,
   sections: [
     { key: 'main', label: 'Nội dung chính', visible: true, layout: 'stack' }

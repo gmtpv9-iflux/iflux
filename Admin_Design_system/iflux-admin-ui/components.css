@@ -84,10 +84,8 @@ body {
   flex-shrink: 0;
 }
 .ix-brand-logo {
-  width: 32px; height: 32px;
-  background: var(--ix-accent);
-  border-radius: var(--radius-button);
-  display: flex; align-items: center; justify-content: center;
+  height: 36px;
+  object-fit: contain;
 }
 .ix-brand-name {
   font-weight: var(--ifx-font-weight-bold);
@@ -1390,9 +1388,9 @@ body {
 }
 .ix-tab:hover { color: var(--ix-text-primary); }
 .ix-tab.active {
-  background: var(--ix-bg-card);
-  color: var(--ix-text-primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  background: var(--ix-accent-soft);
+  color: var(--ix-accent);
+  box-shadow: none;
 }
 
 .ix-nav-pills { display: flex; flex-direction: column; gap: 2px; }

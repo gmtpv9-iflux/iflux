@@ -2,7 +2,7 @@
  * Widget WGT-MKT-004/005/006 — Heatmap (ESM lazy module)
  * source lấy từ slot.config.source hoặc ctx.source: sector | family | story
  */
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=phaseCW420260721';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
