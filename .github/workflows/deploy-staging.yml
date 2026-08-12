@@ -1,0 +1,59 @@
+name: Deploy to Staging
+
+# BR-23 Staging Isolation — CHỈ deploy sang Staging. KHÔNG bao giờ đụng Production.
+# Runner tự host (self-hosted, label "staging") chạy trên chính server, dưới user
+# iflux-deploy (không root, không sudo rộng, không SSH password) — xem
+# Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/
+# "12 - Production → GitHub → New Staging Reconstruction Plan.md".
+
+on:
+  push:
+    branches:
+      - staging
+
+concurrency:
+  group: iflux-staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, staging]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Xác định release id
+        id: rel
+        run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+
+      - name: Build frontend release (atomic — thư mục riêng theo release id)
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="/var/www/iflux/releases-staging/${{ steps.rel.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          cp -a "$GITHUB_WORKSPACE/User_Web" "$RELEASE_DIR/User_Web"
+          cp -a "$GITHUB_WORKSPACE/Admin_Design_system" "$RELEASE_DIR/Admin_Design_system"
+
+      - name: Build backend release (atomic — cài dependency riêng theo release id)
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="/var/iflux/backend-staging/releases/${{ steps.rel.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          cp -a "$GITHUB_WORKSPACE/backend/." "$RELEASE_DIR/"
+          cd "$RELEASE_DIR"
+          npm install --omit=dev --no-audit --no-fund
+
+      - name: Atomic switch (frontend "/var/www/iflux/staging" → release mới) + restart PM2 iflux-api-staging
+        run: sudo -n /usr/local/bin/iflux-staging-deploy-switch.sh "${{ steps.rel.outputs.id }}"
+
+      - name: Health check (Staging backend, KHÔNG qua Production)
+        run: |
+          set -euo pipefail
+          sleep 3
+          curl -fsS http://127.0.0.1:3002/health
+
+      - name: Dọn release cũ (giữ 5 bản gần nhất, không xoá backup legacy)
+        run: |
+          set -euo pipefail
+          cd /var/www/iflux/releases-staging && ls -1t | tail -n +6 | xargs -r rm -rf
+          cd /var/iflux/backend-staging/releases && ls -1t | tail -n +6 | xargs -r rm -rf
