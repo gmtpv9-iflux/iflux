@@ -1,0 +1,66 @@
+name: Deploy to Production (Clean Rebuild)
+
+# Clean rebuild target cho production.iflux.vn — quyết định Owner 14/08/2026 sau
+# "13 - Production <-> Staging Baseline Verification Report.md". CHỈ deploy sang
+# production.iflux.vn (paths -newprod). KHÔNG bao giờ đụng Production cũ
+# (/var/www/iflux/production, /var/iflux/backend) hay Staging
+# (/var/www/iflux/staging, /var/iflux/backend-staging).
+# Runner tự host, cùng máy với Staging (label "staging"), user iflux-deploy
+# (không root, không sudo rộng — chỉ scoped sudo cho đúng 1 script switch).
+
+on:
+  push:
+    branches:
+      - production-clean
+
+concurrency:
+  group: iflux-production-new-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, staging]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Xác định release id
+        id: rel
+        run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+
+      - name: Build frontend release (atomic — thư mục riêng theo release id)
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="/var/www/iflux/releases-newprod/${{ steps.rel.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          cp -a "$GITHUB_WORKSPACE/web/." "$RELEASE_DIR/"
+
+      - name: Build backend release (CHỈ nếu đã có backend/ trong branch — Phase 3 chưa có)
+        run: |
+          set -euo pipefail
+          if [ -d "$GITHUB_WORKSPACE/backend" ]; then
+            RELEASE_DIR="/var/iflux/backend-newprod/releases/${{ steps.rel.outputs.id }}"
+            mkdir -p "$RELEASE_DIR"
+            cp -a "$GITHUB_WORKSPACE/backend/." "$RELEASE_DIR/"
+            cd "$RELEASE_DIR"
+            npm install --omit=dev --no-audit --no-fund
+          else
+            echo "Chua co backend/ trong branch nay — bo qua (dung Phase 3 = empty application)."
+          fi
+
+      - name: Atomic switch (frontend "/var/www/iflux/newprod" → release mới, backend nếu có)
+        run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}"
+
+      - name: Health check (placeholder tĩnh, KHÔNG qua Production/Staging)
+        run: |
+          set -euo pipefail
+          sleep 2
+          curl -fsS https://production.iflux.vn/ > /dev/null
+
+      - name: Dọn release cũ (giữ 5 bản gần nhất)
+        run: |
+          set -euo pipefail
+          cd /var/www/iflux/releases-newprod && ls -1t | tail -n +6 | xargs -r rm -rf
+          if [ -d /var/iflux/backend-newprod/releases ]; then
+            cd /var/iflux/backend-newprod/releases && ls -1t | tail -n +6 | xargs -r rm -rf
+          fi
