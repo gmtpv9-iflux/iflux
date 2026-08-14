@@ -3,13 +3,37 @@
 | | |
 |--|--|
 | **Document ID** | SoT-DEPLOY-001 |
-| **Version** | 1.2 |
-| **Status** | 🔒 **LOCKED as current-state Source of Truth** (as-is + Owner ops lock) |
-| **Date** | 2026-08-02 |
+| **Version** | 1.3 |
+| **Status** | 🔒 **LOCKED as current-state Source of Truth** (as-is + Owner ops lock) — §§4-6, P-01, F-06 **đã bị AMENDMENT v1.3 override**, xem ngay dưới |
+| **Date** | 2026-08-02 (v1.2) · 2026-08-14 (v1.3 amendment) |
 | **Nature** | Mô tả **quy trình deploy thực tế đang dùng** — **không** thiết kế quy trình mới |
 | **Audience** | Owner · Agent Cursor · Operator |
 | **v1.1** | Deploy Units · Rollback decision tree · Forbidden · Deployment Principles (Owner) |
 | **v1.2** | Định nghĩa Deploy · Git ≠ Production · bảng phân biệt thao tác (Owner-LOCK) |
+| **v1.3** | **AMENDMENT — SSH/Deployment Boundary.** `iflux.vn` chuyển thành Protected Live Environment; rsync/SSH deploy trực tiếp vào Production (mô tả as-is §§3-6 dưới) **không còn là hành vi được phép** kể từ 2026-08-14. Xem khối AMENDMENT ngay dưới đây. |
+
+---
+
+## AMENDMENT v1.3 (2026-08-14) — 🔒 Owner Directive, override §§3-6/P-01/F-06
+
+> Toàn bộ nội dung §§2-14 phía dưới mô tả **as-is** quy trình rsync/SSH thẳng vào Production **đã từng dùng trước 2026-08-14**. Giữ lại làm evidence lịch sử/tài liệu audit, **KHÔNG còn là quy trình được phép áp dụng cho `iflux.vn`**.
+
+**Thay đổi cụ thể:**
+
+| Mục cũ | Nội dung cũ | Trạng thái mới |
+|---|---|---|
+| **P-01** | "Production là mặc định. Staging chỉ khi Owner yêu cầu rõ." | ❌ **Đảo ngược.** Từ giờ: **Staging 1/Staging 2 là mặc định** cho mọi deploy/dev. Production (`iflux.vn`) chỉ đọc/audit. |
+| **F-06** | "Cấm Deploy Staging mặc định khi Owner không yêu cầu" | ❌ **Đảo ngược.** Deploy Staging (1 hoặc 2) giờ là hành vi mặc định, hợp lệ không cần hỏi lại mỗi lần. |
+| **§3.3 Release strategy** | rsync trực tiếp từ local → Production, không qua Git bắt buộc | Vẫn đúng **cho Production cũ as-is** (không tự đổi), nhưng **không dùng làm mẫu cho hành vi mới** — Staging 1/2 đi qua GitHub → CI/CD → atomic release (xem `12 -...`, `14 -...`) |
+| **§4/§5/§6** | "Mặc định Production" ở đầu mỗi quy trình Frontend/Admin/Backend | Đổi target mặc định thành **Staging 1 hoặc Staging 2** — path cụ thể xem `14 - SSH ↔ Deployment Boundary Policy.md` §2-3 |
+
+**SoT bổ sung, đọc cùng file này:**
+- `Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md` — chi tiết đầy đủ ranh giới, path, sudoers, CI/CD.
+- `docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md` — bản đồ 3 môi trường cho người mới.
+
+**Production chỉ được ghi lại qua:** Production deployment flow riêng + Production Gate riêng (chưa mở tại thời điểm v1.3).
+
+---
 
 > **Một file SoT duy nhất** cho triển khai iFlux.  
 > Mọi khẳng định gắn nhãn bằng chứng:  

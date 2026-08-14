@@ -169,8 +169,43 @@ Theo chỉ thị Owner, chiến lược tiếp theo được ghi nhận là:
 
 ---
 
-## Việc tiếp theo (cần Owner xác nhận để mở Phase 3)
+## Phase 3 — Staging 2 Infrastructure + GitHub Deployment Path: ✅ PASS / CLOSED (2026-08-14)
 
-- Xác nhận đã đọc báo cáo này và đồng ý kết luận **PARTIALLY VERIFIED**.
-- Xác nhận có muốn xử lý 3 gap ảnh hưởng chức năng (mục 6, #1-#3) trước khi mở Phase 3, hay để Staging tiếp tục ở trạng thái hiện tại làm reference.
-- Xác nhận thời điểm bắt đầu thi công hạ tầng `production.iflux.vn` (Phase 3-4) — vì đây là hành động tạo mới hạ tầng (DNS, Nginx, DB, PM2, CI/CD workflow), không nằm trong phạm vi "chỉ audit" của lượt này.
+Owner quyết định: không xử lý 3 gap ở mục 6 trước (chúng là environment-specific của Staging 1, không phải blocker cho Clean Rebuild). Mở Phase 3 ngay, chỉ dựng hạ tầng — chưa copy application.
+
+**Đã hoàn thành (evidence):**
+
+| Hạng mục | Trạng thái | Evidence |
+|---|---|---|
+| DNS `production.iflux.vn` | ✅ A record → origin, proxied (Cloudflare) | `dns_records` API response |
+| SSL | ✅ Let's Encrypt cert riêng, HTTPS live | `certbot --nginx` output, `curl -I` |
+| Nginx vhost | ✅ Tối giản, KHÔNG copy routing cũ, `X-Robots-Tag: noindex`, `X-IFlux-Env: newprod-clean` | file `/etc/nginx/sites-enabled/production.iflux.vn.conf` |
+| Linux user runtime | ✅ `iflux-newprod` (uid 996, dedicated, chưa chạy app) | `id iflux-newprod` |
+| Thư mục atomic release | ✅ `/var/www/iflux/releases-newprod/`, `/var/iflux/backend-newprod/releases/` (rỗng, chờ CI) | `ls -la` |
+| Database | ✅ `iflux_newprod`, role riêng, **0 bảng** (không restore, không migrate) | `information_schema.tables` count = 0 |
+| Deploy-switch script + sudoers | ✅ `iflux-newprod-deploy-switch.sh`, scoped hẹp, KHÔNG bao giờ đụng path Production/Staging 1 | test qua `sudo -u iflux-deploy sudo -n ...` PASS |
+| GitHub deployment path | ✅ Branch `production-clean` (orphan, chỉ có `web/index.html` placeholder + workflow), `.github/workflows/deploy-production-new.yml` | CI run: `Job result: Succeeded`, release id khớp commit SHA, `https://production.iflux.vn` live |
+| Application | ⬜ Rỗng theo đúng thiết kế — chỉ 1 trang placeholder tĩnh, KHÔNG phải sản phẩm thật | Nội dung `web/index.html` |
+| Config/secrets | ⬜ Rỗng — chưa có `.env` nào cho Staging 2, credential DB lưu riêng trên server (`/root/.iflux-newprod-db-credential.env`, không có trong Git) | — |
+
+**Không làm (đúng theo yêu cầu Owner):** không clone Production, không clone Staging 1, không restore DB nào, không copy `.env`/secrets/PM2 ecosystem/Nginx config cũ.
+
+**Sự cố phát sinh trong Phase 3 (đã xử lý minh bạch):** mất `infra/staging/staging.env` (khôi phục SSH, không khôi phục được Cloudflare token — Owner xác nhận không phải blocker, xem `14 -...` mục 5).
+
+**Chính sách mới phát sinh trong Phase 3, đã lock:** `14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md` — `iflux.vn` chính thức thành Protected Live Environment.
+
+---
+
+## Phase 4 — Clean Rebuild: Architecture/Foundation (đang mở)
+
+> **Phase 4 KHÔNG PHẢI "copy Staging 1 sang Staging 2".** Staging 2 vẫn giữ nguyên trạng rỗng vừa dựng ở Phase 3.
+
+Phase 4 = xây **kiến trúc/nền tảng** cho Clean Rebuild trước khi promote bất kỳ capability nghiệp vụ nào — theo đúng chuỗi đã định ở mục Phase 5 (`SoT → Contract → Implementation trên Staging 1 → Audit → Test → PASS → Promote vào Staging 2`).
+
+**Phạm vi Phase 4 (đề xuất, chờ Owner xác nhận chi tiết khi bắt đầu):**
+
+- Xác định **kiến trúc backend/frontend nền tảng** cho Staging 2 (không phải business feature) — ví dụ: cấu trúc thư mục chuẩn, quy ước module, migration runner rỗng (chưa có bảng nghiệp vụ nào), health-check endpoint, logging/error handling nền.
+- **Không** đưa bất kỳ business logic/UI nghiệp vụ nào vào trước khi có SoT/Contract riêng cho capability đó.
+- Danh sách capability sẽ rebuild theo thứ tự (do Owner quyết) — mỗi capability đi qua đúng chuỗi Promote ở Phase 5, không dồn nhiều capability vào 1 lần "cho nhanh".
+
+**Chưa bắt đầu thi công Phase 4 tại thời điểm ghi nhận này — chờ Owner xác nhận phạm vi/thứ tự trước khi code.**
