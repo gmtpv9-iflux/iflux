@@ -16,7 +16,11 @@
 > - Thay vào đó: tạo **`production.iflux.vn`** — clean rebuild target, trắng tinh, KHÔNG copy nguyên trạng Production cũ hay Staging, quản lý bằng cùng Git flow với `staging.iflux.vn`. Rebuild từng capability theo chuỗi `SoT → Contract → Implementation trên Staging → Audit → Test → PASS → Promote`.
 > - `iflux.vn` (Production cũ) **tiếp tục LIVE, phục vụ user thật**, không xoá/reset/rebuild, cho tới khi có **Cutover Gate riêng** được Owner phê duyệt (tiêu chí: functional parity, data/integration readiness, security, performance, SEO, observability, deployment/recovery, acceptance testing).
 > - Các Phase 1-6 dưới đây (Reconciliation, GitHub Migration, Branch Model, Staging Isolation, Staging CI/CD, Production CI/CD dry-run) **vẫn là lịch sử thực thi hợp lệ** cho `staging.iflux.vn` — giữ nguyên làm evidence, không xoá. Chỉ **Phase 7-8 (Production Migration Plan / Cutover)** bị thay thế bởi chiến lược "clean rebuild `production.iflux.vn` + Cutover Gate" — chi tiết đầy đủ xem `13 - Production ↔ Staging Baseline Verification Report.md` mục Phase 3-7.
-> - Thi công hạ tầng thật cho `production.iflux.vn` (DNS, Nginx, PM2, DB rỗng, GitHub Actions workflow riêng) **chưa bắt đầu** — cần lệnh riêng của Owner để mở.
+> - Thi công hạ tầng thật cho `production.iflux.vn` (DNS, Nginx, PM2, DB rỗng, GitHub Actions workflow riêng) — đã bắt đầu (xem `14 - SSH ↔ Deployment Boundary Policy.md` và log thực thi Phase 3).
+
+---
+
+> **SSH / DEPLOYMENT BOUNDARY — Owner Directive (2026-08-14, ngay sau khi mở Phase 3):** SoT đầy đủ tại `14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md`. Tóm tắt: đường "SSH → sửa trực tiếp Production `iflux.vn`" (mô tả ở nguyên tắc bao trùm đầu file này, và ở toàn bộ Phase 6-8 gốc) **bị loại bỏ hoàn toàn** kể từ thời điểm này. SSH/deploy từ nay **chỉ được phép** trên Staging 1 (`staging.iflux.vn`) và Staging 2 (`production.iflux.vn` — chỉ là hostname của Staging 2, KHÔNG phải Production thật). `iflux.vn` là Protected Live Environment — chỉ đọc/audit, không development/deployment. Việc deploy vào Live Production thật (sau này) sẽ là 1 flow riêng, qua Production Gate riêng — chưa mở.
 
 ---
 
