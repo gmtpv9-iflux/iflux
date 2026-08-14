@@ -41,15 +41,6 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     return user;
   }
 
-  function defaultTrialDays(tier) {
-    tier = tier || 'premium';
-    if (global.PlansRuntimeReader && PlansRuntimeReader.getPlan) {
-      var p = PlansRuntimeReader.getPlan(tier);
-      if (p && p.trial > 0) return p.trial;
-    }
-    return tier === 'elite' ? 14 : 7;
-  }
-
   function getMenuTierLabel(user) {
     user = user || getUser();
     if (!user) return 'Miễn phí';
@@ -115,49 +106,6 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
       }
     }
     return user;
-  }
-
-  function activateTrial(tier) {
-    tier = String(tier || 'premium').toLowerCase();
-    var labels = tierLabels();
-    var trialDays = defaultTrialDays(tier);
-    return updateUser({
-      tier: tier,
-      tier_label: labels[tier] || tier,
-      subscription_phase: 'trial_active',
-      trial_expiry_pending: false,
-      plan: {
-        name: labels[tier] || tier,
-        tier: tier,
-        cycle: 'trial',
-        price: 0,
-        currency: '₫',
-        period: 'dùng thử',
-        days_left: trialDays,
-        days_total: trialDays,
-        expires_at: computeExpiresAt(trialDays)
-      }
-    });
-  }
-
-  function acknowledgeTrialExpiry() {
-    return updateUser({
-      tier: 'free',
-      tier_label: tierLabels().free,
-      subscription_phase: 'freemium',
-      trial_expiry_pending: false,
-      plan: {
-        name: 'Miễn phí',
-        tier: 'free',
-        cycle: 'freemium',
-        price: 0,
-        currency: '₫',
-        period: '',
-        days_left: null,
-        days_total: null,
-        expires_at: null
-      }
-    });
   }
 
   function apiProfileToAppUser(profile) {
@@ -612,27 +560,6 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     syncPlanExpiry(user);
     if (user.plan.days_left != null) return user.plan.days_left;
     return null;
-  }
-
-  function getSubscriptionState(user) {
-    user = user || getUser();
-    if (!user) return 'anonymous';
-    normalizeSubscriptionPhase(user);
-    syncPlanExpiry(user);
-    var phase = user.subscription_phase;
-    if (phase === 'trial_eligible') return 'trial_eligible';
-    if (phase === 'trial_expired' && user.trial_expiry_pending) return 'trial_expired';
-    if (phase === 'freemium') return 'free';
-    var tier = String(user.tier || 'free').toLowerCase();
-    if (tier === 'free') return 'free';
-    if (user.plan && user.plan.cycle === 'lifetime') return 'active';
-    var days = getPlanDaysLeft(user);
-    if (days !== null && days <= 0) {
-      return phase === 'trial_active' ? 'trial_expired' : 'expired';
-    }
-    if (days !== null && days <= 3) return 'expiring';
-    if (phase === 'trial_active') return 'trial_active';
-    return 'active';
   }
 
   function updateUser(patch) {
@@ -1640,10 +1567,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     getToken: getToken,
     getPlanDaysLeft: function () { return getPlanDaysLeft(); },
     getMenuTierLabel: function () { return getMenuTierLabel(); },
-    getSubscriptionState: function () { return getSubscriptionState(); },
     syncSubscriptionLifecycle: syncSubscriptionLifecycle,
-    activateTrial: activateTrial,
-    acknowledgeTrialExpiry: acknowledgeTrialExpiry,
     updateUser: updateUser,
     loginWithEmail: loginWithEmail,
     loginWithSocial: loginWithSocial,

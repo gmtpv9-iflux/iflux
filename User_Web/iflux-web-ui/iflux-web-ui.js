@@ -203,15 +203,6 @@
     });
   });
 
-  /* Chỉ sau onboarding (tương tác thật) — không idle sau login. */
-  document.addEventListener('iflux-onboarding-finished', function () {
-    ensurePricingModal().then(function (modal) {
-      if (modal && modal.tryPromptLifecycle) {
-        modal.tryPromptLifecycle({ afterOnboarding: true });
-      }
-    });
-  });
-
   if (window.IfluxAuth && IfluxAuth.isLoggedIn()) {
     if (IfluxAuth.syncSubscriptionLifecycle) IfluxAuth.syncSubscriptionLifecycle();
     refreshTierChips();
