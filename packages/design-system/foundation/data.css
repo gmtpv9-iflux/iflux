@@ -1,0 +1,102 @@
+/**
+ * Staging 2 — Foundation: Data / Content Presentation
+ *
+ * Ngữ nghĩa trình bày DỮ LIỆU cho sản phẩm tài chính: market · stock · money
+ * flow · chart. Đây KHÔNG phải chart component — đây là từ vựng mà chart và
+ * widget sẽ tiêu thụ.
+ *
+ * ==== VÌ SAO ĐỊNH DẠNG SỐ LẠI LÀ CSS TOKEN ====
+ * Dấu phân cách, số chữ số thập phân, ký hiệu tiền tệ là QUY ƯỚC SẢN PHẨM,
+ * phải do Admin đổi được cùng một chỗ với mọi token khác. JS đọc bằng
+ * getComputedStyle(el).getPropertyValue('--ifx-number-…'). Nếu tách sang file
+ * cấu hình riêng thì sẽ có hai nguồn sự thật và hai chỗ Admin phải sửa.
+ * Token chuỗi bọc trong nháy đơn theo cú pháp CSS <string>.
+ *
+ * ==== RANH GIỚI ====
+ * Ở đây:      định dạng số/tiền/thời gian · biểu hiện trạng thái dữ liệu ·
+ *             từ vựng hình học của chart.
+ * KHÔNG ở đây:
+ *   màu tăng/giảm/series/grid/axis → foundation/color.css (--ifx-color-market-*,
+ *     --ifx-color-chart-*)
+ *   kiểu chữ của giá / phần trăm / mã → foundation/typography.css
+ *     (--ifx-typography-price-* …)
+ *   trạng thái loading chung          → foundation/state.css
+ *
+ * ==== TRẠNG THÁI: TÊN DỰ TRỮ — ĐÃ TẮT ====
+ * Tên đã comment lại; bỏ comment khi migration Market/Widget chứng minh quy ước thật
+ * đang chạy ở Staging 1.
+ */
+
+:root {
+  /* ==== Định dạng số ====
+     VN dùng '.' ngăn nghìn và ',' ngăn thập phân — ngược với en-US. Giá trị
+     vẫn tắt cho tới khi migration xác nhận đúng quy ước đang chạy. */
+  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
+     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
+     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
+     packages/design-system/index.css trước khi gõ. */
+  /* --ifx-number-decimal-separator: ; */
+  /* --ifx-number-thousands-separator: ; */
+  /* --ifx-number-percent-symbol: ; */
+  /* --ifx-number-positive-prefix: ; */
+  /* --ifx-number-negative-prefix: ; */
+  /* --ifx-number-zero-display: ; */
+  /* --ifx-number-missing-display: ; */
+
+  /* ==== Số chữ số thập phân theo loại trường (unitless) ==== */
+  /* --ifx-number-precision-default: ; */
+  /* --ifx-number-precision-price: ; */
+  /* --ifx-number-precision-change: ; */
+  /* --ifx-number-precision-change-percent: ; */
+  /* --ifx-number-precision-volume: ; */
+  /* --ifx-number-precision-value: ; */
+  /* --ifx-number-precision-market-cap: ; */
+  /* --ifx-number-precision-ratio: ; */
+  /* --ifx-number-precision-index: ; */
+
+  /* ==== Số rút gọn (nghìn / triệu / tỷ) ==== */
+  /* --ifx-number-compact-threshold: ; */
+  /* --ifx-number-compact-suffix-thousand: ; */
+  /* --ifx-number-compact-suffix-million: ; */
+  /* --ifx-number-compact-suffix-billion: ; */
+
+  /* ==== Tiền tệ ==== */
+  /* --ifx-currency-code: ; */
+  /* --ifx-currency-symbol: ; */
+  /* --ifx-currency-position: ; */
+  /* --ifx-currency-unit-price: ; */
+
+  /* ==== Thời gian ====
+     Chuỗi mẫu định dạng; JS đọc và đưa vào bộ format. */
+  /* --ifx-format-date: ; */
+  /* --ifx-format-datetime: ; */
+  /* --ifx-format-time: ; */
+  /* --ifx-format-relative-threshold: ; */
+  /* --ifx-format-trading-session: ; */
+  /* --ifx-format-settlement: ; */
+
+  /* ==== Trạng thái dữ liệu ====
+     Khác state.css: đây là trạng thái của DỮ LIỆU (thiếu, cũ, một phần), không
+     phải trạng thái tương tác của control. Loading dùng chung state.css.
+     Hậu tố phân biệt kiểu: -label là chuỗi hiển thị, -color là màu. */
+  /* --ifx-data-empty-label: ; */
+  /* --ifx-data-partial-label: ; */
+  /* --ifx-data-nodata-symbol: ; */
+  /* --ifx-data-empty-icon-color: ; */
+  /* --ifx-data-stale-color: ; */
+  /* --ifx-data-error-color: ; */
+  /* --ifx-data-stale-opacity: ; */
+
+  /* ==== Hình học chart ====
+     Màu nằm ở color.css. Ở đây chỉ có độ dày nét, cỡ điểm, khoảng cách. */
+  /* --ifx-chart-series-count: ; */
+  /* --ifx-chart-line-width: ; */
+  /* --ifx-chart-grid-width: ; */
+  /* --ifx-chart-axis-width: ; */
+  /* --ifx-chart-crosshair-width: ; */
+  /* --ifx-chart-crosshair-dash: ; */
+  /* --ifx-chart-point-size: ; */
+  /* --ifx-chart-bar-gap: ; */
+  /* --ifx-chart-tooltip-padding: ; */
+  /* --ifx-chart-tooltip-offset: ; */
+}

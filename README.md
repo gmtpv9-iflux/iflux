@@ -1,22 +1,46 @@
-# iFlux — `production.iflux.vn` (Clean Rebuild Target)
+# iFlux — branch `production-clean`
 
-Đây là branch **`production-clean`** — nền tảng Git deployment rỗng cho `production.iflux.vn`, theo quyết định Owner (14/08/2026):
+Branch này chứa **chính xác những gì được deploy tới `production.iflux.vn`** (hostname hiện tại của môi trường Staging 2). Không chứa tài liệu, backlog hay lịch sử phân tích — những thứ đó nằm ở branch `staging`.
 
-> Sau `13 - Production ↔ Staging Baseline Verification Report.md` (PARTIALLY VERIFIED), task migration "Production cũ → Staging" đã CLOSED. `production.iflux.vn` là **clean rebuild target** — KHÔNG copy nguyên trạng Production cũ (`iflux.vn`), KHÔNG copy nguyên trạng Staging (`staging.iflux.vn`), KHÔNG restore database cũ, KHÔNG copy `.env`/secrets/PM2 ecosystem/Nginx config cũ.
+## Cấu trúc
 
-## Trạng thái hiện tại
+```
+apps/            ứng dụng — mỗi ứng dụng sở hữu trang và CSS của riêng nó
+  web/admin/       Admin: App Shell, Đăng nhập, Quản lý người dùng, Thư viện Widget
+packages/        mã dùng chung giữa nhiều ứng dụng
+  design-system/   token, foundation, layout, component — nguồn sự thật về giao diện
+services/        dịch vụ chạy nền
+  api/             REST API quản trị (Node/Express)
+database/        migration, đánh số tuần tự, chạy theo thứ tự
+scripts/         công cụ dựng
+```
 
-- Application: **rỗng** — chỉ có 1 trang tĩnh placeholder (`web/index.html`), không phải sản phẩm thật.
-- Database: **rỗng** — `iflux_newprod`, 0 bảng, chưa chạy migration nào.
-- Runtime: **chưa có** — chưa có PM2 process, chưa có backend nào chạy trên `production.iflux.vn`.
-- Configuration: **chưa có** — chưa có `.env`/secrets nào được cấu hình cho môi trường này ngoài credential DB rỗng lưu riêng trên server (không có trong Git).
+Ranh giới quan trọng: `packages/design-system/` chỉ chứa thứ **nhiều màn hình** dùng chung. CSS của một module hay một trang nằm cạnh chính trang đó trong `apps/`. Đây là thứ giữ cho bundle chung không phình theo số module.
 
-## Deploy path
+## Dựng và chạy
 
-`.github/workflows/deploy-production-new.yml` — trigger khi push vào branch `production-clean`, chạy trên self-hosted runner (label `staging`, cùng máy vật lý phục vụ cả Staging và Production-new), atomic release qua `iflux-newprod-deploy-switch.sh` (sudo scoped hẹp, chỉ đụng `/var/www/iflux/newprod` + `/var/iflux/backend-newprod/current`, không bao giờ chạm Production cũ hoặc Staging).
+```bash
+bash scripts/build-web.sh     # apps/ + packages/  →  dist/
+```
 
-## Rebuild tiếp theo (Phase 5)
+`dist/` là sản phẩm dựng, không commit, CI dựng lại mỗi lần deploy. Bước này nội tuyến toàn bộ `@import` của `packages/design-system/index.css` thành một file `/assets/ds.css`, nên mỗi trang chỉ nạp 1–2 file CSS thay vì kéo cả cây import.
 
-Mỗi capability trước khi đưa vào đây phải qua: `SoT → Contract → Implementation trên Staging → Audit → Test → PASS → Promote`. Không copy cả hệ thống từ Staging hoặc Production cũ vào đây để tiết kiệm thời gian.
+Backend:
 
-Chi tiết đầy đủ: xem `Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/` trong branch `staging` (repo Git đầy đủ history nằm ở đó — branch này (`production-clean`) chỉ chứa chính xác những gì được deploy tới `production.iflux.vn`).
+```bash
+cd services/api && npm install && npm start
+```
+
+## Deploy
+
+Push vào `production-clean` kích hoạt `.github/workflows/deploy-production-new.yml` trên self-hosted runner: dựng `dist/`, tạo release theo timestamp, atomic switch qua `iflux-newprod-deploy-switch.sh`.
+
+Workflow chỉ đụng `/var/www/iflux/newprod` và `/var/iflux/backend-newprod/current`. **Không bao giờ** chạm Production cũ (`/var/www/iflux/production`, `/var/iflux/backend`) hay Staging 1 (`/var/www/iflux/staging`).
+
+Database: `staging_2` (đổi tên từ `iflux_newprod` ngày 16/08/2026).
+
+## Nguyên tắc
+
+Mỗi capability trước khi vào đây phải qua: SoT → Contract → Implementation → Audit → Test → PASS. Không copy nguyên khối từ Staging 1 hay Production cũ để tiết kiệm thời gian — mã chết, mã nhân bản và hardcode không được mang sang.
+
+Tài liệu đầy đủ (BRD, SoT, audit, kế hoạch triển khai) nằm ở branch `staging`, thư mục `Product_Backlogs_New/` và `docs/`.

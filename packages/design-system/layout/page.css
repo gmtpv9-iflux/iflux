@@ -1,0 +1,52 @@
+/**
+ * Staging 2 — Layout: Page
+ *
+ * Khung nội dung bên trong .ifx-shell__content: tiêu đề, mô tả, và section có
+ * tiêu đề gạch chân.
+ *
+ * Không sở hữu: bảng, danh sách, component bên trong section, số đo (chiều
+ * rộng tối đa đọc từ foundation/sizing.css).
+ */
+
+.ifx-page {
+  max-width: var(--ifx-max-width-page);
+}
+
+.ifx-page__head {
+  margin-bottom: var(--ifx-space-24);
+}
+
+.ifx-page__title {
+  margin: 0 0 var(--ifx-space-4);
+  font-size: var(--ifx-typography-h3-size);
+  line-height: var(--ifx-typography-h3-line-height);
+}
+
+.ifx-page__meta {
+  margin: 0;
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+/* ==== ĐÃ TẮT — chưa có consumer (audit 16/08/2026) ====
+   Bốn trang hiện có đều đặt nội dung thẳng dưới .ifx-page, chưa trang nào chia
+   section có tiêu đề gạch chân. Bật lại khi có màn hình nhiều section thật.
+
+.ifx-page__section {
+  margin-bottom: var(--ifx-space-32);
+}
+
+.ifx-page__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  margin: 0 0 var(--ifx-space-12);
+  padding-bottom: var(--ifx-space-8);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-color-text-primary);
+}
+*/

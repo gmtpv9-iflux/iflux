@@ -1,0 +1,64 @@
+/**
+ * Staging 2 — Foundation: Layout
+ *
+ * Foundation sở hữu TỪ VỰNG layout. M02 sở hữu AppShell/Layout implementation.
+ * File này KHÔNG chứa selector, không dựng khung — chỉ khai token.
+ *
+ * ==== RANH GIỚI (canonicalize — Owner inventory có chồng lấn) ====
+ * Ở đây:      gutter · grid · alignment.
+ * KHÔNG ở đây:
+ *   chiều của vùng layout (header, sidebar, content) → foundation/sizing.css
+ *   khoảng cách section/page/region                  → foundation/spacing.css
+ *   bậc màn hình                                     → foundation/breakpoint.css
+ *   thứ tự lớp chồng                                 → foundation/z-index.css
+ * Lý do tách: một giá trị canonical, nhiều consumer. Nếu để cả Sizing lẫn
+ * Layout khai chiều sidebar thì sẽ có hai nguồn sự thật.
+ *
+ * ==== BIẾN THỂ THEO MÀN HÌNH: ĐẶT TÊN THEO TIER ====
+ * Token không hậu tố = giá trị Base (mobile-first, không @media). Biến thể
+ * dùng hậu tố tier của foundation/breakpoint.css: -sm -md -lg -xl -2xl.
+ * CẤM hậu tố theo thiết bị (-mobile, -tablet, -desktop, -wide): 768/1024/1280/
+ * 1440 không phải mốc đổi thiết bị, và đặt tên kiểu đó kéo hệ thống về
+ * desktop-first — token không hậu tố sẽ bị hiểu thành "giá trị desktop".
+ * Chỉ khai tier nào thực sự có hành vi riêng, không khai đủ 6 cho tròn bộ.
+ *
+ * ==== TRẠNG THÁI: TÊN DỰ TRỮ — ĐÃ TẮT ====
+ * Tên đã comment lại; bỏ comment khi bước migration Layout chứng minh nguồn gốc.
+ *
+ * ==== SẼ HẤP THỤ ====
+ *   layout/container.css --ifx-layout-container-gutter → --ifx-layout-gutter
+ *                        (biến thể ≥768px)            → --ifx-layout-gutter-md
+ */
+
+:root {
+  /* ==== Container ====
+     gutter = đệm hai bên của vùng nội dung. Base rồi nới từ MD trở lên —
+     evidence: layout/container.css đổi gutter tại đúng 768px. */
+  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
+     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
+     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
+     packages/design-system/index.css trước khi gõ. */
+  /* --ifx-layout-gutter: ; */
+  /* --ifx-layout-gutter-md: ; */
+  /* --ifx-layout-container-align: ; */
+
+  /* ==== Grid ====
+     Hệ 12 cột theo Product Architecture V2 (span 3/4/6/12). Số cột khai ở đây
+     để Widget Layout Engine đọc, không hardcode 12 trong JS.
+     Base là số cột màn hình nhỏ, KHÔNG phải 12 rút gọn xuống. */
+  /* --ifx-layout-grid-columns: ; */
+  /* --ifx-layout-grid-columns-md: ; */
+  /* --ifx-layout-grid-columns-lg: ; */
+  /* --ifx-layout-grid-gap: ; */
+  /* --ifx-layout-grid-row-gap: ; */
+  /* --ifx-layout-grid-column-gap: ; */
+
+  /* ==== Alignment ====
+     Token từ khóa, không phải số đo. Tồn tại để tầng trên không rải
+     flex-start / center rời rạc mỗi nơi một kiểu. */
+  /* --ifx-layout-align-start: ; */
+  /* --ifx-layout-align-center: ; */
+  /* --ifx-layout-align-end: ; */
+  /* --ifx-layout-align-stretch: ; */
+  /* --ifx-layout-align-baseline: ; */
+}

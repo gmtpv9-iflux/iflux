@@ -28,24 +28,29 @@ jobs:
         id: rel
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
 
+      # Mã nguồn chia theo ranh giới kiến trúc (apps/ + packages/), trình duyệt
+      # cần cây phẳng. dist/ không nằm trong Git — dựng lại mỗi lần deploy.
+      - name: Lắp web root từ apps/ + packages/
+        run: bash "$GITHUB_WORKSPACE/scripts/build-web.sh"
+
       - name: Build frontend release (atomic — thư mục riêng theo release id)
         run: |
           set -euo pipefail
           RELEASE_DIR="/var/www/iflux/releases-newprod/${{ steps.rel.outputs.id }}"
           mkdir -p "$RELEASE_DIR"
-          cp -a "$GITHUB_WORKSPACE/web/." "$RELEASE_DIR/"
+          cp -a "$GITHUB_WORKSPACE/dist/." "$RELEASE_DIR/"
 
-      - name: Build backend release (CHỈ nếu đã có backend/ trong branch — Phase 3 chưa có)
+      - name: Build backend release (services/api)
         run: |
           set -euo pipefail
-          if [ -d "$GITHUB_WORKSPACE/backend" ]; then
+          if [ -d "$GITHUB_WORKSPACE/services/api" ]; then
             RELEASE_DIR="/var/iflux/backend-newprod/releases/${{ steps.rel.outputs.id }}"
             mkdir -p "$RELEASE_DIR"
-            cp -a "$GITHUB_WORKSPACE/backend/." "$RELEASE_DIR/"
+            cp -a "$GITHUB_WORKSPACE/services/api/." "$RELEASE_DIR/"
             cd "$RELEASE_DIR"
             npm install --omit=dev --no-audit --no-fund
           else
-            echo "Chua co backend/ trong branch nay — bo qua (dung Phase 3 = empty application)."
+            echo "Chua co services/api/ trong branch nay — bo qua."
           fi
 
       - name: Atomic switch (frontend "/var/www/iflux/newprod" → release mới, backend nếu có)

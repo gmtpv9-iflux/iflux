@@ -1,0 +1,146 @@
+/**
+ * Staging 2 — Design Token System (entry point duy nhất)
+ *
+ * File này là manifest — không khai báo token, không utility, không
+ * component CSS, không responsive, không compatibility layer.
+ *
+ * Runtime: scripts/build-web.sh nội tuyến toàn bộ @import dưới đây thành một
+ * file duy nhất `/assets/ds.css`; trang nạp 1 <link>. Trình duyệt không bao giờ
+ * thấy các @import này — chúng tồn tại để đọc file là thấy dependency graph.
+ *
+ * ============================================================================
+ * FOUNDATION CONTRACT — KHÓA (Owner directive 15/08/2026)
+ * Mục 12 và 13 của Foundation Inventory không sinh ra token; chúng là luật.
+ * Đặt tại đây vì đây là nơi luật được thi hành: thứ tự import chính là cascade.
+ * ============================================================================
+ *
+ * ---- 12.1 Naming ----
+ * Token:  --ifx-*      Class: .ifx-*
+ * Không --ix-* (đó là Staging 1 / Admin DS cũ). Không alias song song.
+ * Không tiền tố né migration: new_ · v2_ · final_ · latest_.
+ *
+ * ---- 12.2 Kiến trúc cascade (một chiều, không được đi ngược) ----
+ *   index.css (manifest)
+ *     → foundation/   giá trị nguyên thủy + semantic nền
+ *     → layout/       khung trang, không khai giá trị mới
+ *     → components/   Card | Block | Item | Atom
+ *     → page/module   chỉ tiêu thụ, nằm ngoài package này (apps/)
+ * Ba tầng đầu là gói dùng chung, ghép thành một file và nạp ở mọi trang. Tầng
+ * page/module nằm cạnh trang sở hữu nó và chỉ trang đó nạp — đó là ranh giới
+ * ngăn CSS của 15 module dồn hết vào bundle chung.
+ * Chưa có tầng templates/: hai file từng nằm đó là UI của một màn hình cụ thể
+ * (đã trả về apps/) và một file chết (đã bỏ). Chỉ tạo lại khi có tổ hợp
+ * component thật sự được từ hai trang trở lên dùng chung.
+ * Tầng dưới KHÔNG được tham chiếu tầng trên. Tầng trên KHÔNG được khai giá trị
+ * literal khi Foundation đã có tên tương ứng.
+ *
+ * ---- 12.3 Reset / base ----
+ * Không reset toàn cục riêng. Base style duy nhất được phép: quy tắc phần tử
+ * trong foundation/typography.css (h1–h6, body). Mọi thứ khác phải có class.
+ *
+ * ---- 12.4 Runtime ----
+ * tokens.css là file viết tay, sửa trực tiếp trong mã nguồn.
+ * Owner đã DỪNG mục tiêu cho Admin cấu hình Foundation (15/08/2026): không có
+ * bảng token trong cơ sở dữ liệu, không có API cấu hình, không có màn hình
+ * quản trị nào sửa được token. Đổi giao diện = sửa CSS + deploy.
+ * Không có cơ chế override. Chỉ một bộ token chính thức.
+ *
+ * ---- 13. Quan hệ token: một giá trị canonical, nhiều consumer ----
+ *   Primitive → Semantic → Component
+ * Ví dụ đúng:
+ *   --ifx-space-16: 16px;              (primitive, một nơi duy nhất)
+ *   --ifx-card-padding: var(--ifx-space-16);
+ * Ví dụ SAI: 16px viết lại ở bốn file khác nhau.
+ * Hệ quả bắt buộc:
+ *   - Trùng GIÁ TRỊ không phải lý do gộp token; trùng Ý NGHĨA mới là.
+ *   - var() biểu diễn phụ thuộc CÓ CHỦ ĐÍCH (đổi cái gốc thì cái này phải đổi
+ *     theo), không biểu diễn sự trùng giá trị ngẫu nhiên.
+ *   - Xem foundation/color.css để biết cách áp dụng luật này (mô hình Hybrid).
+ *
+ * ============================================================================
+ * QUY ƯỚC ĐẶT TÊN TOKEN — đọc trước khi gõ một tên mới
+ * ============================================================================
+ *
+ * ---- Luật 0: chỉ đặt tên khi đã có nơi dùng ----
+ * Từng có 368 tên được khai trước, để trống, chờ "sau này điền". Không tên nào
+ * được dùng, và không ai còn nhớ tên nào nghĩa là gì. Chúng nay bị comment lại
+ * trong các file foundation/. Bài học: token sinh ra TỪ mã đang chạy, không sinh ra
+ * để chờ mã. Đang migrate một màn hình và thấy một số hardcode → lúc đó mới đặt
+ * tên cho nó. Cần tên cũ? Bỏ comment đúng dòng đó, đừng gõ tên mới song song.
+ *
+ * ---- Cấu trúc tên ----
+ *   --ifx-<họ>-<đối tượng>-<biến thể>-<trạng thái>
+ * Chỉ <họ> là bắt buộc; các đoạn sau thêm khi thật sự cần phân biệt.
+ *
+ * <họ> = LOẠI GIÁ TRỊ, không phải nơi dùng. Đây là đoạn hay bị đặt ngược nhất:
+ *   ĐÚNG  --ifx-width-sidebar        SAI  --ifx-sidebar-width
+ *   ĐÚNG  --ifx-color-text-muted     SAI  --ifx-muted-text-color
+ * Đặt họ trước thì mọi số đo nằm cạnh nhau khi sắp xếp, và biết ngay file nào
+ * sở hữu nó. Họ đang dùng:
+ *   color · space · width · height · min-width · max-width · aspect
+ *   font · font-size · font-weight · line-height · letter-spacing
+ *   radius · border-width · border-style · shadow · opacity · blur
+ *   duration · ease · z · breakpoint · icon
+ *
+ * <biến thể> dùng thang có sẵn của họ đó, không tự chế thang mới:
+ *   Số đo cụ thể → chính con số:  --ifx-space-16 · --ifx-font-size-14
+ *   Bậc trừu tượng → sm/md/lg:    --ifx-radius-md · --ifx-shadow-lg
+ *   Sắc độ màu → bậc 50…900:      --ifx-color-neutral-700
+ * Cấm bậc mơ hồ kiểu -normal, -default, -regular khi đã có thang số.
+ *
+ * <trạng thái> luôn là đoạn CUỐI, và chỉ lấy trong bộ đã chốt:
+ *   hover · focus · active · selected · disabled · error · success · warning
+ *   ĐÚNG  --ifx-color-bg-card-hover    SAI  --ifx-color-hover-bg-card
+ *
+ * ---- Biến thể theo bậc màn hình ----
+ * Hậu tố đúng bộ breakpoint trong foundation/breakpoint.css:
+ *   (không hậu tố = Base) · -sm · -md · -lg · -xl · -2xl
+ * Cấm -mobile / -tablet / -desktop: 768 và 1280 không phải mốc đổi thiết bị,
+ * và tên thiết bị sẽ sai ngay khi thêm một bậc.
+ *
+ * ---- Đặt vào file nào ----
+ * Theo <họ>, không theo màn hình đang làm. Số đo của Header thuộc sizing.css
+ * chứ không thuộc layout/shell.css. Tầng trên chỉ var() tới, không khai lại.
+ *
+ * ---- Trước khi thêm, tự hỏi ----
+ *   1. Đã có tên nào cùng Ý NGHĨA chưa? (trùng giá trị không phải lý do gộp,
+ *      trùng ý nghĩa mới là — xem mục 13 ở trên)
+ *   2. Đây là primitive hay semantic? Semantic phải var() tới primitive,
+ *      không chép lại con số.
+ *   3. Có ít nhất một chỗ dùng ngay trong lần sửa này không? Không → dừng.
+ *
+ * ============================================================================
+ * IMPORT — đọc file là thấy dependency graph
+ * ============================================================================
+ */
+
+/* Foundation — reset trước tiên: quy tắc mô hình hộp cho mọi tầng phía sau */
+@import url('./foundation/reset.css');
+/* breakpoint kế tiếp vì mọi tầng dưới đều tham chiếu bậc màn hình */
+@import url('./foundation/breakpoint.css');
+@import url('./foundation/color.css');
+@import url('./foundation/fonts.css');
+@import url('./foundation/typography.css');
+@import url('./foundation/spacing.css');
+@import url('./foundation/sizing.css');
+@import url('./foundation/layout.css');
+@import url('./foundation/border.css');
+@import url('./foundation/effects.css');
+@import url('./foundation/z-index.css');
+@import url('./foundation/icons.css');
+@import url('./foundation/state.css');
+@import url('./foundation/data.css');
+@import url('./foundation/a11y.css');
+
+@import url('./layout/shell.css');
+@import url('./layout/page.css');
+
+@import url('./components/card.css');
+@import url('./components/table.css');
+@import url('./components/chip.css');
+@import url('./components/segmented.css');
+@import url('./components/nav.css');
+@import url('./components/button.css');
+@import url('./components/field.css');
+@import url('./components/checkbox.css');
+@import url('./components/alert.css');

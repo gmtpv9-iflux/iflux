@@ -1,0 +1,7 @@
+# Sản phẩm dựng của scripts/build-web.sh — CI dựng lại mỗi lần deploy.
+dist/
+
+node_modules/
+.env
+*.log
+.DS_Store

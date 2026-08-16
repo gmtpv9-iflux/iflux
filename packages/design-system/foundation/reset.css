@@ -1,0 +1,24 @@
+/**
+ * Staging 2 — Foundation: Reset
+ *
+ * Tầng base của cascade đã khai trong tokens.css §12.2 (reset → base → token →
+ * component). Chỉ chứa quy tắc mô hình hộp áp cho MỌI phần tử: không màu,
+ * không cỡ chữ, không token.
+ *
+ * Vì sao đứng riêng: border.css / spacing.css / sizing.css khai GIÁ TRỊ, còn
+ * đây là quy tắc tính kích thước, phải nạp trước mọi file token nên không nhét
+ * vào file token nào được.
+ *
+ * Thay cho 12 chỗ tự khai box-sizing rải rác ở layout/ · components/ ·
+ * templates/ — đã xóa cùng lần sửa này. Tầng trên không khai lại.
+ *
+ * Hệ quả số đo: mọi chiều rộng/cao trong Design System là KÍCH THƯỚC NGOÀI, đã
+ * gồm viền và padding. Sidebar 260 gồm viền phải, header 64 gồm viền dưới, ô
+ * tìm kiếm 280 gồm padding — đúng như Staging 1 (reset toàn cục ở components.css).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

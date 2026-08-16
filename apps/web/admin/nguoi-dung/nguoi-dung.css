@@ -1,0 +1,113 @@
+/**
+ * Staging 2 — Module Quản lý người dùng: bố cục riêng
+ *
+ * KHÔNG thuộc Design System và KHÔNG được import vào manifest DS — chỉ hai trang
+ * của module nạp, sau /assets/ds.css. Đây là cách sắp xếp riêng của module
+ * (RULE-011), không phải hợp đồng UI dùng chung.
+ *
+ * Bảng, thẻ, nút, ô nhập, chip đều lấy từ Design System. File này chỉ trả lời:
+ * thanh công cụ xếp thế nào, chân bảng xếp thế nào, ô danh tính trong hàng xếp
+ * thế nào.
+ *
+ * Không sở hữu: màu, cỡ chữ, bo góc — mọi giá trị đọc từ token Foundation.
+ */
+
+/* Thanh công cụ: tìm kiếm + lọc dồn trái, hành động dồn phải. Xuống dòng khi
+   hẹp thay vì ép ngang. */
+.ifx-users-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  flex-wrap: wrap;
+  padding: var(--ifx-space-12) var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+}
+
+/* Không chặn bề rộng: chuỗi gợi ý dài, chặn lại là cắt chữ ngay ở tier hẹp. */
+.ifx-users-toolbar__search {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Dưới 768px, chia ba trên một hàng thì ô tìm kiếm hẹp tới mức cắt chữ gợi ý —
+   cho nó chiếm trọn hàng, lọc và nút xuống hàng dưới. */
+@media (max-width: 767px) {
+  .ifx-users-toolbar__search {
+    flex-basis: 100%;
+  }
+}
+
+.ifx-users-toolbar__end {
+  margin-left: auto;
+}
+
+/* Ô danh tính: tên trên, email dưới. Tên là liên kết sang trang chi tiết —
+   bỏ gạch chân mặc định, chỉ hiện khi rê chuột. */
+.ifx-users-identity__name {
+  color: var(--ifx-color-text-primary);
+  font-weight: var(--ifx-font-weight-semibold);
+  text-decoration: none;
+}
+
+.ifx-users-identity__name:hover {
+  text-decoration: underline;
+}
+
+.ifx-users-identity__email {
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+/* Số điện thoại và ngày là chuỗi đọc liền mạch — để xuống dòng thì "0901 234
+   567" vỡ làm hai. Giữ nguyên khối, bảng tự cuộn ngang khi không đủ chỗ. */
+.ifx-users-cell--tight {
+  white-space: nowrap;
+}
+
+/* Chân bảng: số lượng bên trái, điều hướng trang bên phải. */
+.ifx-users-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-12);
+  flex-wrap: wrap;
+  padding: var(--ifx-space-12) var(--ifx-space-20);
+  border-top: 1px solid var(--ifx-color-border-default);
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-users-foot__pager {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+}
+
+/* Trang chi tiết: lưới nhãn — giá trị, gộp một cột khi màn hẹp. */
+.ifx-users-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ifx-space-20);
+}
+
+@media (min-width: 768px) {
+  .ifx-users-detail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ifx-users-detail__full {
+  grid-column: 1 / -1;
+}
+
+.ifx-users-readonly {
+  margin: 0;
+  color: var(--ifx-color-text-primary);
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-users-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+}

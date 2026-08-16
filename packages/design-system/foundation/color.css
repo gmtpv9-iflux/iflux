@@ -1,0 +1,254 @@
+/**
+ * Staging 2 — Foundation: Color (Foundation Base v1)
+ *
+ * Phạm vi: ĐẦY ĐỦ semantic màu cần cho sản phẩm tài chính/market iFlux —
+ * không giới hạn theo "Template nào đang gọi trực tiếp" (xem PRINCIPLE CHANGE
+ * cuối file). Giá trị tra từ Admin DS (theme mặc định dark) — KHÔNG @import/
+ * <link> Admin DS tại runtime, chỉ dùng làm nguồn giá trị.
+ *
+ * ==== KIẾN TRÚC TOKEN: HYBRID (Owner LOCK) ====
+ * Token được định nghĩa bởi CÔNG NĂNG + SEMANTIC OWNERSHIP, không bởi giá trị màu.
+ *
+ * - Independent: literal value riêng. Dùng khi token có công năng/ownership
+ *   riêng — dù trùng hex với token khác cũng KHÔNG reference (trùng giá trị
+ *   không phải lý do để gộp).
+ * - Branding-aligned: dùng var() trỏ về BRANDING (--ifx-color-action-primary/
+ *   -secondary) khi token được THIẾT KẾ CÓ CHỦ ĐÍCH để bám theo brand — đổi
+ *   brand thì token này phải đổi theo. Chỉ áp dụng khi giá trị hiện tại KHỚP
+ *   CHÍNH XÁC giá trị branding (var() biểu diễn dependency có chủ đích, không
+ *   biểu diễn sự trùng giá trị ngẫu nhiên).
+ *
+ * BRANDING
+ *  └── --ifx-color-action-primary
+ *       ├── --ifx-color-text-link       [branding-aligned — link luôn theo màu brand]
+ *       ├── --ifx-color-border-focus    [branding-aligned — focus ring theo màu brand]
+ *       └── --ifx-color-bg-active       [branding-aligned qua action-primary-soft —
+ *                                         xác nhận từ Admin DS: .ix-nav-pill.active
+ *                                         dùng chung bg-active + accent trong 1 rule]
+ *
+ * MARKET / CHART = DOMAIN semantic — ĐỘC LẬP TUYỆT ĐỐI khỏi Branding/UI (action-*,
+ * success/warning/danger/info, text-*, border-*), dù giá trị hiện tại trùng.
+ * Lý do: quy ước giá màu thị trường (xanh=tăng ở VN, có thể khác ở nước khác)
+ * và bảng màu chart không được phép trôi theo khi Admin đổi brand/theme UI.
+ *
+ * ==== TÊN ĐÃ TỒN TẠI — KHÔNG KHAI TRÙNG ====
+ * Owner inventory gọi tên khác cho thứ đã có. Ánh xạ để không sinh alias rỗng nghĩa:
+ *   Surface           = --ifx-color-bg-card
+ *   Surface elevated  = --ifx-color-bg-elevated
+ *   Surface muted     = --ifx-color-bg-subtle / --ifx-color-bg-muted
+ *   Overlay           = --ifx-color-scrim
+ *   Error             = --ifx-color-danger
+ *   Hover / Active    = --ifx-color-bg-hover / --ifx-color-bg-active
+ *   Text tertiary     = --ifx-color-text-muted (đã là bậc thứ ba, sau
+ *                       text-primary và text-secondary)
+ *   Money flow        = --ifx-color-market-flow-in / -out
+ *   Series palette    = --ifx-color-chart-series-1…10
+ *
+ * ==== TRẠNG THÁI CỦA CÁC NHÓM MỚI BÊN DƯỚI ====
+ * Primitive scale · Direction · Bull/Bear · Market session · Community ·
+ * phần Chart bổ sung: TÊN DỰ TRỮ (ĐÃ TẮT) — chỉ bỏ comment khi bước
+ * migration tương ứng chứng minh nguồn gốc. CẤM tầng trên tham chiếu token rỗng.
+ *
+ * 68 token có giá trị bên trên = Foundation Base v1 đã chứng minh, giữ nguyên.
+ */
+
+:root {
+  /* ==== PRIMITIVE — tuyệt đối ====
+     Không theo theme. Không đổi khi Admin đổi brand. */
+  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
+     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
+     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
+     packages/design-system/index.css trước khi gõ. */
+  /* --ifx-color-white: ; */
+  /* --ifx-color-black: ; */
+  /* --ifx-color-transparent: ; */
+
+  /* ==== PRIMITIVE — thang xám ====
+     Owner inventory ghi "Color scale / neutral scale" và "Gray scale" như hai
+     mục; đây là MỘT thang duy nhất. Không tạo neutral-* song song với gray-*.
+     Thang xám là nguồn cho bg-*, text-*, border-* khi migration Color đóng. */
+  /* --ifx-color-gray-50: ; */
+  /* --ifx-color-gray-100: ; */
+  /* --ifx-color-gray-200: ; */
+  /* --ifx-color-gray-300: ; */
+  /* --ifx-color-gray-400: ; */
+  /* --ifx-color-gray-500: ; */
+  /* --ifx-color-gray-600: ; */
+  /* --ifx-color-gray-700: ; */
+  /* --ifx-color-gray-800: ; */
+  /* --ifx-color-gray-900: ; */
+
+  /* ==== PRIMITIVE — thang brand ====
+     Sẽ hấp thụ --ifx-color-action-primary (bậc 500) khi migration Color đóng. */
+  /* --ifx-color-brand-50: ; */
+  /* --ifx-color-brand-100: ; */
+  /* --ifx-color-brand-200: ; */
+  /* --ifx-color-brand-300: ; */
+  /* --ifx-color-brand-400: ; */
+  /* --ifx-color-brand-500: ; */
+  /* --ifx-color-brand-600: ; */
+  /* --ifx-color-brand-700: ; */
+  /* --ifx-color-brand-800: ; */
+  /* --ifx-color-brand-900: ; */
+
+  /* ==== PRIMITIVE — thang accent ====
+     Sẽ hấp thụ --ifx-color-action-secondary (bậc 500). */
+  /* --ifx-color-accent-50: ; */
+  /* --ifx-color-accent-100: ; */
+  /* --ifx-color-accent-200: ; */
+  /* --ifx-color-accent-300: ; */
+  /* --ifx-color-accent-400: ; */
+  /* --ifx-color-accent-500: ; */
+  /* --ifx-color-accent-600: ; */
+  /* --ifx-color-accent-700: ; */
+  /* --ifx-color-accent-800: ; */
+  /* --ifx-color-accent-900: ; */
+
+  /* ==== BRANDING — Action (root: mọi token branding-aligned trỏ vào đây) ==== */
+  --ifx-color-action-primary: #696cff;
+  --ifx-color-action-primary-hover: #5f61e6;
+  --ifx-color-action-primary-soft: rgba(105, 108, 255, 0.16);
+  --ifx-color-action-secondary: #f26522;
+  --ifx-color-action-secondary-hover: #d95518;
+  --ifx-color-action-secondary-soft: rgba(242, 101, 34, 0.14);
+
+  /* ==== TEXT (independent, trừ text-link) ==== */
+  --ifx-color-text-primary: #cfd3ec;
+  --ifx-color-text-secondary: #8592a3;
+  --ifx-color-text-muted: #5f6582;
+  --ifx-color-text-disabled: #697a8d;
+  --ifx-color-text-inverse: #232333;
+  --ifx-color-text-link: var(--ifx-color-action-primary); /* branding-aligned */
+
+  /* Text-on-filled — màu tương phản đặt TRÊN nền solid. Độc lập (không branding-
+     aligned): #ffffff được chọn vì tương phản, không phải vì "bám theo" primary/danger. */
+  --ifx-color-text-on-action-primary: #ffffff;
+  --ifx-color-text-on-success: #151d15;
+  --ifx-color-text-on-warning: #1a1100;
+  --ifx-color-text-on-danger: #ffffff;
+  --ifx-color-text-on-info: #00151a;
+
+  /* ==== BACKGROUND (independent, trừ bg-active) ==== */
+  --ifx-color-bg-body: #232333;
+  --ifx-color-bg-card: #2b2c40;
+  --ifx-color-bg-elevated: #3a3b55; /* trùng hex bg-hover — KHÁC ownership (nền tĩnh vs nền hover), không gộp */
+  --ifx-color-bg-subtle: #1e1e2d;
+  --ifx-color-bg-hover: #3a3b55;
+  --ifx-color-bg-active: var(--ifx-color-action-primary-soft); /* branding-aligned — xem note đầu file */
+  --ifx-color-bg-input: #1e1e2d;
+  --ifx-color-bg-muted: #1e1e2d; /* CHƯA XÁC NHẬN giá trị — xem "OPEN ITEM: bg-muted" cuối file */
+  /* Selected ≠ Active: active là khoảnh khắc nhấn, selected là trạng thái bền
+     (mục menu hiện tại, tab đang mở, dòng đang chọn). Không gộp. */
+  /* --ifx-color-bg-selected: ; */
+  /* --ifx-color-bg-disabled: ; */
+
+  /* ==== OVERLAY (independent) ====
+     Scrim = lớp dim giữa chrome và nội dung (drawer/modal).
+     50% black: đủ tách layer trên nền dark (#232333) và không phụ thuộc
+     brand/slate. Không copy Admin — dark không có literal; light = slate 45%. */
+  --ifx-color-scrim: rgba(0, 0, 0, 0.5);
+
+  /* ==== BORDER (independent, trừ border-focus) ==== */
+  --ifx-color-border-default: rgba(207, 211, 236, 0.12);
+  --ifx-color-border-strong: rgba(207, 211, 236, 0.2);
+  --ifx-color-border-subtle: rgba(207, 211, 236, 0.08);
+  --ifx-color-border-focus: var(--ifx-color-action-primary); /* branding-aligned */
+  /* --ifx-color-border-selected: ; */
+  /* --ifx-color-border-error: ; */
+  /* --ifx-color-border-disabled: ; */
+  /* Divider ≠ Border: border là đường bao của một hộp, divider là đường ngăn
+     GIỮA hai phần tử ngang hàng (dòng danh sách, nhóm menu). */
+  /* --ifx-color-divider: ; */
+
+  /* ==== FEEDBACK (independent — KHÔNG branding-aligned, KHÔNG bị Market/Chart tham chiếu) ==== */
+  --ifx-color-success: #71dd37;
+  --ifx-color-success-soft: rgba(113, 221, 55, 0.16);
+  --ifx-color-warning: #ffab00;
+  --ifx-color-warning-soft: rgba(255, 171, 0, 0.16);
+  --ifx-color-danger: #ff3e1d;
+  --ifx-color-danger-soft: rgba(255, 62, 29, 0.16);
+  --ifx-color-info: #03c3ec;
+  --ifx-color-info-soft: rgba(3, 195, 236, 0.16);
+
+  /* ==== MARKET (domain — độc lập tuyệt đối khỏi Branding/Feedback, dù trùng hex) ====
+     5 trạng thái giá chuẩn VN (tăng/giảm/tham chiếu/trần/sàn) + Flow (mua ròng/bán
+     ròng — gộp vào namespace market, không còn flow-* riêng). */
+  --ifx-color-market-price-up: #71dd37;
+  --ifx-color-market-price-up-soft: rgba(113, 221, 55, 0.16);
+  --ifx-color-market-price-down: #ff3e1d;
+  --ifx-color-market-price-down-soft: rgba(255, 62, 29, 0.16);
+  --ifx-color-market-price-ref: #ffab00;
+  --ifx-color-market-price-ref-soft: rgba(255, 171, 0, 0.16);
+  --ifx-color-market-price-ceiling: #a855f7;
+  --ifx-color-market-price-ceiling-soft: rgba(168, 85, 247, 0.10);
+  --ifx-color-market-price-floor: #03c3ec;
+  --ifx-color-market-price-floor-soft: rgba(3, 195, 236, 0.16);
+  --ifx-color-market-flow-in: #71dd37;
+  --ifx-color-market-flow-out: #ff3e1d;
+  /* --ifx-color-market-flow-neutral: ; */
+
+  /* ==== DIRECTION (domain — hướng biến động, không gắn với giá cổ phiếu) ====
+     price-up/-down chỉ nói về GIÁ. Direction dùng cho mọi đại lượng có chiều:
+     lợi nhuận, tăng trưởng, chênh lệch, điểm số. Tách để widget phi-giá không
+     phải mượn token của bảng giá. */
+  /* --ifx-color-positive: ; */
+  /* --ifx-color-negative: ; */
+  /* --ifx-color-neutral: ; */
+
+  /* ==== BULL / BEAR (domain — trạng thái xu hướng thị trường) ====
+     Khác price-up/-down: up/down là biến động một phiên, bull/bear là nhận
+     định xu hướng. Có thể trùng giá trị nhưng khác ownership — không gộp. */
+  /* --ifx-color-bull: ; */
+  /* --ifx-color-bear: ; */
+  /* --ifx-color-sideway: ; */
+
+  /* ==== MARKET SESSION (domain — phiên giao dịch VN) ====
+     ATO · khớp lệnh liên tục · ATC · nghỉ giữa phiên · đóng cửa · tạm ngừng. */
+  /* --ifx-color-market-session-ato: ; */
+  /* --ifx-color-market-session-continuous: ; */
+  /* --ifx-color-market-session-atc: ; */
+  /* --ifx-color-market-session-break: ; */
+  /* --ifx-color-market-session-closed: ; */
+  /* --ifx-color-market-session-halted: ; */
+
+  /* ==== COMMUNITY (domain — trạng thái nội dung cộng đồng) ==== */
+  /* --ifx-color-community-new: ; */
+  /* --ifx-color-community-hot: ; */
+  /* --ifx-color-community-pinned: ; */
+  /* --ifx-color-community-locked: ; */
+  /* --ifx-color-community-verified: ; */
+
+  /* ==== CHART (domain — độc lập tuyệt đối khỏi Branding/UI, dù trùng hex) ==== */
+  --ifx-color-chart-grid: rgba(207, 211, 236, 0.12);
+  --ifx-color-chart-label: #8592a3;
+  --ifx-color-chart-text: #5f6582;
+  --ifx-color-chart-annotation-bg: rgba(105, 108, 255, 0.16);
+  --ifx-color-chart-marker-stroke: #ffffff;
+  --ifx-color-chart-series-1: #696cff;
+  --ifx-color-chart-series-2: #71dd37;
+  --ifx-color-chart-series-3: #ffab00;
+  --ifx-color-chart-series-4: #ff3e1d;
+  --ifx-color-chart-series-5: #03c3ec;
+  --ifx-color-chart-series-6: #a855f7;
+  --ifx-color-chart-series-7: #f26522;
+  --ifx-color-chart-series-8: #8592a3;
+  --ifx-color-chart-series-9: #5f61e6;
+  --ifx-color-chart-series-10: #cfd3ec;
+  /* Trục, đường ngắm và tooltip: chart-grid/label/text đã có, còn thiếu các
+     thành phần dưới đây khi chart thật được migrate. */
+  /* --ifx-color-chart-axis: ; */
+  /* --ifx-color-chart-crosshair: ; */
+  /* --ifx-color-chart-tooltip-bg: ; */
+  /* --ifx-color-chart-tooltip-text: ; */
+  /* --ifx-color-chart-tooltip-border: ; */
+  /* Series theo chiều — dùng cho biểu đồ một đại lượng có dấu (thanh tăng/giảm),
+     khác series-1…10 vốn là bảng màu phân biệt nhiều chuỗi. */
+  /* --ifx-color-chart-series-positive: ; */
+  /* --ifx-color-chart-series-negative: ; */
+  /* --ifx-color-chart-series-neutral: ; */
+
+  /* ==== TIER (domain — độc lập, KHÔNG branding-aligned dù tier-premium trùng hex primary) ==== */
+  --ifx-color-tier-free: #8592a3;
+  --ifx-color-tier-premium: #696cff;
+  --ifx-color-tier-elite: #f26522;
+}

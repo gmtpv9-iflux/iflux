@@ -1,0 +1,140 @@
+/**
+ * Staging 2 — Foundation: Sizing
+ *
+ * Foundation SỞ HỮU từ vựng kích thước. Template / Component / AppShell sở hữu
+ * CÁCH DÙNG. Không tầng nào được hardcode số đo khi Foundation đã có tên tương ứng.
+ *
+ * ==== RANH GIỚI (canonicalize — Owner inventory có chồng lấn) ====
+ * Sizing giữ MỌI giá trị chiều: width · height · min/max · aspect-ratio,
+ * kể cả chiều của vùng layout (sidebar, header). foundation/layout.css KHÔNG
+ * khai lại — nó chỉ giữ gutter / grid / alignment.
+ * Khoảng cách giữa các vùng → foundation/spacing.css.
+ * Thứ tự lớp chồng → foundation/z-index.css.
+ *
+ * ==== TRẠNG THÁI: TÊN DỰ TRỮ — ĐÃ TẮT ====
+ * Tên đã comment lại. Bỏ comment khi bước migration tương ứng chứng minh được
+ * nguồn gốc giá trị (luật Owner STG2-001:
+ * không giá trị nào vào Design System chỉ vì "hợp lý").
+ * Đọc QUY ƯỚC ĐẶT TÊN TOKEN ở tokens.css trước khi bật lại.
+ *
+ * ==== ĐÃ HẤP THỤ (15/08/2026 — bước migration Layout) ====
+ * layout/shell.css và layout/page.css trước đây tự khai số đo trong :root của
+ * chính chúng. Nay số đo về Foundation, hai file đó chỉ còn tiêu thụ. Giá trị
+ * lấy nguyên từ khai báo đang chạy (chuỗi từ Staging 1: sidebar 260/72,
+ * navbar 64, control 36), không làm tròn, không đặt thêm.
+ *   --ifx-width-sidebar · --ifx-width-sidebar-collapsed · --ifx-height-header
+ *   --ifx-height-control · --ifx-max-width-search · --ifx-width-scrollbar
+ *   --ifx-width-scrollbar-thin · --ifx-max-width-page
+ *
+ * ==== SẼ HẤP THỤ (số đo còn nằm sai tầng) ====
+ *   components/nav.css --ifx-nav-icon-w                 → --ifx-width-icon-md
+ *   templates/…        --ifx-template-preview-min-h     → --ifx-min-height-preview
+ *
+ * --ifx-max-width-auth giữ tên nhưng KHÔNG có consumer trong Design System:
+ * Auth đã ra khỏi DS về admin/dang-nhap/ (quyết định Owner 15/08/2026).
+ */
+
+:root {
+  /* ==== WIDTH — vùng chrome ==== */
+  --ifx-width-sidebar: 260px;
+  --ifx-width-sidebar-collapsed: 72px;
+  --ifx-width-scrollbar: 6px;
+  --ifx-width-scrollbar-thin: 4px;
+
+  /* ==== WIDTH — vùng nội dung ==== */
+  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
+     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
+     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
+     packages/design-system/index.css trước khi gõ. */
+  /* --ifx-width-content: ; */
+  /* --ifx-width-container: ; */
+
+  /* ==== WIDTH — control ==== */
+  /* --ifx-width-input: ; */
+  /* --ifx-width-button: ; */
+  /* --ifx-width-button-icon: ; */
+
+  /* ==== WIDTH — bề mặt ==== */
+  /* --ifx-width-card: ; */
+  /* --ifx-width-widget: ; */
+  /* --ifx-width-modal: ; */
+  /* --ifx-width-dropdown: ; */
+  /* --ifx-width-tooltip: ; */
+
+  /* ==== WIDTH — phần tử vuông (đi kèm height cùng bậc) ==== */
+  /* --ifx-width-avatar-sm: ; */
+  /* --ifx-width-avatar-md: ; */
+  /* --ifx-width-avatar-lg: ; */
+  /* --ifx-width-icon-sm: ; */
+  /* --ifx-width-icon-md: ; */
+  /* --ifx-width-icon-lg: ; */
+
+  /* ==== HEIGHT — vùng chrome ==== */
+  --ifx-height-header: 64px;
+  /* Ô thương hiệu đầu sidebar. Bằng 36 như --ifx-height-control nhưng KHÁC ý
+     nghĩa (thương hiệu, không phải control) nên tách tên — evidence Staging 1
+     .ix-brand-logo height 36px. */
+  --ifx-height-brand-logo: 36px;
+  /* --ifx-height-navigation: ; */
+  /* --ifx-height-footer: ; */
+
+  /* ==== HEIGHT — control ====
+     control = chiều cao chuẩn của control trong header (nút icon, ô tìm kiếm,
+     avatar). Một giá trị canonical, nhiều consumer. */
+  --ifx-height-control: 36px;
+  /* --ifx-height-button: ; */
+  /* --ifx-height-button-sm: ; */
+  /* --ifx-height-button-lg: ; */
+  /* --ifx-height-input: ; */
+  /* --ifx-height-select: ; */
+  /* --ifx-height-textarea: ; */
+
+  /* ==== HEIGHT — vùng của bề mặt ==== */
+  /* --ifx-height-card-header: ; */
+  /* --ifx-height-card-foot: ; */
+  /* --ifx-height-widget-header: ; */
+  /* --ifx-height-widget-foot: ; */
+  /* --ifx-height-modal-header: ; */
+  /* --ifx-height-modal-foot: ; */
+
+  /* ==== HEIGHT — phần tử vuông ==== */
+  /* --ifx-height-avatar-sm: ; */
+  /* --ifx-height-avatar-md: ; */
+  /* --ifx-height-avatar-lg: ; */
+  /* --ifx-height-icon-sm: ; */
+  /* --ifx-height-icon-md: ; */
+  /* --ifx-height-icon-lg: ; */
+
+  /* ==== MIN / MAX — nội dung & trang ==== */
+  /* --ifx-min-width-content: ; */
+  /* --ifx-max-width-content: ; */
+  --ifx-max-width-page: 1200px;
+  /* --ifx-max-width-reading: ; */
+  /* --ifx-min-height-content: ; */
+
+  /* ==== MIN / MAX — form & control ==== */
+  /* --ifx-max-width-form: ; */
+  --ifx-max-width-auth: 420px;
+  --ifx-max-width-search: 280px;
+
+  /* ==== MIN / MAX — bề mặt nổi ==== */
+  /* --ifx-max-width-modal: ; */
+  /* --ifx-max-height-modal: ; */
+  /* --ifx-max-width-dropdown: ; */
+  /* --ifx-max-height-dropdown: ; */
+  /* --ifx-max-width-tooltip: ; */
+
+  /* ==== MIN / MAX — widget & xem trước ==== */
+  /* --ifx-min-width-widget: ; */
+  /* --ifx-max-width-widget: ; */
+  /* --ifx-min-height-widget: ; */
+  /* --ifx-max-height-widget: ; */
+  --ifx-min-height-preview: 240px;
+
+  /* ==== ASPECT RATIO ==== */
+  /* --ifx-aspect-avatar: ; */
+  /* --ifx-aspect-image: ; */
+  /* --ifx-aspect-thumbnail: ; */
+  /* --ifx-aspect-chart: ; */
+  /* --ifx-aspect-media: ; */
+}

@@ -1,0 +1,289 @@
+/**
+ * Staging 2 — Layout: App Shell
+ *
+ * Shared chrome: sidebar + header + main + content.
+ * Không sở hữu menu, không class admin-*. Slot nav = .ifx-shell__nav.
+ * Không sở hữu SỐ ĐO: mọi chiều đọc từ foundation/sizing.css.
+ *
+ * Breakpoint: từ XL (≥1280) sidebar cố định, thu gọn được thành rail
+ *             dưới XL (≤1279.98) drawer (trượt ngang + lớp mờ)
+ *
+ * State (trực giao):
+ *   is-sidebar-open       — chỉ ≤1279.98 (drawer)
+ *   is-sidebar-collapsed  — chỉ ≥1280 (rail 72px)
+ * State lệch breakpoint = no-op (không mâu thuẫn khi resize / đổi page).
+ *
+ * Header một hàng, không có tiêu đề trang: nút menu · ô tìm kiếm · cụm cuối.
+ * Tiêu đề trang thuộc nội dung (.ifx-page__title), không thuộc chrome.
+ */
+
+html:has(.ifx-shell),
+body:has(.ifx-shell) {
+  margin: 0;
+  height: 100%;
+  background: var(--ifx-color-bg-body);
+}
+
+.ifx-shell {
+  display: flex;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ifx-color-bg-body);
+}
+
+/* ==== Sidebar ==== */
+
+.ifx-shell__sidebar {
+  width: var(--ifx-width-sidebar);
+  background: var(--ifx-color-bg-card);
+  border-right: 1px solid var(--ifx-color-border-default);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: var(--ifx-z-drawer);
+  transition: width var(--ifx-duration-slow) var(--ifx-ease-out),
+    transform var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+
+.ifx-shell__sidebar::-webkit-scrollbar {
+  width: var(--ifx-width-scrollbar-thin);
+}
+
+.ifx-shell__sidebar::-webkit-scrollbar-thumb {
+  background: var(--ifx-color-border-default);
+  border-radius: var(--ifx-radius-sm);
+}
+
+.ifx-shell__brand {
+  height: var(--ifx-height-header);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  padding: 0 var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+  flex-shrink: 0;
+}
+
+.ifx-shell__brand-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
+  letter-spacing: var(--ifx-letter-spacing-tight);
+  color: var(--ifx-color-text-primary);
+  text-decoration: none;
+}
+
+/* Ô logo. Nay là chữ, sau là <img> — giữ nguyên chiều cao để không đổi bố cục. */
+.ifx-shell__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--ifx-height-brand-logo);
+  flex-shrink: 0;
+  color: var(--ifx-color-action-primary);
+}
+
+.ifx-shell__nav {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ==== Main ==== */
+
+.ifx-shell__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100vh;
+  margin-left: 0;
+  overflow: hidden;
+  transition: margin-left var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+
+.ifx-shell__header {
+  height: var(--ifx-height-header);
+  background: var(--ifx-color-bg-card);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+  display: flex;
+  align-items: center;
+  padding-inline: var(--ifx-layout-container-gutter);
+  gap: var(--ifx-space-12);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--ifx-z-sticky);
+}
+
+.ifx-shell__content {
+  flex: 1;
+  min-height: 0;
+  padding: var(--ifx-layout-container-gutter);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ifx-shell__content::-webkit-scrollbar {
+  width: var(--ifx-width-scrollbar);
+}
+
+.ifx-shell__content::-webkit-scrollbar-thumb {
+  background: var(--ifx-color-border-default);
+  border-radius: var(--ifx-radius-sm);
+}
+
+/* ==== Header controls ==== */
+
+.ifx-shell__icon-btn {
+  width: var(--ifx-height-control);
+  height: var(--ifx-height-control);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ifx-radius-full);
+  background: none;
+  color: var(--ifx-color-text-secondary);
+  font-size: var(--ifx-font-size-20);
+  cursor: pointer;
+  transition: var(--ifx-transition-color);
+}
+
+.ifx-shell__icon-btn:hover {
+  background: var(--ifx-color-bg-hover);
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-shell__icon-btn:focus-visible {
+  outline: 2px solid var(--ifx-color-border-focus);
+  outline-offset: 2px;
+}
+
+.ifx-shell__search {
+  flex: 1;
+  max-width: var(--ifx-max-width-search);
+  height: var(--ifx-height-control);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  padding: 0 var(--ifx-space-12);
+  background: var(--ifx-color-bg-input);
+  border: 1px solid var(--ifx-color-border-default);
+  border-radius: var(--ifx-radius-input);
+  color: var(--ifx-color-text-muted);
+  font-size: var(--ifx-font-size-16);
+  cursor: text;
+}
+
+.ifx-shell__search:focus-within {
+  border-color: var(--ifx-color-border-focus);
+}
+
+.ifx-shell__search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--ifx-color-text-primary);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-shell__search input::placeholder {
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-shell__header-end {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  margin-left: auto;
+}
+
+.ifx-shell__avatar {
+  margin-left: var(--ifx-space-4);
+  width: var(--ifx-height-control);
+  height: var(--ifx-height-control);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifx-radius-full);
+  background: var(--ifx-color-action-primary-soft);
+  border: 2px solid var(--ifx-color-action-primary);
+  color: var(--ifx-color-action-primary);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+
+/* ==== Overlay ==== */
+
+.ifx-shell__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--ifx-color-scrim);
+  z-index: var(--ifx-z-scrim);
+}
+
+.ifx-shell.is-sidebar-open .ifx-shell__overlay {
+  display: block;
+}
+
+/* ==== Base: drawer (mọi tier dưới XL) ==== */
+
+.ifx-shell__sidebar {
+  transform: translateX(-100%);
+}
+
+.ifx-shell.is-sidebar-open .ifx-shell__sidebar {
+  transform: translateX(0);
+}
+
+/* ==== Từ XL: sidebar cố định, thu gọn được thành rail ====
+   is-sidebar-collapsed chỉ có nghĩa ở đây — dưới XL là no-op, không cần
+   khai lại giá trị base để vô hiệu hóa. */
+
+@media (min-width: 1280px) {
+  .ifx-shell__sidebar {
+    transform: none;
+  }
+
+  .ifx-shell__main {
+    margin-left: var(--ifx-width-sidebar);
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-shell__sidebar {
+    width: var(--ifx-width-sidebar-collapsed);
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-shell__main {
+    margin-left: var(--ifx-width-sidebar-collapsed);
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-shell__brand {
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Rail chỉ đủ chỗ cho ô logo — tên đầy đủ nhường chỗ, không để trống. */
+  .ifx-shell.is-sidebar-collapsed .ifx-shell__brand-text {
+    display: none;
+  }
+}

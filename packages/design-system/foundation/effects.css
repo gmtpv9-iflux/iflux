@@ -1,0 +1,97 @@
+/**
+ * Staging 2 — Foundation: Effects — raw primitives + semantic/composed effects
+ * (Foundation Base v1)
+ *
+ * "Semantic" ở file này = effect meaning (vd. --ifx-shadow-card = bóng của
+ * bề mặt card-like), KHÔNG phải semantic toàn hệ thống và KHÔNG phải
+ * component token (vd. --ifx-card-shadow sẽ thuộc Component).
+ *
+ * Hybrid dependency (Owner LOCK):
+ *   Shadow: primitive → semantic effect → (sau này) component
+ *   Motion: primitive → transition composed → (sau này) component
+ *   Alpha: raw primitive → input có chủ đích cho Shadow (black-*) hoặc
+ *          nền tint (white-4). Không phải Color semantic.
+ *
+ * Giá trị tra từ Admin DS primitives — không @import Admin DS tại runtime.
+ *
+ * ==== RANH GIỚI ====
+ * Radius ĐÃ CHUYỂN sang foundation/border.css (giữ nguyên tên + giá trị,
+ * không còn bản ở đây). Bo góc là hình học của bề mặt, không phải hiệu ứng.
+ *
+ * "Motion: Fast / Normal / Slow" trong Owner inventory KHÔNG sinh token mới —
+ * đã là --ifx-duration-fast / -normal / -slow bên dưới. Không tạo alias trùng.
+ */
+
+:root {
+  /* ==== Alpha (raw primitive, dùng cho các semantic/composed effect bên dưới) ====
+     alpha-black-* → input cho Shadow (xem mục Shadow — dependency có chủ đích).
+     alpha-white-4 → input cho nền tint mờ, KHÔNG phải shadow/overlay. Consumer
+     xác nhận: `.ifx-breadth-stat.is-total` (block-templates.css, 1 trong 13
+     Living Template) + `--color-surface-elevated` ("Elevated Tint") ở Admin DS. */
+  --ifx-alpha-white-4: rgba(255, 255, 255, 0.04);
+  --ifx-alpha-black-8: rgba(0, 0, 0, 0.08);
+  --ifx-alpha-black-12: rgba(0, 0, 0, 0.12);
+  --ifx-alpha-black-16: rgba(0, 0, 0, 0.16);
+
+  /* ==== Shadow ==== */
+  --ifx-shadow-xs: 0 1px 2px var(--ifx-alpha-black-8);
+  --ifx-shadow-sm: 0 2px 6px var(--ifx-alpha-black-8);
+  --ifx-shadow-md: 0 4px 16px var(--ifx-alpha-black-12);
+  --ifx-shadow-lg: 0 8px 24px var(--ifx-alpha-black-16);
+  --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
+  --ifx-shadow-card: var(--ifx-shadow-sm);
+  --ifx-shadow-dropdown: var(--ifx-shadow-lg);
+  --ifx-shadow-modal: var(--ifx-shadow-xl);
+  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
+     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
+     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
+     packages/design-system/index.css trước khi gõ. */
+  /* --ifx-shadow-none: ; */
+  /* --ifx-shadow-subtle: ; */
+  /* --ifx-shadow-elevated: ; */
+  /* --ifx-shadow-tooltip: ; */
+
+  /* ==== Opacity ====
+     Độ mờ của TRẠNG THÁI (state.css tham chiếu vào đây), không phải màu.
+     Màu bán trong suốt là việc của alpha-* và --ifx-color-*-soft. */
+  /* --ifx-opacity-none: ; */
+  /* --ifx-opacity-disabled: ; */
+  /* --ifx-opacity-muted: ; */
+  /* --ifx-opacity-overlay: ; */
+  /* --ifx-opacity-hover: ; */
+  /* --ifx-opacity-full: ; */
+
+  /* ==== Blur ====
+     Chỉ khai bậc thực sự có consumer khi migration mở; hiện chưa có backdrop
+     filter nào trong Staging 2. */
+  /* --ifx-blur-overlay: ; */
+  /* --ifx-blur-backdrop: ; */
+
+  /* ==== Motion ==== */
+  --ifx-duration-instant: 0ms;
+  --ifx-duration-fast: 100ms;
+  --ifx-duration-normal: 200ms;
+  --ifx-duration-slow: 300ms;
+  --ifx-duration-slower: 400ms;
+  --ifx-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ifx-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ifx-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ifx-transition-color: color var(--ifx-duration-fast) var(--ifx-ease-default),
+    background-color var(--ifx-duration-fast) var(--ifx-ease-default),
+    border-color var(--ifx-duration-fast) var(--ifx-ease-default);
+  --ifx-transition-transform: transform var(--ifx-duration-normal) var(--ifx-ease-out);
+  --ifx-transition-opacity: opacity var(--ifx-duration-normal) var(--ifx-ease-default);
+}
+
+/**
+ * Ngoài v1 (cố ý): --ifx-shadow-topnav (Admin shell only).
+ * --ifx-ease-in-out đã REMOVE — evidence ở
+ * Product_Backlogs_New/01_.../07 - Changelog — Effects Foundation v1.md
+ *
+ * NAMING MAP (tạm giữ đến khi migration Foundation Base v1 đóng):
+ * --ifx-alpha-white-4 chuyển từ color.css sang đây, giữ nguyên tên.
+ * Radius chuyển từ đây sang foundation/border.css, giữ nguyên tên + giá trị.
+ *
+ * "Interaction transition" của Owner inventory = ba token --ifx-transition-*
+ * đã có. Không thêm token mới khi chưa có thuộc tính nào cần chuyển động khác.
+ */

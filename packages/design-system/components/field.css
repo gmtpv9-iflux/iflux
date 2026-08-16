@@ -1,0 +1,134 @@
+/**
+ * Staging 2 — Component: Field
+ *
+ * Label + input + password toggle + invalid.
+ * Consumer chứng minh: Auth (email, mật khẩu).
+ *
+ * .ifx-field__control / __toggle / __error: đã tắt, chưa có consumer.
+ * Không mang textarea — chưa có consumer.
+ * Không alias .ix-*.
+ *
+ * SOURCE = STAGING_1 — .ix-form-group / .ix-label / .ix-input /
+ * .ix-input-password-wrap / .ix-input-password-toggle / .ix-select
+ */
+
+.ifx-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-16);
+}
+
+.ifx-field__label {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-color-text-secondary);
+}
+
+/* ==== ĐÃ TẮT — đi cùng khối .ifx-field__toggle ở cuối file ====
+.ifx-field__control {
+  position: relative;
+}
+*/
+
+.ifx-input {
+  width: 100%;
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  background: var(--ifx-color-bg-input);
+  border: 1px solid var(--ifx-color-border-default);
+  border-radius: var(--ifx-radius-input);
+  color: var(--ifx-color-text-primary);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+  outline: none;
+  transition: var(--ifx-transition-color),
+    box-shadow var(--ifx-duration-fast) var(--ifx-ease-default);
+}
+
+.ifx-input::placeholder {
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-input:focus {
+  border-color: var(--ifx-color-border-focus);
+  box-shadow: 0 0 0 3px var(--ifx-color-action-primary-soft);
+}
+
+.ifx-input:disabled {
+  color: var(--ifx-color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Chung khung với .ifx-input; khác ở mũi tên gốc của trình duyệt nên chừa chỗ
+   bên phải. Consumer: bộ lọc trạng thái ở module Quản lý người dùng. */
+.ifx-select {
+  padding: var(--ifx-space-8) var(--ifx-space-32) var(--ifx-space-8) var(--ifx-space-12);
+  background: var(--ifx-color-bg-input);
+  border: 1px solid var(--ifx-color-border-default);
+  border-radius: var(--ifx-radius-input);
+  color: var(--ifx-color-text-primary);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-14);
+  outline: none;
+  cursor: pointer;
+  transition: var(--ifx-transition-color),
+    box-shadow var(--ifx-duration-fast) var(--ifx-ease-default);
+}
+
+.ifx-select:focus {
+  border-color: var(--ifx-color-border-focus);
+  box-shadow: 0 0 0 3px var(--ifx-color-action-primary-soft);
+}
+
+.ifx-field.is-invalid .ifx-input,
+.ifx-input[aria-invalid='true'] {
+  border-color: var(--ifx-color-danger);
+}
+
+.ifx-field.is-invalid .ifx-input:focus,
+.ifx-input[aria-invalid='true']:focus {
+  border-color: var(--ifx-color-danger);
+  box-shadow: 0 0 0 3px var(--ifx-color-danger-soft);
+}
+
+/* ==== ĐÃ TẮT — chưa có consumer (audit 16/08/2026) ====
+   Mang từ Staging 1 sang để chờ nút hiện/ẩn mật khẩu và thông báo lỗi dưới ô
+   nhập. Trang Đăng nhập hiện không dựng hai thứ đó: lỗi hiển thị bằng
+   .ifx-alert ở đầu form. Bật lại đúng khối này khi màn hình thật cần, đừng gõ
+   tên mới song song.
+
+.ifx-field__error {
+  margin: 0;
+  font-size: var(--ifx-font-size-12);
+  color: var(--ifx-color-danger);
+}
+
+.ifx-field__control:has(.ifx-field__toggle) .ifx-input {
+  padding-right: calc(var(--ifx-space-32) + var(--ifx-space-8));
+}
+
+.ifx-field__toggle {
+  position: absolute;
+  right: var(--ifx-space-8);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ifx-color-text-muted);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-12);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ifx-field__toggle:hover {
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-field__toggle:focus-visible {
+  outline: 2px solid var(--ifx-color-border-focus);
+  outline-offset: 2px;
+}
+*/

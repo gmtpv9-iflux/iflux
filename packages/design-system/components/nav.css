@@ -1,0 +1,162 @@
+/**
+ * Staging 2 — Component: Nav
+ *
+ * Menu điều hướng dạng dọc: nhãn nhóm · mục · icon · nhãn · mũi tên · submenu.
+ * Không sở hữu App Shell, không class admin-*. Shell chỉ cấp slot .ifx-shell__nav.
+ *
+ * Trạng thái thu gọn (rail) do App Shell quyết định qua .is-sidebar-collapsed;
+ * file này chỉ mô tả phản ứng của nav với trạng thái đó.
+ */
+
+:root {
+  --ifx-nav-active-bar-w: 3px;
+  --ifx-nav-active-bar-inset: 4px;
+  --ifx-nav-bullet-size: 5px;
+  --ifx-nav-icon-w: 20px;
+}
+
+.ifx-nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ifx-space-12) 0;
+}
+
+.ifx-nav__group-label {
+  padding: var(--ifx-space-16) var(--ifx-space-20) var(--ifx-space-4);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--ifx-color-text-muted);
+  white-space: nowrap;
+}
+
+.ifx-nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  width: 100%;
+  padding: var(--ifx-space-9) var(--ifx-space-20);
+  border: 0;
+  background: transparent;
+  font-family: var(--ifx-font-primary);
+  color: var(--ifx-color-text-secondary);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--ifx-transition-color);
+}
+
+.ifx-nav__item:hover {
+  background: var(--ifx-color-bg-hover);
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-nav__item.is-active {
+  background: var(--ifx-color-bg-active);
+  color: var(--ifx-color-action-primary);
+}
+
+.ifx-nav__item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--ifx-nav-active-bar-inset);
+  bottom: var(--ifx-nav-active-bar-inset);
+  width: var(--ifx-nav-active-bar-w);
+  background: var(--ifx-color-action-primary);
+  border-radius: 0 var(--ifx-nav-active-bar-w) var(--ifx-nav-active-bar-w) 0;
+}
+
+.ifx-nav__item:focus-visible {
+  outline: 2px solid var(--ifx-color-border-focus);
+  outline-offset: -2px;
+}
+
+.ifx-nav__icon {
+  flex-shrink: 0;
+  width: var(--ifx-nav-icon-w);
+  font-size: var(--ifx-font-size-18);
+  text-align: center;
+}
+
+.ifx-nav__label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--ifx-font-size-13-5);
+}
+
+.ifx-nav__arrow {
+  flex-shrink: 0;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ifx-color-text-muted);
+  transition: var(--ifx-transition-transform);
+}
+
+.ifx-nav__item.is-open .ifx-nav__arrow {
+  transform: rotate(90deg);
+}
+
+/* ==== Submenu ==== */
+
+.ifx-nav__sub {
+  display: none;
+  padding: var(--ifx-space-4) 0;
+}
+
+.ifx-nav__item.is-open + .ifx-nav__sub {
+  display: block;
+}
+
+.ifx-nav__sub .ifx-nav__item {
+  padding-left: var(--ifx-space-32);
+  gap: var(--ifx-space-8);
+}
+
+.ifx-nav__sub .ifx-nav__label {
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-nav__bullet {
+  flex-shrink: 0;
+  width: var(--ifx-nav-bullet-size);
+  height: var(--ifx-nav-bullet-size);
+  margin-left: var(--ifx-space-16);
+  border-radius: var(--ifx-radius-full);
+  background: var(--ifx-color-text-muted);
+  transition: var(--ifx-transition-color);
+}
+
+.ifx-nav__sub .ifx-nav__item:hover .ifx-nav__bullet,
+.ifx-nav__sub .ifx-nav__item.is-active .ifx-nav__bullet {
+  background: var(--ifx-color-action-primary);
+}
+
+/* ==== Rail (App Shell thu gọn, chỉ từ XL) ==== */
+
+@media (min-width: 1280px) {
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__group-label,
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__label,
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__arrow,
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__sub,
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__item.is-open + .ifx-nav__sub {
+    display: none;
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__item {
+    justify-content: center;
+    padding: var(--ifx-space-10) 0;
+    gap: 0;
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__icon {
+    width: auto;
+  }
+
+  .ifx-shell.is-sidebar-collapsed .ifx-nav__item.is-active::before {
+    display: none;
+  }
+}
