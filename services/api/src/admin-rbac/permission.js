@@ -21,7 +21,8 @@ const { authenticateAdmin } = require('../admin-auth/token');
 
 async function loadAccess(email) {
   const res = await getPool().query(
-    `SELECT a.status,
+    `SELECT a.id,
+            a.status,
             a.is_super OR COALESCE(bool_or(r.is_super), false) AS is_super,
             COALESCE(array_agg(p.key) FILTER (WHERE p.key IS NOT NULL), '{}') AS keys
        FROM admin_accounts a
@@ -49,6 +50,7 @@ function requirePermission(config, key) {
             return next(new AppError('FORBIDDEN', 'Tài khoản quản trị không còn hiệu lực.', 403));
           }
           if (access.is_super || access.keys.indexOf(key) >= 0) {
+            req.admin.id = access.id;
             req.admin.isSuper = access.is_super;
             return next();
           }

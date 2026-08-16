@@ -13,6 +13,7 @@ const express = require('express');
 const { z } = require('zod');
 const { AppError } = require('../errors');
 const { requirePermission } = require('../admin-rbac/permission');
+const { insertAdminAudit } = require('../db');
 const { listUsers, listAllUsers, getUserById, updateUser } = require('./service');
 
 const listQuerySchema = z.object({
@@ -106,7 +107,24 @@ function createAdminUsersRouter(config) {
   router.patch('/:id', requirePermission(config, 'users.list.edit'), async function (req, res, next) {
     try {
       const id = parse(idSchema, req.params.id);
-      res.json({ user: await updateUser(id, parse(patchSchema, req.body)) });
+      const patch = parse(patchSchema, req.body);
+      const user = await updateUser(id, patch);
+      const wrote =
+        patch.displayName !== undefined ||
+        patch.phone !== undefined ||
+        patch.accountStatus !== undefined;
+      if (wrote) {
+        if (!req.admin || !req.admin.id) {
+          throw new AppError('UNAUTHORIZED', 'Unauthorized', 401);
+        }
+        await insertAdminAudit({
+          adminId: req.admin.id,
+          action: 'users.update',
+          targetType: 'users',
+          targetId: String(id)
+        });
+      }
+      res.json({ user: user });
     } catch (err) {
       next(err);
     }

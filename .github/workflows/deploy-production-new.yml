@@ -50,11 +50,17 @@ jobs:
             RELEASE_DIR="/var/iflux/backend-newprod/releases/${{ steps.rel.outputs.id }}"
             mkdir -p "$RELEASE_DIR"
             cp -a "$GITHUB_WORKSPACE/services/api/." "$RELEASE_DIR/"
+            mkdir -p "$RELEASE_DIR/migrations"
+            cp -a "$GITHUB_WORKSPACE/database/migrations/." "$RELEASE_DIR/migrations/"
+            cp "$GITHUB_WORKSPACE/scripts/migrate.sh" "$RELEASE_DIR/migrate.sh"
             cd "$RELEASE_DIR"
             npm install --omit=dev --no-audit --no-fund
           else
             echo "Chua co services/api/ trong branch nay — bo qua."
           fi
+
+      - name: Migrate
+        run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}" --migrate-only
 
       - name: Atomic switch (frontend "/var/www/iflux/newprod" → release mới, backend nếu có)
         run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}"

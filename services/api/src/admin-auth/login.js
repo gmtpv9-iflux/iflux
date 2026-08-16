@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcrypt');
 const { AppError } = require('../errors');
-const { getPool } = require('../db');
+const { getPool, insertAdminAudit } = require('../db');
 const { signAdminToken } = require('./token');
 
 function invalidCredentials() {
@@ -44,6 +44,13 @@ async function loginWithPassword(config, email, password, remember) {
     'UPDATE admin_accounts SET last_login_at = NOW(), updated_at = NOW() WHERE id = $1',
     [row.id]
   );
+
+  await insertAdminAudit({
+    adminId: row.id,
+    action: 'auth.login',
+    targetType: 'admin_accounts',
+    targetId: String(row.id)
+  });
 
   const admin = {
     email: row.email,
