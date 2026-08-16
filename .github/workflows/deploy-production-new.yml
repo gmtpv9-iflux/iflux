@@ -1,8 +1,11 @@
-name: Deploy to Production (Clean Rebuild)
+name: Deploy to Staging 2
 
-# Clean rebuild target cho production.iflux.vn — quyết định Owner 14/08/2026 sau
-# "13 - Production <-> Staging Baseline Verification Report.md". CHỈ deploy sang
-# production.iflux.vn (paths -newprod). KHÔNG bao giờ đụng Production cũ
+# Staging 2 — hostname hiện tại là production.iflux.vn, KHÔNG phải Production.
+# Quyết định Owner 14/08/2026 sau "13 - Production <-> Staging Baseline
+# Verification Report.md"; branch đổi tên production-clean -> staging-2 ngày
+# 16/08/2026 để tên branch nói đúng môi trường nó phục vụ.
+# CHỈ deploy sang production.iflux.vn (paths -newprod). KHÔNG bao giờ đụng
+# Production thật
 # (/var/www/iflux/production, /var/iflux/backend) hay Staging
 # (/var/www/iflux/staging, /var/iflux/backend-staging).
 # Runner tự host, cùng máy với Staging (label "staging"), user iflux-deploy
@@ -11,7 +14,7 @@ name: Deploy to Production (Clean Rebuild)
 on:
   push:
     branches:
-      - production-clean
+      - staging-2
 
 concurrency:
   group: iflux-production-new-deploy

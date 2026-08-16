@@ -1,4 +1,4 @@
-# iFlux — branch `production-clean`
+# iFlux — branch `staging-2`
 
 Branch này chứa **chính xác những gì được deploy tới `production.iflux.vn`** (hostname hiện tại của môi trường Staging 2). Không chứa tài liệu, backlog hay lịch sử phân tích — những thứ đó nằm ở branch `staging`.
 
@@ -33,7 +33,7 @@ cd services/api && npm install && npm start
 
 ## Deploy
 
-Push vào `production-clean` kích hoạt `.github/workflows/deploy-production-new.yml` trên self-hosted runner: dựng `dist/`, tạo release theo timestamp, atomic switch qua `iflux-newprod-deploy-switch.sh`.
+Push vào `staging-2` kích hoạt `.github/workflows/deploy-production-new.yml` trên self-hosted runner: dựng `dist/`, tạo release theo timestamp, atomic switch qua `iflux-newprod-deploy-switch.sh`.
 
 Workflow chỉ đụng `/var/www/iflux/newprod` và `/var/iflux/backend-newprod/current`. **Không bao giờ** chạm Production cũ (`/var/www/iflux/production`, `/var/iflux/backend`) hay Staging 1 (`/var/www/iflux/staging`).
 
