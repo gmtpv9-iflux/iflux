@@ -12,7 +12,8 @@ packages/        mã dùng chung giữa nhiều ứng dụng
 services/        dịch vụ chạy nền
   api/             REST API quản trị (Node/Express)
 database/        migration, đánh số tuần tự, chạy theo thứ tự
-scripts/         công cụ dựng
+scripts/         công cụ dựng + deploy-switch Staging 2
+infra/staging-2/   vhost nginx Staging 2 (CI áp, không SSH sửa tay)
 ```
 
 Ranh giới quan trọng: `packages/design-system/` chỉ chứa thứ **nhiều màn hình** dùng chung. CSS của một module hay một trang nằm cạnh chính trang đó trong `apps/`. Đây là thứ giữ cho bundle chung không phình theo số module.
@@ -33,9 +34,9 @@ cd services/api && npm install && npm start
 
 ## Deploy
 
-Push vào `staging-2` kích hoạt `.github/workflows/deploy-production-new.yml` trên self-hosted runner: dựng `dist/`, tạo release theo timestamp, atomic switch qua `iflux-newprod-deploy-switch.sh`.
+Push vào `staging-2` kích hoạt `.github/workflows/deploy-production-new.yml` trên self-hosted runner: dựng `dist/`, tạo release theo timestamp, atomic switch qua `iflux-newprod-deploy-switch.sh` (frontend + backend + vhost `infra/staging-2/nginx.conf`).
 
-Workflow chỉ đụng `/var/www/iflux/newprod` và `/var/iflux/backend-newprod/current`. **Không bao giờ** chạm Production cũ (`/var/www/iflux/production`, `/var/iflux/backend`) hay Staging 1 (`/var/www/iflux/staging`).
+Workflow chỉ đụng `/var/www/iflux/newprod`, `/var/iflux/backend-newprod/current`, và `/etc/nginx/sites-available/production.iflux.vn.conf`. **Không bao giờ** chạm Production cũ (`/var/www/iflux/production`, `/var/iflux/backend`, `iflux-production.conf`, `iflux-prod-app.conf`) hay Staging 1 (`/var/www/iflux/staging`).
 
 Database: `staging_2` (đổi tên từ `iflux_newprod` ngày 16/08/2026).
 

@@ -10,6 +10,8 @@ name: Deploy to Staging 2
 # (/var/www/iflux/staging, /var/iflux/backend-staging).
 # Runner tự host, cùng máy với Staging (label "staging"), user iflux-deploy
 # (không root, không sudo rộng — chỉ scoped sudo cho đúng 1 script switch).
+# Script switch còn áp vhost Staging 2 từ infra/staging-2/nginx.conf.
+# Không đụng iflux-production.conf / iflux-prod-app.conf.
 
 on:
   push:
@@ -59,6 +61,14 @@ jobs:
             echo "Chua co services/api/ trong branch nay — bo qua."
           fi
 
+      - name: Stage Staging 2 nginx + switch (ngoài web root)
+        run: |
+          set -euo pipefail
+          META="/var/www/iflux/releases-newprod/${{ steps.rel.outputs.id }}.deploy"
+          mkdir -p "$META"
+          cp "$GITHUB_WORKSPACE/infra/staging-2/nginx.conf" "$META/nginx.conf"
+          cp "$GITHUB_WORKSPACE/scripts/iflux-newprod-deploy-switch.sh" "$META/iflux-newprod-deploy-switch.sh"
+
       - name: Migrate
         run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}" --migrate-only
 
@@ -70,11 +80,24 @@ jobs:
           set -euo pipefail
           sleep 2
           curl -fsS https://production.iflux.vn/ > /dev/null
+          loc=$(curl -sSI --max-redirs 0 https://production.iflux.vn/admin/login \
+            | awk 'tolower($1)=="location:" {print $2; exit}' | tr -d '\r')
+          case "$loc" in
+            */admin/login/) ;;
+            *) echo "FAIL: /admin/login redirected to ${loc:-<empty>}" >&2; exit 1 ;;
+          esac
+          curl -fsS https://production.iflux.vn/admin/login/ > /dev/null
 
       - name: Dọn release cũ (giữ 5 bản gần nhất)
         run: |
           set -euo pipefail
-          cd /var/www/iflux/releases-newprod && ls -1t | tail -n +6 | xargs -r rm -rf
+          cd /var/www/iflux/releases-newprod
+          ls -1dt [0-9]* | grep -v '\.deploy$' | tail -n +6 | xargs -r rm -rf
+          for d in *.deploy; do
+            [ -e "$d" ] || continue
+            base="${d%.deploy}"
+            [ -d "$base" ] || rm -rf "$d"
+          done
           if [ -d /var/iflux/backend-newprod/releases ]; then
             cd /var/iflux/backend-newprod/releases && ls -1t | tail -n +6 | xargs -r rm -rf
           fi
