@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách Quản trị viên · iFlux</title>
+  <link rel="preload" href="/assets/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/ds.css?v=20260816a" />
+  <link rel="stylesheet" href="/admin/system-settings/administrators/administrators.css?v=20260817a" />
+</head>
+<body>
+  <div class="ifx-shell" id="ifx-shell">
+    <main class="ifx-shell__content">
+      <div class="ifx-page">
+        <div class="ifx-page__head">
+          <p class="ifx-admins-crumb">Admin / Hệ thống / Quản trị viên / Danh sách Quản trị viên</p>
+          <h1 class="ifx-page__title">Danh sách Quản trị viên</h1>
+          <p class="ifx-page__meta">Tất cả tài khoản quản trị nội bộ — gán vai trò, khóa, đặt lại mật khẩu.</p>
+        </div>
+
+        <section class="ifx-card">
+          <div class="ifx-admins-toolbar">
+            <input
+              class="ifx-input ifx-admins-toolbar__search"
+              id="admins-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Tìm theo tên hoặc email"
+              aria-label="Tìm quản trị viên" />
+            <div class="ifx-admins-toolbar__end">
+              <button class="ifx-button ifx-button--primary" id="admins-add" type="button" hidden>Thêm tài khoản nhân viên</button>
+            </div>
+          </div>
+          <div class="ifx-table__scroll">
+            <table class="ifx-table">
+              <thead>
+                <tr>
+                  <th scope="col">Quản trị viên</th>
+                  <th scope="col">Vai trò</th>
+                  <th scope="col">Đăng nhập gần nhất</th>
+                  <th scope="col">Trạng thái</th>
+                  <th scope="col">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="admins-rows">
+                <tr><td class="ifx-table__notice" colspan="5">Đang tải…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="ifx-offcanvas" id="admins-drawer" hidden>
+    <div class="ifx-offcanvas__backdrop" data-close="1"></div>
+    <div class="ifx-offcanvas__panel" role="dialog" aria-labelledby="admins-drawer-title">
+      <div class="ifx-offcanvas__head">
+        <h2 class="ifx-offcanvas__title" id="admins-drawer-title">Thêm tài khoản nhân viên</h2>
+        <button class="ifx-button ifx-button--outline" type="button" data-close="1">Đóng</button>
+      </div>
+      <div class="ifx-offcanvas__body">
+        <input type="hidden" id="account-id" />
+        <label class="ifx-field">
+          <span class="ifx-field__label">Họ tên</span>
+          <input class="ifx-input" id="account-name" type="text" required />
+        </label>
+        <label class="ifx-field">
+          <span class="ifx-field__label">Email</span>
+          <input class="ifx-input" id="account-email" type="email" required />
+        </label>
+        <label class="ifx-field" id="account-password-field">
+          <span class="ifx-field__label">Mật khẩu</span>
+          <input class="ifx-input" id="account-password" type="password" minlength="8" autocomplete="new-password" />
+        </label>
+        <div class="ifx-field">
+          <span class="ifx-field__label">Vai trò</span>
+          <div class="ifx-admins-roles-box" id="account-roles"></div>
+        </div>
+      </div>
+      <div class="ifx-offcanvas__foot">
+        <button class="ifx-button ifx-button--outline" type="button" data-close="1">Huỷ</button>
+        <button class="ifx-button ifx-button--primary" id="account-save" type="button">Lưu</button>
+      </div>
+    </div>
+  </div>
+  <div class="ifx-admins-toast" id="admins-toast" hidden></div>
+
+  <script src="/admin/platform.js"></script>
+  <script src="/admin/session.js"></script>
+  <script src="/admin/api.js?v=20260815i"></script>
+  <script src="/admin/auth-api.js"></script>
+  <script src="/admin/navigation.js?v=20260817a"></script>
+  <script src="/admin/shell.js?v=20260817a"></script>
+  <script src="/admin/protect.js"></script>
+  <script src="/admin/system-settings/administrators/list/list.js?v=20260817a"></script>
+</body>
+</html>

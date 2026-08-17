@@ -30,9 +30,18 @@ function insertAdminAudit(fields) {
   if (!adminId) {
     return Promise.reject(new Error('insertAdminAudit: adminId required from auth context'));
   }
-  return getPool().query(
-    'INSERT INTO admin_audit_log (admin_id, action, target_type, target_id) VALUES ($1, $2, $3, $4)',
-    [adminId, fields.action, fields.targetType || null, fields.targetId || null]
+  const db = fields.client || getPool();
+  return db.query(
+    'INSERT INTO admin_audit_log (admin_id, admin_email, action, target_type, target_id, detail, ip) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+    [
+      adminId,
+      fields.adminEmail || null,
+      fields.action,
+      fields.targetType || null,
+      fields.targetId || null,
+      fields.detail || {},
+      fields.ip || null
+    ]
   );
 }
 

@@ -26,6 +26,35 @@
           children: [
             { href: '/admin/widget-library', label: 'Thư viện Widget' }
           ]
+        },
+        {
+          label: 'Quản trị viên',
+          icon: 'users',
+          children: [
+            {
+              href: '/admin/system-settings/administrators/list',
+              label: 'Danh sách Quản trị viên',
+              pageIdentity: 'page.administrators.list',
+              viewKey: 'admin.accounts.view'
+            },
+            {
+              href: '/admin/system-settings/administrators/roles',
+              label: 'Vai trò quản trị',
+              pageIdentity: 'page.administrators.roles',
+              viewKey: 'admin.roles.view'
+            },
+            {
+              href: '/admin/system-settings/administrators/permissions',
+              label: 'Phân quyền quản trị',
+              pageIdentity: 'page.administrators.permissions',
+              viewKey: 'admin.permissions.view'
+            },
+            {
+              href: '/admin/system-settings/administrators/my-profile',
+              label: 'Hồ sơ của tôi',
+              pageIdentity: 'page.administrators.my-profile'
+            }
+          ]
         }
       ]
     }
@@ -54,28 +83,37 @@
       (item.href || (item.children && item.children.length)));
   }
 
-  function pickItems(list) {
+  function allowed(item, access) {
+    if (!item.viewKey) return true;
+    if (!access) return false;
+    if (access.isSuper) return true;
+    var keys = access.keys || [];
+    return keys.indexOf(item.viewKey) >= 0;
+  }
+
+  function pickItems(list, access) {
     var out = [];
     var i;
     for (i = 0; i < (list || []).length; i++) {
       var item = list[i];
       if (!keepItem(item)) continue;
       if (item.children) {
-        var kids = pickItems(item.children);
+        var kids = pickItems(item.children, access);
         if (!kids.length) continue;
         out.push({ href: item.href, label: item.label, icon: item.icon, children: kids });
         continue;
       }
+      if (!allowed(item, access)) continue;
       out.push(item);
     }
     return out;
   }
 
-  function visibleModules() {
+  function visibleModules(access) {
     var out = [];
     var i;
     for (i = 0; i < MODULES.length; i++) {
-      var items = pickItems(MODULES[i].items);
+      var items = pickItems(MODULES[i].items, access);
       if (items.length) out.push({ label: MODULES[i].label, items: items });
     }
     return out;

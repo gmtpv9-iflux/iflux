@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const { createAdminAuthRouter } = require('./admin-auth/routes');
 const { createAdminUsersRouter } = require('./admin-users/routes');
+const { createAdminAdministratorsRouter } = require('./admin-administrators/routes');
 const { errorHandler } = require('./errors');
 
 function createApp(config) {
@@ -23,6 +24,7 @@ function createApp(config) {
 
   app.use('/api/admin/auth', createAdminAuthRouter(config));
   app.use('/api/admin/users', createAdminUsersRouter(config));
+  app.use('/api/admin/administrators', createAdminAdministratorsRouter(config));
 
   app.use(function (req, res) {
     res.status(404).json({ error: 'Not found', code: 'NOT_FOUND' });

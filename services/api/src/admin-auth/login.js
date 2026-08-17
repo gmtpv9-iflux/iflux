@@ -13,7 +13,7 @@ function invalidCredentials() {
   );
 }
 
-async function loginWithPassword(config, email, password, remember) {
+async function loginWithPassword(config, email, password, remember, ip) {
   const norm = String(email || '').trim().toLowerCase();
   if (!norm || !password) throw invalidCredentials();
 
@@ -47,9 +47,11 @@ async function loginWithPassword(config, email, password, remember) {
 
   await insertAdminAudit({
     adminId: row.id,
+    adminEmail: row.email,
     action: 'auth.login',
     targetType: 'admin_accounts',
-    targetId: String(row.id)
+    targetId: String(row.id),
+    ip: ip || null
   });
 
   const admin = {

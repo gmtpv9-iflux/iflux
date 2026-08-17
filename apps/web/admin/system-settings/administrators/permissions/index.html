@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phân quyền quản trị · iFlux</title>
+  <link rel="preload" href="/assets/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/ds.css?v=20260816a" />
+  <link rel="stylesheet" href="/admin/system-settings/administrators/administrators.css?v=20260817a" />
+</head>
+<body>
+  <div class="ifx-shell" id="ifx-shell">
+    <main class="ifx-shell__content">
+      <div class="ifx-page">
+        <div class="ifx-page__head">
+          <p class="ifx-admins-crumb">Admin / Hệ thống / Quản trị viên / Phân quyền quản trị</p>
+          <h1 class="ifx-page__title">Phân quyền quản trị</h1>
+          <p class="ifx-page__meta">Gán quyền cho vai trò nhân viên. Owner (toàn quyền) không nằm trong danh sách.</p>
+          <p class="ifx-admins-hint" id="perm-session"></p>
+        </div>
+        <section class="ifx-card">
+          <div class="ifx-admins-matrix-bar">
+            <label class="ifx-field ifx-admins-matrix-bar__field">
+              <span class="ifx-field__label">Vai trò</span>
+              <select class="ifx-select" id="perm-role" aria-label="Vai trò"></select>
+            </label>
+            <div class="ifx-admins-matrix-bar__end">
+              <button class="ifx-button ifx-button--primary" id="perm-save" type="button" hidden>Lưu phân quyền</button>
+            </div>
+          </div>
+          <div class="ifx-table__scroll">
+            <table class="ifx-table ifx-admins-perm">
+              <thead id="perm-head"></thead>
+              <tbody id="perm-body">
+                <tr><td class="ifx-table__notice">Đang tải…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="ifx-admins-toast" id="admins-toast" hidden></div>
+
+  <script src="/admin/platform.js"></script>
+  <script src="/admin/session.js"></script>
+  <script src="/admin/api.js?v=20260815i"></script>
+  <script src="/admin/auth-api.js"></script>
+  <script src="/admin/navigation.js?v=20260817a"></script>
+  <script src="/admin/shell.js?v=20260817a"></script>
+  <script src="/admin/protect.js"></script>
+  <script src="/admin/system-settings/administrators/permissions/permissions.js?v=20260817a"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+/**
+ * Staging 2 — Module ADM-15: bố cục bốn trang Quản trị viên
+ *
+ * Chỉ bốn trang này nạp, sau /assets/ds.css. Bảng, thẻ, nút, ô nhập, chip
+ * lấy từ Design System. File này xếp toolbar, ô user, thẻ role, matrix,
+ * offcanvas, toast — không copy components.css / .ix-*.
+ */
+
+.ifx-admins-crumb {
+  margin: 0 0 var(--ifx-space-8);
+  font-size: var(--ifx-font-size-12);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-admins-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  flex-wrap: wrap;
+  padding: var(--ifx-space-12) var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+}
+
+.ifx-admins-toolbar__search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.ifx-admins-toolbar__end {
+  margin-left: auto;
+}
+
+.ifx-admins-user {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+}
+
+.ifx-admins-user__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--ifx-color-action-primary-soft);
+  color: var(--ifx-color-action-primary);
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+
+.ifx-admins-user__name {
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-admins-user__email {
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-admins-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-8);
+}
+
+.ifx-admins-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ifx-space-16);
+  padding: var(--ifx-space-20);
+}
+
+@media (min-width: 768px) {
+  .ifx-admins-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ifx-admins-profile {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ifx-admins-role {
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+.ifx-admins-role__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-12);
+}
+
+.ifx-admins-role__count {
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-admins-role__name {
+  margin: 0 0 var(--ifx-space-4);
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+
+.ifx-admins-role__code {
+  margin: 0 0 var(--ifx-space-8);
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-admins-role__desc {
+  margin: 0;
+  flex: 1;
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-secondary);
+}
+
+.ifx-admins-role__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-8);
+  margin-top: var(--ifx-space-16);
+}
+
+.ifx-admins-role--add {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.ifx-admins-role--add .ifx-admins-role__name {
+  margin: 0 0 var(--ifx-space-8);
+}
+
+.ifx-admins-hint {
+  margin: 0 0 var(--ifx-space-16);
+  font-size: var(--ifx-font-size-13);
+  color: var(--ifx-color-text-muted);
+}
+
+.ifx-admins-matrix-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  flex-wrap: wrap;
+  padding: var(--ifx-space-12) var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+}
+
+.ifx-admins-matrix-bar__end {
+  margin-left: auto;
+}
+
+.ifx-admins-matrix-bar__field {
+  margin: 0;
+}
+
+.ifx-admins-perm th,
+.ifx-admins-perm td {
+  text-align: center;
+}
+
+.ifx-admins-perm th:first-child,
+.ifx-admins-perm td:first-child {
+  text-align: left;
+}
+
+.ifx-admins-perm__group {
+  font-weight: var(--ifx-font-weight-semibold);
+  background: var(--ifx-color-bg-subtle, var(--ifx-color-bg-card));
+}
+
+.ifx-admins-profile {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ifx-space-16);
+}
+
+.ifx-admins-readonly {
+  margin: 0;
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-offcanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.ifx-offcanvas[hidden] {
+  display: none;
+}
+
+.ifx-offcanvas.is-open {
+  pointer-events: auto;
+}
+
+.ifx-offcanvas__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.ifx-offcanvas__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(420px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--ifx-color-bg-card);
+  box-shadow: var(--ifx-shadow-lg, 0 16px 40px rgba(15, 23, 42, 0.18));
+  transform: translateX(100%);
+  transition: transform var(--ifx-duration-fast, 160ms) var(--ifx-ease-default, ease);
+}
+
+.ifx-offcanvas.is-open .ifx-offcanvas__panel {
+  transform: translateX(0);
+}
+
+.ifx-offcanvas__head,
+.ifx-offcanvas__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-space-16) var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-color-border-default);
+}
+
+.ifx-offcanvas__foot {
+  border-bottom: 0;
+  border-top: 1px solid var(--ifx-color-border-default);
+  justify-content: flex-end;
+}
+
+.ifx-offcanvas__title {
+  margin: 0;
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+
+.ifx-offcanvas__body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--ifx-space-20);
+}
+
+.ifx-admins-toast {
+  position: fixed;
+  right: var(--ifx-space-20);
+  bottom: var(--ifx-space-20);
+  z-index: 50;
+  max-width: 360px;
+  padding: var(--ifx-space-12) var(--ifx-space-16);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-color-bg-card);
+  border: 1px solid var(--ifx-color-border-default);
+  box-shadow: var(--ifx-shadow-lg, 0 16px 40px rgba(15, 23, 42, 0.18));
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-admins-toast.is-danger {
+  border-color: var(--ifx-color-danger);
+  color: var(--ifx-color-danger);
+}
+
+.ifx-admins-toast[hidden] {
+  display: none;
+}
+
+.ifx-admins-roles-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+}

@@ -234,8 +234,11 @@
     }
   }
 
-  function renderNav(navHost, root, toggle) {
-    var modules = global.IfluxAdminNavigation.visibleModules();
+  function renderNav(navHost) {
+    var access = identity
+      ? { isSuper: !!identity.isSuper, keys: identity.keys || [] }
+      : null;
+    var modules = global.IfluxAdminNavigation.visibleModules(access);
     navHost.textContent = '';
     var groups = [];
     var i, j;
@@ -255,10 +258,6 @@
       }
       groups.push(heads);
     }
-
-    navHost.addEventListener('click', function (e) {
-      if (e.target.closest('a.ifx-nav__item')) setDrawer(root, toggle, false);
-    });
 
     applyActive(navHost, global.location.pathname);
     openFirstParent(groups);
@@ -305,9 +304,13 @@
     applyEnv(refs.env);
     setDrawer(root, refs.toggle, false);
     setCollapsed(root, refs.toggle, readCollapsed());
-    renderNav(refs.nav, root, refs.toggle);
+    renderNav(refs.nav);
+    refs.nav.addEventListener('click', function (e) {
+      if (e.target.closest('a.ifx-nav__item')) setDrawer(root, refs.toggle, false);
+    });
     bindLogout(refs);
     mounted = refs;
+    mounted.root = root;
     paintIdentity();
 
     refs.toggle.addEventListener('click', function () {
@@ -342,6 +345,10 @@
     setAdmin: function (admin) {
       identity = admin;
       paintIdentity();
+      if (mounted && mounted.nav) renderNav(mounted.nav);
+    },
+    getAdmin: function () {
+      return identity;
     }
   };
 

@@ -16,8 +16,14 @@
  */
 
 const { AppError } = require('../errors');
-const { getPool } = require('../db');
+const { getPool, insertAdminAudit } = require('../db');
 const { authenticateAdmin } = require('../admin-auth/token');
+
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return req.ip || '';
+}
 
 async function loadAccess(email) {
   const res = await getPool().query(
@@ -54,11 +60,22 @@ function requirePermission(config, key) {
             req.admin.isSuper = access.is_super;
             return next();
           }
-          return next(new AppError('FORBIDDEN', 'Không có quyền: ' + key, 403));
+          req.admin.id = access.id;
+          return insertAdminAudit({
+            adminId: access.id,
+            adminEmail: req.admin.email,
+            action: 'authz.deny',
+            targetType: 'permission',
+            targetId: key,
+            detail: { key: key },
+            ip: clientIp(req)
+          }).then(function () {
+            return next(new AppError('FORBIDDEN', 'Không có quyền: ' + key, 403));
+          });
         })
         .catch(next);
     });
   };
 }
 
-module.exports = { requirePermission };
+module.exports = { requirePermission, loadAccess };

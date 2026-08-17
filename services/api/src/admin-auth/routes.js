@@ -5,6 +5,7 @@ const { AppError } = require('../errors');
 const { createLoginThrottle } = require('./throttle');
 const { loginWithPassword } = require('./login');
 const { authenticateAdmin } = require('./token');
+const { loadAccess } = require('../admin-rbac/permission');
 
 const passwordSchema = z.object({
   email: z.string().email(),
@@ -44,7 +45,8 @@ function createAdminAuthRouter(config) {
         config,
         email,
         parsed.data.password,
-        !!parsed.data.remember
+        !!parsed.data.remember,
+        ip
       );
       throttle.reset(ip, email);
       res.json(result);
@@ -54,8 +56,25 @@ function createAdminAuthRouter(config) {
     }
   });
 
-  router.get('/me', authenticateAdmin(config), function (req, res) {
-    res.json({ admin: req.admin });
+  router.get('/me', authenticateAdmin(config), async function (req, res, next) {
+    try {
+      const access = await loadAccess(req.admin.email);
+      if (!access || access.status !== 'active') {
+        return next(new AppError('FORBIDDEN', 'Tài khoản quản trị không còn hiệu lực.', 403));
+      }
+      res.json({
+        admin: {
+          email: req.admin.email,
+          name: req.admin.name,
+          avatarUrl: req.admin.avatarUrl,
+          id: access.id,
+          keys: access.keys || [],
+          isSuper: !!access.is_super
+        }
+      });
+    } catch (err) {
+      next(err);
+    }
   });
 
   return router;

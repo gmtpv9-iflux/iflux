@@ -119,9 +119,13 @@ function createAdminUsersRouter(config) {
         }
         await insertAdminAudit({
           adminId: req.admin.id,
+          adminEmail: req.admin.email,
           action: 'users.update',
           targetType: 'users',
-          targetId: String(id)
+          targetId: String(id),
+          ip: req.headers['x-forwarded-for']
+            ? String(req.headers['x-forwarded-for']).split(',')[0].trim()
+            : req.ip || null
         });
       }
       res.json({ user: user });
