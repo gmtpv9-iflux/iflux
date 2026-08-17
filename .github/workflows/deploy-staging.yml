@@ -1,10 +1,12 @@
 name: Deploy to Staging
 
-# BR-23 Staging Isolation — CHỈ deploy sang Staging. KHÔNG bao giờ đụng Production.
-# Runner tự host (self-hosted, label "staging") chạy trên chính server, dưới user
-# iflux-deploy (không root, không sudo rộng, không SSH password) — xem
-# Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/
-# "12 - Production → GitHub → New Staging Reconstruction Plan.md".
+# Staging 1 — staging.iflux.vn. Cùng mô hình CI Staging 2:
+# checkout → atomic release → stage nginx + switch từ Git → switch → health.
+# CHỈ path Staging 1. KHÔNG đụng Production
+# (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api)
+# hay Staging 2 (/var/www/iflux/newprod, /var/iflux/backend-newprod).
+# Runner self-hosted label "staging", user iflux-deploy.
+# Sudo chỉ /usr/local/bin/iflux-staging-deploy-switch.sh (script tự refresh từ Git).
 
 on:
   push:
@@ -26,7 +28,7 @@ jobs:
         id: rel
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
 
-      - name: Build frontend release (atomic — thư mục riêng theo release id)
+      - name: Build frontend release (atomic)
         run: |
           set -euo pipefail
           RELEASE_DIR="/var/www/iflux/releases-staging/${{ steps.rel.outputs.id }}"
@@ -34,7 +36,7 @@ jobs:
           cp -a "$GITHUB_WORKSPACE/User_Web" "$RELEASE_DIR/User_Web"
           cp -a "$GITHUB_WORKSPACE/Admin_Design_system" "$RELEASE_DIR/Admin_Design_system"
 
-      - name: Build backend release (atomic — cài dependency riêng theo release id)
+      - name: Build backend release (atomic)
         run: |
           set -euo pipefail
           RELEASE_DIR="/var/iflux/backend-staging/releases/${{ steps.rel.outputs.id }}"
@@ -43,17 +45,37 @@ jobs:
           cd "$RELEASE_DIR"
           npm install --omit=dev --no-audit --no-fund
 
-      - name: Atomic switch (frontend "/var/www/iflux/staging" → release mới) + restart PM2 iflux-api-staging
+      - name: Stage Staging 1 nginx + switch (từ Git, ngoài web root)
+        run: |
+          set -euo pipefail
+          META="/var/www/iflux/releases-staging/${{ steps.rel.outputs.id }}.deploy"
+          mkdir -p "$META"
+          cp "$GITHUB_WORKSPACE/infra/staging-1/iflux-staging.conf" "$META/iflux-staging.conf"
+          cp "$GITHUB_WORKSPACE/infra/staging-1/iflux-staging-app.conf" "$META/iflux-staging-app.conf"
+          cp "$GITHUB_WORKSPACE/infra/staging-1/iflux-staging-deploy-switch.sh" "$META/iflux-staging-deploy-switch.sh"
+
+      - name: Atomic switch + nginx + refresh switch
         run: sudo -n /usr/local/bin/iflux-staging-deploy-switch.sh "${{ steps.rel.outputs.id }}"
 
-      - name: Health check (Staging backend, KHÔNG qua Production)
+      - name: Health check (Staging 1 only)
         run: |
           set -euo pipefail
           sleep 3
           curl -fsS http://127.0.0.1:3002/health
+          code=$(curl -sS -o /dev/null -w '%{http_code}' https://staging.iflux.vn/admin/dang-nhap)
+          if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
+            echo "FAIL HTTPS staging.iflux.vn/admin/dang-nhap → $code" >&2
+            exit 1
+          fi
 
-      - name: Dọn release cũ (giữ 5 bản gần nhất, không xoá backup legacy)
+      - name: Dọn release cũ (giữ 5 bản, kèm .deploy)
         run: |
           set -euo pipefail
-          cd /var/www/iflux/releases-staging && ls -1t | tail -n +6 | xargs -r rm -rf
+          cd /var/www/iflux/releases-staging
+          ls -1dt [0-9]* 2>/dev/null | grep -v '\.deploy$' | tail -n +6 | xargs -r rm -rf
+          for d in *.deploy; do
+            [ -e "$d" ] || continue
+            base="${d%.deploy}"
+            [ -d "$base" ] || rm -rf "$d"
+          done
           cd /var/iflux/backend-staging/releases && ls -1t | tail -n +6 | xargs -r rm -rf
