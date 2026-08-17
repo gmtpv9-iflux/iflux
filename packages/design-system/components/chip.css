@@ -10,15 +10,9 @@
  */
 
 .ifx-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ifx-space-4);
   padding: var(--ifx-space-4) var(--ifx-space-12);
   border-radius: var(--ifx-radius-chip);
-  font-family: var(--ifx-font-primary);
-  font-size: var(--ifx-font-size-13);
-  font-weight: var(--ifx-font-weight-semibold);
-  white-space: nowrap;
+  font-size: var(--ifx-font-size-12);
 }
 
 /* ==== ĐÃ TẮT — chưa có consumer (audit 16/08/2026) ====

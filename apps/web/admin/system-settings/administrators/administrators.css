@@ -70,7 +70,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--ifx-space-16);
-  padding: var(--ifx-space-20);
 }
 
 @media (min-width: 768px) {
