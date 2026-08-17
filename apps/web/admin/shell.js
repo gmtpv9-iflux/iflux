@@ -18,7 +18,7 @@
      matchMedia nên số viết tay ở đây; lệch với CSS = drawer và rail cùng bật. */
   var XL = '(min-width: 1280px)';
   var SPRITE = '/assets/icons.svg';
-  var LOGIN = '/admin/dang-nhap';
+  var LOGIN = '/admin/login';
 
   function isDesktop() {
     return global.matchMedia(XL).matches;

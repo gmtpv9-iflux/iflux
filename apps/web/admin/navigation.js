@@ -3,8 +3,7 @@
  * Một nguồn: định nghĩa module, menu, route, active, visibility.
  * Trang không tự khai báo menu, không tự set active.
  *
- * Module = nhóm điều hướng (nhãn nhóm trên sidebar), KHÔNG nằm trong URL.
- * URL trang phẳng: /admin/{slug} — đổi module không đổi đường dẫn.
+ * Nhãn menu = tiếng Việt. URL / thư mục / tệp = tiếng Anh (URL Architecture).
  *
  * Chỉ item đã có trang thật mới được hiện (exists !== false).
  */
@@ -15,7 +14,7 @@
     {
       label: 'Quản lý người dùng',
       items: [
-        { href: '/admin/nguoi-dung', label: 'Danh sách người dùng', icon: 'users' }
+        { href: '/admin/users', label: 'Danh sách người dùng', icon: 'users' }
       ]
     },
     {
@@ -25,7 +24,7 @@
           label: 'Cấu hình Widget',
           icon: 'template',
           children: [
-            { href: '/admin/thu-vien-widget', label: 'Thư viện Widget' }
+            { href: '/admin/widget-library', label: 'Thư viện Widget' }
           ]
         }
       ]

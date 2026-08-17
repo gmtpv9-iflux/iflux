@@ -85,7 +85,7 @@ function createAdminUsersRouter(config) {
         lines.push(CSV_COLUMNS.map(function (c) { return csvCell(c[1](u)); }).join(','));
       });
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', 'attachment; filename="nguoi-dung.csv"');
+      res.setHeader('Content-Disposition', 'attachment; filename="users.csv"');
       // BOM: Excel trên Windows đọc CSV không BOM thành ANSI, tiếng Việt vỡ dấu.
       // Xuống dòng cuối tệp theo RFC 4180 — thiếu nó một số công cụ nuốt dòng chót.
       res.send('\uFEFF' + lines.join('\n') + '\n');

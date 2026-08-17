@@ -4,7 +4,7 @@
  * KHÔNG thuộc Design System. Auth phục vụ một đối tượng cụ thể (trang đăng
  * nhập), không phải vùng layout dùng chung của hệ thống — nên nó nằm trong
  * thư mục trang của chính nó và KHÔNG được import vào manifest Design System.
- * Chỉ trang /admin/dang-nhap nạp file này, sau /assets/ds.css.
+ * Chỉ trang /admin/login nạp file này, sau /assets/ds.css.
  *
  * Vẫn tiêu thụ token Foundation như mọi nơi khác — tách khỏi DS là tách quyền
  * sở hữu, không phải tách khỏi hệ token.

@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var LOGIN = '/admin/dang-nhap';
+  var LOGIN = '/admin/login';
 
   function toLogin() {
     if (window.IfluxAdminSession) IfluxAdminSession.clearSession();

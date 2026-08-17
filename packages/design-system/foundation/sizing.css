@@ -31,7 +31,7 @@
  *   templates/…        --ifx-template-preview-min-h     → --ifx-min-height-preview
  *
  * --ifx-max-width-auth giữ tên nhưng KHÔNG có consumer trong Design System:
- * Auth đã ra khỏi DS về admin/dang-nhap/ (quyết định Owner 15/08/2026).
+ * Auth đã ra khỏi DS về admin/login/ (quyết định Owner 15/08/2026).
  */
 
 :root {

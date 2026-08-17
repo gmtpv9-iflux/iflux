@@ -60,7 +60,7 @@
   function identityCell(user) {
     var cell = el('td');
     var link = el('a', 'ifx-users-identity__name', user.displayName || '(chưa đặt tên)');
-    link.href = '/admin/nguoi-dung/chi-tiet?id=' + encodeURIComponent(user.id);
+    link.href = '/admin/users/detail?id=' + encodeURIComponent(user.id);
     cell.appendChild(link);
     cell.appendChild(el('div', 'ifx-users-identity__email', user.email));
     return cell;
@@ -126,7 +126,7 @@
 
   function exportCsv() {
     els.export.disabled = true;
-    global.IfluxAdminApi.download('/admin/users/export' + query(), 'nguoi-dung.csv')
+    global.IfluxAdminApi.download('/admin/users/export' + query(), 'users.csv')
       .then(function (res) {
         if (!res.ok) {
           els.export.textContent = res.status === 403 ? 'Không có quyền xuất' : 'Xuất thất bại';
