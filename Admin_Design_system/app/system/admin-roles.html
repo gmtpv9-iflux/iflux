@@ -27,16 +27,11 @@
       </header>
       <div class="ix-content">
         <h1 class="ix-page-title">Vai trò quản trị</h1>
-        <div class="ix-breadcrumb ix-mb-24">
-          <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Hệ thống</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Quản trị viên</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Vai trò quản trị</span>
-        </div>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
         <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">
           Chỉ quản lý <strong>hồ sơ vai trò</strong> (tên, mã, mô tả) để gán cho tài khoản nhân viên.
           Phân quyền thao tác thiết lập duy nhất tại
-          <a href="/admin/he-thong/admin-permissions">Phân quyền quản trị</a>.
+          <a href="/admin/system-settings/administrators/permissions">Phân quyền quản trị</a>.
           Vai trò <strong>Admin</strong> luôn toàn quyền — không chỉnh tại đây (không nằm trong Matrix).
         </p>
         <div class="ix-grid ix-grid-3 ix-mb-24" id="admin-role-cards"></div>
@@ -66,7 +61,7 @@
       <label class="ix-label">Mô tả</label>
       <input type="text" class="ix-input" id="role-field-desc" placeholder="Mô tả ngắn" />
     </div>
-    <p class="ix-field-hint">Sau khi tạo, vào <a href="/admin/he-thong/admin-permissions">Phân quyền quản trị</a> để gán quyền cho vai trò này.</p>
+    <p class="ix-field-hint">Sau khi tạo, vào <a href="/admin/system-settings/administrators/permissions">Phân quyền quản trị</a> để gán quyền cho vai trò này.</p>
   </div>
   <div class="ix-offcanvas-footer">
     <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>

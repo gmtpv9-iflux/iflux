@@ -26,7 +26,7 @@
   }
 
   function loginUrl(returnTo) {
-    var url = '/admin/dang-nhap';
+    var url = '/admin/login';
     if (returnTo) url += '?return=' + encodeURIComponent(returnTo);
     return url;
   }
@@ -277,7 +277,7 @@
   function returnUrl() {
     var q = new URLSearchParams(global.location.search || '');
     var ret = q.get('return');
-    if (ret && ret.indexOf('/admin/dang-nhap') < 0 && ret.indexOf('/dang-nhap') < 0) {
+    if (ret && ret.indexOf('/admin/dang-nhap') < 0 && ret.indexOf('/admin/login') < 0 && ret.indexOf('/dang-nhap') < 0) {
       return ret;
     }
     return '/admin/tong-quan';

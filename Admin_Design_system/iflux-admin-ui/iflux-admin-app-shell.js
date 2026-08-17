@@ -127,6 +127,33 @@
     return applyDefaultFirstParentOpen(out);
   }
 
+  function fillBreadcrumb() {
+    var el = document.getElementById('adm-page-bc');
+    var Nav = registry();
+    var key = activeKey();
+    if (!el || !Nav || !Nav.trailFor || !key) return;
+    var trail = Nav.trailFor(key);
+    el.textContent = '';
+    trail.forEach(function (crumb, idx) {
+      if (idx > 0) {
+        var sep = document.createElement('i');
+        sep.className = 'ti ti-chevron-right';
+        sep.style.fontSize = '12px';
+        el.appendChild(sep);
+      }
+      if (crumb.href && idx < trail.length - 1) {
+        var a = document.createElement('a');
+        a.href = crumb.href;
+        a.textContent = crumb.label;
+        el.appendChild(a);
+      } else {
+        var span = document.createElement('span');
+        span.textContent = crumb.label;
+        el.appendChild(span);
+      }
+    });
+  }
+
   function getHeaderState() {
     var Auth = global.IfluxAdminAuth;
     var admin = Auth && Auth.getAdmin ? Auth.getAdmin() : null;
@@ -148,6 +175,7 @@
     isActive: isActive,
     getSidebarNav: getSidebarNav,
     getHeaderState: getHeaderState,
+    fillBreadcrumb: fillBreadcrumb,
     refresh: function () {
       if (global.IfluxAdminAppShellSidebar && global.IfluxAdminAppShellSidebar.render) {
         global.IfluxAdminAppShellSidebar.render();
@@ -155,6 +183,10 @@
       if (global.IfluxAdminAppShellHeader && global.IfluxAdminAppShellHeader.render) {
         global.IfluxAdminAppShellHeader.render();
       }
+      fillBreadcrumb();
     }
   };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillBreadcrumb);
+  else fillBreadcrumb();
 })(window);

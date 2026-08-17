@@ -78,13 +78,13 @@
     "system-platform-layers": { key: "system-platform-layers", slug: "/admin/he-thong/platform-layers", file: "system/platform-layers.html" },
     "system-feature-flags": { key: "system-feature-flags", slug: "/admin/he-thong/feature-flags", file: "system/feature-flags.html" },
     "system-maintenance": { key: "system-maintenance", slug: "/admin/he-thong/maintenance", file: "system/maintenance.html" },
-    "system-admin-list": { key: "system-admin-list", slug: "/admin/he-thong/admin-list", file: "system/admin-list.html" },
-    "system-admin-profile": { key: "system-admin-profile", slug: "/admin/he-thong/admin-profile", file: "system/admin-profile.html" },
-    "system-admin-roles": { key: "system-admin-roles", slug: "/admin/he-thong/admin-roles", file: "system/admin-roles.html" },
-    "system-admin-permissions": { key: "system-admin-permissions", slug: "/admin/he-thong/admin-permissions", file: "system/admin-permissions.html" },
-    "system-roles": { key: "system-roles", slug: "/admin/he-thong/admin-roles", file: "system/admin-roles.html" },
+    "system-admin-list": { key: "system-admin-list", slug: "/admin/system-settings/administrators/list", file: "system/admin-list.html", legacySlugs: ["/admin/he-thong/admin-list", "/admin/system/admin-list", "/admin/he-thong/admin-users", "/admin/administrators/list"] },
+    "system-admin-profile": { key: "system-admin-profile", slug: "/admin/system-settings/administrators/profile", file: "system/admin-profile.html", legacySlugs: ["/admin/he-thong/admin-profile", "/admin/system/admin-profile", "/admin/administrators/profile"] },
+    "system-admin-roles": { key: "system-admin-roles", slug: "/admin/system-settings/administrators/roles", file: "system/admin-roles.html", legacySlugs: ["/admin/he-thong/admin-roles", "/admin/system/admin-roles", "/admin/he-thong/roles", "/admin/administrators/roles"] },
+    "system-admin-permissions": { key: "system-admin-permissions", slug: "/admin/system-settings/administrators/permissions", file: "system/admin-permissions.html", legacySlugs: ["/admin/he-thong/admin-permissions", "/admin/system/admin-permissions", "/admin/administrators/permissions"] },
+    "system-roles": { key: "system-admin-roles", slug: "/admin/system-settings/administrators/roles", file: "system/admin-roles.html", legacy: true },
     "system-audit": { key: "system-audit", slug: "/admin/he-thong/audit", file: "system/audit.html" },
-    "system-admin-users": { key: "system-admin-users", slug: "/admin/he-thong/admin-list", file: "system/admin-list.html" },
+    "system-admin-users": { key: "system-admin-list", slug: "/admin/system-settings/administrators/list", file: "system/admin-list.html", legacy: true },
     "community-content-dashboard": { key: "community-content-dashboard", slug: "/admin/cong-dong/content/dashboard", file: "community/content/dashboard.html" },
     "community-content-edit": { key: "community-content-edit", slug: "/admin/cong-dong/content/edit", file: "community/content/edit.html" },
     "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/danh-sach-bai-viet", file: "community/danh-sach-bai-viet.html" },
@@ -134,6 +134,16 @@
   }
 
   function hrefFor(key) {
+    var Nav = global.IfluxAdminNavRegistry;
+    if (Nav && Nav.pathFor) {
+      var ia = Nav.pathFor(key);
+      if (ia) return ia;
+      var p0 = PAGES[key];
+      if (p0 && p0.key && p0.key !== key) {
+        ia = Nav.pathFor(p0.key);
+        if (ia) return ia;
+      }
+    }
     var p = PAGES[key];
     if (p && p.slug) return p.slug;
     /* Alias: object key ≠ value.key (vd. market-price-data → market-cau-hinh-thoi-gian). */
@@ -191,15 +201,22 @@
     var best = null, bestLen = -1;
     Object.keys(PAGES).forEach(function (k) {
       var p = PAGES[k];
-      var slug = p.slug || '';
-      var slugPath = slug.split('#')[0];
-      var slugHash = slug.indexOf('#') >= 0 ? '#' + slug.split('#').slice(1).join('#') : '';
+      var slugs = [p.slug || ''];
+      if (p.legacySlugs && p.legacySlugs.length) slugs = slugs.concat(p.legacySlugs);
       var score = -1;
-      if (slugHash && hash === slugHash && (pathname === slugPath || pathname.indexOf('/ds-studio') >= 0 || pathname.indexOf('/he-thong/ds-studio') >= 0)) {
-        score = slug.length + 1000;
-      } else if (!slugHash && (pathname === slugPath || pathname.indexOf(slugPath + '/') === 0)) {
-        score = slugPath.length;
-      }
+      slugs.forEach(function (slug) {
+        var slugPath = String(slug || '').split('#')[0];
+        var slugHash = slug.indexOf('#') >= 0 ? '#' + slug.split('#').slice(1).join('#') : '';
+        var s = -1;
+        if (slugHash && hash === slugHash && (pathname === slugPath || pathname.indexOf('/ds-studio') >= 0 || pathname.indexOf('/he-thong/ds-studio') >= 0)) {
+          s = slug.length + 1000;
+        } else if (!slugHash && slugPath && (pathname === slugPath || pathname.indexOf(slugPath + '/') === 0)) {
+          s = slugPath.length;
+        }
+        if (s > score) score = s;
+      });
+      var slug = p.slug || '';
+      var slugHash = slug.indexOf('#') >= 0 ? '#' + slug.split('#').slice(1).join('#') : '';
       if (p.file) {
         var fileBase = '/Admin_Design_system/app/' + p.file;
         if (pathname === fileBase || pathname.indexOf(fileBase) === 0) {
@@ -218,9 +235,11 @@
           if (rs > score) score = rs;
         }
       }
+      if (p.legacy) score -= 1;
       if (score > bestLen) { best = k; bestLen = score; }
     });
-    return best;
+    if (!best) return best;
+    return (PAGES[best] && PAGES[best].key) || best;
   }
 
   function detectActiveKey() {

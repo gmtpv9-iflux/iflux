@@ -151,7 +151,7 @@
     { type: 'item', key: "system-ds-studio-13", routeKey: "system-ds-studio-13", label: "Luồng người dùng", icon: "ti-route", badge: "soon" },
 
     /* 8. Hệ thống */
-    { type: 'group', label: "Cài đặt hệ thống" },
+    { type: 'group', label: "Cài đặt hệ thống", urlSegment: "system-settings" },
     { type: 'item', key: "system-sla", routeKey: "system-sla", label: "Bảng SLA", icon: "ti-activity", badge: "···" },
     { type: 'item', key: "system-platform-layers", routeKey: "system-platform-layers", label: "Kiến trúc 4 tầng", icon: "ti-layers-intersect" },
     { type: 'item', key: "system-feature-flags", routeKey: "system-feature-flags", label: "Cờ tính năng", icon: "ti-toggle-left", badge: "···" },
@@ -162,11 +162,12 @@
       routeKey: "system-admin-list",
       label: "Quản trị viên",
       icon: "ti-user-shield",
+      urlSegment: "administrators",
       children: [
-        { type: 'item', key: "system-admin-list", routeKey: "system-admin-list", label: "Danh sách Quản trị viên", icon: "ti-users" },
-        { type: 'item', key: "system-admin-profile", routeKey: "system-admin-profile", label: "Hồ sơ", icon: "ti-id" },
-        { type: 'item', key: "system-admin-roles", routeKey: "system-admin-roles", label: "Vai trò quản trị", icon: "ti-shield" },
-        { type: 'item', key: "system-admin-permissions", routeKey: "system-admin-permissions", label: "Phân quyền quản trị", icon: "ti-lock" }
+        { type: 'item', key: "system-admin-list", routeKey: "system-admin-list", label: "Danh sách Quản trị viên", icon: "ti-users", urlSegment: "list" },
+        { type: 'item', key: "system-admin-profile", routeKey: "system-admin-profile", label: "Hồ sơ", icon: "ti-id", urlSegment: "profile" },
+        { type: 'item', key: "system-admin-roles", routeKey: "system-admin-roles", label: "Vai trò quản trị", icon: "ti-shield", urlSegment: "roles" },
+        { type: 'item', key: "system-admin-permissions", routeKey: "system-admin-permissions", label: "Phân quyền quản trị", icon: "ti-lock", urlSegment: "permissions" }
       ]
     },
     { type: 'item', key: "system-audit", routeKey: "system-audit", label: "Nhật ký kiểm tra", icon: "ti-list-details", badge: "···" },
@@ -248,8 +249,69 @@
     { type: 'item', key: "Admin-Design-system-patterns-charts", routeKey: "Admin-Design-system-patterns-charts", label: "Mẫu: Biểu đồ", icon: "ti-chart-pie" },
   ];
 
+  function pathFor(routeKey) {
+    var groupSeg = null;
+    var i;
+    for (i = 0; i < sidebar.length; i += 1) {
+      var node = sidebar[i];
+      if (node.type === 'group') {
+        groupSeg = node.urlSegment || null;
+        continue;
+      }
+      if (node.type === 'item' && node.routeKey === routeKey && node.urlSegment) {
+        return '/admin/' + (groupSeg ? groupSeg + '/' : '') + node.urlSegment;
+      }
+      if (node.type === 'parent' && node.children) {
+        var c;
+        for (c = 0; c < node.children.length; c += 1) {
+          var ch = node.children[c];
+          if (ch.routeKey === routeKey && ch.urlSegment) {
+            var segs = [];
+            if (groupSeg) segs.push(groupSeg);
+            if (node.urlSegment) segs.push(node.urlSegment);
+            segs.push(ch.urlSegment);
+            return '/admin/' + segs.join('/');
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  function trailFor(routeKey) {
+    var groupLabel = null;
+    var i;
+    for (i = 0; i < sidebar.length; i += 1) {
+      var node = sidebar[i];
+      if (node.type === 'group') {
+        groupLabel = node.label;
+        continue;
+      }
+      if (node.type === 'item' && node.routeKey === routeKey) {
+        return [{ label: 'Admin', href: '/admin/tong-quan' }]
+          .concat(groupLabel ? [{ label: groupLabel }] : [])
+          .concat([{ label: node.label }]);
+      }
+      if (node.type === 'parent' && node.children) {
+        var hit = null;
+        node.children.forEach(function (ch) {
+          if (ch.routeKey === routeKey) hit = ch;
+        });
+        if (hit) {
+          return [{ label: 'Admin', href: '/admin/tong-quan' }]
+            .concat(groupLabel ? [{ label: groupLabel }] : [])
+            .concat([{ label: node.label }])
+            .concat([{ label: hit.label }]);
+        }
+      }
+    }
+    return [{ label: 'Admin', href: '/admin/tong-quan' }];
+  }
+
   global.IfluxAdminNavRegistry = {
     sidebar: sidebar,
+    pathFor: pathFor,
+    trailFor: trailFor,
     itemCount: (function () {
       var n = 0;
       sidebar.forEach(function (x) {

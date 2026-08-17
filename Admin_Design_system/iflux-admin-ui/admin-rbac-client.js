@@ -55,10 +55,10 @@
     { re: /\/admin\/he-thong\/platform-layers|\/system\/platform-layers/, p: 'system.platform_layers.view' },
     { re: /\/admin\/he-thong\/feature-flags|\/system\/feature-flags/, p: 'system.feature_flags.view' },
     { re: /\/admin\/he-thong\/maintenance|\/system\/maintenance/, p: 'system.maintenance.view' },
-    { re: /\/admin\/he-thong\/admin-list|\/system\/admin-list|\/admin\/he-thong\/admin-users|\/system\/admin-users/, p: 'access.admin_accounts.view' },
+    { re: /\/admin\/he-thong\/admin-list|\/system\/admin-list|\/admin\/he-thong\/admin-users|\/system\/admin-users|\/admin\/system-settings\/administrators\/list|\/admin\/administrators\/list/, p: 'access.admin_accounts.view' },
     /* Hồ sơ cá nhân — mọi admin đã đăng nhập; không map access.admin_accounts */
-    { re: /\/admin\/he-thong\/admin-roles|\/system\/admin-roles|\/admin\/he-thong\/roles|\/system\/roles/, p: 'access.roles.view' },
-    { re: /\/admin\/he-thong\/admin-permissions|\/system\/admin-permissions/, p: 'access.permissions.view' },
+    { re: /\/admin\/he-thong\/admin-roles|\/system\/admin-roles|\/admin\/he-thong\/roles|\/system\/roles|\/admin\/system-settings\/administrators\/roles|\/admin\/administrators\/roles/, p: 'access.roles.view' },
+    { re: /\/admin\/he-thong\/admin-permissions|\/system\/admin-permissions|\/admin\/system-settings\/administrators\/permissions|\/admin\/administrators\/permissions/, p: 'access.permissions.view' },
     { re: /\/admin\/he-thong\/audit|\/system\/audit/, p: 'access.audit.view' },
     { re: /\/admin\/cong-dong\/content\/dashboard/, p: 'community.content_dashboard.view' },
     { re: /\/admin\/cong-dong\/danh-sach-bai-viet/, p: 'community.articles.view' },
@@ -97,8 +97,27 @@
     { re: /\/Admin_Design_system\/patterns\/charts\.html/, p: 'guides.patterns_charts.view' }
   ];
 
+  var PAGE_PERM = {
+    'system-admin-list': 'access.admin_accounts.view',
+    'system-admin-roles': 'access.roles.view',
+    'system-admin-permissions': 'access.permissions.view'
+  };
+
+  function permForPage(pageKey) {
+    return PAGE_PERM[pageKey] || null;
+  }
+
   function permForHref(href) {
     var h = String(href || '');
+    var R = global.IfluxAdminRoutes;
+    if (R && R.matchPath) {
+      var raw = h.split('?')[0];
+      var hash = '';
+      var hi = raw.indexOf('#');
+      if (hi >= 0) { hash = raw.slice(hi); raw = raw.slice(0, hi); }
+      var key = R.matchPath(raw, hash);
+      if (key && Object.prototype.hasOwnProperty.call(PAGE_PERM, key)) return PAGE_PERM[key];
+    }
     for (var i = 0; i < HREF_PERM.length; i++) {
       if (HREF_PERM[i].re.test(h)) return HREF_PERM[i].p;
     }
@@ -212,13 +231,7 @@
 
   function gateCurrentPage() {
     var path = (global.location && global.location.pathname) || '';
-    var need = null;
-    for (var i = 0; i < HREF_PERM.length; i++) {
-      if (HREF_PERM[i].re.test(path)) {
-        need = HREF_PERM[i].p;
-        break;
-      }
-    }
+    var need = permForHref(path);
     if (!need) return;
     /* Fail-closed: chưa load hoặc thiếu quyền → chặn trang được bảo vệ. */
     if (!cache.loaded || !hasPermission(need)) {
@@ -263,6 +276,7 @@
   global.IfluxAdminRbac = {
     hasPermission: hasPermission,
     permForHref: permForHref,
+    permForPage: permForPage,
     getPermissions: function () { return Array.from(cache.perms); },
     isSuper: function () { return cache.isSuper; },
     isLoaded: function () { return !!cache.loaded; },

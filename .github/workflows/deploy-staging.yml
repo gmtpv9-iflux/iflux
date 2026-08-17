@@ -62,9 +62,9 @@ jobs:
           set -euo pipefail
           sleep 3
           curl -fsS http://127.0.0.1:3002/health
-          code=$(curl -sS -o /dev/null -w '%{http_code}' https://staging.iflux.vn/admin/dang-nhap)
+          code=$(curl -sS -o /dev/null -w '%{http_code}' https://staging.iflux.vn/admin/login)
           if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
-            echo "FAIL HTTPS staging.iflux.vn/admin/dang-nhap → $code" >&2
+            echo "FAIL HTTPS staging.iflux.vn/admin/login → $code" >&2
             exit 1
           fi
 

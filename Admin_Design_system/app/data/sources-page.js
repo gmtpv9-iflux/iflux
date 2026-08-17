@@ -198,34 +198,8 @@
 
   function navTrail(routeKey) {
     var reg = global.IfluxAdminNavRegistry;
-    var sidebar = reg && reg.sidebar ? reg.sidebar : [];
-    var groupLabel = null;
-    var i;
-    for (i = 0; i < sidebar.length; i += 1) {
-      var node = sidebar[i];
-      if (node.type === 'group') {
-        groupLabel = node.label;
-        continue;
-      }
-      if (node.type === 'item' && node.routeKey === routeKey) {
-        return [{ label: 'Admin', href: '/Admin_Design_system/hub.html' }]
-          .concat(groupLabel ? [{ label: groupLabel }] : [])
-          .concat([{ label: node.label }]);
-      }
-      if (node.type === 'parent' && node.children) {
-        var hit = null;
-        node.children.forEach(function (ch) {
-          if (ch.routeKey === routeKey) hit = ch;
-        });
-        if (hit) {
-          return [{ label: 'Admin', href: '/Admin_Design_system/hub.html' }]
-            .concat(groupLabel ? [{ label: groupLabel }] : [])
-            .concat([{ label: node.label }])
-            .concat([{ label: hit.label }]);
-        }
-      }
-    }
-    return [{ label: 'Admin', href: '/Admin_Design_system/hub.html' }];
+    if (reg && reg.trailFor) return reg.trailFor(routeKey);
+    return [{ label: 'Admin', href: '/admin/tong-quan' }];
   }
 
   function fillPageChrome() {
