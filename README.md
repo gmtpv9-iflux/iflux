@@ -24,7 +24,7 @@ Ranh giới quan trọng: `packages/design-system/` chỉ chứa thứ **nhiều
 bash scripts/build-web.sh     # apps/ + packages/  →  dist/
 ```
 
-`dist/` là sản phẩm dựng, không commit, CI dựng lại mỗi lần deploy. Bước này nội tuyến toàn bộ `@import` của `packages/design-system/index.css` thành một file `/assets/ds.css`, nên mỗi trang chỉ nạp 1–2 file CSS thay vì kéo cả cây import.
+`dist/` là sản phẩm dựng, không commit, CI dựng lại mỗi lần deploy. `packages/design-system/` được chép nguyên cây thành `/assets/design-system/`. Mỗi trang nạp đúng một `<link>` `/assets/design-system/index.css`; browser theo `@import` và tải từng file con. Không ghép `ds.css`.
 
 Backend:
 

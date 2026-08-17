@@ -5,7 +5,7 @@
  * Mỗi mẫu là một .ifx-card, không phải bảng.
  *
  * KHÔNG thuộc Design System. Đây là giao diện của đúng một màn hình nên nó nằm
- * cạnh màn hình đó và chỉ màn hình đó nạp, sau /assets/ds.css. Trước 16/08/2026
+ * cạnh màn hình đó và chỉ màn hình đó nạp, sau /assets/design-system/index.css. Trước 16/08/2026
  * file này nằm trong design_system/templates/ và bị nạp ở mọi trang.
  */
 

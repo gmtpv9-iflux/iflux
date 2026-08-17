@@ -58,8 +58,19 @@
     els.rows.replaceChildren(row);
   }
 
+  function iconAction(name, label, onClick) {
+    var btn = el('button', 'ifx-button ifx-button--icon');
+    btn.type = 'button';
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+    if (global.IfluxAdminShell && IfluxAdminShell.icon) {
+      btn.appendChild(IfluxAdminShell.icon(name));
+    }
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
   function openDrawer(account) {
-    els.drawer.hidden = false;
     els.drawer.classList.add('is-open');
     els.drawerTitle.textContent = account ? 'Sửa tài khoản' : 'Thêm tài khoản nhân viên';
     els.id.value = account ? account.id : '';
@@ -86,7 +97,6 @@
 
   function closeDrawer() {
     els.drawer.classList.remove('is-open');
-    els.drawer.hidden = true;
   }
 
   function selectedRoleIds() {
@@ -120,52 +130,38 @@
       return cell;
     }
     if (hasKey('admin.accounts.edit')) {
-      var edit = el('button', 'ifx-button ifx-button--outline', 'Sửa');
-      edit.type = 'button';
-      edit.addEventListener('click', function () { openDrawer(account); });
-      wrap.appendChild(edit);
+      wrap.appendChild(iconAction('edit', 'Sửa / gán vai trò', function () { openDrawer(account); }));
     }
     if (hasKey('admin.accounts.reset_password')) {
-      var reset = el('button', 'ifx-button ifx-button--outline', 'Đặt lại mật khẩu');
-      reset.type = 'button';
-      reset.addEventListener('click', function () {
+      wrap.appendChild(iconAction('key', 'Đặt lại mật khẩu', function () {
         var password = window.prompt('Mật khẩu mới (tối thiểu 8 ký tự)');
         if (password == null) return;
         api('POST', '/admin/administrators/accounts/' + account.id + '/reset-password', { password: password })
           .then(function (res) {
             toast(res.ok ? 'Đã đặt lại mật khẩu.' : (res.data && res.data.error) || 'Không đặt lại được mật khẩu.', !res.ok);
           });
-      });
-      wrap.appendChild(reset);
+      }));
     }
     if (account.status === 'active' && hasKey('admin.accounts.disable')) {
-      var disable = el('button', 'ifx-button ifx-button--outline', 'Khóa');
-      disable.type = 'button';
-      disable.addEventListener('click', function () {
+      wrap.appendChild(iconAction('lock', 'Khóa', function () {
         api('PATCH', '/admin/administrators/accounts/' + account.id + '/status', { status: 'disabled' })
           .then(function (res) {
             if (!res.ok) { toast((res.data && res.data.error) || 'Không khóa được.', true); return; }
             load();
           });
-      });
-      wrap.appendChild(disable);
+      }));
     }
     if (account.status === 'disabled' && hasKey('admin.accounts.enable')) {
-      var enable = el('button', 'ifx-button ifx-button--outline', 'Mở');
-      enable.type = 'button';
-      enable.addEventListener('click', function () {
+      wrap.appendChild(iconAction('lock-open', 'Mở khóa', function () {
         api('PATCH', '/admin/administrators/accounts/' + account.id + '/status', { status: 'active' })
           .then(function (res) {
             if (!res.ok) { toast((res.data && res.data.error) || 'Không mở được.', true); return; }
             load();
           });
-      });
-      wrap.appendChild(enable);
+      }));
     }
     if (hasKey('admin.accounts.delete')) {
-      var del = el('button', 'ifx-button ifx-button--outline', 'Xóa');
-      del.type = 'button';
-      del.addEventListener('click', function () {
+      wrap.appendChild(iconAction('trash', 'Xóa', function () {
         if (!window.confirm('Xóa tài khoản này?')) return;
         api('DELETE', '/admin/administrators/accounts/' + account.id).then(function (res) {
           if (!res.ok) { toast((res.data && res.data.error) || 'Không xóa được.', true); return; }
@@ -174,8 +170,7 @@
             : 'Đã xóa tài khoản.');
           load();
         });
-      });
-      wrap.appendChild(del);
+      }));
     }
     cell.appendChild(wrap);
     return cell;
@@ -185,8 +180,10 @@
     var q = els.search.value.trim().toLowerCase();
     var rows = accounts.filter(function (account) {
       if (!q) return true;
-      return String(account.name || '').toLowerCase().indexOf(q) >= 0 ||
-        String(account.email || '').toLowerCase().indexOf(q) >= 0;
+      var roles = (account.roles || []).map(function (r) { return r.name; }).join(' ');
+      return (account.name || '').toLowerCase().indexOf(q) >= 0 ||
+        (account.email || '').toLowerCase().indexOf(q) >= 0 ||
+        roles.toLowerCase().indexOf(q) >= 0;
     });
     if (!rows.length) {
       notice(q ? 'Không có quản trị viên nào khớp bộ lọc.' : 'Chưa có quản trị viên nào.');
@@ -288,6 +285,8 @@
     var n = 0;
     var t = setInterval(function () {
       n += 1;
+      var headerSearch = document.querySelector('.ifx-shell__search input');
+      if (headerSearch) headerSearch.disabled = true;
       if ((global.IfluxAdminShell && IfluxAdminShell.getAdmin()) || n > 40) {
         clearInterval(t);
         load();

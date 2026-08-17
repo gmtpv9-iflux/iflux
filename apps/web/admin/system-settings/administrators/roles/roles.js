@@ -32,8 +32,19 @@
     return global.IfluxAdminApi.request(method, path, body);
   }
 
+  function iconAction(name, label, onClick) {
+    var btn = el('button', 'ifx-button ifx-button--icon');
+    btn.type = 'button';
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+    if (global.IfluxAdminShell && IfluxAdminShell.icon) {
+      btn.appendChild(IfluxAdminShell.icon(name));
+    }
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
   function openDrawer(role) {
-    els.drawer.hidden = false;
     els.drawer.classList.add('is-open');
     els.title.textContent = role ? 'Sửa vai trò' : 'Thêm vai trò';
     els.id.value = role ? role.id : '';
@@ -45,7 +56,6 @@
 
   function closeDrawer() {
     els.drawer.classList.remove('is-open');
-    els.drawer.hidden = true;
   }
 
   function card(role) {
@@ -59,35 +69,26 @@
     node.appendChild(el('p', 'ifx-admins-role__desc', role.description || '—'));
     var foot = el('div', 'ifx-admins-role__foot');
     if (!role.isSuper && !role.isSystem && hasKey('admin.roles.edit')) {
-      var edit = el('button', 'ifx-button ifx-button--outline', 'Sửa hồ sơ');
-      edit.type = 'button';
-      edit.addEventListener('click', function () { openDrawer(role); });
-      foot.appendChild(edit);
+      foot.appendChild(iconAction('edit', 'Sửa hồ sơ', function () { openDrawer(role); }));
     }
     if (!role.isSuper && hasKey('admin.roles.clone')) {
-      var clone = el('button', 'ifx-button ifx-button--outline', 'Nhân bản');
-      clone.type = 'button';
-      clone.addEventListener('click', function () {
+      foot.appendChild(iconAction('copy', 'Nhân bản hồ sơ', function () {
         api('POST', '/admin/administrators/roles/' + role.id + '/clone').then(function (res) {
           if (!res.ok) { toast((res.data && res.data.error) || 'Không nhân bản được.', true); return; }
           toast('Đã nhân bản vai trò.');
           load();
         });
-      });
-      foot.appendChild(clone);
+      }));
     }
     if (!role.isSuper && !role.isSystem && hasKey('admin.roles.delete')) {
-      var del = el('button', 'ifx-button ifx-button--outline', 'Xóa');
-      del.type = 'button';
-      del.addEventListener('click', function () {
+      foot.appendChild(iconAction('trash', 'Xóa', function () {
         if (!window.confirm('Xóa vai trò này?')) return;
         api('DELETE', '/admin/administrators/roles/' + role.id).then(function (res) {
           if (!res.ok) { toast((res.data && res.data.error) || 'Không xóa được.', true); return; }
           toast('Đã xóa vai trò.');
           load();
         });
-      });
-      foot.appendChild(del);
+      }));
     }
     node.appendChild(foot);
     return node;

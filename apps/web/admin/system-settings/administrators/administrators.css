@@ -1,7 +1,7 @@
 /**
  * Staging 2 — Module ADM-15: bố cục bốn trang Quản trị viên
  *
- * Chỉ bốn trang này nạp, sau /assets/ds.css. Bảng, thẻ, nút, ô nhập, chip
+ * Chỉ bốn trang này nạp, sau /assets/design-system/index.css. Bảng, thẻ, nút, ô nhập, chip
  * lấy từ Design System. File này xếp toolbar, ô user, thẻ role, matrix,
  * offcanvas, toast — không copy components.css / .ix-*.
  */
@@ -192,12 +192,8 @@
 .ifx-offcanvas {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: var(--ifx-z-drawer);
   pointer-events: none;
-}
-
-.ifx-offcanvas[hidden] {
-  display: none;
 }
 
 .ifx-offcanvas.is-open {
@@ -205,9 +201,14 @@
 }
 
 .ifx-offcanvas__backdrop {
+  display: none;
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--ifx-color-scrim);
+}
+
+.ifx-offcanvas.is-open .ifx-offcanvas__backdrop {
+  display: block;
 }
 
 .ifx-offcanvas__panel {
@@ -219,9 +220,9 @@
   display: flex;
   flex-direction: column;
   background: var(--ifx-color-bg-card);
-  box-shadow: var(--ifx-shadow-lg, 0 16px 40px rgba(15, 23, 42, 0.18));
+  box-shadow: var(--ifx-shadow-lg);
   transform: translateX(100%);
-  transition: transform var(--ifx-duration-fast, 160ms) var(--ifx-ease-default, ease);
+  transition: transform var(--ifx-duration-slow) var(--ifx-ease-out);
 }
 
 .ifx-offcanvas.is-open .ifx-offcanvas__panel {
@@ -266,7 +267,7 @@
   border-radius: var(--ifx-radius-md);
   background: var(--ifx-color-bg-card);
   border: 1px solid var(--ifx-color-border-default);
-  box-shadow: var(--ifx-shadow-lg, 0 16px 40px rgba(15, 23, 42, 0.18));
+  box-shadow: var(--ifx-shadow-lg);
   font-size: var(--ifx-font-size-14);
 }
 

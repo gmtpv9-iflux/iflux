@@ -25,20 +25,17 @@
  * ==== TRẠNG THÁI: TÊN DỰ TRỮ — ĐÃ TẮT ====
  * Tên đã comment lại; bỏ comment khi bước migration Layout chứng minh nguồn gốc.
  *
- * ==== SẼ HẤP THỤ ====
- *   layout/container.css --ifx-layout-container-gutter → --ifx-layout-gutter
- *                        (biến thể ≥768px)            → --ifx-layout-gutter-md
+ * ==== ĐÃ HẤP THỤ ====
+ *   --ifx-layout-gutter ← S1 --ifx-space-container (base = space-24).
+ *   Consumer: layout/shell.css (.ifx-shell__header / .ifx-shell__content).
+ *   --ifx-layout-gutter-md chưa bật — chưa có consumer bậc MD riêng.
  */
 
 :root {
   /* ==== Container ====
-     gutter = đệm hai bên của vùng nội dung. Base rồi nới từ MD trở lên —
-     evidence: layout/container.css đổi gutter tại đúng 768px. */
-  /* ==== TÊN DỰ TRỮ — ĐÃ TẮT ====
-     Những tên dưới đây chưa từng có giá trị và không có nơi nào dùng.
-     Bật lại hoặc thêm tên mới: đọc "QUY ƯỚC ĐẶT TÊN TOKEN" ở
-     packages/design-system/index.css trước khi gõ. */
-  /* --ifx-layout-gutter: ; */
+     gutter = đệm hai bên của vùng nội dung. Evidence S1 .ix-content
+     padding: var(--ifx-space-container) = --ifx-space-24. */
+  --ifx-layout-gutter: var(--ifx-space-24);
   /* --ifx-layout-gutter-md: ; */
   /* --ifx-layout-container-align: ; */
 

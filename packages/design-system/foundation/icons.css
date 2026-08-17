@@ -3,7 +3,7 @@
  *
  * ==== HỆ ICON CANONICAL — KHÓA ====
  * iFlux dùng MỘT hệ duy nhất: sprite nội bộ foundation/icons.svg (<symbol>),
- * gọi qua <svg class="ifx-icon"><use href="…/icons.svg#ifx-icon-*"></svg>.
+ * gọi qua <svg class="ifx-icon"><use href="/assets/design-system/foundation/icons.svg#ifx-icon-*"></svg>.
  * CẤM CDN, icon font, thư viện vendor, SVG dán thẳng vào HTML trang.
  * Module KHÔNG được tự chọn bộ icon riêng — thêm icon = thêm <symbol> vào sprite.
  *
@@ -16,9 +16,9 @@
  * chữ (nút chỉ có icon, ô trống, biểu tượng trạng thái) — nơi 1em không có
  * nghĩa. Không dùng chúng để ghi đè icon nằm trong dòng chữ.
  *
- * ==== KIỂM KÊ SPRITE (15/08/2026 — 11 symbol) ====
+ * ==== KIỂM KÊ SPRITE (17/08/2026 — 17 symbol) ====
  *   Điều hướng: menu · chevron-right
- *   Hành động:  search · logout
+ *   Hành động:  search · logout · edit · key · lock · lock-open · trash · copy
  *   Module:     template · users
  *   Còn trong sprite nhưng KHÔNG còn consumer:
  *               palette · layers · layout · components (bỏ Cấu hình Giao diện)
@@ -59,7 +59,8 @@
      Vùng chạm tối thiểu là hợp đồng tiếp cận → --ifx-a11y-icon-button-min
      trong foundation/a11y.css. Ba bậc dưới đây phải ≥ ngưỡng đó. */
   /* --ifx-icon-button-size-sm: ; */
-  /* --ifx-icon-button-size-md: ; */
+  /* Evidence S1 .ix-btn-icon 32×32. Consumer: cột Thao tác ADM-15. */
+  --ifx-icon-button-size-md: 32px;
   /* --ifx-icon-button-size-lg: ; */
 }
 

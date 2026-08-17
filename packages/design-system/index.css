@@ -4,9 +4,9 @@
  * File này là manifest — không khai báo token, không utility, không
  * component CSS, không responsive, không compatibility layer.
  *
- * Runtime: scripts/build-web.sh nội tuyến toàn bộ @import dưới đây thành một
- * file duy nhất `/assets/ds.css`; trang nạp 1 <link>. Trình duyệt không bao giờ
- * thấy các @import này — chúng tồn tại để đọc file là thấy dependency graph.
+ * Runtime: trang nạp đúng một <link> `/assets/design-system/index.css`.
+ * File này giữ @import — trình duyệt tải từng file con. DevTools thấy đúng
+ * path + dòng (components/chip.css, …). CẤM ghép thành ds.css / source map.
  *
  * ============================================================================
  * FOUNDATION CONTRACT — KHÓA (Owner directive 15/08/2026)
@@ -25,9 +25,9 @@
  *     → layout/       khung trang, không khai giá trị mới
  *     → components/   Card | Block | Item | Atom
  *     → page/module   chỉ tiêu thụ, nằm ngoài package này (apps/)
- * Ba tầng đầu là gói dùng chung, ghép thành một file và nạp ở mọi trang. Tầng
+ * Ba tầng đầu là gói dùng chung, nạp qua manifest này ở mọi trang. Tầng
  * page/module nằm cạnh trang sở hữu nó và chỉ trang đó nạp — đó là ranh giới
- * ngăn CSS của 15 module dồn hết vào bundle chung.
+ * ngăn CSS của 15 module dồn hết vào gói dùng chung.
  * Chưa có tầng templates/: hai file từng nằm đó là UI của một màn hình cụ thể
  * (đã trả về apps/) và một file chết (đã bỏ). Chỉ tạo lại khi có tổ hợp
  * component thật sự được từ hai trang trở lên dùng chung.

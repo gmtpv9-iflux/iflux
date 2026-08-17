@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Danh sách Quản trị viên · iFlux</title>
-  <link rel="preload" href="/assets/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/assets/ds.css?v=20260816a" />
-  <link rel="stylesheet" href="/admin/system-settings/administrators/administrators.css?v=20260817a" />
+  <link rel="preload" href="/assets/design-system/foundation/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/design-system/index.css?v=20260817d" />
+  <link rel="stylesheet" href="/admin/system-settings/administrators/administrators.css?v=20260817c" />
 </head>
 <body>
   <div class="ifx-shell" id="ifx-shell">
@@ -25,7 +25,7 @@
               id="admins-search"
               type="search"
               autocomplete="off"
-              placeholder="Tìm theo tên hoặc email"
+              placeholder="Tìm tài khoản nhân viên..."
               aria-label="Tìm quản trị viên" />
             <div class="ifx-admins-toolbar__end">
               <button class="ifx-button ifx-button--primary" id="admins-add" type="button" hidden>Thêm tài khoản nhân viên</button>
@@ -52,7 +52,7 @@
     </main>
   </div>
 
-  <div class="ifx-offcanvas" id="admins-drawer" hidden>
+  <div class="ifx-offcanvas" id="admins-drawer">
     <div class="ifx-offcanvas__backdrop" data-close="1"></div>
     <div class="ifx-offcanvas__panel" role="dialog" aria-labelledby="admins-drawer-title">
       <div class="ifx-offcanvas__head">
@@ -91,8 +91,8 @@
   <script src="/admin/api.js?v=20260815i"></script>
   <script src="/admin/auth-api.js"></script>
   <script src="/admin/navigation.js?v=20260817a"></script>
-  <script src="/admin/shell.js?v=20260817a"></script>
+  <script src="/admin/shell.js?v=20260817c"></script>
   <script src="/admin/protect.js"></script>
-  <script src="/admin/system-settings/administrators/list/list.js?v=20260817a"></script>
+  <script src="/admin/system-settings/administrators/list/list.js?v=20260817c"></script>
 </body>
 </html>

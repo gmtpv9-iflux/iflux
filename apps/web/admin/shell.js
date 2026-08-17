@@ -17,7 +17,7 @@
   /* Phải khớp --ifx-breakpoint-xl. Custom property không dùng được trong
      matchMedia nên số viết tay ở đây; lệch với CSS = drawer và rail cùng bật. */
   var XL = '(min-width: 1280px)';
-  var SPRITE = '/assets/icons.svg';
+  var SPRITE = '/assets/design-system/foundation/icons.svg';
   var LOGIN = '/admin/login/';
 
   function isDesktop() {
@@ -349,7 +349,8 @@
     },
     getAdmin: function () {
       return identity;
-    }
+    },
+    icon: icon
   };
 
   if (document.readyState === 'loading') {

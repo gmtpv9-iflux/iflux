@@ -1,10 +1,11 @@
 /**
  * Staging 2 — Component: Button
  *
- * Variant: primary · outline. Width: --block. Loading: [aria-busy="true"].
- * Consumer chứng minh: Auth (submit, Google fallback, forbidden).
+ * Variant: primary · outline · icon. Width: --block. Loading: [aria-busy="true"].
+ * Consumer chứng minh: Auth (submit, Google fallback, forbidden);
+ * ADM-15 cột Thao tác (icon).
  *
- * Không mang success/danger/ghost/icon/sm/lg — chưa có consumer.
+ * Không mang success/danger/ghost/sm/lg — chưa có consumer.
  * Padding compose Foundation space-8/16. Không --ifx-space-button-*.
  * Không alias .ix-*. Không justify center — Staging 1 .ix-btn là start.
  *
@@ -55,6 +56,23 @@
 }
 
 .ifx-button--outline:hover {
+  background: var(--ifx-color-bg-hover);
+  color: var(--ifx-color-text-primary);
+}
+
+.ifx-button--icon {
+  width: var(--ifx-icon-button-size-md);
+  height: var(--ifx-icon-button-size-md);
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+  background: transparent;
+  color: var(--ifx-color-text-secondary);
+  border: 1px solid transparent;
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-button--icon:hover {
   background: var(--ifx-color-bg-hover);
   color: var(--ifx-color-text-primary);
 }

@@ -118,7 +118,7 @@ body:has(.ifx-shell) {
   border-bottom: 1px solid var(--ifx-color-border-default);
   display: flex;
   align-items: center;
-  padding-inline: var(--ifx-layout-container-gutter);
+  padding-inline: var(--ifx-layout-gutter);
   gap: var(--ifx-space-12);
   flex-shrink: 0;
   position: sticky;
@@ -129,7 +129,7 @@ body:has(.ifx-shell) {
 .ifx-shell__content {
   flex: 1;
   min-height: 0;
-  padding: var(--ifx-layout-container-gutter);
+  padding: var(--ifx-layout-gutter);
   overflow-x: hidden;
   overflow-y: auto;
 }

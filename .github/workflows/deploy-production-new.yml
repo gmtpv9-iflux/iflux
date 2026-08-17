@@ -33,8 +33,9 @@ jobs:
         id: rel
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
 
-      # Mã nguồn chia theo ranh giới kiến trúc (apps/ + packages/), trình duyệt
-      # cần cây phẳng. dist/ không nằm trong Git — dựng lại mỗi lần deploy.
+      # Mã nguồn chia theo ranh giới kiến trúc (apps/ + packages/).
+      # Design System chép nguyên cây → /assets/design-system/. dist/ không
+      # nằm trong Git — dựng lại mỗi lần deploy. CẤM sinh ds.css.
       - name: Lắp web root từ apps/ + packages/
         run: bash "$GITHUB_WORKSPACE/scripts/build-web.sh"
 

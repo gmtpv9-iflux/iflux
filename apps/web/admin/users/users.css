@@ -2,7 +2,7 @@
  * Staging 2 — Module Quản lý người dùng: bố cục riêng
  *
  * KHÔNG thuộc Design System và KHÔNG được import vào manifest DS — chỉ hai trang
- * của module nạp, sau /assets/ds.css. Đây là cách sắp xếp riêng của module
+ * của module nạp, sau /assets/design-system/index.css. Đây là cách sắp xếp riêng của module
  * (RULE-011), không phải hợp đồng UI dùng chung.
  *
  * Bảng, thẻ, nút, ô nhập, chip đều lấy từ Design System. File này chỉ trả lời:
