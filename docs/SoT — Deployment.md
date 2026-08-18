@@ -3,7 +3,7 @@
 | | |
 |--|--|
 | **Document ID** | SoT-DEPLOY-001 |
-| **Version** | 1.3 |
+| **Version** | 1.6 |
 | **Status** | 🔒 **LOCKED as current-state Source of Truth** (as-is + Owner ops lock) — §§4-6, P-01, F-06 **đã bị AMENDMENT v1.3 override**, xem ngay dưới |
 | **Date** | 2026-08-02 (v1.2) · 2026-08-14 (v1.3 amendment) |
 | **Nature** | Mô tả **quy trình deploy thực tế đang dùng** — **không** thiết kế quy trình mới |
@@ -11,6 +11,68 @@
 | **v1.1** | Deploy Units · Rollback decision tree · Forbidden · Deployment Principles (Owner) |
 | **v1.2** | Định nghĩa Deploy · Git ≠ Production · bảng phân biệt thao tác (Owner-LOCK) |
 | **v1.3** | **AMENDMENT — SSH/Deployment Boundary.** `iflux.vn` chuyển thành Protected Live Environment; rsync/SSH deploy trực tiếp vào Production (mô tả as-is §§3-6 dưới) **không còn là hành vi được phép** kể từ 2026-08-14. Xem khối AMENDMENT ngay dưới đây. |
+| **v1.4** | **AMENDMENT — GitHub là kênh duy nhất.** GitLab bị cắt. (Lịch sử: từng ghi hai Staging.) |
+| **v1.5** | **AMENDMENT — chỉ Staging 1.** Bỏ Staging 2 khỏi đường triển khai. Xem AMENDMENT v1.5. |
+| **v1.6** | **AMENDMENT — Git identity.** `staging` = Staging · `production` = Production Runtime. Xem AMENDMENT v1.6. |
+
+---
+
+## AMENDMENT v1.6 (2026-08-19) — 🔒 Owner Directive (Task 05 Gate 03)
+
+```text
+GitHub staging     → Canonical Staging     → :3002 → iflux_staging
+GitHub production  → Canonical Production  → :3003 → iflux_production_next
+```
+
+| Môi trường | Nguồn | Cơ chế |
+|---|---|---|
+| Staging · `staging.iflux.vn` | GitHub `staging` | `deploy-staging.yml` |
+| Production · `iflux.vn` + `production.iflux.vn` | GitHub `production` | `deploy-production-new.yml` → path `*-newprod` |
+
+Không còn branch `staging-2`. SHA `bb9512a` (tên `production` cũ) giữ trên `backup/100826-appshell-foundation-20260810`. Leftover `/var/www/iflux/production` = backup, không phải runtime.
+
+`infra/staging-2/` + marker `IFLUX_DEPLOY_TARGET=staging-2` = path CI Production — **không** đổi máy móc.
+
+---
+
+## AMENDMENT v1.5 (2026-08-17) — 🔒 Owner Directive
+
+Chỉ đạo Owner ngày 17/08/2026: **bỏ Staging 2 khỏi đường triển khai.** Không thiết kế lại CI Staging 1. Một kênh duy nhất:
+
+```text
+Owner Worktree (iFLUX_P1 · staging) → GitHub / staging → CI → Staging 1 → Verification → Production (Gate, chưa mở)
+```
+
+| Môi trường | Nguồn | Cơ chế |
+|---|---|---|
+| Staging 1 · `staging.iflux.vn` | GitHub branch `staging` | `.github/workflows/deploy-staging.yml` → atomic release → `iflux-staging-deploy-switch.sh` |
+| Production `iflux.vn` | — | **Không có kênh.** Chỉ Production Gate (chưa mở). |
+| Staging 2 · `production.iflux.vn` | — | **Không còn mục tiêu triển khai.** Không push `staging-2` để deploy. |
+
+Worktree bắt buộc khi làm Staging 1: `/Users/mac/Documents/Productions/iFLUX_P1` · branch `staging`. Không dùng worktree `Staging_2/`.
+
+---
+
+## AMENDMENT v1.4 (2026-08-16) — 🔒 Owner Directive
+
+Chỉ đạo Owner ngày 16/08/2026, cao hơn mọi mô tả as-is trong file này:
+
+> Không làm việc với GitLab nữa. Staging 1 và Staging 2 đều nằm trên GitHub. Đóng mọi đường SSH deploy mã nguồn thẳng lên Production live.
+
+**Kênh triển khai hợp lệ — ⛔ AMEND v1.5:** chỉ còn Staging 1. Bảng hai kênh dưới đây là lịch sử 16/08.
+
+| Môi trường | Nguồn | Cơ chế |
+|---|---|---|
+| Staging 1 · `staging.iflux.vn` | GitHub branch `staging` | `.github/workflows/deploy-staging.yml` → atomic release → `iflux-staging-deploy-switch.sh` |
+| Staging 2 · `production.iflux.vn` | GitHub branch `staging-2` | ~~`deploy-production-new.yml`~~ — **đóng kênh 17/08/2026** |
+
+**Không còn kênh nào tới Production `iflux.vn`.** Không CI/CD, không rsync, không SSH đẩy mã nguồn. Khi nào mở lại phải qua Production deployment flow + Production Gate riêng — chưa mở.
+
+**GitLab:** remote `origin` (`gitlab.com/gm.tpv9/iflux`) đã gỡ khỏi repo; mọi URL `gitlab.com` bị chặn ở tầng git config toàn máy và tầng SSH. Server không có `gitlab-runner`, không cron nào kéo từ GitLab, và `/var/www/iflux/production` không phải git checkout — nên không tồn tại đường tự động nào từ GitLab tới bất kỳ môi trường nào.
+
+**Hệ quả với Definition — Deploy ở §0 dưới:** định nghĩa cũ ("đưa mã từ local working tree lên Production Server bằng rsync") **không còn hiệu lực**. Deploy nay nghĩa là: **đẩy commit lên GitHub branch `staging` và để `deploy-staging.yml` chạy** (v1.5). Mọi mô tả rsync/SSH ở §§3-6 chỉ còn giá trị lịch sử.
+
+**Đã xoá:** `infra/staging/deploy-production.env.example` — file này chứa sẵn map path Production (`/var/www/iflux/production`, `/var/iflux/backend`, PM2 `iflux-api`) để deploy tay, tức là chính con đường bị cấm.
 
 ---
 
@@ -44,9 +106,11 @@
 
 ### Definition — Deploy (Owner-LOCK)
 
-🔒 Trong toàn bộ tài liệu / hội thoại iFlux, khi nói **Deploy** mà **không** ghi rõ thêm, mặc định hiểu là:
+> ⛔ **Định nghĩa dưới đây đã bị AMENDMENT v1.4 (2026-08-16) thay thế.** Deploy nay là: đẩy commit lên GitHub branch tương ứng (`staging` hoặc `staging-2`) và để CI/CD chạy. Không còn rsync từ local, không còn đích Production. Giữ lại nguyên văn làm evidence lịch sử.
 
-> **Đưa mã/file đang có (thường từ local working tree) lên Production Server** theo **Deploy Unit** của SoT này, đủ bước unit tương ứng (rsync · restart/migrate/nginx nếu cần · Cloudflare purge khi FE/Admin · smoke), để **người dùng thực sự dùng được**.
+🔒 ~~Trong toàn bộ tài liệu / hội thoại iFlux, khi nói **Deploy** mà **không** ghi rõ thêm, mặc định hiểu là:~~
+
+> ~~**Đưa mã/file đang có (thường từ local working tree) lên Production Server** theo **Deploy Unit** của SoT này, đủ bước unit tương ứng (rsync · restart/migrate/nginx nếu cần · Cloudflare purge khi FE/Admin · smoke), để **người dùng thực sự dùng được**.~~
 
 **Deploy không đồng nghĩa với** (và **không** được diễn giải thành):
 
@@ -192,11 +256,13 @@ Files: STORAGE_LOCAL_PATH=/var/iflux/storage  ✅ backend .env
 
 ### 3.1 Git remote
 
-| Fact | Value | Tag |
+> ⛔ **Bảng dưới là hiện trạng cũ (2026-08-02), đã bị AMENDMENT v1.4 thay thế.** Remote hiện tại là GitHub `git@github.com:gmtpv9-iflux/iflux.git`; remote GitLab đã gỡ và bị chặn. Có CI/CD (GitHub Actions) tới cả hai Staging.
+
+| Fact | Value (as-is 2026-08-02) | Tag |
 |------|-------|-----|
-| Remote | GitLab `git@gitlab.com:gm.tpv9/iflux.git` | ✅ `git remote -v` |
-| CI pipeline deploy | **Không** có `.gitlab-ci.yml` trong workspace audit | ✅ absent |
-| Automated CD | **Không** thấy | ✅ |
+| Remote | ~~GitLab `git@gitlab.com:gm.tpv9/iflux.git`~~ | ✅ `git remote -v` |
+| CI pipeline deploy | **Không** có `.gitlab-ci.yml` trong workspace audit — GitLab chưa từng chạy CI cho repo này | ✅ absent |
+| Automated CD | ~~**Không** thấy~~ → nay có GitHub Actions cho `staging` và `staging-2` | ✅ |
 
 ### 3.2 Observed branch practice
 
