@@ -49,7 +49,7 @@
     var children = [];
     var childActive = false;
     (node.children || []).forEach(function (ch) {
-      if (ch.type !== 'item') return;
+      if (ch.type !== 'item' || ch.nav === false) return;
       var href = hrefFor(ch.routeKey);
       if (!canShowHref(href)) return;
       var mapped = mapItem(ch, active);
@@ -115,7 +115,7 @@
         out.push(parent);
         return;
       }
-      if (node.type !== 'item') return;
+      if (node.type !== 'item' || node.nav === false) return;
       var href = hrefFor(node.routeKey);
       if (!canShowHref(href)) return;
       if (pendingGroup) {

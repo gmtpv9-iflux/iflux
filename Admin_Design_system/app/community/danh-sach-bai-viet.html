@@ -27,11 +27,7 @@
       </header>
       <div class="ix-content">
         <h1 class="ix-page-title">Danh sách bài viết</h1>
-        <div class="ix-breadcrumb ix-mb-24">
-          <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Cộng đồng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-          <span>Danh sách bài viết</span>
-        </div>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
         <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Quản lý bài viết Cộng đồng — nguồn, danh mục, chủ đề, chủ thể và trạng thái xuất bản.</p>
 
         <div class="ix-card">
@@ -47,7 +43,7 @@
                 <option value="scheduled">Đã lên lịch</option>
               </select>
               <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-reload"><i class="ti ti-refresh"></i> Làm mới</button>
-              <a href="/admin/cong-dong/content/edit" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-perm="community.articles.create"><i class="ti ti-plus"></i> Tạo bài viết</a>
+              <a href="/admin/community/edit" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-perm="community.articles.create"><i class="ti ti-plus"></i> Tạo bài viết</a>
             </div>
           </div>
           <div class="ix-table-responsive">

@@ -28,16 +28,12 @@
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
           <div>
             <h1 class="ix-page-title">Danh sách đơn hàng</h1>
-            <div class="ix-breadcrumb ix-mb-16">
-              <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
-              <span>Quản lý đơn hàng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-              <span>Danh sách đơn hàng</span>
-            </div>
+            <div class="ix-breadcrumb ix-mb-16" id="adm-page-bc"></div>
             <p style="color:var(--ix-text-muted);font-size:13px;margin:0">Xem / sửa / xoá / cập nhật trạng thái. Duyệt chuyển khoản để kích hoạt gói.</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start">
             <button type="button" class="ix-btn ix-btn-outline" id="adm-txn-export" data-ix-perm="subscription.transactions.export"><i class="ti ti-download"></i> Xuất CSV</button>
-            <a href="/admin/don-hang/add" class="ix-btn ix-btn-primary" data-ix-perm="subscription.transactions.create"><i class="ti ti-plus"></i> Thêm mới đơn hàng</a>
+            <a href="/admin/orders/add" class="ix-btn ix-btn-primary" data-ix-perm="subscription.transactions.create"><i class="ti ti-plus"></i> Thêm mới đơn hàng</a>
           </div>
         </div>
 

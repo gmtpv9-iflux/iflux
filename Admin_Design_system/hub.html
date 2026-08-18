@@ -26,9 +26,7 @@
       </header>
       <div class="ix-content">
         <h1 class="ix-page-title">Checklist Admin</h1>
-        <div class="ix-breadcrumb ix-mb-24">
-          <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Checklist</span>
-        </div>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
         <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">
           Đồng bộ 1:1 từ <strong>menu chính</strong> (<code>IfluxAdminNavRegistry</code>) · nhóm module giống sidebar · trạng thái theo badge menu.
         </p>
@@ -168,11 +166,11 @@
       }
       if (node.type === 'parent') {
         (node.children || []).forEach(function (ch) {
-          if (ch.type === 'item') pushItem(ch, node.label);
+          if (ch.type === 'item' && ch.nav !== false) pushItem(ch, node.label);
         });
         return;
       }
-      if (node.type === 'item') pushItem(node, '');
+      if (node.type === 'item' && node.nav !== false) pushItem(node, '');
     });
 
     return { html: html.join(''), stats: stats, groups: groups };

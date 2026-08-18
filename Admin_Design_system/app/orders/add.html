@@ -28,15 +28,11 @@
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">
           <div>
             <h1 class="ix-page-title">Thêm mới đơn hàng</h1>
-            <div class="ix-breadcrumb">
-              <a href="/Admin_Design_system/hub.html">Admin</a><i class="ti ti-chevron-right" style="font-size:12px"></i>
-              <span>Quản lý đơn hàng</span><i class="ti ti-chevron-right" style="font-size:12px"></i>
-              <span>Thêm mới đơn hàng</span>
-            </div>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
             <p style="color:var(--ix-text-muted);font-size:13px;margin-top:12px">Tạo đơn thủ công giúp khách khi gặp sự cố thanh toán. Có thể chọn <strong>Đã duyệt</strong> để kích hoạt gói ngay.</p>
           </div>
           <div style="display:flex;gap:8px">
-            <a href="/admin/don-hang/list" class="ix-btn ix-btn-outline">Huỷ</a>
+            <a href="/admin/orders/list" class="ix-btn ix-btn-outline">Huỷ</a>
             <button type="button" class="ix-btn ix-btn-primary" id="btn-save-order" data-ix-perm="subscription.transactions.create"><i class="ti ti-check"></i> Tạo đơn</button>
           </div>
         </div>

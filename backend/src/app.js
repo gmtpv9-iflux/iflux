@@ -52,7 +52,7 @@ function mountAdminUi(app, config) {
   }
   app.get(/^\/admin(?:\/.*)?$/, (req, res, next) => {
     const pathname = String(req.path || '').replace(/\/+$/, '') || '/';
-    if (pathname === '/admin') return res.redirect(302, '/admin/tong-quan');
+    if (pathname === '/admin') return res.redirect(302, '/admin/overview');
     let ctx;
     try {
       ctx = ui();
