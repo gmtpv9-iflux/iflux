@@ -106,7 +106,7 @@
       ]
     },
 
-    /* 8. Quản lý Sản phẩm — Người đăng ký xóa khỏi IA */
+    /* 8. Quản lý Sản phẩm */
     { type: 'group', label: "Quản lý Sản phẩm", urlSegment: "subscriptions" },
     {
       type: 'parent',
@@ -197,8 +197,7 @@
       children: [
         { type: 'item', key: "community-rss-providers", routeKey: "community-rss-providers", label: "Danh sách RSS data", icon: "ti-building", urlSegment: "rss-sources" },
         { type: 'item', key: "community-rss-category-sync", routeKey: "community-rss-category-sync", label: "Đồng bộ danh mục bài viết", icon: "ti-arrows-exchange", urlSegment: "rss-category-sync" },
-        { type: 'item', key: "community-rss-article-schema", routeKey: "community-rss-article-schema", label: "Đồng bộ cấu trúc bài viết", icon: "ti-table", urlSegment: "rss-article-schema" },
-        { type: 'item', key: "community-rss-sync-history", routeKey: "community-rss-sync-history", label: "Lịch sử đồng bộ", icon: "ti-history", badge: "soon" }
+        { type: 'item', key: "community-rss-article-schema", routeKey: "community-rss-article-schema", label: "Đồng bộ cấu trúc bài viết", icon: "ti-table", urlSegment: "rss-article-schema" }
       ]
     },
 

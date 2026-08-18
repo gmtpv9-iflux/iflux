@@ -29,7 +29,6 @@
     "subscription-plans": { key: "subscription-plans", slug: "/admin/goi-cuoc/plans", file: "subscription/plans.html", legacySlugs: ["/admin/subscription/plans"] },
     "subscription-plan-add": { key: "subscription-plan-add", slug: "/admin/goi-cuoc/plan-edit?plan=new", file: "subscription/plan-edit.html", legacySlugs: ["/admin/subscription/plan-edit"] },
     "subscription-entitlements": { key: "subscription-entitlements", slug: "/admin/goi-cuoc/entitlements", file: "subscription/entitlements.html", legacySlugs: ["/admin/subscription/entitlements", "/admin/quyen-han", "/admin/access"] },
-    "subscription-subscribers": { key: "subscription-subscribers", slug: "/admin/goi-cuoc/subscribers", file: "subscription/subscribers.html", legacySlugs: ["/admin/subscription/subscribers"] },
     "subscription-transactions": { key: "orders-list", slug: "/admin/don-hang/list", file: "orders/list.html", legacy: true },
     "orders-list": { key: "orders-list", slug: "/admin/don-hang/list", file: "orders/list.html" },
     "orders-add": { key: "orders-add", slug: "/admin/don-hang/add", file: "orders/add.html" },
