@@ -192,7 +192,7 @@ URL → matchPath → identity → PAGE_PERM → **existing catalog key**.
 | V5 | **PASS** | Slot `#adm-page-bc` + trailFor. Studio: không slot sẵn |
 | V6 | **PASS** | PAGE_PERM existing keys; 2 GAP không bịa |
 | V7 | **PASS** source | 0 HTML Page-serve `/admin/{module}` đã migrate |
-| V8 | **PASS** local | `?plan=new` giữ trên 301 |
+| V8 | **PASS** Staging | `?plan=new` giữ trên 301 1 hop |
 | V9 | **PASS** | 13 nav · 1 identity · 1 base · 13 hash |
 | V10 | **PASS** | 0 registry/engine mới · 0 User Web |
 | W1 | **PASS** Staging | administrators/{list,profile,roles,permissions} + login 200 |
