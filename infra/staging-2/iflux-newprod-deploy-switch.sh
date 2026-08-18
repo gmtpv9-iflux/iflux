@@ -147,11 +147,11 @@ refresh_switch() {
     echo "Refusing switch self-update: missing newprod frontend live path" >&2
     exit 1
   fi
-  if grep -F -q 'FRONTEND_LIVE="/var/www/iflux/production"' "$SWITCH_SRC"; then
+  if grep -E '^FRONTEND_LIVE="/var/www/iflux/production"' "$SWITCH_SRC"; then
     echo "Refusing switch self-update: Live Production frontend path" >&2
     exit 1
   fi
-  if grep -F -q 'FRONTEND_LIVE="/var/www/iflux/staging"' "$SWITCH_SRC"; then
+  if grep -E '^FRONTEND_LIVE="/var/www/iflux/staging"' "$SWITCH_SRC"; then
     echo "Refusing switch self-update: Staging 1 frontend path" >&2
     exit 1
   fi
