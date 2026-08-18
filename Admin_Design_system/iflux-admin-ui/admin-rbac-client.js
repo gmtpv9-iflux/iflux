@@ -100,7 +100,8 @@
   var PAGE_PERM = {
     'system-admin-list': 'access.admin_accounts.view',
     'system-admin-roles': 'access.roles.view',
-    'system-admin-permissions': 'access.permissions.view'
+    'system-admin-permissions': 'access.permissions.view',
+    'system-ds-studio': 'interface.design_system.view'
   };
 
   function permForPage(pageKey) {

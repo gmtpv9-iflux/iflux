@@ -4,8 +4,8 @@
 **Căn cứ:** [`02_Audit.md`](02_Audit.md) F-01…F-15 · [`03_SoT.md`](03_SoT.md) (Owner Locked)  
 **Ngày:** 17/08/2026  
 **Status:** Owner Locked — Comparison  
-**Solution:** [`04_Solution.md`](04_Solution.md) — chưa khóa  
-**Implementation:** Dispatcher + V5 — chứng minh constraint SoT. Wave 2 English chưa ủy quyền
+**Solution:** [`04_Solution.md`](04_Solution.md) — Owner Locked. D-03 LOCK.  
+**Implementation:** AUTHORIZED §14 — Staging 1. Không Wave 2.
 
 Luồng tài liệu:
 
@@ -146,4 +146,4 @@ URL
     └── Permission binding
 ```
 
-Bước tiếp: [`04_Solution.md`](04_Solution.md) — chưa được Owner khóa, chưa được implement.
+Bước tiếp: Owner Lock D-03 (`04` §1.1) rồi ủy quyền Implementation (`04` §14). §13 đã ACCEPT trừ D-03.

@@ -58,18 +58,18 @@
     "system-page-settings": { key: "system-page-settings", slug: "/admin/he-thong/page-settings", file: "system/page-settings.html" },
     "system-templates": { key: "system-templates", slug: "/admin/he-thong/templates", file: "system/templates.html" },
     "system-ds-studio": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-primitive-tokens", file: "system/ds-studio.html" },
-    "system-ds-studio-2": { key: "system-ds-studio-2", slug: "/admin/he-thong/ds-studio#page-foundations", file: "system/ds-studio.html" },
-    "system-ds-studio-3": { key: "system-ds-studio-3", slug: "/admin/he-thong/ds-studio#page-design-tokens", file: "system/ds-studio.html" },
-    "system-ds-studio-4": { key: "system-ds-studio-4", slug: "/admin/he-thong/ds-studio#page-icons", file: "system/ds-studio.html" },
-    "system-ds-studio-5": { key: "system-ds-studio-5", slug: "/admin/he-thong/ds-studio#page-charts", file: "system/ds-studio.html" },
-    "system-ds-studio-6": { key: "system-ds-studio-6", slug: "/admin/he-thong/ds-studio#page-atoms", file: "system/ds-studio.html" },
-    "system-ds-studio-7": { key: "system-ds-studio-7", slug: "/admin/he-thong/ds-studio#page-items", file: "system/ds-studio.html" },
-    "system-ds-studio-8": { key: "system-ds-studio-8", slug: "/admin/he-thong/ds-studio#page-blocks", file: "system/ds-studio.html" },
-    "system-ds-studio-9": { key: "system-ds-studio-9", slug: "/admin/he-thong/ds-studio#page-cards", file: "system/ds-studio.html" },
-    "system-ds-studio-10": { key: "system-ds-studio-10", slug: "/admin/he-thong/ds-studio#page-organisms", file: "system/ds-studio.html" },
-    "system-ds-studio-11": { key: "system-ds-studio-11", slug: "/admin/he-thong/ds-studio#page-sections", file: "system/ds-studio.html" },
-    "system-ds-studio-12": { key: "system-ds-studio-12", slug: "/admin/he-thong/ds-studio#page-business-objects", file: "system/ds-studio.html" },
-    "system-ds-studio-13": { key: "system-ds-studio-13", slug: "/admin/he-thong/ds-studio#page-user-flows", file: "system/ds-studio.html" },
+    "system-ds-studio-2": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-foundations", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-3": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-design-tokens", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-4": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-icons", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-5": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-charts", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-6": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-atoms", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-7": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-items", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-8": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-blocks", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-9": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-cards", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-10": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-organisms", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-11": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-sections", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-12": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-business-objects", file: "system/ds-studio.html", legacy: true },
+    "system-ds-studio-13": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-user-flows", file: "system/ds-studio.html", legacy: true },
     "system-sla": { key: "system-sla", slug: "/admin/he-thong/sla", file: "system/sla.html" },
     "market-cau-hinh-thoi-gian": { key: "market-cau-hinh-thoi-gian", slug: "/admin/thi-truong/cau-hinh-thoi-gian", file: "market/cau-hinh-thoi-gian.html" },
     /* legacy bookmark → cùng trang Thị trường */
@@ -78,13 +78,13 @@
     "system-platform-layers": { key: "system-platform-layers", slug: "/admin/he-thong/platform-layers", file: "system/platform-layers.html" },
     "system-feature-flags": { key: "system-feature-flags", slug: "/admin/he-thong/feature-flags", file: "system/feature-flags.html" },
     "system-maintenance": { key: "system-maintenance", slug: "/admin/he-thong/maintenance", file: "system/maintenance.html" },
-    "system-admin-list": { key: "system-admin-list", slug: "/admin/system-settings/administrators/list", file: "system/admin-list.html", legacySlugs: ["/admin/he-thong/admin-list", "/admin/system/admin-list", "/admin/he-thong/admin-users", "/admin/administrators/list"] },
-    "system-admin-profile": { key: "system-admin-profile", slug: "/admin/system-settings/administrators/profile", file: "system/admin-profile.html", legacySlugs: ["/admin/he-thong/admin-profile", "/admin/system/admin-profile", "/admin/administrators/profile"] },
-    "system-admin-roles": { key: "system-admin-roles", slug: "/admin/system-settings/administrators/roles", file: "system/admin-roles.html", legacySlugs: ["/admin/he-thong/admin-roles", "/admin/system/admin-roles", "/admin/he-thong/roles", "/admin/administrators/roles"] },
-    "system-admin-permissions": { key: "system-admin-permissions", slug: "/admin/system-settings/administrators/permissions", file: "system/admin-permissions.html", legacySlugs: ["/admin/he-thong/admin-permissions", "/admin/system/admin-permissions", "/admin/administrators/permissions"] },
-    "system-roles": { key: "system-admin-roles", slug: "/admin/system-settings/administrators/roles", file: "system/admin-roles.html", legacy: true },
+    "system-admin-list": { key: "system-admin-list", slug: "/admin/administrators/list", file: "system/admin-list.html", legacySlugs: ["/admin/system-settings/administrators/list", "/admin/he-thong/admin-list", "/admin/system/admin-list", "/admin/he-thong/admin-users"] },
+    "system-admin-profile": { key: "system-admin-profile", slug: "/admin/administrators/profile", file: "system/admin-profile.html", legacySlugs: ["/admin/system-settings/administrators/profile", "/admin/he-thong/admin-profile", "/admin/system/admin-profile"] },
+    "system-admin-roles": { key: "system-admin-roles", slug: "/admin/administrators/roles", file: "system/admin-roles.html", legacySlugs: ["/admin/system-settings/administrators/roles", "/admin/he-thong/admin-roles", "/admin/system/admin-roles", "/admin/he-thong/roles"] },
+    "system-admin-permissions": { key: "system-admin-permissions", slug: "/admin/administrators/permissions", file: "system/admin-permissions.html", legacySlugs: ["/admin/system-settings/administrators/permissions", "/admin/he-thong/admin-permissions", "/admin/system/admin-permissions"] },
+    "system-roles": { key: "system-admin-roles", slug: "/admin/administrators/roles", file: "system/admin-roles.html", legacy: true },
     "system-audit": { key: "system-audit", slug: "/admin/he-thong/audit", file: "system/audit.html" },
-    "system-admin-users": { key: "system-admin-list", slug: "/admin/system-settings/administrators/list", file: "system/admin-list.html", legacy: true },
+    "system-admin-users": { key: "system-admin-list", slug: "/admin/administrators/list", file: "system/admin-list.html", legacy: true },
     "community-content-dashboard": { key: "community-content-dashboard", slug: "/admin/cong-dong/content/dashboard", file: "community/content/dashboard.html" },
     "community-content-edit": { key: "community-content-edit", slug: "/admin/cong-dong/content/edit", file: "community/content/edit.html" },
     "community-content-index": { key: "community-content-index", slug: "/admin/cong-dong/danh-sach-bai-viet", file: "community/danh-sach-bai-viet.html" },
@@ -262,7 +262,20 @@
     if (/\/don-hang\/edit(\.html)?$/.test(pathOnly) || /\/orders\/edit(\.html)?$/.test(pathOnly)) {
       return 'orders-list';
     }
-    return matchPath(path, hash);
+    var ident = matchPath(path, hash);
+    /* D-03: identity = system-ds-studio; nav highlight vẫn theo region hash. */
+    if (ident === 'system-ds-studio' && hash) {
+      var sk;
+      for (sk in PAGES) {
+        if (!Object.prototype.hasOwnProperty.call(PAGES, sk)) continue;
+        var sp = PAGES[sk];
+        if (!sp || String(sp.slug || '').indexOf('/ds-studio') < 0) continue;
+        var sh = String(sp.slug);
+        var shash = sh.indexOf('#') >= 0 ? '#' + sh.split('#').slice(1).join('#') : '';
+        if (shash && shash === hash) return sk;
+      }
+    }
+    return ident;
   }
 
   global.IfluxAdminRoutes = {

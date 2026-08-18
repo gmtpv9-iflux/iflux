@@ -112,17 +112,8 @@
 
   function hrefForKey(routeKey) {
     var R = window.IfluxAdminRoutes;
-    var p = R && R.PAGES && R.PAGES[routeKey];
-    if (!p) return '#';
-    var hash = '';
-    if (p.slug && p.slug.indexOf('#') >= 0) {
-      hash = '#' + p.slug.split('#').slice(1).join('#');
-    }
-    if (p.file) return 'app/' + p.file + hash;
-    if (p.slug && p.slug.indexOf('/Admin_Design_system/') === 0) {
-      return p.slug.replace('/Admin_Design_system/', '') + (hash && p.slug.indexOf('#') < 0 ? hash : '');
-    }
-    return p.slug || '#';
+    if (R && R.hrefFor) return R.hrefFor(routeKey);
+    return '#';
   }
 
   function buildRows() {

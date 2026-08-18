@@ -9,7 +9,7 @@
 
 # 0. Kết luận (nguyên nhân, không suy diễn)
 
-**Chưa áp dụng toàn bộ.** BRD BR-02 (“URL Admin phải tiếng Anh”) vẫn đúng là **yêu cầu sản phẩm**. Việc đã thi công chỉ là **Wave 1** theo khóa D-02 / D-04.
+**Chưa áp dụng toàn bộ.** BRD BR-02 (“URL Admin phải tiếng Anh”) vẫn đúng là **yêu cầu sản phẩm**. Việc đã thi công chỉ là **Wave 1** theo đề xuất D-02 / D-04 trên `04` — **không** Owner Locked.
 
 | Hạng | Số |
 |---|---|
@@ -43,9 +43,9 @@ Live cùng lúc đo:
 
 Ba lớp cùng lúc. Không phải một lớp hỏng rồi các lớp kia tự sửa.
 
-## 1.1. Phạm vi khóa — không phải bug runtime
+## 1.1. Phạm vi Wave 1 (đề xuất trên 04) — không phải bug runtime
 
-[`04_Solution.md`](04_Solution.md) D-02 (Owner Locked 17/08):
+[`04_Solution.md`](04_Solution.md) D-02 (đề xuất Solution — **không** Owner Locked):
 
 ```text
 Cùng architecture, hai wave URL.
@@ -55,7 +55,7 @@ Wave 2 = phần Admin còn lại.
 
 D-04 Wave 2: bảng slug §8 ghi **“đề xuất, chưa khóa”**. Không có ủy quyền đổi `goi-cuoc` → `subscription`.
 
-Implementation Authorization trên [`01_BRD.md`](01_BRD.md): **Wave 1 only**.
+[`01_BRD.md`](01_BRD.md): không còn ghi ủy quyền Implementation mới. Wave 1 / V5 = evidence.
 
 ## 1.2. Menu không tự dựng URL English
 
@@ -188,7 +188,7 @@ Cột “§8 đề xuất” = **chưa khóa** ([`04_Solution.md`](04_Solution.m
 | Mẫu giao diện | `system-templates` | `/admin/he-thong/templates` |
 | Token nguyên thủy … Luồng người dùng (13 DS Studio) | `system-ds-studio` … `-13` | `/admin/he-thong/ds-studio#…` |
 
-G-06 / D-03: 13 mục DS Studio = **một** page identity, hash = region. Module EN `system-settings` vs tách `interface`: **chưa khóa**. Wave 1 không đổi các URL này.
+D-03: inventory `04` §1.1 = 1 identity + 13 region (**chưa** Owner Lock). G-06 module EN vs `interface`: chưa khóa. Wave 1 không đổi các URL này.
 
 ### Cài đặt hệ thống — sibling chưa Wave 1 (5)
 
@@ -345,7 +345,7 @@ Không đi qua `/admin/…`. Wave 1 không đụng. Chưa có quyết định UR
 
 **Không có:** công tắc “toàn Admin sang English”. Không có locale engine. Không có việc group `urlSegment` tự áp mọi item trong group.
 
-**Muốn hết `goi-cuoc` trên menu:** Owner mở Wave 2 + khóa D-04 từng dòng §8 (và leaf VI nếu còn). Khi đó mới được invert nginx `subscription` ↔ `goi-cuoc` và gắn `urlSegment` / sửa `PAGES.slug`. File này **không** ủy quyền việc đó.
+**Muốn hết `goi-cuoc` trên menu:** Owner chốt **OD-6** / **OD-7** trên [`04_Solution.md`](04_Solution.md) (và slug §8 nếu phủ EN). File này **không** ủy quyền việc đó.
 
 ---
 

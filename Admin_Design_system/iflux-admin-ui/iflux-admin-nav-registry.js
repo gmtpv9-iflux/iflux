@@ -278,9 +278,16 @@
     return null;
   }
 
+  function adminHomeHref() {
+    var R = global.IfluxAdminRoutes;
+    if (R && R.hrefFor) return R.hrefFor('dashboard-index');
+    return '/admin/tong-quan';
+  }
+
   function trailFor(routeKey) {
     var groupLabel = null;
     var i;
+    var home = { label: 'Admin', href: adminHomeHref() };
     for (i = 0; i < sidebar.length; i += 1) {
       var node = sidebar[i];
       if (node.type === 'group') {
@@ -288,7 +295,7 @@
         continue;
       }
       if (node.type === 'item' && node.routeKey === routeKey) {
-        return [{ label: 'Admin', href: '/admin/tong-quan' }]
+        return [home]
           .concat(groupLabel ? [{ label: groupLabel }] : [])
           .concat([{ label: node.label }]);
       }
@@ -298,14 +305,14 @@
           if (ch.routeKey === routeKey) hit = ch;
         });
         if (hit) {
-          return [{ label: 'Admin', href: '/admin/tong-quan' }]
+          return [home]
             .concat(groupLabel ? [{ label: groupLabel }] : [])
             .concat([{ label: node.label }])
             .concat([{ label: hit.label }]);
         }
       }
     }
-    return [{ label: 'Admin', href: '/admin/tong-quan' }];
+    return [home];
   }
 
   global.IfluxAdminNavRegistry = {

@@ -6,8 +6,8 @@
 **Primary Implementation Scope:** Admin
 **Authority:** Product URL Architecture SoT
 **Status:** Owner Locked — BRD  
-**Implementation Authorization:** Dispatcher + V5 (SoT §4 §5 §8.5 §8.6 constraint) trên 4 trang Quản trị viên + login. Wave 2 English **chưa** ủy quyền.  
-**Solution:** [`04_Solution.md`](04_Solution.md) — **mở khóa** — architecture Dispatcher (không mở G-FLEX)
+**Implementation Authorization:** **AUTHORIZED** 18/08 — `04` §14, Staging 1. Không Wave 2.  
+**Solution:** [`04_Solution.md`](04_Solution.md) — Owner Locked. D-03 LOCK = `system-ds-studio`.
 
 ---
 
@@ -975,8 +975,8 @@ Task chỉ hoàn thành khi:
 
 **Status:** BRD Owner Locked
 
-**Implementation:** Ủy quyền Wave 1 — 17/08/2026.
+**Implementation:** Không ghi ủy quyền mới tại đây. Evidence Wave 1 / V5 ≠ phê duyệt 04.
 
 **Next Action:**
 
-> Thi công Wave 1 theo `04_Solution.md` (đã khóa). Wave 2 chưa ủy quyền.
+> Implementation §14 đang chạy / đã ghi §15. Không mở Wave 2.
