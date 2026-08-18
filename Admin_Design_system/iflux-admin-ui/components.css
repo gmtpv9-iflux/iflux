@@ -200,6 +200,15 @@ body {
   z-index: var(--ifx-z-sticky);
 }
 
+/* Page Host — cùng flex slot mà .ix-content từng giữ khi là con trực tiếp của main */
+[data-ix-admin-page-host] {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* Content area — scroll nội bộ, không scroll body */
 .ix-content {
   flex: 1;
