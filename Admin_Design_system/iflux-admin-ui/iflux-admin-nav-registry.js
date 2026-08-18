@@ -151,7 +151,7 @@
     { type: 'item', key: "system-ds-studio-13", routeKey: "system-ds-studio-13", label: "Luồng người dùng", icon: "ti-route", badge: "soon" },
 
     /* 8. Hệ thống */
-    { type: 'group', label: "Cài đặt hệ thống", urlSegment: "system-settings" },
+    { type: 'group', label: "Cài đặt hệ thống" },
     { type: 'item', key: "system-sla", routeKey: "system-sla", label: "Bảng SLA", icon: "ti-activity", badge: "···" },
     { type: 'item', key: "system-platform-layers", routeKey: "system-platform-layers", label: "Kiến trúc 4 tầng", icon: "ti-layers-intersect" },
     { type: 'item', key: "system-feature-flags", routeKey: "system-feature-flags", label: "Cờ tính năng", icon: "ti-toggle-left", badge: "···" },

@@ -6,7 +6,8 @@
 **Primary Implementation Scope:** Admin
 **Authority:** Product URL Architecture SoT
 **Status:** Owner Locked — BRD  
-**Implementation Authorization:** Owner cấp 17/08/2026 — Wave 1 (4 trang Quản trị viên + login) theo [`04_Solution.md`](04_Solution.md) D-01…D-06
+**Implementation Authorization:** Dispatcher + V5 (SoT §4 §5 §8.5 §8.6 constraint) trên 4 trang Quản trị viên + login. Wave 2 English **chưa** ủy quyền.  
+**Solution:** [`04_Solution.md`](04_Solution.md) — **mở khóa** — architecture Dispatcher (không mở G-FLEX)
 
 ---
 

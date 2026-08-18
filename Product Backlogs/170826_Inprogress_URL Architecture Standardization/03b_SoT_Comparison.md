@@ -4,10 +4,20 @@
 **Căn cứ:** [`02_Audit.md`](02_Audit.md) F-01…F-15 · [`03_SoT.md`](03_SoT.md) (Owner Locked)  
 **Ngày:** 17/08/2026  
 **Status:** Owner Locked — Comparison  
-**Solution:** [`04_Solution.md`](04_Solution.md) — Owner Locked 17/08/2026  
-**Implementation:** Wave 1 ủy quyền cùng khóa 04
+**Solution:** [`04_Solution.md`](04_Solution.md) — chưa khóa  
+**Implementation:** Dispatcher + V5 — chứng minh constraint SoT. Wave 2 English chưa ủy quyền
 
-`03_SoT.md` không bị sửa bởi file này. File này chỉ chấm hiện trạng S1 Admin (và dependency User Web / API) so với SoT đã khóa.
+Luồng tài liệu:
+
+```text
+Comparison
+    ↓
+Solution
+    ↓
+Implementation
+```
+
+`03_SoT.md` không bị sửa bởi file này. File này chỉ chấm hiện trạng S1 Admin (và dependency User Web / API) so với SoT đã khóa. Không khóa Solution. Không ủy quyền implement.
 
 ---
 
@@ -63,7 +73,7 @@ Không suy diễn slug / identity mới trong file này. Gap G-01…G-06 vẫn m
 | F-12 21 HTML ngoài registry; 18 route ngoài nav | §6 | **FAIL** | Dead file ≠ Page mới; route mồ côi = Route thừa |
 | F-13 API EN, UI Admin VI | §2.2 | **PARTIAL** | API không phải vấn đề. UI là lệch |
 | F-14 User Web VI; chưa có cây EN SEO | §2.1, §8.2 | **OUT** | Admin-first. Không chặn architecture Admin. G-04 |
-| F-15 Nginx Admin không trong Git S1 | §5, §8.6 | **FAIL** (maintainability) | Cùng lúc là gap hạ tầng đã biết (G-05) |
+| F-15 Nginx Admin: runtime S1 chưa chứng minh reproducible từ Git | §5, §8.6 | **FAIL** (maintainability) | Audit F-15 A/B/C · G-05. Không suy “runtime = file Git” |
 
 ---
 
@@ -101,13 +111,39 @@ F-14 không vào chuỗi Admin. G-02, G-03, G-06 là quyết định dữ liệu
 
 S1 Admin **không đạt** Product URL Architecture SoT.
 
-Không có hạng Admin UI nào ở §8 đạt PASS.
+Không có hạng mục **Admin UI** nào ở §8 đạt PASS.
+
+Các điểm đang khớp SoT chỉ là các thành phần cục bộ:
+
+- Admin API dùng English;
+- Nav dùng `routeKey` thay vì hardcode URL;
+- permission key độc lập với tên URL;
+- HTML đang theo Convention A;
+- không nhân bản parent menu để giữ URL cũ.
+
+Các điểm này **không đủ** để tạo thành Canonical Product URL Architecture.
 
 Architecture mục tiêu của Solution phải đảo:
 
 ```text
-Hiện tại:  URL (VI, 2 cấp)  →  nhiều implementation  →  “identity”
-Mục tiêu:  Page Identity  →  IA  →  Route Registry  →  URL (EN, đủ cấp)
+Hiện tại:
+URL (VI, 2 cấp)
+    ↓
+nhiều implementation
+    ↓
+pageKey / permission / file / URL chồng nhau
+
+Mục tiêu:
+Page Identity
+    ↓
+IA
+    ↓
+Canonical Route Registry
+    ↓
+URL
+    ├── Nav
+    ├── Breadcrumb
+    └── Permission binding
 ```
 
 Bước tiếp: [`04_Solution.md`](04_Solution.md) — chưa được Owner khóa, chưa được implement.

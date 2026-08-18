@@ -203,6 +203,11 @@
       var p = PAGES[k];
       var slugs = [p.slug || ''];
       if (p.legacySlugs && p.legacySlugs.length) slugs = slugs.concat(p.legacySlugs);
+      var Nav = global.IfluxAdminNavRegistry;
+      if (Nav && Nav.pathFor) {
+        var ia = Nav.pathFor(p.key);
+        if (ia) slugs.push(ia);
+      }
       var score = -1;
       slugs.forEach(function (slug) {
         var slugPath = String(slug || '').split('#')[0];

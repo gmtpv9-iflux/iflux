@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
 const express = require('express');
 const cors = require('cors');
 const { requestId } = require('./middleware/request-id');
@@ -16,6 +19,72 @@ const { createMarketRouter } = require('./modules/market/market.routes');
   const { createOnboardingRouter } = require('./modules/onboarding/onboarding.routes');
   const { createPlansRouter } = require('./modules/plans/plans.routes');
   const { AppError } = require('./shared/exceptions/app-error');
+
+function adminWebRoot(config) {
+  if (process.env.IFLUX_WEB_ROOT) return process.env.IFLUX_WEB_ROOT;
+  if (config.APP_ENV === 'staging') return '/var/www/iflux/staging';
+  if (config.APP_ENV === 'local') return path.resolve(__dirname, '../..');
+  return null;
+}
+
+function loadAdminUiPack(webRoot) {
+  const ctx = { window: {} };
+  ctx.window = ctx;
+  ctx.global = ctx;
+  vm.runInNewContext(
+    fs.readFileSync(path.join(webRoot, 'Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js'), 'utf8'),
+    ctx
+  );
+  vm.runInNewContext(
+    fs.readFileSync(path.join(webRoot, 'Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js'), 'utf8'),
+    ctx
+  );
+  return ctx;
+}
+
+function mountAdminUi(app, config) {
+  const webRoot = adminWebRoot(config);
+  if (!webRoot) return;
+  let pack;
+  function ui() {
+    if (!pack) pack = loadAdminUiPack(webRoot);
+    return pack;
+  }
+  app.get(/^\/admin(?:\/.*)?$/, (req, res, next) => {
+    const pathname = String(req.path || '').replace(/\/+$/, '') || '/';
+    if (pathname === '/admin') return res.redirect(302, '/admin/tong-quan');
+    let ctx;
+    try {
+      ctx = ui();
+    } catch (e) {
+      return next(e);
+    }
+    const R = ctx.IfluxAdminRoutes;
+    const Nav = ctx.IfluxAdminNavRegistry;
+    if (!R || !R.matchPath) return next();
+    const key = R.matchPath(pathname, '');
+    if (!key) return next();
+    const canonical = (Nav && Nav.pathFor && Nav.pathFor(key)) || (R.hrefFor && R.hrefFor(key)) || '';
+    const canPath = String(canonical).split('?')[0].split('#')[0].replace(/\/+$/, '');
+    if (canPath && canPath !== '#' && pathname !== canPath) {
+      const q = req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?')) : '';
+      return res.redirect(301, canPath + q);
+    }
+    let file = null;
+    Object.keys(R.PAGES || {}).some((k) => {
+      if (R.PAGES[k] && R.PAGES[k].key === key && R.PAGES[k].file) {
+        file = R.PAGES[k].file;
+        return true;
+      }
+      return false;
+    });
+    if (!file) return next();
+    const abs = path.join(webRoot, 'Admin_Design_system', 'app', file);
+    if (!fs.existsSync(abs)) return next();
+    res.set('Cache-Control', 'no-store');
+    return res.sendFile(abs);
+  });
+}
 
 function legacyErrorAdapter(err, req, res, next) {
   if (err instanceof AppError) {
@@ -193,6 +262,8 @@ function createApp(config) {
 
   const { createDnseRouter } = require('./modules/dnse/dnse.routes');
   app.use(`${config.LEGACY_API_PREFIX}/admin/dnse`, createDnseRouter({ config, auth: adminAuthMw }));
+
+  mountAdminUi(app, config);
 
   app.use(legacyErrorAdapter);
   app.use(notFoundHandler);
