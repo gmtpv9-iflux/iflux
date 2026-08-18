@@ -1,0 +1,81 @@
+/**
+ * iFlux Foundation — Legacy aliases (Layer 2 → --ix-* / --iflux-*)
+ * Giữ tương thích trong khi migrate domain CSS. Không thêm hex mới ở đây.
+ */
+:root {
+  /* Brand shorthand */
+  --iflux-navy: var(--ifx-color-navy-600);
+  --iflux-navy-hover: var(--ifx-color-navy-700);
+  --iflux-orange: var(--ifx-color-orange-500);
+  --iflux-success: var(--ifx-color-green-500);
+  --iflux-danger: var(--ifx-color-red-500);
+  --iflux-warning: var(--ifx-color-amber-500);
+
+  /* Vuexy-compat semantic (--ix-*) */
+  --ix-bg-body: var(--color-bg-canvas);
+  --ix-bg-card: var(--color-bg-surface);
+  --ix-bg-sidebar: var(--color-bg-sidebar);
+  --ix-bg-navbar: var(--color-bg-navbar);
+  --ix-bg-hover: var(--color-bg-hover);
+  --ix-bg-active: var(--color-bg-active);
+  --ix-bg-input: var(--color-bg-input);
+
+  --ix-accent: var(--color-action-primary);
+  --ix-accent-hover: var(--color-action-primary-hover);
+  --ix-accent-soft: var(--color-action-primary-soft);
+
+  --ix-success: var(--color-success);
+  --ix-success-soft: var(--color-success-soft);
+  --ix-warning: var(--color-warning);
+  --ix-warning-soft: var(--color-warning-soft);
+  --ix-danger: var(--color-danger);
+  --ix-danger-soft: var(--color-danger-soft);
+  --ix-info: var(--color-info);
+  --ix-info-soft: var(--color-info-soft);
+
+  --ix-text-primary: var(--color-text-primary);
+  --ix-text-secondary: var(--color-text-secondary);
+  --ix-text-card-title: var(--color-text-card-title);
+  --ix-text-muted: var(--color-text-muted);
+
+  --ix-border: var(--color-border-default);
+
+  /* Layout */
+  --ix-sidebar-w: var(--ifx-size-sidebar-w);
+  --ix-sidebar-w-collapsed: var(--ifx-size-sidebar-w-collapsed);
+  --ix-navbar-h: var(--ifx-size-navbar-h);
+
+  /* Radius */
+  --ix-radius: var(--radius-button);
+  --ix-radius-lg: var(--radius-card);
+
+  /* User Web chrome */
+  --ifx-topnav-bg: var(--color-topnav-bg);
+  --ifx-topnav-shadow: var(--color-topnav-shadow);
+  --ifx-surface-elevated: var(--color-surface-elevated);
+  --ifx-overlay-scrim: var(--color-scrim);
+  --ifx-nav-drawer-w: var(--ifx-size-nav-drawer-w);
+  --ifx-topnav-h: var(--ifx-size-topnav-h);
+  --ifx-tabbar-h: var(--ifx-size-tabbar-h);
+
+  /* Market semantic shortcuts */
+  --ifx-market-up: var(--color-market-up);
+  --ifx-market-down: var(--color-market-down);
+  --ifx-market-up-soft: var(--color-market-up-soft);
+  --ifx-market-down-soft: var(--color-market-down-soft);
+  --ifx-market-ref: var(--color-market-ref);
+  --ifx-market-ref-soft: var(--color-market-ref-soft);
+  --ifx-market-ceiling: var(--color-market-ceiling);
+  --ifx-market-ceiling-soft: var(--color-market-ceiling-soft);
+  --ifx-market-floor: var(--color-market-floor);
+  --ifx-market-floor-soft: var(--color-market-floor-soft);
+  --ifx-flow-in: var(--color-flow-in);
+  --ifx-flow-out: var(--color-flow-out);
+
+  /* Chart runtime (ApexCharts / SVG) */
+  --ifx-chart-grid: var(--ifx-color-border-frost);
+  --ifx-chart-label: var(--ix-text-secondary);
+  --ifx-chart-text: var(--ix-text-muted);
+  --ifx-chart-annotation-bg: var(--ix-accent-soft);
+  --ifx-chart-marker-stroke: var(--color-text-on-primary);
+}

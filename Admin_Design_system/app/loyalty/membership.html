@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách Membership · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .adm-ms-layout { display:flex; gap:var(--ifx-space-24, 24px); align-items:stretch; min-height:480px; }
+    .adm-ms-tree-card { width:320px; flex-shrink:0; padding:12px; overflow:auto; max-height:calc(100vh - 220px); }
+    .adm-ms-detail-card { flex:1; min-width:0; padding:0; overflow:auto; max-height:calc(100vh - 220px); }
+    .adm-ms-node { display:flex; align-items:center; gap:2px; margin:2px 0; }
+    .adm-ms-node.is-active .adm-ms-node-btn { color:var(--ix-accent); font-weight:600; }
+    .adm-ms-node-btn { border:0; background:transparent; color:var(--ix-text-primary); font:inherit; cursor:pointer; text-align:left; padding:6px 8px; border-radius:var(--ix-radius); flex:1; }
+    .adm-ms-node-btn:hover { background:var(--ix-bg-hover); }
+    .adm-ms-node-count { color:var(--ix-text-muted); font-size:12px; font-weight:400; }
+    .adm-ms-chevron { width:28px; height:28px; flex-shrink:0; }
+    .adm-ms-row-active td { background:var(--ix-bg-hover); }
+    .adm-ms-detail-head { padding:16px 20px; border-bottom:1px solid var(--ix-border); font-weight:600; }
+    @media (max-width:960px) {
+      .adm-ms-layout { flex-direction:column; }
+      .adm-ms-tree-card { width:100%; max-height:280px; }
+    }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." disabled /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Danh sách Membership</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+
+        <div class="adm-ms-layout">
+          <div class="ix-card adm-ms-tree-card">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--ix-text-secondary)">Cây hệ thống</div>
+            <div id="ms-tree"></div>
+          </div>
+          <div class="ix-card adm-ms-detail-card">
+            <div class="adm-ms-detail-head" id="ms-detail-title">Admin</div>
+            <div class="ix-table-responsive">
+              <table class="ix-table">
+                <thead><tr>
+                  <th>Tên</th>
+                  <th>Ngày tham gia</th>
+                  <th>(Tổng) Hoa hồng F0</th>
+                  <th>(Tổng) Hoa hồng F1</th>
+                  <th>(Tổng) Hoa hồng F2</th>
+                  <th>Tổng hoa hồng</th>
+                </tr></thead>
+                <tbody id="ms-detail-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=loyalty20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/subscription/loyalty-affiliate-store.js"></script>
+<script src="/Admin_Design_system/app/loyalty/membership-page.js?v=loyalty20260723"></script>
+</body>
+</html>

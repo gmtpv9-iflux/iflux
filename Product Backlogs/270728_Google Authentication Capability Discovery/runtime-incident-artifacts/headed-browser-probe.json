@@ -1,0 +1,260 @@
+{
+  "mode": "headed-chromium",
+  "pre": {
+    "location_href": "https://iflux.vn/dang-nhap",
+    "document_location_href": "https://iflux.vn/dang-nhap",
+    "typeof_IfluxAuthSocial": "object",
+    "typeof_loginGoogle": "function",
+    "typeof_initPage": "function",
+    "typeof_IfluxUserDataSync": "undefined",
+    "shellReady": "auth",
+    "btnExists": true,
+    "btnHref": "#",
+    "btnOuter": "<a class=\"ix-social-btn google\" href=\"#\" id=\"btn-google\" title=\"Google\"><i class=\"ti ti-brand-google-filled\"></i></a>",
+    "serviceWorker": false,
+    "cachesApi": true
+  },
+  "listenersPre": [
+    {
+      "type": "click",
+      "useCapture": false,
+      "once": false,
+      "passive": false,
+      "scriptId": "23",
+      "lineNumber": 344,
+      "columnNumber": 44,
+      "handlerPreview": "function (e) {\n        e.preventDefault();\n        var run = map[provider];\n        var runOpts = {\n          referral_code: affiliateCodeForSocial(opts.referral_code),\n          remember_me: opts.remember_me\n        };\n        if (opts.onStart) opts.onStart(provider);\n        if (provider === 'google' && googleActivatorReady) {\n          startGoogleLoginFromUserGesture(runOpts)\n            .then(function (user) {\n              if (opts.onSuccess) opts.onSuccess(provider, user);\n            })\n            .catch(function (err) {\n              if (opts.onError) opts.onError(provider, err);\n            });\n          return;\n        }\n        run(runOpts)\n          .then(function (user) {\n            if (opts.onSuccess) opts.onSuccess(provider, user);\n          })\n          .catch(function (err) {\n            if (opts.onError) opts.onError(provider, err);\n          });\n      }"
+    }
+  ],
+  "scriptSrcs": [
+    {
+      "src": "/User_Web/iflux-web-ui/iflux-platform-boot.js?v=homeCd20260724",
+      "loaded": "1"
+    },
+    {
+      "src": "/User_Web/iflux-web-ui/auth.js?v=regSoT_20260728",
+      "loaded": "1"
+    },
+    {
+      "src": "/User_Web/iflux-web-ui/auth-social.js?v=googleProxy20260728",
+      "loaded": "1"
+    },
+    {
+      "src": "/User_Web/iflux-web-ui/iflux-user-data-sync.js",
+      "loaded": "1"
+    },
+    {
+      "src": "/User_Web/iflux-web-ui/auth-login-init.js?v=zombieKill20260724",
+      "loaded": "1"
+    },
+    {
+      "src": "/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=googleProxy20260728",
+      "loaded": null
+    }
+  ],
+  "sw": {
+    "supported": true,
+    "controller": false,
+    "regs": []
+  },
+  "reqVersions": [
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=googleProxy20260728",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/runtime/legacy-bridge.js?v=phaseCW420260721",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/auth-social.js?v=googleProxy20260728",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/iflux-user-data-sync.js",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/auth-login-init.js?v=zombieKill20260724",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=googleProxy20260728",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/runtime/legacy-bridge.js?v=phaseCW420260721",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/auth-social.js?v=googleProxy20260728",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/iflux-user-data-sync.js",
+      "status": 200
+    },
+    {
+      "url": "https://iflux.vn/User_Web/iflux-web-ui/auth-login-init.js?v=zombieKill20260724",
+      "status": 200
+    }
+  ],
+  "clickMeta": {
+    "willClick": "inner-i",
+    "btnStillSameNode": true
+  },
+  "post": {
+    "location_href": "https://iflux.vn/dang-nhap",
+    "document_location_href": "https://iflux.vn/dang-nhap",
+    "btnExists": true,
+    "btnHref": "#",
+    "btnOuter": "<a class=\"ix-social-btn google\" href=\"#\" id=\"btn-google\" title=\"Google\"><i class=\"ti ti-brand-google-filled\"></i></a>",
+    "incident": {
+      "clicks": [
+        {
+          "phase": "document-capture",
+          "defaultPrevented": false,
+          "timeStamp": 4335.60000000149,
+          "targetId": "",
+          "targetTag": "I",
+          "closestBtnGoogle": true,
+          "path": [
+            {
+              "tag": "I",
+              "id": null,
+              "cls": "ti ti-brand-google-filled"
+            },
+            {
+              "tag": "A",
+              "id": "btn-google",
+              "cls": "ix-social-btn google"
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "cls": "ix-auth-socials"
+            },
+            {
+              "tag": "DIV",
+              "id": "login-main",
+              "cls": ""
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "cls": "ix-auth-card"
+            },
+            {
+              "tag": "DIV",
+              "id": null,
+              "cls": "ix-auth-root"
+            },
+            {
+              "tag": "BODY",
+              "id": null,
+              "cls": "ifx-auth-page"
+            },
+            {
+              "tag": "HTML",
+              "id": null,
+              "cls": ""
+            }
+          ]
+        },
+        {
+          "phase": "document-bubble",
+          "defaultPrevented": true,
+          "timeStamp": 4335.60000000149,
+          "targetId": ""
+        }
+      ],
+      "mutations": [],
+      "btnSnapshots": [
+        {
+          "when": "after-reload",
+          "outerHTML": "<a class=\"ix-social-btn google\" href=\"#\" id=\"btn-google\" title=\"Google\"><i class=\"ti ti-brand-google-filled\"></i></a>",
+          "isConnected": true
+        }
+      ]
+    },
+    "gsiProxy": true,
+    "gsiIframes": [
+      "https://accounts.google.com/gsi/button?type=icon&theme=outline&size=medium&shape=circle&is_fedcm_supported=false&client_id=642927266497-o04c7abj4rbj1lobf906342ivhaoecse.apps.googleusercontent.com&iframe_id=gsi_804776_447811&cas=QChUOWtsPdSlOYyiRGWCsa2Cjrw6%2FtShawJ%2FDkqKiWk"
+    ]
+  },
+  "listenersPost": [
+    {
+      "type": "click",
+      "useCapture": false,
+      "lineNumber": 344,
+      "handlerPreview": "function (e) {\n        e.preventDefault();\n        var run = map[provider];\n        var runOpts = {\n          referral_code: affiliateCodeForSocial(opts.referral_code),\n          remember_me: opts.rem"
+    }
+  ],
+  "nav": [
+    {
+      "t": 1785248799789,
+      "url": "https://iflux.vn/dang-nhap"
+    },
+    {
+      "t": 1785248804638,
+      "url": "https://iflux.vn/dang-nhap"
+    }
+  ],
+  "failed": [],
+  "cons": [
+    {
+      "type": "pageerror",
+      "text": "missing ) after argument list",
+      "stack": ""
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "loc": {
+        "url": "https://iflux.vn/favicon.ico",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "pageerror",
+      "text": "missing ) after argument list",
+      "stack": ""
+    }
+  ],
+  "loginHtmlPath": {
+    "pre2": {
+      "location_href": "https://iflux.vn/dang-nhap",
+      "authSocial": "object",
+      "sync": "undefined",
+      "btnHref": "#"
+    },
+    "listeners2": [
+      {
+        "type": "click",
+        "line": 344
+      }
+    ],
+    "post2": {
+      "href": "https://iflux.vn/dang-nhap",
+      "nav2": [
+        {
+          "t": 1785248813642,
+          "url": "https://iflux.vn/dang-nhap"
+        }
+      ]
+    }
+  },
+  "race": {
+    "href": "https://iflux.vn/User_Web/auth/#",
+    "nav3": [
+      "https://iflux.vn/dang-nhap",
+      "https://iflux.vn/User_Web/auth/#"
+    ],
+    "racePre": {
+      "href": "https://iflux.vn/dang-nhap",
+      "authSocial": "undefined",
+      "shell": null
+    }
+  }
+}

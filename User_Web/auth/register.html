@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng ký · iFlux</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../iflux-web-ui/iflux-web-ui.css" />
+  <style>
+    .ix-input.is-ref-locked {
+      opacity: 0.92;
+      background: rgba(105, 108, 255, 0.06);
+      border-color: var(--ix-accent);
+      cursor: not-allowed;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .ix-input.is-invalid {
+      border-color: var(--ix-danger) !important;
+      box-shadow: 0 0 0 1px rgba(var(--ix-danger-rgb, 255, 62, 29), 0.25);
+    }
+    .ifx-field-error {
+      font-size: 12px;
+      color: var(--ix-danger);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+  </style>
+  </head>
+<body class="ifx-auth-page">
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Tạo tài khoản 🚀</div>
+    <div class="ix-auth-sub">Miễn phí — theo dõi thị trường và cá nhân hóa watchlist</div>
+
+    <div class="ix-tabs ifx-auth-tabs" id="reg-tabs">
+      <button type="button" class="ix-tab active" data-reg-tab="email">Email</button>
+      <button type="button" class="ix-tab" data-reg-tab="phone">Số điện thoại</button>
+    </div>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Họ tên hiển thị</label>
+      <input type="text" class="ix-input" id="reg-name" placeholder="Nguyễn Văn A" autofocus />
+    </div>
+
+    <div id="reg-panel-email">
+      <div class="ix-form-group">
+        <label class="ix-label">Email</label>
+        <input type="email" class="ix-input" id="reg-email" placeholder="ban@iflux.vn" required />
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label">Số điện thoại <span style="font-weight:400;color:var(--ix-text-muted)">(tuỳ chọn)</span></label>
+        <input type="tel" class="ix-input" id="reg-phone" placeholder="0912 345 678" />
+      </div>
+    </div>
+
+    <div id="reg-panel-phone" style="display:none">
+      <div class="ix-form-group">
+        <label class="ix-label">Số điện thoại</label>
+        <input type="tel" class="ix-input" id="reg-phone-primary" placeholder="0912 345 678" />
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label">Email <span style="font-weight:400;color:var(--ix-text-muted)">(tuỳ chọn)</span></label>
+        <input type="email" class="ix-input" id="reg-email-optional" placeholder="ban@iflux.vn" />
+      </div>
+    </div>
+    <div class="ix-form-group" id="reg-ref-group">
+      <label class="ix-label" id="reg-ref-label">Mã giới thiệu <span style="font-weight:400;color:var(--ix-text-muted)">(tuỳ chọn)</span></label>
+      <input type="text" class="ix-input" id="reg-referral" placeholder="Nhập mã giới thiệu" autocomplete="off" maxlength="32" autocapitalize="characters" />
+      <p class="ifx-auth-hint" id="reg-ref-hint" hidden></p>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mật khẩu</label>
+      <div class="ix-input-password-wrap">
+        <input type="password" class="ix-input" id="reg-password" placeholder="············" />
+        <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="reg-password"><i class="ti ti-eye-off"></i></button>
+      </div>
+    </div>
+    <div style="margin:16px 0">
+      <label class="ix-auth-check">
+        <input type="checkbox" class="ix-checkbox" id="reg-terms" />
+        <span>Tôi đồng ý <a href="#" style="color:var(--ix-accent)">điều khoản</a> và <a href="#" style="color:var(--ix-accent)">chính sách bảo mật</a></span>
+      </label>
+    </div>
+    <button type="button" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:16px" id="btn-register">Đăng ký</button>
+
+    <div class="ix-auth-divider">hoặc đăng ký nhanh</div>
+    <div class="ix-auth-socials">
+      <!-- GIS Sign in with Google Button (renderButton) — icon fallback HTML + SDK replacement -->
+      <div id="ifx-google-signin-btn" class="ix-social-btn google" title="Google" aria-label="Đăng nhập bằng Google"><i class="ti ti-brand-google-filled" aria-hidden="true"></i></div>
+      <button type="button" class="ix-social-btn" id="btn-apple" title="Apple" disabled aria-label="Apple"><i class="ti ti-brand-apple-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn facebook" id="btn-facebook" title="Facebook" disabled aria-label="Facebook"><i class="ti ti-brand-facebook-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn" id="btn-zalo" title="Zalo" disabled aria-label="Zalo"><i class="ti ti-message-circle" aria-hidden="true"></i></button>
+    </div>
+    <p class="ifx-auth-hint" id="social-register-hint">Đăng ký / đăng nhập bằng tài khoản mạng xã hội — không cần mật khẩu</p>
+
+    <div class="ix-auth-footer">
+      <span>Đã có tài khoản?</span> <a href="login.html?return=/cong-dong">Đăng nhập</a>
+    </div>
+    <a href="/cong-dong" class="ix-auth-back"><i class="ti ti-chevron-left" style="font-size:13px"></i> Về trang chủ</a>
+  </div>
+</div>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-register-boot.js?v=affOwnerRead20260808"></script>
+</body>
+</html>

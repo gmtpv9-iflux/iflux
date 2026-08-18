@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-007 — Kiến trúc 4 tầng · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market-components.css?v=menuFix20260725" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/flow.css?v=mcmpMobile20260718b" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/community.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/watchlist.css?v=breakpointSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/widget-shell.css?v=tmpDivBars20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/block-templates.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/foundation/share-action.css?v=shareFound20260723" />
+  <style>
+    .pl-flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:20px; padding:14px 16px; background:rgba(105,108,255,.06); border:1px solid rgba(105,108,255,.15); border-radius:var(--ix-radius-lg); font-size:12px; color:var(--ix-text-muted); }
+    .pl-flow span { display:inline-flex; align-items:center; gap:4px; }
+    .pl-flow .ti { color:var(--ix-accent); }
+    .pl-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+    .pl-tab { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:var(--ix-radius); border:1px solid var(--ix-border); background:transparent; color:var(--ix-text-secondary); font-size:13px; font-weight:600; cursor:pointer; }
+    .pl-tab.active { background:rgba(105,108,255,.12); border-color:rgba(105,108,255,.35); color:var(--ix-accent); }
+    .pl-tab__num { font-size:10px; opacity:.7; }
+    .pl-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .pl-group__head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .pl-group__title { font-size:15px; font-weight:700; margin:0; color:var(--ix-text-primary); }
+    .pl-block { margin-bottom:10px; overflow:hidden; }
+    .pl-block__head { width:100%; display:flex; align-items:center; gap:12px; padding:12px 16px; border:0; background:transparent; cursor:pointer; text-align:left; color:inherit; }
+    .pl-block__head:hover { background:rgba(255,255,255,.02); }
+    .pl-block__id code { font-size:11px; color:var(--ix-accent); }
+    .pl-block__meta { flex:1; min-width:0; }
+    .pl-block__meta strong { display:block; font-size:14px; color:var(--ix-text-primary); }
+    .pl-block__meta span { font-size:12px; color:var(--ix-text-muted); }
+    .pl-block__badges { display:flex; align-items:center; gap:8px; }
+    .pl-block__body { border-top:1px solid var(--ix-border); padding:0 16px 12px; }
+    .pl-field-table { font-size:12px; }
+    .pl-field-table pre.pl-val { margin:0; padding:8px 10px; background:rgba(0,0,0,.25); border-radius:6px; font-size:11px; line-height:1.45; max-height:200px; overflow:auto; white-space:pre-wrap; word-break:break-word; color:var(--ix-text-secondary); }
+    .pl-alg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    @media (max-width:900px) { .pl-alg-grid { grid-template-columns:1fr; } }
+    .pl-alg-label { font-size:12px; font-weight:600; color:var(--ix-text-muted); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .pl-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .pl-admin-field { margin-bottom:8px; }
+    .pl-admin-field .ix-input { max-width:200px; }
+    .pl-inputs-cell { min-width:220px; max-width:360px; vertical-align:top; }
+    .pl-input-line { font-size:11px; line-height:1.5; color:var(--ix-text-secondary); padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.06); font-family:ui-monospace,monospace; }
+    .pl-input-line:last-child { border-bottom:0; }
+
+    /* Tầng 4 — Widget card */
+    .l4-card { padding:16px; margin-bottom:12px; }
+    .l4-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .l4-head__meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-width:0; }
+    .l4-id { font-size:11px; color:var(--ix-accent); background:rgba(105,108,255,.1); padding:2px 8px; border-radius:6px; }
+    .l4-title { font-size:15px; font-weight:700; color:var(--ix-text-primary); }
+    .l4-desc { font-size:12px; color:var(--ix-text-muted); margin:8px 0 4px; line-height:1.55; }
+    .l4-sec { padding:12px 0; border-top:1px solid var(--ix-border); }
+    .l4-sec:last-child { padding-bottom:0; }
+    .l4-label { font-size:12px; font-weight:600; color:var(--ix-text-secondary); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .l4-label .ti { color:var(--ix-accent); }
+    .l4-table { font-size:12px; margin:0; }
+    .l4-table th { font-size:11px; color:var(--ix-text-muted); font-weight:600; }
+    .l4-table code { font-size:11px; color:var(--ix-accent); }
+    .l4-tpl { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .l4-warn { font-size:11px; color:var(--ix-danger,#ff5c5c); display:inline-flex; align-items:center; gap:4px; }
+    .l4-compat { margin-top:8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .l4-compat__label { font-size:11px; color:var(--ix-text-muted); }
+    .l4-in { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:12px; border-bottom:1px dashed rgba(255,255,255,.06); flex-wrap:wrap; }
+    .l4-in:last-child { border-bottom:0; }
+    .l4-in code { font-size:11px; color:var(--ix-text-secondary); font-family:ui-monospace,monospace; }
+    .l4-in__name { color:var(--ix-text-muted); }
+    .l4-spec { font-size:12px; line-height:1.6; color:var(--ix-text-secondary); background:rgba(0,0,0,.2); border-radius:8px; padding:10px 12px; white-space:pre-wrap; word-break:break-word; }
+    .l4-spec-list { font-size:12px; line-height:1.6; color:var(--ix-text-secondary); background:rgba(0,0,0,.2); border-radius:8px; padding:10px 12px 10px 28px; margin:0; }
+    .l4-spec-list li { margin:2px 0; }
+    .l4-spec-list code { font-size:11px; color:var(--ix-accent); font-family:ui-monospace,monospace; }
+    .l4-muted { font-size:12px; color:var(--ix-text-muted); }
+    .l4-edit { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+    .l4-lb { font-size:12px; font-weight:600; color:var(--ix-text-secondary); margin-top:6px; }
+    .l4-hint { font-weight:400; color:var(--ix-text-muted); font-size:11px; }
+    .l4-mono { font-family:ui-monospace,monospace; font-size:12px; }
+    /* Chỉ áp cho ô nhập ở cột cấu hình — không leak vào canvas Preview (DS tự quản width). */
+    .l4-authoring__config textarea.ix-input, .l4-authoring__config input.ix-input, .l4-authoring__config select.ix-input { width:100%; max-width:none; }
+    .l4-edit__actions { display:flex; gap:8px; margin-top:12px; }
+    .l4-section-tag { font-size:11px; font-weight:600; color:var(--ix-text-muted); text-transform:uppercase; letter-spacing:.04em; }
+    .l4-widget-meta { display:flex; flex-direction:column; gap:8px; margin:8px 0 4px; }
+    .l4-field { display:flex; flex-direction:column; gap:4px; }
+    .l4-field--row { flex-direction:row; align-items:center; flex-wrap:wrap; gap:10px; }
+    .l4-field__lb { font-size:11px; font-weight:600; color:var(--ix-text-muted); }
+    .l4-field__val { font-size:13px; color:var(--ix-text-primary); }
+    .l4-divider { border-top:1px solid var(--ix-border); margin:10px 0; }
+    .l4-readonly { opacity:.7; cursor:not-allowed; }
+    /* Authoring layout — 2/3 cấu hình : 1/3 preview (mô hình trang Template, khác tỷ lệ) */
+    .l4-authoring { flex-direction:row; align-items:flex-start; gap:20px; }
+    .l4-authoring__config { flex:2 1 0; min-width:0; display:flex; flex-direction:column; gap:6px; }
+    .l4-authoring__preview { flex:1 1 0; min-width:0; position:sticky; top:12px; display:flex; flex-direction:column; gap:6px; }
+    .l4-out-scroll { overflow-x:auto; }
+    .l4-out-scroll .l4-table { min-width:560px; }
+    .l4-out-scroll .l4-table .ix-input { min-width:110px; }
+    /* Khung Preview chỉ quản lý vùng nhìn/cuộn; canvas nhận width từ Viewport Registry. */
+    .l4-preview-frame { width:100%; max-width:100%; margin:0 auto; max-height:70vh; overflow:auto; border:1px solid var(--ix-border); border-radius:12px; padding:12px; background:rgba(0,0,0,.2); }
+    @media (max-width: 1100px) { .l4-authoring { flex-direction:column; } .l4-authoring__preview { position:static; width:100%; } }
+    .l4-formula-list { font-size:12px; line-height:1.7; color:var(--ix-text-secondary); background:rgba(0,0,0,.2); border-radius:8px; padding:10px 12px 10px 24px; margin:0; list-style:disc; }
+    .l4-formula-list li { margin:4px 0; }
+    .l4-formula__lhs { font-weight:600; color:var(--ix-text-primary); }
+    .l4-formula__eq { margin:0 6px; color:var(--ix-accent); font-weight:700; }
+    .l4-formula__rhs { color:var(--ix-text-secondary); }
+    .l4-formula-hint { margin:0 0 6px; line-height:1.5; }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/system/platform-layers">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Kiến trúc 4 tầng dữ liệu</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="pl-btn-reset-l4"><i class="ti ti-rotate"></i> Khôi phục widget mặc định</button>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="pl-btn-refresh"><i class="ti ti-refresh"></i> Làm mới demo</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 16px;line-height:1.6">Thiết lập bài toán &amp; thông số kỹ thuật từ <strong>Tầng hiển thị (4)</strong> ngược về <strong>Dữ liệu thô (1)</strong>. Hiện tại dùng snapshot demo <code>IfluxMockMarket</code> — khi triển khai production, resolver sẽ nối API thật.</p>
+
+        <div class="pl-flow">
+          <span><strong>④ Hiển thị</strong> <i class="ti ti-arrow-left"></i></span>
+          <span><strong>③ Giải thuật</strong> <i class="ti ti-arrow-left"></i></span>
+          <span><strong>② Chuẩn hóa</strong> <i class="ti ti-arrow-left"></i></span>
+          <span><strong>① Dữ liệu thô</strong></span>
+        </div>
+
+        <div id="pl-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+        <div class="pl-tabs">
+          <button type="button" class="pl-tab active" data-pl-tab="display"><span class="pl-tab__num">④</span> Tầng hiển thị</button>
+          <button type="button" class="pl-tab" data-pl-tab="algorithm"><span class="pl-tab__num">③</span> Tầng giải thuật</button>
+          <button type="button" class="pl-tab" data-pl-tab="normalized"><span class="pl-tab__num">②</span> Dữ liệu chuẩn hóa</button>
+          <button type="button" class="pl-tab" data-pl-tab="raw"><span class="pl-tab__num">①</span> Dữ liệu thô</button>
+        </div>
+
+        <div id="pl-panel-display" class="pl-panel">
+          <div class="pl-toolbar">
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Widget · Tầng 4 (hiển thị)</div>
+              <div style="font-size:12px;color:var(--ix-text-muted)">Mỗi widget khai báo Dữ liệu đầu ra + chọn Template; Dữ liệu đầu vào theo nguồn Tầng 3/2/1 + Đặc tả thuật toán. <span id="pl-l4-updated" style="color:var(--ix-accent)"></span></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="pl-btn-add-widget"><i class="ti ti-plus"></i> Thêm Widget</button>
+              <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="text" id="pl-display-search" placeholder="Tìm widget…" /></div>
+            </div>
+          </div>
+          <div id="pl-display-root"></div>
+        </div>
+
+        <div id="pl-panel-algorithm" class="pl-panel" hidden>
+          <div class="pl-toolbar">
+            <div>
+              <div style="font-size:14px;font-weight:600">Bài toán Core</div>
+              <div style="font-size:12px;color:var(--ix-text-muted)">Đầu vào = Chuẩn hóa + thiết lập Admin · Đầu ra = Block hiển thị</div>
+            </div>
+            <button type="button" class="ix-btn ix-btn-success ix-btn-sm" id="pl-btn-save-admin"><i class="ti ti-device-floppy"></i> Lưu thiết lập Admin</button>
+          </div>
+          <div id="pl-algorithm-root"></div>
+        </div>
+
+        <div id="pl-panel-normalized" class="pl-panel" hidden>
+          <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 16px">Entity đã chuẩn hóa từ tick thô — ví dụ phân loại lô lớn/nhỏ, breadth, heatmap group…</p>
+          <div id="pl-normalized-root"></div>
+        </div>
+
+        <div id="pl-panel-raw" class="pl-panel" hidden>
+          <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 16px">Kết nối market-data provider — tick realtime từ HOSE/HNX…</p>
+          <div id="pl-raw-root"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/watchlist-taxonomy.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/mock-market.js"></script>
+<script src="/Admin_Design_system/ds-sot-icons-catalog.js?v=tmpDivBars20260718"></script>
+<script src="/Admin_Design_system/ds-sot-viewport-registry.js?v=viewportSoT20260718"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-catalog.js?v=storyTop20260714"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-resolver.js?v=storyTop20260714"></script>
+<!-- Preview dùng nguyên renderer hiện có của trang Mẫu giao diện; không tạo renderer Widget riêng. -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+<script src="/User_Web/iflux-web-ui/block-templates.js?v=segmentedSoT20260718"></script>
+<script src="/User_Web/iflux-web-ui/breadth-block.js"></script>
+<script src="/User_Web/iflux-web-ui/community-market-overview.js"></script>
+<script src="/User_Web/iflux-web-ui/top10-market-block.js"></script>
+<script src="/User_Web/iflux-web-ui/squarified-treemap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-heatmap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-liquidity.js?v=segmentedSoT20260718"></script>
+<script src="/User_Web/iflux-web-ui/flow-net-top.js?v=segmentedSoT20260718"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top-mock.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top.js?v=sigLabel20260717"></script>
+<script src="/User_Web/iflux-web-ui/flow-market-sidebar.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-mentions.js"></script>
+<script src="/User_Web/iflux-web-ui/community-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-users-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-links.js"></script>
+<script src="/User_Web/iflux-web-ui/community-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-trending.js?v=segmentedSoT20260718"></script>
+<script src="/User_Web/iflux-web-ui/community-featured-experts.js"></script>
+<script src="/User_Web/iflux-web-ui/community-active-members.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist.js?v=topwlHead20260708"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-block.js"></script>
+<script src="/User_Web/iflux-web-ui/widget-renderers.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/templates-catalog.js?v=preToastRevert20260718"></script>
+<script src="/Admin_Design_system/app/system/templates-store.js?v=widgetAuthoringV2-20260717"></script>
+<script src="/Admin_Design_system/app/system/templates-preview.js?v=segmentedSoT20260718b"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=abhE320260727"></script>
+<!-- ABH E3: entitlement-catalog.js removed — L4 không load Permission module -->
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/system/template-web-implementations.js?v=wave2320260722"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-page.js?v=wave2320260722"></script>
+<script>PlatformLayersPage.init();</script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveE20260727"></script>
+</body>
+</html>

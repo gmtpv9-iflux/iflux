@@ -1,0 +1,30 @@
+---
+description: Bắt buộc tiếng Việt cho người dùng VN — cấm English bừa bãi (URL slug, UI, Admin, kỹ thuật hiển thị)
+alwaysApply: true
+---
+
+# Ngôn ngữ iFlux — tiếng Việt là mặc định
+
+Người dùng Việt Nam · Admin Việt Nam · kỹ thuật vận hành Việt Nam · chủ sản phẩm Việt Nam.
+
+## Bắt buộc
+
+1. **URL / slug công khai**: dùng tiếng Việt không dấu, gạch ngang (`/thi-truong`, `/cong-dong`, `/chu-de`, `/co-phieu`…). Không đặt slug English mới (`/market`, `/community`, `/stocks`…).
+2. **Text UI** (User Web + Admin): nhãn, nút, toast, tiêu đề, breadcrumb, empty state → tiếng Việt. Không để "Story", "Dashboard", "Submit", "Loading…" làm text hiển thị cho user.
+3. **Link điều hướng**: sinh từ SoT route Việt (`IfluxRoutes` / `IfluxSeoUrl`). Không hardcode path English mới.
+4. **Alias English cũ**: chỉ giữ **301/redirect đọc tạm** để bookmark/SEO — không dùng làm path chuẩn mới.
+
+## Được phép English (hẹp)
+
+- Mã/ticker chứng khoán (HPG, SSI…), tên thư viện kỹ thuật nội bộ (file/module/API code), key DB đã khóa.
+- Từ đã là thương hiệu quốc tế bắt buộc và **không** có bản Việt chuẩn trong SoT — hỏi user trước.
+
+## Khi thêm tính năng
+
+- Đặt tên hiển thị + slug tiếng Việt trước; map kỹ thuật nội bộ sau.
+- Xung đột SoT Product Architecture → sửa theo SoT; vẫn ưu tiên slug/UI tiếng Việt.
+
+## Cấm
+
+- "Việt hóa nửa vời": UI tiếng Việt nhưng URL vẫn `/community`, `/market`.
+- Dùng English cho Admin "vì kỹ thuật" — Admin cũng là người Việt.

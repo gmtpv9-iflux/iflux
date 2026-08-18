@@ -1,0 +1,15 @@
+[Unit]
+Description=iFlux API (staging)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/iflux/backend
+EnvironmentFile=/var/iflux/backend/.env
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+RestartSec=5
+User=iflux
+
+[Install]
+WantedBy=multi-user.target

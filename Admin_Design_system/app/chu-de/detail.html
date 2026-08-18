@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-STR-002 — Chủ đề Detail · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/app/chu-de/chu-de-admin.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Chi tiết Chủ đề</h1>
+        <div id="adm-str-detail-root"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/chu-de-registry-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/chu-de/chu-de-detail-page.js"></script>
+<script>AdmChuDeDetail.init();</script>
+</body>
+</html>

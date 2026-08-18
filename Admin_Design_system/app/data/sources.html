@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nguồn Market data · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" id="adm-src-search" placeholder="Tìm nguồn..." /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content" data-mdm-page="registry">
+        <!-- Title + breadcrumb: IfluxAdminNavRegistry -->
+        <h1 class="ix-page-title" id="adm-page-title"></h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+
+        <div class="ix-card ix-mb-24">
+          <div class="ix-table-toolbar">
+            <div class="ix-caption">Tổng: <strong id="adm-src-count">0</strong></div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th>Nguồn</th>
+                  <th>Provider</th>
+                  <th>Loại</th>
+                  <th>Trạng thái</th>
+                  <th>Import cuối</th>
+                  <th>Thành công cuối</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="adm-src-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ix-card ix-mb-24" id="adm-mdm-source-detail" hidden>
+          <div class="ix-table-toolbar">
+            <div class="ix-caption"><strong>Chi tiết nguồn</strong> — <span id="adm-mdm-detail-title">—</span></div>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="btn-adm-mdm-detail-close" style="margin-left:auto">Đóng</button>
+          </div>
+          <div id="adm-mdm-detail-body" style="padding:0 16px 16px"></div>
+          <div id="adm-mdm-staging-wrap" style="padding:0 16px 16px" hidden>
+            <label class="ix-label">Staging CSV/JSON (Import sẽ dùng nếu adapter cần payload)</label>
+            <textarea class="ix-input" id="adm-mdm-staging-payload" rows="4" placeholder="ticker,name,exchange,market_cap,cap_group&#10;..."></textarea>
+            <div style="margin-top:8px">
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-adm-mdm-staging-save" data-ix-perm="data.sources.edit">Lưu staging</button>
+              <span class="ix-caption" id="adm-mdm-staging-meta"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=mdmDynMap20260808c"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/app/data/sources-page.js?v=mdmRowLock20260808d"></script>
+<script>AdmDataSources.init('registry');</script>
+</body>
+</html>

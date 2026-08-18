@@ -1,0 +1,13 @@
+HTTP/2 301 
+date: Tue, 28 Jul 2026 14:18:32 GMT
+content-type: text/html
+location: https://iflux.vn/dang-nhap
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains
+x-iflux-env: production
+cf-cache-status: DYNAMIC
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ekfdUNTbOm8uQ3Q4qg9hB58aUJjx%2FhGw3hzMileEBUyY6bF%2FJUA3EoDrpdbXWV9vmVL891fgMRKv1c1UQXdXkNkJGpu1K6J4PHR9aJWpEDbZn0jmw9I9nwFuhLEXZAADbQmrp4US%2FQ%3D%3D"}]}
+cf-ray: a224837edf6a3fcc-SIN
+alt-svc: h3=":443"; ma=86400
+

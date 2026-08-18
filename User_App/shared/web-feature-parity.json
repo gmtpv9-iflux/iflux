@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "strategy": "native-shell-webview-content",
+  "description": "Mobile giữ shell native (tab, deep link, push sau này); nội dung = User_Web MVP trên server — luôn đồng bộ với Web + Admin sandbox.",
+  "baseUrls": {
+    "staging": "http://103.154.177.157:8888",
+    "production": "http://103.154.177.157"
+  },
+  "mainTabs": [
+    { "id": "home", "label": "Nhà của tôi", "path": "/User_Web/home/index.html", "webRoute": "home" },
+    { "id": "market", "label": "Thị trường", "path": "/User_Web/market/index.html", "webRoute": "market" },
+    { "id": "community", "label": "Cộng đồng", "path": "/User_Web/community/index.html", "webRoute": "community" },
+    { "id": "pricing", "label": "Gói cước", "path": "/User_Web/pricing/index.html", "webRoute": "pricing" },
+    { "id": "loyalty", "label": "Membership", "path": "/User_Web/loyalty/index.html", "webRoute": "loyalty" }
+  ],
+  "quickActions": [
+    { "id": "search", "label": "Tìm kiếm", "path": "/User_Web/search/index.html" },
+    { "id": "alerts", "label": "Cảnh báo", "path": "/User_Web/alerts/index.html" },
+    { "id": "watchlist", "label": "Watchlist", "path": "/User_Web/watchlist/index.html" },
+    { "id": "flow", "label": "Dòng tiền", "path": "/User_Web/flow/index.html" },
+    { "id": "faq", "label": "FAQ", "path": "/User_Web/faq/index.html" }
+  ],
+  "auth": {
+    "login": "/User_Web/auth/login.html",
+    "register": "/User_Web/auth/register.html",
+    "forgot": "/User_Web/auth/forgot.html"
+  },
+  "featureModules": [
+    "auth", "home-hub", "dashboard-widgets", "market", "community", "watchlist", "alerts",
+    "search", "flow", "stock", "sector", "family", "story", "pricing", "checkout",
+    "loyalty-affiliate", "profile", "feature-suggestions", "faq", "share"
+  ]
+}

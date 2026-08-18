@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-07",
+  "note": "SoT — map deployment → environment + default dataMode. Override: ?dataMode=api|sandbox|mock|replay|test hoặc window.IFLUX_DATA_MODE",
+  "deployments": [
+    { "environment": "staging", "match": { "port": "8888" } },
+    { "environment": "staging", "match": { "hostnamePrefix": "staging." } },
+    { "environment": "staging", "match": { "hostname": "103.154.177.157", "port": "8888" } },
+    { "environment": "production", "match": { "hostname": ["iflux.vn", "www.iflux.vn"] } },
+    { "environment": "production", "match": { "hostname": "103.154.177.157", "port": ["80", "443", ""] } },
+    { "environment": "development", "match": { "hostname": ["localhost", "127.0.0.1"] } },
+    { "environment": "development", "match": { "protocol": "file:" } }
+  ],
+  "defaults": {
+    "production": {
+      "dataMode": "sandbox",
+      "apiBaseUrl": "https://api.iflux.vn/api",
+      "comment": "Đổi dataMode thành api khi api.iflux.vn go-live"
+    },
+    "staging": {
+      "dataMode": "sandbox"
+    },
+    "development": {
+      "dataMode": "mock",
+      "apiBaseUrl": "http://localhost:3001/api",
+      "comment": "Dev backend: ?dataMode=api"
+    }
+  },
+  "dataModes": {
+    "api": { "provider": "api", "label": "ApiDataProvider" },
+    "sandbox": { "provider": "sandbox", "label": "SandboxDataProvider" },
+    "mock": { "provider": "mock", "label": "MockDataProvider" },
+    "replay": { "provider": "replay", "label": "ReplayDataProvider" },
+    "test": { "provider": "test", "label": "TestDataProvider" }
+  }
+}

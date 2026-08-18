@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-012 — Mẫu giao diện · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market-components.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/flow.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/community.css?v=topwlHead20260708" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/watchlist.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/widget-shell.css?v=stripTabTopN20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/block-templates.css?v=srHist20260720" />
+  <style>
+    .ifx-wl-empty { padding:20px; text-align:center; color:var(--ix-text-muted); font-size:12px; }
+    .tpl-hint { font-size:13px; color:var(--ix-text-muted); margin:0 0 16px; line-height:1.6; }
+    .tpl-updated { font-size:12px; color:var(--ix-text-muted); margin:8px 0 12px; }
+    .tpl-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    /* Row = 1 template (trái: chi tiết + demo | phải: preview) */
+    .tpl-row { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:16px; overflow:hidden; padding:0; }
+    @media (max-width:1080px) { .tpl-row { grid-template-columns:1fr; } }
+    .tpl-row__left { padding:16px; border-right:1px solid var(--ix-border); min-width:0; }
+    @media (max-width:1080px) { .tpl-row__left { border-right:0; border-bottom:1px solid var(--ix-border); } }
+    .tpl-row__right { padding:14px 16px; background:#2b2c40; min-height:240px; min-width:0; overflow:auto; }
+    .tpl-row.is-previewing .tpl-row__left { box-shadow:inset 3px 0 0 var(--ix-accent); }
+    .tpl-row__head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .tpl-row__meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .tpl-row__id { font-size:11px; color:var(--ix-accent); }
+    .tpl-row__actions { display:flex; gap:6px; flex-shrink:0; }
+    .tpl-row__actions .ix-btn-sm { padding:4px 8px; font-size:11px; }
+    /* Tiêu đề + mô tả: typography lấy 100% từ DS (.ix-card-title / .ix-card-subtitle). Ở đây CHỈ set khoảng cách bằng token. */
+    .tpl-row__title { margin-top:var(--ifx-space-8); }
+    .tpl-row__desc { margin:var(--ifx-space-4) 0 var(--ifx-space-8); }
+    .tpl-col { padding:12px 0; border-bottom:1px solid var(--ix-border); }
+    .tpl-col:last-child { border-bottom:0; }
+    .tpl-col__label { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ix-text-muted); margin-bottom:8px; }
+    .tpl-col__hint { text-transform:none; letter-spacing:0; color:var(--ix-text-muted); font-weight:400; }
+    .tpl-line { display:flex; align-items:flex-start; gap:6px; font-size:13px; color:var(--ix-text-secondary); line-height:1.7; padding:2px 0; }
+    .tpl-line__dot { font-size:14px; color:var(--ix-accent); flex-shrink:0; margin-top:2px; }
+    .tpl-input-line { display:flex; align-items:center; gap:10px; padding:3px 0; }
+    .tpl-input-line__label { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ix-text-secondary); flex:1 1 40%; min-width:0; }
+    .tpl-demo { flex:1 1 55%; font-size:12px; padding:5px 8px; }
+    /* View Mode: dữ liệu mẫu read-only — text thuần, không caret, không focus */
+    .tpl-demo-ro { flex:1 1 55%; font-size:12px; color:var(--ix-text-secondary); line-height:1.5; padding:5px 8px; border:1px solid transparent; word-break:break-word; }
+    .tpl-spec-text { font-size:12.5px; color:var(--ix-text-secondary); line-height:1.6; background:rgba(255,255,255,.02); border:1px solid var(--ix-border); border-radius:var(--ix-radius); padding:10px 12px; }
+    .tpl-spec-edit { width:100%; font-size:12.5px; line-height:1.6; resize:vertical; }
+    .tpl-spec-actions { display:flex; gap:6px; margin-top:8px; }
+    /* Preview panel — CHỈ khung, nội dung bên trong là giao diện thật của Design System */
+    .tpl-pv-hint { font-size:12px; color:var(--ix-text-muted); text-align:center; padding:48px 16px; margin:0; line-height:1.8; }
+    .tpl-pv-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; font-size:11px; color:var(--ix-text-muted); }
+    .tpl-pv-head code { color:var(--ix-accent); }
+    /* Preview panel — UI-001: khung layout only; Card Owner = Template shell bên trong */
+    .tpl-pv-live { background: transparent; border: none; border-radius: 0; padding: 0; }
+    .tpl-rt-bar { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .tpl-rt-tabs, .tpl-rt-modes { display:flex; gap:6px; flex-wrap:wrap; }
+    [hidden] { display:none !important; }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/interface/design-system">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Mẫu giao diện</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="tpl-reset"><i class="ti ti-restore"></i> Khôi phục mặc định</button>
+          </div>
+        </div>
+        <p class="tpl-hint"><strong>Mẫu giao diện Widget</strong> chỉ mô tả <strong>nội dung hiển thị</strong> và <strong>hình thức hiển thị</strong> — không xử lý nghiệp vụ, không thuộc Trang và không thuộc Widget. Bấm <strong>Xem</strong> để dựng giao diện thật của Design System, rồi sửa phần <strong>Dữ liệu mẫu</strong> để kiểm tra phần thân bản xem trước.</p>
+
+        <div id="tpl-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <div id="tpl-updated" class="tpl-updated"></div>
+
+        <div class="tpl-toolbar">
+          <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="text" id="tpl-search" placeholder="Tìm mẫu giao diện…" /></div>
+        </div>
+
+        <div id="tpl-root"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<!-- Renderer THẬT của User Web — preview template = giao diện thật, không vẽ lại -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+<script src="/User_Web/iflux-web-ui/iflux-market-master.js?v=mockRmWp6_20260809"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-taxonomy.js?v=mockRmWp6_20260809"></script>
+<script src="/User_Web/iflux-web-ui/block-templates.js?v=srHist20260720"></script>
+<script src="/User_Web/iflux-web-ui/breadth-block.js?v=stripTabTopN20260718"></script>
+<script src="/User_Web/iflux-web-ui/community-market-overview.js"></script>
+<script src="/User_Web/iflux-web-ui/top10-market-block.js"></script>
+<script src="/User_Web/iflux-web-ui/squarified-treemap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-heatmap.js"></script>
+<script src="/User_Web/iflux-web-ui/market-liquidity.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-net-top.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top-mock.js"></script>
+<script src="/User_Web/iflux-web-ui/flow-score-top.js?v=sigLabel20260717"></script>
+<script src="/User_Web/iflux-web-ui/flow-market-sidebar.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-mentions.js"></script>
+<script src="/User_Web/iflux-web-ui/community-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-users-store.js"></script>
+<script src="/User_Web/iflux-web-ui/profile-links.js"></script>
+<script src="/User_Web/iflux-web-ui/community-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/stock-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-trending.js?v=tplHead20260714"></script>
+<script src="/User_Web/iflux-web-ui/community-featured-experts.js"></script>
+<script src="/User_Web/iflux-web-ui/community-active-members.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/community-top-watchlist.js?v=topwlHead20260708"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-store.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-ui.js"></script>
+<script src="/User_Web/iflux-web-ui/watchlist-block.js"></script>
+<script src="/User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/User_Web/iflux-web-ui/widget-renderers.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/templates-catalog.js?v=srHist20260720"></script>
+<script src="/Admin_Design_system/app/system/templates-store.js?v=tplEdit20260717"></script>
+<script src="/Admin_Design_system/app/system/template-web-implementations.js?v=wave2320260722"></script>
+<script src="/Admin_Design_system/app/system/templates-preview.js?v=ui001tpl20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
+<script src="/Admin_Design_system/app/system/templates-page.js?v=wave2320260722"></script>
+<script>TemplatesPage.init();</script>
+</body>
+</html>

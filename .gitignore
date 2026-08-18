@@ -1,7 +1,86 @@
-# Sản phẩm dựng của scripts/build-web.sh — CI dựng lại mỗi lần deploy.
-dist/
-
-node_modules/
-.env
-*.log
+# OS / editor
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Cursor — giữ rules/skills trong repo; bỏ cache/agent tạm
+.cursor/*
+!.cursor/rules/
+!.cursor/skills/
+
+# Secrets & env — KHÔNG bao giờ commit
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+infra/staging/staging.env
+**/staging.env
+*.pem
+*.key
+*credentials*
+*secret*
+# Ngoại lệ: file source frontend thật (store module UI), không phải secret.
+# Bị *credentials* ở trên chặn nhầm → gãy chuỗi load JS trang đăng nhập (Google login).
+!Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js
+
+# Python / backend
+**/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+**/node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / runtime / logs
+dist/
+build/
+coverage/
+*.log
+tmp/
+temp/
+/storage/
+
+# Large vendor mirrors (không phải SoT sản phẩm)
+tabler-icons-3.44.0/
+
+# Local scratch / binary dumps
+*.zip
+*.tar.gz
+*.dmg
+29a5ebde-*.jpeg
+Generated Image*.png
+iflux-insight-*.png
+
+# Production deploy env (secrets)
+infra/staging/deploy-production.env
+
+# Local agent/temp artifacts
+.tmp/
+.agents/
++OUT+
+
+# Generated SEO/runtime pages (build/cronjob output, không phải source thủ công)
+# Quyết định: 12 - Production → GitHub → New Staging Reconstruction Plan.md, mục 3
+# CHỈ ignore các sub-folder theo entity (ticker/ngành/topic) — KHÔNG ignore
+# index.html cấp cha (SPA shell source, cần cho route /co-phieu /nganh /he-sinh-thai).
+User_Web/sectors/*/
+User_Web/stocks/*/
+User_Web/cong-dong/*/
+User_Web/ecosystems/*/
+User_Web/topics/*/
+User_Web/data/iflux-plans-v1.json
+User_Web/data/iflux-routes.json
+User_Web/tests/test-results/
+Admin_Design_system/**/*.bak-*
+User_Web/**/*.bak-*

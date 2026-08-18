@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-012 — Quản lý giao diện · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .lm-hint { font-size:13px; color:var(--ix-text-muted); margin:0 0 16px; line-height:1.6; }
+    .lm-updated { font-size:12px; color:var(--ix-text-muted); margin:8px 0 16px; }
+    .lm-table { table-layout:fixed; }
+    .lm-table th { font-size:12px; }
+    .lm-table td { vertical-align:top; }
+    .lm-cell { padding:10px !important; }
+    .lm-cell--na { text-align:center; }
+    .lm-na { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ix-text-muted); padding:16px 0; }
+    .lm-pagecell strong { font-size:14px; color:var(--ix-text-primary); }
+    .lm-page-path { margin-top:4px; font-size:11px; }
+    .lm-page-note { margin-top:6px; font-size:11px; color:var(--ix-text-secondary); display:flex; align-items:center; gap:4px; }
+    .lm-stack { display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
+    .lm-empty { font-size:12px; color:var(--ix-text-muted); padding:10px; border:1px dashed var(--ix-border); border-radius:var(--ix-radius); text-align:center; }
+    .lm-item { border:1px solid var(--ix-border); border-radius:var(--ix-radius); padding:8px 10px; background:rgba(255,255,255,.02); }
+    .lm-item--off { opacity:.55; }
+    .lm-item__top { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .lm-item__id { font-size:10px; color:var(--ix-accent); }
+    .lm-item__actions { margin-left:auto; display:flex; align-items:center; gap:2px; }
+    .lm-item__title { font-size:12px; font-weight:600; color:var(--ix-text-primary); margin:6px 0; }
+    .lm-item__ctrls { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .lm-ctrl { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--ix-text-secondary); }
+    .lm-input-sm { width:70px; padding:2px 6px; font-size:12px; }
+    .lm-lock { font-size:10px; }
+    .lm-add { width:100%; }
+    .lm-pick-group { margin-bottom:16px; }
+    .lm-pick-group__head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid var(--ix-border); }
+    .lm-pick-group__title { font-size:12px; font-weight:600; color:var(--ix-text-primary); }
+    .lm-pick-group__domain { font-size:10px; color:var(--ix-text-muted); }
+    .lm-pick-item { display:flex; gap:10px; align-items:flex-start; padding:8px; border-radius:var(--ix-radius); cursor:pointer; }
+    .lm-pick-item:hover { background:rgba(255,255,255,.03); }
+    .lm-pick-item--used { cursor:default; opacity:.7; justify-content:space-between; align-items:center; }
+    .lm-pick-item__title { font-size:13px; font-weight:600; color:var(--ix-text-primary); margin-top:2px; }
+    .lm-pick-item__desc { font-size:11px; color:var(--ix-text-muted); margin-top:2px; line-height:1.5; }
+    .lm-manifest-json { max-height:420px; overflow:auto; font-size:11px; padding:12px; background:var(--ix-bg-input); border-radius:var(--ix-radius); border:1px solid var(--ix-border); white-space:pre; }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Quản lý giao diện</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
+            <a href="/Admin_Design_system/app/system/page-settings.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-sitemap"></i> Cài đặt Trang</a>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="lm-reset"><i class="ti ti-restore"></i> Khôi phục mặc định</button>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="lm-publish-all" title="Ghi PagePublished cho mọi trang"><i class="ti ti-rocket"></i> Publish tất cả</button>
+          </div>
+        </div>
+        <p class="lm-hint">Gán <strong>Widget</strong> vào các vùng <strong>App Shell</strong> của từng trang. <strong>Sửa = lưu nháp</strong> (page-composition). <strong>Publish</strong> mới ghi <strong>PagePublished</strong> — User Web đọc từ đó. Widget lấy từ <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4">Core 4 tầng · Tầng 4</a>.</p>
+
+        <div id="lm-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <div id="lm-updated" class="lm-updated"></div>
+
+        <div id="lm-table"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Drawer: chọn widget từ Tầng 4 -->
+<div class="ix-offcanvas-overlay" id="lm-picker-overlay"></div>
+<aside class="ix-offcanvas" id="lm-picker" aria-label="Chọn widget">
+  <div class="ix-offcanvas-header">
+    <div class="ix-offcanvas-title" id="lm-picker-title">Thêm widget</div>
+    <button type="button" class="ix-btn ix-btn-ghost ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Đóng"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="ix-tabs" id="lm-picker-tabs" style="padding:12px 20px 0;margin:0"></div>
+  <div class="ix-offcanvas-body" id="lm-picker-body"></div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-ghost" data-ix-dismiss="offcanvas">Đóng</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="lm-picker-add" disabled><i class="ti ti-plus"></i> Thêm widget</button>
+  </div>
+</aside>
+
+<!-- Modal: xem Page Manifest -->
+<div class="ix-modal-overlay" id="lm-manifest-modal" style="display:none">
+  <div class="ix-modal" style="width:640px">
+    <div class="ix-modal-header">
+      <div class="ix-modal-title" id="lm-manifest-title">Page Manifest</div>
+      <button type="button" class="ix-btn ix-btn-ghost ix-btn-icon" data-ix-dismiss="modal" aria-label="Đóng"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="ix-modal-body">
+      <p class="lm-hint">JSON mô tả Page → Section → Widget + <code>lazyModule</code>. User Web runtime đọc manifest này — không chứa implementation.</p>
+      <pre id="lm-manifest-pre" class="lm-manifest-json"></pre>
+    </div>
+    <div class="ix-modal-footer">
+      <button type="button" class="ix-btn ix-btn-ghost" data-ix-dismiss="modal">Đóng</button>
+      <button type="button" class="ix-btn ix-btn-outline" id="lm-copy-manifest"><i class="ti ti-copy"></i> Sao chép</button>
+    </div>
+  </div>
+</div>
+
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=migrateFlagV2-20260719"></script>
+<script src="/Admin_Design_system/app/system/widget-library-catalog.js?v=l4sot20260714b"></script>
+<script src="/Admin_Design_system/app/system/page-settings-catalog.js?v=comPostWidgetHost20260811"></script>
+<script src="/Admin_Design_system/app/system/page-settings-store.js?v=placementUi20260719"></script>
+<script src="/Admin_Design_system/app/system/page-runtime-manifest.js?v=placementUi20260719"></script>
+<script src="/User_Web/iflux-web-ui/iflux-platform-boot.js"></script>
+<script src="/Admin_Design_system/app/system/page-composition-client.js?v=phase41Pub20260716"></script>
+<script src="/Admin_Design_system/app/system/widget-publish-client.js?v=placementUi20260719"></script>
+<script src="/Admin_Design_system/app/system/page-publish-bridge.js?v=placementUi20260719"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/system/layout-manager-page.js?v=widgetPageAgnostic20260717"></script>
+<script>LayoutManagerPage.init();</script>
+</body>
+</html>

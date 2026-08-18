@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập · iFlux</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../iflux-web-ui/iflux-web-ui.css" />
+  </head>
+<body class="ifx-auth-page">
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Chào mừng trở lại 👋</div>
+    <div class="ix-auth-sub">Đăng nhập để theo dõi watchlist, cảnh báo và dòng tiền</div>
+
+    <div id="login-main">
+    <div class="ix-tabs ifx-auth-tabs" id="login-tabs">
+      <button type="button" class="ix-tab active" data-login-tab="email">Email</button>
+      <button type="button" class="ix-tab" data-login-tab="phone">Số điện thoại</button>
+    </div>
+
+    <!-- Email + mật khẩu (mặc định) -->
+    <form id="panel-email" autocomplete="on">
+      <div class="ix-form-group">
+        <label class="ix-label" for="login-email">Email</label>
+        <input type="email" class="ix-input" id="login-email" name="email" placeholder="ban@iflux.vn" autofocus />
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label" for="login-password">Mật khẩu</label>
+        <div class="ix-input-password-wrap">
+          <input type="password" class="ix-input" id="login-password" name="password" placeholder="············" />
+          <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="login-password" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+        </div>
+      </div>
+      <div class="ix-auth-remember">
+        <label class="ix-auth-check">
+          <input type="checkbox" class="ix-checkbox" checked />
+          Ghi nhớ đăng nhập
+        </label>
+        <a href="forgot.html">Quên mật khẩu?</a>
+      </div>
+      <button type="submit" class="ix-btn ix-btn-primary" style="width:100%" id="btn-email-login">Đăng nhập</button>
+      <p class="ifx-auth-error" id="login-error" hidden role="alert"></p>
+      <p class="ifx-auth-hint" id="email-login-hint">Đăng nhập bằng email + mật khẩu — không cần OTP</p>
+    </form>
+
+    <!-- SĐT + mật khẩu -->
+    <form id="panel-phone" style="display:none" autocomplete="on">
+      <div class="ix-form-group">
+        <label class="ix-label" for="login-phone">Số điện thoại</label>
+        <input type="tel" class="ix-input" id="login-phone" name="phone" placeholder="0912 345 678" />
+      </div>
+      <div class="ix-form-group">
+        <label class="ix-label" for="login-phone-password">Mật khẩu</label>
+        <div class="ix-input-password-wrap">
+          <input type="password" class="ix-input" id="login-phone-password" name="password" placeholder="············" />
+          <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="login-phone-password" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+        </div>
+      </div>
+      <div class="ix-auth-remember">
+        <label class="ix-auth-check">
+          <input type="checkbox" class="ix-checkbox" checked />
+          Ghi nhớ đăng nhập
+        </label>
+        <a href="forgot.html">Quên mật khẩu?</a>
+      </div>
+      <button type="submit" class="ix-btn ix-btn-primary" style="width:100%" id="btn-phone-login">Đăng nhập</button>
+      <p class="ifx-auth-hint" id="phone-login-hint">Đăng nhập bằng SĐT + mật khẩu — OTP chỉ dùng khi đăng ký lần đầu hoặc quên mật khẩu</p>
+    </form>
+
+    <div class="ix-auth-divider">hoặc</div>
+    <div class="ix-auth-socials">
+      <!-- GIS Sign in with Google Button (renderButton) — icon fallback HTML + SDK replacement -->
+      <div id="ifx-google-signin-btn" class="ix-social-btn google" title="Google" aria-label="Đăng nhập bằng Google"><i class="ti ti-brand-google-filled" aria-hidden="true"></i></div>
+      <button type="button" class="ix-social-btn" id="btn-apple" title="Apple" disabled aria-label="Apple"><i class="ti ti-brand-apple-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn facebook" id="btn-facebook" title="Facebook" disabled aria-label="Facebook"><i class="ti ti-brand-facebook-filled" aria-hidden="true"></i></button>
+      <button type="button" class="ix-social-btn" id="btn-zalo" title="Zalo" disabled aria-label="Zalo"><i class="ti ti-message-circle" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="ix-auth-footer">
+      <span>Chưa có tài khoản?</span> <a href="register.html">Đăng ký</a>
+    </div>
+    <a href="/cong-dong" class="ix-auth-back">
+      <i class="ti ti-chevron-left" style="font-size:13px"></i> Về trang chủ
+    </a>
+    </div>
+
+    <div id="emergency-lock-panel" hidden>
+      <div class="ix-auth-title" style="font-size:18px"><i class="ti ti-shield-lock"></i> Phiên đăng nhập đang hoạt động</div>
+      <p class="ifx-auth-hint" style="margin:12px 0 16px;line-height:1.55">
+        Tài khoản này đang được sử dụng ở tab hoặc trình duyệt khác. Bạn không thể đăng nhập thêm cho đến khi phiên đó đăng xuất.
+        Nếu nghi ngờ bị truy cập trái phép, gửi yêu cầu <strong>khóa tài khoản khẩn cấp</strong> — đội hỗ trợ sẽ xử lý trong thời gian sớm nhất.
+      </p>
+      <form id="emergency-lock-form">
+        <div class="ix-form-group">
+          <label class="ix-label" for="emergency-email">Email tài khoản</label>
+          <input type="email" class="ix-input" id="emergency-email" required placeholder="ban@iflux.vn" />
+        </div>
+        <div class="ix-form-group">
+          <label class="ix-label" for="emergency-reason">Mô tả tình huống</label>
+          <textarea class="ix-input" id="emergency-reason" rows="4" required placeholder="VD: Tôi không đăng nhập nhưng nhận thông báo hoạt động lạ…"></textarea>
+        </div>
+        <button type="submit" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:8px">
+          <i class="ti ti-alert-triangle"></i> Gửi yêu cầu khóa khẩn cấp
+        </button>
+        <button type="button" class="ix-btn ix-btn-ghost" style="width:100%" id="btn-emergency-back">
+          Quay lại trang chủ
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=affOwnerRead20260808"></script>
+</body>
+</html>

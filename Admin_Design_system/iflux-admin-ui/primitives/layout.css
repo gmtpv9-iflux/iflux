@@ -1,0 +1,42 @@
+/**
+ * iFlux Foundation — Layout dimensions + breakpoints
+ *
+ * BREAKPOINT SoT (LOCKED — ECR 270727 Slice 1)
+ * Authority: ONLY this file defines responsive px values (--ifx-bp-*).
+ * Semantic ids: bp-xs · bp-sm · bp-md · bp-lg · bp-xl · bp-2xl · bp-3xl
+ * Catalog sync: ds-sot-foundations-catalog.js · ds-sot-primitive-catalog.js → cssVar --ifx-bp-*
+ * Consumers: no magic numbers — runtime abstraction (Slice 2+) · Exception 09 only.
+ * @see docs/Product Backlog/270727_Responsive Breakpoint Consolidation/02-SoT.md §1
+ */
+:root {
+  /* Breakpoints — Foundation catalog (7 tokens) */
+  --ifx-bp-xs: 375px;   /* bp-xs */
+  --ifx-bp-sm: 640px;   /* bp-sm */
+  --ifx-bp-md: 768px;   /* bp-md */
+  --ifx-bp-lg: 1024px;  /* bp-lg */
+  --ifx-bp-xl: 1280px;  /* bp-xl */
+  --ifx-bp-2xl: 1440px; /* bp-2xl */
+  --ifx-bp-3xl: 1600px; /* bp-3xl */
+
+  /* Touch / icon */
+  --ifx-size-touch-target: 44px;
+  --ifx-size-icon-sm: 16px;
+  --ifx-size-icon-md: 20px;
+  --ifx-size-icon-lg: 24px;
+
+  /* Avatar */
+  --ifx-size-avatar-sm: 28px;
+  --ifx-size-avatar-md: 36px;
+  --ifx-size-avatar-lg: 48px;
+
+  /* Admin shell */
+  --ifx-size-sidebar-w: 260px;
+  --ifx-size-sidebar-w-collapsed: 72px;
+  --ifx-size-navbar-h: 64px;
+
+  /* User Web shell */
+  --ifx-size-topnav-h: 56px;
+  --ifx-size-tabbar-h: 60px;
+  --ifx-size-nav-drawer-w: 300px;
+  --ifx-size-container-max: 1280px;
+}

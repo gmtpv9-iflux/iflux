@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vai trò &amp; Quyền · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/subscription/entitlements">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." disabled /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Vai trò &amp; Quyền</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="/Admin_Design_system/app/users/list.html" class="ix-btn ix-btn-outline"><i class="ti ti-arrow-left"></i> Danh sách người dùng</a>
+            <button type="button" class="ix-btn ix-btn-primary" id="btn-save-matrix"><i class="ti ti-device-floppy"></i> Lưu</button>
+          </div>
+        </div>
+        <div id="matrix-mount"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=abhE3close20260727"></script>
+<script src="/Admin_Design_system/app/system/widget-library-catalog.js?v=l4sot20260714b"></script>
+<!-- ABH E1/E2: Read adapters — không PageSettingsStore / widget-publish-client -->
+<script src="/Admin_Design_system/shared/runtime-read/widget-registry-reader.js?v=abhE120260727"></script>
+<script src="/Admin_Design_system/shared/runtime-read/placement-widget-index-reader.js?v=abhE3fix20260727"></script>
+<script src="/Admin_Design_system/app/subscription/entitlement-catalog.js?v=entStaticFix20260726"></script>
+<script src="/Admin_Design_system/app/subscription/plans-store.js?v=entApiSoT20260727"></script>
+<script src="/Admin_Design_system/app/subscription/entitlement-matrix-ui.js?v=abhE3close20260727"></script>
+<script>
+(function () {
+  var mount = document.getElementById('matrix-mount');
+
+  if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
+    EntitlementCatalog.refreshBlocksCatalog();
+  }
+
+  document.addEventListener('iflux-widget-catalog-changed', function () {
+    if (window.EntitlementCatalog && EntitlementCatalog.refreshBlocksCatalog) {
+      EntitlementCatalog.refreshBlocksCatalog();
+    }
+    if (window.EntitlementMatrixUI && EntitlementMatrixUI.render && mount) {
+      EntitlementMatrixUI.render(mount);
+      if (window.PlansStore && PlansStore.getMatrixPlans) {
+        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+      }
+    }
+  });
+
+  function bootMatrix() {
+    EntitlementMatrixUI.render(mount);
+    function loadMatrix() {
+      if (PlansStore.hydrate) {
+        PlansStore.hydrate().then(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        }).catch(function () {
+          EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+        });
+      } else {
+        EntitlementMatrixUI.fill(PlansStore.getMatrixPlans());
+      }
+    }
+    loadMatrix();
+    document.getElementById('btn-save-matrix').addEventListener('click', function () {
+      var btn = document.getElementById('btn-save-matrix');
+      var overrides = EntitlementMatrixUI.collect();
+      btn.disabled = true;
+      PlansStore.saveMatrixOverrides(overrides).then(function (result) {
+        btn.disabled = false;
+        if (!result.ok) {
+          ixToast(result.error || 'Lưu thất bại', 'danger');
+          return;
+        }
+        ixToast('Đã lưu ma trận phân quyền · User Web đồng bộ qua server', 'success');
+        loadMatrix();
+      }).catch(function (err) {
+        btn.disabled = false;
+        ixToast(String(err && err.message ? err.message : err) || 'Lưu thất bại', 'danger');
+      });
+    });
+  }
+
+  function prefetchThenBoot() {
+    var p = Promise.resolve();
+    if (window.PlacementWidgetIndexReader && PlacementWidgetIndexReader.fetch) {
+      p = PlacementWidgetIndexReader.fetch().catch(function () { return null; });
+    }
+    p.then(bootMatrix).catch(bootMatrix);
+  }
+
+  prefetchThenBoot();
+})();
+</script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveE20260727"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-USR-001 — Danh sách người dùng · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .ix-modal-overlay { display: none; }
+    .ix-offcanvas { transform: translateX(100%); }
+  </style>
+</head>
+<body>
+
+<div class="ix-root">
+  <div class="ix-layout">
+
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="ix-main">
+
+      <!-- NAVBAR -->
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Toggle menu">
+          <i class="ti ti-menu-2"></i>
+        </button>
+        <div class="ix-search">
+          <i class="ti ti-search"></i>
+          <input type="text" placeholder="Tìm kiếm (Ctrl+K)..." />
+        </div>
+        <div class="ix-nav-actions">
+          <button class="ix-nav-btn"><i class="ti ti-language"></i></button>
+          <button class="ix-nav-btn"><i class="ti ti-sun"></i></button>
+          <div class="ix-dropdown">
+            <button class="ix-nav-btn" data-ix-toggle="dropdown">
+              <i class="ti ti-bell"></i><span class="ix-nav-dot"></span>
+            </button>
+            <div class="ix-dropdown-menu" style="min-width:200px">
+              <a href="#" class="ix-dropdown-item">Khách hàng mới đăng ký</a>
+              <a href="#" class="ix-dropdown-item">Gói đăng ký thành công</a>
+              <div class="ix-dropdown-divider"></div>
+              <a href="#" class="ix-dropdown-item" style="color:var(--ix-accent)">Xem tất cả</a>
+            </div>
+          </div>
+          <div class="ix-dropdown">
+            <div class="ix-avatar" data-ix-toggle="dropdown" style="cursor:pointer">JD</div>
+            <div class="ix-dropdown-menu">
+              <div style="padding:10px 16px 8px;border-bottom:1px solid var(--ix-border)">
+                <div style="font-weight:600;font-size:14px;color:var(--ix-text-primary)">Quản trị viên</div>
+                <div style="font-size:12px;color:var(--ix-text-muted)">Admin</div>
+              </div>
+              <a href="#" class="ix-dropdown-item"><i class="ti ti-user" style="margin-right:8px"></i>Hồ sơ</a>
+              <a href="#" class="ix-dropdown-item"><i class="ti ti-settings" style="margin-right:8px"></i>Cài đặt</a>
+              <div class="ix-dropdown-divider"></div>
+              <a href="#" class="ix-dropdown-item" style="color:var(--ix-danger)"><i class="ti ti-logout" style="margin-right:8px"></i>Đăng xuất</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="ix-content">
+        <h1 class="ix-page-title">Danh sách người dùng</h1>
+        <div class="ix-breadcrumb" id="adm-page-bc"></div>
+
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Người dùng app/web iFlux — không phải tài khoản admin hệ thống.</p>
+
+        <!-- Stat cards row — horizontal variant -->
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-stat-card-h">
+            <div class="ix-stat-info">
+              <div class="ix-stat-label">Tổng khách hàng</div>
+              <div class="ix-stat-value" id="stat-total">—</div>
+              <div class="ix-stat-sub" id="stat-total-sub">—</div>
+            </div>
+            <div class="ix-stat-icon accent"><i class="ti ti-users"></i></div>
+          </div>
+          <div class="ix-stat-card-h">
+            <div class="ix-stat-info">
+              <div class="ix-stat-label">Đang trả phí</div>
+              <div class="ix-stat-value" id="stat-paid">—</div>
+              <div class="ix-stat-sub" id="stat-paid-sub">—</div>
+            </div>
+            <div class="ix-stat-icon success"><i class="ti ti-crown"></i></div>
+          </div>
+          <div class="ix-stat-card-h">
+            <div class="ix-stat-info">
+              <div class="ix-stat-label">Sắp hết hạn</div>
+              <div class="ix-stat-value" id="stat-expiring">—</div>
+              <div class="ix-stat-sub">Còn &lt; 7 ngày</div>
+            </div>
+            <div class="ix-stat-icon warning"><i class="ti ti-clock"></i></div>
+          </div>
+          <div class="ix-stat-card-h">
+            <div class="ix-stat-info">
+              <div class="ix-stat-label">Hết hạn (30 ngày)</div>
+              <div class="ix-stat-value" id="stat-expired-30">—</div>
+              <div class="ix-stat-sub">Chuyển về Miễn phí</div>
+            </div>
+            <div class="ix-stat-icon danger"><i class="ti ti-user-off"></i></div>
+          </div>
+        </div>
+
+        <!-- User list table card -->
+        <div class="ix-card">
+
+          <!-- Filter bar -->
+          <div class="ix-filter-bar">
+            <div class="ix-filter-bar-title">Bộ lọc</div>
+            <div class="ix-filter-row">
+              <div>
+                <label class="ix-label">Vai trò</label>
+                <select class="ix-select" id="filter-role">
+                  <option value="">Tất cả</option>
+                  <option value="Standard">Tiêu chuẩn</option>
+                  <option value="Creator">Sáng tạo</option>
+                  <option value="Analyst">Phân tích</option>
+                  <option value="API Partner">Đối tác API</option>
+                  <option value="Community Expert">Chuyên gia cộng đồng</option>
+                </select>
+              </div>
+              <div>
+                <label class="ix-label">Gói</label>
+                <select class="ix-select" id="filter-package">
+                  <option value="">Tất cả</option>
+                  <option value="Free">Miễn phí</option>
+                  <option value="Premium">Premium</option>
+                  <option value="Elite">Elite</option>
+                </select>
+              </div>
+              <div>
+                <label class="ix-label">Chu kỳ</label>
+                <select class="ix-select" id="filter-plan">
+                  <option value="">Tất cả</option>
+                  <option value="freemium">Miễn phí</option>
+                  <option value="monthly">Hàng tháng</option>
+                  <option value="yearly">Hàng năm</option>
+                  <option value="lifetime">Trọn đời</option>
+                </select>
+              </div>
+              <div>
+                <label class="ix-label">Trạng thái</label>
+                <select class="ix-select" id="filter-status">
+                  <option value="">Tất cả</option>
+                  <option value="active">Hoạt động</option>
+                  <option value="expired">Hết hạn</option>
+                  <option value="suspended">Tạm khóa</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table toolbar -->
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search">
+              <i class="ti ti-search"></i>
+              <input type="text" id="users-search" placeholder="Tìm khách hàng..." />
+            </div>
+            <div class="ix-table-actions">
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="adm-users-export" data-ix-perm="users.list.export">
+                <i class="ti ti-download" style="font-size:13px"></i> Xuất
+              </button>
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-offcanvas="offcanvas-add-user" data-ix-perm="users.list.create">
+                <i class="ti ti-plus" style="font-size:13px"></i> Thêm khách hàng
+              </button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="users-table">
+              <thead>
+                <tr>
+                  <th style="width:40px"><input type="checkbox" class="ix-checkbox" /></th>
+                  <th data-ix-sort="1">Khách hàng</th>
+                  <th data-ix-sort="2">Gói</th>
+                  <th data-ix-sort="3">Chu kỳ</th>
+                  <th data-ix-sort="4">Vai trò</th>
+                  <th data-ix-sort="5">Thanh toán</th>
+                  <th data-ix-sort="6">Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination rendered by users-list.js -->
+          <div id="users-pagination" class="ix-pagination"></div>
+
+        </div><!-- /ix-card -->
+
+      </div><!-- /ix-content -->
+
+      <!-- FOOTER -->
+      <footer class="ix-footer">
+        <span>© 2026 iFlux. All rights reserved.</span>
+        <div class="ix-footer-links">
+          <a href="#">License</a>
+          <a href="#">Documentation</a>
+          <a href="#">Support</a>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<!-- OFFCANVAS OVERLAY -->
+<div id="offcanvas-add-user-overlay" class="ix-offcanvas-overlay"></div>
+
+<!-- OFFCANVAS: Edit User -->
+<div id="offcanvas-edit-user-overlay" class="ix-offcanvas-overlay"></div>
+<div id="offcanvas-edit-user" class="ix-offcanvas">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title">Sửa khách hàng</span>
+    <button class="ix-btn ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Close">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <input type="hidden" id="edit-field-id" />
+    <div class="ix-form-group">
+      <label class="ix-label">Họ và tên <span style="color:var(--ix-danger)">*</span></label>
+      <input type="text" class="ix-input" id="edit-field-name" autocomplete="name" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Email</label>
+      <input type="email" class="ix-input" id="edit-field-email" readonly />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Điện thoại</label>
+      <input type="tel" class="ix-input" id="edit-field-phone" inputmode="numeric" autocomplete="tel" maxlength="14" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Trạng thái tài khoản</label>
+      <select class="ix-select" id="edit-field-status">
+        <option value="active">Hoạt động</option>
+        <option value="suspended">Tạm khóa</option>
+      </select>
+    </div>
+  </div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-submit-edit-user" data-ix-perm="users.list.edit">
+      <i class="ti ti-check"></i> Lưu
+    </button>
+  </div>
+</div>
+
+<!-- OFFCANVAS: Add User -->
+<div id="offcanvas-add-user" class="ix-offcanvas">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title">Thêm khách hàng</span>
+    <button class="ix-btn ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Close">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-form-group">
+      <label class="ix-label">Họ và tên <span style="color:var(--ix-danger)">*</span></label>
+      <input type="text" class="ix-input" id="add-field-name" placeholder="Nguyễn Văn An" autocomplete="name" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Email <span style="color:var(--ix-danger)">*</span></label>
+      <input type="email" class="ix-input" id="add-field-email" placeholder="an.nguyen@gmail.com" autocomplete="email" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Điện thoại</label>
+      <input type="tel" class="ix-input" id="add-field-phone" placeholder="0909 123 456" inputmode="numeric" autocomplete="tel" maxlength="14" />
+      <div style="font-size:11px;color:var(--ix-text-muted);margin-top:6px">Định dạng Việt Nam · 10 số (vd. 0909123456)</div>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mã affiliate (publicId) — chỉ gán lúc tạo, không sửa sau</label>
+        <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" class="ix-input" id="add-field-affiliate" readonly style="flex:1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.04em" />
+        <button type="button" class="ix-btn ix-btn-outline ix-btn-icon" id="btn-regen-affiliate" title="Tạo mã mới (chỉ trước khi lưu user mới)"><i class="ti ti-refresh"></i></button>
+        </div>
+      <div style="font-size:11px;color:var(--ix-text-muted);margin-top:6px">Tự sinh khi mở form</div>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Vai trò (quyền bổ sung)</label>
+      <select class="ix-select" id="add-field-role">
+        <option value="Standard">Tiêu chuẩn</option>
+        <option value="Creator">Sáng tạo</option>
+        <option value="Analyst">Phân tích</option>
+        <option value="API Partner">Đối tác API</option>
+        <option value="Community Expert">Chuyên gia cộng đồng</option>
+      </select>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Gói</label>
+      <select class="ix-select" id="add-field-package">
+        <option value="Free">Miễn phí</option>
+        <option value="Premium">Premium</option>
+        <option value="Elite">Elite</option>
+      </select>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Chu kỳ gói</label>
+      <select class="ix-select" id="add-field-plan">
+        <option value="freemium">Miễn phí</option>
+        <option value="monthly">Hàng tháng</option>
+        <option value="yearly">Hàng năm</option>
+        <option value="lifetime">Trọn đời</option>
+      </select>
+    </div>
+  </div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-submit-add-user">
+      <i class="ti ti-check"></i> Thêm
+    </button>
+  </div>
+</div>
+
+<div id="ix-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99"></div>
+
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js?v=20260712c"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-customers-store.js?v=20260712c"></script>
+<script src="/Admin_Design_system/app/users/users-list.js?v=noep2users20260726"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>UsersList.init();</script>
+</body>
+</html>

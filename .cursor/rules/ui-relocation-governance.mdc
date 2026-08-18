@@ -1,0 +1,41 @@
+---
+description: UR-001 — Cấm over-engineer khi chỉ di chuyển UI; reuse App Shell; diff phải xóa nhiều hơn thêm.
+alwaysApply: true
+---
+
+# UI Relocation Governance (UR-001)
+
+SoT: `docs/SoT — UI Relocation Governance (UR-001).md` — **KHÓA**. Đọc trước mọi task đổi vị trí UI.
+
+## Câu hỏi bắt buộc trước khi code
+
+> Đang **thêm abstraction** hay đang **di chuyển ownership**?
+
+Nếu ownership **không** đổi (vẫn App Shell / cùng Owner):
+
+- **CẤM** tạo mode, manager, lifecycle, state máy, helper/API mới chỉ để đổi chỗ hiển thị.
+- **CHỈ ĐƯỢC:** đổi node · đổi selector · đổi binding · **XÓA** HTML/CSS/JS chỗ cũ.
+- **CẤM** khung page song song với App Shell cho cùng dữ liệu (vd. header trong page + header shell).
+
+## Diff
+
+Mục tiêu: **xóa nhiều hơn thêm**.  
+Nếu +vượt − đáng kể → phải giải trình Ownership/Business bắt buộc trong tóm tắt; không giải trình được → **không** ship abstraction thừa — xóa trước khi xong task.
+
+## Mùi — xóa ngay
+
+Hàm/`window.*` chỉ phục vụ một call-site hoặc không được gọi (`clear*`, `sync*`, `bind*`, `isXxxPage` thừa) → **không** thêm; nếu đã lỡ thêm → **xóa trong cùng task**.
+
+## Đúng
+
+```text
+Chỗ cũ → XÓA
+App Shell / slot đã có → đổ dữ liệu
+```
+
+## Sai (cấm)
+
+```text
+App Shell + XxxMode mới + API + CSS + helper + lifecycle
+```
+chỉ vì “header/bottom cần đổi nội dung”.

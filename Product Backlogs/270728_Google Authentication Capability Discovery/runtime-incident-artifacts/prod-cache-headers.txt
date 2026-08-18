@@ -1,0 +1,54 @@
+=== https://iflux.vn/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=googleProxy20260728 ===
+HTTP/2 200 
+content-length: 1051
+server: cloudflare
+last-modified: Tue, 28 Jul 2026 10:29:38 GMT
+etag: "6a688492-41b"
+cache-control: public, max-age=14400
+cf-cache-status: MISS
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=rtzeNpOk4J7ZqgpGn3Viz1u8x07xdahNwVOWHl5NfiL9UfsFDl7YF9hXs2RbRZkv%2B6bgAuD6IxyvD0kLejYSyCwLDR1JG3jaokQYeWyan%2FtDcIKaQHL%2BCa6%2BXwUYUB8vhTUu3ksMXg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+=== https://iflux.vn/User_Web/iflux-web-ui/auth-social.js?v=googleProxy20260728 ===
+HTTP/2 200 
+content-length: 13954
+server: cloudflare
+last-modified: Tue, 28 Jul 2026 10:30:29 GMT
+etag: "6a6884c5-3682"
+cache-control: public, max-age=14400
+age: 1462
+cf-cache-status: HIT
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=aQDrW3dhFkIgxDsLHhV2PH0FLzNx%2FNZ%2BtQai%2FNMHB0ilUYR29yy90l53syshHVGr0pDg7chKQqWUnSXo015uHTr%2FhqZKH0xAv0frrZF07VTZU5NCCzVkAUxuRNGT2N4Spvtkkl0WgQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+=== https://iflux.vn/User_Web/iflux-web-ui/auth-login-init.js?v=zombieKill20260724 ===
+HTTP/2 200 
+content-length: 5361
+server: cloudflare
+last-modified: Tue, 28 Jul 2026 06:23:28 GMT
+etag: "6a684ae0-14f1"
+cache-control: public, max-age=14400
+age: 3318
+cf-cache-status: HIT
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2BLkGQ4CH1c6q0uXl7wDcUdN9PfQHTuj2yYr%2BSl3zYx1%2BG1pOC4EASSvgfntxva3O3rIGQU%2BaMjrsVSFsHHOyGbvjCUqKtX5h%2FjVGLY%2FoouUpiuMjLbXdvEyo%2F9av3amDXE259pFD%2Bg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+=== https://iflux.vn/User_Web/iflux-web-ui/runtime/legacy-bridge.js?v=phaseCW420260721 ===
+HTTP/2 200 
+content-length: 7136
+server: cloudflare
+last-modified: Mon, 27 Jul 2026 03:43:35 GMT
+etag: "6a66d3e7-1be0"
+cache-control: public, max-age=14400
+age: 478
+cf-cache-status: HIT
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=9a1tpTqWoWPIq%2BOh8DC9YP4hH%2BlN5gjdcF1UuJODjhwgzgBewAieIvgvvrE9W51oogwd1P1CV0r8drqezW5pe76AFAURE%2BcxGCKYLbROtWWZ4yEqSKOXkWCd1Lruet3bNIgNUK3LXg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+=== https://iflux.vn/User_Web/iflux-web-ui/iflux-user-data-sync.js ===
+HTTP/2 200 
+content-length: 4779
+server: cloudflare
+last-modified: Tue, 28 Jul 2026 08:08:07 GMT
+etag: "6a686367-12ab"
+cache-control: public, max-age=14400
+age: 1463
+cf-cache-status: HIT
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=a2gNUswd4r38SVi56GU8BJmuBp3gWMfTaFQKH8azb6rn4P7nWSM%2FKAmtDcWNCKwH4pgb0CHaiwvmOpnVVDLb5DNABKiI82LWOMEgZWw9x2PfuxTBFNxXoIOuOQihGXmU9tczfB3QRg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}

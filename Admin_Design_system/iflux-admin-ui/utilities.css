@@ -1,0 +1,63 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-002
+Priority: P1
+STATUS: Unused-on-community|bundle
+OWNER (hiện tại): Admin DS utilities
+Owner đích (map): Admin DS utilities.css
+Usage audit: ✓
+Dep động: Không
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: 0 selector Community refined; vẫn không cắt @import bundle
+===== IFX-AUDIT-END ===== */
+/**
+ * iFlux Admin UI — utilities.css
+ */
+.ix-page-stub {
+  padding: 48px 32px;
+  text-align: center;
+}
+.ix-page-stub__icon {
+  font-size: 48px;
+  color: var(--ix-text-muted);
+  margin-bottom: 16px;
+}
+.ix-page-stub__code {
+  font-size: 12px;
+  color: var(--ix-accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.ix-page-stub__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+  margin: 8px 0;
+}
+.ix-page-stub__desc {
+  font-size: 13px;
+  color: var(--ix-text-muted);
+  max-width: 420px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+.ix-menu-badge {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: auto;
+  background: var(--ix-bg-hover);
+  color: var(--ix-text-muted);
+}
+.ix-hub-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ix-hub-table th, .ix-hub-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ix-border);
+  text-align: left;
+}
+.ix-hub-ok { color: var(--ix-success); }
+.ix-hub-partial { color: var(--ix-warning); }
+.ix-hub-miss { color: var(--ix-danger); }
+.ix-hub-gd2 { color: var(--ix-text-muted); }

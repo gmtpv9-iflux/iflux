@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách Gói · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/subscription/plans">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Danh sách Gói</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+
+        <div class="ix-card ix-mb-24" style="padding:0">
+          <div class="ix-widget-separator">
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">MRR</div>
+                <div class="ix-widget-sep-value">₫428M</div>
+                <div class="ix-widget-sep-sub">tháng này <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">+8.2%</span></div>
+              </div>
+              <div class="ix-stat-icon accent" style="width:44px;height:44px;font-size:20px"><i class="ti ti-currency-dong"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Subscribers trả phí</div>
+                <div class="ix-widget-sep-value">12,840</div>
+                <div class="ix-widget-sep-sub">Premium + Elite</div>
+              </div>
+              <div class="ix-stat-icon success" style="width:44px;height:44px;font-size:20px"><i class="ti ti-users-group"></i></div>
+            </div>
+            <div class="ix-widget-separator-item">
+              <div>
+                <div class="ix-widget-sep-label">Free → Premium</div>
+                <div class="ix-widget-sep-value">4.6%</div>
+                <div class="ix-widget-sep-sub">30 ngày <span class="ix-chip ix-chip-success" style="padding:2px 6px;font-size:11px">+0.3pp</span></div>
+              </div>
+              <div class="ix-stat-icon warning" style="width:44px;height:44px;font-size:20px"><i class="ti ti-arrow-up-right"></i></div>
+            </div>
+            <div class="ix-widget-separator-item" style="border-right:none">
+              <div>
+                <div class="ix-widget-sep-label">Churn</div>
+                <div class="ix-widget-sep-value">2.1%</div>
+                <div class="ix-widget-sep-sub">tháng trước <span class="ix-chip ix-chip-danger" style="padding:2px 6px;font-size:11px">+0.2pp</span></div>
+              </div>
+              <div class="ix-stat-icon danger" style="width:44px;height:44px;font-size:20px"><i class="ti ti-trending-down"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-bar-title">Bộ lọc</div>
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="filter-status"><option value="">Tất cả</option><option value="Đang bán" selected>Đang bán</option><option value="Ẩn">Ẩn</option><option value="Lên lịch">Lên lịch</option></select></div>
+              <div><label class="ix-label">Chu kỳ</label><select class="ix-select" id="filter-cycle"><option value="">Tất cả</option><option value="Tháng">Tháng</option><option value="Năm">Năm</option><option value="Trọn đời">Trọn đời</option></select></div>
+              <div><label class="ix-label">Kênh thanh toán</label><select class="ix-select" id="filter-channel"><option value="">Tất cả</option><option value="IAP iOS">IAP iOS</option><option value="IAP Android">IAP Android</option><option value="Web">Web</option></select></div>
+            </div>
+          </div>
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="plans-search" placeholder="Tìm gói..." /></div>
+            <div class="ix-table-actions">
+              <a href="/Admin_Design_system/app/subscription/entitlements.html" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-grid-dots" style="font-size:13px"></i> Vai trò &amp; Quyền</a>
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-download" style="font-size:13px"></i> Xuất</button>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="plans-table">
+              <thead><tr>
+                <th><input type="checkbox" class="ix-checkbox" /></th>
+                <th data-ix-sort="0">Gói</th>
+                <th data-ix-sort="1">Tháng</th>
+                <th data-ix-sort="2">Năm</th>
+                <th data-ix-sort="3">Trọn đời</th>
+                <th>IAP SKU</th>
+                <th data-ix-sort="4">Người đăng ký</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr></thead>
+              <tbody id="plans-tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/app/subscription/plans-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=prodMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+(function () {
+  PlansStore.refreshListPage();
+
+  if (new URLSearchParams(location.search).get('saved') === '1') {
+    ixToast('Đã lưu gói!', 'success');
+    history.replaceState(null, '', 'plans.html');
+  }
+
+  ['filter-status', 'filter-cycle', 'filter-channel'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', function () {
+      PlansStore.refreshListPage();
+    });
+  });
+
+  var searchInput = document.getElementById('plans-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      PlansStore.refreshListPage();
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-delete-plan]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var planId = btn.getAttribute('data-delete-plan');
+    if (!confirm('Xoá gói "' + planId + '"?')) return;
+    var result = PlansStore.deletePlan(planId);
+    if (!result.ok) {
+      ixToast(result.error, 'danger');
+      return;
+    }
+    PlansStore.refreshListPage();
+    ixToast('Đã xoá gói', 'success');
+  });
+})();
+</script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveE20260727"></script>
+</body>
+</html>

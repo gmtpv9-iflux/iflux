@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách Quản trị viên · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>.ix-offcanvas { transform: translateX(100%); }</style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-admin-gov="list">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." disabled /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Danh sách Quản trị viên</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">Tất cả tài khoản quản trị nội bộ — gán vai trò, khóa, đặt lại mật khẩu.</p>
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="admin-users-search" placeholder="Tìm tài khoản nhân viên..." /></div>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-add-user"><i class="ti ti-plus"></i> Thêm tài khoản nhân viên</button>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="admin-users-table">
+              <thead><tr><th>Quản trị viên</th><th>Vai trò</th><th>Đăng nhập gần nhất</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+              <tbody id="admin-users-tbody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--ix-text-muted)">Đang tải…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="offcanvas-admin-user-overlay" class="ix-offcanvas-overlay"></div>
+<div id="offcanvas-admin-user" class="ix-offcanvas">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title" id="user-modal-title">Thêm tài khoản nhân viên</span>
+    <button type="button" class="ix-btn ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Đóng">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-form-group">
+      <label class="ix-label">Họ tên <span style="color:var(--ix-danger)">*</span></label>
+      <input type="text" class="ix-input" id="acc-field-name" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Email <span style="color:var(--ix-danger)">*</span></label>
+      <input type="email" class="ix-input" id="acc-field-email" />
+    </div>
+    <div class="ix-form-group" id="acc-pw-wrap">
+      <label class="ix-label">Mật khẩu</label>
+      <input type="password" class="ix-input" id="acc-field-password" autocomplete="new-password" />
+      <div class="ix-field-hint">Tối thiểu 6 ký tự. Có thể để trống nếu chỉ đăng nhập Gmail.</div>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Vai trò</label>
+      <div id="acc-roles-wrap" style="margin-top:6px"></div>
+    </div>
+  </div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-save-user">
+      <i class="ti ti-check"></i> Lưu
+    </button>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=adminGov20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=adminGov20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/system/admin-governance.js?v=statusBadge20260725"></script>
+</body>
+</html>

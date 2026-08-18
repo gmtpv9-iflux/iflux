@@ -1,0 +1,28 @@
+{
+  "version": "1.0.1",
+  "foundationPx": [375, 640, 768, 1024, 1280, 1440, 1600],
+  "exceptions": [
+    {
+      "id": "EXC-1200-ADMIN-SHELL",
+      "semantic": "admin-shell-drawer",
+      "px": 1199.98,
+      "files": [
+        "Admin_Design_system/iflux-admin-ui/components.css"
+      ],
+      "consumers": "CSS",
+      "reason": "Admin sidebar drawer — không có Foundation token giữa bp-lg (1024) và bp-xl (1280)",
+      "expiry": "2027-01-27"
+    },
+    {
+      "id": "EXC-1200-ADMIN-SHELL",
+      "semantic": "admin-shell-desktop",
+      "px": 1200,
+      "files": [
+        "Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"
+      ],
+      "consumers": "JS",
+      "reason": "Admin isDesktop() — cặp CSS 1199.98 · không map bp-xl 1280 (gây mất menu tại 1280px)",
+      "expiry": "2027-01-27"
+    }
+  ]
+}

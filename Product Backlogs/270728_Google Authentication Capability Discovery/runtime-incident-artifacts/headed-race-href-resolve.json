@@ -1,0 +1,19 @@
+{
+  "url": "https://iflux.vn/User_Web/auth/#",
+  "nav": [
+    "https://iflux.vn/dang-nhap",
+    "https://iflux.vn/User_Web/auth/#"
+  ],
+  "pre": {
+    "href": "https://iflux.vn/dang-nhap",
+    "pathname": "/dang-nhap",
+    "baseURI": "https://iflux.vn/User_Web/auth/",
+    "baseHref": "https://iflux.vn/User_Web/auth/",
+    "btnHrefAttr": "#",
+    "resolvedHref": "https://iflux.vn/dang-nhap#",
+    "authSocial": "undefined",
+    "shell": null,
+    "hasPathBase": "undefined",
+    "hasIfluxHref": "object"
+  }
+}

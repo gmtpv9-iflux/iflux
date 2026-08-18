@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đồng bộ cấu trúc cổ phiếu · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
+  <style>
+    .ix-page-title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
+    .ix-page-title-row .ix-page-title { margin:0; }
+  </style>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm field..." /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content" data-mdm-page="structure">
+        <!-- Title + breadcrumb: đổ từ IfluxAdminNavRegistry (không hardcode nhãn) -->
+        <div class="ix-page-title-row">
+          <h1 class="ix-page-title" id="adm-page-title"></h1>
+          <button type="button" class="ix-btn ix-btn-primary" id="btn-adm-mdm-sync" data-ix-perm="data.sources.execute">
+            <i class="ti ti-download"></i> Import
+          </button>
+        </div>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+
+        <div class="ix-card ix-mb-24">
+          <div class="ix-table-toolbar">
+            <div class="ix-caption" id="adm-mdm-config-toolbar">Block 1 — Cổ phiếu (Stock)</div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="adm-mdm-config-table">
+              <thead>
+                <tr id="adm-mdm-config-thead"></tr>
+              </thead>
+              <tbody id="adm-mdm-config-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ix-card ix-mb-24">
+          <div class="ix-table-toolbar">
+            <div class="ix-caption" id="adm-mdm-price-config-toolbar">Block 2 — Giá cổ phiếu (Stock Prices)</div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="adm-mdm-price-config-table">
+              <thead>
+                <tr id="adm-mdm-price-config-thead"></tr>
+              </thead>
+              <tbody id="adm-mdm-price-config-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <pre class="ix-caption" id="adm-mdm-sync-result" style="display:none"></pre>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Conflict Review: Import≠Apply — reject rồi Apply mới ghi Master (ghi chú kỹ thuật, không hiện UI) -->
+<div class="ix-offcanvas-overlay" id="offcanvas-mdm-conflict-overlay"></div>
+<div class="ix-offcanvas" id="offcanvas-mdm-conflict">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title">Xem xét xung đột</span>
+    <button type="button" class="ix-btn ix-btn-icon" id="btn-mdm-conflict-close" aria-label="Đóng"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-table-responsive">
+      <table class="ix-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="mdm-conflict-check-all" title="Chọn tất cả" /></th>
+            <th>Mã</th>
+            <th>Trường</th>
+            <th>Master hiện tại</th>
+            <th>Incoming</th>
+            <th>Nguồn</th>
+            <th>Quyết định</th>
+          </tr>
+        </thead>
+        <tbody id="adm-mdm-conflict-review-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="ix-offcanvas-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px">
+    <button type="button" class="ix-btn ix-btn-outline" id="btn-mdm-reject-selected" data-ix-perm="data.sources.execute">Từ chối đã chọn</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-mdm-apply-import" data-ix-perm="data.sources.execute">Áp dụng</button>
+  </div>
+</div>
+
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=mdmDynMap20260808c"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/app/data/sources-page.js?v=mdmConflictOnly20260808"></script>
+<script>AdmDataSources.init('structure');</script>
+</body>
+</html>

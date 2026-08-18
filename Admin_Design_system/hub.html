@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iFlux Admin — Hub &amp; Checklist</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body data-ix-view-api="/admin/guides/checklist">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm mã / tên màn / nhóm…" id="hub-search" /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Checklist Admin</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">
+          Đồng bộ 1:1 từ <strong>menu chính</strong> (<code>IfluxAdminNavRegistry</code>) · nhóm module giống sidebar · trạng thái theo badge menu.
+        </p>
+
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon success"><i class="ti ti-circle-check"></i></div>
+            <div>
+              <div class="ix-stat-label">Full</div>
+              <div class="ix-stat-value ix-hub-ok" id="hub-stat-full">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon warning"><i class="ti ti-progress"></i></div>
+            <div>
+              <div class="ix-stat-label">Đang làm</div>
+              <div class="ix-stat-value ix-hub-partial" id="hub-stat-partial">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon danger"><i class="ti ti-clock"></i></div>
+            <div>
+              <div class="ix-stat-label">Sắp có</div>
+              <div class="ix-stat-value ix-hub-miss" id="hub-stat-soon">—</div>
+            </div>
+          </div>
+          <div class="ix-stat-card">
+            <div class="ix-stat-icon info"><i class="ti ti-layout-list"></i></div>
+            <div>
+              <div class="ix-stat-label">Tổng màn / nhóm</div>
+              <div class="ix-stat-value" id="hub-stat-total" style="font-size:18px">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ix-card" style="padding:0;overflow:auto">
+          <table class="ix-hub-table" id="hub-table">
+            <thead>
+              <tr>
+                <th>Mã (route)</th>
+                <th>Nhóm</th>
+                <th>Tên màn</th>
+                <th>GĐ</th>
+                <th>Trạng thái</th>
+                <th>Badge menu</th>
+                <th>Link</th>
+              </tr>
+            </thead>
+            <tbody id="hub-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=hubSync20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function statusFromBadge(badge) {
+    if (!badge) return { label: 'Full', cls: 'ix-hub-ok', phase: '1', kind: 'full' };
+    if (badge === 'soon') return { label: 'Sắp có', cls: 'ix-hub-miss', phase: '—', kind: 'soon' };
+    if (badge === 'GĐ2') return { label: 'Full', cls: 'ix-hub-ok', phase: '2', kind: 'full' };
+    if (badge === '···') return { label: 'Đang làm', cls: 'ix-hub-partial', phase: '1', kind: 'partial' };
+    return { label: String(badge), cls: 'ix-hub-gd2', phase: '—', kind: 'other' };
+  }
+
+  function hrefForKey(routeKey) {
+    var R = window.IfluxAdminRoutes;
+    if (R && R.hrefFor) return R.hrefFor(routeKey);
+    return '#';
+  }
+
+  function buildRows() {
+    var reg = window.IfluxAdminNavRegistry;
+    var sidebar = (reg && reg.sidebar) || [];
+    var group = 'Tổng quan';
+    var groups = 0;
+    var seenGroup = {};
+    var stats = { full: 0, partial: 0, soon: 0, other: 0, total: 0 };
+    var html = [];
+
+    function ensureGroup() {
+      if (seenGroup[group]) return;
+      seenGroup[group] = true;
+      groups += 1;
+      html.push(
+        '<tr class="ix-hub-group-row" data-hub-group="' + esc(group) + '">' +
+          '<td colspan="7" style="background:var(--ix-bg-hover);font-weight:600;color:var(--ix-text-secondary)">' +
+            esc(group) +
+          '</td>' +
+        '</tr>'
+      );
+    }
+
+    function pushItem(node, labelPrefix) {
+      ensureGroup();
+      var st = statusFromBadge(node.badge);
+      stats[st.kind] = (stats[st.kind] || 0) + 1;
+      stats.total += 1;
+      var href = hrefForKey(node.routeKey);
+      var badgeCell = node.badge
+        ? '<span class="ix-chip ix-chip-warning" style="font-size:11px">' + esc(node.badge) + '</span>'
+        : '<span style="color:var(--ix-text-muted)">—</span>';
+      var name = labelPrefix ? (labelPrefix + ' → ' + node.label) : node.label;
+      html.push(
+        '<tr data-hub-item="1" data-hub-group="' + esc(group) + '">' +
+          '<td><code style="font-size:11px">' + esc(node.routeKey || node.key) + '</code></td>' +
+          '<td>' + esc(group) + '</td>' +
+          '<td>' + esc(name) + '</td>' +
+          '<td>' + esc(st.phase) + '</td>' +
+          '<td class="' + st.cls + '">' + esc(st.label) + '</td>' +
+          '<td>' + badgeCell + '</td>' +
+          '<td><a href="' + esc(href) + '">Mở</a></td>' +
+        '</tr>'
+      );
+    }
+
+    sidebar.forEach(function (node) {
+      if (node.type === 'group') {
+        group = node.label || '—';
+        return;
+      }
+      if (node.type === 'parent') {
+        (node.children || []).forEach(function (ch) {
+          if (ch.type === 'item' && ch.nav !== false) pushItem(ch, node.label);
+        });
+        return;
+      }
+      if (node.type === 'item' && node.nav !== false) pushItem(node, '');
+    });
+
+    return { html: html.join(''), stats: stats, groups: groups };
+  }
+
+  function render() {
+    var built = buildRows();
+    var tbody = document.getElementById('hub-tbody');
+    if (tbody) tbody.innerHTML = built.html;
+
+    var s = built.stats;
+    var elFull = document.getElementById('hub-stat-full');
+    var elPartial = document.getElementById('hub-stat-partial');
+    var elSoon = document.getElementById('hub-stat-soon');
+    var elTotal = document.getElementById('hub-stat-total');
+    if (elFull) elFull.textContent = String(s.full || 0);
+    if (elPartial) elPartial.textContent = String(s.partial || 0);
+    if (elSoon) elSoon.textContent = String(s.soon || 0);
+    if (elTotal) elTotal.textContent = (s.total || 0) + ' / ' + built.groups;
+  }
+
+  function bindSearch() {
+    var input = document.getElementById('hub-search');
+    if (!input) return;
+    input.addEventListener('input', function () {
+      var q = String(this.value || '').toLowerCase().trim();
+      var rows = document.querySelectorAll('#hub-table tbody tr');
+      var visibleGroups = {};
+      rows.forEach(function (row) {
+        if (row.classList.contains('ix-hub-group-row')) return;
+        var show = !q || row.textContent.toLowerCase().indexOf(q) >= 0;
+        row.style.display = show ? '' : 'none';
+        if (show) visibleGroups[row.getAttribute('data-hub-group') || ''] = true;
+      });
+      rows.forEach(function (row) {
+        if (!row.classList.contains('ix-hub-group-row')) return;
+        var g = row.getAttribute('data-hub-group') || '';
+        row.style.display = !q || visibleGroups[g] ? '' : 'none';
+      });
+    });
+  }
+
+  render();
+  bindSearch();
+})();
+</script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
+</body>
+</html>

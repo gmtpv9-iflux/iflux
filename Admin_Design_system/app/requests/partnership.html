@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-REQ — Yêu cầu hợp tác · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" id="req-search" placeholder="Tìm theo tên, email, SĐT..." /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Yêu cầu hợp tác</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Danh sách yêu cầu hợp tác do người dùng gửi từ trang User Web (menu Cá nhân → Liên hệ hợp tác).</p>
+
+        <!-- Stat chips theo trạng thái -->
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-stat-card"><div class="ix-stat-icon warning"><i class="ti ti-inbox"></i></div><div><div class="ix-stat-label">Mới</div><div class="ix-stat-value" id="req-count-new">—</div></div></div>
+          <div class="ix-stat-card"><div class="ix-stat-icon info"><i class="ti ti-progress"></i></div><div><div class="ix-stat-label">Đang xử lý</div><div class="ix-stat-value" id="req-count-progress">—</div></div></div>
+          <div class="ix-stat-card"><div class="ix-stat-icon success"><i class="ti ti-circle-check"></i></div><div><div class="ix-stat-label">Hoàn tất</div><div class="ix-stat-value" id="req-count-done">—</div></div></div>
+          <div class="ix-stat-card"><div class="ix-stat-icon danger"><i class="ti ti-circle-x"></i></div><div><div class="ix-stat-label">Từ chối</div><div class="ix-stat-value" id="req-count-rejected">—</div></div></div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="ix-filter-bar ix-mb-16">
+          <div class="ix-filter-group">
+            <label class="ix-label">Trạng thái</label>
+            <select class="ix-select" id="req-filter-status">
+              <option value="">Tất cả</option>
+              <option value="new">Mới</option>
+              <option value="in_progress">Đang xử lý</option>
+              <option value="done">Hoàn tất</option>
+              <option value="rejected">Từ chối</option>
+            </select>
+          </div>
+          <div class="ix-filter-group">
+            <label class="ix-label">Hình thức</label>
+            <select class="ix-select" id="req-filter-type">
+              <option value="">Tất cả</option>
+              <option value="media">Hợp tác truyền thông</option>
+              <option value="content">Hợp tác nội dung</option>
+              <option value="business">Hợp tác kinh doanh</option>
+              <option value="investment">Đầu tư</option>
+              <option value="other">Khác</option>
+            </select>
+          </div>
+          <button class="ix-btn ix-btn-outline ix-btn-sm" id="req-refresh"><i class="ti ti-refresh"></i> Làm mới</button>
+        </div>
+
+        <div class="ix-card">
+          <table class="ix-table" id="req-table">
+            <thead>
+              <tr>
+                <th>Người gửi</th>
+                <th>Liên hệ</th>
+                <th>Hình thức</th>
+                <th>Nội dung</th>
+                <th>Trạng thái</th>
+                <th>Ngày gửi</th>
+                <th style="width:120px">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="req-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:var(--ix-text-muted)">Đang tải…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal chi tiết -->
+<div class="ix-modal-overlay" id="req-modal" data-ix-modal style="display:none">
+  <div class="ix-modal-box" style="max-width:560px;width:100%">
+    <button type="button" class="ix-modal-close" data-req-close><i class="ti ti-x"></i></button>
+    <div class="ix-modal-title">Chi tiết yêu cầu</div>
+    <div class="ix-modal-sub" id="req-modal-sub">—</div>
+    <div id="req-modal-body" style="margin-top:16px"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+      <button class="ix-btn ix-btn-outline ix-btn-sm" data-req-status="in_progress" data-ix-perm="requests.partnership.status_in_progress"><i class="ti ti-progress"></i> Đang xử lý</button>
+      <button class="ix-btn ix-btn-primary ix-btn-sm" data-req-status="done" data-ix-perm="requests.partnership.status_done"><i class="ti ti-circle-check"></i> Hoàn tất</button>
+      <button class="ix-btn ix-btn-ghost ix-btn-sm" data-req-status="rejected" data-ix-perm="requests.partnership.status_rejected" style="color:var(--ix-danger)"><i class="ti ti-circle-x"></i> Từ chối</button>
+    </div>
+  </div>
+</div>
+
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  var API = (window.IfluxAdminAuth ? IfluxAdminAuth.apiBase() : (location.origin + '/api')) + '/partnership-requests';
+  var STATUS = {
+    new: { label: 'Mới', chip: 'ix-chip-warning' },
+    in_progress: { label: 'Đang xử lý', chip: 'ix-chip-info' },
+    done: { label: 'Hoàn tất', chip: 'ix-chip-success' },
+    rejected: { label: 'Từ chối', chip: 'ix-chip-danger' }
+  };
+  var rows = [];
+  var currentId = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function authHeaders() {
+    var s = window.IfluxAdminAuth && IfluxAdminAuth.getSession();
+    var h = { 'Content-Type': 'application/json' };
+    if (s && s.token) h.Authorization = 'Bearer ' + s.token;
+    return h;
+  }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  function statusChip(s) {
+    var st = STATUS[s] || { label: s, chip: 'ix-chip' };
+    return '<span class="ix-chip ' + st.chip + '">' + esc(st.label) + '</span>';
+  }
+
+  function query() {
+    var q = [];
+    var st = document.getElementById('req-filter-status').value;
+    var tp = document.getElementById('req-filter-type').value;
+    var s = document.getElementById('req-search').value.trim();
+    if (st) q.push('status=' + encodeURIComponent(st));
+    if (tp) q.push('type=' + encodeURIComponent(tp));
+    if (s) q.push('q=' + encodeURIComponent(s));
+    return q.length ? '?' + q.join('&') : '';
+  }
+
+  function load() {
+    var tbody = document.getElementById('req-tbody');
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--ix-text-muted)">Đang tải…</td></tr>';
+    fetch(API + query(), { headers: authHeaders() })
+      .then(function (res) { return res.json().then(function (b) { if (!res.ok) throw new Error(b.error || 'HTTP ' + res.status); return b; }); })
+      .then(function (data) {
+        rows = data.requests || [];
+        renderCounts(data.counts || {});
+        renderRows();
+      })
+      .catch(function (err) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--ix-danger)">Lỗi tải dữ liệu: ' + esc(err.message) + '</td></tr>';
+      });
+  }
+
+  function renderCounts(c) {
+    document.getElementById('req-count-new').textContent = c.new || 0;
+    document.getElementById('req-count-progress').textContent = c.in_progress || 0;
+    document.getElementById('req-count-done').textContent = c.done || 0;
+    document.getElementById('req-count-rejected').textContent = c.rejected || 0;
+  }
+
+  function renderRows() {
+    var tbody = document.getElementById('req-tbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--ix-text-muted)">Chưa có yêu cầu nào.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(function (r) {
+      var msg = (r.message || '').length > 60 ? r.message.slice(0, 60) + '…' : (r.message || '—');
+      return '<tr>' +
+        '<td><div style="font-weight:600">' + esc(r.fullName || '—') + '</div></td>' +
+        '<td><div>' + esc(r.email) + '</div><div style="color:var(--ix-text-muted);font-size:12px">' + esc(r.phone || '') + '</div></td>' +
+        '<td>' + esc(r.partnershipTypeLabel || r.partnershipType) + '</td>' +
+        '<td style="max-width:220px;color:var(--ix-text-muted)">' + esc(msg) + '</td>' +
+        '<td>' + statusChip(r.status) + '</td>' +
+        '<td style="white-space:nowrap;font-size:12px">' + esc(fmtDate(r.createdAt)) + '</td>' +
+        '<td><button class="ix-btn ix-btn-ghost ix-btn-sm" data-req-view="' + esc(r.id) + '"><i class="ti ti-eye"></i> Xem</button></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function openModal(id) {
+    var r = rows.filter(function (x) { return x.id === id; })[0];
+    if (!r) return;
+    currentId = id;
+    document.getElementById('req-modal-sub').textContent = r.fullName + ' · ' + fmtDate(r.createdAt);
+    document.getElementById('req-modal-body').innerHTML =
+      row('Họ tên', r.fullName) +
+      row('Email', r.email) +
+      row('Số điện thoại', r.phone) +
+      row('Hình thức hợp tác', r.partnershipTypeLabel || r.partnershipType) +
+      row('Trạng thái', statusChip(r.status)) +
+      row('Nội dung', esc(r.message || '—')) +
+      (r.processedBy ? row('Xử lý bởi', esc(r.processedBy) + ' · ' + fmtDate(r.processedAt)) : '');
+    var m = document.getElementById('req-modal');
+    m.style.display = 'flex';
+    m.classList.add('open');
+  }
+  function row(k, v) {
+    return '<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--ix-border)">' +
+      '<div style="width:150px;color:var(--ix-text-muted);flex-shrink:0">' + esc(k) + '</div>' +
+      '<div style="flex:1">' + v + '</div></div>';
+  }
+  function closeModal() {
+    var m = document.getElementById('req-modal');
+    m.style.display = 'none';
+    m.classList.remove('open');
+    currentId = null;
+  }
+
+  function setStatus(status) {
+    if (!currentId) return;
+    fetch(API + '/' + encodeURIComponent(currentId) + '/status', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ status: status })
+    }).then(function (res) { return res.json().then(function (b) { if (!res.ok) throw new Error(b.error || 'HTTP ' + res.status); return b; }); })
+      .then(function () {
+        if (typeof ixToast === 'function') ixToast('Đã cập nhật trạng thái', 'success');
+        closeModal();
+        load();
+      })
+      .catch(function (err) {
+        if (typeof ixToast === 'function') ixToast('Lỗi: ' + err.message, 'error');
+      });
+  }
+
+  document.addEventListener('click', function (e) {
+    var view = e.target.closest && e.target.closest('[data-req-view]');
+    if (view) { openModal(view.getAttribute('data-req-view')); return; }
+    if (e.target.closest && e.target.closest('[data-req-close]')) { closeModal(); return; }
+    var st = e.target.closest && e.target.closest('[data-req-status]');
+    if (st) { setStatus(st.getAttribute('data-req-status')); return; }
+    if (e.target.id === 'req-modal') closeModal();
+  });
+  document.getElementById('req-refresh').addEventListener('click', load);
+  document.getElementById('req-filter-status').addEventListener('change', load);
+  document.getElementById('req-filter-type').addEventListener('change', load);
+  var searchTimer;
+  document.getElementById('req-search').addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(load, 350);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

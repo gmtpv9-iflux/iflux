@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forgot Password — Vuexy Dark</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css" />
+<link rel="stylesheet" href="/Admin_Design_system/files (3)/vuexy-system.css" />
+</head>
+<body>
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <img class="ix-brand-logo" alt="iFlux" hidden />
+      <span class="ix-auth-brand-name">Vuexy</span>
+    </div>
+
+    <div class="ix-auth-title">Forgot Password? 🔒</div>
+    <div class="ix-auth-sub">Enter your email and we'll send you instructions to reset your password</div>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Email</label>
+      <input type="email" class="ix-input" placeholder="Enter your email" autofocus />
+    </div>
+    <button class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:8px" onclick="ixToast('Reset link sent!','success')">
+      <i class="ti ti-send"></i> Send Reset Link
+    </button>
+
+    <a href="/Admin_Design_system/files (3)/auth-login.html" class="ix-auth-back">
+      <i class="ti ti-chevron-left" style="font-size:13px"></i>
+      Back to login
+    </a>
+  </div>
+</div>
+<script src="/Admin_Design_system/files (3)/vuexy-system.js"></script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+/**
+ * Foundation — Follow Action (Theo dõi thực thể)
+ * Owner: Design System Foundation (Admin SoT) · catalog: ix-follow
+ * Icon: ti-bookmark. Token màu: --ifx-color-violet-400.
+ * Class .ifx-heart giữ tương thích selector consumer cũ (= cùng nút Follow).
+ * Consumer: User Web + Admin preview. Không thuộc Watchlist logic.
+ */
+
+.ifx-follow,
+.ifx-heart {
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--ifx-color-violet-400);
+  cursor: pointer;
+  transition:
+    color var(--ifx-ix-hover-duration, 0.12s),
+    background var(--ifx-ix-hover-duration, 0.12s),
+    transform var(--ifx-ix-active-duration, 0.1s);
+  border-radius: var(--ix-radius, var(--ifx-radius-md));
+}
+
+.ifx-follow:hover:not(.is-readonly):not(.is-active),
+.ifx-heart:hover:not(.is-readonly):not(.is-active) {
+  color: var(--ifx-color-violet-400);
+  transform: scale(1.08);
+}
+
+.ifx-follow.is-active,
+.ifx-heart.is-active {
+  color: var(--ifx-color-violet-400);
+  background: transparent;
+}
+
+.ifx-follow.is-readonly,
+.ifx-heart.is-readonly {
+  cursor: default;
+}
+
+.ifx-follow.is-readonly.is-active,
+.ifx-heart.is-readonly.is-active {
+  color: var(--ifx-color-violet-400);
+  background: transparent;
+}
+
+.ifx-follow.is-readonly:hover,
+.ifx-heart.is-readonly:hover {
+  transform: none;
+}
+
+.ifx-follow__icon,
+.ifx-heart__icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.ifx-widget__body .ifx-follow__icon,
+.ifx-widget__body .ifx-heart__icon {
+  width: 16px;
+  height: 16px;
+}

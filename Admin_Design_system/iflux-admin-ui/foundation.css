@@ -1,0 +1,18 @@
+/**
+ * iFlux Foundation — Token catalog reference
+ * Layer 1: primitives/*  |  Layer 2: semantic/*  |  Typography + Spacing: sibling files
+ *
+ * Quy tắc:
+ * - Component CSS chỉ dùng var(--color-*), var(--ifx-space-*), var(--ifx-text-*), var(--shadow-*)
+ * - Không thêm hex/rgba trực tiếp trong domain CSS
+ * - Legacy --ix-* alias tự map qua semantic/aliases.css
+ */
+@import url('./primitives/color.css');
+@import url('./primitives/radius.css');
+@import url('./primitives/shadow.css');
+@import url('./primitives/motion.css');
+@import url('./primitives/z-index.css');
+@import url('./primitives/layout.css');
+@import url('./semantic/theme.css');
+@import url('./semantic/aliases.css');
+@import url('./foundation/heart-action.css');

@@ -1,0 +1,654 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-IGNORE-015
+Priority: IGNORE
+STATUS: IGNORE
+OWNER: Runtime
+Candidate Owner: Runtime
+Usage audit: N/A
+Dep động: N/A
+Migration ROI: 1
+Khả năng bỏ load: Không
+P1 Gate: N/A
+Refs: Task5 PhaseA — không audit / không tối ưu
+===== IFX-AUDIT-END ===== */
+/* Widget shell — 2 cột dashboard + drag ghost */
+.ifx-dash-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-12);
+  margin-bottom: 20px;
+}
+.ifx-dash-toolbar__hint {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+}
+.ifx-dash-toolbar__cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--ifx-inline-sm);
+}
+.ifx-dash-toolbar__primary[hidden] {
+  display: none !important;
+}
+.ifx-dash-toolbar__confirm[hidden] {
+  display: none !important;
+}
+.ifx-dash-toolbar__confirm:not([hidden]) {
+  display: flex !important;
+  gap: var(--ifx-space-8);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ifx-dash-canvas {
+  display: block;
+}
+.ifx-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ifx-space-16) 20px;
+  align-items: start;
+}
+.ifx-dash-grid__label {
+  grid-column: 1 / -1;
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ix-text-muted);
+  padding: 0 4px 4px;
+}
+.ifx-dash-grid__stack {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ifx-space-16) 20px;
+  align-items: start;
+}
+.ifx-dash-grid__stack > .ifx-widget {
+  grid-column: span 6;
+  min-width: 0;
+}
+.ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="third"] {
+  grid-column: span 4;
+}
+.ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="half"] {
+  grid-column: span 6;
+}
+.ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="twothirds"] {
+  grid-column: span 8;
+}
+.ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="full"] {
+  grid-column: span 12;
+}
+.ifx-dash-grid__stack > .ifx-dash-add-slot {
+  grid-column: 1 / -1;
+}
+.ifx-widget-width {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--ix-radius);
+  background: rgba(105, 108, 255, 0.08);
+  border: 1px solid rgba(105, 108, 255, 0.2);
+  flex-shrink: 0;
+}
+.ifx-widget-width__btn {
+  border: none;
+  background: transparent;
+  color: var(--ix-text-muted);
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  font-family: var(--ix-font);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+.ifx-widget-width__btn:hover {
+  color: var(--ix-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+.ifx-widget-width__btn.is-active {
+  background: var(--ix-accent);
+  color: #fff;
+}
+.ifx-dash-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-12);
+  min-height: 320px;
+  border-radius: var(--ix-radius-lg);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.ifx-dash-col__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+  flex: 1;
+  min-height: 240px;
+}
+.ifx-dash-canvas.is-edit .ifx-widget {
+  outline: 1px dashed rgba(105, 108, 255, 0.4);
+  outline-offset: 2px;
+  transition: margin 0.15s ease;
+}
+.ifx-dash-canvas.is-edit .ifx-widget__drag { display: flex; }
+
+.ifx-drop-placeholder {
+  border: 2px dashed var(--ix-accent);
+  border-radius: var(--ix-radius-lg);
+  background: rgba(105, 108, 255, 0.1);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 6px 0;
+  transition: min-height 0.12s ease, margin 0.12s ease;
+  pointer-events: none;
+}
+.ifx-widget.is-drop-push-before {
+  margin-top: 14px;
+}
+.ifx-widget.is-drop-push-after {
+  margin-bottom: 14px;
+}
+
+.ifx-widget {
+  /* UI-001: Dashboard host = layout only — Card Owner là Template / .ifx-widget__surface */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.ifx-dash-canvas.is-edit .ifx-widget {
+  outline: 1px dashed var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  outline-offset: 2px;
+}
+
+/* TPL-SHELL-CARD fallback khi Template mount chưa có Feature shell */
+.ifx-widget__surface {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * UI-001: body đã có Feature Card Owner → demote surface (không card lần hai).
+ * Không whitelist theo WGT-* — chỉ theo class shell.
+ */
+.ifx-widget__surface:has(.ifx-mkt-liq-block),
+.ifx-widget__surface:has(.ifx-com-overview),
+.ifx-widget__surface:has(.ifx-com-breadth-sidebar),
+.ifx-widget__surface:has(.ifx-com-trending-panel),
+.ifx-widget__surface:has(.ifx-block.ifx-block--card),
+.ifx-widget__surface:has(.ifx-block.ifx-block--sidebar),
+.ifx-widget__surface:has(.ifx-mkt-card),
+.ifx-widget__surface:has(.ifx-flow-card),
+.ifx-widget__surface:has(.ifx-mkt-sidebar-widget),
+.ifx-widget__surface:has(.ifx-com-topwl),
+.ifx-widget__surface:has(.ifx-com-active-members),
+.ifx-widget__surface:has(.ifx-com-experts-leaders),
+.ifx-widget__surface:has(.ifx-mcmp) {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* View: ẩn host header khi Template đã có head riêng trong Feature shell */
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mkt-liq-block) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-overview) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-breadth-sidebar) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-trending-panel) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-block.ifx-block--card) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-block.ifx-block--sidebar) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-flow-card) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mkt-sidebar-widget) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-com-topwl) > .ifx-widget__header,
+.ifx-dash-canvas:not(.is-edit) .ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__header {
+  display: none;
+}
+.ifx-widget.is-dragging {
+  opacity: 0.15;
+  outline: 2px dashed var(--ix-accent);
+}
+
+.ifx-drag-ghost {
+  position: fixed;
+  z-index: 3000;
+  pointer-events: none;
+  opacity: 0.95;
+  border-radius: var(--ix-radius-lg);
+  border: 1px solid rgba(105, 108, 255, 0.6);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  transform: scale(1.02);
+  transition: none;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+/* WIDGET HEADER BLOCK — CSS Source of Truth (Phase A: PASS).
+ * HTML Contract (immutable DOM order — SoT, kể cả khi Runtime → Phase B):
+ *   1. .ifx-widget__icon
+ *   2. .ifx-widget__identity  (title + subtitle)
+ *   3. .ifx-widget__actions
+ * CẤM đổi thứ tự (Icon↔Actions, Identity trước Icon, …). Mở rộng chỉ qua 3 slot trên.
+ */
+.ifx-widget__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  padding: var(--ifx-inset-widget);
+  border-bottom: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius) var(--ix-radius) 0 0;
+  background: var(--ix-bg-card);
+  margin-bottom: var(--ifx-space-16);
+  min-height: 48px;
+  text-align: left;
+  box-sizing: border-box;
+}
+.ifx-widget__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--ix-accent);
+  font-size: var(--ifx-font-size-18);
+}
+.ifx-widget__identity {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ifx-space-4);
+}
+.ifx-widget__title,
+/*
+ * Technical Debt (Phase A) — ALIAS TƯƠNG THÍCH DUY NHẤT được phép tồn tại:
+ *   .ifx-widget__header > h3
+ * Chỉ để Runtime legacy (title nằm trực tiếp trong header) vẫn nhận typography.
+ * CẤM thêm alias mới sau Phase A (ví dụ > h2, > span, .title, …).
+ * Gỡ alias này ở Phase B khi toàn bộ consumer đã migrate HTML Contract.
+ */
+.ifx-widget__header > h3 {
+  margin: 0;
+  width: 100%;
+  font-family: var(--ix-font);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: 1.35;
+  color: var(--ix-text-primary);
+  text-align: left;
+}
+.ifx-widget__subtitle {
+  margin: 0;
+  width: 100%;
+  font-family: var(--ix-font);
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  line-height: 1.45;
+  text-align: left;
+}
+.ifx-widget__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+/* Runtime legacy chưa migrate HTML ở Phase A: giữ visual cũ, không đổi consumer. */
+.ifx-widget__header:not(:has(> .ifx-widget__identity)) {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.ifx-widget__drag {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--ix-text-muted);
+  cursor: grab;
+  flex-shrink: 0;
+  border-radius: var(--ix-radius);
+  background: var(--ix-bg-hover);
+}
+.ifx-widget__drag:active { cursor: grabbing; }
+.ifx-widget__body { padding: 0; }
+
+/* Inset UI-002: khi surface là Card Owner, body giữ một lớp inset */
+.ifx-widget__surface > .ifx-widget__body {
+  padding: var(--ifx-space-16);
+}
+.ifx-widget__surface > .ifx-widget__header {
+  margin-bottom: 0;
+}
+/* Feature shell đã có inset riêng → body không pad thêm */
+.ifx-widget__surface:has(.ifx-mkt-liq-block) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-overview) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-breadth-sidebar) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-trending-panel) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-block.ifx-block--card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-block.ifx-block--sidebar) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mkt-card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-flow-card) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mkt-sidebar-widget) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-topwl) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-active-members) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-com-experts-leaders) > .ifx-widget__body,
+.ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__body {
+  padding: 0;
+}
+
+/* Watchlist panel: surface là Card Owner — panel không vẽ card lần hai */
+.ifx-widget__surface .ifx-wl-stock-panel.ifx-wl-block {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* Nhà của tôi — header có actions/drag: hàng ngang, title+subtitle cột trái */
+.ifx-widget__surface > .ifx-widget__header,
+.ifx-widget > .ifx-widget__header {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.ifx-widget__surface > .ifx-widget__header > h3,
+.ifx-widget > .ifx-widget__header > h3 {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+.ifx-widget__surface > .ifx-widget__header > .ifx-widget__subtitle,
+.ifx-widget > .ifx-widget__header > .ifx-widget__subtitle {
+  flex: 1 0 100%;
+  order: 3;
+  padding-left: 0;
+}
+.ifx-widget__surface > .ifx-widget__header > .ifx-widget__actions,
+.ifx-widget > .ifx-widget__header > .ifx-widget__actions {
+  margin-left: auto;
+}
+.ifx-widget.is-edit .ifx-widget__header > .ifx-widget__drag {
+  display: flex;
+}
+
+/* WGT-* không whitelist chrome — UI-001: Template/Feature shell owns card; host surface :has() demote */
+
+.ifx-widget__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid var(--ix-border);
+  font-size: var(--ifx-font-size-12);
+  color: var(--ix-text-muted);
+}
+.ifx-widget__footer a {
+  color: var(--ix-accent);
+  text-decoration: none;
+  font-weight: var(--ifx-font-weight-medium);
+}
+
+.ifx-widget__body .ifx-wl-block .ifx-stock-row-wrap .ifx-stock-row {
+  grid-template-columns: 40px minmax(0, 1fr) minmax(52px, auto) minmax(48px, auto);
+  padding: 6px 8px;
+  font-size: var(--ifx-font-size-12);
+  gap: var(--ifx-space-4) 6px;
+}
+.ifx-widget__body .ifx-wl-block .ifx-stock-row__badges-row {
+  padding: 0 8px 5px;
+}
+.ifx-widget__body .ifx-wl-block .ifx-stock-row__alert,
+.ifx-widget__body .ifx-wl-block .ifx-heart {
+  width: 32px;
+}
+.ifx-widget__body .ifx-wl-block .ifx-stock-row__name,
+.ifx-widget__body .ifx-wl-block .ifx-stock-row__vol { display: none; }
+
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row {
+  grid-template-columns: 40px minmax(0, 1fr) minmax(52px, auto) minmax(48px, auto);
+  padding: 6px 8px;
+  font-size: var(--ifx-font-size-12);
+  gap: var(--ifx-space-4) 6px;
+}
+.ifx-dash-col--left .ifx-stock-row__badges-row {
+  padding: 0 8px 5px;
+}
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__alert,
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-heart { width: 32px; }
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__name,
+.ifx-dash-col--left .ifx-stock-row-wrap .ifx-stock-row__vol,
+.ifx-dash-col--left .ifx-stock-row__name,
+.ifx-dash-col--left .ifx-stock-row__vol {
+  display: none;
+}
+
+.ifx-widget-paywall { text-align: center; padding: 28px 20px; }
+.ifx-widget-paywall i { font-size: var(--ifx-font-size-32); color: var(--ix-accent); margin-bottom: var(--ifx-space-12); }
+
+/* TPL-BREADTH / TMP-BREADTH CSS → block-templates.css (owner duy nhất). */
+
+.ifx-registry-group { margin-bottom: 20px; }
+.ifx-registry-group__title {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-bold);
+  text-transform: uppercase;
+  color: var(--ix-text-muted);
+  margin-bottom: 10px;
+}
+.ifx-registry-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-space-12) 14px;
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-registry-item__name { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-semibold); }
+.ifx-registry-item__desc { font-size: var(--ifx-font-size-12); color: var(--ix-text-muted); margin-top: var(--ifx-space-4); }
+
+.ix-modal-overlay[data-ifx-modal] {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-16);
+}
+.ix-modal-overlay[data-ifx-modal].open { display: flex; }
+.ix-modal-overlay[data-ifx-modal] .ix-modal-box {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: var(--ifx-space-container) 28px;
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="third"],
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="half"],
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="twothirds"] {
+    grid-column: span 12;
+  }
+}
+
+.ifx-dash-empty--hero {
+  grid-column: 1 / -1;
+  min-height: min(440px, 58vh);
+  max-width: 620px;
+  margin: 24px auto;
+  padding: 40px 24px;
+  border: none;
+  background: transparent;
+}
+.ifx-dash-empty__lead {
+  margin: 0;
+  font-size: var(--ifx-font-size-18);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+}
+.ifx-dash-empty__sub {
+  margin: 12px 0 0;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-secondary);
+  max-width: 520px;
+  line-height: 1.75;
+}
+.ifx-dash-empty__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-inline-sm);
+  vertical-align: middle;
+  margin: 0 2px;
+}
+.ifx-dash-canvas.is-empty-hero {
+  display: block;
+}
+.ifx-dash-canvas.is-edit .ifx-dash-grid__stack {
+  min-height: 160px;
+  position: relative;
+  padding: var(--ifx-space-8);
+  border-radius: var(--ix-radius-lg);
+  background: rgba(105, 108, 255, 0.03);
+  border: 1px dashed rgba(105, 108, 255, 0.18);
+}
+.ifx-dash-canvas.is-edit .ifx-widget[data-ifx-widget-width="third"] .ifx-widget__body {
+  max-height: min(420px, 52vh);
+  overflow-y: auto;
+}
+.ifx-dash-add-slot {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-8);
+  min-height: 128px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px dashed rgba(105, 108, 255, 0.45) !important;
+  border-radius: var(--ix-radius-lg);
+  background: rgba(105, 108, 255, 0.08);
+  color: var(--ix-accent);
+  cursor: pointer;
+  font-family: var(--ix-font);
+  user-select: none;
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+}
+.ifx-dash-add-slot i,
+.ifx-dash-add-slot span {
+  pointer-events: none;
+}
+.ifx-dash-canvas.is-edit .ifx-dash-col__stack {
+  min-height: 160px;
+  position: relative;
+}
+.ifx-dash-add-slot i { font-size: 36px; line-height: 1; }
+.ifx-dash-add-slot span { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-semibold); color: var(--ix-text-secondary); }
+.ifx-dash-add-slot:hover {
+  border-color: var(--ix-accent);
+  background: rgba(105, 108, 255, 0.1);
+  transform: translateY(-1px);
+}
+.ifx-dash-add-slot:active { transform: translateY(0); }
+
+.ifx-dash-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--ifx-inline-md);
+  min-height: 280px;
+  padding: 32px 20px;
+  border: 1px dashed var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  background: var(--ix-bg-card);
+}
+.ifx-dash-empty__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(105, 108, 255, 0.12);
+  color: var(--ix-accent);
+  font-size: 26px;
+  margin-bottom: var(--ifx-space-4);
+}
+.ifx-dash-empty__title {
+  margin: 0;
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+}
+.ifx-dash-empty__sub {
+  margin: 0 0 8px;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+/* Top 10 performance chart — widget body */
+.ifx-top10-wgt__range {
+  flex-wrap: wrap;
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-widget__body .ix-top10-market {
+  --ix-top10-rw: 148px;
+}
+@media (max-width: 768px) {
+  .ifx-widget__icon { display: none; }
+  .ifx-widget__body .ix-top10-market {
+    --ix-top10-h: 280px;
+    --ix-top10-rw: 120px;
+    --ix-top10-yw: 44px;
+  }
+  .ifx-top10-wgt__range .ix-tab {
+    font-size: var(--ifx-font-size-10);
+    padding: 4px 8px;
+  }
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="third"],
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="half"],
+  .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="twothirds"] {
+    grid-column: span 12;
+  }
+}
+
+/* Preview/host có container context: áp dụng cùng contract mobile theo bề rộng shell. */
+@container (max-width: 768px) {
+  .ifx-widget__icon { display: none; }
+}

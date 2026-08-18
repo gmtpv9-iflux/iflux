@@ -1,0 +1,293 @@
+/**
+ * iFlux Spacing Foundation
+ * Base 4px · 8pt grid · Foundation → Layout → Component
+ * Dùng var(--ifx-space-*) hoặc class .ifx-space-* / .ix-space-*
+ */
+:root {
+  /* ── 1. Base Unit ─────────────────────────────────────────── */
+  --ifx-space-unit: 4px;
+
+  /* ── 2. Spacing Scale ─────────────────────────────────────── */
+  --ifx-space-0: 0;
+  --ifx-space-2: 0.125rem;   /* 2px */
+  --ifx-space-4: 0.25rem;    /* 4px */
+  --ifx-space-8: 0.5rem;     /* 8px */
+  --ifx-space-12: 0.75rem;   /* 12px */
+  --ifx-space-16: 1rem;      /* 16px */
+  --ifx-space-20: 1.25rem;   /* 20px */
+  --ifx-space-24: 1.5rem;    /* 24px */
+  --ifx-space-32: 2rem;      /* 32px */
+  --ifx-space-40: 2.5rem;    /* 40px */
+  --ifx-space-48: 3rem;      /* 48px */
+  --ifx-space-56: 3.5rem;    /* 56px */
+  --ifx-space-64: 4rem;      /* 64px */
+  --ifx-space-80: 5rem;      /* 80px */
+  --ifx-space-96: 6rem;      /* 96px */
+  --ifx-space-128: 8rem;     /* 128px */
+  --ifx-space-160: 10rem;    /* 160px */
+  --ifx-space-192: 12rem;    /* 192px */
+  --ifx-space-256: 16rem;    /* 256px */
+
+  /* ── 3–5. Padding / Margin / Gap (semantic sizes) ───────── */
+  --ifx-padding-xs: var(--ifx-space-8);
+  --ifx-padding-sm: var(--ifx-space-12);
+  --ifx-padding-md: var(--ifx-space-16);
+  --ifx-padding-lg: var(--ifx-space-24);
+  --ifx-padding-xl: var(--ifx-space-32);
+
+  --ifx-margin-xs: var(--ifx-space-8);
+  --ifx-margin-sm: var(--ifx-space-12);
+  --ifx-margin-md: var(--ifx-space-16);
+  --ifx-margin-lg: var(--ifx-space-24);
+  --ifx-margin-xl: var(--ifx-space-32);
+
+  --ifx-gap-xs: var(--ifx-space-8);
+  --ifx-gap-sm: var(--ifx-space-12);
+  --ifx-gap-md: var(--ifx-space-16);
+  --ifx-gap-lg: var(--ifx-space-24);
+  --ifx-gap-xl: var(--ifx-space-32);
+
+  /* ── 6. Inset ─────────────────────────────────────────────── */
+  --ifx-inset-card: var(--ifx-space-16) var(--ifx-space-20);
+  --ifx-inset-card-header: var(--ifx-space-16) var(--ifx-space-20) 0;
+  --ifx-inset-card-body: var(--ifx-space-16) var(--ifx-space-20) var(--ifx-space-20);
+  --ifx-inset-card-footer: var(--ifx-space-12) var(--ifx-space-20);
+  --ifx-inset-widget: var(--ifx-space-12) var(--ifx-space-16);
+  --ifx-inset-panel: var(--ifx-space-20) var(--ifx-space-24);
+  --ifx-inset-dialog: var(--ifx-space-24);
+  --ifx-inset-sheet: var(--ifx-space-16) var(--ifx-space-20);
+
+  /* ── 7. Layout Spacing ────────────────────────────────────── */
+  --ifx-space-container: var(--ifx-space-24);
+  --ifx-space-section: var(--ifx-space-64);
+  --ifx-space-page: var(--ifx-space-80);
+  --ifx-space-sidebar-gap: var(--ifx-space-16);
+  --ifx-space-content-gap: var(--ifx-space-24);
+
+  /* ── 8. Component Spacing ─────────────────────────────────── */
+  --ifx-space-button-y: var(--ifx-space-8);
+  --ifx-space-button-x: var(--ifx-space-16);
+  --ifx-space-button-sm-y: var(--ifx-space-4);
+  --ifx-space-button-sm-x: var(--ifx-space-12);
+  --ifx-space-button-lg-y: var(--ifx-space-12);
+  --ifx-space-button-lg-x: var(--ifx-space-24);
+  --ifx-space-button-icon-gap: var(--ifx-space-8);
+
+  --ifx-space-input-y: var(--ifx-space-8);
+  --ifx-space-input-x: var(--ifx-space-12);
+  --ifx-space-input-lg-y: var(--ifx-space-12);
+
+  --ifx-space-chip-y: var(--ifx-space-4);
+  --ifx-space-chip-x: var(--ifx-space-12);
+  --ifx-space-badge-y: var(--ifx-space-4);
+  --ifx-space-badge-x: var(--ifx-space-8);
+  --ifx-space-toast: var(--ifx-space-12) var(--ifx-space-16);
+  --ifx-space-table-cell-y: var(--ifx-space-12);
+  --ifx-space-table-cell-x: var(--ifx-space-16);
+
+  /* ── 9. Stack Spacing ─────────────────────────────────────── */
+  --ifx-stack-xs: var(--ifx-space-8);
+  --ifx-stack-sm: var(--ifx-space-12);
+  --ifx-stack-md: var(--ifx-space-16);
+  --ifx-stack-lg: var(--ifx-space-24);
+  --ifx-stack-xl: var(--ifx-space-32);
+
+  /* ── 10. Inline Spacing ─────────────────────────────────────── */
+  --ifx-inline-xs: var(--ifx-space-4);
+  --ifx-inline-sm: var(--ifx-space-8);
+  --ifx-inline-md: var(--ifx-space-12);
+  --ifx-inline-lg: var(--ifx-space-16);
+  --ifx-inline-xl: var(--ifx-space-24);
+
+  /* ── 11. Grid & Layout ────────────────────────────────────── */
+  --ifx-grid-gutter: var(--ifx-space-24);
+  --ifx-grid-col-gap: var(--ifx-space-16);
+  --ifx-grid-row-gap: var(--ifx-space-24);
+  --ifx-container-margin: var(--ifx-space-24);
+  --ifx-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ── 13. Semantic aliases (component-facing) ──────────────── */
+  --ifx-space-card: var(--ifx-inset-card);
+  --ifx-space-widget: var(--ifx-inset-widget);
+  --ifx-space-inline-xs: var(--ifx-inline-xs);
+  --ifx-space-inline-sm: var(--ifx-inline-sm);
+  --ifx-space-inline-md: var(--ifx-inline-md);
+  --ifx-space-stack-xs: var(--ifx-stack-xs);
+  --ifx-space-stack-sm: var(--ifx-stack-sm);
+  --ifx-space-stack-md: var(--ifx-stack-md);
+  --ifx-space-stack-lg: var(--ifx-stack-lg);
+  --ifx-space-stack-xl: var(--ifx-stack-xl);
+}
+
+/* ── 12. Responsive (layout only) ───────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-16);
+    --ifx-space-section: var(--ifx-space-48);
+    --ifx-space-page: var(--ifx-space-64);
+    --ifx-grid-gutter: var(--ifx-space-16);
+    --ifx-container-margin: var(--ifx-space-16);
+    --ifx-inset-panel: var(--ifx-space-16);
+    --ifx-inset-dialog: var(--ifx-space-16);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-20);
+    --ifx-space-section: var(--ifx-space-56);
+    --ifx-space-page: var(--ifx-space-64);
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-32);
+    --ifx-space-section: var(--ifx-space-80);
+    --ifx-space-page: var(--ifx-space-96);
+  }
+}
+
+/* ── Primitive utilities ────────────────────────────────────── */
+.ifx-p-0,  .ix-p-0  { padding: var(--ifx-space-0) !important; }
+.ifx-p-2,  .ix-p-2  { padding: var(--ifx-space-2) !important; }
+.ifx-p-4,  .ix-p-4  { padding: var(--ifx-space-4) !important; }
+.ifx-p-8,  .ix-p-8  { padding: var(--ifx-space-8) !important; }
+.ifx-p-12, .ix-p-12 { padding: var(--ifx-space-12) !important; }
+.ifx-p-16, .ix-p-16 { padding: var(--ifx-space-16) !important; }
+.ifx-p-20, .ix-p-20 { padding: var(--ifx-space-20) !important; }
+.ifx-p-24, .ix-p-24 { padding: var(--ifx-space-24) !important; }
+.ifx-p-32, .ix-p-32 { padding: var(--ifx-space-32) !important; }
+
+.ifx-m-0,  .ix-m-0  { margin: var(--ifx-space-0) !important; }
+.ifx-m-4,  .ix-m-4  { margin: var(--ifx-space-4) !important; }
+.ifx-m-8,  .ix-m-8  { margin: var(--ifx-space-8) !important; }
+.ifx-m-12, .ix-m-12 { margin: var(--ifx-space-12) !important; }
+.ifx-m-16, .ix-m-16 { margin: var(--ifx-space-16) !important; }
+.ifx-m-24, .ix-m-24 { margin: var(--ifx-space-24) !important; }
+
+.ifx-mt-0,  .ix-mt-0  { margin-top: var(--ifx-space-0) !important; }
+.ifx-mt-4,  .ix-mt-4  { margin-top: var(--ifx-space-4) !important; }
+.ifx-mt-8,  .ix-mt-8  { margin-top: var(--ifx-space-8) !important; }
+.ifx-mt-12, .ix-mt-12 { margin-top: var(--ifx-space-12) !important; }
+.ifx-mt-16, .ix-mt-16 { margin-top: var(--ifx-space-16) !important; }
+.ifx-mt-24, .ix-mt-24 { margin-top: var(--ifx-space-24) !important; }
+
+.ifx-mb-0,  .ix-mb-0  { margin-bottom: var(--ifx-space-0) !important; }
+.ifx-mb-4,  .ix-mb-4  { margin-bottom: var(--ifx-space-4) !important; }
+.ifx-mb-8,  .ix-mb-8  { margin-bottom: var(--ifx-space-8) !important; }
+.ifx-mb-12, .ix-mb-12 { margin-bottom: var(--ifx-space-12) !important; }
+.ifx-mb-16, .ix-mb-16 { margin-bottom: var(--ifx-space-16) !important; }
+.ifx-mb-24, .ix-mb-24 { margin-bottom: var(--ifx-space-24) !important; }
+
+.ifx-gap-0,  .ix-gap-0  { gap: var(--ifx-space-0) !important; }
+.ifx-gap-4,  .ix-gap-4  { gap: var(--ifx-space-4) !important; }
+.ifx-gap-8,  .ix-gap-8  { gap: var(--ifx-space-8) !important; }
+.ifx-gap-12, .ix-gap-12 { gap: var(--ifx-space-12) !important; }
+.ifx-gap-16, .ix-gap-16 { gap: var(--ifx-space-16) !important; }
+.ifx-gap-24, .ix-gap-24 { gap: var(--ifx-space-24) !important; }
+
+/* Semantic size utilities */
+.ifx-p-xs, .ix-p-xs { padding: var(--ifx-padding-xs) !important; }
+.ifx-p-sm, .ix-p-sm { padding: var(--ifx-padding-sm) !important; }
+.ifx-p-md, .ix-p-md { padding: var(--ifx-padding-md) !important; }
+.ifx-p-lg, .ix-p-lg { padding: var(--ifx-padding-lg) !important; }
+.ifx-p-xl, .ix-p-xl { padding: var(--ifx-padding-xl) !important; }
+
+.ifx-m-xs, .ix-m-xs { margin: var(--ifx-margin-xs) !important; }
+.ifx-m-sm, .ix-m-sm { margin: var(--ifx-margin-sm) !important; }
+.ifx-m-md, .ix-m-md { margin: var(--ifx-margin-md) !important; }
+.ifx-m-lg, .ix-m-lg { margin: var(--ifx-margin-lg) !important; }
+.ifx-m-xl, .ix-m-xl { margin: var(--ifx-margin-xl) !important; }
+
+.ifx-gap-xs, .ix-gap-xs { gap: var(--ifx-gap-xs) !important; }
+.ifx-gap-sm, .ix-gap-sm { gap: var(--ifx-gap-sm) !important; }
+.ifx-gap-md, .ix-gap-md { gap: var(--ifx-gap-md) !important; }
+.ifx-gap-lg, .ix-gap-lg { gap: var(--ifx-gap-lg) !important; }
+.ifx-gap-xl, .ix-gap-xl { gap: var(--ifx-gap-xl) !important; }
+
+/* ── Stack & Inline layouts ───────────────────────────────── */
+.ifx-stack-xs > * + *, .ix-stack-xs > * + * { margin-top: var(--ifx-stack-xs); }
+.ifx-stack-sm > * + *, .ix-stack-sm > * + * { margin-top: var(--ifx-stack-sm); }
+.ifx-stack-md > * + *, .ix-stack-md > * + * { margin-top: var(--ifx-stack-md); }
+.ifx-stack-lg > * + *, .ix-stack-lg > * + * { margin-top: var(--ifx-stack-lg); }
+.ifx-stack-xl > * + *, .ix-stack-xl > * + * { margin-top: var(--ifx-stack-xl); }
+
+.ifx-inline-xs, .ix-inline-xs { display: inline-flex; align-items: center; gap: var(--ifx-inline-xs); }
+.ifx-inline-sm, .ix-inline-sm { display: inline-flex; align-items: center; gap: var(--ifx-inline-sm); }
+.ifx-inline-md, .ix-inline-md { display: inline-flex; align-items: center; gap: var(--ifx-inline-md); }
+.ifx-inline-lg, .ix-inline-lg { display: inline-flex; align-items: center; gap: var(--ifx-inline-lg); }
+.ifx-inline-xl, .ix-inline-xl { display: inline-flex; align-items: center; gap: var(--ifx-inline-xl); }
+
+/* ── Semantic layout regions ──────────────────────────────── */
+.ifx-space-container, .ix-space-container {
+  padding-left: var(--ifx-space-container);
+  padding-right: var(--ifx-space-container);
+}
+.ifx-space-section, .ix-space-section {
+  margin-bottom: var(--ifx-space-section);
+}
+.ifx-space-page, .ix-space-page {
+  padding: var(--ifx-space-page) var(--ifx-space-container);
+}
+.ifx-space-card-inset, .ix-space-card-inset { padding: var(--ifx-inset-card); }
+.ifx-space-widget-inset, .ix-space-widget-inset { padding: var(--ifx-inset-widget); }
+
+/* ── Component bridges (map ix-* components) ──────────────── */
+.ix-grid { gap: var(--ifx-grid-gutter); }
+.ix-card-header { padding: var(--ifx-inset-card-header); }
+.ix-card-body { padding: var(--ifx-inset-card-body); }
+.ix-card-footer { padding: var(--ifx-inset-card-footer); }
+.ix-stat-card { padding: var(--ifx-inset-card); gap: var(--ifx-gap-md); }
+
+.ix-btn {
+  gap: var(--ifx-space-button-icon-gap);
+  padding: var(--ifx-space-button-y) var(--ifx-space-button-x);
+}
+.ix-btn-sm { padding: var(--ifx-space-button-sm-y) var(--ifx-space-button-sm-x); }
+.ix-btn-lg { padding: var(--ifx-space-button-lg-y) var(--ifx-space-button-lg-x); }
+
+.ix-input,
+.ix-select,
+.ix-textarea {
+  padding: var(--ifx-space-input-y) var(--ifx-space-input-x);
+}
+.ix-textarea { padding: var(--ifx-space-input-lg-y); }
+
+.ix-chip {
+  gap: var(--ifx-inline-xs);
+  padding: var(--ifx-space-chip-y) var(--ifx-space-chip-x);
+}
+.ix-badge {
+  padding: var(--ifx-space-badge-y) var(--ifx-space-badge-x);
+}
+
+.ix-form-group { margin-bottom: var(--ifx-stack-md); }
+.ix-label { margin-bottom: var(--ifx-inline-sm); }
+
+.ix-breadcrumb {
+  gap: var(--ifx-inline-sm);
+  margin-bottom: var(--ifx-stack-lg);
+}
+
+.ix-modal-body { padding: var(--ifx-inset-dialog); }
+.ix-modal-header,
+.ix-modal-footer {
+  padding: var(--ifx-padding-sm) var(--ifx-padding-md);
+}
+
+.ix-table th,
+.ix-table td {
+  padding: var(--ifx-space-table-cell-y) var(--ifx-space-table-cell-x);
+}
+
+/* User Web layout hooks */
+.ifx-topnav {
+  gap: var(--ifx-gap-md);
+  padding: 0 var(--ifx-space-20);
+}
+.ifx-main-content {
+  padding: var(--ifx-space-container);
+}
+.ifx-mkt-card__head { padding: var(--ifx-inset-card-header); }
+.ifx-mkt-card__body { padding: var(--ifx-inset-widget); }

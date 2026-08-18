@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vai trò quản trị · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>.ix-offcanvas { transform: translateX(100%); }</style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-admin-gov="roles">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." disabled /></div>
+        <div class="ix-nav-actions"><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Vai trò quản trị</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="color:var(--ix-text-muted);font-size:13px;margin-bottom:20px">
+          Chỉ quản lý <strong>hồ sơ vai trò</strong> (tên, mã, mô tả) để gán cho tài khoản nhân viên.
+          Phân quyền thao tác thiết lập duy nhất tại
+          <a href="/admin/system-settings/administrators/permissions">Phân quyền quản trị</a>.
+          Vai trò <strong>Admin</strong> luôn toàn quyền — không chỉnh tại đây (không nằm trong Matrix).
+        </p>
+        <div class="ix-grid ix-grid-3 ix-mb-24" id="admin-role-cards"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="offcanvas-admin-role-overlay" class="ix-offcanvas-overlay"></div>
+<div id="offcanvas-admin-role" class="ix-offcanvas">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title" id="role-modal-title">Thêm vai trò</span>
+    <button type="button" class="ix-btn ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Đóng">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-form-group">
+      <label class="ix-label">Tên vai trò <span style="color:var(--ix-danger)">*</span></label>
+      <input type="text" class="ix-input" id="role-field-name" placeholder="VD: Product &amp; Engineering" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mã <span style="color:var(--ix-danger)">*</span></label>
+      <input type="text" class="ix-input" id="role-field-code" placeholder="VD: product_eng" autocomplete="off" />
+      <div class="ix-field-hint">Mã viết thường, không dấu.</div>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mô tả</label>
+      <input type="text" class="ix-input" id="role-field-desc" placeholder="Mô tả ngắn" />
+    </div>
+    <p class="ix-field-hint">Sau khi tạo, vào <a href="/admin/system-settings/administrators/permissions">Phân quyền quản trị</a> để gán quyền cho vai trò này.</p>
+  </div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-save-role">
+      <i class="ti ti-check"></i> Lưu
+    </button>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=adminGov20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=adminGov20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/system/admin-governance.js?v=statusBadge20260725"></script>
+</body>
+</html>

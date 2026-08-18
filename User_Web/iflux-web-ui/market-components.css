@@ -1,0 +1,265 @@
+/**
+ * iFlux User Web — market components (DS §4.1–4.7)
+ * Prefix: ifx-*
+ */
+
+.ifx-market-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-12) 20px;
+  min-height: 56px;
+  padding: var(--ifx-inset-widget);
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  margin-bottom: var(--ifx-space-24);
+}
+.ifx-market-header__title {
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+  margin-right: 4px;
+}
+.ifx-market-header__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ifx-market-header__label {
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ifx-market-header__val {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
+}
+.ifx-market-header__val.is-up { color: var(--ix-success); }
+.ifx-market-header__val.is-down { color: var(--ix-danger); }
+.ifx-market-header__breadth {
+  display: flex;
+  gap: var(--ifx-space-8);
+  margin-left: auto;
+}
+
+.ifx-stock-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(0, auto) 72px 64px 64px;
+  align-items: center;
+  gap: var(--ifx-inline-sm) 8px;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+}
+.ifx-stock-row__badges {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--ifx-space-4);
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  max-width: min(100%, 280px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ifx-stock-row__badges::-webkit-scrollbar { display: none; }
+.ifx-stock-row__badges .ix-chip,
+.ifx-stock-row__badges .ix-badge {
+  flex-shrink: 0;
+  font-size: var(--ifx-font-size-10);
+  padding: 2px 7px;
+  line-height: 1.25;
+}
+.ifx-stock-row:last-child { border-bottom: none; }
+.ifx-stock-row__ticker {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+}
+.ifx-stock-row__name {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ifx-stock-row__price,
+.ifx-stock-row__chg,
+.ifx-stock-row__vol {
+  font-family: var(--ifx-font-mono);
+  text-align: right;
+}
+.ifx-stock-row__price { font-size: var(--ifx-font-size-16); font-weight: var(--ifx-font-weight-bold); }
+.ifx-stock-row__chg { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-semibold); }
+.ifx-stock-row__vol { font-size: var(--ifx-font-size-12); color: var(--ix-text-muted); }
+.ifx-stock-row.is-up .ifx-stock-row__price,
+.ifx-stock-row.is-up .ifx-stock-row__chg { color: var(--ix-success); }
+.ifx-stock-row.is-down .ifx-stock-row__price,
+.ifx-stock-row.is-down .ifx-stock-row__chg { color: var(--ix-danger); }
+
+.ifx-sector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--ifx-space-12);
+}
+.ifx-sector-card {
+  min-height: 80px;
+  padding: 14px 16px;
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.12s, background 0.12s;
+}
+.ifx-sector-card:hover {
+  border-color: rgba(105, 108, 255, 0.35);
+  background: var(--ix-bg-hover);
+}
+.ifx-sector-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  margin-bottom: 10px;
+}
+.ifx-sector-card__name {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ifx-sector-card__rank {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-accent);
+  background: var(--ix-accent-soft);
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.ifx-sector-card__metrics {
+  display: flex;
+  gap: var(--ifx-space-16);
+}
+.ifx-sector-card__metric span {
+  display: block;
+  font-size: var(--ifx-font-size-10);
+  color: var(--ix-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.ifx-sector-card__metric strong {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-bold);
+}
+.ifx-sector-card__metric strong.is-up { color: var(--ix-success); }
+.ifx-sector-card__metric strong.is-down { color: var(--ix-danger); }
+
+.ifx-flow-panel {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--ix-border);
+}
+.ifx-flow-panel:last-child { border-bottom: none; padding-bottom: 0; }
+.ifx-flow-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-flow-panel__label {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-text-primary);
+}
+.ifx-flow-panel__net {
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  font-family: var(--ifx-font-mono);
+}
+.ifx-flow-panel__net.is-up { color: var(--ix-success); }
+.ifx-flow-panel__net.is-down { color: var(--ix-danger); }
+
+.ifx-flow-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--ix-bg-input);
+}
+.ifx-flow-bar__buy {
+  background: var(--ix-success);
+  flex-shrink: 0;
+}
+.ifx-flow-bar__sell {
+  background: var(--ix-danger);
+  flex-shrink: 0;
+}
+
+/* .ifx-dash-grid: Layout Primitive — owner DUY NHẤT là widget-shell.css (grid 12-col).
+   Widget CSS KHÔNG được redefine (SoT: Layout Engine 1 owner). */
+.ifx-movers-tabs {
+  display: flex;
+  gap: var(--ifx-space-4);
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-movers-tabs .ix-tab { flex: 1; text-align: center; font-size: var(--ifx-font-size-12); padding: var(--ifx-space-8) 10px; }
+
+.ifx-degraded-banner {
+  display: none;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  min-height: 40px;
+  padding: var(--ifx-space-8) 14px;
+  margin-bottom: var(--ifx-space-16);
+  background: rgba(255, 171, 0, 0.12);
+  border: 1px solid rgba(255, 171, 0, 0.35);
+  border-radius: var(--ix-radius);
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ix-warning);
+}
+.ifx-degraded-banner.is-visible { display: flex; }
+
+/* StockRow responsive — mirror Breakpoint SoT:
+   dưới bp-lg (1024): bỏ Volume; dưới bp-md (768): bỏ thêm Name.
+   CSS media conditions không đọc được custom property nên dùng biên px tương ứng. */
+/* SYNC:market-components-mobile → bp-lg Foundation layout.css --ifx-bp-lg = 1024px */
+@media (max-width: 1024px) {
+  .ifx-stock-row {
+    grid-template-columns: 48px minmax(0, 1fr) minmax(0, auto) 64px 52px;
+  }
+  .ifx-stock-row__badges {
+    max-width: min(100%, 220px);
+  }
+  .ifx-stock-row__badges .ix-chip,
+  .ifx-stock-row__badges .ix-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+  .ifx-stock-row__vol { display: none; }
+}
+
+/* SYNC:market-components-tablet → bp-md Foundation layout.css --ifx-bp-md = 768px */
+@media (max-width: 768px) {
+  .ifx-stock-row {
+    grid-template-columns: 48px minmax(56px, 1fr) minmax(52px, auto);
+  }
+  .ifx-stock-row__name,
+  .ifx-stock-row__vol { display: none; }
+  .ifx-sector-grid { grid-template-columns: 1fr; }
+  .ifx-market-header__breadth { margin-left: 0; width: 100%; }
+}

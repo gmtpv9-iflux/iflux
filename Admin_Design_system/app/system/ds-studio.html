@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Design System Studio · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market-components.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/app-shell.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/flow.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/stock.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/alerts.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/widget-shell.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/hub.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/market.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/community.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/block-templates.css?v=segmentedSoT20260718" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/pricing.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/faq.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/watchlist.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/loyalty.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/profile.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/foundation/share-action.css?v=shareFound20260723" />
+  <link rel="stylesheet" href="/Admin_Design_system/design-sandbox.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/ds-sot.css?v=20260710m" />
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search" style="flex:1;max-width:480px"><i class="ti ti-search"></i><input type="search" id="ds-sot-search" placeholder="Tìm component, class, BLK-…" autocomplete="off" /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-info">UI Studio · live edit</span><div class="ix-avatar ix-avatar-accent">DS</div></div>
+      </header>
+
+      <div class="ix-content" id="ds-sot-panel">
+        <p style="color:var(--ix-text-muted)">Đang tải catalog…</p>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/ds-sot-roadmap.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-primitive-catalog.js?v=20260712c"></script>
+<script src="/Admin_Design_system/ds-sot-primitive-studio.js?v=20260711c"></script>
+<script src="/Admin_Design_system/ds-sot-foundations-catalog.js?v=20260711i"></script>
+<script src="/Admin_Design_system/ds-sot-foundations-studio.js?v=20260711g"></script>
+<script src="/Admin_Design_system/ds-sot-design-tokens-catalog.js?v=20260712c"></script>
+<script src="/Admin_Design_system/ds-sot-design-tokens-studio.js?v=20260712c"></script>
+<script src="/Admin_Design_system/ds-sot-atoms-catalog.js?v=20260712d"></script>
+<script src="/Admin_Design_system/ds-sot-atoms-studio.js?v=segmentedSoT20260718"></script>
+<script src="/Admin_Design_system/ds-sot-items-catalog.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-items-studio.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-blocks-catalog.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/ds-sot-blocks-studio.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-cards-catalog.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-cards-studio.js?v=20260710m"></script>
+<script src="/Admin_Design_system/ds-sot-icons-catalog.js?v=20260712a"></script>
+<script src="/Admin_Design_system/ds-sot-icons-studio.js?v=20260712a"></script>
+<script src="/Admin_Design_system/ds-sot-charts-catalog.js?v=20260712b"></script>
+<script src="/Admin_Design_system/ds-sot-charts-studio.js?v=20260712b"></script>
+<script src="/Admin_Design_system/ds-sot-catalog.js?v=segmentedSoT20260718"></script>
+<script src="/Admin_Design_system/ds-sot-studio.js"></script>
+<script src="/Admin_Design_system/ds-sot.js?v=dsStudio20260714a"></script>
+<script>
+  // Highlight mục Giao diện tương ứng với trang DS đang mở (theo hash) trong sidebar admin.
+  (function () {
+    function syncActive() {
+      var hash = location.hash || '#page-primitive-tokens';
+      document.querySelectorAll('.ix-menu .ix-menu-item').forEach(function (a) {
+        var href = a.getAttribute('href') || '';
+        var isDs = href.indexOf('ds-studio.html') >= 0;
+        a.classList.toggle('active', isDs && href.indexOf(hash) >= 0);
+      });
+    }
+    window.addEventListener('hashchange', syncActive);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncActive);
+    else syncActive();
+  })();
+</script>
+</body>
+</html>

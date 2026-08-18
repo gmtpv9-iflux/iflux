@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-003 — Thiết lập mẫu thông báo · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .ann-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+    @media (max-width:900px) { .ann-summary { grid-template-columns:1fr; } }
+    .ann-layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(280px,1fr); gap:20px; align-items:start; }
+    @media (max-width:1024px) {
+      .ann-layout { grid-template-columns:1fr; }
+      .ann-aside { order:-1; position:static !important; }
+      .ann-tag-grid { max-height:320px; }
+    }
+    .ann-aside { position:sticky; top:0; }
+    .ann-tags-card { padding:16px; }
+    .ann-tags-head { display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+    .ann-tags-head select { width:100%; max-width:none !important; }
+    .ann-tag-grid { display:flex; flex-direction:column; gap:8px; max-height:calc(100vh - 240px); overflow-y:auto; padding-right:4px; }
+    .ann-tag-chip { display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; padding:10px 12px; border:1px solid var(--ix-border); border-radius:var(--ix-radius); background:rgba(105,108,255,.04); cursor:pointer; transition:border-color .15s,background .15s; width:100%; }
+    .ann-tag-chip:hover { border-color:var(--ix-primary); background:rgba(105,108,255,.1); }
+    .ann-tag-chip code { font-size:12px; color:var(--ix-primary); }
+    .ann-tag-chip span { font-size:12px; color:var(--ix-text-primary); font-weight:500; }
+    .ann-tag-chip em { font-size:11px; color:var(--ix-text-muted); font-style:normal; }
+    .ann-toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+    .ann-case { margin-bottom:12px; padding:0; overflow:hidden; }
+    .ann-case__head { width:100%; display:flex; align-items:flex-start; gap:14px; padding:16px 18px; border:0; background:transparent; cursor:pointer; text-align:left; color:inherit; }
+    .ann-case__head:hover { background:rgba(255,255,255,.02); }
+    .ann-case__icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(105,108,255,.12); color:var(--ix-primary); font-size:18px; flex-shrink:0; }
+    .ann-case__meta { flex:1; min-width:0; }
+    .ann-case__title { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .ann-case__sub { font-size:12px; color:var(--ix-text-muted); margin-bottom:4px; }
+    .ann-case__trigger { font-size:12px; color:var(--ix-text-secondary); line-height:1.45; }
+    .ann-case__badges { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .ann-case__body { padding:0 18px 18px; border-top:1px solid var(--ix-border); }
+    .ann-case__tags-label { font-size:12px; color:var(--ix-text-muted); margin:14px 0 8px; }
+    .ann-case__tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+    .ann-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .ann-form-full { grid-column:1 / -1; }
+    @media (max-width:768px) { .ann-form-grid { grid-template-columns:1fr; } }
+    .ann-preview { margin-top:16px; }
+    .ann-preview__label { font-size:12px; color:var(--ix-text-muted); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .ann-preview__box { padding:14px 16px; border-radius:var(--ix-radius); border:1px dashed rgba(105,108,255,.35); background:rgba(105,108,255,.05); }
+    .ann-preview__title { font-size:14px; font-weight:600; margin-bottom:6px; }
+    .ann-preview__msg { font-size:13px; color:var(--ix-text-secondary); line-height:1.5; }
+    .ann-case__actions { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/notifications/types">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Thiết lập mẫu thông báo</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ann-reset-all"><i class="ti ti-refresh"></i> Khôi phục tất cả</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 20px">Quản lý <strong>mẫu nội dung</strong> cho từng trường hợp thông báo tự động (user, Alert Hệ thống, Admin). Dùng thẻ <code>{Tên thẻ}</code> — hệ thống thay bằng dữ liệu thực khi gửi (BR-AL-03 · ADM-OPS-004).</p>
+
+        <div class="ann-summary">
+          <div class="ix-card" style="padding:16px 18px">
+            <div style="font-size:12px;color:var(--ix-text-muted);margin-bottom:4px">Thẻ merge</div>
+            <div style="font-size:28px;font-weight:700;color:var(--ix-primary)" id="ann-tag-total">—</div>
+            <div style="font-size:12px;color:var(--ix-text-muted)">Dạng <code>{Tên người dùng}</code>…</div>
+          </div>
+          <div class="ix-card" style="padding:16px 18px">
+            <div style="font-size:12px;color:var(--ix-text-muted);margin-bottom:4px">Trường hợp</div>
+            <div style="font-size:28px;font-weight:700" id="ann-case-count">19 / 19</div>
+            <div style="font-size:12px;color:var(--ix-text-muted)">Mỗi trường hợp = 1 mẫu riêng</div>
+          </div>
+          <div class="ix-card" style="padding:16px 18px">
+            <div style="font-size:12px;color:var(--ix-text-muted);margin-bottom:4px">Kênh</div>
+            <div style="font-size:13px;line-height:1.6;color:var(--ix-text-secondary)">In-app user · Push · Alert Hệ thống · Admin bell</div>
+          </div>
+        </div>
+
+        <div class="ann-layout">
+          <div class="ann-main">
+            <div class="ann-toolbar">
+              <select class="ix-input" id="ann-group-filter" style="max-width:280px"></select>
+              <div class="ix-table-search" style="margin:0;flex:1;max-width:360px"><i class="ti ti-search"></i><input type="text" id="ann-search" placeholder="Tìm trường hợp, mã NOTIF…" /></div>
+            </div>
+            <div id="ann-cases-root"></div>
+          </div>
+          <aside class="ann-aside">
+            <div class="ix-card ann-tags-card">
+              <div id="ann-tags-root"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/app/system/announcements-page.js?v=notifD1rev_20260728"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=platformNotif20260728"></script>
+</body>
+</html>

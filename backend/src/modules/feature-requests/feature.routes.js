@@ -1,0 +1,137 @@
+'use strict';
+
+const express = require('express');
+const { z } = require('zod');
+const { validate } = require('../../middleware/validate');
+const { AppError } = require('../../shared/exceptions/app-error');
+const { verifyTurnstile, clientIp } = require('../../shared/turnstile');
+const {
+  listPublic,
+  listAdmin,
+  countByStatus,
+  createItem,
+  toggleLike,
+  updateStatus
+} = require('./feature.service');
+const { requireJwtPermission, requireAdminStatusPermission } = require('../admin-rbac/admin-perm-guard');
+
+function voterId(req) {
+  if (req.user && req.user.id) return 'user:' + req.user.id;
+  const vid = req.headers['x-visitor-id'];
+  if (vid && String(vid).length >= 8 && String(vid).length <= 64) return 'visitor:' + String(vid);
+  return null;
+}
+
+function createFeatureRequestsRouter(deps) {
+  deps = deps || {};
+  const { config, auth } = deps;
+  const router = express.Router();
+  const optAuth = auth && auth.optionalAuth;
+  const viewGuard = requireJwtPermission({ config, auth }, ['requests.features.view']);
+  const statusGuard = requireAdminStatusPermission(
+    { config, auth },
+    'requests.features',
+    {
+      new: 'status_new',
+      accepted: 'status_accepted',
+      developing: 'status_developing',
+      released: 'status_released'
+    }
+  );
+
+  const createSchema = z.object({
+    body: z.object({
+      title: z.string().min(3).max(200),
+      idea_description: z.string().min(10).max(2000),
+      expectation_description: z.string().min(10).max(2000),
+      turnstile_token: z.string().optional().default('')
+    })
+  });
+
+  router.get('/public', optAuth, async (req, res, next) => {
+    try {
+      const items = await listPublic(voterId(req));
+      res.json({ items });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/', optAuth, validate(createSchema), async (req, res, next) => {
+    try {
+      const b = req.validated.body;
+      const ip = clientIp(req);
+      const verified = await verifyTurnstile(config, b.turnstile_token, ip);
+      if (!verified.ok) {
+        return next(AppError.badRequest('TURNSTILE_FAILED', 'Xác minh chống spam thất bại. Vui lòng thử lại.'));
+      }
+      let userName = 'Thành viên iFlux';
+      if (req.user) {
+        const uRes = await require('../../core/database/connection').query(
+          'SELECT display_name, email FROM users WHERE id = $1',
+          [req.user.id]
+        );
+        const u = uRes.rows[0];
+        if (u) userName = u.display_name || u.email || userName;
+      }
+      const row = await createItem({
+        user_id: req.user ? req.user.id : null,
+        user_name: userName,
+        title: b.title,
+        idea_description: b.idea_description,
+        expectation_description: b.expectation_description,
+        ip,
+        user_agent: req.headers['user-agent'] || ''
+      });
+      res.status(201).json({ ok: true, item: row });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/:id/like', optAuth, async (req, res, next) => {
+    try {
+      const vid = voterId(req);
+      if (!vid) return next(AppError.badRequest('VISITOR_REQUIRED', 'Thiếu định danh trình duyệt'));
+      const row = await toggleLike(req.params.id, vid);
+      if (!row) return next(AppError.notFound('NOT_FOUND', 'Không tìm thấy đề xuất'));
+      res.json({ ok: true, item: row });
+    } catch (err) {
+      if (err.statusCode) return next(AppError.badRequest('LIKE_FAILED', err.message));
+      next(err);
+    }
+  });
+
+  router.get('/', viewGuard, async (req, res, next) => {
+    try {
+      const items = await listAdmin({
+        status: req.query.status,
+        q: req.query.q,
+        sort: req.query.sort || 'likes'
+      });
+      const counts = await countByStatus();
+      res.json({ items, counts });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/:id/status', statusGuard, async (req, res, next) => {
+    try {
+      const status = String((req.body && req.body.status) || '').trim();
+      const row = await updateStatus(req.params.id, status, {
+        note: req.body && req.body.note,
+        processed_by: (req.body && req.body.admin_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin'
+      });
+      if (!row) return next(AppError.notFound('NOT_FOUND', 'Không tìm thấy đề xuất'));
+      res.json({ ok: true, item: row });
+    } catch (err) {
+      if (err.statusCode) return next(AppError.badRequest('INVALID_STATUS', err.message));
+      next(err);
+    }
+  });
+
+  return router;
+}
+
+module.exports = { createFeatureRequestsRouter };

@@ -1,0 +1,216 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P2-008
+Priority: P2
+STATUS: Wrong-owner
+OWNER (hiện tại): Onboarding
+Owner đích (map): Onboarding
+Usage audit: ✓ (symbol scan)
+Dep động: Có thể
+Migration ROI: 5
+Khả năng bỏ load: Chưa
+P1 Gate: N/A
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
+Note: @import từ app-shell.css
+===== IFX-AUDIT-END ===== */
+/**
+ * iFlux User Web — onboarding spotlight
+ */
+
+.ifx-onboard-mask-host {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  pointer-events: none;
+  background: transparent;
+}
+
+.ifx-onboard-mask {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ifx-onboard-center {
+  position: fixed;
+  z-index: 10060;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(520px, calc(100vw - 28px));
+  max-height: min(520px, calc(100vh - 40px));
+  overflow-y: auto;
+  padding: 26px 28px 20px;
+  pointer-events: auto;
+  border: 1px solid var(--ix-border);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.55);
+  background: var(--ix-bg-card);
+  border-radius: var(--ix-radius-lg);
+}
+
+.ifx-onboard-center__media {
+  margin: -2px -2px 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.ifx-onboard-center__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.ifx-onboard-center__step {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ix-accent);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.ifx-onboard-center__title {
+  font-size: 21px;
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.ifx-onboard-center__body {
+  font-size: var(--ifx-font-size-16);
+  line-height: 1.6;
+  color: var(--ix-text-muted);
+  margin: 0 0 22px;
+  text-align: center;
+}
+
+.ifx-onboard-center__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  flex-wrap: wrap;
+}
+
+.ifx-onboard-spotlight {
+  position: relative;
+  z-index: 10055;
+  filter: brightness(1.12);
+  background: var(--color-text-on-primary);
+  color: var(--color-text-on-success);
+  border-radius: 8px;
+}
+
+html.ifx-onboard-active,
+body.ifx-onboard-active,
+html.ifx-user-web.ifx-onboard-active,
+body.ifx-user-web.ifx-onboard-active {
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  touch-action: none;
+}
+
+/* App slides (preview / mobile) */
+.ifx-onboard-slides-root {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-container) 16px;
+  background: rgba(8, 9, 18, 0.88);
+}
+
+.ifx-onboard-slides-panel {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 28px 24px 22px;
+  text-align: center;
+}
+
+.ifx-onboard-slides-skip {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.ifx-onboard-slides-media {
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 200px;
+}
+
+.ifx-onboard-slides-media img {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.ifx-onboard-slides-placeholder {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ix-bg-hover);
+  color: var(--ix-text-muted);
+  font-size: 48px;
+}
+
+.ifx-onboard-slides-step {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ix-accent);
+  margin-bottom: var(--ifx-space-8);
+}
+
+.ifx-onboard-slides-title {
+  font-size: var(--ifx-font-size-24);
+  font-weight: var(--ifx-font-weight-bold);
+  margin: 0 0 10px;
+  color: var(--ix-text-primary);
+}
+
+.ifx-onboard-slides-body {
+  font-size: var(--ifx-font-size-14);
+  line-height: 1.55;
+  color: var(--ix-text-muted);
+  margin: 0 0 18px;
+}
+
+.ifx-onboard-slides-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--ifx-inline-sm);
+  margin-bottom: 18px;
+}
+
+.ifx-onboard-slides-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ix-border);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.ifx-onboard-slides-dot.is-active {
+  background: var(--ix-accent);
+  transform: scale(1.15);
+}
+
+.ifx-onboard-slides-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--ifx-inline-md);
+}
+
+body.ifx-onboard-slides-active {
+  overflow: hidden;
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-COM-CNT-003 — Thêm / sửa nội dung · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <!-- TipTap surface scaffold (tokens DS only; required by FN-CMS-ED-001) -->
+  <style>
+    #article-body-editor-root .ix-article-tiptap {
+      min-height: 280px;
+      outline: none;
+      color: var(--ix-text-primary);
+      font-size: var(--ix-font-size-sm, 14px);
+      line-height: 1.6;
+    }
+    #article-body-editor-root .ix-article-tiptap p { margin: 0 0 0.75em; }
+    #article-body-editor-root .ix-article-tiptap h2 { font-size: 1.25em; margin: 1em 0 0.5em; }
+    #article-body-editor-root .ix-article-tiptap h3 { font-size: 1.1em; margin: 0.9em 0 0.45em; }
+    #article-body-editor-root .ix-article-tiptap ul,
+    #article-body-editor-root .ix-article-tiptap ol { margin: 0 0 0.75em 1.25em; }
+    #article-body-editor-root .ix-article-tiptap blockquote {
+      margin: 0 0 0.75em;
+      padding-left: 12px;
+      border-left: 3px solid var(--ix-border);
+      color: var(--ix-text-muted);
+    }
+    #article-body-editor-root .ix-article-tiptap img { max-width: 100%; height: auto; }
+    #article-body-editor-root .ix-article-tiptap table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0 0 0.75em;
+    }
+    #article-body-editor-root .ix-article-tiptap th,
+    #article-body-editor-root .ix-article-tiptap td {
+      border: 1px solid var(--ix-border);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+    #article-body-editor-root .ix-article-tiptap hr {
+      border: 0;
+      border-top: 1px solid var(--ix-border);
+      margin: 1em 0;
+    }
+    #article-body-editor-root [data-abody-html] {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: pre;
+      tab-size: 2;
+    }
+    #article-body-editor-root [data-abody-preview-frame] {
+      width: 100%;
+      min-height: 280px;
+      border: 1px solid var(--ix-border);
+      border-radius: var(--ix-radius-md, 8px);
+      background: var(--ix-bg-elevated, var(--ix-bg-body));
+    }
+  </style>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+            <div class="ix-content">
+        <h1 class="ix-page-title" id="cnt-page-title">Tạo bài viết</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+          <p style="font-size:13px;color:var(--ix-text-muted);margin:0;max-width:640px">Trường bài viết: tiêu đề · URL · danh mục · chủ đề · chủ thể · mô tả · nội dung · ảnh đại diện · SEO · trạng thái · ngày đăng · thiết lập hiển thị.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <span class="ix-chip ix-chip-warning" id="media-status-chip" hidden>Ảnh</span>
+            <button type="button" class="ix-btn ix-btn-outline" id="btn-media-import" title="Tải toàn bộ ảnh ngoài vào Thư viện media và cập nhật bài viết — một thao tác.">Nhập vào Thư viện</button>
+            <a href="/admin/community/articles" class="ix-btn ix-btn-outline">Quay lại</a>
+            <button type="button" class="ix-btn ix-btn-outline" id="btn-save-draft">Lưu nháp</button>
+            <button type="button" class="ix-btn ix-btn-outline" id="btn-save-content">Lưu</button>
+            <button type="button" class="ix-btn ix-btn-primary" id="btn-publish"><i class="ti ti-send"></i> Xuất bản</button>
+          </div>
+        </div>
+
+        <div class="ix-alert ix-alert-warning ix-mb-24" id="media-external-banner" hidden>
+          <div class="ix-alert-title" id="media-external-banner-title">Có hình ảnh ngoài · Chưa thuộc Thư viện media</div>
+          <div class="ix-alert-text" id="media-external-banner-text">Bấm «Nhập vào Thư viện» để tải ảnh về và cập nhật bài viết.</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" id="btn-media-retry" hidden>Thử lại ảnh lỗi</button>
+            <span class="ix-caption" id="media-import-progress" hidden></span>
+          </div>
+        </div>
+
+        <div class="ix-layout-main">
+          <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:24px">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Tiêu đề &amp; URL</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">Tiêu đề <span style="color:var(--ix-danger)">*</span></label><input type="text" class="ix-input" id="fld-title" placeholder="VD: Đầu tư công sẽ bùng nổ trong nửa cuối năm" /></div>
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">URL <span class="ix-caption">(tự tạo từ tiêu đề)</span></label><input type="text" class="ix-input" id="fld-slug" readonly placeholder="tự tạo từ tiêu đề" /></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Mô tả &amp; nội dung bài viết</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">Mô tả bài viết</label><textarea class="ix-textarea" id="fld-excerpt" rows="3"></textarea></div>
+                <div class="ix-form-group ix-mb-0" id="article-body-editor-root">
+                  <label class="ix-label">Nội dung bài viết</label>
+                  <div class="ix-mb-12" style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-primary" data-abody-mode="rich">Soạn thảo</button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-mode="html">HTML</button>
+                  </div>
+                  <div data-abody-toolbar class="ix-mb-12" style="display:flex;gap:6px;flex-wrap:wrap">
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="h2" title="Tiêu đề H2">H2</button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="h3" title="Tiêu đề H3">H3</button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="p" title="Đoạn văn">P</button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="bold" title="Đậm"><i class="ti ti-bold"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="italic" title="Nghiêng"><i class="ti ti-italic"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="bullet" title="Danh sách"><i class="ti ti-list"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="ordered" title="Danh sách số"><i class="ti ti-list-numbers"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="quote" title="Trích dẫn"><i class="ti ti-quote"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="hr" title="Đường kẻ"><i class="ti ti-separator"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="link" title="Liên kết"><i class="ti ti-link"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="unlink" title="Gỡ liên kết"><i class="ti ti-link-off"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="image" title="Ảnh (URL)"><i class="ti ti-photo"></i></button>
+                    <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-abody-cmd="table" title="Bảng"><i class="ti ti-table"></i></button>
+                  </div>
+                  <div data-abody-rich class="ix-input" style="min-height:280px;padding:12px;overflow:auto"></div>
+                  <textarea data-abody-html class="ix-textarea" rows="16" hidden spellcheck="false" autocomplete="off"></textarea>
+                  <textarea id="fld-body" hidden aria-hidden="true"></textarea>
+                  <div class="ix-mt-16">
+                    <div class="ix-label ix-mb-8">Xem trước (Production)</div>
+                    <iframe data-abody-preview-frame title="Xem trước nội dung bài viết"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Thiết lập SEO</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">SEO Title</label><input type="text" class="ix-input" id="fld-seo-title" /></div>
+                <div class="ix-form-group"><label class="ix-label">SEO Description</label><textarea class="ix-textarea" id="fld-seo-desc" rows="2"></textarea></div>
+                <div class="ix-form-group"><label class="ix-label">SEO Keywords</label><input type="text" class="ix-input" id="fld-seo-keywords" /></div>
+                <div class="ix-form-group">
+                  <label class="ix-label">ALT ảnh OG</label>
+                  <input type="text" class="ix-input" id="fld-seo-og-alt" maxlength="500" />
+                  <p class="ix-caption ix-mt-8" style="margin:0">Tuỳ chọn — để trống = dùng Alt ảnh đại diện hoặc tiêu đề. Không bắt buộc.</p>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Canonical URL <span class="ix-caption">(tự động)</span></label>
+                  <input type="text" class="ix-input" id="fld-seo-canonical" readonly />
+                  <p class="ix-caption ix-mt-8" style="margin:0">Hệ thống tạo từ tiêu đề → URL. Đổi tiêu đề sẽ đổi link; link cũ tự chuyển về link mới.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ix-layout-side-col" style="display:flex;flex-direction:column;gap:24px">
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Danh mục <span class="ix-caption">(chọn đúng 1)</span></div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">Danh mục <span style="color:var(--ix-danger)">*</span></label><select class="ix-select" id="fld-category"></select></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Chủ đề <span class="ix-caption">(tuỳ chọn)</span></div></div>
+              <div class="ix-card-body">
+                <div id="art-chude-selected" class="ix-mb-12"></div>
+                <div class="ix-form-group"><label class="ix-label">Tìm / tạo chủ đề</label><input type="text" class="ix-input" id="art-chude-q" placeholder="Gõ để tìm hoặc tạo chủ đề mới…" /></div>
+                <div id="art-chude-suggest"></div>
+                <div id="art-ticker-suggest" class="ix-mt-16"></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Chủ thể</div></div>
+              <div class="ix-card-body">
+                <p class="ix-caption ix-mb-12">Chỉ một nhóm: 0–5 mã CP · hoặc 0–3 ngành · hoặc 0–3 hệ sinh thái · hoặc 0–1 sàn.</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-primary" data-entity-mode="tickers">Cổ phiếu</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="sectors">Ngành</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="ecosystems">Hệ sinh thái</button>
+                  <button type="button" class="ix-btn ix-btn-sm ix-btn-outline" data-entity-mode="exchange">Sàn</button>
+                </div>
+                <div id="art-entity-tickers" class="ix-form-group ix-mb-0"><label class="ix-label">Mã cổ phiếu (tối đa 5)</label><input type="text" class="ix-input" id="fld-tickers" placeholder="VCG, HHV, C4G" /></div>
+                <div id="art-entity-sectors" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Ngành (tối đa 3)</label><input type="text" class="ix-input" id="fld-sectors" placeholder="ngan-hang, thep" /></div>
+                <div id="art-entity-ecosystems" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Hệ sinh thái (tối đa 3)</label><input type="text" class="ix-input" id="fld-ecosystems" placeholder="vin, masan" /></div>
+                <div id="art-entity-exchange" class="ix-form-group ix-mb-0" hidden><label class="ix-label">Sàn (0–1)</label><select class="ix-select" id="fld-exchange"><option value="">— Không gắn —</option><option value="VNIndex">VNIndex</option><option value="HOSE">HOSE</option><option value="HNX">HNX</option><option value="UPCOM">UPCOM</option></select></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Ảnh đại diện</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">URL ảnh</label><input type="url" class="ix-input" id="fld-cover-url" /></div>
+                <div class="ix-form-group"><label class="ix-label">Alt</label><input type="text" class="ix-input" id="fld-cover-alt" /><p class="ix-caption ix-mt-8" style="margin:0">Tuỳ chọn — để trống = hệ thống dùng tiêu đề / ALT SEO.</p></div>
+                <div class="ix-form-group"><label class="ix-label">Caption</label><input type="text" class="ix-input" id="fld-cover-caption" /></div>
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">Credit</label><input type="text" class="ix-input" id="fld-cover-credit" /></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Trạng thái</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label">Trạng thái</label><select class="ix-select" id="fld-status"><option value="draft">Nháp</option><option value="pending">Chờ duyệt</option><option value="published">Xuất bản</option><option value="published_rss">Xuất bản (RSS)</option><option value="scheduled">Đã lên lịch</option></select></div>
+                <div class="ix-form-group ix-mb-0"><label class="ix-label">Ngày đăng</label><input type="datetime-local" class="ix-input" id="fld-publish-at" /></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Thiết lập hiển thị</div></div>
+              <div class="ix-card-body" style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+                <label style="display:flex;align-items:center;justify-content:space-between"><span>Nổi bật</span><input type="checkbox" class="ix-checkbox" id="fld-d-featured" /></label>
+                <label style="display:flex;align-items:center;justify-content:space-between"><span>Ghim đầu trang</span><input type="checkbox" class="ix-checkbox" id="fld-d-pin" /></label>
+                <label style="display:flex;align-items:center;justify-content:space-between"><span>Cho phép bình luận</span><input type="checkbox" class="ix-checkbox" id="fld-d-comments" checked /></label>
+                <label style="display:flex;align-items:center;justify-content:space-between"><span>Cho phép chia sẻ</span><input type="checkbox" class="ix-checkbox" id="fld-d-share" checked /></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=seoLogoOnly20260810" data-ix-rbac=""></script>
+<script src="/Admin_Design_system/iflux-admin-ui/vendor/dompurify/purify.min.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/vendor/tiptap/tiptap.bundle.js"></script>
+<script src="/Admin_Design_system/app/community/content/article-html-contract.js?v=mediaLib20260730"></script>
+<script src="/Admin_Design_system/app/community/content/article-body-editor.js?v=mediaLib20260730"></script>
+<script src="/Admin_Design_system/app/community/content/article-edit-page.js?v=seoOgImageAlt20260811"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-SYS-011 — Cài đặt Trang · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .ps-hint { font-size:13px; color:var(--ix-text-muted); margin:0 0 16px; line-height:1.6; }
+    .ps-updated { font-size:12px; color:var(--ix-text-muted); margin:8px 0 16px; }
+    .ps-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .ps-section-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--ix-border); }
+    .ps-section-row:last-child { border-bottom:0; }
+    .ps-section-row__title { font-size:14px; font-weight:600; color:var(--ix-text-primary); }
+    .ps-section-row__meta { font-size:11px; color:var(--ix-text-muted); margin-top:4px; }
+    .ps-toggle { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--ix-text-secondary); }
+    .ps-grid-preview { display:grid; grid-template-columns:repeat(12,1fr); gap:8px; }
+    .ps-grid-slot { min-height:72px; padding:10px; border:1px dashed var(--ix-border); border-radius:var(--ix-radius); background:rgba(255,255,255,.02); }
+    .ps-grid-slot__id { font-size:10px; color:var(--ix-accent); margin-bottom:4px; }
+    .ps-grid-slot__title { font-size:12px; font-weight:600; color:var(--ix-text-primary); }
+    .ps-grid-slot__meta { font-size:10px; color:var(--ix-text-muted); margin-top:4px; }
+    .ps-empty { font-size:13px; color:var(--ix-text-muted); text-align:center; padding:24px; margin:0; }
+    .ps-input-sm { width:72px; padding:4px 8px; font-size:12px; }
+    .ps-page-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .ps-cell-dead { opacity:0.38; pointer-events:none; display:inline-flex; justify-content:center; align-items:center; }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body data-ix-view-api="/admin/interface/page-settings">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:4px">Cài đặt Trang</h1>
+            <div class="ix-breadcrumb" id="adm-page-bc"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4" class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-layers-intersect"></i> Tầng 4 · Widget</a>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-disable-all-widgets" data-ix-perm="interface.page_settings.edit" title="Tắt toàn bộ Widget trên mọi trang"><i class="ti ti-toggle-left"></i> Tắt hết Widget</button>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-reset" data-ix-perm="interface.page_settings.edit"><i class="ti ti-restore"></i> Khôi phục mặc định</button>
+            <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="ps-save-widgets" data-ix-perm="interface.page_settings.edit"><i class="ti ti-device-floppy"></i> Lưu nháp</button>
+            <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="ps-publish" data-ix-perm="interface.page_settings.edit" title="Ghi PagePublished — User Web đọc từ đây"><i class="ti ti-rocket"></i> Publish lên User Web</button>
+          </div>
+        </div>
+        <p class="ps-hint"><strong>Lưu nháp</strong> = page-composition. <strong>Publish</strong> = PagePublished (User Web). Quản lý Page Architecture: sitemap, App Shell / Section và Widget. Định nghĩa Widget tại <a href="/Admin_Design_system/app/system/platform-layers.html#layer-4">Core 4 tầng · Tầng 4</a> — danh mục Widget tại đây tự đồng bộ theo Tầng 4.</p>
+
+        <div id="ps-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        <div id="ps-updated" class="ps-updated"></div>
+
+        <div class="ix-tabs" style="margin-bottom:20px">
+          <button type="button" class="ix-tab active" data-ps-tab="sitemap"><i class="ti ti-sitemap" style="margin-right:4px"></i> Sitemap</button>
+          <button type="button" class="ix-tab" data-ps-tab="layout"><i class="ti ti-layout" style="margin-right:4px"></i> Bố cục trang</button>
+          <button type="button" class="ix-tab" data-ps-tab="hosts"><i class="ti ti-box" style="margin-right:4px"></i> Widget Host</button>
+          <button type="button" class="ix-tab" data-ps-tab="widgets"><i class="ti ti-layout-grid" style="margin-right:4px"></i> Widget Placement</button>
+        </div>
+
+        <div class="ix-tab-content active" data-ps-panel="sitemap">
+          <div class="ps-toolbar">
+            <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Sitemap — toàn bộ trang User Web</div>
+            <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="text" id="ps-search" placeholder="Tìm trang…" /></div>
+          </div>
+          <div id="ps-sitemap"></div>
+        </div>
+
+        <div class="ix-tab-content" data-ps-panel="layout">
+          <div class="ps-page-bar">
+            <label class="ix-label" style="margin:0">Chọn trang</label>
+            <select class="ix-input" id="ps-page-layout" style="width:auto;min-width:220px;padding:6px 10px;font-size:13px"></select>
+          </div>
+          <div id="ps-layout"></div>
+        </div>
+
+        <div class="ix-tab-content" data-ps-panel="hosts">
+          <div id="ps-hosts"></div>
+        </div>
+
+        <div class="ix-tab-content" data-ps-panel="widgets">
+          <div class="ps-page-bar">
+            <label class="ix-label" style="margin:0">Chọn trang</label>
+            <select class="ix-input" id="ps-page-widgets" style="width:auto;min-width:220px;padding:6px 10px;font-size:13px"></select>
+          </div>
+          <div id="ps-widgets"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/User_Web/iflux-web-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=migrateFlagV2-20260719"></script>
+<script src="/Admin_Design_system/app/system/widget-library-catalog.js?v=l4sot20260714b"></script>
+<script src="/Admin_Design_system/app/system/page-settings-catalog.js?v=comPostWidgetHost20260811"></script>
+<script src="/Admin_Design_system/app/system/page-settings-store.js?v=cauChuyen20260720"></script>
+<script src="/Admin_Design_system/app/system/page-runtime-manifest.js?v=pubFix20260722"></script>
+<script src="/Admin_Design_system/app/system/page-composition-client.js?v=phase41Pub20260716"></script>
+<script src="/Admin_Design_system/app/system/widget-publish-client.js?v=pubFix20260722"></script>
+<script src="/Admin_Design_system/app/system/page-publish-bridge.js?v=pubFix20260722"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
+<script src="/Admin_Design_system/app/system/page-settings-page.js?v=deployEnabled20260722"></script>
+<script>PageSettingsPage.init();</script>
+</body>
+</html>

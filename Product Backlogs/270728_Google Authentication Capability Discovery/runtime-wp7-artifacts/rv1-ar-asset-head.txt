@@ -1,0 +1,2 @@
+/* P2 Affiliate Resolver â€” B1: parse + capture + emit event (ADR-AFF-007)
+ * C

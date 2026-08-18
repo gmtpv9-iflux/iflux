@@ -1,0 +1,250 @@
+/* ===== IFX-AUDIT-BEGIN =====
+AUDIT-ID: T5A-P1-001
+Priority: P1
+STATUS: Used|bundle
+OWNER (hiện tại): Admin DS atoms-extensions
+Owner đích (map): Admin DS atoms-extensions.css
+Usage audit: ✓
+Dep động: Không
+Migration ROI: 2
+Khả năng bỏ load: Không
+P1 Gate: FAIL
+Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
+Note: Bundle iflux-admin-ui.css — không bỏ load từ Community
+===== IFX-AUDIT-END ===== */
+/**
+ * iFlux Atoms — GĐ2 extensions (Shared Admin + User)
+ * Chỉ token DS · class ix-* / ifx-* · import sau components.css
+ */
+.ix-btn-secondary {
+  background: var(--color-action-secondary);
+  color: var(--color-text-on-primary);
+}
+.ix-btn-secondary:hover { background: var(--color-action-secondary-hover); }
+
+.ix-btn-text {
+  background: transparent;
+  border: none;
+  color: var(--color-text-link);
+  padding: var(--ifx-space-4) var(--ifx-space-8);
+}
+.ix-btn-text:hover { text-decoration: underline; }
+
+.ix-btn-fab {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: var(--ifx-radius-full);
+  justify-content: center;
+  box-shadow: var(--ifx-shadow-lg);
+}
+
+.ix-btn-split {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+.ix-btn-split > span { padding: var(--ifx-space-button-y) var(--ifx-space-button-x); }
+.ix-btn-split > i { padding: var(--ifx-space-button-y) var(--ifx-space-12); border-left: 1px solid var(--color-border-subtle); }
+
+.ix-btn-toggle.is-active {
+  background: var(--color-action-primary-soft);
+  color: var(--color-action-primary);
+}
+
+.ix-input-search,
+.ix-input-currency,
+.ix-input-percent,
+.ix-input-number,
+.ix-input-password,
+.ix-datepicker,
+.ix-timepicker,
+.ix-datetimepicker,
+.ix-combobox,
+.ix-multiselect {
+  /* inherit .ix-input */
+}
+
+.ix-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-action-primary);
+  cursor: pointer;
+}
+
+.ix-segmented {
+  display: inline-flex;
+  padding: var(--ifx-space-4);
+  background: var(--color-bg-subtle);
+  border-radius: var(--ix-radius);
+  gap: var(--ifx-space-4);
+}
+.ix-segmented .ix-segment {
+  border: 0;
+  background: transparent;
+  font-family: var(--ix-font);
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  border-radius: var(--ifx-radius-sm);
+  font-size: var(--ifx-font-size-12);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.ix-segmented .ix-segment.is-active {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+.ix-segmented .ix-segment:hover {
+  color: var(--color-text-primary);
+}
+
+/* :not(td/th) — tránh display:block phá table-cell khi gắn .ix-caption lên ô bảng */
+.ix-caption:not(td):not(th),
+.ix-helper-text,
+.ix-field-title { display: block; }
+
+.ix-caption { font-size: var(--ifx-font-size-12); color: var(--color-text-muted); }
+.ix-helper-text { font-size: var(--ifx-font-size-12); color: var(--color-text-muted); margin-top: var(--ifx-space-4); }
+.ix-field-title { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-semibold); color: var(--color-text-primary); }
+
+.ix-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ifx-radius-full);
+  background: var(--color-danger);
+  display: inline-block;
+}
+.ix-badge-count { min-width: 18px; text-align: center; }
+.ix-badge-status { text-transform: uppercase; letter-spacing: 0.04em; }
+
+.ix-progress-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--color-bg-input);
+  border-top-color: var(--color-action-primary);
+  display: inline-block;
+}
+
+.ix-skeleton {
+  display: block;
+  height: 12px;
+  background: var(--color-surface-elevated);
+  border-radius: var(--ix-radius);
+  animation: ix-skeleton-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ix-skeleton-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.9; }
+}
+
+.ix-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-subtle);
+  border-top-color: var(--color-action-primary);
+  border-radius: 50%;
+  animation: ix-spin 0.7s linear infinite;
+  display: inline-block;
+}
+.ix-loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-subtle);
+  border-top-color: var(--color-text-muted);
+  border-radius: 50%;
+  animation: ix-spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes ix-spin { to { transform: rotate(360deg); } }
+
+.ix-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--ifx-radius-full);
+  background: var(--color-action-primary);
+  animation: ix-pulse 1.4s ease infinite;
+}
+@keyframes ix-pulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.ix-divider-vertical {
+  width: 1px;
+  height: 24px;
+  margin: 0 var(--ifx-space-8);
+  display: inline-block;
+}
+
+.ix-chip-filter.is-active { background: var(--color-action-primary-soft); color: var(--color-action-primary); }
+.ix-chip-tag { font-size: var(--ifx-font-size-12); }
+
+.ix-pill {
+  display: inline-flex;
+  padding: var(--ifx-space-4) var(--ifx-space-12);
+  border-radius: var(--ifx-radius-full);
+  font-size: var(--ifx-font-size-12);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+}
+.ix-pill-status { font-weight: var(--ifx-font-weight-medium); }
+
+.ix-tooltip {
+  display: inline-block;
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-size: var(--ifx-font-size-12);
+  border-radius: var(--ix-radius);
+  box-shadow: var(--ifx-shadow-md);
+}
+
+.ix-link {
+  color: var(--color-text-link);
+  text-decoration: none;
+  font-size: var(--ifx-font-size-14);
+}
+.ix-link:hover { text-decoration: underline; }
+.ix-link-external::after {
+  content: ' ↗';
+  font-size: 0.85em;
+}
+
+.ix-image {
+  display: block;
+  width: 48px;
+  height: 48px;
+  background: var(--color-bg-subtle);
+  border-radius: var(--ix-radius);
+  object-fit: cover;
+}
+
+.ifx-typo-percentage.is-up { color: var(--color-market-up); }
+.ifx-typo-percentage.is-down { color: var(--color-market-down); }
+
+.ix-chip-tier-free { background: var(--color-tier-free); color: var(--color-text-inverse); opacity: 0.9; }
+.ix-chip-tier-premium { background: var(--color-action-primary-soft); color: var(--color-tier-premium); }
+.ix-chip-tier-elite { background: var(--color-action-secondary-soft); color: var(--color-tier-elite); }
+
+.ifx-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  padding: var(--ifx-space-4) var(--ifx-space-8);
+  border-radius: var(--ifx-radius-full);
+  font-size: var(--ifx-font-size-10);
+  background: var(--color-surface-elevated);
+  color: var(--color-tier-premium);
+}
+
+/* Studio preview helpers */
+.ds-atom-preview .ifx-typo-price-m,
+.ds-atom-preview .ifx-typo-price-s,
+.ds-atom-preview .ifx-typo-percentage,
+.ds-atom-preview .ifx-typo-volume,
+.ds-atom-preview .ifx-typo-money {
+  font-family: var(--ifx-font-numeric);
+  font-variant-numeric: tabular-nums;
+}

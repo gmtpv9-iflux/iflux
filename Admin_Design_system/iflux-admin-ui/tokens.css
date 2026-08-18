@@ -1,0 +1,12 @@
+/**
+ * iFlux Foundation — entry shim
+ * @deprecated Dùng iflux-admin-ui.css. File này giữ tương thích import cũ.
+ */
+@import url('./primitives/color.css');
+@import url('./primitives/radius.css');
+@import url('./primitives/shadow.css');
+@import url('./primitives/motion.css');
+@import url('./primitives/z-index.css');
+@import url('./primitives/layout.css');
+@import url('./semantic/theme.css');
+@import url('./semantic/aliases.css');

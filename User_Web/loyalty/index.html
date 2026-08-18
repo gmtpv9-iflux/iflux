@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/app-shell.css?v=stickyFix20260811" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/loyalty.css" />
+  <script>
+    document.documentElement.classList.add('ifx-user-web');
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.classList.add('ifx-user-web');
+    });
+  </script>
+</head>
+<body>
+<div class="ifx-app">
+  <header class="ifx-topnav">
+    <a href="/nha-cua-toi" class="ifx-topnav-brand">
+      <img class="ix-brand-logo" data-ifx-seo-logo alt="iFlux" width="120" height="32" hidden />
+    </a>
+    <nav class="ifx-topnav-menu" data-ifx-guest-nav></nav>
+    <div class="ifx-topnav-actions" data-ifx-guest-actions>
+      <div class="ifx-topnav-search-wrap" data-ifx-header-search>
+        <div class="ix-search ifx-hdr-search" role="combobox" aria-expanded="false">
+          <i class="ti ti-search"></i>
+          <input type="search" autocomplete="off" spellcheck="false" placeholder="Tìm CP, ngành, họ, chủ đề… (⌘K)" aria-label="Tìm kiếm thị trường" />
+          <kbd class="ifx-hdr-search-kbd">⌘K</kbd>
+        </div>
+        <div class="ifx-hdr-search-dropdown" hidden></div>
+      </div>
+      <div class="ix-dropdown ifx-user-menu">
+        <button class="ix-avatar" data-ix-toggle="dropdown" data-ifx-user-initials>U</button>
+        <div class="ix-dropdown-menu"></div>
+      </div>
+    </div>
+  </header>
+  <main class="ifx-main ifx-main--membership">
+    <div data-ifx-page-runtime></div>
+  </main>
+</div>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=canonOgUrlL5_20260812"></script>
+</body>
+</html>

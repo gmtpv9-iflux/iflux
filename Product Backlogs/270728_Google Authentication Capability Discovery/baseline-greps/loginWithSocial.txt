@@ -1,0 +1,7 @@
+User_Web/iflux-web-ui/auth-social.js:3: * Gọi IfluxAuth.loginWithSocial → POST /auth/social khi dataMode=api
+User_Web/iflux-web-ui/auth-social.js:100:    if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) {
+User_Web/iflux-web-ui/auth-social.js:107:    return IfluxAuth.loginWithSocial(provider, tokens || {}, opts || {});
+User_Web/iflux-web-ui/auth.js:1294:  function loginWithSocial(provider, tokens, opts) {
+User_Web/iflux-web-ui/auth.js:1637:    loginWithSocial: loginWithSocial,
+User_Web/iflux-web-ui/google-onetap.js:72:    if (!global.IfluxAuth || !IfluxAuth.loginWithSocial) return;
+User_Web/iflux-web-ui/google-onetap.js:77:    IfluxAuth.loginWithSocial('google', { id_token: response.credential }, {

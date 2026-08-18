@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Vuexy Dark</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css" />
+<link rel="stylesheet" href="/Admin_Design_system/files (3)/vuexy-system.css" />
+</head>
+<body>
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <!-- Brand -->
+    <div class="ix-auth-brand">
+      <img class="ix-brand-logo" alt="iFlux" hidden />
+      <span class="ix-auth-brand-name">Vuexy</span>
+    </div>
+
+    <div class="ix-auth-title">Welcome to Vuexy! 👋</div>
+    <div class="ix-auth-sub">Please sign-in to your account and start the adventure</div>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Email or Username</label>
+      <input type="text" class="ix-input" placeholder="Enter your email or username" autofocus />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Password</label>
+      <div style="position:relative">
+        <input type="password" class="ix-input" placeholder="············" id="pw-login" style="padding-right:40px" />
+        <button onclick="var p=document.getElementById('pw-login');p.type=p.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ix-text-muted);font-size:16px"><i class="ti ti-eye-off"></i></button>
+      </div>
+    </div>
+    <div class="ix-auth-remember">
+      <label class="ix-auth-check">
+        <input type="checkbox" class="ix-checkbox" />
+        Remember Me
+      </label>
+      <a href="/Admin_Design_system/files (3)/auth-forgot.html">Forgot Password?</a>
+    </div>
+    <button class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:16px" onclick="ixToast('Login successful!','success')">Login</button>
+
+    <div class="ix-auth-footer">
+      <span>New on our platform?</span> <a href="/Admin_Design_system/files (3)/auth-register.html">Create an account</a>
+    </div>
+
+    <div class="ix-auth-divider">or</div>
+
+    <div class="ix-auth-socials">
+      <a class="ix-social-btn facebook" href="#"><i class="ti ti-brand-facebook-filled"></i></a>
+      <a class="ix-social-btn twitter" href="#"><i class="ti ti-brand-twitter-filled"></i></a>
+      <a class="ix-social-btn github" href="#"><i class="ti ti-brand-github-filled"></i></a>
+      <a class="ix-social-btn google" href="#"><i class="ti ti-brand-google-filled"></i></a>
+    </div>
+  </div>
+</div>
+<script src="/Admin_Design_system/files (3)/vuexy-system.js"></script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-FEAT-001 — Đề xuất tính năng · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <style>
+    .adm-feat-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 900px) { .adm-feat-stats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+  <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Đề xuất tính năng từ người dùng</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Danh sách ý tưởng từ Dashboard — sắp xếp theo lượt ủng hộ. Admin cập nhật trạng thái xử lý (Backlog · Đang phát triển · Đã phát hành…).</p>
+
+        <div class="adm-feat-stats" id="adm-feat-stats"></div>
+
+        <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-feat-status"><option value="">Tất cả</option><option value="new">Đề xuất mới</option><option value="reviewing">Đang xem xét</option><option value="backlog">Đã đưa vào Backlog</option><option value="developing">Đang phát triển</option><option value="released">Đã phát hành</option></select></div>
+            </div>
+          </div>
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="adm-feat-search" placeholder="Tìm tên hoặc mô tả..." /></div>
+            <div style="font-size:12px;color:var(--ix-text-muted)">Sắp xếp: lượt ủng hộ ↓</div>
+          </div>
+          <div class="ix-table-wrap">
+            <table class="ix-table">
+              <thead><tr><th>#</th><th>Tính năng</th><th>Ủng hộ</th><th>Trạng thái</th><th>Người gửi</th><th>Ngày gửi</th><th>Cập nhật trạng thái</th></tr></thead>
+              <tbody id="adm-feat-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/User_Web/iflux-web-ui/feature-suggestions-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/product/feature-suggestions-page.js"></script>
+<script>AdmFeatureSuggestions.init();</script>
+</body>
+</html>

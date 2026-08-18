@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-MAR-002 — Thiết lập nội dung Onboarding · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/User_Web/iflux-web-ui/onboarding.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+<nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar">MK</div></div>
+      </header>
+      <div class="ix-content">
+        <div style="margin-bottom:8px">
+          <h1 class="ix-page-title" style="margin-bottom:4px">Thiết lập nội dung Onboarding</h1>
+          <div class="ix-breadcrumb" id="adm-page-bc"></div>
+        </div>
+        <p id="ob-channel-hint" style="color:var(--ix-text-muted);font-size:13px;margin:0 0 20px">Cấu hình nội dung onboarding dùng chung — App (slide) và User Web (spotlight menu).</p>
+
+        <div class="ix-tabs ix-mb-24">
+          <button type="button" class="ix-tab active" data-ob-channel="web"><i class="ti ti-world"></i> User Web</button>
+          <button type="button" class="ix-tab" data-ob-channel="app"><i class="ti ti-device-mobile"></i> Mobile App</button>
+        </div>
+
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div style="font-size:13px;color:var(--ix-text-muted)">Mỗi bước: hình minh họa, tiêu đề, mô tả. Web thêm <strong>vị trí menu</strong> để spotlight.</div>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="btn-ob-preview"><i class="ti ti-eye"></i> Xem thử App</button>
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-ob-add" data-ix-perm="marketing.onboarding.edit"><i class="ti ti-plus"></i> Thêm bước</button>
+            </div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead><tr>
+                <th>#</th><th>Tiêu đề</th><th>Mô tả</th><th>Vị trí (Web)</th><th>Trạng thái</th><th></th>
+              </tr></thead>
+              <tbody id="ob-steps-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="ob-modal" class="ix-modal-overlay" style="display:none" aria-hidden="true">
+  <div class="ix-modal" style="width:520px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="ix-modal-header">
+      <span class="ix-modal-title" id="ob-modal-title">Thêm bước</span>
+      <button type="button" class="ix-btn ix-btn-icon" id="ob-modal-close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="ix-modal-body" style="overflow-y:auto">
+      <div class="ix-form-group"><label class="ix-label">Thứ tự</label><input type="number" class="ix-input" id="ob-f-order" min="1" value="1" /></div>
+      <div class="ix-form-group"><label class="ix-label">Tiêu đề</label><input type="text" class="ix-input" id="ob-f-title" /></div>
+      <div class="ix-form-group"><label class="ix-label">Nội dung</label><textarea class="ix-input" id="ob-f-body" rows="4"></textarea></div>
+      <div class="ix-form-group"><label class="ix-label">URL hình minh họa</label><input type="url" class="ix-input" id="ob-f-image" placeholder="https://..." /></div>
+      <div class="ix-form-group" id="ob-target-group"><label class="ix-label">Vị trí menu (Web spotlight)</label><select class="ix-input" id="ob-f-target"></select></div>
+      <label class="ix-auth-check"><input type="checkbox" class="ix-checkbox" id="ob-f-active" checked /> Kích hoạt bước này</label>
+    </div>
+    <div class="ix-modal-footer">
+      <button type="button" class="ix-btn ix-btn-outline" id="ob-modal-close2">Huỷ</button>
+      <button type="button" class="ix-btn ix-btn-primary" id="ob-modal-save"><i class="ti ti-check"></i> Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script src="/User_Web/iflux-web-ui/iflux-api-bundle.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/marketing/onboarding-page.js"></script>
+</body>
+</html>

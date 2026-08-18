@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-STR-003 — Chủ đề Mapping · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/app/chu-de/chu-de-admin.css" />
+  <style>.ix-modal-overlay { display: none; }</style>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Ánh xạ Story</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <div class="ix-card" style="padding:16px 18px;margin-bottom:20px">
+          <label class="ix-label">Chọn story</label>
+          <select class="ix-select" id="adm-str-map-story-select" style="max-width:420px;margin-top:6px"></select>
+        </div>
+        <h2 id="adm-str-map-title" style="font-size:16px;font-weight:700;margin:0 0 16px;color:var(--ix-text-primary)">Chủ đề</h2>
+        <div id="adm-str-map-root"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/chu-de-registry-store.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/chu-de/chu-de-mapping-page.js"></script>
+<script>AdmChuDeMapping.init();</script>
+
+<div class="ix-modal-overlay" id="modal-str-map-add">
+  <div class="ix-modal-box" style="max-width:440px">
+    <button type="button" class="ix-modal-close" data-ix-dismiss="modal"><i class="ti ti-x"></i></button>
+    <div class="ix-modal-title" id="adm-str-map-modal-title">Thêm ánh xạ</div>
+    <input type="hidden" id="adm-str-map-entity-type" />
+    <div class="ix-form-group" style="margin-top:16px"><label class="ix-label">Mã / ID</label><input class="ix-input" id="adm-str-map-entity-id" placeholder="HPG hoặc sector id" /></div>
+    <div class="ix-form-group"><label class="ix-label">Nhãn hiển thị</label><input class="ix-input" id="adm-str-map-entity-label" placeholder="Tùy chọn — mặc định = mã" /></div>
+    <div class="ix-form-group"><label class="ix-label">Trọng số (0–1)</label><input class="ix-input" id="adm-str-map-weight" type="number" min="0" max="1" step="0.05" value="0.7" /></div>
+    <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
+      <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
+      <button type="button" class="ix-btn ix-btn-primary" id="btn-str-map-save">Thêm</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+.ifx-main--faq {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.ifx-faq-hero {
+  text-align: center;
+  padding: var(--ifx-space-8) 0 28px;
+}
+
+.ifx-faq-hero__eyebrow {
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ix-accent);
+  margin-bottom: var(--ifx-space-8);
+}
+
+.ifx-faq-hero__title {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+  margin: 0 0 8px;
+}
+
+.ifx-faq-hero__sub {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto 20px;
+}
+
+.ifx-faq-search {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.ifx-faq-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-8);
+  justify-content: center;
+  margin: 20px 0 28px;
+}
+
+.ifx-faq-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-inline-sm);
+  padding: var(--ifx-space-8) 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ix-border);
+  background: var(--ix-bg-card);
+  color: var(--ix-text-secondary);
+  font-size: var(--ifx-font-size-12);
+  font-weight: var(--ifx-font-weight-semibold);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+
+.ifx-faq-cat:hover {
+  border-color: rgba(105, 108, 255, .45);
+  color: var(--ix-text-primary);
+}
+
+.ifx-faq-cat.active {
+  background: rgba(105, 108, 255, .12);
+  border-color: var(--ix-accent);
+  color: var(--ix-accent);
+}
+
+.ifx-faq-cat i { font-size: var(--ifx-font-size-14); }
+
+.ifx-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+}
+
+.ifx-faq-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--ix-text-muted);
+  font-size: var(--ifx-font-size-14);
+}
+
+.ifx-faq-support {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.ifx-faq-support .ix-card-body {
+  padding: 32px 24px;
+}
+
+.ifx-faq-support h3 {
+  font-size: var(--ifx-font-size-18);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ix-text-primary);
+  margin: 0 0 8px;
+}
+
+.ifx-faq-support p {
+  font-size: var(--ifx-font-size-14);
+  color: var(--ix-text-muted);
+  margin: 0 0 16px;
+  line-height: 1.55;
+}
+
+.ifx-faq-support__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-inline-md);
+  justify-content: center;
+}

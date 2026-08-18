@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pattern — Form thêm/sửa · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body data-ix-view-api="/admin/guides/patterns_form">
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand"><img class="ix-brand-logo" alt="iFlux" hidden /><span class="ix-brand-name">iFlux Admin</span></div>
+                  <nav class="ix-menu">
+        <a href="/Admin_Design_system/app/dashboard/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboard</span></a>
+        <a href="/Admin_Design_system/hub.html" class="ix-menu-item"><i class="ti ti-checklist ix-menu-icon"></i><span class="ix-menu-label">Checklist</span></a>
+        <div class="ix-menu-header">Patterns</div>
+        <a href="/Admin_Design_system/patterns/table-list.html" class="ix-menu-item"><i class="ti ti-table ix-menu-icon"></i><span class="ix-menu-label">Bảng danh sách</span></a>
+        <a href="/Admin_Design_system/patterns/form-add.html" class="ix-menu-item active"><i class="ti ti-forms ix-menu-icon"></i><span class="ix-menu-label">Form thêm/sửa</span></a>
+        <a href="/Admin_Design_system/patterns/order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">List + stats strip</span></a>
+        <a href="/Admin_Design_system/patterns/order-detail.html" class="ix-menu-item"><i class="ti ti-file-description ix-menu-icon"></i><span class="ix-menu-label">Chi tiết + timeline</span></a>
+        <a href="/Admin_Design_system/patterns/user-profile.html" class="ix-menu-item"><i class="ti ti-user ix-menu-icon"></i><span class="ix-menu-label">User profile</span></a>
+        <a href="/Admin_Design_system/patterns/wizard.html" class="ix-menu-item"><i class="ti ti-stairs-up ix-menu-icon"></i><span class="ix-menu-label">Wizard</span></a>
+        <a href="/Admin_Design_system/patterns/chat.html" class="ix-menu-item"><i class="ti ti-messages ix-menu-icon"></i><span class="ix-menu-label">Chat</span></a>
+        <a href="/Admin_Design_system/patterns/referrals.html" class="ix-menu-item"><i class="ti ti-users-group ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></a>
+        <a href="/Admin_Design_system/patterns/charts.html" class="ix-menu-item"><i class="ti ti-chart-pie ix-menu-icon"></i><span class="ix-menu-label">Biểu đồ</span></a>
+        <a href="/Admin_Design_system/auth/login.html" class="ix-menu-item"><i class="ti ti-login ix-menu-icon"></i><span class="ix-menu-label">Auth</span></a>
+        <a href="/Admin_Design_system/design-system.html" class="ix-menu-item"><i class="ti ti-color-swatch ix-menu-icon"></i><span class="ix-menu-label">UI Components</span></a>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions">
+          <button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button>
+          <div class="ix-avatar">JD</div>
+        </div>
+      </header>
+      <div class="ix-content">
+
+        <!-- Page header with actions -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h1 class="ix-page-title" style="margin-bottom:2px">Add a new product</h1>
+            <p style="font-size:13px;color:var(--ix-text-muted)">Orders placed across your store</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="ix-btn ix-btn-outline">Discard</button>
+            <button class="ix-btn ix-btn-outline">Save draft</button>
+            <button class="ix-btn ix-btn-primary" onclick="ixToast('Product published!','success')"><i class="ti ti-send"></i> Publish product</button>
+          </div>
+        </div>
+
+        <!-- Two column layout -->
+        <div class="ix-layout-main">
+
+          <!-- Main column -->
+          <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:24px">
+
+            <!-- Product information -->
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Product information</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Name</label>
+                  <input type="text" class="ix-input" placeholder="Product title" />
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                  <div class="ix-form-group" style="margin:0">
+                    <label class="ix-label">SKU</label>
+                    <input type="number" class="ix-input" placeholder="SKU" />
+                  </div>
+                  <div class="ix-form-group" style="margin:0">
+                    <label class="ix-label">Barcode</label>
+                    <input type="text" class="ix-input" placeholder="0123-4567" />
+                  </div>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Description (optional)</label>
+                  <textarea class="ix-textarea" placeholder="Write product description..." style="min-height:120px"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Media / Upload -->
+            <div class="ix-card">
+              <div class="ix-card-header" style="padding-bottom:12px">
+                <div class="ix-card-title">Product image</div>
+                <a href="#" style="font-size:13px;color:var(--ix-accent);text-decoration:none">Add media from URL</a>
+              </div>
+              <div class="ix-card-body">
+                <div class="ix-dropzone">
+                  <div class="ix-dropzone-icon"><i class="ti ti-photo-up"></i></div>
+                  <div class="ix-dropzone-title">Drag and drop your image here</div>
+                  <div class="ix-dropzone-sub">or</div>
+                  <button class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-folder-open"></i> Browse image</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inventory with tabs -->
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Inventory</div></div>
+              <div class="ix-card-body">
+                <div style="display:flex;gap:24px">
+                  <!-- Nav pills -->
+                  <div style="width:180px;flex-shrink:0;border-right:1px solid var(--ix-border);padding-right:16px">
+                    <div class="ix-nav-pills" data-ix-tabs>
+                      <button class="ix-nav-pill active" data-ix-tab="inv-restock"><i class="ti ti-box" style="font-size:15px"></i> Restock</button>
+                      <button class="ix-nav-pill" data-ix-tab="inv-shipping"><i class="ti ti-car" style="font-size:15px"></i> Shipping</button>
+                      <button class="ix-nav-pill" data-ix-tab="inv-delivery"><i class="ti ti-world" style="font-size:15px"></i> Global Delivery</button>
+                      <button class="ix-nav-pill" data-ix-tab="inv-attributes"><i class="ti ti-link" style="font-size:15px"></i> Attributes</button>
+                      <button class="ix-nav-pill" data-ix-tab="inv-advanced"><i class="ti ti-lock" style="font-size:15px"></i> Advanced</button>
+                    </div>
+                  </div>
+                  <!-- Tab panels -->
+                  <div style="flex:1">
+                    <div id="inv-restock" class="ix-tab-panel">
+                      <div style="font-size:13px;font-weight:600;color:var(--ix-text-secondary);margin-bottom:12px">Options</div>
+                      <div class="ix-form-group">
+                        <label class="ix-label">Add to stock</label>
+                        <div style="display:flex;gap:8px">
+                          <input type="number" class="ix-input" placeholder="Quantity" style="max-width:200px" />
+                          <button class="ix-btn ix-btn-primary">Confirm</button>
+                        </div>
+                      </div>
+                      <div style="font-size:13px;color:var(--ix-text-secondary);display:flex;flex-direction:column;gap:4px">
+                        <span>Product in stock now: <strong style="color:var(--ix-text-primary)">54</strong></span>
+                        <span>Product in transit: <strong style="color:var(--ix-text-primary)">390</strong></span>
+                        <span>Last time restocked: <strong style="color:var(--ix-text-primary)">24th June, 2024</strong></span>
+                        <span>Total stock over lifetime: <strong style="color:var(--ix-text-primary)">2,430</strong></span>
+                      </div>
+                    </div>
+                    <div id="inv-shipping" class="ix-tab-panel" style="display:none">
+                      <div style="font-size:13px;font-weight:600;color:var(--ix-text-secondary);margin-bottom:12px">Shipping type</div>
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+                          <input type="radio" name="shipping" style="margin-top:3px" />
+                          <div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Fulfilled by Seller</div><div style="font-size:12px;color:var(--ix-text-muted)">You'll be responsible for product delivery.</div></div>
+                        </label>
+                        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+                          <input type="radio" name="shipping" checked style="margin-top:3px" />
+                          <div><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Fulfilled by Company <span class="ix-chip ix-chip-warning" style="padding:2px 7px;font-size:11px">RECOMMENDED</span></div><div style="font-size:12px;color:var(--ix-text-muted)">Your product, Our responsibility.</div></div>
+                        </label>
+                      </div>
+                    </div>
+                    <div id="inv-delivery" class="ix-tab-panel" style="display:none">
+                      <div style="font-size:13px;font-weight:600;color:var(--ix-text-secondary);margin-bottom:12px">Global delivery</div>
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="radio" name="delivery" style="margin-top:3px" /><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Worldwide delivery</div></label>
+                        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="radio" name="delivery" checked style="margin-top:3px" /><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Selected countries</div></label>
+                        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="radio" name="delivery" style="margin-top:3px" /><div style="font-size:13px;font-weight:500;color:var(--ix-text-primary)">Local delivery</div></label>
+                      </div>
+                    </div>
+                    <div id="inv-attributes" class="ix-tab-panel" style="display:none">
+                      <div style="font-size:13px;font-weight:600;color:var(--ix-text-secondary);margin-bottom:12px">Attributes</div>
+                      <div style="display:flex;flex-direction:column;gap:10px">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ix-text-secondary)"><input type="checkbox" class="ix-checkbox" /> Fragile product</label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ix-text-secondary)"><input type="checkbox" class="ix-checkbox" /> Biodegradable</label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ix-text-secondary)"><input type="checkbox" class="ix-checkbox" checked /> Frozen product</label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ix-text-secondary)"><input type="checkbox" class="ix-checkbox" checked /> Expiry date</label>
+                      </div>
+                    </div>
+                    <div id="inv-advanced" class="ix-tab-panel" style="display:none">
+                      <div style="font-size:13px;font-weight:600;color:var(--ix-text-secondary);margin-bottom:12px">Advanced</div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <div class="ix-form-group ix-mb-0"><label class="ix-label">Product ID type</label><select class="ix-select"><option>ISBN</option><option>UPC</option><option>EAN</option></select></div>
+                        <div class="ix-form-group ix-mb-0"><label class="ix-label">Product ID</label><input type="number" class="ix-input" placeholder="ISBN Number" /></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Side column -->
+          <div class="ix-layout-side-col" style="display:flex;flex-direction:column;gap:24px">
+
+            <!-- Pricing -->
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Pricing</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Base price</label>
+                  <input type="number" class="ix-input" placeholder="Price" />
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Discounted price</label>
+                  <input type="number" class="ix-input" placeholder="Discounted Price" />
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ix-text-secondary);cursor:pointer;margin-bottom:12px">
+                  <input type="checkbox" class="ix-checkbox" checked /> Charge tax on this product
+                </label>
+                <hr class="ix-divider" />
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span style="font-size:13px;color:var(--ix-text-secondary)">In stock</span>
+                  <label class="ix-switch">
+                    <input type="checkbox" checked />
+                    <span class="ix-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Organize -->
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Organize</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group">
+                  <label class="ix-label">Vendor</label>
+                  <select class="ix-select"><option value="">Select Vendor</option><option>Men's Clothing</option><option>Women's Clothing</option><option>Kid's Clothing</option></select>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Category</label>
+                  <select class="ix-select"><option value="">Select Category</option><option>Household</option><option>Electronics</option><option>Office</option><option>Automotive</option></select>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Collection</label>
+                  <select class="ix-select"><option value="">Collection</option><option>Men's Clothing</option><option>Women's Clothing</option></select>
+                </div>
+                <div class="ix-form-group">
+                  <label class="ix-label">Status</label>
+                  <select class="ix-select"><option>Published</option><option>Scheduled</option><option>Inactive</option></select>
+                </div>
+                <div class="ix-form-group ix-mb-0">
+                  <label class="ix-label">Tags</label>
+                  <input type="text" class="ix-input" value="Normal, Standard, Premium" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-view-gate.js?v=waveA20260721"></script>
+</body></html>

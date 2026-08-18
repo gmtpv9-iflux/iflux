@@ -1,0 +1,14 @@
+---
+description: Sau khi xong việc — summary + link file; không tự mở .md
+alwaysApply: true
+---
+
+# Deliverable — không tự mở file
+
+Khi hoàn thành task (đặc biệt tài liệu `.md`, audit, BRD, báo cáo):
+
+1. **Chỉ** tóm tắt kết quả + đưa **đường dẫn / link** để Owner tự mở.
+2. **CẤM** tự chạy `open`, `open_resource`, hoặc lệnh tương đương để mở file `.md` (hay Preview) sau khi làm xong.
+3. Không giả định Owner muốn Preview tự bật — Owner tự click link.
+
+Áp dụng mọi loại deliverable trong repo, không chỉ Product Backlogs.

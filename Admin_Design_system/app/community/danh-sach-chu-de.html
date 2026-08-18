@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-COM — Danh sách chủ đề · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/app/chu-de/chu-de-admin.css" />
+  <style>
+    .ix-modal-overlay { display: none; }
+    .ix-offcanvas { transform: translateX(100%); }
+  </style>
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Danh sách chủ đề</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Nguồn: database <code>content_chu_de</code> — tạo / sửa / lưu trữ đồng bộ User Web.</p>
+        <div class="ix-card">
+          <div class="ix-filter-bar">
+            <div class="ix-filter-row">
+              <div><label class="ix-label">Lifecycle</label><select class="ix-select" id="adm-str-reg-lifecycle"><option value="">Tất cả</option></select></div>
+              <div><label class="ix-label">Trạng thái</label><select class="ix-select" id="adm-str-reg-status"><option value="">Tất cả</option><option value="new">Mới</option><option value="mature">Trưởng thành</option><option value="declining">Suy yếu</option><option value="archived">Lưu trữ</option></select></div>
+            </div>
+          </div>
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" id="adm-str-reg-search" placeholder="Tìm tên chủ đề..." /></div>
+            <div class="ix-table-actions">
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="btn-str-reg-merge"><i class="ti ti-git-merge"></i> Gộp chủ đề</button>
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-str-reg-add"><i class="ti ti-plus"></i> Tạo chủ đề</button>
+            </div>
+          </div>
+          <div class="ix-table-wrap">
+            <table class="ix-table">
+              <thead><tr><th>Tên chủ đề</th><th>Lifecycle</th><th>Trạng thái</th><th>Số CP</th><th>Tạo bởi</th><th>Cập nhật</th><th>Thao tác</th></tr></thead>
+              <tbody id="adm-str-reg-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+
+<div id="offcanvas-str-reg-form-overlay" class="ix-offcanvas-overlay"></div>
+<div id="offcanvas-str-reg-form" class="ix-offcanvas">
+  <div class="ix-offcanvas-header">
+    <span class="ix-offcanvas-title" id="adm-str-reg-form-title">Tạo chủ đề mới</span>
+    <button type="button" class="ix-btn ix-btn-icon" data-ix-dismiss="offcanvas" aria-label="Đóng">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+  <div class="ix-offcanvas-body">
+    <div class="ix-form-group">
+      <label class="ix-label">Tên chủ đề <span style="color:var(--ix-danger)">*</span></label>
+      <input class="ix-input" id="adm-str-reg-name" placeholder="VD: Đầu tư công" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mô tả</label>
+      <textarea class="ix-input" id="adm-str-reg-desc" rows="3"></textarea>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Lifecycle</label>
+      <select class="ix-select" id="adm-str-reg-form-lifecycle"></select>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Trạng thái</label>
+      <select class="ix-select" id="adm-str-reg-form-status">
+        <option value="new">Mới</option>
+        <option value="mature">Trưởng thành</option>
+        <option value="declining">Suy yếu</option>
+        <option value="archived">Lưu trữ</option>
+      </select>
+    </div>
+  </div>
+  <div class="ix-offcanvas-footer">
+    <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="offcanvas">Huỷ</button>
+    <button type="button" class="ix-btn ix-btn-primary" id="btn-str-reg-save">
+      <i class="ti ti-check"></i> Lưu
+    </button>
+  </div>
+</div>
+
+<div class="ix-modal-overlay" id="modal-str-merge">
+  <div class="ix-modal-box" style="max-width:480px">
+    <button type="button" class="ix-modal-close" data-ix-dismiss="modal"><i class="ti ti-x"></i></button>
+    <div class="ix-modal-title">Gộp chủ đề</div>
+    <p style="font-size:13px;color:var(--ix-text-muted);margin:12px 0 16px">Tính năng gộp trên DB đang hoàn thiện.</p>
+    <div class="ix-form-group"><label class="ix-label">Chủ đề nguồn</label><select class="ix-select" id="adm-str-merge-source"></select></div>
+    <div class="ix-form-group"><label class="ix-label">Chủ đề đích</label><select class="ix-select" id="adm-str-merge-target"></select></div>
+    <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
+      <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
+      <button type="button" class="ix-btn ix-btn-primary" id="btn-str-merge-confirm">Gộp</button>
+    </div>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/chu-de-registry-store.js?v=20260723story1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=reqMenu20260723story"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/app/chu-de/chu-de-registry-page.js?v=offcanvasForm20260725"></script>
+<script>AdmChuDeRegistry.init();</script>
+</body>
+</html>

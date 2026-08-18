@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../../Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
+  <link rel="stylesheet" href="../iflux-web-ui/app-shell.css?v=stickyFix20260811" />
+  <link rel="stylesheet" href="../iflux-web-ui/community.css" />
+  <link rel="stylesheet" href="../iflux-web-ui/profile.css?v=accountEarlyTab20260728" />
+  <script>
+  (function () {
+    var TAB_MAP = {
+      timeline: 'tab-affiliate', affiliate: 'tab-affiliate',
+      payment: 'tab-payment', billing: 'tab-payment',
+      privacy: 'tab-privacy', security: 'tab-security',
+      profile: 'tab-profile', account: 'tab-profile', personal: 'tab-profile'
+    };
+    var tabParam = null;
+    try { tabParam = new URLSearchParams(location.search).get('tab'); } catch (e) { /* ignore */ }
+    var tabId = 'tab-affiliate';
+    if (tabParam) {
+      if (tabParam === 'personal' || tabParam === 'account') {
+        tabId = window.matchMedia && window.matchMedia('(max-width: 1024px)').matches
+          ? 'tab-profile' : 'tab-affiliate';
+      } else if (TAB_MAP[tabParam]) {
+        tabId = TAB_MAP[tabParam];
+      } else if (tabParam.indexOf('tab-') === 0) {
+        tabId = tabParam;
+      } else {
+        tabId = 'tab-' + tabParam;
+      }
+    }
+    document.documentElement.setAttribute('data-ifx-account-tab', tabId);
+    if (window.matchMedia && window.matchMedia('(max-width: 1024px)').matches) {
+      document.documentElement.setAttribute(
+        'data-ifx-account-view',
+        tabId === 'tab-profile' ? 'profile' : 'sub'
+      );
+    }
+  })();
+  </script>
+</head>
+<body>
+<div class="ifx-app" data-ifx-account-profile>
+<script>
+(function () {
+  var app = document.querySelector('.ifx-app[data-ifx-account-profile]');
+  if (!app) return;
+  var view = document.documentElement.getAttribute('data-ifx-account-view');
+  app.setAttribute('data-ifx-account-view', view || 'sub');
+})();
+</script>
+  <header class="ifx-topnav">
+    <a href="/nha-cua-toi" class="ifx-topnav-brand">
+      <img class="ix-brand-logo" data-ifx-seo-logo alt="iFlux" width="120" height="32" hidden />
+    </a>
+    <nav class="ifx-topnav-menu"></nav>
+    <div class="ifx-topnav-actions">
+      <div class="ifx-topnav-search-wrap" data-ifx-header-search>
+        <div class="ix-search ifx-hdr-search" role="combobox" aria-expanded="false">
+          <i class="ti ti-search"></i>
+          <input type="search" autocomplete="off" spellcheck="false" placeholder="Tìm CP, ngành, họ, chủ đề… (⌘K)" aria-label="Tìm kiếm thị trường" />
+          <kbd class="ifx-hdr-search-kbd">⌘K</kbd>
+        </div>
+        <div class="ifx-hdr-search-dropdown" hidden></div>
+      </div>
+<div class="ix-dropdown ifx-user-menu">
+        <button class="ix-avatar" data-ix-toggle="dropdown" data-ifx-user-initials>…</button>
+        <div class="ix-dropdown-menu"></div>
+      </div>
+    </div>
+  </header>
+  <main class="ifx-main">
+    <h1 class="ix-page-title" id="ifx-profile-title">Tài khoản của tôi</h1>
+    <div class="ix-breadcrumb ix-mb-24">
+      <a href="../home/index.html">Nhà của tôi</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span id="ifx-profile-crumb">Hồ sơ</span>
+    </div>
+<!-- Layout: sidebar left + content right -->
+        <div class="ix-profile-grid">
+
+          <!-- ─── LEFT SIDEBAR ─────────────────────────────── -->
+          <div class="ix-profile-sidebar" data-ifx-profile-sidebar>
+
+            <!-- Profile card -->
+            <div class="ix-card ix-mb-24">
+              <div class="ix-profile-hero" data-ifx-profile-hero>
+                <div class="ifx-profile-avatar-wrap">
+                  <div class="ix-profile-avatar" id="ifx-profile-avatar" data-bind="avatar">…</div>
+                  <button type="button" class="ifx-profile-avatar-edit" id="btn-change-avatar" data-ifx-own-only title="Đổi ảnh đại diện" aria-label="Đổi ảnh đại diện"><i class="ti ti-camera"></i></button>
+                  <input type="file" id="ifx-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden data-ifx-own-only />
+                </div>
+
+                <div class="ifx-profile-name-row">
+                  <div class="ix-profile-name"><span data-bind="display_name">—</span></div>
+                  <span class="ix-chip ix-chip-primary ifx-profile-tier-chip" data-ifx-tier-inline><span data-bind="tier_label">—</span></span>
+                </div>
+
+                <div class="ifx-profile-public-actions" data-ifx-public-only hidden>
+                  <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="btn-follow-user">Theo dõi</button>
+                  <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="btn-friend-user"><i class="ti ti-user-plus" style="font-size:14px"></i> Kết bạn</button>
+                  <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="btn-message-user"><i class="ti ti-message" style="font-size:14px"></i> Nhắn tin</button>
+                  <button type="button" class="ix-btn ix-btn-outline ix-btn-sm ifx-btn-block" id="btn-block-user"><i class="ti ti-ban" style="font-size:14px"></i> Chặn</button>
+                </div>
+
+                <!-- Community stats -->
+                <div class="ix-profile-stats" data-ifx-privacy="stats">
+                  <div class="ix-profile-stat">
+                    <div class="ix-profile-stat-value"><span data-bind="posts">—</span></div>
+                    <div class="ix-profile-stat-label">Bài viết</div>
+                  </div>
+                  <div class="ix-profile-stat">
+                    <div class="ix-profile-stat-value"><span data-bind="followers">—</span></div>
+                    <div class="ix-profile-stat-label">Người theo dõi</div>
+                  </div>
+                  <div class="ix-profile-stat">
+                    <div class="ix-profile-stat-value"><span data-bind="following">—</span></div>
+                    <div class="ix-profile-stat-label">Đang theo dõi</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Detail list -->
+              <div style="padding:0 20px 20px">
+                <!-- VIEW: xem thông tin -->
+                <div data-ifx-side-view>
+                  <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Chi tiết</div>
+                  <ul class="ix-detail-list">
+                    <li data-ifx-privacy="username"><span class="ix-detail-label">Tên đăng nhập</span><span class="ix-detail-val"><span data-bind="username">—</span></span></li>
+                    <li data-ifx-own-only><span class="ix-detail-label">Email</span><span class="ix-detail-val"><span data-bind="email">—</span></span></li>
+                    <li data-ifx-privacy="status"><span class="ix-detail-label">Trạng thái</span><span class="ix-chip ix-chip-success" style="font-size:11px" data-bind="status_label">—</span></li>
+                    <li data-ifx-privacy="role"><span class="ix-detail-label">Vai trò</span><span class="ix-detail-val"><span data-bind="role">—</span></span></li>
+                    <li data-ifx-own-only><span class="ix-detail-label">Số điện thoại</span><span class="ix-detail-val"><span data-bind="phone">—</span></span></li>
+                    <li data-ifx-privacy="joined_at"><span class="ix-detail-label">Tham gia</span><span class="ix-detail-val"><span data-bind="joined_at">—</span></span></li>
+                    <li data-ifx-privacy="country"><span class="ix-detail-label">Quốc gia</span><span class="ix-detail-val"><span data-bind="country">—</span></span></li>
+                    <li data-ifx-privacy="bio"><span class="ix-detail-label">Giới thiệu</span><span class="ix-detail-val" style="font-size:13px;line-height:1.5"><span data-bind="bio">—</span></span></li>
+                  </ul>
+                  <div style="display:flex;gap:10px;margin-top:16px" data-ifx-own-only>
+                    <button type="button" class="ix-btn ix-btn-primary" style="flex:1" data-ifx-side-edit-open>
+                      <i class="ti ti-edit" style="font-size:13px"></i> Chỉnh sửa hồ sơ
+                    </button>
+                  </div>
+                </div>
+
+                <!-- EDIT: sửa trực tiếp trên sidebar -->
+                <div data-ifx-side-edit hidden data-ifx-own-only>
+                  <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Chỉnh sửa hồ sơ</div>
+                  <div class="ix-form-group"><label class="ix-label">Họ tên</label><input type="text" class="ix-input" data-bind-input="display_name" /></div>
+                  <div class="ix-form-group"><label class="ix-label">Tên đăng nhập</label><input type="text" class="ix-input" data-bind-input="username" /></div>
+                  <div class="ix-form-group"><label class="ix-label">Email</label><input type="email" class="ix-input" data-bind-input="email" /></div>
+                  <div class="ix-form-group"><label class="ix-label">Số điện thoại</label><input type="text" class="ix-input" data-bind-input="phone" /></div>
+                  <div class="ix-form-group"><label class="ix-label">Quốc gia</label><input type="text" class="ix-input" data-bind-input="country" /></div>
+                  <div class="ix-form-group"><label class="ix-label">Giới thiệu</label><textarea class="ix-input" rows="3" data-bind-input="bio" style="resize:vertical"></textarea></div>
+                  <div style="display:flex;gap:10px;margin-top:8px">
+                    <button type="button" class="ix-btn ix-btn-primary" style="flex:1" id="btn-save-profile"><i class="ti ti-device-floppy" style="font-size:14px"></i> Lưu</button>
+                    <button type="button" class="ix-btn ix-btn-ghost" data-ifx-side-edit-cancel><i class="ti ti-x" style="font-size:13px"></i> Hủy</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plan promo card — Free→Premium · Premium→Elite · Elite ẩn -->
+            <div class="ix-card ix-plan-card ix-mb-24" data-ifx-own-only data-ifx-plan-promo>
+              <div class="ix-card-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                  <span class="ix-chip ix-chip-primary"><span data-bind="plan_name">—</span></span>
+                  <div class="ix-plan-price" data-bind="plan_price"><span class="ix-plan-price-cur">₫</span><span class="ix-plan-price-num">—</span><span class="ix-plan-price-per">/tháng</span></div>
+                </div>
+                <div data-ifx-plan-features></div>
+                <div style="margin:16px 0 8px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ix-text-muted);margin-bottom:6px">
+                    <span>Chu kỳ thanh toán</span><span style="color:var(--ix-text-primary);font-weight:600"><span data-bind="plan_days">—</span></span>
+                  </div>
+                  <div style="height:6px;background:rgba(105,108,255,.2);border-radius:3px;overflow:hidden">
+                    <div data-bind="plan_progress" style="width:0%;height:100%;background:var(--ix-accent);border-radius:3px"></div>
+                  </div>
+                </div>
+                <a href="../pricing/index.html" class="ix-btn ix-btn-primary" data-ifx-plan-upgrade style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px">
+                  <i class="ti ti-arrow-up-circle" style="font-size:13px"></i> Nâng cấp Premium
+                </a>
+              </div>
+            </div>
+
+          </div>
+          <!-- ─── END LEFT SIDEBAR ──────────────────────────── -->
+
+          <!-- ─── RIGHT CONTENT ────────────────────────────── -->
+          <div style="flex:1;min-width:0">
+
+            <!-- Tab navigation — hydrated from IfluxAppShell.resolveNavigationItems('accountProfile') -->
+            <div class="ix-profile-tabs" data-ifx-account-profile-tabs></div>
+
+            <!-- ── TAB: AFFILIATE ── -->
+            <div id="tab-affiliate" class="ix-tab-content" data-ix-profile-panel="tab-affiliate" data-ifx-own-only data-ifx-aff-root data-ifx-aff-state="loading">
+
+              <!-- Referral link & code — hàng ngang đầu tab -->
+              <div class="ix-card ix-mb-24 ifx-aff-ref-bar">
+                <div class="ix-card-body">
+                  <div class="ifx-aff-ref-head">
+                    <div class="ifx-aff-ref-title">
+                      <div class="ix-stat-icon accent" style="width:32px;height:32px;font-size:14px"><i class="ti ti-share"></i></div>
+                      <div>
+                        <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Liên kết & mã giới thiệu</div>
+                        <div style="font-size:12px;color:var(--ix-text-muted);margin-top:2px">Chia sẻ để nhận hoa hồng affiliate</div>
+                      </div>
+                    </div>
+                    <div class="ifx-aff-ref-layers">
+                      <span class="ix-layer-pill"><span class="ix-layer-f0">F0</span> <strong data-ifx-aff-rate="f0">—%</strong></span>
+                      <span class="ix-layer-pill"><span class="ix-layer-f1">F1</span> <strong data-ifx-aff-rate="f1">—%</strong></span>
+                      <span class="ix-layer-pill"><span class="ix-layer-f2">F2</span> <strong data-ifx-aff-rate="f2">—%</strong></span>
+                    </div>
+                  </div>
+                  <div class="ifx-aff-ref-fields">
+                    <div class="ifx-aff-ref-field">
+                      <label class="ix-label">Liên kết giới thiệu</label>
+                      <div class="ix-ref-row" style="margin-top:0">
+                        <input class="ix-ref-input" readonly value="" id="ref-link" />
+                        <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-copy-ref="ref-link">
+                          <i class="ti ti-copy" style="font-size:13px"></i> Sao chép
+                        </button>
+                      </div>
+                    </div>
+                    <div class="ifx-aff-ref-field ifx-aff-ref-field--code">
+                      <label class="ix-label">Mã giới thiệu</label>
+                      <div class="ix-ref-row" style="margin-top:0">
+                        <input class="ix-ref-input" readonly value="" id="ref-code" style="font-size:15px;font-weight:700;letter-spacing:2px;text-align:center" />
+                        <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-copy-ref="ref-code">
+                          <i class="ti ti-copy" style="font-size:13px"></i> Sao chép
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ix-card ix-mb-24 ifx-aff-loading" data-ifx-aff-loading>
+                <div class="ix-card-body ifx-aff-loading__body">Đang tải dữ liệu affiliate…</div>
+              </div>
+
+              <div class="ifx-aff-data-pane" data-ifx-aff-data-pane hidden>
+
+              <!-- Summary strip -->
+              <div class="ix-card ix-mb-24" style="padding:0">
+                <div class="ix-aff-summary">
+                  <div class="ix-aff-sum-item">
+                    <div class="ix-aff-sum-val ix-aff-sum-accent" data-ifx-aff-sum="total">—</div>
+                    <div class="ix-aff-sum-label">Tổng thu nhập (tất cả)</div>
+                  </div>
+                  <div class="ix-aff-sum-item">
+                    <div class="ix-aff-sum-val ix-aff-sum-unpaid" data-ifx-aff-sum="unpaid">—</div>
+                    <div class="ix-aff-sum-label">Chờ thanh toán</div>
+                  </div>
+                  <div class="ix-aff-sum-item">
+                    <div class="ix-aff-sum-val" data-ifx-aff-sum="signups">—</div>
+                    <div class="ix-aff-sum-label">Tổng giới thiệu (F0+F1+F2)</div>
+                  </div>
+                  <div class="ix-aff-sum-item">
+                    <div class="ix-aff-sum-val ix-aff-sum-conv" data-ifx-aff-sum="conv">—</div>
+                    <div class="ix-aff-sum-label">Tỷ lệ chuyển đổi</div>
+                  </div>
+                </div>
+
+                <!-- Commission rate info -->
+                <div class="ix-layer-info">
+                  <span style="font-size:12px;color:var(--ix-text-muted);font-weight:500">Tỷ lệ hoa hồng:</span>
+                  <div class="ix-layer-pill"><span class="ix-layer-f0">F0</span> <strong data-ifx-aff-rate="f0">—%</strong> — bạn giới thiệu trực tiếp</div>
+                  <div class="ix-layer-pill"><span class="ix-layer-f1">F1</span> <strong data-ifx-aff-rate="f1">—%</strong> — F0 của bạn giới thiệu</div>
+                  <div class="ix-layer-pill"><span class="ix-layer-f2">F2</span> <strong data-ifx-aff-rate="f2">—%</strong> — F1 của bạn giới thiệu</div>
+                </div>
+
+                <!-- Payout action -->
+                <div class="ifx-aff-payout-bar">
+                  <div class="ifx-aff-payout-bar__balance">
+                    Số dư khả dụng: <strong data-ifx-aff-balance>—</strong>
+                    <span class="ifx-aff-payout-bar__min">(min. rút <span data-ifx-aff-min-payout>—</span>)</span>
+                  </div>
+                  <button type="button" class="ix-btn ix-btn-success ix-btn-sm" data-ifx-aff-payout disabled aria-disabled="true">
+                    <i class="ti ti-cash" style="font-size:13px"></i> Rút hoa hồng
+                  </button>
+                </div>
+              </div>
+
+              <!-- Network overview -->
+              <div class="ix-card ix-mb-24">
+                <div class="ix-card-header"><div class="ix-card-title">Tổng quan mạng giới thiệu</div></div>
+                <div class="ix-card-body">
+                  <div id="ifx-aff-network-grid" class="ifx-aff-network-grid"></div>
+                </div>
+              </div>
+
+              <!-- Danh sách thành viên -->
+              <div class="ix-card ix-mb-24">
+                <div class="ix-table-toolbar">
+                  <div>
+                    <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Danh sách thành viên</div>
+                    <div style="font-size:12px;color:var(--ix-text-muted);margin-top:2px">Thành viên trong hệ thống giới thiệu F0 · F1 · F2 của bạn</div>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                    <select class="ix-input" id="aff-members-layer" style="width:auto;min-width:140px;padding:6px 10px;font-size:13px">
+                      <option value="">Tất cả lớp</option>
+                      <option value="F0">F0 — Trực tiếp</option>
+                      <option value="F1">F1 — Cấp 2</option>
+                      <option value="F2">F2 — Cấp 3</option>
+                    </select>
+                    <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="search" placeholder="Tìm thành viên…" data-ifx-aff-members-search autocomplete="off" /></div>
+                  </div>
+                </div>
+                <div class="ix-table-responsive">
+                  <table class="ix-table" id="aff-members-table">
+                    <thead><tr>
+                      <th>Ngày tham gia</th>
+                      <th>Thành viên</th>
+                      <th>Lớp</th>
+                      <th>Trạng thái</th>
+                    </tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div id="ifx-aff-members-pager" style="padding:12px 16px 4px;display:flex;justify-content:center"></div>
+              </div>
+
+              <!-- Affiliate transaction table -->
+              <div class="ix-card">
+                <div class="ix-table-toolbar">
+                  <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Lịch sử hoa hồng</div>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="search" placeholder="Tìm hoa hồng…" data-ifx-aff-commission-search autocomplete="off" /></div>
+                    <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" disabled aria-disabled="true" title="Đang triển khai"><i class="ti ti-download" style="font-size:12px"></i> Xuất</button>
+                  </div>
+                </div>
+                <div class="ix-table-responsive">
+                  <table class="ix-table" id="aff-table">
+                    <thead><tr>
+                      <th>Ngày</th>
+                      <th>Người được giới thiệu</th>
+                      <th>Lớp</th>
+                      <th>Sản phẩm</th>
+                      <th>Giá trị đơn</th>
+                      <th>Hoa hồng</th>
+                      <th>Trạng thái</th>
+                    </tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div id="ifx-aff-commission-pager" style="padding:12px 16px 4px;display:flex;justify-content:center"></div>
+              </div>
+
+              </div><!-- /.ifx-aff-data-pane -->
+            </div>
+            <!-- ── TAB: TÀI KHOẢN THANH TOÁN ── -->
+            <div id="tab-payment" class="ix-tab-content" data-ix-profile-panel="tab-payment" data-ifx-own-only>
+                <form id="ifx-mine-payment-form" class="ifx-mine-payment-stack">
+                  <div class="ix-card ix-mb-24">
+                    <div class="ix-card-header"><div class="ix-card-title">Thanh toán gói cước</div></div>
+                    <div class="ix-card-body">
+                      <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 16px;line-height:1.5">Phương thức mặc định khi mua hoặc gia hạn gói Premium / Elite.</p>
+                      <div class="ifx-pay-method-row">
+                        <label class="ifx-pay-method-opt"><input type="radio" name="payMethod" value="card" data-pay-field="payMethod" checked /> <span><i class="ti ti-credit-card"></i> Thẻ tín dụng / Ghi nợ</span></label>
+                        <label class="ifx-pay-method-opt"><input type="radio" name="payMethod" value="momo" data-pay-field="payMethod" /> <span><i class="ti ti-wallet"></i> MoMo</span></label>
+                        <label class="ifx-pay-method-opt"><input type="radio" name="payMethod" value="transfer" data-pay-field="payMethod" /> <span><i class="ti ti-building-bank"></i> Chuyển khoản</span></label>
+                      </div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+                        <div class="ix-form-group"><label class="ix-label">Loại thẻ</label><input type="text" class="ix-input" placeholder="Visa, Mastercard…" data-pay-field="cardBrand" /></div>
+                        <div class="ix-form-group"><label class="ix-label">4 số cuối thẻ</label><input type="text" class="ix-input" placeholder="1234" maxlength="4" data-pay-field="cardLast4" /></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ix-card ix-mb-24">
+                    <div class="ix-card-header"><div class="ix-card-title">Nhận hoa hồng Affiliate</div></div>
+                    <div class="ix-card-body">
+                      <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 16px;line-height:1.5">Tài khoản ngân hàng để iFlux chuyển hoa hồng referral khi bạn yêu cầu rút tiền.</p>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                        <div class="ix-form-group"><label class="ix-label">Ngân hàng</label><input type="text" class="ix-input" placeholder="VD: Vietcombank" data-pay-field="bankName" /></div>
+                        <div class="ix-form-group"><label class="ix-label">Chi nhánh</label><input type="text" class="ix-input" placeholder="Tùy chọn" data-pay-field="bankBranch" /></div>
+                        <div class="ix-form-group"><label class="ix-label">Số tài khoản</label><input type="text" class="ix-input" placeholder="0123456789" data-pay-field="bankAccount" /></div>
+                        <div class="ix-form-group"><label class="ix-label">Chủ tài khoản</label><input type="text" class="ix-input" placeholder="NGUYEN VAN A" data-pay-field="bankHolder" /></div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="ix-btn ix-btn-primary"><i class="ti ti-device-floppy" style="font-size:14px"></i> Lưu tài khoản thanh toán</button>
+                </form>
+              </div>
+
+            <!-- ── TAB: QUYỀN RIÊNG TƯ ── -->
+            <div id="tab-privacy" class="ix-tab-content" data-ix-profile-panel="tab-privacy" data-ifx-own-only>
+                <div class="ix-card ix-mb-24">
+                  <div class="ix-card-header"><div class="ix-card-title">Quyền riêng tư hồ sơ</div></div>
+                  <div class="ix-card-body">
+                    <p style="font-size:13px;color:var(--ix-text-muted);margin:0 0 20px;line-height:1.55">Chọn thông tin nào người khác được xem khi truy cập hồ sơ công khai của bạn. Mặc định tất cả đều ẩn — chỉ hiển thị tên và ảnh đại diện.</p>
+                    <div class="ifx-privacy-cols">
+                      <div>
+                        <div style="font-size:13px;font-weight:600;color:var(--ix-text-primary);margin-bottom:10px"><i class="ti ti-eye" style="font-size:14px;color:var(--ix-accent)"></i> Luôn hiển thị công khai</div>
+                        <ul class="ifx-privacy-static-list" id="ifx-privacy-always-public"></ul>
+                      </div>
+                      <div>
+                        <div style="font-size:13px;font-weight:600;color:var(--ix-text-primary);margin-bottom:10px"><i class="ti ti-lock" style="font-size:14px;color:var(--ix-text-muted)"></i> Không bao giờ hiển thị</div>
+                        <ul class="ifx-privacy-static-list" id="ifx-privacy-always-private"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ix-card ix-mb-24">
+                  <div class="ix-card-header" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
+                    <div class="ix-card-title">Thiết lập hiển thị</div>
+                    <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ifx-save-privacy><i class="ti ti-device-floppy" style="font-size:13px"></i> Lưu thay đổi</button>
+                  </div>
+                  <div class="ix-card-body" style="padding-top:0">
+                    <div id="ifx-privacy-settings"></div>
+                  </div>
+                </div>
+                <div class="ix-card">
+                  <div class="ix-card-header" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
+                    <div class="ix-card-title">Thiết lập thông báo</div>
+                    <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-ifx-save-privacy><i class="ti ti-device-floppy" style="font-size:13px"></i> Lưu thay đổi</button>
+                  </div>
+                  <div class="ix-card-body" style="padding-top:0">
+                    <p class="ifx-notif-pref-intro">Bật/tắt từng thông báo in-app. Nhóm chỉ để dễ đọc — mỗi loại độc lập.</p>
+                    <div id="ifx-notification-settings"></div>
+                  </div>
+                </div>
+              </div>
+
+            <!-- ── TAB: BẢO MẬT ── -->
+            <div id="tab-security" class="ix-tab-content" data-ix-profile-panel="tab-security" data-ifx-own-only>
+                <div class="ix-card ix-mb-24">
+                  <div class="ix-card-header"><div class="ix-card-title">Đổi mật khẩu</div></div>
+                  <div class="ix-card-body">
+                    <div id="ifx-security-no-password" class="ix-alert ix-alert-info" hidden style="margin:0 0 16px">
+                      <i class="ti ti-info-circle ix-alert-icon"></i>
+                      <div class="ix-alert-body">
+                        Tài khoản đăng nhập bằng mạng xã hội — chưa có mật khẩu email. Tính năng đặt mật khẩu sẽ được bổ sung sau.
+                      </div>
+                    </div>
+                    <form id="ifx-security-password-form" autocomplete="off" style="display:flex;flex-direction:column;gap:16px;max-width:480px">
+                      <div class="ix-form-group">
+                        <label class="ix-label" for="ifx-sec-current">Mật khẩu hiện tại</label>
+                        <div class="ix-input-password-wrap">
+                          <input type="password" id="ifx-sec-current" class="ix-input" data-sec-field="current" autocomplete="current-password" placeholder="············" required />
+                          <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="ifx-sec-current" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+                        </div>
+                      </div>
+                      <div class="ix-form-group">
+                        <label class="ix-label" for="ifx-sec-new">Mật khẩu mới</label>
+                        <div class="ix-input-password-wrap">
+                          <input type="password" id="ifx-sec-new" class="ix-input" data-sec-field="new" autocomplete="new-password" placeholder="············" minlength="8" required />
+                          <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="ifx-sec-new" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+                        </div>
+                        <div class="ifx-field-hint" style="font-size:12px;color:var(--ix-text-muted);margin-top:6px">Ít nhất 8 ký tự</div>
+                      </div>
+                      <div class="ix-form-group">
+                        <label class="ix-label" for="ifx-sec-confirm">Xác nhận mật khẩu mới</label>
+                        <div class="ix-input-password-wrap">
+                          <input type="password" id="ifx-sec-confirm" class="ix-input" data-sec-field="confirm" autocomplete="new-password" placeholder="············" minlength="8" required />
+                          <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="ifx-sec-confirm" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+                        </div>
+                      </div>
+                      <div>
+                        <button type="submit" class="ix-btn ix-btn-primary" data-ifx-save-password><i class="ti ti-device-floppy" style="font-size:13px"></i> Lưu mật khẩu</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="ix-card">
+                  <div class="ix-card-header"><div class="ix-card-title">Xác thực hai yếu tố (2FA)</div></div>
+                  <div class="ix-card-body">
+                    <div class="ix-alert ix-alert-info" style="margin:0">
+                      <i class="ti ti-info-circle ix-alert-icon"></i>
+                      <div class="ix-alert-body">
+                        <strong>Sắp có</strong> — Xác thực hai yếu tố đang được triển khai.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- Public: không có nội dung công khai -->
+            <div id="ifx-profile-public-empty" class="ix-tab-content" hidden>
+              <div class="ix-card">
+                <div class="ix-card-body ifx-profile-empty">
+                  <i class="ti ti-shield-lock"></i>
+                  <p style="margin:0">Người dùng này đã ẩn nội dung hồ sơ công khai.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- ─── END RIGHT CONTENT ────────────────────────── -->
+        </div>
+  </main>
+</div>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=canonOgUrlL5_20260812"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/account-feature-boot.js?v=p6Writer20260730"></script>
+</body>
+</html>

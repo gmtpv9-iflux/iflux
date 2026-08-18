@@ -1,0 +1,517 @@
+[
+  {
+    "order": 0,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/affiliate-resolver.js?v=regAffLock20260728",
+    "path": "/User_Web/iflux-web-ui/runtime/affiliate-resolver.js",
+    "query": "v=regAffLock20260728",
+    "http_status": "200",
+    "bytes": 6133,
+    "md5": "be7f178fed2bfea5fdecc06e91c0e334",
+    "artifact": "login-surface-artifacts/00-affiliate-resolver.js",
+    "exports_global_assign": [
+      "IfluxAffiliateResolver"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 1,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/iflux-normalize-path.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/iflux-normalize-path.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 970,
+    "md5": "02bcfd104a846cee4d8eb338adf15b90",
+    "artifact": "login-surface-artifacts/01-iflux-normalize-path.js",
+    "exports_global_assign": [
+      "IfluxNormalizePath"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 2,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/navigation-context.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/navigation-context.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 6635,
+    "md5": "c5db05ae0616be8af6f9bee09de2bbfa",
+    "artifact": "login-surface-artifacts/02-navigation-context.js",
+    "exports_global_assign": [
+      "IfluxIdentityContext",
+      "IfluxNavigationContext"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": true
+    }
+  },
+  {
+    "order": 3,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/pnc-shell-bridge.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/pnc-shell-bridge.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 993,
+    "md5": "0a7d825836a4daa4a881a424efdbdf3d",
+    "artifact": "login-surface-artifacts/03-pnc-shell-bridge.js",
+    "exports_global_assign": [
+      "IfluxPncShellBridge"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 4,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/pnc-lifecycle.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/pnc-lifecycle.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 6118,
+    "md5": "b3c3c2cd2943038f66a69ebd9313346c",
+    "artifact": "login-surface-artifacts/04-pnc-lifecycle.js",
+    "exports_global_assign": [
+      "IfluxPncLifecycle",
+      "location"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 5,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/shell-url-writer.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/shell-url-writer.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 5579,
+    "md5": "dbd7b9215f6a6c1d3d490ef96fd2e438",
+    "artifact": "login-surface-artifacts/05-shell-url-writer.js",
+    "exports_global_assign": [
+      "IfluxShellUrlWriter"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 6,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/runtime/iflux-href.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/runtime/iflux-href.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 4326,
+    "md5": "6dcd9fd273f81abc68c0063714f3fa5b",
+    "artifact": "login-surface-artifacts/06-iflux-href.js",
+    "exports_global_assign": [
+      "IfluxHref",
+      "requestAnimationFrame"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 7,
+    "phase": "A_html_head",
+    "url": "/User_Web/iflux-web-ui/path-base.js?v=b4w3_20260727",
+    "path": "/User_Web/iflux-web-ui/path-base.js",
+    "query": "v=b4w3_20260727",
+    "http_status": "200",
+    "bytes": 5888,
+    "md5": "35877d1a0c241e9d5c551b5058b742e2",
+    "artifact": "login-surface-artifacts/07-path-base.js",
+    "exports_global_assign": [],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 8,
+    "phase": "B_auth_login_boot_module",
+    "url": "/User_Web/iflux-web-ui/runtime/auth-login-boot.js?v=regAffLock20260728",
+    "path": "/User_Web/iflux-web-ui/runtime/auth-login-boot.js",
+    "query": "v=regAffLock20260728",
+    "http_status": "200",
+    "bytes": 1065,
+    "md5": "5bf58830b2335bb3243ad93cfd928b96",
+    "artifact": "login-surface-artifacts/08-auth-login-boot.js",
+    "exports_global_assign": [],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 9,
+    "phase": "C_legacy_bridge_import",
+    "url": "/User_Web/iflux-web-ui/runtime/legacy-bridge.js?v=phaseCW420260721",
+    "path": "/User_Web/iflux-web-ui/runtime/legacy-bridge.js",
+    "query": "v=phaseCW420260721",
+    "http_status": "200",
+    "bytes": 7136,
+    "md5": "9a50a80d737b94f91e837942c6b8a1c9",
+    "artifact": "login-surface-artifacts/09-legacy-bridge.js",
+    "exports_global_assign": [],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 10,
+    "phase": "D_SHELL",
+    "url": "/User_Web/iflux-web-ui/iflux-platform-boot.js?v=homeCd20260724",
+    "path": "/User_Web/iflux-web-ui/iflux-platform-boot.js",
+    "query": "v=homeCd20260724",
+    "http_status": "200",
+    "bytes": 39918,
+    "md5": "3fb7f99d6a1c2ed4b87771330bee9464",
+    "artifact": "login-surface-artifacts/10-iflux-platform-boot.js",
+    "exports_global_assign": [
+      "IFLUX_API_BASE",
+      "IFLUX_RUNTIME_ENV",
+      "IfluxApiConfig",
+      "IfluxAppShell",
+      "IfluxAppShellHeader",
+      "IfluxData",
+      "IfluxNavRegistry",
+      "IfluxRoutes",
+      "IfluxRuntime"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 11,
+    "phase": "D_SHELL",
+    "url": "/User_Web/iflux-web-ui/iflux-api-bundle.js",
+    "path": "/User_Web/iflux-web-ui/iflux-api-bundle.js",
+    "query": "",
+    "http_status": "200",
+    "bytes": 20499,
+    "md5": "ac9d713c37a6b1de87d6fb45a7ba252e",
+    "artifact": "login-surface-artifacts/11-iflux-api-bundle.js",
+    "exports_global_assign": [
+      "IfluxApiClient"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 12,
+    "phase": "D_SHELL",
+    "url": "/User_Web/iflux-web-ui/auth.js?v=regSoT_20260728",
+    "path": "/User_Web/iflux-web-ui/auth.js",
+    "query": "v=regSoT_20260728",
+    "http_status": "200",
+    "bytes": 55047,
+    "md5": "5f36b9aa81b87aa4e085ea55714330b7",
+    "artifact": "login-surface-artifacts/12-auth.js",
+    "exports_global_assign": [
+      "IfluxAuth",
+      "IfluxAuthRedirectPolicy",
+      "IfluxUserStorage"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": true
+    }
+  },
+  {
+    "order": 13,
+    "phase": "E_FEATURE",
+    "url": "/Admin_Design_system/iflux-admin-ui/iflux-customers-store.js",
+    "path": "/Admin_Design_system/iflux-admin-ui/iflux-customers-store.js",
+    "query": "",
+    "http_status": "200",
+    "bytes": 4568,
+    "md5": "c66aca95464f4a2d76211862dbcac751",
+    "artifact": "login-surface-artifacts/13-iflux-customers-store.js",
+    "exports_global_assign": [
+      "IfluxCustomersStore"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 14,
+    "phase": "E_FEATURE",
+    "url": "/Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js?v=20260706",
+    "path": "/Admin_Design_system/iflux-admin-ui/iflux-credentials-store.js",
+    "query": "v=20260706",
+    "http_status": "200",
+    "bytes": 3375,
+    "md5": "f45cafd058f15a69afab10203cfadda7",
+    "artifact": "login-surface-artifacts/14-iflux-credentials-store.js",
+    "exports_global_assign": [
+      "IfluxCredentialsStore"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 15,
+    "phase": "E_FEATURE",
+    "url": "/User_Web/iflux-web-ui/loyalty-affiliate-store.js?v=regAffLock20260728",
+    "path": "/User_Web/iflux-web-ui/loyalty-affiliate-store.js",
+    "query": "v=regAffLock20260728",
+    "http_status": "200",
+    "bytes": 29116,
+    "md5": "4a1f00a4d6bdae50269edce255496ac6",
+    "artifact": "login-surface-artifacts/15-loyalty-affiliate-store.js",
+    "exports_global_assign": [
+      "IfluxLoyaltyAffiliateStore"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": true
+    }
+  },
+  {
+    "order": 16,
+    "phase": "E_FEATURE",
+    "url": "/User_Web/iflux-web-ui/auth-social.js?v=googleProxy20260728",
+    "path": "/User_Web/iflux-web-ui/auth-social.js",
+    "query": "v=googleProxy20260728",
+    "http_status": "200",
+    "bytes": 13971,
+    "md5": "62dee0747706ef786080104c4a6a2872",
+    "artifact": "login-surface-artifacts/16-auth-social.js",
+    "exports_global_assign": [
+      "IfluxAuthSocial"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": true,
+      "renderButton": true,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": true,
+      "toast_Khong_mo_duoc_cua_so_Google": true,
+      "IfluxAuthSocial": true,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 17,
+    "phase": "E_FEATURE",
+    "url": "/User_Web/iflux-web-ui/iflux-user-data-sync.js?v=btnRace20260728",
+    "path": "/User_Web/iflux-web-ui/iflux-user-data-sync.js",
+    "query": "v=btnRace20260728",
+    "http_status": "200",
+    "bytes": 4769,
+    "md5": "1363053455eb0135d9577d0a2ab8eef6",
+    "artifact": "login-surface-artifacts/17-iflux-user-data-sync.js",
+    "exports_global_assign": [
+      "IfluxUserDataSync"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": true,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 18,
+    "phase": "E_FEATURE",
+    "url": "/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js",
+    "path": "/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js",
+    "query": "",
+    "http_status": "200",
+    "bytes": 22109,
+    "md5": "2662bcc1cb19e9a7372ccf5dca2d61d2",
+    "artifact": "login-surface-artifacts/18-iflux-admin-ui.js",
+    "exports_global_assign": [
+      "ixCloseModal",
+      "ixCloseOffcanvas",
+      "ixOpenModal",
+      "ixOpenOffcanvas",
+      "ixToast"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 19,
+    "phase": "E_FEATURE",
+    "url": "/User_Web/iflux-web-ui/iflux-web-ui.js?v=phaseA20260721c",
+    "path": "/User_Web/iflux-web-ui/iflux-web-ui.js",
+    "query": "v=phaseA20260721c",
+    "http_status": "200",
+    "bytes": 66233,
+    "md5": "2dd3d2a386cf8878976a4fa9ca34ffe0",
+    "artifact": "login-surface-artifacts/19-iflux-web-ui.js",
+    "exports_global_assign": [
+      "IfluxWebUI",
+      "innerWidth",
+      "requestIdleCallback"
+    ],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": false,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  },
+  {
+    "order": 20,
+    "phase": "E_FEATURE",
+    "url": "/User_Web/iflux-web-ui/auth-login-init.js?v=btnRace20260728",
+    "path": "/User_Web/iflux-web-ui/auth-login-init.js",
+    "query": "v=btnRace20260728",
+    "http_status": "200",
+    "bytes": 5782,
+    "md5": "90d48f49119c32ec8bdc2c3b310702c3",
+    "artifact": "login-surface-artifacts/20-auth-login-init.js",
+    "exports_global_assign": [],
+    "flags": {
+      "clickOffscreenGoogleActivator": false,
+      "renderButton": false,
+      "accounts.id.prompt": false,
+      "use_fedcm_for_prompt": false,
+      "toast_Khong_mo_duoc_cua_so_Google": false,
+      "IfluxAuthSocial": true,
+      "IfluxAuth": false,
+      "IfluxIdentityContext": false
+    }
+  }
+]

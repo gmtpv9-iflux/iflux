@@ -1,0 +1,502 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-14T07:40:08.738Z",
+  "pages": {
+    "market": {
+      "pageKey": "market",
+      "path": "/market",
+      "title": "Thị trường",
+      "intro": "Widget đặc thù cố định — Sidebar: Tổng quan + Độ rộng · Main: Heatmap Ngành + Họ CP.",
+      "documentTitle": "Thị trường · iFlux",
+      "sections": [
+        {
+          "key": "sidebar",
+          "label": "Sidebar thị trường",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "grid-12"
+        }
+      ],
+      "widgets": [
+        {
+          "id": "WGT-MKT-001",
+          "title": "Tổng quan thị trường",
+          "section": "sidebar",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/market-overview/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/market.css"
+          ]
+        },
+        {
+          "id": "WGT-MKT-004",
+          "title": "Biểu đồ Ngành",
+          "section": "main",
+          "position": 0,
+          "span": 6,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {
+            "source": "sector"
+          },
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/market-heatmap/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/market.css",
+            "/User_Web/iflux-web-ui/market-components.css"
+          ]
+        },
+        {
+          "id": "WGT-MKT-002",
+          "title": "Độ rộng thị trường",
+          "section": "sidebar",
+          "position": 1,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/market-breadth/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/market.css"
+          ]
+        },
+        {
+          "id": "WGT-MKT-005",
+          "title": "Biểu đồ Hệ sinh thái",
+          "section": "main",
+          "position": 1,
+          "span": 6,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {
+            "source": "family"
+          },
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/market-heatmap/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/market.css",
+            "/User_Web/iflux-web-ui/market-components.css"
+          ]
+        }
+      ],
+      "publishedAt": "2026-07-13T10:32:48.928Z"
+    },
+    "dashboard": {
+      "pageKey": "dashboard",
+      "path": "/home",
+      "title": "Nhà của tôi",
+      "intro": "Sidebar: Thông tin hồ sơ, Gói Promotion · Main: Watchlist & bộ công cụ tùy chỉnh.",
+      "documentTitle": "Nhà của tôi · iFlux",
+      "sections": [
+        {
+          "key": "header",
+          "label": "Header",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "nav",
+          "label": "Navigation / Bottom nav",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "sidebar",
+          "label": "Thông tin cá nhân",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "grid-12"
+        },
+        {
+          "key": "footer",
+          "label": "Footer",
+          "visible": true,
+          "layout": null
+        }
+      ],
+      "widgets": [
+        {
+          "id": "WGT-PRF-001",
+          "title": "Thông tin hồ sơ",
+          "section": "sidebar",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-WAT-001",
+          "title": "Watchlist",
+          "section": "main",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-PRF-002",
+          "title": "Gói cước & ưu đãi",
+          "section": "sidebar",
+          "position": 1,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        }
+      ],
+      "publishedAt": "2026-07-13T10:18:06.686Z"
+    },
+    "flow": {
+      "pageKey": "flow",
+      "path": "/flow",
+      "title": "Dòng tiền",
+      "intro": "Widget đặc thù cố định — Sidebar: Top mua/bán ròng CP & Ngành · Main: Thống kê cơ bản, nâng cao, Độc quyền.",
+      "documentTitle": "Dòng tiền · iFlux",
+      "sections": [
+        {
+          "key": "header",
+          "label": "Header",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "nav",
+          "label": "Navigation / Bottom nav",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "sidebar",
+          "label": "Sidebar dòng tiền",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "grid-12"
+        }
+      ],
+      "widgets": [
+        {
+          "id": "WGT-FLW-SUBJ-STOCK",
+          "title": "Thống kê mua/bán ròng theo cổ phiếu",
+          "section": "sidebar",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-STAT_STOCK",
+          "title": "TOP 10 CỔ PHIẾU — DÒNG TIỀN VÀO / RA MẠNH NHẤT",
+          "section": "main",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-SUBJ-SECTOR",
+          "title": "Thống kê mua/bán ròng theo ngành",
+          "section": "sidebar",
+          "position": 1,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-STAT_SECTOR",
+          "title": "TOP 10 NGÀNH — DÒNG TIỀN VÀO / RA MẠNH NHẤT",
+          "section": "main",
+          "position": 1,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-STAT_HST",
+          "title": "TOP 10 HỆ SINH THÁI — DÒNG TIỀN VÀO / RA MẠNH NHẤT",
+          "section": "main",
+          "position": 2,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-STAT_STORY",
+          "title": "TOP 10 CÂU CHUYỆN — DÒNG TIỀN VÀO / RA MẠNH NHẤT",
+          "section": "main",
+          "position": 3,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-EX_TM_IN",
+          "title": "TOP 10 CỔ PHIẾU CÓ DÒNG TIỀN THÔNG MINH VÀO MẠNH NHẤT",
+          "section": "main",
+          "position": 4,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-EX_TM_SECTOR_IN",
+          "title": "TOP 10 NGÀNH CÓ DÒNG TIỀN THÔNG MINH VÀO MẠNH NHẤT",
+          "section": "main",
+          "position": 5,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-EX_TM_HST_IN",
+          "title": "TOP 10 HỆ SINH THÁI CÓ DÒNG TIỀN THÔNG MINH VÀO MẠNH NHẤT",
+          "section": "main",
+          "position": 6,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        },
+        {
+          "id": "WGT-FLW-EX_TM_STORY_IN",
+          "title": "TOP 10 CÂU CHUYỆN CÓ DÒNG TIỀN THÔNG MINH VÀO MẠNH NHẤT",
+          "section": "main",
+          "position": 7,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": null,
+          "css": []
+        }
+      ],
+      "publishedAt": "2026-07-13T08:40:50.548Z"
+    },
+    "community": {
+      "pageKey": "community",
+      "path": "/community",
+      "title": "Cộng đồng",
+      "intro": "Widget đặc thù cố định — Main: Heatmap CP + Câu chuyện tích cực (dưới là feed tin) · Sidebar phải: Heatmap Câu chuyện + Thành viên tích cực.",
+      "documentTitle": "Cộng đồng · iFlux",
+      "sections": [
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "grid-12"
+        },
+        {
+          "key": "sidebar-right",
+          "label": "Sidebar phải",
+          "visible": true,
+          "layout": null
+        }
+      ],
+      "widgets": [
+        {
+          "id": "WGT-COM-001",
+          "title": "Heatmap cổ phiếu cộng đồng",
+          "section": "main",
+          "position": 0,
+          "span": 6,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/community.css",
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/watchlist.css"
+          ]
+        },
+        {
+          "id": "WGT-MKT-006",
+          "title": "Biểu đồ Câu chuyện",
+          "section": "sidebar-right",
+          "position": 0,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {
+            "source": "story"
+          },
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/market-heatmap/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/block-templates.css",
+            "/User_Web/iflux-web-ui/market.css",
+            "/User_Web/iflux-web-ui/market-components.css"
+          ]
+        },
+        {
+          "id": "WGT-COM-CHUDE-TOP",
+          "title": "Chủ đề tích cực hàng đầu",
+          "section": "main",
+          "position": 1,
+          "span": 6,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/community-story-top/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/community.css",
+            "/User_Web/iflux-web-ui/block-templates.css"
+          ]
+        },
+        {
+          "id": "WGT-COM-002",
+          "title": "Thành viên tích cực",
+          "section": "sidebar-right",
+          "position": 1,
+          "span": 12,
+          "enabled": true,
+          "locked": true,
+          "userCanOverride": false,
+          "config": {},
+          "lazyModule": "/User_Web/iflux-web-ui/widgets/community-active/index.js",
+          "css": [
+            "/User_Web/iflux-web-ui/community.css"
+          ]
+        }
+      ],
+      "publishedAt": "2026-07-14T07:40:08.738Z"
+    },
+    "messages": {
+      "pageKey": "messages",
+      "path": "/messages",
+      "title": "Tin nhắn",
+      "intro": "Trang riêng phục vụ Tin nhắn (mặc định) và Theo dõi. Vào từ nút tin nhắn trên hồ sơ hoặc biểu tượng tin nhắn ở header.",
+      "documentTitle": "Tin nhắn · iFlux",
+      "sections": [
+        {
+          "key": "header",
+          "label": "Header",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "nav",
+          "label": "Navigation / Bottom nav",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "tabs"
+        }
+      ],
+      "widgets": [],
+      "publishedAt": "2026-07-13T07:09:22.596Z"
+    },
+    "account": {
+      "pageKey": "account",
+      "path": "/account",
+      "title": "Trang cá nhân",
+      "intro": "Hồ sơ cá nhân ở sidebar (nút Chỉnh sửa hồ sơ). Main content mặc định là Timeline; các tab: Affiliate, Tài khoản thanh toán, Quyền riêng tư, Bảo mật. Vào từ avatar ở header. (Tin nhắn & Theo dõi đã tách sang /messages; Hoạt động gần đây bỏ vì đã có trong Thông báo.)",
+      "documentTitle": "Trang cá nhân · iFlux",
+      "sections": [
+        {
+          "key": "header",
+          "label": "Header",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "nav",
+          "label": "Navigation / Bottom nav",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "sidebar",
+          "label": "Hồ sơ cá nhân (Chỉnh sửa hồ sơ)",
+          "visible": true,
+          "layout": null
+        },
+        {
+          "key": "main",
+          "label": "Main — Widget grid",
+          "visible": true,
+          "layout": "tabs"
+        }
+      ],
+      "widgets": [],
+      "publishedAt": "2026-07-13T08:40:50.545Z"
+    }
+  }
+}

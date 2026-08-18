@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Referrals — Vuexy Dark</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css" />
+<link rel="stylesheet" href="/Admin_Design_system/files (3)/vuexy-system.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar">
+      <div class="ix-brand"><img class="ix-brand-logo" alt="iFlux" hidden /><span class="ix-brand-name">Vuexy</span></div>
+      <nav class="ix-menu">
+        <a href="/Admin_Design_system/files (3)/index.html" class="ix-menu-item"><i class="ti ti-smart-home ix-menu-icon"></i><span class="ix-menu-label">Dashboards</span></a>
+        <div class="ix-menu-header">eCommerce</div>
+        <a href="/Admin_Design_system/files (3)/order-list.html" class="ix-menu-item"><i class="ti ti-clipboard-list ix-menu-icon"></i><span class="ix-menu-label">Order List</span></a>
+        <div class="ix-menu-item active"><i class="ti ti-users ix-menu-icon"></i><span class="ix-menu-label">Referrals</span></div>
+      </nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar">
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Search..." /></div>
+        <div class="ix-nav-actions"><button class="ix-nav-btn"><i class="ti ti-bell"></i><span class="ix-nav-dot"></span></button><div class="ix-avatar">JD</div></div>
+      </header>
+      <div class="ix-content">
+        <h1>Referrals</h1>
+
+        <!-- Stat cards 4 col -->
+        <div class="ix-grid ix-grid-4 ix-mb-24">
+          <div class="ix-card ix-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">$24,983</div><div style="font-size:12px;color:var(--ix-text-muted)">Total Earning</div></div>
+              <div class="ix-stat-icon accent" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-currency-dollar"></i></div>
+            </div>
+          </div>
+          <div class="ix-card ix-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">$8,647</div><div style="font-size:12px;color:var(--ix-text-muted)">Unpaid Earning</div></div>
+              <div class="ix-stat-icon success" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-gift"></i></div>
+            </div>
+          </div>
+          <div class="ix-card ix-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">2,367</div><div style="font-size:12px;color:var(--ix-text-muted)">Signups</div></div>
+              <div class="ix-stat-icon danger" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-users"></i></div>
+            </div>
+          </div>
+          <div class="ix-card ix-card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div><div style="font-size:18px;font-weight:700;color:var(--ix-text-primary)">4.5%</div><div style="font-size:12px;color:var(--ix-text-muted)">Conversion Rate</div></div>
+              <div class="ix-stat-icon info" style="border-radius:50%;width:40px;height:40px;font-size:18px"><i class="ti ti-infinity"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- How to use + Invite form -->
+        <div class="ix-grid ix-grid-2 ix-mb-24" style="grid-template-columns:1.4fr 1fr">
+          <!-- How to use -->
+          <div class="ix-card ix-card-body">
+            <div style="font-size:16px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">How to use</div>
+            <div style="font-size:13px;color:var(--ix-text-muted);margin-bottom:24px">Integrate your referral code in 3 easy steps.</div>
+            <div class="ix-referral-steps">
+              <div class="ix-referral-step">
+                <div class="ix-referral-step-icon"><i class="ti ti-bulb"></i></div>
+                <div class="ix-referral-step-title">Create &amp; validate your referral link and get</div>
+                <div class="ix-referral-step-reward">$50</div>
+              </div>
+              <div class="ix-referral-step">
+                <div class="ix-referral-step-icon"><i class="ti ti-user-plus"></i></div>
+                <div class="ix-referral-step-title">For every new signup you get</div>
+                <div class="ix-referral-step-reward">10%</div>
+              </div>
+              <div class="ix-referral-step">
+                <div class="ix-referral-step-icon"><i class="ti ti-send"></i></div>
+                <div class="ix-referral-step-title">Get other friends to generate link and get</div>
+                <div class="ix-referral-step-reward">$100</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invite form -->
+          <div class="ix-card ix-card-body">
+            <div style="margin-bottom:20px">
+              <div style="font-size:15px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Invite your friends</div>
+              <label class="ix-label">Enter friend's email address and invite them</label>
+              <div style="display:flex;gap:8px;margin-top:6px">
+                <input type="email" class="ix-input" placeholder="Email address" style="flex:1" />
+                <button class="ix-btn ix-btn-primary" onclick="ixToast('Invitation sent!','success')"><i class="ti ti-check"></i> Submit</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:15px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Share the referral link</div>
+              <label class="ix-label">Share referral link in social media</label>
+              <div style="display:flex;gap:8px;margin-top:6px">
+                <input type="text" class="ix-input" value="pixinvent.com/?ref=6479" style="flex:1" readonly />
+                <button class="ix-btn" style="background:#1877f2;color:#fff;border:none" onclick="ixToast('Copied!','success')"><i class="ti ti-brand-facebook"></i></button>
+                <button class="ix-btn" style="background:#1da1f2;color:#fff;border:none" onclick="ixToast('Shared!','success')"><i class="ti ti-brand-twitter"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referral table -->
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div class="ix-table-search"><i class="ti ti-search"></i><input type="text" placeholder="Search referral..." data-ix-search="ref-table" /></div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table" id="ref-table">
+              <thead><tr>
+                <th>User</th><th>Referred ID</th><th>Status</th><th>Value</th><th>Earnings</th>
+              </tr></thead>
+              <tbody>
+                <tr><td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-accent">NT</div><div class="ix-user-name">Natalie Turnbull</div></div></td><td>#47961</td><td><span class="ix-chip ix-chip-success">Active</span></td><td>$830</td><td style="color:var(--ix-success);font-weight:600">$83</td></tr>
+                <tr><td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-success">JD</div><div class="ix-user-name">Jane Doe</div></div></td><td>#47962</td><td><span class="ix-chip ix-chip-warning">Pending</span></td><td>$210</td><td style="color:var(--ix-warning);font-weight:600">$21</td></tr>
+                <tr><td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-danger">KN</div><div class="ix-user-name">Kris Norton</div></div></td><td>#47963</td><td><span class="ix-chip ix-chip-success">Active</span></td><td>$1,200</td><td style="color:var(--ix-success);font-weight:600">$120</td></tr>
+                <tr><td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-info">PL</div><div class="ix-user-name">Peter Larkin</div></div></td><td>#47964</td><td><span class="ix-chip ix-chip-danger">Cancelled</span></td><td>$0</td><td style="color:var(--ix-text-muted)">$0</td></tr>
+                <tr><td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-warning">MS</div><div class="ix-user-name">Mary Stephens</div></div></td><td>#47965</td><td><span class="ix-chip ix-chip-success">Active</span></td><td>$560</td><td style="color:var(--ix-success);font-weight:600">$56</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div data-ix-paginate="ref-table" data-per-page="5"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="/Admin_Design_system/files (3)/vuexy-system.js"></script>
+  <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+</body>
+</html>

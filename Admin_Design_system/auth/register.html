@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-AUTH — Đăng ký · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+<link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Tạo tài khoản quản trị 🚀</div>
+    <div class="ix-auth-sub">Dành cho nhân viên được mời — cần phê duyệt từ Admin</div>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Tên hiển thị</label>
+      <input type="text" class="ix-input" placeholder="Nguyễn Văn A" autofocus />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Email</label>
+      <input type="email" class="ix-input" placeholder="admin@iflux.vn" />
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Mật khẩu</label>
+      <div class="ix-input-password-wrap">
+        <input type="password" class="ix-input" placeholder="············" id="pw-reg" />
+        <button type="button" class="ix-input-password-toggle" data-ix-toggle-password="pw-reg" aria-label="Hiện mật khẩu"><i class="ti ti-eye-off"></i></button>
+      </div>
+    </div>
+    <div style="margin:16px 0">
+      <label class="ix-auth-check">
+        <input type="checkbox" class="ix-checkbox" />
+        <span>Tôi đồng ý với <a href="#" style="color:var(--ix-accent)">điều khoản &amp; chính sách</a></span>
+      </label>
+    </div>
+    <button type="button" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:16px" onclick="ixToast('Đã gửi yêu cầu đăng ký','success')">Đăng ký</button>
+
+    <div class="ix-auth-footer">
+      <span>Đã có tài khoản?</span> <a href="/Admin_Design_system/auth/login.html">Đăng nhập</a>
+    </div>
+  </div>
+</div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script>
+document.querySelectorAll('[data-ix-toggle-password]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var input = document.getElementById(btn.getAttribute('data-ix-toggle-password'));
+    if (!input) return;
+    var isPw = input.type === 'password';
+    input.type = isPw ? 'text' : 'password';
+    btn.querySelector('i').className = isPw ? 'ti ti-eye' : 'ti ti-eye-off';
+  });
+});
+</script>
+</body>
+</html>

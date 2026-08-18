@@ -1,0 +1,9 @@
+backend/src/modules/legacy-auth/auth.service.js:8:const { verifySocialToken } = require('./social-auth.service');
+backend/src/modules/legacy-auth/auth.service.js:638:  const profile = await verifySocialToken(config, provider, payload);
+backend/src/modules/legacy-auth/social-auth.service.js:29:async function verifyGoogleIdToken(idToken, clientId) {
+backend/src/modules/legacy-auth/social-auth.service.js:174:async function verifySocialToken(config, provider, payload) {
+backend/src/modules/legacy-auth/social-auth.service.js:176:  switch (p) {
+backend/src/modules/legacy-auth/social-auth.service.js:177:    case 'google':
+backend/src/modules/legacy-auth/social-auth.service.js:178:      return verifyGoogleIdToken(payload.id_token, config.GOOGLE_CLIENT_ID);
+backend/src/modules/legacy-auth/social-auth.service.js:214:  verifySocialToken,
+backend/src/modules/legacy-auth/social-auth.service.js:215:  verifyGoogleIdToken,

@@ -1,0 +1,1641 @@
+/* =================================================================
+   VUEXY DARK — Design System
+   Bóc tách từ Vuexy Bootstrap Dashboard PRO v3.0.0
+   Dùng độc lập, không cần Bootstrap
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. DESIGN TOKENS
+   ----------------------------------------------------------------- */
+:root {
+  /* Backgrounds */
+  --ix-bg-body:        #232333;   /* page background */
+  --ix-bg-card:        #2b2c40;   /* card / sidebar / navbar */
+  --ix-bg-sidebar:     #2b2c40;
+  --ix-bg-navbar:      #2b2c40;
+  --ix-bg-hover:       #3a3b55;   /* menu item hover */
+  --ix-bg-active:      rgba(105,108,255,0.16);
+  --ix-bg-input:       #1e1e2d;   /* input, progress track */
+
+  /* Brand accent (purple) */
+  --ix-accent:         #696cff;
+  --ix-accent-hover:   #5f61e6;
+  --ix-accent-soft:    rgba(105,108,255,0.16);
+
+  /* Semantic colors */
+  --ix-success:        #71dd37;
+  --ix-success-soft:   rgba(113,221,55,0.16);
+  --ix-warning:        #ffab00;
+  --ix-warning-soft:   rgba(255,171,0,0.16);
+  --ix-danger:         #ff3e1d;
+  --ix-danger-soft:    rgba(255,62,29,0.16);
+  --ix-info:           #03c3ec;
+  --ix-info-soft:      rgba(3,195,236,0.16);
+
+  /* Text */
+  --ix-text-primary:   #cfd3ec;
+  --ix-text-secondary: #8592a3;
+  --ix-text-muted:     #5f6582;
+
+  /* Border */
+  --ix-border:         rgba(207,211,236,0.12);
+
+  /* Layout */
+  --ix-sidebar-w:      260px;
+  --ix-navbar-h:       64px;
+
+  /* Radius */
+  --ix-radius:         6px;
+  --ix-radius-lg:      8px;
+
+  /* Typography */
+  --ix-font: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --ix-font-size-base: 14px;
+}
+
+/* -----------------------------------------------------------------
+   2. RESET & BASE
+   ----------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ix-root {
+  font-family: var(--ix-font);
+  font-size: var(--ix-font-size-base);
+  color: var(--ix-text-primary);
+  background: var(--ix-bg-body);
+  line-height: 1.5;
+}
+
+/* -----------------------------------------------------------------
+   3. LAYOUT
+   ----------------------------------------------------------------- */
+.ix-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.ix-sidebar {
+  width: var(--ix-sidebar-w);
+  background: var(--ix-bg-sidebar);
+  border-right: 1px solid var(--ix-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.ix-sidebar::-webkit-scrollbar { width: 4px; }
+.ix-sidebar::-webkit-scrollbar-thumb { background: var(--ix-border); border-radius: 4px; }
+
+/* Brand */
+.ix-brand {
+  height: var(--ix-navbar-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--ix-border);
+  flex-shrink: 0;
+}
+.ix-brand-logo {
+  width: 32px; height: 32px;
+  background: var(--ix-accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ix-brand-name {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ix-text-primary);
+  letter-spacing: -0.3px;
+}
+
+/* Main content area */
+.ix-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: var(--ix-sidebar-w);
+}
+
+/* Navbar */
+.ix-navbar {
+  height: var(--ix-navbar-h);
+  background: var(--ix-bg-navbar);
+  border-bottom: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Content area */
+.ix-content {
+  flex: 1;
+  padding: 24px;
+}
+
+/* -----------------------------------------------------------------
+   4. NAVIGATION MENU
+   ----------------------------------------------------------------- */
+.ix-menu {
+  flex: 1;
+  padding: 12px 0;
+}
+.ix-menu-header {
+  padding: 16px 20px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ix-text-muted);
+}
+.ix-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  color: var(--ix-text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+  user-select: none;
+}
+.ix-menu-item:hover {
+  background: var(--ix-bg-hover);
+  color: var(--ix-text-primary);
+}
+.ix-menu-item.active {
+  background: var(--ix-bg-active);
+  color: var(--ix-accent);
+}
+.ix-menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 3px;
+  background: var(--ix-accent);
+  border-radius: 0 3px 3px 0;
+}
+.ix-menu-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.ix-menu-label {
+  flex: 1;
+  font-size: 13.5px;
+}
+.ix-menu-arrow {
+  font-size: 14px;
+  color: var(--ix-text-muted);
+  transition: transform 0.2s;
+}
+.ix-menu-item.open .ix-menu-arrow { transform: rotate(90deg); }
+
+/* Submenu */
+.ix-menu-sub {
+  list-style: none;
+  display: none;
+  padding: 4px 0;
+}
+.ix-menu-item.open + .ix-menu-sub { display: block; }
+.ix-menu-sub .ix-menu-item { padding-left: 50px; font-size: 13px; }
+
+/* -----------------------------------------------------------------
+   5. NAVBAR ELEMENTS
+   ----------------------------------------------------------------- */
+.ix-search {
+  flex: 1;
+  max-width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: 0 12px;
+  height: 36px;
+  color: var(--ix-text-muted);
+  font-size: 13px;
+  cursor: text;
+}
+.ix-search i { font-size: 16px; }
+.ix-search input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--ix-text-primary);
+  font-size: 13px;
+  width: 100%;
+  font-family: var(--ix-font);
+}
+.ix-search input::placeholder { color: var(--ix-text-muted); }
+
+.ix-nav-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ix-nav-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ix-text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+  background: none;
+  border: none;
+}
+.ix-nav-btn:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+.ix-nav-btn i { font-size: 20px; }
+.ix-nav-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ix-danger);
+  border: 2px solid var(--ix-bg-navbar);
+}
+.ix-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--ix-accent-soft);
+  border: 2px solid var(--ix-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 13px;
+  color: var(--ix-accent);
+  cursor: pointer;
+  margin-left: 4px;
+}
+.ix-avatar img {
+  width: 100%; height: 100%;
+  border-radius: 50%; object-fit: cover;
+}
+.ix-avatar-online { position: relative; }
+.ix-avatar-online::after {
+  content: '';
+  position: absolute;
+  bottom: 1px; right: 1px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--ix-success);
+  border: 2px solid var(--ix-bg-navbar);
+}
+
+/* -----------------------------------------------------------------
+   6. PAGE HEADER
+   ----------------------------------------------------------------- */
+.ix-page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+  margin-bottom: 4px;
+}
+.ix-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ix-text-muted);
+  margin-bottom: 24px;
+}
+.ix-breadcrumb a {
+  color: var(--ix-text-secondary);
+  text-decoration: none;
+}
+.ix-breadcrumb a:hover { color: var(--ix-accent); }
+
+/* -----------------------------------------------------------------
+   7. GRID
+   ----------------------------------------------------------------- */
+.ix-grid { display: grid; gap: 24px; }
+.ix-grid-1  { grid-template-columns: 1fr; }
+.ix-grid-2  { grid-template-columns: repeat(2, 1fr); }
+.ix-grid-3  { grid-template-columns: repeat(3, 1fr); }
+.ix-grid-4  { grid-template-columns: repeat(4, 1fr); }
+.ix-grid-auto { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+/* -----------------------------------------------------------------
+   8. CARD
+   ----------------------------------------------------------------- */
+.ix-card {
+  background: var(--ix-bg-card);
+  border-radius: var(--ix-radius-lg);
+  border: 1px solid var(--ix-border);
+}
+.ix-card-header {
+  padding: 16px 20px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.ix-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+  margin-bottom: 2px;
+}
+.ix-card-subtitle {
+  font-size: 12px;
+  color: var(--ix-text-muted);
+}
+.ix-card-body { padding: 16px 20px 20px; }
+.ix-card-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--ix-border);
+}
+
+/* -----------------------------------------------------------------
+   9. STAT / METRIC CARD
+   ----------------------------------------------------------------- */
+.ix-stat-card {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ix-stat-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--ix-radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.ix-stat-icon.accent  { background: var(--ix-accent-soft);  color: var(--ix-accent);  }
+.ix-stat-icon.success { background: var(--ix-success-soft); color: var(--ix-success); }
+.ix-stat-icon.warning { background: var(--ix-warning-soft); color: var(--ix-warning); }
+.ix-stat-icon.danger  { background: var(--ix-danger-soft);  color: var(--ix-danger);  }
+.ix-stat-icon.info    { background: var(--ix-info-soft);    color: var(--ix-info);    }
+.ix-stat-label {
+  font-size: 12px;
+  color: var(--ix-text-muted);
+  margin-bottom: 4px;
+}
+.ix-stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+  line-height: 1;
+}
+.ix-stat-trend { font-size: 12px; margin-top: 4px; }
+.ix-stat-trend.up   { color: var(--ix-success); }
+.ix-stat-trend.down { color: var(--ix-danger); }
+
+/* -----------------------------------------------------------------
+   10. BADGE / CHIP
+   ----------------------------------------------------------------- */
+.ix-badge {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 20px;
+}
+.ix-badge-primary { background: var(--ix-accent);  color: #fff; }
+.ix-badge-danger  { background: var(--ix-danger);  color: #fff; }
+.ix-badge-success { background: var(--ix-success); color: #151d15; }
+.ix-badge-warning { background: var(--ix-warning); color: #1a1100; }
+.ix-badge-info    { background: var(--ix-info);    color: #00151a; }
+
+.ix-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.ix-chip-primary { background: var(--ix-accent-soft);  color: var(--ix-accent);  }
+.ix-chip-success { background: var(--ix-success-soft); color: var(--ix-success); }
+.ix-chip-warning { background: var(--ix-warning-soft); color: var(--ix-warning); }
+.ix-chip-danger  { background: var(--ix-danger-soft);  color: var(--ix-danger);  }
+.ix-chip-info    { background: var(--ix-info-soft);    color: var(--ix-info);    }
+
+/* -----------------------------------------------------------------
+   11. BUTTONS
+   ----------------------------------------------------------------- */
+.ix-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--ix-radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: var(--ix-font);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ix-btn-primary {
+  background: var(--ix-accent);
+  color: #fff;
+}
+.ix-btn-primary:hover { background: var(--ix-accent-hover); }
+.ix-btn-primary:active { transform: scale(0.98); }
+
+.ix-btn-success { background: var(--ix-success); color: #151d15; }
+.ix-btn-danger  { background: var(--ix-danger);  color: #fff; }
+.ix-btn-warning { background: var(--ix-warning); color: #1a1100; }
+
+.ix-btn-outline {
+  background: transparent;
+  color: var(--ix-text-secondary);
+  border: 1px solid var(--ix-border);
+}
+.ix-btn-outline:hover {
+  background: var(--ix-bg-hover);
+  color: var(--ix-text-primary);
+}
+.ix-btn-ghost {
+  background: transparent;
+  color: var(--ix-text-secondary);
+  border: none;
+}
+.ix-btn-ghost:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+
+.ix-btn-icon {
+  width: 32px; height: 32px;
+  padding: 0;
+  justify-content: center;
+  background: transparent;
+  color: var(--ix-text-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--ix-radius);
+}
+.ix-btn-icon:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+
+.ix-btn-sm { padding: 5px 12px; font-size: 12px; }
+.ix-btn-lg { padding: 11px 24px; font-size: 15px; }
+
+/* -----------------------------------------------------------------
+   12. FORM ELEMENTS
+   ----------------------------------------------------------------- */
+.ix-form-group { margin-bottom: 16px; }
+.ix-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ix-text-secondary);
+  margin-bottom: 6px;
+}
+.ix-input,
+.ix-select,
+.ix-textarea {
+  width: 100%;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: 8px 12px;
+  color: var(--ix-text-primary);
+  font-size: 13px;
+  font-family: var(--ix-font);
+  transition: border-color 0.15s;
+  outline: none;
+}
+.ix-input:focus,
+.ix-select:focus,
+.ix-textarea:focus {
+  border-color: var(--ix-accent);
+  box-shadow: 0 0 0 3px var(--ix-accent-soft);
+}
+.ix-input::placeholder { color: var(--ix-text-muted); }
+.ix-textarea { resize: vertical; min-height: 80px; }
+.ix-select { appearance: none; cursor: pointer; }
+
+/* -----------------------------------------------------------------
+   13. TABLE
+   ----------------------------------------------------------------- */
+.ix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ix-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ix-text-muted);
+  border-bottom: 1px solid var(--ix-border);
+  white-space: nowrap;
+}
+.ix-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--ix-border);
+  color: var(--ix-text-secondary);
+  vertical-align: middle;
+}
+.ix-table tbody tr:last-child td { border-bottom: none; }
+.ix-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.ix-table-responsive { overflow-x: auto; }
+
+/* -----------------------------------------------------------------
+   14. PROGRESS BAR
+   ----------------------------------------------------------------- */
+.ix-progress {
+  height: 6px;
+  background: var(--ix-bg-input);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ix-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  background: var(--ix-accent);
+}
+.ix-progress-success .ix-progress-bar { background: var(--ix-success); }
+.ix-progress-warning .ix-progress-bar { background: var(--ix-warning); }
+.ix-progress-danger  .ix-progress-bar { background: var(--ix-danger); }
+.ix-progress-info    .ix-progress-bar { background: var(--ix-info); }
+.ix-progress-lg { height: 10px; border-radius: 5px; }
+
+/* -----------------------------------------------------------------
+   15. AVATAR
+   ----------------------------------------------------------------- */
+.ix-avatar-sm {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.ix-avatar-md {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.ix-avatar-lg {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.ix-avatar-accent  { background: var(--ix-accent-soft);  color: var(--ix-accent); }
+.ix-avatar-success { background: var(--ix-success-soft); color: var(--ix-success); }
+.ix-avatar-warning { background: var(--ix-warning-soft); color: var(--ix-warning); }
+.ix-avatar-danger  { background: var(--ix-danger-soft);  color: var(--ix-danger); }
+.ix-avatar-info    { background: var(--ix-info-soft);    color: var(--ix-info); }
+
+/* -----------------------------------------------------------------
+   16. DIVIDER
+   ----------------------------------------------------------------- */
+.ix-divider {
+  border: none;
+  border-top: 1px solid var(--ix-border);
+  margin: 12px 0;
+}
+
+/* -----------------------------------------------------------------
+   17. LIST
+   ----------------------------------------------------------------- */
+.ix-list { list-style: none; }
+.ix-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ix-border);
+}
+.ix-list-item:last-child { border-bottom: none; }
+
+/* -----------------------------------------------------------------
+   18. DROPDOWN
+   ----------------------------------------------------------------- */
+.ix-dropdown { position: relative; display: inline-block; }
+.ix-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  min-width: 160px;
+  padding: 6px 0;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  display: none;
+}
+.ix-dropdown.open .ix-dropdown-menu { display: block; }
+.ix-dropdown-item {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--ix-text-secondary);
+  cursor: pointer;
+  transition: background 0.1s;
+  display: block;
+  text-decoration: none;
+}
+.ix-dropdown-item:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+.ix-dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--ix-border);
+  margin: 4px 0;
+}
+
+/* -----------------------------------------------------------------
+   19. MODAL
+   ----------------------------------------------------------------- */
+.ix-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.ix-modal {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+}
+.ix-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ix-border);
+}
+.ix-modal-title { font-size: 16px; font-weight: 600; color: var(--ix-text-primary); }
+.ix-modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+.ix-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--ix-border);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* -----------------------------------------------------------------
+   20. TOAST / ALERT
+   ----------------------------------------------------------------- */
+.ix-alert {
+  padding: 12px 16px;
+  border-radius: var(--ix-radius);
+  border-left: 4px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.ix-alert-primary { background: var(--ix-accent-soft);  border-color: var(--ix-accent);  color: var(--ix-accent);  }
+.ix-alert-success { background: var(--ix-success-soft); border-color: var(--ix-success); color: var(--ix-success); }
+.ix-alert-warning { background: var(--ix-warning-soft); border-color: var(--ix-warning); color: var(--ix-warning); }
+.ix-alert-danger  { background: var(--ix-danger-soft);  border-color: var(--ix-danger);  color: var(--ix-danger);  }
+.ix-alert-info    { background: var(--ix-info-soft);    border-color: var(--ix-info);    color: var(--ix-info);    }
+.ix-alert-title { font-weight: 600; font-size: 13px; }
+.ix-alert-text  { font-size: 13px; color: var(--ix-text-secondary); margin-top: 2px; }
+
+/* -----------------------------------------------------------------
+   21. UTILITY CLASSES
+   ----------------------------------------------------------------- */
+.ix-text-primary   { color: var(--ix-text-primary) !important; }
+.ix-text-secondary { color: var(--ix-text-secondary) !important; }
+.ix-text-muted     { color: var(--ix-text-muted) !important; }
+.ix-text-accent    { color: var(--ix-accent) !important; }
+.ix-text-success   { color: var(--ix-success) !important; }
+.ix-text-warning   { color: var(--ix-warning) !important; }
+.ix-text-danger    { color: var(--ix-danger) !important; }
+.ix-text-info      { color: var(--ix-info) !important; }
+
+.ix-fw-400 { font-weight: 400; }
+.ix-fw-500 { font-weight: 500; }
+.ix-fw-600 { font-weight: 600; }
+.ix-fw-700 { font-weight: 700; }
+
+.ix-fs-12 { font-size: 12px; }
+.ix-fs-13 { font-size: 13px; }
+.ix-fs-14 { font-size: 14px; }
+.ix-fs-16 { font-size: 16px; }
+.ix-fs-18 { font-size: 18px; }
+.ix-fs-22 { font-size: 22px; }
+
+.ix-d-flex      { display: flex; }
+.ix-align-center { align-items: center; }
+.ix-justify-between { justify-content: space-between; }
+.ix-gap-4  { gap: 4px; }
+.ix-gap-8  { gap: 8px; }
+.ix-gap-12 { gap: 12px; }
+.ix-gap-16 { gap: 16px; }
+
+.ix-mt-0  { margin-top: 0; }
+.ix-mt-8  { margin-top: 8px; }
+.ix-mt-16 { margin-top: 16px; }
+.ix-mb-0  { margin-bottom: 0; }
+.ix-mb-4  { margin-bottom: 4px; }
+.ix-mb-8  { margin-bottom: 8px; }
+.ix-mb-16 { margin-bottom: 16px; }
+.ix-mb-24 { margin-bottom: 24px; }
+
+.ix-rounded    { border-radius: var(--ix-radius); }
+.ix-rounded-lg { border-radius: var(--ix-radius-lg); }
+.ix-rounded-full { border-radius: 50%; }
+
+/* -----------------------------------------------------------------
+   22. SCROLLBAR (global)
+   ----------------------------------------------------------------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ix-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(207,211,236,0.25); }
+
+/* -----------------------------------------------------------------
+   23. FILTER BAR (User List pattern)
+   ----------------------------------------------------------------- */
+.ix-filter-bar {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ix-border);
+}
+.ix-filter-bar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+  margin-bottom: 12px;
+}
+.ix-filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ix-filter-row-2 { grid-template-columns: repeat(2, 1fr); }
+.ix-filter-row-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* -----------------------------------------------------------------
+   24. OFFCANVAS / DRAWER
+   ----------------------------------------------------------------- */
+.ix-offcanvas {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 400px;
+  max-width: 100vw;
+  background: var(--ix-bg-card);
+  border-left: 1px solid var(--ix-border);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+.ix-offcanvas.open { transform: translateX(0); }
+.ix-offcanvas-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1040;
+  display: none;
+}
+.ix-offcanvas-overlay.open { display: block; }
+.ix-offcanvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ix-border);
+  flex-shrink: 0;
+}
+.ix-offcanvas-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ix-text-primary);
+}
+.ix-offcanvas-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+.ix-offcanvas-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--ix-border);
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* -----------------------------------------------------------------
+   25. TABLE ACTIONS ROW (search + export + add button)
+   ----------------------------------------------------------------- */
+.ix-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ix-table-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: 0 12px;
+  height: 36px;
+  min-width: 220px;
+}
+.ix-table-search i { font-size: 16px; color: var(--ix-text-muted); }
+.ix-table-search input {
+  background: none; border: none; outline: none;
+  color: var(--ix-text-primary); font-size: 13px;
+  font-family: var(--ix-font); width: 100%;
+}
+.ix-table-search input::placeholder { color: var(--ix-text-muted); }
+.ix-table-actions { display: flex; gap: 8px; align-items: center; }
+
+/* -----------------------------------------------------------------
+   26. PAGINATION
+   ----------------------------------------------------------------- */
+.ix-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+}
+.ix-page-btn {
+  min-width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--ix-radius);
+  font-size: 13px; cursor: pointer;
+  color: var(--ix-text-secondary);
+  background: none;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.ix-page-btn:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+.ix-page-btn.active {
+  background: var(--ix-accent);
+  color: #fff;
+  border-color: var(--ix-accent);
+}
+.ix-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ix-page-info {
+  font-size: 13px; color: var(--ix-text-muted);
+  margin-left: auto;
+}
+
+/* -----------------------------------------------------------------
+   27. STAT CARD — horizontal variant (User List style)
+   ----------------------------------------------------------------- */
+.ix-stat-card-h {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ix-stat-card-h .ix-stat-info { flex: 1; }
+.ix-stat-card-h .ix-stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ix-text-primary);
+  margin-bottom: 4px;
+}
+.ix-stat-card-h .ix-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ix-text-primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.ix-stat-card-h .ix-stat-sub {
+  font-size: 12px;
+  color: var(--ix-text-muted);
+}
+.ix-stat-card-h .ix-stat-icon {
+  width: 48px; height: 48px;
+  border-radius: var(--ix-radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+/* -----------------------------------------------------------------
+   28. FOOTER
+   ----------------------------------------------------------------- */
+.ix-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ix-text-muted);
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+.ix-footer a { color: var(--ix-text-secondary); text-decoration: none; }
+.ix-footer a:hover { color: var(--ix-accent); }
+.ix-footer-links { display: flex; gap: 16px; }
+
+/* -----------------------------------------------------------------
+   29. CHECKBOX (table row select)
+   ----------------------------------------------------------------- */
+.ix-checkbox {
+  width: 16px; height: 16px;
+  border-radius: 3px;
+  border: 2px solid var(--ix-border);
+  background: var(--ix-bg-input);
+  cursor: pointer;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.ix-checkbox:checked {
+  background: var(--ix-accent);
+  border-color: var(--ix-accent);
+}
+.ix-checkbox:checked::after {
+  content: '';
+  width: 8px; height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.ix-checkbox:indeterminate {
+  background: var(--ix-accent);
+  border-color: var(--ix-accent);
+}
+.ix-checkbox:indeterminate::after {
+  content: '';
+  width: 8px; height: 2px;
+  background: #fff;
+}
+
+/* -----------------------------------------------------------------
+   30. USER ROW AVATAR (inline in table)
+   ----------------------------------------------------------------- */
+.ix-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ix-user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ix-text-primary);
+  line-height: 1.3;
+}
+.ix-user-email {
+  font-size: 12px;
+  color: var(--ix-text-muted);
+}
+
+/* -----------------------------------------------------------------
+   31. ROLE CARD GRID (Roles page)
+   ----------------------------------------------------------------- */
+.ix-role-card {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 20px;
+}
+.ix-avatar-group {
+  display: flex;
+  align-items: center;
+}
+.ix-avatar-group .ix-avatar-sm {
+  margin-left: -8px;
+  border: 2px solid var(--ix-bg-card);
+}
+.ix-avatar-group .ix-avatar-sm:first-child { margin-left: 0; }
+.ix-avatar-group-count {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--ix-bg-hover);
+  border: 2px solid var(--ix-bg-card);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  color: var(--ix-text-secondary);
+  margin-left: -8px;
+}
+.ix-role-name {
+  font-size: 15px; font-weight: 600;
+  color: var(--ix-text-primary);
+  margin-bottom: 2px;
+}
+.ix-role-edit {
+  font-size: 13px; color: var(--ix-accent);
+  text-decoration: none; cursor: pointer;
+}
+.ix-role-edit:hover { text-decoration: underline; }
+
+/* -----------------------------------------------------------------
+   32. PERMISSION TABLE (Role modal)
+   ----------------------------------------------------------------- */
+.ix-perm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ix-perm-table td { padding: 10px 12px; border-bottom: 1px solid var(--ix-border); }
+.ix-perm-table tr:last-child td { border-bottom: none; }
+.ix-perm-name { font-weight: 500; color: var(--ix-text-primary); white-space: nowrap; }
+.ix-perm-actions { display: flex; gap: 16px; justify-content: flex-end; }
+.ix-perm-check {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ix-text-secondary);
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------------
+   33. CHART PLACEHOLDER CARD
+   ----------------------------------------------------------------- */
+.ix-chart-placeholder {
+  height: 200px;
+  background: linear-gradient(
+    135deg,
+    rgba(105,108,255,0.06) 0%,
+    rgba(105,108,255,0.02) 100%
+  );
+  border-radius: var(--ix-radius);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ix-text-muted); font-size: 13px;
+}
+
+/* -----------------------------------------------------------------
+   34. WIDGET SEPARATOR (eCommerce / Product List hero strip)
+   ----------------------------------------------------------------- */
+.ix-widget-separator {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+.ix-widget-separator-item {
+  flex: 1;
+  min-width: 200px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-right: 1px solid var(--ix-border);
+}
+.ix-widget-separator-item:last-child { border-right: none; }
+.ix-widget-sep-label {
+  font-size: 13px; color: var(--ix-text-secondary);
+  margin-bottom: 4px;
+}
+.ix-widget-sep-value {
+  font-size: 22px; font-weight: 600;
+  color: var(--ix-text-primary); line-height: 1;
+  margin-bottom: 4px;
+}
+.ix-widget-sep-sub { font-size: 12px; color: var(--ix-text-muted); }
+
+/* -----------------------------------------------------------------
+   35. TABS (nav pills / horizontal tabs)
+   ----------------------------------------------------------------- */
+.ix-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--ix-bg-input);
+  border-radius: var(--ix-radius);
+  padding: 3px;
+  width: fit-content;
+}
+.ix-tab {
+  padding: 6px 14px;
+  border-radius: calc(var(--ix-radius) - 2px);
+  font-size: 13px; font-weight: 500;
+  color: var(--ix-text-muted);
+  cursor: pointer;
+  transition: all .15s;
+  border: none; background: none;
+  font-family: var(--ix-font);
+}
+.ix-tab:hover { color: var(--ix-text-primary); }
+.ix-tab.active {
+  background: var(--ix-bg-card);
+  color: var(--ix-text-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.ix-nav-pills { display: flex; flex-direction: column; gap: 2px; }
+.ix-nav-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--ix-radius);
+  font-size: 13px; font-weight: 500;
+  color: var(--ix-text-secondary);
+  cursor: pointer; border: none;
+  background: none; font-family: var(--ix-font);
+  transition: all .15s; text-align: left;
+}
+.ix-nav-pill:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+.ix-nav-pill.active { background: var(--ix-bg-active); color: var(--ix-accent); }
+
+/* -----------------------------------------------------------------
+   36. TWO-COLUMN LAYOUT (Add Product)
+   ----------------------------------------------------------------- */
+.ix-layout-main { display: flex; gap: 24px; align-items: flex-start; }
+.ix-layout-main-col { flex: 1; min-width: 0; }
+.ix-layout-side-col { width: 320px; flex-shrink: 0; }
+
+/* -----------------------------------------------------------------
+   37. HERO BANNER CARD (eCommerce congratulations)
+   ----------------------------------------------------------------- */
+.ix-hero-card {
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ix-hero-card-body { flex: 1; }
+.ix-hero-card-img {
+  width: 120px; flex-shrink: 0; text-align: center;
+}
+.ix-hero-card-img i { font-size: 80px; color: var(--ix-accent); opacity: 0.5; }
+
+/* -----------------------------------------------------------------
+   38. INLINE STAT ROW (eCommerce stats strip)
+   ----------------------------------------------------------------- */
+.ix-stat-row {
+  display: flex; flex-wrap: wrap; gap: 20px;
+}
+.ix-stat-row-item {
+  display: flex; align-items: center; gap: 12px;
+}
+.ix-stat-row-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--ix-radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ix-stat-row-label { font-size: 12px; color: var(--ix-text-muted); }
+.ix-stat-row-value { font-size: 16px; font-weight: 600; color: var(--ix-text-primary); }
+
+/* -----------------------------------------------------------------
+   39. FILE UPLOAD DROP ZONE
+   ----------------------------------------------------------------- */
+.ix-dropzone {
+  border: 2px dashed var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.ix-dropzone:hover {
+  border-color: var(--ix-accent);
+  background: var(--ix-accent-soft);
+}
+.ix-dropzone-icon { font-size: 40px; color: var(--ix-text-muted); margin-bottom: 12px; }
+.ix-dropzone-title { font-size: 15px; font-weight: 500; color: var(--ix-text-primary); margin-bottom: 4px; }
+.ix-dropzone-sub { font-size: 13px; color: var(--ix-text-muted); margin-bottom: 12px; }
+
+/* -----------------------------------------------------------------
+   40. SWITCH TOGGLE
+   ----------------------------------------------------------------- */
+.ix-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.ix-switch input { opacity: 0; width: 0; height: 0; }
+.ix-switch-slider {
+  position: absolute; inset: 0;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.ix-switch-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 2px; top: 2px;
+  background: var(--ix-text-muted);
+  border-radius: 50%;
+  transition: transform .2s;
+}
+.ix-switch input:checked + .ix-switch-slider {
+  background: var(--ix-accent);
+  border-color: var(--ix-accent);
+}
+.ix-switch input:checked + .ix-switch-slider::before {
+  transform: translateX(18px);
+  background: #fff;
+}
+
+/* -----------------------------------------------------------------
+   41. TIMELINE (Order Details / Shipping Activity)
+   ----------------------------------------------------------------- */
+.ix-timeline { list-style: none; padding: 0; margin: 0; }
+.ix-timeline-item {
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 20px;
+}
+.ix-timeline-item:last-child { padding-bottom: 0; }
+.ix-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 20px; bottom: 0;
+  width: 2px;
+  background: var(--ix-border);
+}
+.ix-timeline-item:last-child::before { display: none; }
+.ix-timeline-dot {
+  position: absolute;
+  left: 0; top: 4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--ix-accent);
+  background: var(--ix-bg-card);
+  display: flex; align-items: center; justify-content: center;
+}
+.ix-timeline-dot.filled { background: var(--ix-accent); }
+.ix-timeline-dot.success { border-color: var(--ix-success); }
+.ix-timeline-dot.filled.success { background: var(--ix-success); }
+.ix-timeline-dot.muted { border-color: var(--ix-border); }
+.ix-timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.ix-timeline-title { font-size: 13px; font-weight: 600; color: var(--ix-text-primary); }
+.ix-timeline-time { font-size: 12px; color: var(--ix-text-muted); }
+.ix-timeline-body { font-size: 13px; color: var(--ix-text-muted); }
+
+/* -----------------------------------------------------------------
+   42. DETAIL PAGE SIDEBAR (Order Details customer card)
+   ----------------------------------------------------------------- */
+.ix-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: flex-start;
+}
+.ix-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.ix-info-row:last-child { margin-bottom: 0; }
+.ix-info-label { color: var(--ix-text-muted); }
+.ix-info-value { font-weight: 500; color: var(--ix-text-primary); }
+
+/* -----------------------------------------------------------------
+   43. REFERRAL STEP CARDS (How to use)
+   ----------------------------------------------------------------- */
+.ix-referral-steps {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.ix-referral-step {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.ix-referral-step-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 2px dashed var(--ix-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  color: var(--ix-accent);
+  flex-shrink: 0;
+}
+.ix-referral-step-title { font-size: 13px; color: var(--ix-text-secondary); }
+.ix-referral-step-reward { font-size: 14px; font-weight: 700; color: var(--ix-accent); }
+
+/* -----------------------------------------------------------------
+   44. CHAT LAYOUT (Split-pane)
+   ----------------------------------------------------------------- */
+.ix-chat-layout {
+  display: flex;
+  height: calc(100vh - 140px);
+  min-height: 600px;
+  overflow: hidden;
+  border-radius: var(--ix-radius-lg);
+  border: 1px solid var(--ix-border);
+  background: var(--ix-bg-card);
+}
+.ix-chat-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--ix-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ix-chat-sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ix-border);
+  flex-shrink: 0;
+}
+.ix-chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.ix-chat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.ix-chat-item:hover { background: var(--ix-bg-hover); }
+.ix-chat-item.active { background: var(--ix-bg-active); }
+.ix-chat-item-name { font-size: 13px; font-weight: 500; color: var(--ix-text-primary); line-height: 1.2; }
+.ix-chat-item-preview { font-size: 12px; color: var(--ix-text-muted); }
+.ix-chat-item-time { font-size: 11px; color: var(--ix-text-muted); white-space: nowrap; }
+.ix-chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ix-chat-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.ix-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ix-chat-msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.ix-chat-msg.sent { flex-direction: row-reverse; }
+.ix-chat-bubble {
+  max-width: 60%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ix-text-primary);
+  background: var(--ix-bg-hover);
+}
+.ix-chat-msg.sent .ix-chat-bubble {
+  background: var(--ix-accent);
+  color: #fff;
+}
+.ix-chat-time { font-size: 11px; color: var(--ix-text-muted); margin-top: 4px; }
+.ix-chat-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ix-chat-input {
+  flex: 1;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: var(--ix-font);
+  color: var(--ix-text-primary);
+  outline: none;
+}
+.ix-chat-input:focus { border-color: var(--ix-accent); }
+
+/* -----------------------------------------------------------------
+   45. STEPPER / WIZARD (Property Listing)
+   ----------------------------------------------------------------- */
+.ix-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 24px 0;
+  overflow-x: auto;
+}
+.ix-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+.ix-step-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+.ix-step-circle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--ix-border);
+  background: var(--ix-bg-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600;
+  color: var(--ix-text-muted);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.ix-step.active .ix-step-circle,
+.ix-step.completed .ix-step-circle {
+  background: var(--ix-accent);
+  border-color: var(--ix-accent);
+  color: #fff;
+}
+.ix-step.completed .ix-step-circle {
+  background: var(--ix-success);
+  border-color: var(--ix-success);
+}
+.ix-step-info { min-width: 0; }
+.ix-step-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--ix-text-primary);
+  white-space: nowrap;
+}
+.ix-step-subtitle { font-size: 11px; color: var(--ix-text-muted); }
+.ix-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--ix-border);
+  min-width: 20px;
+}
+.ix-step.completed + .ix-step-line { background: var(--ix-success); }
+
+.ix-step-panel { display: none; }
+.ix-step-panel.active { display: block; }
+
+/* -----------------------------------------------------------------
+   46. AUTH PAGES (Login / Register / Forgot Password)
+   ----------------------------------------------------------------- */
+.ix-auth-root {
+  min-height: 100vh;
+  background: var(--ix-bg-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ix-font);
+}
+.ix-auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--ix-bg-card);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  padding: 36px 40px;
+}
+.ix-auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.ix-auth-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ix-text-primary);
+}
+.ix-auth-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ix-text-primary);
+  margin-bottom: 4px;
+}
+.ix-auth-sub {
+  font-size: 13px;
+  color: var(--ix-text-muted);
+  margin-bottom: 24px;
+}
+.ix-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--ix-text-muted);
+  font-size: 12px;
+}
+.ix-auth-divider::before,
+.ix-auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ix-border);
+}
+.ix-auth-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ix-social-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--ix-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  background: none;
+  color: var(--ix-text-secondary);
+  transition: all .15s;
+  text-decoration: none;
+}
+.ix-social-btn:hover { border-color: var(--ix-accent); color: var(--ix-accent); }
+.ix-social-btn.facebook:hover { color: #1877f2; border-color: #1877f2; }
+.ix-social-btn.twitter:hover  { color: #1da1f2; border-color: #1da1f2; }
+.ix-social-btn.github:hover   { color: #cfd3ec;  border-color: #cfd3ec; }
+.ix-social-btn.google:hover   { color: #ea4335; border-color: #ea4335; }
+.ix-auth-footer {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--ix-text-muted);
+}
+.ix-auth-footer a { color: var(--ix-accent); text-decoration: none; }
+.ix-auth-footer a:hover { text-decoration: underline; }
+.ix-auth-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--ix-accent);
+  text-decoration: none;
+  margin-top: 16px;
+}
+.ix-auth-back:hover { text-decoration: underline; }
+.ix-auth-remember {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.ix-auth-remember a { color: var(--ix-accent); text-decoration: none; font-size: 13px; }
+.ix-auth-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ix-text-secondary);
+}

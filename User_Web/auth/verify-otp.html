@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xác thực email · iFlux</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="../iflux-web-ui/iflux-web-ui.css" />
+  </head>
+<body class="ifx-auth-page">
+<div class="ix-auth-root">
+  <div class="ix-auth-card">
+    <div class="ix-auth-brand">
+      <span class="ix-auth-brand-name">iFlux</span>
+    </div>
+
+    <div class="ix-auth-title">Xác thực lần đầu ✉️</div>
+    <div class="ix-auth-sub" id="verify-msg">Nhập mã OTP 6 số để hoàn tất đăng ký</div>
+    <p class="ifx-auth-hint" id="verify-email-display" style="margin-bottom:16px"></p>
+    <p class="ifx-auth-hint" id="verify-demo-hint" hidden></p>
+
+    <div class="ix-form-group">
+      <label class="ix-label">Mã xác thực (6 số)</label>
+      <div id="otp-input-row" aria-label="Nhập mã OTP 6 số"></div>
+    </div>
+
+    <button type="button" class="ix-btn ix-btn-ghost" style="width:100%;margin-bottom:12px" id="btn-open-mail" hidden>
+      <i class="ti ti-mail"></i> Mở ứng dụng Gmail
+    </button>
+
+    <button type="button" class="ix-btn ix-btn-primary" style="width:100%;margin-bottom:8px" id="btn-verify">Xác thực &amp; hoàn tất</button>
+    <button type="button" class="ix-btn ix-btn-ghost" style="width:100%;margin-bottom:8px" id="btn-resend" disabled>Gửi lại mã (60s)</button>
+
+    <div class="ix-auth-footer">
+      <a href="register.html" id="btn-back-register">← Quay lại đăng ký</a>
+    </div>
+    <a href="/cong-dong" class="ix-auth-back"><i class="ti ti-chevron-left" style="font-size:13px"></i> Về trang chủ</a>
+  </div>
+</div>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/auth-otp-boot.js?v=homeCd20260724"></script>
+</body>
+</html>
