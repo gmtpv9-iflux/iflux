@@ -2,7 +2,9 @@
 
 **Task:** `180826_Inprogress_Admin_URL_Architecture_Wave_2`  
 **Ngày:** 18/08/2026  
-**Status:** IMPLEMENTATION COMPLETE — local writer/Express-logic PASS · Staging HTTP = chờ CI sau push
+**Status:** IMPLEMENTATION COMPLETE  
+**Commit:** `fa0cbc3` · `github/staging`  
+**Staging:** `https://staging.iflux.vn` — HTTP PASS 18/08/2026 (sau CI)
 
 ```text
 IMPLEMENTATION COMPLETE
@@ -184,8 +186,8 @@ URL → matchPath → identity → PAGE_PERM → **existing catalog key**.
 | # | Kết quả | Ghi chú |
 |---|---|---|
 | V1 | **PASS** local | 1 Page = 1 identity; RUNTIME cùng pipeline |
-| V2 | **PASS** local pack | Canonical = pathFor; file tồn tại |
-| V3 | **PASS** local pack | Legacy evidenced → identity → pathFor; `/admin` = 302 |
+| V2 | **PASS** Staging | Canonical 200 Express (`x-powered-by: Express`) |
+| V3 | **PASS** Staging | Legacy evidenced → 301 1 hop; `/admin` = 302 |
 | V4 | **PASS** | hrefFor path === pathFor; slug không writer. Query/hash = state (plan-add, Studio) |
 | V5 | **PASS** | Slot `#adm-page-bc` + trailFor. Studio: không slot sẵn |
 | V6 | **PASS** | PAGE_PERM existing keys; 2 GAP không bịa |
@@ -193,30 +195,40 @@ URL → matchPath → identity → PAGE_PERM → **existing catalog key**.
 | V8 | **PASS** local | `?plan=new` giữ trên 301 |
 | V9 | **PASS** | 13 nav · 1 identity · 1 base · 13 hash |
 | V10 | **PASS** | 0 registry/engine mới · 0 User Web |
-| W1 | **PASS** local | administrators/{list,profile,roles,permissions} + login không đổi |
+| W1 | **PASS** Staging | administrators/{list,profile,roles,permissions} + login 200 |
 | V7 live sidebar | **NOT RE-RUN** | Chưa session Staging trong lượt này |
 
 ## 16. Git / commit
 
-Xem `git log` / `git show` sau commit lượt này. Message:
-
 ```text
-feat(admin): Wave 2 URL architecture — pathFor writer and Express authority
+fa0cbc3 feat(admin): Wave 2 URL architecture — pathFor writer and Express authority
+github/staging  24beb82..fa0cbc3
+98 files changed
 ```
 
 ## 17. Staging verification evidence
 
-Chạy **sau** CI `deploy-staging.yml` trên branch `staging`. Cần chứng minh trên `https://staging.iflux.vn`:
+Host: `https://staging.iflux.vn` · 18/08/2026 · sau push `fa0cbc3`
 
-```text
-/admin                              → 302 /admin/overview
-/admin/overview                     → 200 Express
-/admin/tong-quan                    → 301 /admin/overview (1 hop)
-/admin/dashboard                    → 301 /admin/overview
-/admin/administrators/list          → 200 (W1)
-/admin/login                        → 200
-/admin/interface/ds-studio          → 200
-/admin/he-thong/ds-studio           → 301 /admin/interface/ds-studio
-```
+Canonical **200** + header `x-powered-by: Express` · `cache-control: no-store` (mẫu `/admin/overview`, `/admin/administrators/list`).
 
-Kết quả HTTP Staging: điền sau push/CI (mục này cập nhật khi có evidence).
+| URL | HTTP | Location / hop |
+|---|---|---|
+| `/admin` | **302** | `/admin/overview` · 1 hop → 200 |
+| `/admin/overview` | **200 Express** | — |
+| `/admin/login` | **200** | — |
+| `/admin/tong-quan` | **301** | `/admin/overview` · 1 hop |
+| `/admin/dashboard` | **301** | `/admin/overview` · 1 hop |
+| `/admin/administrators/list` | **200 Express** | W1 |
+| `/admin/interface/ds-studio` | **200 Express** | — |
+| `/admin/he-thong/ds-studio` | **301** | `/admin/interface/ds-studio` · 1 hop |
+| `/admin/khach-hang/list` | **301** | `/admin/users/list` · 1 hop |
+| `/admin/goi-cuoc/plan-edit?plan=new` | **301** | `/admin/subscriptions/plan-edit?plan=new` · query giữ · 1 hop |
+| `/admin/story/detail` | **301** | `/admin/topics/registry-detail` · 1 hop |
+| `/admin/loyalty/ma-list` | **301** | `/admin/membership/promo/list` · 1 hop |
+| `/admin/market-ops/feed-health` | **301** | `/admin/data-operations/feed-health` · 1 hop |
+| `/admin/dang-nhap` | **301** | `/admin/login` · 1 hop |
+
+Toàn bộ canonical trong §4 đã **200** trên Staging (41 URL probe). Legacy probed **301/302 1 hop**.
+
+V7 live sidebar: **NOT RE-RUN** (không session Admin trong lượt).
