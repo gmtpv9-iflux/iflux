@@ -162,12 +162,10 @@ refresh_switch() {
 
 start_or_restart_api() {
   if pm2 describe iflux-api-newprod >/dev/null 2>&1; then
-    pm2 restart iflux-api-newprod --update-env
-  else
-    cd "$BACKEND_LIVE"
-    pm2 start src/server.js --name iflux-api-newprod --update-env
+    pm2 delete iflux-api-newprod
   fi
-  echo "OK: PM2 iflux-api-newprod"
+  pm2 start src/server.js --name iflux-api-newprod --cwd "$BACKEND_LIVE"
+  echo "OK: PM2 iflux-api-newprod cwd=$BACKEND_LIVE"
 }
 
 if [ "$MIGRATE_ONLY" = "1" ]; then
