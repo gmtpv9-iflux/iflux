@@ -1,17 +1,19 @@
-name: Deploy to Production candidate
+name: Deploy to Production
 
-# production.iflux.vn — Production chính thức (chưa cutover iflux.vn).
-# Application artifact = Staging 1 (User_Web + Admin_Design_system + backend).
-# Khung deploy = atomic release + scoped switch (giữ path *-newprod).
-# CẤM: Live Production (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api)
+# GitHub `production` → Canonical Production Runtime
+#   iflux.vn + production.iflux.vn → newprod → :3003
+# Application artifact = User_Web + Admin_Design_system + backend.
+# Khung deploy = atomic release + scoped switch (giữ path *-newprod — historical path).
+# CẤM: leftover backup (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api)
 # CẤM: Staging 1 (/var/www/iflux/staging, /var/iflux/backend-staging).
+# Folder infra/staging-2/ = deploy plumbing, không phải tên branch.
 # Runner self-hosted label "staging", user iflux-deploy.
 # Sudo chỉ /usr/local/bin/iflux-newprod-deploy-switch.sh
 
 on:
   push:
     branches:
-      - staging-2
+      - production
 
 concurrency:
   group: iflux-production-new-deploy
