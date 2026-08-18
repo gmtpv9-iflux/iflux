@@ -104,7 +104,7 @@
         var sotHref = shell && shell.hrefFor ? shell.hrefFor(routeKey) : '';
         if (sotHref && sotHref.charAt(0) === '/') {
           e.preventDefault();
-          global.location.assign(sotHref);
+          if (shell && shell.navigate) shell.navigate(sotHref);
           return;
         }
       }
@@ -129,11 +129,53 @@
     });
   }
 
-  function render() {
+  function snapshotOpen(host) {
+    var keys = [];
+    if (!host) return keys;
+    host.querySelectorAll('.ix-menu-item[data-ix-submenu].open').forEach(function (el) {
+      var k = el.getAttribute('data-ix-route');
+      if (k) keys.push(k);
+    });
+    return keys;
+  }
+
+  function restoreOpen(host, keys) {
+    if (!host || !keys || !keys.length) return;
+    var set = {};
+    keys.forEach(function (k) { set[k] = true; });
+    host.querySelectorAll('.ix-menu-item[data-ix-submenu]').forEach(function (el) {
+      el.classList.toggle('open', !!set[el.getAttribute('data-ix-route')]);
+    });
+  }
+
+  function syncActive() {
+    var host = findHost();
+    var shell = global.IfluxAdminAppShell;
+    if (!host || !shell || !shell.activeKey) return;
+    var active = shell.activeKey();
+    host.querySelectorAll('a.ix-menu-item[data-ix-route]').forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('data-ix-route') === active);
+    });
+    host.querySelectorAll('.ix-menu-item[data-ix-submenu]').forEach(function (p) {
+      var rk = p.getAttribute('data-ix-route');
+      var childActive = false;
+      var sub = p.nextElementSibling;
+      if (sub && sub.classList && sub.classList.contains('ix-menu-sub')) {
+        sub.querySelectorAll('a[data-ix-route]').forEach(function (a) {
+          if (a.getAttribute('data-ix-route') === active) childActive = true;
+        });
+      }
+      p.classList.toggle('active', rk === active && !childActive);
+    });
+  }
+
+  function render(opts) {
     var host = findHost();
     if (!host) return;
     var shell = global.IfluxAdminAppShell;
     if (!shell || !shell.getSidebarNav) return;
+    opts = opts || {};
+    var openKeys = opts.preserveOpen ? snapshotOpen(host) : [];
     var nodes = shell.getSidebarNav();
     var html = nodes.map(function (n) {
       if (n.type === 'group') return groupHtml(n);
@@ -142,6 +184,7 @@
     }).join('');
     host.innerHTML = html;
     host.setAttribute('data-ix-admin-nav', '');
+    if (opts.preserveOpen) restoreOpen(host, openKeys);
     bindSubmenu(host);
   }
 
@@ -194,6 +237,7 @@
 
   global.IfluxAdminAppShellSidebar = {
     render: render,
+    syncActive: syncActive,
     applyBrandLogoFromSeo: applyBrandLogoFromSeo,
     clearHardcodedBrandLogo: clearHardcodedBrandLogo
   };

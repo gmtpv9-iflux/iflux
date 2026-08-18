@@ -470,7 +470,8 @@
         var art = data.article || data;
         toast(editingId ? 'Đã cập nhật bài viết' : 'Đã tạo bài viết', 'success');
         if (!editingId && art && art.id) {
-          window.location.href = 'edit.html?id=' + encodeURIComponent(art.id);
+          if (window.IfluxAdminAppShell && IfluxAdminAppShell.navigate) IfluxAdminAppShell.navigate('edit.html?id=' + encodeURIComponent(art.id));
+          else window.location.href = 'edit.html?id=' + encodeURIComponent(art.id);
         } else if (art) {
           fillForm(art);
           return refreshMediaStatus();

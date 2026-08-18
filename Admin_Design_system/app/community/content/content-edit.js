@@ -88,7 +88,8 @@
     post = id ? S.getById(id) : S.emptyPost();
     if (id && !post) {
       alert('Không tìm thấy bài viết');
-      window.location.href = 'index.html';
+      if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate('index.html');
+      else window.location.href = 'index.html';
       return;
     }
 
@@ -313,7 +314,8 @@
         var p = collectPost();
         p.status = 'draft';
         IfluxContentStore.save(p);
-        window.location.href = 'edit.html?id=' + encodeURIComponent(p.id);
+        if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate('edit.html?id=' + encodeURIComponent(p.id));
+        else window.location.href = 'edit.html?id=' + encodeURIComponent(p.id);
       });
     }
     var saveBtn = $('btn-save-content');
@@ -323,7 +325,10 @@
         if (!p.title) { alert('Vui lòng nhập tiêu đề'); return; }
         var saved = IfluxContentStore.save(p);
         alert('Đã lưu bài viết');
-        if (!qs('id')) window.location.href = 'edit.html?id=' + encodeURIComponent(saved.id);
+        if (!qs('id')) {
+          if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate('edit.html?id=' + encodeURIComponent(saved.id));
+          else window.location.href = 'edit.html?id=' + encodeURIComponent(saved.id);
+        }
         else { post = saved; renderVersions(); renderAudit(); }
       });
     }

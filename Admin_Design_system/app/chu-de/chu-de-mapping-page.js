@@ -108,7 +108,8 @@
       return '<option value="' + esc(s.id) + '"' + (s.id === storyId ? ' selected' : '') + '>' + esc(s.name) + '</option>';
     }).join('');
     sel.addEventListener('change', function () {
-      global.location.href = 'mapping.html?id=' + encodeURIComponent(sel.value);
+      if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate('mapping.html?id=' + encodeURIComponent(sel.value));
+      else global.location.href = 'mapping.html?id=' + encodeURIComponent(sel.value);
     });
   }
 

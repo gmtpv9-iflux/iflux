@@ -457,7 +457,9 @@
       toast('Đã tạo đơn hàng thủ công');
       var id = res && res.order && res.order.id;
       setTimeout(function () {
-        location.href = id ? ('/admin/don-hang/edit?id=' + encodeURIComponent(id)) : '/admin/don-hang/list';
+        var next = id ? ('/admin/don-hang/edit?id=' + encodeURIComponent(id)) : '/admin/don-hang/list';
+        if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate(next);
+        else location.href = next;
       }, 400);
     }).catch(function (err) {
       toast(err.message, 'danger');
@@ -538,7 +540,8 @@
         apiJson('/subscriptions/orders/' + encodeURIComponent(id), { method: 'DELETE' })
           .then(function () {
             toast('Đã xoá đơn hàng');
-            location.href = '/admin/don-hang/list';
+            if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.navigate) global.IfluxAdminAppShell.navigate('/admin/don-hang/list');
+            else location.href = '/admin/don-hang/list';
           })
           .catch(function (err) { toast(err.message, 'danger'); });
       });

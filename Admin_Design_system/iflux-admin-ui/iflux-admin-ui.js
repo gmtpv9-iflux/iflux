@@ -135,45 +135,25 @@
      ------------------------------------------------------------------ */
   /* no-op legacy — behavior ở iflux-admin-app-shell-sidebar.js */
 
-  /* Mark active: ủy quyền IfluxAdminAppShell (route key / pathname chuẩn). */
-  if (window.IfluxAdminAppShell && window.IfluxAdminAppShellSidebar) {
-    try { window.IfluxAdminAppShellSidebar.render(); } catch (e) { /* ignore */ }
-  } else {
-    /* Legacy fallback nếu trang chưa nạp App Shell */
-    const path = window.location.pathname.split('/').pop();
-    document.querySelectorAll('.ix-menu-item[href]').forEach(function (link) {
-      if (link.getAttribute('href') === path) {
-        link.classList.add('active');
-        const parent = link.closest('.ix-menu-sub');
-        if (parent) {
-          const toggle = parent.previousElementSibling;
-          if (toggle) toggle.classList.add('open');
-        }
-      }
-    });
-  }
+  /* Active: App Shell Sidebar. Không mở parent theo path (D-04). Không render lần 2. */
 
 
   /* ------------------------------------------------------------------
      3. DROPDOWN
      ------------------------------------------------------------------ */
-  document.querySelectorAll('[data-ix-toggle="dropdown"]').forEach(function (trigger) {
-    trigger.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
+    var trigger = e.target.closest && e.target.closest('[data-ix-toggle="dropdown"]');
+    if (trigger) {
       e.stopPropagation();
-      const dropdown = trigger.closest('.ix-dropdown');
-      const isOpen = dropdown.classList.contains('open');
-
-      /* close all dropdowns */
+      var dropdown = trigger.closest('.ix-dropdown');
+      if (!dropdown) return;
+      var isOpen = dropdown.classList.contains('open');
       document.querySelectorAll('.ix-dropdown.open').forEach(function (d) {
         d.classList.remove('open');
       });
-
       if (!isOpen) dropdown.classList.add('open');
-    });
-  });
-
-  /* Close dropdown on outside click */
-  document.addEventListener('click', function () {
+      return;
+    }
     document.querySelectorAll('.ix-dropdown.open').forEach(function (d) {
       d.classList.remove('open');
     });
@@ -200,21 +180,21 @@
     setTimeout(function () { modal.style.display = 'none'; }, 200);
   }
 
-  document.querySelectorAll('[data-ix-modal]').forEach(function (trigger) {
-    trigger.addEventListener('click', function () {
-      openModal(trigger.dataset.ixModal);
-    });
-  });
-  document.querySelectorAll('[data-ix-dismiss="modal"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const modal = btn.closest('.ix-modal-overlay');
+  document.addEventListener('click', function (e) {
+    var openBtn = e.target.closest && e.target.closest('[data-ix-modal]');
+    if (openBtn) {
+      openModal(openBtn.dataset.ixModal);
+      return;
+    }
+    var dismiss = e.target.closest && e.target.closest('[data-ix-dismiss="modal"]');
+    if (dismiss) {
+      var modal = dismiss.closest('.ix-modal-overlay');
       if (modal) closeModal(modal.id);
-    });
-  });
-  document.querySelectorAll('.ix-modal-overlay').forEach(function (overlay) {
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) closeModal(overlay.id);
-    });
+      return;
+    }
+    if (e.target.classList && e.target.classList.contains('ix-modal-overlay')) {
+      closeModal(e.target.id);
+    }
   });
 
   /* Expose globally */
@@ -361,34 +341,28 @@
      9. TABLE — sortable columns
      Usage: <th data-ix-sort="colIndex">
      ------------------------------------------------------------------ */
-  document.querySelectorAll('table.ix-table').forEach(function (table) {
-    const tbody = table.querySelector('tbody');
+  document.addEventListener('click', function (e) {
+    var th = e.target.closest && e.target.closest('th[data-ix-sort]');
+    if (!th) return;
+    var table = th.closest('table.ix-table');
+    if (!table) return;
+    var tbody = table.querySelector('tbody');
     if (!tbody) return;
-
-    table.querySelectorAll('th[data-ix-sort]').forEach(function (th) {
-      th.style.cursor = 'pointer';
-      th.style.userSelect = 'none';
-
-      let dir = 1;
-      th.addEventListener('click', function () {
-        const col = parseInt(th.dataset.ixSort, 10);
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-
-        rows.sort(function (a, b) {
-          const aText = (a.cells[col] || {}).textContent || '';
-          const bText = (b.cells[col] || {}).textContent || '';
-          return aText.localeCompare(bText, undefined, { numeric: true }) * dir;
-        });
-
-        rows.forEach(function (r) { tbody.appendChild(r); });
-
-        table.querySelectorAll('th[data-ix-sort]').forEach(function (other) {
-          other.dataset.sortDir = '';
-        });
-        dir = dir * -1;
-        th.dataset.sortDir = dir === -1 ? 'asc' : 'desc';
-      });
+    th.style.cursor = 'pointer';
+    var dir = th.dataset.ixSortDir === '1' ? -1 : 1;
+    var col = parseInt(th.dataset.ixSort, 10);
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort(function (a, b) {
+      var aText = (a.cells[col] || {}).textContent || '';
+      var bText = (b.cells[col] || {}).textContent || '';
+      return aText.localeCompare(bText, undefined, { numeric: true }) * dir;
     });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+    table.querySelectorAll('th[data-ix-sort]').forEach(function (other) {
+      other.dataset.sortDir = '';
+    });
+    th.dataset.ixSortDir = String(dir);
+    th.dataset.sortDir = dir === -1 ? 'asc' : 'desc';
   });
 
 })();
@@ -416,22 +390,20 @@ function ixCloseOffcanvas(id) {
 window.ixOpenOffcanvas  = ixOpenOffcanvas;
 window.ixCloseOffcanvas = ixCloseOffcanvas;
 
-document.querySelectorAll('[data-ix-offcanvas]').forEach(function (trigger) {
-  trigger.addEventListener('click', function () {
-    ixOpenOffcanvas(trigger.dataset.ixOffcanvas);
-  });
-});
-document.querySelectorAll('[data-ix-dismiss="offcanvas"]').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var el = btn.closest('.ix-offcanvas');
-    if (el) ixCloseOffcanvas(el.id);
-  });
-});
-document.querySelectorAll('.ix-offcanvas-overlay').forEach(function (ov) {
-  ov.addEventListener('click', function () {
-    var targetId = ov.id.replace('-overlay', '');
-    ixCloseOffcanvas(targetId);
-  });
+document.addEventListener('click', function (e) {
+  var openOc = e.target.closest && e.target.closest('[data-ix-offcanvas]');
+  if (openOc) {
+    ixOpenOffcanvas(openOc.dataset.ixOffcanvas);
+    return;
+  }
+  var closeOc = e.target.closest && e.target.closest('[data-ix-dismiss="offcanvas"]');
+  if (closeOc) {
+    var panel = closeOc.closest('.ix-offcanvas');
+    if (panel) ixCloseOffcanvas(panel.id);
+    return;
+  }
+  var ov = e.target.classList && e.target.classList.contains('ix-offcanvas-overlay') ? e.target : null;
+  if (ov) ixCloseOffcanvas(ov.id.replace('-overlay', ''));
 });
 
 /* ------------------------------------------------------------------
@@ -527,18 +499,18 @@ document.querySelectorAll('[data-ix-paginate]').forEach(function (pager) {
    14. TABS — client-side tab switching
    Usage: <button class="ix-tab" data-ix-tab="panel-id"> / <div id="panel-id" class="ix-tab-panel">
    ------------------------------------------------------------------ */
-document.querySelectorAll('[data-ix-tab]').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var container = btn.closest('[data-ix-tabs]') || btn.parentElement;
-    container.querySelectorAll('[data-ix-tab]').forEach(function (b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    var targetId = btn.dataset.ixTab;
-    var target = document.getElementById(targetId);
-    if (!target) return;
-    var panels = target.parentElement.querySelectorAll('.ix-tab-panel');
-    panels.forEach(function (p) { p.style.display = 'none'; });
-    target.style.display = '';
-  });
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('[data-ix-tab]');
+  if (!btn) return;
+  var container = btn.closest('[data-ix-tabs]') || btn.parentElement;
+  container.querySelectorAll('[data-ix-tab]').forEach(function (b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var targetId = btn.dataset.ixTab;
+  var target = document.getElementById(targetId);
+  if (!target) return;
+  var panels = target.parentElement.querySelectorAll('.ix-tab-panel');
+  panels.forEach(function (p) { p.style.display = 'none'; });
+  target.style.display = '';
 });
 
 /* ------------------------------------------------------------------

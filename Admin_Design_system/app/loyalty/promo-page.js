@@ -156,7 +156,8 @@
         var res = Store().save(collectForm(), editingCode);
         if (!res.ok) { toast(res.error, 'danger'); return; }
         toast('Đã lưu');
-        location.href = '/admin/thanh-vien/ma-list';
+        if (window.IfluxAdminAppShell && IfluxAdminAppShell.navigate) IfluxAdminAppShell.navigate('/admin/thanh-vien/ma-list');
+        else location.href = '/admin/thanh-vien/ma-list';
       });
     }
   }

@@ -279,10 +279,10 @@
   }
 
   function gateMenu() {
-    /* Ưu tiên re-render từ App Shell (ẩn item theo permission trong Registry). */
+    /* Re-render Menu theo permission, giữ disclosure Admin đã chọn. */
     if (global.IfluxAdminAppShell && global.IfluxAdminAppShell.refresh) {
       try {
-        global.IfluxAdminAppShell.refresh();
+        global.IfluxAdminAppShell.refresh({ preserveOpen: true, header: false });
         hideEmptyMenuGroups();
         return;
       } catch (e) { /* fall through */ }
@@ -305,6 +305,12 @@
       '<h1 class="ix-page-title">Không có quyền truy cập</h1>' +
       '<p class="ix-fs-13" style="color:var(--ix-text-muted);margin-top:8px">Tài khoản của bạn không được phép xem trang này.</p>' +
       '<a href="/admin/tong-quan" class="ix-btn ix-btn-primary ix-mt-24">Về Tổng quan</a></div>';
+    var host = document.querySelector('[data-ix-admin-page-host]');
+    if (host) {
+      host.textContent = '';
+      host.appendChild(denied);
+      return;
+    }
     var main = document.querySelector('.ix-content');
     if (main) main.replaceWith(denied);
   }

@@ -62,5 +62,5 @@
     bootFromAttr();
   }
 
-  global.IfluxAdminViewGate = { fetchView: fetchView };
+  global.IfluxAdminViewGate = { fetchView: fetchView, bootFromAttr: bootFromAttr };
 })(window);

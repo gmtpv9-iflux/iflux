@@ -300,7 +300,8 @@
     }
     ixToast('Đã lưu · quyền đã ghi sang website (tải lại trang guest)', 'success');
     setTimeout(function () {
-      location.href = 'plans.html?saved=1';
+      if (window.IfluxAdminAppShell && IfluxAdminAppShell.navigate) IfluxAdminAppShell.navigate('plans.html?saved=1');
+      else location.href = 'plans.html?saved=1';
     }, 500);
   });
 })();
