@@ -213,8 +213,17 @@
         fileEl.addEventListener('change', function () {
           var file = fileEl.files && fileEl.files[0];
           if (!file) return;
+          if (fieldRef === 'social' || fieldRef === 'og') {
+            var okType = /image\/(jpeg|jpg|png)/i.test(file.type) || /\.(jpe?g|png)$/i.test(file.name || '');
+            if (!okType) {
+              toast('Ảnh Social/OG phải là JPEG hoặc PNG', 'danger');
+              fileEl.value = '';
+              return;
+            }
+          }
           var fd = new FormData();
           fd.append('file', file);
+          if (fieldRef === 'social' || fieldRef === 'og') fd.append('purpose', fieldRef);
           var h = authHeaders();
           delete h['Content-Type'];
           fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })
@@ -345,9 +354,18 @@
         fileEl.addEventListener('change', function () {
           var file = fileEl.files && fileEl.files[0];
           if (!file) return;
+          if (fieldRef === 'social' || fieldRef === 'og') {
+            var okType = /image\/(jpeg|jpg|png)/i.test(file.type) || /\.(jpe?g|png)$/i.test(file.name || '');
+            if (!okType) {
+              toast('Ảnh Social/OG phải là JPEG hoặc PNG', 'danger');
+              fileEl.value = '';
+              return;
+            }
+          }
           var pageKey = val('seo-p-pageKey');
           var fd = new FormData();
           fd.append('file', file);
+          if (fieldRef === 'social' || fieldRef === 'og') fd.append('purpose', fieldRef);
           var h = authHeaders();
           delete h['Content-Type'];
           fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })
