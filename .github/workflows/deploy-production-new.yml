@@ -1,7 +1,7 @@
 name: Deploy to Production
 
 # GitHub `production` → Canonical Production Runtime
-#   iflux.vn + production.iflux.vn → newprod → :3003
+#   iflux.vn → newprod → :3003
 # Application artifact = User_Web + Admin_Design_system + backend.
 # Khung deploy = atomic release + scoped switch (giữ path *-newprod — historical path).
 # CẤM: leftover backup (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api)
@@ -59,14 +59,14 @@ jobs:
       - name: Atomic switch + nginx + refresh switch
         run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}"
 
-      - name: Health check (production.iflux.vn only)
+      - name: Health check (iflux.vn)
         run: |
           set -euo pipefail
           sleep 3
           curl -fsS http://127.0.0.1:3003/health
-          code=$(curl -sS -o /dev/null -w '%{http_code}' https://production.iflux.vn/admin/login)
+          code=$(curl -sS -o /dev/null -w '%{http_code}' https://iflux.vn/admin/login)
           if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
-            echo "FAIL HTTPS production.iflux.vn/admin/login → $code" >&2
+            echo "FAIL HTTPS iflux.vn/admin/login → $code" >&2
             exit 1
           fi
 

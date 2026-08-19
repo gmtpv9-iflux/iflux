@@ -1,14 +1,14 @@
 #!/bin/bash
 # IFLUX_DEPLOY_TARGET=staging-2
-# Atomic deploy switch — Production candidate (production.iflux.vn).
+# Atomic deploy switch — Production runtime (iflux.vn / newprod).
 # Artifact: Staging 1 (User_Web + Admin_Design_system + backend).
 # CHỈ đụng:
 #   /var/www/iflux/newprod
 #   /var/www/iflux/releases-newprod
 #   /var/iflux/backend-newprod
-#   /etc/nginx/sites-available/production.iflux.vn.conf
 #   /etc/nginx/snippets/iflux-newprod-app.conf
 #   PM2 iflux-api-newprod
+# Không lấy apply vhost production.iflux.vn.conf làm điều kiện thành công.
 # KHÔNG bao giờ chạm Live Production
 #   (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api,
 #    iflux-production.conf, iflux-prod-app.conf)
@@ -83,16 +83,8 @@ refuse_if_forbidden() {
 }
 
 apply_nginx() {
-  if [ ! -f "$NGINX_VHOST_SRC" ] || [ ! -f "$NGINX_APP_SRC" ]; then
-    echo "Missing Git nginx in $DEPLOY_META" >&2
-    exit 1
-  fi
-  if ! grep -F -q 'server_name production.iflux.vn' "$NGINX_VHOST_SRC"; then
-    echo "Refusing nginx vhost: missing production.iflux.vn" >&2
-    exit 1
-  fi
-  if ! grep -F -q 'X-IFlux-Env' "$NGINX_VHOST_SRC"; then
-    echo "Refusing nginx vhost: missing X-IFlux-Env" >&2
+  if [ ! -f "$NGINX_APP_SRC" ]; then
+    echo "Missing Git nginx snippet in $DEPLOY_META" >&2
     exit 1
   fi
   if ! grep -F -q 'root /var/www/iflux/newprod' "$NGINX_APP_SRC"; then
@@ -103,27 +95,17 @@ apply_nginx() {
     echo "Refusing nginx app: missing API port 3003" >&2
     exit 1
   fi
-  refuse_if_forbidden "$NGINX_VHOST_SRC"
   refuse_if_forbidden "$NGINX_APP_SRC"
 
-  if [ ! -f "$NGINX_VHOST_DEST" ]; then
-    echo "Missing live vhost slot: $NGINX_VHOST_DEST" >&2
-    exit 1
-  fi
-
-  local bak_v="${NGINX_VHOST_DEST}.bak.${RELEASE_ID}"
   local bak_a="${NGINX_APP_DEST}.bak.${RELEASE_ID}"
-  cp -a "$NGINX_VHOST_DEST" "$bak_v"
   if [ -f "$NGINX_APP_DEST" ]; then
     cp -a "$NGINX_APP_DEST" "$bak_a"
   fi
-  cp "$NGINX_VHOST_SRC" "$NGINX_VHOST_DEST"
   cp "$NGINX_APP_SRC" "$NGINX_APP_DEST"
-  chmod 644 "$NGINX_VHOST_DEST" "$NGINX_APP_DEST"
+  chmod 644 "$NGINX_APP_DEST"
 
   if ! nginx -t; then
-    echo "nginx -t failed — restore" >&2
-    cp -a "$bak_v" "$NGINX_VHOST_DEST"
+    echo "nginx -t failed — restore snippet" >&2
     if [ -f "$bak_a" ]; then
       cp -a "$bak_a" "$NGINX_APP_DEST"
     fi
@@ -131,7 +113,7 @@ apply_nginx() {
     exit 1
   fi
   nginx -s reload
-  echo "OK: production-next nginx reloaded from $DEPLOY_META"
+  echo "OK: production snippet reloaded from $DEPLOY_META"
 }
 
 refresh_switch() {
