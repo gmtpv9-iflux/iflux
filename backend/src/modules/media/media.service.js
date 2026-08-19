@@ -684,13 +684,6 @@ async function getActiveProfileVersionByKey(profileKey) {
 }
 
 const PROFILE_ALIAS = { 'media-detail': 'media-hero' };
-const PROFILE_TARGET_W = {
-  'media-compact': 120,
-  'media-card': 640,
-  'media-hero': 960,
-  'media-body': 960,
-  'media-og': 1200
-};
 const LEGACY_ROLE_FALLBACK = {
   'media-compact': ['thumbnail'],
   'media-card': ['delivery'],
@@ -698,6 +691,13 @@ const LEGACY_ROLE_FALLBACK = {
   'media-body': ['delivery'],
   'media-og': ['social', 'delivery']
 };
+
+function profileTargetWidth(profile) {
+  if (!profile) return null;
+  if (profile.width != null) return Number(profile.width);
+  if (profile.max_width != null) return Number(profile.max_width);
+  return null;
+}
 
 function variantMime(v) {
   if (!v) return '';
@@ -742,6 +742,12 @@ async function resolveMedia(assetId, profileKey) {
   const variants = asset.variants || [];
   const profile = requested ? await getActiveProfileVersionByKey(requested) : null;
   const version = profile ? profile.version : null;
+  const registry = await listImageProfiles();
+  const widthByKey = {};
+  for (let i = 0; i < registry.length; i++) {
+    const w = profileTargetWidth(registry[i]);
+    if (w != null) widthByKey[registry[i].profile_key] = w;
+  }
 
   const exact = variants.find(function (v) {
     return v.role === requested;
@@ -751,12 +757,12 @@ async function resolveMedia(assetId, profileKey) {
   }
 
   const registered = variants.filter(function (v) {
-    return PROFILE_TARGET_W[v.role] != null && v.public_url;
+    return widthByKey[v.role] != null && v.public_url;
   });
-  if (registered.length && PROFILE_TARGET_W[requested] != null) {
-    const target = PROFILE_TARGET_W[requested];
+  const target = widthByKey[requested];
+  if (registered.length && target != null) {
     registered.sort(function (a, b) {
-      return Math.abs(PROFILE_TARGET_W[a.role] - target) - Math.abs(PROFILE_TARGET_W[b.role] - target);
+      return Math.abs(widthByKey[a.role] - target) - Math.abs(widthByKey[b.role] - target);
     });
     return resolvedFromVariant(registered[0], requested, version, 'FALLBACK', registered[0].role);
   }
