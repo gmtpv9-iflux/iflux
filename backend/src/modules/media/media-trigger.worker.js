@@ -2,6 +2,7 @@
 
 const { getPool, query } = require('../../core/database/connection');
 const mediaImport = require('./media-import.service');
+const mediaService = require('./media.service');
 
 /**
  * Quét các bài viết có trạng thái media là PENDING hoặc FAILED (dưới mức tối đa tối đa)
@@ -79,6 +80,9 @@ async function runAutoImportWorker(config) {
       );
     }
   }
+
+  const concurrency = config.MEDIA_JOB_CONCURRENCY || 4;
+  await mediaService.processQueuedMediaJobs(config, { limit: concurrency });
 }
 
 module.exports = { runAutoImportWorker };
