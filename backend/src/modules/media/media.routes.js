@@ -71,6 +71,19 @@ function createMediaRouter(deps) {
     }
   });
 
+  router.get('/assets/:id/resolve/:profile', perm('community.articles.view'), async function (
+    req,
+    res,
+    next
+  ) {
+    try {
+      const resolved = await mediaService.resolveMedia(req.params.id, req.params.profile);
+      return success(res, { resolved: resolved });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/assets/:id/usages', perm('community.articles.view'), async function (req, res, next) {
     try {
       const usages = await mediaService.listUsages(req.params.id);
