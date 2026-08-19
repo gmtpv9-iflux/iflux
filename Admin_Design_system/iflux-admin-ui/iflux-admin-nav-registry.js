@@ -155,11 +155,7 @@
     { type: 'item', key: "notifications-history", routeKey: "notifications-history", label: "Lịch sử phát sóng", icon: "ti-history", badge: "···", urlSegment: "history" },
     { type: 'item', key: "system-announcements", routeKey: "system-announcements", label: "Thiết lập mẫu thông báo", icon: "ti-template", urlSegment: "templates" },
 
-    /* 11. Quản lý Thư viện — trên Quản lý giao diện (Task 04) */
-    { type: 'group', label: "Quản lý Thư viện", urlSegment: "library" },
-    { type: 'item', key: "library-image-profiles", routeKey: "library-image-profiles", label: "Quy chuẩn hình ảnh", icon: "ti-photo", urlSegment: "image-profiles" },
-
-    /* 12. Quản lý giao diện — giữ nguyên toàn bộ */
+    /* 11. Quản lý giao diện — giữ nguyên toàn bộ */
     { type: 'group', label: "Quản lý giao diện", urlSegment: "interface" },
     { type: 'item', key: "system-page-settings", routeKey: "system-page-settings", label: "Cài đặt Trang", icon: "ti-sitemap", urlSegment: "page-settings" },
     { type: 'item', key: "system-templates", routeKey: "system-templates", label: "Mẫu giao diện", icon: "ti-template", urlSegment: "templates" },

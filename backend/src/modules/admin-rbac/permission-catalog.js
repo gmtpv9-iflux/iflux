@@ -251,24 +251,6 @@ const MODULES = [
     ]
   },
   {
-    key: 'media',
-    pages: [
-      {
-        key: 'profile',
-        actions: ['view'],
-        business: [
-          { action: 'manage', label: 'Quản lý quy chuẩn' },
-          { action: 'regenerate', label: 'Tạo lại derivative' }
-        ]
-      },
-      {
-        key: 'cleanup',
-        actions: [],
-        business: [{ action: 'cleanup', label: 'Dọn raw / file thừa', flatKey: 'media.cleanup' }]
-      }
-    ]
-  },
-  {
     key: 'guides',
     pages: [
       { key: 'checklist', actions: VIEW },
