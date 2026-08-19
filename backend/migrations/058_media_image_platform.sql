@@ -158,3 +158,17 @@ ON CONFLICT (profile_id, version) DO UPDATE SET
   lossless = EXCLUDED.lossless,
   status = EXCLUDED.status,
   spec = EXCLUDED.spec;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iflux_staging') THEN
+    GRANT ALL ON TABLE media_image_profiles TO iflux_staging;
+    GRANT ALL ON TABLE media_image_profile_versions TO iflux_staging;
+    ALTER TABLE media_image_profiles OWNER TO iflux_staging;
+    ALTER TABLE media_image_profile_versions OWNER TO iflux_staging;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iflux_production_next') THEN
+    GRANT ALL ON TABLE media_image_profiles TO iflux_production_next;
+    GRANT ALL ON TABLE media_image_profile_versions TO iflux_production_next;
+  END IF;
+END $$;

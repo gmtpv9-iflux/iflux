@@ -148,6 +148,10 @@ async function createMaster(buf, declaredMime) {
       limitInputPixels: MAX_PIXELS
     }).metadata();
   } catch (e) {
+    const msg = String((e && e.message) || e || '');
+    if (/pixel|limitInputPixels/i.test(msg)) {
+      throw AppError.badRequest('MEDIA_BOMB', 'Ảnh vượt giới hạn pixel an toàn');
+    }
     throw AppError.badRequest('MEDIA_MALFORMED', 'Không đọc được ảnh');
   }
   assertSafeDimensions(meta);
