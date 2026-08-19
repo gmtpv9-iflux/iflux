@@ -39,6 +39,62 @@ function createMediaRouter(deps) {
 
   storage.ensureMediaRoot(config);
 
+  router.get('/profiles', perm('media.profile.view'), async function (req, res, next) {
+    try {
+      const profiles = await mediaService.listImageProfilesForAdmin();
+      return success(res, { profiles: profiles });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/profiles', perm('media.profile.manage'), async function (req, res, next) {
+    try {
+      const actor = req.admin || req.user || {};
+      const out = await mediaService.createImageProfile(
+        req.body || {},
+        actor.admin_id || actor.email || actor.id
+      );
+      return success(res, out, 201);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.patch('/profiles/:key', perm('media.profile.manage'), async function (req, res, next) {
+    try {
+      const actor = req.admin || req.user || {};
+      const out = await mediaService.updateImageProfile(
+        req.params.key,
+        req.body || {},
+        actor.admin_id || actor.email || actor.id
+      );
+      if (!out) throw AppError.notFound('Không tìm thấy profile');
+      return success(res, out);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/profiles/:key/regenerate', perm('media.profile.regenerate'), async function (
+    req,
+    res,
+    next
+  ) {
+    try {
+      const actor = req.admin || req.user || {};
+      const body = req.body || {};
+      const out = await mediaService.enqueueGenerateForProfile(
+        req.params.key,
+        actor.admin_id || actor.email || actor.id,
+        { limit: body.limit }
+      );
+      return success(res, out);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/health', function (req, res) {
     return success(res, {
       service: 'media',

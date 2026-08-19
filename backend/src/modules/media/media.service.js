@@ -359,17 +359,211 @@ async function enqueueGenerateForProfile(profileKey, actorId, opts) {
   return { enqueued: enqueued, jobIds: jobIds, profile: profile.profile_key, version: profile.version };
 }
 
-async function updateProfileStatus(profileKey, status) {
-  const next = String(status || '').toUpperCase();
-  if (next !== 'ACTIVE' && next !== 'INACTIVE' && next !== 'DEPRECATED') {
+const PROFILE_LIFECYCLE = ['DRAFT', 'ACTIVE', 'DEPRECATED', 'RETIRED'];
+const RESERVED_PROFILE_KEYS = ['media-detail', 'media-thumbnail', 'card-lg'];
+
+function assertProfileKey(key) {
+  const k = String(key || '').trim();
+  if (!/^[a-z][a-z0-9-]{1,47}$/.test(k)) {
+    throw AppError.badRequest('MEDIA_PROFILE', 'profile_key không hợp lệ');
+  }
+  if (RESERVED_PROFILE_KEYS.indexOf(k) !== -1) {
+    throw AppError.badRequest('MEDIA_PROFILE', 'Không được tạo profile ' + k);
+  }
+  return k;
+}
+
+function parseProfileSpec(body) {
+  body = body || {};
+  const crop = String(body.crop || 'none').toLowerCase();
+  const format = String(body.format || 'webp').toLowerCase();
+  const quality = body.quality != null ? Number(body.quality) : 82;
+  const width = body.width != null && body.width !== '' ? Number(body.width) : null;
+  const height = body.height != null && body.height !== '' ? Number(body.height) : null;
+  const maxWidth = body.max_width != null && body.max_width !== '' ? Number(body.max_width) : null;
+  if (crop !== 'cover' && crop !== 'none') {
+    throw AppError.badRequest('MEDIA_PROFILE', 'crop phải là cover hoặc none');
+  }
+  if (format !== 'webp' && format !== 'jpeg' && format !== 'jpg' && format !== 'png') {
+    throw AppError.badRequest('MEDIA_PROFILE', 'format không hỗ trợ');
+  }
+  if (!(quality >= 1 && quality <= 100)) {
+    throw AppError.badRequest('MEDIA_PROFILE', 'quality phải từ 1–100');
+  }
+  if (crop === 'cover' && !(width > 0 && height > 0)) {
+    throw AppError.badRequest('MEDIA_PROFILE', 'crop cover cần width và height');
+  }
+  if (crop === 'none' && !(maxWidth > 0 || width > 0)) {
+    throw AppError.badRequest('MEDIA_PROFILE', 'crop none cần max_width hoặc width');
+  }
+  return {
+    crop: crop,
+    format: format === 'jpg' ? 'jpeg' : format,
+    quality: quality,
+    width: width,
+    height: height,
+    max_width: maxWidth,
+    max_height: body.max_height != null && body.max_height !== '' ? Number(body.max_height) : null
+  };
+}
+
+async function listImageProfilesForAdmin() {
+  const res = await query(
+    `SELECT p.id, p.profile_key, p.display_name, p.purpose, p.status,
+            v.id AS version_id, v.version, v.width, v.height, v.max_width, v.max_height,
+            v.crop, v.format, v.quality, v.lossless, v.status AS version_status
+       FROM media_image_profiles p
+       LEFT JOIN LATERAL (
+         SELECT * FROM media_image_profile_versions vv
+          WHERE vv.profile_id = p.id
+          ORDER BY vv.version DESC
+          LIMIT 1
+       ) v ON true
+      ORDER BY p.profile_key`
+  );
+  return res.rows;
+}
+
+async function createImageProfile(body, actorId) {
+  body = body || {};
+  const key = assertProfileKey(body.profile_key);
+  const spec = parseProfileSpec(body);
+  const status = String(body.status || 'DRAFT').toUpperCase();
+  if (PROFILE_LIFECYCLE.indexOf(status) === -1) {
     throw AppError.badRequest('MEDIA_PROFILE', 'Trạng thái profile không hợp lệ');
   }
-  const res = await query(
-    `UPDATE media_image_profiles SET status = $2, updated_at = NOW()
-      WHERE profile_key = $1 RETURNING id, profile_key, status`,
-    [profileKey, next]
+  const profileId = 'mip-' + key;
+  const versionId = 'mipv-' + key + '-v1';
+  try {
+    await query(
+      `INSERT INTO media_image_profiles (id, profile_key, display_name, purpose, status)
+       VALUES ($1,$2,$3,$4,$5)`,
+      [
+        profileId,
+        key,
+        String(body.display_name || key).trim(),
+        String(body.purpose || '').trim(),
+        status
+      ]
+    );
+  } catch (e) {
+    if (e && e.code === '23505') {
+      throw AppError.badRequest('MEDIA_PROFILE', 'profile_key đã tồn tại');
+    }
+    throw e;
+  }
+  await query(
+    `INSERT INTO media_image_profile_versions
+      (id, profile_id, version, width, height, max_width, max_height, crop, format, quality, lossless, status, spec)
+     VALUES ($1,$2,1,$3,$4,$5,$6,$7,$8,$9,false,'ACTIVE',$10::jsonb)`,
+    [
+      versionId,
+      profileId,
+      spec.width,
+      spec.height,
+      spec.max_width,
+      spec.max_height,
+      spec.crop,
+      spec.format,
+      spec.quality,
+      JSON.stringify(spec)
+    ]
   );
-  return res.rows[0] || null;
+  let enqueue = null;
+  if (status === 'ACTIVE') {
+    enqueue = await enqueueGenerateForProfile(key, actorId, { limit: 50 });
+  }
+  const rows = await listImageProfilesForAdmin();
+  return {
+    profile: rows.find(function (r) { return r.profile_key === key; }) || { profile_key: key, status: status },
+    enqueue: enqueue
+  };
+}
+
+async function updateImageProfile(profileKey, patch, actorId) {
+  patch = patch || {};
+  const key = String(profileKey || '').trim();
+  const current = await query(
+    `SELECT id, profile_key, status FROM media_image_profiles WHERE profile_key = $1 LIMIT 1`,
+    [key]
+  );
+  const row = current.rows[0];
+  if (!row) return null;
+  const prevStatus = row.status;
+  if (patch.display_name != null || patch.purpose != null) {
+    await query(
+      `UPDATE media_image_profiles
+          SET display_name = COALESCE($2, display_name),
+              purpose = COALESCE($3, purpose),
+              updated_at = NOW()
+        WHERE id = $1`,
+      [row.id, patch.display_name != null ? String(patch.display_name).trim() : null, patch.purpose != null ? String(patch.purpose).trim() : null]
+    );
+  }
+  let nextStatus = prevStatus;
+  if (patch.status != null && String(patch.status).trim() !== '') {
+    nextStatus = String(patch.status).toUpperCase();
+    if (PROFILE_LIFECYCLE.indexOf(nextStatus) === -1) {
+      throw AppError.badRequest('MEDIA_PROFILE', 'Trạng thái profile không hợp lệ');
+    }
+    await query(
+      `UPDATE media_image_profiles SET status = $2, updated_at = NOW() WHERE id = $1`,
+      [row.id, nextStatus]
+    );
+  }
+  const specKeys = ['width', 'height', 'max_width', 'max_height', 'crop', 'format', 'quality'];
+  const hasSpec = specKeys.some(function (k) { return patch[k] != null && patch[k] !== ''; });
+  if (hasSpec) {
+    const spec = parseProfileSpec(Object.assign({}, patch));
+    const latest = await query(
+      `SELECT id, version, status FROM media_image_profile_versions
+        WHERE profile_id = $1 ORDER BY version DESC LIMIT 1`,
+      [row.id]
+    );
+    const ver = latest.rows[0];
+    if (ver && prevStatus === 'DRAFT') {
+      await query(
+        `UPDATE media_image_profile_versions
+            SET width=$2, height=$3, max_width=$4, max_height=$5, crop=$6, format=$7, quality=$8, spec=$9::jsonb
+          WHERE id = $1`,
+        [ver.id, spec.width, spec.height, spec.max_width, spec.max_height, spec.crop, spec.format, spec.quality, JSON.stringify(spec)]
+      );
+    } else {
+      const nextVer = (ver ? ver.version : 0) + 1;
+      await query(
+        `INSERT INTO media_image_profile_versions
+          (id, profile_id, version, width, height, max_width, max_height, crop, format, quality, lossless, status, spec)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,false,'ACTIVE',$11::jsonb)`,
+        [
+          'mipv-' + key + '-v' + nextVer,
+          row.id,
+          nextVer,
+          spec.width,
+          spec.height,
+          spec.max_width,
+          spec.max_height,
+          spec.crop,
+          spec.format,
+          spec.quality,
+          JSON.stringify(spec)
+        ]
+      );
+    }
+  }
+  let enqueue = null;
+  if (nextStatus === 'ACTIVE' && prevStatus !== 'ACTIVE') {
+    enqueue = await enqueueGenerateForProfile(key, actorId, { limit: 50 });
+  }
+  const rows = await listImageProfilesForAdmin();
+  return {
+    profile: rows.find(function (r) { return r.profile_key === key; }) || { profile_key: key, status: nextStatus },
+    enqueue: enqueue
+  };
+}
+
+async function updateProfileStatus(profileKey, status) {
+  const out = await updateImageProfile(profileKey, { status: status });
+  return out && out.profile;
 }
 
 async function enqueueGenerateForAsset(assetId, actorId, kind) {
@@ -718,8 +912,13 @@ async function listImageProfiles() {
             v.id AS version_id, v.version, v.width, v.height, v.max_width, v.max_height,
             v.crop, v.format, v.quality, v.lossless, v.status AS version_status, v.spec
        FROM media_image_profiles p
-       JOIN media_image_profile_versions v
-         ON v.profile_id = p.id AND v.status = 'ACTIVE'
+       JOIN LATERAL (
+         SELECT * FROM media_image_profile_versions vv
+          WHERE vv.profile_id = p.id
+          ORDER BY vv.version DESC
+          LIMIT 1
+       ) v ON true
+      WHERE p.status = 'ACTIVE'
       ORDER BY p.profile_key`
   );
   return res.rows;
@@ -893,6 +1092,9 @@ module.exports = {
   enqueueGenerateForAsset,
   enqueueGenerateForProfile,
   updateProfileStatus,
+  createImageProfile,
+  updateImageProfile,
+  listImageProfilesForAdmin,
   evaluateCleanupEligibility,
   processQueuedMediaJobs,
   PLATFORM_JOB_KINDS,
