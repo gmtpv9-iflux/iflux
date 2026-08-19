@@ -50,96 +50,42 @@ async function validateImageBuffer(buf, declaredMime) {
   return { mime: mime === 'image/jpg' ? 'image/jpeg' : mime, byteSize: buf.length };
 }
 
+async function validateShareImageBuffer(buf, declaredMime) {
+  const meta = await validateImageBuffer(buf, declaredMime);
+  if (meta.mime !== 'image/jpeg' && meta.mime !== 'image/png') {
+    throw AppError.badRequest('MEDIA_TYPE', 'Ảnh Social/OG phải là JPEG hoặc PNG');
+  }
+  return meta;
+}
+
 async function normalizeAndVariants(buf) {
   const fp = fingerprint(buf);
   if (!sharp) {
     const meta = await validateImageBuffer(buf);
     return {
       fingerprint: fp,
-      original: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
-      delivery: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
-      thumbnail: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) },
-      social: null
+      delivery: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) }
     };
   }
 
-  let pipeline = sharp(buf, { failOn: 'none' }).rotate();
-  const meta = await pipeline.metadata();
+  const meta = await sharp(buf, { failOn: 'none' }).rotate().metadata();
   if ((meta.width || 0) > 8000 || (meta.height || 0) > 8000) {
     throw AppError.badRequest('MEDIA_DIMENSION', 'Kích thước ảnh vượt giới hạn');
   }
 
-  const originalBuf = await sharp(buf, { failOn: 'none' }).rotate().toBuffer();
-  const originalMeta = await sharp(originalBuf).metadata();
-
-  const deliveryBuf = await sharp(originalBuf)
-    .webp({ quality: 80 })
-    .toBuffer();
+  const rotatedBuf = await sharp(buf, { failOn: 'none' }).rotate().toBuffer();
+  const deliveryBuf = await sharp(rotatedBuf).webp({ quality: 80 }).toBuffer();
   const deliveryMeta = await sharp(deliveryBuf).metadata();
-
-  const thumbBuf = await sharp(originalBuf)
-    .resize({ width: 400, height: 400, fit: 'inside', withoutEnlargement: true })
-    .webp({ quality: 70 })
-    .toBuffer();
-  const thumbMeta = await sharp(thumbBuf).metadata();
-
-  // PD-20 / SOL-IMG (2026-08-11): Zalo/Facebook/Twitter crawlers need a JPEG/PNG og:image —
-  // WebP support is inconsistent. If the source isn't already jpeg/png, derive one
-  // "social" variant so resolveSocialCompatibleImage() always has a compatible URL to pick.
-  const originalFormat = String(originalMeta.format || '').toLowerCase();
-  let social = null;
-  if (originalFormat !== 'jpeg' && originalFormat !== 'jpg' && originalFormat !== 'png') {
-    const socialBuf = await sharp(originalBuf)
-      .flatten({ background: '#ffffff' })
-      .jpeg({ quality: 85 })
-      .toBuffer();
-    const socialMeta = await sharp(socialBuf).metadata();
-    social = {
-      buffer: socialBuf,
-      mime: 'image/jpeg',
-      width: socialMeta.width || null,
-      height: socialMeta.height || null,
-      ext: 'jpg'
-    };
-  }
-
   return {
-    fingerprint: fingerprint(originalBuf),
-    original: {
-      buffer: originalBuf,
-      mime: mimeFromSharp(originalMeta.format) || 'image/jpeg',
-      width: originalMeta.width || null,
-      height: originalMeta.height || null,
-      ext: originalMeta.format || 'jpg'
-    },
+    fingerprint: fingerprint(rotatedBuf),
     delivery: {
       buffer: deliveryBuf,
       mime: 'image/webp',
       width: deliveryMeta.width || null,
       height: deliveryMeta.height || null,
       ext: 'webp'
-    },
-    thumbnail: {
-      buffer: thumbBuf,
-      mime: 'image/webp',
-      width: thumbMeta.width || null,
-      height: thumbMeta.height || null,
-      ext: 'webp'
-    },
-    social: social
+    }
   };
-}
-
-function mimeFromSharp(fmt) {
-  const m = {
-    jpeg: 'image/jpeg',
-    jpg: 'image/jpeg',
-    png: 'image/png',
-    webp: 'image/webp',
-    gif: 'image/gif',
-    avif: 'image/avif'
-  };
-  return m[String(fmt || '').toLowerCase()] || '';
 }
 
 function extForMime(mime) {
@@ -210,6 +156,7 @@ async function downloadImage(url, opts) {
 module.exports = {
   fingerprint,
   validateImageBuffer,
+  validateShareImageBuffer,
   normalizeAndVariants,
   downloadImage,
   extForMime,

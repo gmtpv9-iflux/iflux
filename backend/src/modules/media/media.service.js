@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 const { newId, slugify } = require('./media-util');
@@ -159,50 +160,60 @@ async function updateAlt(assetId, altText) {
  */
 async function createAssetFromBuffer(config, buf, opts) {
   opts = opts || {};
+  const purpose = String(opts.purpose || '').toLowerCase();
+  const isShare = purpose === 'social' || purpose === 'og';
   storage.ensureMediaRoot(config);
-  const variantsPack = await processImg.normalizeAndVariants(buf);
-  const existing = await findByFingerprint(variantsPack.fingerprint);
+
+  let fingerprint;
+  let pack;
+  if (isShare) {
+    const meta = await processImg.validateShareImageBuffer(buf);
+    fingerprint = processImg.fingerprint(buf);
+    pack = {
+      buffer: buf,
+      mime: meta.mime,
+      width: null,
+      height: null,
+      ext: processImg.extForMime(meta.mime)
+    };
+  } else {
+    const variantsPack = await processImg.normalizeAndVariants(buf);
+    fingerprint = variantsPack.fingerprint;
+    pack = variantsPack.delivery;
+  }
+
+  const existing = await findByFingerprint(fingerprint);
   if (existing) {
     return { asset: existing, reused: true };
+  }
+
+  if (!pack || !pack.buffer) {
+    throw AppError.badRequest('MEDIA_VERIFY', 'Thiếu file ảnh để lưu');
   }
 
   const assetId = newId('mas');
   const now = new Date();
   const dir = storage.assetDir(config, assetId, now);
   const baseName = slugify(opts.filenameHint || opts.title || 'img') + '-' + String(opts.seq || 1).padStart(3, '0');
-
-  const roles = [
-    { role: 'original', pack: variantsPack.original },
-    { role: 'delivery', pack: variantsPack.delivery },
-    { role: 'thumbnail', pack: variantsPack.thumbnail }
-  ];
-  if (variantsPack.social) {
-    roles.push({ role: 'social', pack: variantsPack.social });
+  const key = pathJoin(dir, baseName + '.' + pack.ext);
+  const w = await storage.writeVariantFile(config, key, pack.buffer);
+  const full = storage.absolutePath(config, w.storageKey);
+  const st = await fs.promises.stat(full);
+  if (!st.size || st.size !== pack.buffer.length) {
+    await fs.promises.unlink(full).catch(function () {});
+    throw AppError.badRequest('MEDIA_VERIFY', 'File ảnh không ghi được');
   }
 
-  const written = [];
-  for (let i = 0; i < roles.length; i++) {
-    const r = roles[i];
-    const key = pathJoin(dir, baseName + (r.role === 'delivery' ? '' : '.' + r.role) + '.' + r.pack.ext);
-    const w = await storage.writeVariantFile(config, key, r.pack.buffer);
-    written.push({
-      role: r.role,
-      format: r.pack.ext,
-      width: r.pack.width,
-      height: r.pack.height,
-      byte_size: r.pack.buffer.length,
-      storage_key: w.storageKey,
-      public_url: w.publicUrl,
-      mime: r.pack.mime
-    });
-  }
-
-  const delivery = written.find(function (x) {
-    return x.role === 'delivery';
-  });
-  const original = written.find(function (x) {
-    return x.role === 'original';
-  });
+  const delivery = {
+    role: 'delivery',
+    format: pack.ext,
+    width: pack.width,
+    height: pack.height,
+    byte_size: pack.buffer.length,
+    storage_key: w.storageKey,
+    public_url: w.publicUrl,
+    mime: pack.mime
+  };
 
   await query(
     `INSERT INTO media_assets
@@ -210,38 +221,35 @@ async function createAssetFromBuffer(config, buf, opts) {
      VALUES ($1,'active',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
     [
       assetId,
-      variantsPack.fingerprint,
+      fingerprint,
       baseName,
       String(opts.alt || '').trim(),
       String(opts.caption || '').trim(),
       delivery.public_url,
-      delivery.mime || original.mime,
+      delivery.mime,
       delivery.byte_size,
-      delivery.width || original.width,
-      delivery.height || original.height,
+      delivery.width,
+      delivery.height,
       opts.createdBy || null
     ]
   );
 
-  for (let j = 0; j < written.length; j++) {
-    const v = written[j];
-    await query(
-      `INSERT INTO media_variants
-        (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-      [
-        newId('mvar'),
-        assetId,
-        v.role,
-        v.format,
-        v.width,
-        v.height,
-        v.byte_size,
-        v.storage_key,
-        v.public_url
-      ]
-    );
-  }
+  await query(
+    `INSERT INTO media_variants
+      (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+    [
+      newId('mvar'),
+      assetId,
+      delivery.role,
+      delivery.format,
+      delivery.width,
+      delivery.height,
+      delivery.byte_size,
+      delivery.storage_key,
+      delivery.public_url
+    ]
+  );
 
   if (opts.sourceUrl || opts.channel) {
     await query(

@@ -132,6 +132,7 @@ function createMediaRouter(deps) {
         filenameHint: req.body && (req.body.filename_hint || req.body.title),
         alt: (req.body && req.body.alt) || '',
         channel: 'upload',
+        purpose: req.body && (req.body.purpose || req.body.field_ref),
         createdBy: actor.admin_id || actor.email || actor.id
       });
       return success(res, { asset: created.asset, reused: created.reused }, 201);
