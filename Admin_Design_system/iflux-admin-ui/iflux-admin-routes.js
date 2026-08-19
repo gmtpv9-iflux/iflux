@@ -54,7 +54,7 @@
     "marketing-seo-system": { key: "marketing-seo-system", slug: "/admin/tiep-thi/thiet-lap-seo-he-thong", file: "marketing/thiet-lap-seo-he-thong.html", legacySlugs: ["/admin/tiep-thi/seo-system"] },
     "marketing-seo-pages": { key: "marketing-seo-pages", slug: "/admin/tiep-thi/thiet-lap-seo-tung-trang", file: "marketing/thiet-lap-seo-tung-trang.html", legacySlugs: ["/admin/tiep-thi/seo-pages"] },
     "marketing-onboarding": { key: "marketing-onboarding", slug: "/admin/tiep-thi/onboarding", file: "marketing/onboarding.html" },
-    "library-image-profiles": { key: "library-image-profiles", slug: "/admin/thu-vien/quy-chuan-hinh-anh", file: "library/quy-chuan-hinh-anh.html" },
+    "library-image-profiles": { key: "library-image-profiles", slug: "/admin/library/image-profiles", file: "library/quy-chuan-hinh-anh.html", legacySlugs: ["/admin/thu-vien/quy-chuan-hinh-anh"] },
     "system-page-settings": { key: "system-page-settings", slug: "/admin/he-thong/page-settings", file: "system/page-settings.html" },
     "system-templates": { key: "system-templates", slug: "/admin/he-thong/templates", file: "system/templates.html" },
     "system-ds-studio": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-primitive-tokens", file: "system/ds-studio.html" },

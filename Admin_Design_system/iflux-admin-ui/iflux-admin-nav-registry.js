@@ -1,6 +1,7 @@
 /* iFlux Admin — Navigation Registry (thuần dữ liệu). Không resolve href.
  * SoT NHÃN DUY NHẤT cho Module / Menu / Submenu trên toàn Admin.
- * CẤM tạo nhãn thứ 2 (catalog, hardcode, bản sao). Thêm menu mới → chỉ thêm nhãn tại đây. */
+ * CẤM tạo nhãn thứ 2 (catalog, hardcode, bản sao). Thêm menu mới → chỉ thêm nhãn tại đây.
+ * CỔNG URL: Admin chỉ English urlSegment. Nhãn menu được tiếng Việt. pathFor() là writer — cấm slug Việt, cấm href cứng App Shell. Mọi menu mới bắt buộc tuân (SoT URL §2.2). */
 (function (global) {
   'use strict';
   if (global.IfluxAdminNavRegistry) return;
@@ -155,8 +156,8 @@
     { type: 'item', key: "system-announcements", routeKey: "system-announcements", label: "Thiết lập mẫu thông báo", icon: "ti-template", urlSegment: "templates" },
 
     /* 11. Quản lý Thư viện — trên Quản lý giao diện (Task 04) */
-    { type: 'group', label: "Quản lý Thư viện", urlSegment: "thu-vien" },
-    { type: 'item', key: "library-image-profiles", routeKey: "library-image-profiles", label: "Quy chuẩn hình ảnh", icon: "ti-photo", urlSegment: "quy-chuan-hinh-anh" },
+    { type: 'group', label: "Quản lý Thư viện", urlSegment: "library" },
+    { type: 'item', key: "library-image-profiles", routeKey: "library-image-profiles", label: "Quy chuẩn hình ảnh", icon: "ti-photo", urlSegment: "image-profiles" },
 
     /* 12. Quản lý giao diện — giữ nguyên toàn bộ */
     { type: 'group', label: "Quản lý giao diện", urlSegment: "interface" },

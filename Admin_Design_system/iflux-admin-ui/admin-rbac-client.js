@@ -45,7 +45,7 @@
     { re: /\/admin\/tiep-thi\/thiet-lap-seo-he-thong|\/marketing\/thiet-lap-seo-he-thong|\/marketing\/seo-system/, p: 'marketing.seo_system.view' },
     { re: /\/admin\/tiep-thi\/thiet-lap-seo-tung-trang|\/marketing\/thiet-lap-seo-tung-trang|\/marketing\/seo-pages/, p: 'marketing.seo_pages.view' },
     { re: /\/admin\/tiep-thi\/onboarding|\/marketing\/onboarding/, p: 'marketing.onboarding.view' },
-    { re: /\/admin\/thu-vien\/quy-chuan-hinh-anh|\/library\/quy-chuan-hinh-anh/, p: 'media.profile.view' },
+    { re: /\/admin\/library\/image-profiles|\/admin\/thu-vien\/quy-chuan-hinh-anh|\/library\/quy-chuan-hinh-anh/, p: 'media.profile.view' },
     { re: /\/admin\/he-thong\/page-settings|\/system\/page-settings/, p: 'interface.page_settings.view' },
     { re: /\/admin\/he-thong\/widget-library|\/system\/widget-library/, p: 'interface.widget_library.view' },
     { re: /\/admin\/he-thong\/templates|\/system\/templates/, p: 'interface.design_system.view' },
