@@ -429,6 +429,61 @@ async function evaluateCleanupEligibility(assetId) {
   };
 }
 
+async function requiredProfileGaps(assetId) {
+  const required = await listImageProfiles();
+  const res = await query(
+    `SELECT role FROM media_variants
+      WHERE asset_id = $1 AND role <> 'master' AND public_url IS NOT NULL`,
+    [assetId]
+  );
+  const have = {};
+  for (let i = 0; i < res.rows.length; i++) {
+    have[res.rows[i].role] = true;
+  }
+  const missing = [];
+  for (let i = 0; i < required.length; i++) {
+    if (!have[required[i].profile_key]) missing.push(required[i].profile_key);
+  }
+  return missing;
+}
+
+async function verifyAssetFiles(config, assetId) {
+  const asset = await getAsset(assetId);
+  const variants = (asset && asset.variants) || [];
+  const missingFiles = [];
+  const fs = require('fs');
+  for (let i = 0; i < variants.length; i++) {
+    const full = storage.absolutePath(config, variants[i].storage_key);
+    try {
+      await fs.promises.access(full);
+    } catch (e) {
+      missingFiles.push(variants[i].role);
+    }
+  }
+  const missingProfiles = await requiredProfileGaps(assetId);
+  const master = await loadMasterVariant(assetId);
+  return {
+    ok: missingFiles.length === 0 && missingProfiles.length === 0 && !!master,
+    missingFiles: missingFiles,
+    missingProfiles: missingProfiles,
+    hasMaster: !!master
+  };
+}
+
+async function enqueueVerifyIfComplete(assetId) {
+  const missing = await requiredProfileGaps(assetId);
+  if (missing.length) return { enqueued: false, missing: missing };
+  const existing = await query(
+    `SELECT id FROM media_jobs
+      WHERE asset_id = $1 AND kind = 'VERIFY' AND status IN ('queued','PROCESSING')
+      LIMIT 1`,
+    [assetId]
+  );
+  if (existing.rows[0]) return { enqueued: false, existing: existing.rows[0].id };
+  const id = await createJob('VERIFY', null, null, { assetId: assetId, status: 'queued' });
+  return { enqueued: true, jobId: id };
+}
+
 async function processPlatformJob(config, job) {
   const kind = String(job.kind || '').toUpperCase();
   const assetId = job.asset_id;
@@ -450,18 +505,15 @@ async function processPlatformJob(config, job) {
   }
 
   if (kind === 'VERIFY') {
-    const asset = await getAsset(assetId);
-    const variants = (asset && asset.variants) || [];
-    const missingFiles = [];
-    for (let i = 0; i < variants.length; i++) {
-      const full = storage.absolutePath(config, variants[i].storage_key);
-      try {
-        await require('fs').promises.access(full);
-      } catch (e) {
-        missingFiles.push(variants[i].role);
-      }
+    const checked = await verifyAssetFiles(config, assetId);
+    if (checked.ok) {
+      await query(
+        `UPDATE media_assets SET status = 'READY', updated_at = NOW()
+          WHERE id = $1 AND status IN ('PROCESSING','active','READY')`,
+        [assetId]
+      );
     }
-    await finishJob(job.id, missingFiles.length ? 'failed' : 'succeeded', { missingFiles: missingFiles });
+    await finishJob(job.id, checked.ok ? 'succeeded' : 'failed', checked);
     return;
   }
 
@@ -472,6 +524,7 @@ async function processPlatformJob(config, job) {
   if (kind === 'REBUILD') {
     await persistRequiredDerivatives(config, assetId, masterBuf, dir);
     await finishJob(job.id, 'succeeded', { rebuilt: true });
+    await enqueueVerifyIfComplete(assetId);
     return;
   }
 
@@ -522,6 +575,7 @@ async function processPlatformJob(config, job) {
       ]
     );
     await finishJob(job.id, 'succeeded', { profile: profile.profile_key, version: profile.version });
+    await enqueueVerifyIfComplete(assetId);
     return;
   }
 
@@ -531,32 +585,38 @@ async function processPlatformJob(config, job) {
 async function processQueuedMediaJobs(config, opts) {
   opts = opts || {};
   const limit = opts.limit || 4;
-  const claimed = await query(
-    `WITH next AS (
-       SELECT id FROM media_jobs
-        WHERE status = 'queued'
-          AND kind IN ('GENERATE','REGENERATE','REBUILD','VERIFY','CLEANUP')
-        ORDER BY created_at
-        LIMIT $1
-        FOR UPDATE SKIP LOCKED
-     )
-     UPDATE media_jobs j
-        SET status = 'PROCESSING', started_at = NOW(), updated_at = NOW(),
-            attempt_count = j.attempt_count + 1
-       FROM next
-      WHERE j.id = next.id
-     RETURNING j.*`,
-    [limit]
-  );
-  const jobs = claimed.rows || [];
-  for (let i = 0; i < jobs.length; i++) {
-    try {
-      await processPlatformJob(config, jobs[i]);
-    } catch (err) {
-      await finishJob(jobs[i].id, 'failed', { error: (err && err.message) || 'JOB_ERROR' });
+  const maxRounds = opts.maxRounds != null ? Number(opts.maxRounds) : 8;
+  let claimedTotal = 0;
+  for (let round = 0; round < maxRounds; round++) {
+    const claimed = await query(
+      `WITH next AS (
+         SELECT id FROM media_jobs
+          WHERE status = 'queued'
+            AND kind IN ('GENERATE','REGENERATE','REBUILD','VERIFY','CLEANUP')
+          ORDER BY created_at
+          LIMIT $1
+          FOR UPDATE SKIP LOCKED
+       )
+       UPDATE media_jobs j
+          SET status = 'PROCESSING', started_at = NOW(), updated_at = NOW(),
+              attempt_count = j.attempt_count + 1
+         FROM next
+        WHERE j.id = next.id
+       RETURNING j.*`,
+      [limit]
+    );
+    const jobs = claimed.rows || [];
+    if (!jobs.length) break;
+    claimedTotal += jobs.length;
+    for (let i = 0; i < jobs.length; i++) {
+      try {
+        await processPlatformJob(config, jobs[i]);
+      } catch (err) {
+        await finishJob(jobs[i].id, 'failed', { error: (err && err.message) || 'JOB_ERROR' });
+      }
     }
   }
-  return { claimed: jobs.length };
+  return { claimed: claimedTotal };
 }
 
 async function finishJob(jobId, status, result) {
