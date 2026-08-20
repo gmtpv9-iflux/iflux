@@ -895,12 +895,13 @@ function renderOpenGraphHtml(meta) {
 }
 
 function resolveUserWebRoot() {
-  if (process.env.DEPLOY_WEB_PRODUCTION) return process.env.DEPLOY_WEB_PRODUCTION;
-  if (process.env.APP_ENV === 'production' || process.env.NODE_ENV === 'production') {
-    return '/var/www/iflux/production';
+  if (process.env.IFLUX_WEB_ROOT) return process.env.IFLUX_WEB_ROOT;
+  if (process.env.APP_ENV === 'staging') return '/var/www/iflux/staging';
+  if (process.env.APP_ENV === 'production') {
+    return process.env.DEPLOY_WEB_PRODUCTION || '/var/www/iflux/newprod';
   }
   const path = require('path');
-  return path.resolve(__dirname, '../../../../..');
+  return path.resolve(__dirname, '../../../..');
 }
 
 /**
@@ -915,7 +916,7 @@ function renderArticleSpaHtml(meta) {
   try {
     html = fs.readFileSync(templatePath, 'utf8');
   } catch (err) {
-    throw new AppError('Không đọc được shell bài viết', 500, 'SPA_SHELL_MISSING');
+    throw new AppError('SPA_SHELL_MISSING', 'Không đọc được shell bài viết', 500);
   }
   const head = buildArticleMetadataHeadHtml(meta);
   /* Bỏ title placeholder trong template — thay bằng Contract head (có <title>). */
