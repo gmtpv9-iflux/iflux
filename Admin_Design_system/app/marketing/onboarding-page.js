@@ -10,7 +10,7 @@
   }
 
   var WEB_TARGETS = [
-    { id: 'home', label: 'Nhà của tôi' },
+    { id: 'home', label: 'Trang chủ' },
     { id: 'market', label: 'Thị trường' },
     { id: 'flow', label: 'Dòng tiền' },
     { id: 'community', label: 'Cộng đồng' },

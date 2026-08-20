@@ -34,9 +34,9 @@ async function main() {
   }
   /* P6-API-01 — internal nav chỉ Writer.navigate */
   if (window.IfluxShellUrlWriter && window.IfluxShellUrlWriter.navigate) {
-    window.IfluxShellUrlWriter.navigate('/nha-cua-toi', { replace: true });
+    window.IfluxShellUrlWriter.navigate('/trang-chu', { replace: true });
   } else {
-    window.location.replace('/nha-cua-toi');
+    window.location.replace('/trang-chu');
   }
 }
 

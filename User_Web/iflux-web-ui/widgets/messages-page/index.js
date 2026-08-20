@@ -11,7 +11,7 @@ export const meta = { id: 'WGT-MSG-PAGE', title: 'Tin nhắn' };
 function routeUrl(key) {
   var R = typeof window !== 'undefined' && window.IfluxRoutes;
   if (R && R.to) return R.to(key);
-  var fb = { home: '/nha-cua-toi' };
+  var fb = { home: '/trang-chu' };
   return fb[key] || '/';
 }
 
@@ -35,7 +35,7 @@ function renderLayout(manifest) {
   var title = (manifest && manifest.title) || 'Tin nhắn';
   return `<h1 class="ix-page-title">` + title + `</h1>
     <div class="ix-breadcrumb ix-mb-24">
-      <a href="#" data-route-key="home">Nhà của tôi</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tin nhắn</span>
+      <a href="#" data-route-key="home">Trang chủ</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>Tin nhắn</span>
     </div>
 
     <div class="ix-profile-tabs">
@@ -56,7 +56,7 @@ function renderLayout(manifest) {
               <div style="font-size:13px;font-weight:600;color:var(--ix-text-primary);margin-bottom:10px">Cuộc trò chuyện</div>
               <div style="position:relative">
                 <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ix-text-muted);font-size:13px"></i>
-                <input type="text" id="ifx-chat-search" style="width:100%;padding:7px 10px 7px 32px;background:var(--ix-bg-input);border:1px solid var(--ix-border);border-radius:var(--ix-radius);font-size:13px;color:var(--ix-text-primary);font-family:var(--ix-font);outline:none" placeholder="Tìm cuộc trò chuyện..." />
+                <input type="text" id="ifx-chat-search" style="width:100%;padding:7px 10px 7px 32px;background:var(--ix-bg-input);border:1px solid var(--ix-border);border-radius:var(--ix-radius);font-size:13px;color:var(--ix-text-primary);font-family:var(--ifx-font-primary);outline:none" placeholder="Tìm cuộc trò chuyện..." />
               </div>
             </div>
             <div class="ix-chat-list" id="ifx-chat-thread-list"></div>

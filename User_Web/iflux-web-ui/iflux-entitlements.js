@@ -10,7 +10,7 @@
     { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown', guestNever: false },
     { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle', guestNever: false },
     { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift', guestNever: false },
-    { key: 'dashboard', label: 'Nhà của tôi', menu: true, icon: 'ti-home', guestNever: true }
+    { key: 'dashboard', label: 'Trang chủ', menu: true, icon: 'ti-home', guestNever: true }
   ];
 
   var FALLBACK_GUEST = {

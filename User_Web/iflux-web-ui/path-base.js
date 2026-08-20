@@ -24,10 +24,11 @@
   }
 
   var EXACT = {
-    '/': '/User_Web/community/',
+    '/': '/User_Web/home/',
     '/thi-truong': '/User_Web/market/',
     '/market': '/User_Web/market/',
-    '/guest': '/User_Web/community/',
+    '/guest': '/User_Web/home/',
+    '/trang-chu': '/User_Web/home/',
     '/nha-cua-toi': '/User_Web/home/',
     '/home': '/User_Web/home/',
     '/dong-tien': '/User_Web/flow/',

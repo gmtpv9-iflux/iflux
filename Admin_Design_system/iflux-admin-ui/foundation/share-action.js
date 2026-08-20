@@ -1276,7 +1276,7 @@
   }
 
   var SOURCE_PAGE_LABELS = {
-    dashboard: 'Nhà của tôi',
+    dashboard: 'Trang chủ',
     market: 'Thị trường',
     flow: 'Dòng tiền',
     community: 'Cộng đồng',
@@ -1286,7 +1286,7 @@
   function resolveSourcePageLabel(sourcePage) {
     if (SOURCE_PAGE_LABELS[sourcePage]) return SOURCE_PAGE_LABELS[sourcePage];
     var path = location.pathname || '';
-    if (/\/home\//.test(path)) return 'Nhà của tôi';
+    if (/\/home\//.test(path) || /\/trang-chu/.test(path)) return 'Trang chủ';
     if (/\/market\//.test(path)) return 'Thị trường';
     if (/\/flow\//.test(path)) return 'Dòng tiền';
     if (/\/community\//.test(path)) return 'Cộng đồng';

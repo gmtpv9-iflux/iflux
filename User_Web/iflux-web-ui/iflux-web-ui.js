@@ -1402,7 +1402,7 @@
           return;
         }
         if (window.history.length > 1) window.history.back();
-        else appNavigate((window.IfluxRoutes && IfluxRoutes.to) ? IfluxRoutes.to('home', { canonical: true, skipDecorate: true }) : '/nha-cua-toi');
+        else appNavigate((window.IfluxRoutes && IfluxRoutes.to) ? IfluxRoutes.to('home', { canonical: true, skipDecorate: true }) : '/trang-chu');
       });
 
       document.addEventListener('iflux-chat-mobile-view', function (e) {

@@ -27,7 +27,7 @@ Nguyên tắc cốt lõi:
 - Mỗi **Entity** tồn tại **một lần duy nhất** với **một URL top-level** duy nhất\.
 - **Page chỉ là điểm truy cập (entry point)** tới Entity 
 — Page KHÔNG "sở hữu" Entity\.
-- Thị trường, Cộng đồng, Nhà, Search, AI, Alert, Notification, Insight Widget, Report… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
+- Thị trường, Cộng đồng, Trang chủ, Search, AI, Alert, Notification, Insight Widget, Report… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
 - Quan hệ giữa các Entity là **Relationship** (không có cha–con), tạo thành **Knowledge Graph**\.
 
 ```Plain Text
@@ -48,12 +48,21 @@ Hệ thống chia làm **bốn tầng** (Experience · Knowledge · Community ·
 Các Page trải nghiệm dành cho người dùng (entry points)\.
 
 ```Plain Text
-/nha-cua-toi       Nhà của tôi
+/trang-chu         Trang chủ
 /thi-truong        Thị trường
 /dong-tien         Dòng tiền
 /cong-dong         Cộng đồng
 /...               Và các trang tùy biến khác: Hỏi đáp, Gói cước...
 ```
+
+Cùng Page Identity `home` / `dashboard`. User Web URL + Display theo **locale của trang** — Product URL Architecture SoT (`Product_Backlogs_M8/Governance_URL_Architecture.md` §2.1):
+
+| Locale | Display | Canonical path |
+| --- | --- | --- |
+| VI | Trang chủ | `/trang-chu` |
+| EN | Home | `/home` |
+
+Host root (`/` · `iflux.vn`) là default landing của **cùng page này**. `/home` là representation locale EN, không phải leftover English như `/account`. `/nha-cua-toi` không còn là Experience URL.
 
 ## Knowledge Layer
 
@@ -179,10 +188,11 @@ Trạng thái chủ đề (Admin): **Mới · Trưởng thành · Suy yếu · L
 /dang-ky            Đăng ký
 /quen-mat-khau      Quên mật khẩu
 /xac-minh-otp       Xác minh OTP
-/                   Redirect → /cong-dong (landing)
+/                   Redirect → landing Trang chủ / Home
+                    VI: /trang-chu · EN: /home
 ```
 
-Legacy English (`/account`, `/messages`, `/search`, `/watchlist`, `/pricing`, `/auth/login`…) → **301** sang slug Việt tương ứng.
+Legacy English (`/account`, `/messages`, `/search`, `/watchlist`, `/pricing`, `/auth/login`…) → **301** sang slug Việt tương ứng. `/home` **không** thuộc nhóm leftover này khi locale EN.
 
 ## Hệ quả bắt buộc
 
@@ -243,7 +253,7 @@ Page là một màn hình nghiệp vụ hoàn chỉnh, đóng vai trò là đi�
 
 Ví dụ:
 
-- Nhà của tôi
+- Trang chủ
 - Thị trường
 - Dòng tiền
 - Cộng đồng
@@ -350,7 +360,7 @@ Mọi Widget đều là **Shared Widget** và được quản lý tập trung tr
 
 Admin có thể cấu hình một Widget xuất hiện trên bất kỳ Page nào thông qua **Cài đặt Trang**.
 
-Riêng tại trang: **Nhà của tôi**, cấu hình của Admin chỉ đóng vai trò là bố cục mặc định. User có thể tự thay đổi vị trí và bố cục Widget theo nhu cầu của mình, độc lập với cấu hình mặc định của hệ thống.
+Riêng tại trang: **Trang chủ**, cấu hình của Admin chỉ đóng vai trò là bố cục mặc định. User có thể tự thay đổi vị trí và bố cục Widget theo nhu cầu của mình, độc lập với cấu hình mặc định của hệ thống.
 
 **5. Export Insight**
 
@@ -581,7 +591,7 @@ Việc tách ranh giới này nhằm bảo đảm mỗi thành phần chỉ có 
 
 # **Runtime Blueprint — Kiến trúc tải & vòng đời tài nguyên của Page**
 
-> Nghiệm thu từ **Pilot trang Cộng đồng** (2026‑07). Đây là **chuẩn chung cho MỌI Page** (Nhà của tôi, Thị trường, Dòng tiền, Cộng đồng…), KHÔNG mô tả riêng một trang.
+> Nghiệm thu từ **Pilot trang Cộng đồng** (2026‑07). Đây là **chuẩn chung cho MỌI Page** (Trang chủ, Thị trường, Dòng tiền, Cộng đồng…), KHÔNG mô tả riêng một trang.
 >
 > Tài liệu phân biệt rõ **Target** (kiến trúc đích) và **Current** (hiện trạng đã đạt tới đâu). Khi mở một Page mới chỉ cần yêu cầu: **"Áp dụng Runtime Blueprint"** — không tự nghĩ lại kiến trúc.
 
@@ -1380,7 +1390,7 @@ Widget chỉ nhận: ViewModel
 ## 5. Approved Architectural Exceptions (Các ngoại lệ được chấp nhận)
 | Exception                    | Phạm vi                            | Owner           | Lý do                  |
 | ---------------------------- | ---------------------------------- | --------------- | ---------------------- |
-| User Dashboard Layout        | Widget Tùy chỉnh trong Nhà của tôi | User Preference | Cá nhân hóa Dashboard  |
+| User Dashboard Layout        | Widget Tùy chỉnh trong Trang chủ | User Preference | Cá nhân hóa Dashboard  |
 
 Điều kiện:
 

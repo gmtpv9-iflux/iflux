@@ -97,9 +97,9 @@
     {
       id: 'PAGE-DASH',
       key: 'dashboard',
-      title: 'Nhà của tôi',
-      slug: 'nha-cua-toi',
-      path: '/nha-cua-toi',
+      title: 'Trang chủ',
+      slug: 'trang-chu',
+      path: '/trang-chu',
       order: 1,
       navVisible: true,
       status: 'active',

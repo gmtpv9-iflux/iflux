@@ -20,7 +20,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   if (global.IfluxRoutes) return;
 
   var ROUTES = {
-    home: { public: '/nha-cua-toi', file: '/User_Web/home/index.html', zone: 'app', auth: true },
+    home: { public: '/trang-chu', file: '/User_Web/home/index.html', zone: 'app', auth: true, landing: true },
     market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app' },
     flow: { public: '/dong-tien', file: '/User_Web/flow/index.html', zone: 'app' },
     stocks: { public: '/co-phieu', file: '/User_Web/stocks/index.html', zone: 'app', auth: true },
@@ -29,7 +29,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     chuDe: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     stories: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     cauChuyen: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
-    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app', landing: true },
+    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -51,8 +51,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     login: 'auth.login',
     register: 'auth.register',
     forgot: 'auth.forgot',
-    root: 'community',
-    landing: 'community',
+    root: 'home',
+    landing: 'home',
     'chu-de': 'cauChuyen',
     chude: 'cauChuyen',
     'cau-chuyen': 'cauChuyen'
@@ -88,8 +88,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   function detectRoute(path) {
     path = normalizePath(path);
-    /* Legacy bookmark /guest → Cộng đồng (trang chủ) */
-    if (path === '/' || path === '/guest') return ROUTES.community;
+    /* Root / · /guest → landing owner = home */
+    if (path === '/' || path === '/guest') return ROUTES.home;
     var keys = Object.keys(ROUTES);
     var i;
     for (i = 0; i < keys.length; i++) {
@@ -152,7 +152,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   function isPublicPage(path) {
     path = normalizePath(path);
-    if (path === '/' || path === '/guest') return true;
     var r = detectRoute(path);
     if (!r) return false;
     if (r.zone === 'auth') return true;
@@ -172,7 +171,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   function loginWithReturn(returnPath) {
     var ret = normalizePath(returnPath || pathname());
-    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('community', { canonical: true, skipDecorate: true });
+    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('home', { canonical: true, skipDecorate: true });
     return to('auth.login') + '?return=' + encodeURIComponent(ret);
   }
 
@@ -535,7 +534,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
    * "Nhà" ở bottom bar là PRESENTATION, do renderer tự xử lý). route = key Page Registry.
    * appOnly: chỉ hiện khi đã đăng nhập. exclusive: kiểu link Độc quyền. */
   var primary = [
-    { key: 'dashboard', route: 'home',      label: 'Nhà của tôi', icon: 'ti-home',            appOnly: true, onboard: 'home' },
+    { key: 'dashboard', route: 'home',      label: 'Trang chủ', icon: 'ti-home',            appOnly: true, onboard: 'home' },
     { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
     { key: 'community', route: 'community', label: 'Cộng đồng',   icon: 'ti-users', onboard: 'community' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
@@ -633,7 +632,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   var LEGACY_HREF = {
-    home: '/nha-cua-toi', market: '/thi-truong', flow: '/dong-tien',
+    home: '/trang-chu', market: '/thi-truong', flow: '/dong-tien',
     community: '/cong-dong', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
   };
   function hrefFor(routeKey) {
@@ -740,7 +739,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     }
     var path = '';
     try { path = (global.location && global.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
-    if (/\/(nha-cua-toi|home)(\/|$)/.test(path)) return 'dashboard';
+    if (/\/(trang-chu|nha-cua-toi|home)(\/|$)/.test(path)) return 'dashboard';
     if (/\/(thi-truong|market)(\/|$)/.test(path)) return 'market';
     if (/\/(dong-tien|flow)(\/|$)/.test(path)) return 'flow';
     if (/\/(cong-dong|community)(\/|$)/.test(path)) return 'community';

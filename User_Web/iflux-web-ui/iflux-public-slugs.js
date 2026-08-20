@@ -7,8 +7,9 @@
 
   /** public canonical → thư mục vật lý User_Web */
   var USER_PUBLIC = {
-    '/': '/User_Web/market/',
+    '/': '/User_Web/home/',
     '/thi-truong': '/User_Web/market/',
+    '/trang-chu': '/User_Web/home/',
     '/nha-cua-toi': '/User_Web/home/',
     '/dong-tien': '/User_Web/flow/',
     '/co-phieu': '/User_Web/stocks/',
@@ -37,7 +38,8 @@
   var USER_LEGACY_TO_CANON = {
     '/guest': '/',
     '/market': '/thi-truong',
-    '/home': '/nha-cua-toi',
+    '/home': '/trang-chu',
+    '/nha-cua-toi': '/trang-chu',
     '/flow': '/dong-tien',
     '/stocks': '/co-phieu',
     '/sectors': '/nganh',

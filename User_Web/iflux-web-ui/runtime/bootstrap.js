@@ -136,7 +136,7 @@ function detectPageKey() {
   if (path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
   if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
-  if (path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
+  if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
   if (path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'market';
   if (path.indexOf('/hoi-dap') >= 0 || path.indexOf('/faq') >= 0) return 'faq';
   if (path.indexOf('/thanh-vien') >= 0 || path.indexOf('/loyalty') >= 0 || path.indexOf('/membership') >= 0) return 'loyalty';

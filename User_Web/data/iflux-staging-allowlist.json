@@ -4,7 +4,7 @@
   "note": "Staging User Web — chỉ bật module có Admin Full/Sandbox (hub.html ix-hub-ok)",
   "enabled": {
     "auth": { "admin": "ADM-AUTH", "label": "Đăng nhập / Đăng ký" },
-    "home": { "admin": "ADM-DASH + widget-library + core-setup + onboarding", "label": "Nhà của tôi" },
+    "home": { "admin": "ADM-DASH + widget-library + core-setup + onboarding", "label": "Trang chủ" },
     "market": { "admin": "ADM-MKT-000..006", "label": "Thị trường" },
     "flow": { "admin": "ADM-MKT-005/006", "label": "Dòng tiền" },
     "watchlist": { "admin": "watchlist-taxonomy", "label": "Watchlist" },
