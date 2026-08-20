@@ -10,7 +10,7 @@
   function routeUrl(key) {
     var R = global.IfluxRoutes;
     if (R && R.to) return R.to(key);
-    if (key === 'community') return '/cong-dong';
+    if (key === 'community') return '/tin-tuc';
     return '/';
   }
 
@@ -125,7 +125,7 @@
                 var isBrand =
                   aid === 'cafef' || aid === 'vietstock' || aid === 'baodautu';
                 var authorHref = isBrand
-                  ? '/cong-dong/tac-gia/' + encodeURIComponent(aid)
+                  ? '/tin-tuc/tac-gia/' + encodeURIComponent(aid)
                   : '';
                 var nameHtml = authorHref
                   ? ('<a class="ifx-profile-link" href="' +

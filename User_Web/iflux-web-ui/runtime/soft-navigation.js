@@ -75,7 +75,7 @@ function pageKeyFromPath(pathname) {
   if (path === '/trang-chu' || path === '/nha-cua-toi' || path === '/home') return 'home';
   if (path === '/thi-truong' || path === '/market') return 'market';
   if (path === '/dong-tien' || path === '/flow') return 'flow';
-  if (path === '/cong-dong' || path === '/community') return 'community';
+  if (path === '/tin-tuc' || path === '/cong-dong' || path === '/community') return 'community';
   if (path === '/goi-cuoc' || path === '/pricing' || path === '/bang-gia') return 'pricing';
   return null;
 }

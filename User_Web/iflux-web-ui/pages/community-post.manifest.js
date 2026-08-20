@@ -3,7 +3,7 @@
  */
 export default {
   pageKey: 'communityPost',
-  path: '/cong-dong/bai-viet',
+  path: '/tin-tuc/bai-viet',
   title: 'Bài viết cộng đồng',
   documentTitle: '',
   composite: true,

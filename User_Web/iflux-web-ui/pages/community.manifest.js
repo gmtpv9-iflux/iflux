@@ -7,8 +7,8 @@
 
 export default {
   pageKey: 'community',
-  path: '/cong-dong',
-  title: 'Cộng đồng',
+  path: '/tin-tuc',
+  title: 'Tin tức',
   intro: 'Tin tức, bài viết chuyên gia và thảo luận từ cộng đồng nhà đầu tư — cập nhật theo mã, ngành và chủ đề bạn quan tâm.',
   documentTitle: '',
   composite: true,
@@ -18,7 +18,7 @@ export default {
   widgets: [
     {
       id: 'WGT-COM-PAGE',
-      title: 'Cộng đồng',
+      title: 'Tin tức',
       section: 'main',
       position: 0,
       span: 12,

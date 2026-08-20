@@ -89,8 +89,8 @@ function seoCatalogKey(pageKey) {
   } catch (e) {
     path = String(location.pathname || '').toLowerCase();
   }
-  if (/\/cong-dong\/tac-gia\/[^/]+/.test(path)) return 'com-author';
-  if (/\/cong-dong\/danh-muc\/[^/]+/.test(path)) return 'com-cat';
+  if (/\/(?:tin-tuc|cong-dong)\/tac-gia\/[^/]+/.test(path)) return 'com-author';
+  if (/\/(?:tin-tuc|cong-dong)\/danh-muc\/[^/]+/.test(path)) return 'com-cat';
   return SEO_KEY_ALIAS[pageKey] || PUBLISH_KEY_ALIAS[pageKey] || pageKey;
 }
 
@@ -119,21 +119,21 @@ function detectPageKey() {
     return 'checkout';
   }
   /* Viết bài — TRƯỚC nhánh rộng /cong-dong (tránh nhận nhầm pageKey=community → mất AuthGate). */
-  if (/\/cong-dong\/(viet|write)/.test(path) || /\/user_web\/community\/write/.test(path) || /\/community\/write/.test(path)) {
+  if (/\/(?:tin-tuc|cong-dong)\/(viet|write)/.test(path) || /\/user_web\/community\/write/.test(path) || /\/community\/write/.test(path)) {
     return 'communityWrite';
   }
-  if (/\/(cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/community\/post/.test(path)) {
+  if (/\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/community\/post/.test(path)) {
     return 'communityPost';
   }
   /* Collection Cộng đồng: chủ đề / tác giả / danh mục — cùng runtime community (filter theo path) */
-  if (/\/cong-dong\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'community';
+  if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'community';
 
   if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
   if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
   if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
   if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
 
-  if (path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
+  if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
   if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
   if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
@@ -155,7 +155,7 @@ function detectPageKey() {
   if (/\/(he-sinh-thai|ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
   if (/\/(cau-chuyen|chu-de|stories)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/index/.test(path)) return 'cauChuyen';
 
-  if (path === '/' || path === '') return 'community';
+  if (path === '/' || path === '') return 'home';
   return null;
 }
 

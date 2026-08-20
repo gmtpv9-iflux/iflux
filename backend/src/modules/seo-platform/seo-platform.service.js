@@ -19,6 +19,7 @@ var PATH_TO_PAGE_KEY = {
   '/trang-chu': 'dashboard',
   '/nha-cua-toi': 'dashboard',
   '/dong-tien': 'flow',
+  '/tin-tuc': 'community',
   '/cong-dong': 'community',
   '/co-phieu': 'stocks',
   '/nganh': 'sectors',
@@ -34,7 +35,7 @@ var PATH_TO_PAGE_KEY = {
 
 var SITEMAP_STATIC = [
   { pageKey: 'market', path: '/thi-truong', changefreq: 'hourly', priority: '1.0' },
-  { pageKey: 'community', path: '/cong-dong', changefreq: 'hourly', priority: '0.9' },
+  { pageKey: 'community', path: '/tin-tuc', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'flow', path: '/dong-tien', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'stocks', path: '/co-phieu', changefreq: 'daily', priority: '0.8' },
   { pageKey: 'sectors', path: '/nganh', changefreq: 'daily', priority: '0.8' },
@@ -52,10 +53,10 @@ function pageKeyFromPath(path) {
   if (/^\/nganh\//i.test(clean)) return 'sector-detail';
   if (/^\/he-sinh-thai\//i.test(clean)) return 'eco-detail';
   if (/^\/chu-de\//i.test(clean) || /^\/cau-chuyen\//i.test(clean)) return 'cau-chuyen-detail';
-  if (/^\/cong-dong\/tac-gia\//i.test(clean)) return 'com-author';
-  if (/^\/cong-dong\/danh-muc\//i.test(clean)) return 'com-cat';
-  if (/^\/cong-dong\/chu-de\//i.test(clean)) return 'com-topic';
-  if (/^\/cong-dong\/bai-viet\//i.test(clean)) return 'community';
+  if (/^\/(?:tin-tuc|cong-dong)\/tac-gia\//i.test(clean)) return 'com-author';
+  if (/^\/(?:tin-tuc|cong-dong)\/danh-muc\//i.test(clean)) return 'com-cat';
+  if (/^\/(?:tin-tuc|cong-dong)\/chu-de\//i.test(clean)) return 'com-topic';
+  if (/^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(clean)) return 'community';
   return PATH_TO_PAGE_KEY[clean] || 'market';
 }
 
@@ -162,7 +163,7 @@ async function loadEntitySeoContext(path) {
       vars: { storyName: storyName }
     };
   }
-  if ((m = clean.match(/^\/cong-dong\/tac-gia\/([^/]+)\/?$/i))) {
+  if ((m = clean.match(/^\/(?:tin-tuc|cong-dong)\/tac-gia\/([^/]+)\/?$/i))) {
     var authorRef = decodeSeg(m[1]);
     var authorName = authorRef;
     var authorKey = authorRef;
@@ -188,11 +189,11 @@ async function loadEntitySeoContext(path) {
     }
     return {
       pageKey: 'com-author',
-      cleanPath: '/cong-dong/tac-gia/' + authorKey,
+      cleanPath: '/tin-tuc/tac-gia/' + authorKey,
       vars: { authorName: authorName }
     };
   }
-  if ((m = clean.match(/^\/cong-dong\/danh-muc\/([^/]+)\/?$/i))) {
+  if ((m = clean.match(/^\/(?:tin-tuc|cong-dong)\/danh-muc\/([^/]+)\/?$/i))) {
     var catRef = decodeSeg(m[1]);
     var categoryName = catRef;
     var categorySlug = catRef;
@@ -212,11 +213,11 @@ async function loadEntitySeoContext(path) {
     }
     return {
       pageKey: 'com-cat',
-      cleanPath: '/cong-dong/danh-muc/' + categorySlug,
+      cleanPath: '/tin-tuc/danh-muc/' + categorySlug,
       vars: { categoryName: categoryName }
     };
   }
-  if ((m = clean.match(/^\/cong-dong\/chu-de\/([^/]+)\/?$/i))) {
+  if ((m = clean.match(/^\/(?:tin-tuc|cong-dong)\/chu-de\/([^/]+)\/?$/i))) {
     var topicRef = decodeSeg(m[1]);
     var topicName = topicRef;
     var topicSlug = topicRef;
@@ -236,7 +237,7 @@ async function loadEntitySeoContext(path) {
     }
     return {
       pageKey: 'com-topic',
-      cleanPath: '/cong-dong/chu-de/' + topicSlug,
+      cleanPath: '/tin-tuc/chu-de/' + topicSlug,
       /* storyName alias — nếu Admin thêm placeholder {Tên câu chuyện} / name */
       vars: { storyName: topicName, name: topicName, title: topicName }
     };
@@ -371,7 +372,7 @@ async function resolveArticleContract(article, opts) {
   opts = opts || {};
   article = article || {};
   var slug = String(article.slug || article.id || '').trim();
-  var cleanPath = '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
   var origin = opts.origin || contractBuilder.PUBLIC_ORIGIN;
   var foundationEffective = {};
   try {
@@ -489,7 +490,7 @@ function articleOverridesFromCandidate(row) {
     }
   }
   var slug = String((row && row.slug) || '').trim();
-  var cleanPath = '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
   var robots = seo.robots || seo.meta_robots || '';
   var entity = {
     title: row && row.title,
@@ -530,7 +531,7 @@ function articleContractInputFromCandidate(row, foundationCommunity) {
     }
   }
   var slug = String((row && row.slug) || '').trim();
-  var cleanPath = '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
   var robots = seo.robots || seo.meta_robots || '';
   return {
     foundationEffective: foundationCommunity || {},
@@ -780,6 +781,7 @@ function buildRobotsTxt() {
     'Allow: /\n' +
     'Disallow: /tai-khoan\n' +
     'Disallow: /tin-nhan\n' +
+    'Disallow: /tin-tuc/viet-bai\n' +
     'Disallow: /cong-dong/viet-bai\n' +
     'Disallow: /api/\n' +
     '\n' +

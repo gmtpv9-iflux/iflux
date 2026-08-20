@@ -849,7 +849,7 @@ function resolveArticleMetadata(article, origin, globalPayload) {
   const description = String(pub.description || '').trim();
   const image = absoluteAssetUrl(pub.og_image || pub.social_image || '', base);
   const slug = item.slug || item.id || '';
-  const canonical = base + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  const canonical = base + '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
   const siteName = String(pub.site_name || 'iFlux').trim() || 'iFlux';
   const documentTitle = title.indexOf(siteName) >= 0 ? title : title + ' · ' + siteName;
   return {
@@ -950,7 +950,7 @@ function renderArticleSpaHtml(meta) {
 }
 
 function articlePublicPath(slug) {
-  return '/cong-dong/bai-viet/' + encodeURIComponent(String(slug || '').trim());
+  return '/tin-tuc/bai-viet/' + encodeURIComponent(String(slug || '').trim());
 }
 
 module.exports = {

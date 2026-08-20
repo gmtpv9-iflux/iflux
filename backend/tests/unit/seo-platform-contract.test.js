@@ -77,7 +77,7 @@ describe('seo-platform contract consume foundation', () => {
 
   it('decorated URL collapses to Clean identity and noindex', () => {
     const contract = buildSeoContract({
-      foundationEffective: { site_name: 'iFlux', title: 'Cộng đồng' },
+      foundationEffective: { site_name: 'iFlux', title: 'Tin tức' },
       pageKey: 'community',
       path: '/IFLABCDEF12/cong-dong',
       requestedUrl: 'https://iflux.vn/IFLABCDEF12/cong-dong',

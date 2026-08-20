@@ -29,7 +29,7 @@ describe('P7 health / preview / observability', () => {
     const c = buildSeoContract({
       foundationEffective: { title: 'X' },
       pageKey: 'community',
-      path: '/cong-dong',
+      path: '/tin-tuc',
       httpStatus: 200,
       overrides: { robots: 'noindex,nofollow', forceNonIndex: true }
     });
@@ -76,12 +76,12 @@ describe('P7 health / preview / observability', () => {
 
   it('observability bundle exposes full chain', () => {
     const c = buildSeoContract({
-      foundationEffective: { title: 'Cộng đồng', description: 'x' },
+      foundationEffective: { title: 'Tin tức', description: 'x' },
       pageKey: 'community',
-      path: '/cong-dong',
+      path: '/tin-tuc',
       httpStatus: 200
     });
-    const b = buildObservabilityBundle(c, { path: '/cong-dong' });
+    const b = buildObservabilityBundle(c, { path: '/tin-tuc' });
     assert.deepEqual(b.chain, ['url', 'resolve', 'contract', 'render', 'health']);
     assert.ok(b.contract);
     assert.ok(b.preview.google);

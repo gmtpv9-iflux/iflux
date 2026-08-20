@@ -318,7 +318,7 @@
   function postStoryHref(post, opts) {
     var c = global.IfluxSeoUrl
       ? IfluxSeoUrl.postHref(post)
-      : '/cong-dong/bai-viet/' + encodeURIComponent(post.slug || post.id);
+      : '/tin-tuc/bai-viet/' + encodeURIComponent(post.slug || post.id);
     return idHref(c);
   }
 
@@ -665,7 +665,7 @@
     var canonical = meta.canonical || meta.url ||
       (global.IfluxSeoUrl ? IfluxSeoUrl.postCanonical(post) : '');
     var communityUrl = global.IfluxSeoUrl
-      ? IfluxSeoUrl.PROD_ORIGIN + '/cong-dong'
+      ? IfluxSeoUrl.PROD_ORIGIN + '/tin-tuc'
       : location.href.split('#')[0].replace(/story\.html.*/, 'index.html');
     var breadcrumb = {
       '@context': 'https://schema.org',

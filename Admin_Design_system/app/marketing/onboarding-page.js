@@ -13,7 +13,7 @@
     { id: 'home', label: 'Trang chủ' },
     { id: 'market', label: 'Thị trường' },
     { id: 'flow', label: 'Dòng tiền' },
-    { id: 'community', label: 'Cộng đồng' },
+    { id: 'community', label: 'Tin tức' },
     { id: 'search', label: 'Tìm kiếm' },
     { id: 'pricing', label: 'Gói cước' },
     { id: 'loyalty', label: 'Membership' },

@@ -1,6 +1,6 @@
 export default {
   pageKey: 'communityWrite',
-  path: '/cong-dong/viet-bai',
+  path: '/tin-tuc/viet-bai',
   title: 'Viết bài cộng đồng',
   documentTitle: '',
   seo: {

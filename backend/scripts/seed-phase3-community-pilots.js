@@ -73,7 +73,7 @@ function baseWidgetDrafts() {
 function pageDraft() {
   return {
     page: 'community',
-    path: '/cong-dong',
+    path: '/tin-tuc',
     title: 'Cộng đồng',
     intro: 'PagePublished + Layout Engine Host Tree.',
     documentTitle: 'Cộng đồng · iFlux',

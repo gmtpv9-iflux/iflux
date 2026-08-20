@@ -29,7 +29,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     chuDe: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     stories: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     cauChuyen: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
-    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },
+    community: { public: '/tin-tuc', file: '/User_Web/community/index.html', zone: 'app' },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -536,7 +536,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   var primary = [
     { key: 'dashboard', route: 'home',      label: 'Trang chủ', icon: 'ti-home',            appOnly: true, onboard: 'home' },
     { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
-    { key: 'community', route: 'community', label: 'Cộng đồng',   icon: 'ti-users', onboard: 'community' },
+    { key: 'community', route: 'community', label: 'Tin tức',   icon: 'ti-users', onboard: 'community' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' }
   ];
@@ -633,7 +633,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   var LEGACY_HREF = {
     home: '/trang-chu', market: '/thi-truong', flow: '/dong-tien',
-    community: '/cong-dong', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
+    community: '/tin-tuc', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
   };
   function hrefFor(routeKey) {
     var r = routes();
@@ -845,14 +845,14 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     { entityType: 'sector', re: /\/(nganh|sectors?)\/[^/]+\/?$/,          list: '/nganh' },
     { entityType: 'family', re: /\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+\/?$/, list: '/he-sinh-thai' },
     { entityType: 'story',  re: /\/(cau-chuyen|chu-de|stories)\/[^/]+\/?$/, list: '/cau-chuyen' },
-    { entityType: 'communityPost', re: /\/(cong-dong|community)\/(bai-viet|posts?)\/[^/]+\/?$/, list: '/cong-dong' }
+    { entityType: 'communityPost', re: /\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?)\/[^/]+\/?$/, list: '/tin-tuc' }
   ];
   var FILE_ENTITY = [
     { entityType: 'stock',  re: /\/stock\//,          list: '/co-phieu' },
     { entityType: 'sector', re: /\/sector\//,          list: '/nganh' },
     { entityType: 'family', re: /\/family\//,          list: '/he-sinh-thai' },
     { entityType: 'story',  re: /\/(cau-chuyen|chu-de)\/chi-tiet/,  list: '/cau-chuyen' },
-    { entityType: 'communityPost', re: /\/User_Web\/community\/post/i, list: '/cong-dong' }
+    { entityType: 'communityPost', re: /\/User_Web\/community\/post/i, list: '/tin-tuc' }
   ];
   function detectContext() {
     if (_entity && _entity.entityType) return _entity;

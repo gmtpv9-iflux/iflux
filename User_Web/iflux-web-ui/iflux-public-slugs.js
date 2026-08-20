@@ -17,6 +17,8 @@
     '/he-sinh-thai': '/User_Web/ecosystems/',
     '/ho-co-phieu': '/User_Web/ecosystems/',
     '/chu-de': '/User_Web/chu-de/',
+    '/tin-tuc': '/User_Web/community/',
+    '/tin-tuc/viet-bai': '/User_Web/community/',
     '/cong-dong': '/User_Web/community/',
     '/cong-dong/viet-bai': '/User_Web/community/',
     '/goi-cuoc': '/User_Web/pricing/',
@@ -46,8 +48,10 @@
     '/ecosystems': '/he-sinh-thai',
     '/ho-co-phieu': '/he-sinh-thai',
     '/stories': '/chu-de',
-    '/community': '/cong-dong',
-    '/community/write': '/cong-dong/viet-bai',
+    '/community': '/tin-tuc',
+    '/community/write': '/tin-tuc/viet-bai',
+    '/cong-dong': '/tin-tuc',
+    '/cong-dong/viet-bai': '/tin-tuc/viet-bai',
     '/pricing': '/goi-cuoc',
     '/faq': '/hoi-dap',
     '/membership': '/thanh-vien',
@@ -70,7 +74,7 @@
     { re: /^\/nganh\//i, base: '/User_Web/sector/', legacyRe: /^\/sectors\//i },
     { re: /^\/he-sinh-thai\//i, base: '/User_Web/family/', legacyRe: /^\/(?:ho-co-phieu|ecosystems)\//i },
     { re: /^\/chu-de\//i, base: '/User_Web/chu-de/', legacyRe: /^\/stories\//i },
-    { re: /^\/cong-dong\/bai-viet\//i, base: '/User_Web/community/', legacyRe: /^\/community\/posts\//i }
+    { re: /^\/(?:tin-tuc|cong-dong)\/bai-viet\//i, base: '/User_Web/community/', legacyRe: /^\/community\/posts\//i }
   ];
 
   /** Admin: slug module VI → thư mục app/ */
@@ -154,7 +158,8 @@
     m = path.match(/^\/stories\/([^/]+)$/i);
     if (m) return '/chu-de/' + m[1];
     m = path.match(/^\/community\/posts\/([^/]+)$/i);
-    if (m) return '/cong-dong/bai-viet/' + m[1];
+    if (m) return '/tin-tuc/bai-viet/' + m[1];
+    if (/^\/cong-dong(\/|$)/i.test(path)) return path.replace(/^\/cong-dong/i, '/tin-tuc');
     m = path.match(/^\/account\/(.+)$/i);
     if (m) return '/tai-khoan/' + m[1];
     m = path.match(/^\/messages\/(.+)$/i);

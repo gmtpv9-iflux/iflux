@@ -351,7 +351,7 @@
       '<div class="ifx-stock-not-found">' +
         '<h1 class="ix-page-title">Không tìm thấy mã ' + esc(ticker) + '</h1>' +
         '<p style="color:var(--ix-text-muted);margin-bottom:16px">Mã không có trong dữ liệu sandbox.</p>' +
-        '<a href="../community/index.html" class="ix-btn ix-btn-outline">Về Cộng đồng</a>' +
+        '<a href="../community/index.html" class="ix-btn ix-btn-outline">Về Tin tức</a>' +
       '</div>'
     );
   }

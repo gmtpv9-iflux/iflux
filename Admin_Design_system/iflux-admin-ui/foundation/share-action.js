@@ -1279,7 +1279,7 @@
     dashboard: 'Trang chủ',
     market: 'Thị trường',
     flow: 'Dòng tiền',
-    community: 'Cộng đồng',
+    community: 'Tin tức',
     watchlist: 'Theo dõi'
   };
 
@@ -1289,7 +1289,7 @@
     if (/\/home\//.test(path) || /\/trang-chu/.test(path)) return 'Trang chủ';
     if (/\/market\//.test(path)) return 'Thị trường';
     if (/\/flow\//.test(path)) return 'Dòng tiền';
-    if (/\/community\//.test(path)) return 'Cộng đồng';
+    if (/\/community\//.test(path) || /\/tin-tuc\//.test(path) || /\/cong-dong\//.test(path)) return 'Tin tức';
     if (/\/watchlist\//.test(path)) return 'Theo dõi';
     return 'iFlux';
   }

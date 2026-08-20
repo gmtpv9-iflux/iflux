@@ -6,7 +6,7 @@
   var PAGES = [
     { key: 'market', label: 'Thị trường', menu: true, icon: 'ti-chart-candle', guestNever: false },
     { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash', guestNever: false },
-    { key: 'community', label: 'Cộng đồng', menu: true, icon: 'ti-users', guestNever: false },
+    { key: 'community', label: 'Tin tức', menu: true, icon: 'ti-users', guestNever: false },
     { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown', guestNever: false },
     { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle', guestNever: false },
     { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift', guestNever: false },

@@ -1206,11 +1206,11 @@
     var meta = post.metadata || {};
     var url = meta.canonical || meta.url || (global.IfluxSeoUrl
       ? IfluxSeoUrl.postCanonical(post)
-      : baseUrl + '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug));
+      : baseUrl + '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug));
     return {
       url: url,
       slug: post.slug,
-      path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug),
+      path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug),
       meta: {
         title: meta.title,
         description: meta.description,

@@ -9,7 +9,7 @@ import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?
 import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
 import featureManifest from '../../features/community.manifest.js?v=calFeedFix20260808';
 
-export const meta = { id: 'WGT-COM-PAGE', title: 'Cộng đồng' };
+export const meta = { id: 'WGT-COM-PAGE', title: 'Tin tức' };
 
 var featureRt = null;
 
@@ -39,9 +39,9 @@ async function mountFromHostTree(root) {
 
 function isCollectionIndexPath() {
   var path = String((typeof location !== 'undefined' && location.pathname) || '').replace(/\/+$/, '') || '/';
-  return path === '/cong-dong/chu-de' ||
-    path === '/cong-dong/tac-gia' ||
-    path === '/cong-dong/danh-muc';
+  return (path === '/tin-tuc/chu-de' || path === '/cong-dong/chu-de') ||
+    (path === '/tin-tuc/tac-gia' || path === '/cong-dong/tac-gia') ||
+    (path === '/tin-tuc/danh-muc' || path === '/cong-dong/danh-muc');
 }
 
 function applyCommunity(root) {

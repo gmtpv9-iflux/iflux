@@ -173,7 +173,7 @@
   ];
 
   var PAGE_LABELS = {
-    dashboard: 'Nhà', market: 'Thị trường', community: 'Cộng đồng', flow: 'Dòng tiền',
+    dashboard: 'Nhà', market: 'Thị trường', community: 'Tin tức', flow: 'Dòng tiền',
     loyalty: 'Membership', faq: 'FAQ', account: 'Tài khoản', messages: 'Tin nhắn'
   };
 

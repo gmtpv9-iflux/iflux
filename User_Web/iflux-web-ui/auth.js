@@ -731,13 +731,13 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     var isAuthPage = R ? R.isAuthPage(path) : /\/auth\//.test(path);
 
     if (loggedIn && isAuthPage) {
-      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/tin-tuc')) {
         global.location.replace(appHomePath());
       }
       return;
     }
     if (loggedIn && (R ? R.isGuestPage(path) : /\/guest\/?$/.test(path))) {
-      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/cong-dong')) {
+      if (!shellNavigate(R ? R.to('community', { skipDecorate: true }) : '/tin-tuc')) {
         global.location.replace(appHomePath());
       }
       return;
@@ -1493,7 +1493,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
       }
       return;
     }
-    var homeCanonical = R ? R.to('community', { skipDecorate: true }) : '/cong-dong';
+    var homeCanonical = R ? R.to('community', { skipDecorate: true }) : '/tin-tuc';
     if (!shellNavigate(homeCanonical)) {
       global.location.replace(defaultPath || homeCanonical);
     }

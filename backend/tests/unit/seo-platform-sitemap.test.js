@@ -39,9 +39,9 @@ describe('isContractSitemapEligible (Contract gate)', () => {
     const c = buildSeoContract({
       foundationEffective: { title: 'X' },
       pageKey: 'community',
-      path: '/cong-dong/bai-viet/abc',
+      path: '/tin-tuc/bai-viet/abc',
       httpStatus: 200,
-      overrides: { robots: 'noindex,nofollow', cleanPath: '/cong-dong/bai-viet/abc' }
+      overrides: { robots: 'noindex,nofollow', cleanPath: '/tin-tuc/bai-viet/abc' }
     });
     assert.equal(isContractSitemapEligible(c), false);
   });
@@ -77,7 +77,7 @@ describe('P5 sitemap Contract eligibility + scale (>5000)', () => {
 
     const collected = await collectSitemapEntries({
       listArticleCandidatesPage,
-      foundationEffectiveByPageKey: { community: { site_name: 'iFlux', title: 'Cộng đồng' } },
+      foundationEffectiveByPageKey: { community: { site_name: 'iFlux', title: 'Tin tức' } },
       skipFoundationFetch: true
     });
 
@@ -89,7 +89,7 @@ describe('P5 sitemap Contract eligibility + scale (>5000)', () => {
     assert.equal(collected.stats.staticIncluded, 9);
     assert.ok(ARTICLE_CANDIDATE_BATCH < TOTAL);
 
-    const articleLocs = collected.urls.filter((u) => u.loc.includes('/cong-dong/bai-viet/'));
+    const articleLocs = collected.urls.filter((u) => u.loc.includes('/tin-tuc/bai-viet/'));
     assert.equal(articleLocs.length, TOTAL - noindexCount);
     assert.ok(articleLocs.every((u) => !/\/IFL[A-Za-z0-9]{5,17}(\/|$)/i.test(u.loc)));
     assert.ok(articleLocs.every((u) => !/[?&]ref=/.test(u.loc)));

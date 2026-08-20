@@ -2,7 +2,7 @@
 if (window.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn()) {
   location.replace(
     (window.IfluxAuth.appHomePath && IfluxAuth.appHomePath()) ||
-    (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/cong-dong')
+    (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/tin-tuc')
   );
 }
 
@@ -109,7 +109,7 @@ function submitVerify() {
       ixToast('Xác thực thành công!', 'success');
       location.replace(
         (IfluxAuth.appHomePath && IfluxAuth.appHomePath()) ||
-        (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/cong-dong')
+        (window.IfluxRoutes ? IfluxRoutes.to('community', { canonical: true }) : '/tin-tuc')
       );
     })
     .catch(function (e) {

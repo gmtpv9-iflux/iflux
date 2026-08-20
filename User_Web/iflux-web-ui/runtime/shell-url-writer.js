@@ -23,7 +23,7 @@
   /* Pre-shell fallback — same public prefixes as IfluxRoutes (zone policy, not page list) */
   var APP_PUBLIC_PREFIXES = [
     '/trang-chu', '/nha-cua-toi', '/thi-truong', '/dong-tien', '/co-phieu', '/nganh', '/he-sinh-thai',
-    '/cau-chuyen', '/chu-de', '/cong-dong', '/goi-cuoc', '/hoi-dap', '/thanh-vien',
+    '/cau-chuyen', '/chu-de', '/tin-tuc', '/cong-dong', '/goi-cuoc', '/hoi-dap', '/thanh-vien',
     '/tin-nhan', '/theo-doi', '/tim-kiem', '/canh-bao', '/chia-se', '/tai-khoan'
   ];
 

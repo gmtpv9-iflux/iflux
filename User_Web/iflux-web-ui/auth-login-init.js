@@ -53,9 +53,9 @@
       ixToast('Đã gửi yêu cầu khóa khẩn cấp. Đội hỗ trợ sẽ liên hệ qua email.', 'success');
       setTimeout(function () {
         if (window.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
-          IfluxShellUrlWriter.navigate('/cong-dong', { replace: true });
+          IfluxShellUrlWriter.navigate('/tin-tuc', { replace: true });
         } else {
-          location.href = '/cong-dong';
+          location.href = '/tin-tuc';
         }
       }, 800);
     } catch (err) {
@@ -65,9 +65,9 @@
 
   document.getElementById('btn-emergency-back').addEventListener('click', function () {
     if (window.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
-      IfluxShellUrlWriter.navigate('/cong-dong', { replace: true });
+      IfluxShellUrlWriter.navigate('/tin-tuc', { replace: true });
     } else {
-      location.href = '/cong-dong';
+      location.href = '/tin-tuc';
     }
   });
 

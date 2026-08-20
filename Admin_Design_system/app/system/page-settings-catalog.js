@@ -129,9 +129,9 @@
     {
       id: 'PAGE-COM',
       key: 'community',
-      title: 'Cộng đồng',
-      slug: 'cong-dong',
-      path: '/cong-dong',
+      title: 'Tin tức',
+      slug: 'tin-tuc',
+      path: '/tin-tuc',
       order: 3,
       navVisible: true,
       status: 'active',
@@ -297,7 +297,7 @@
   ];
 
   /**
-   * Community collection pages — KHÔNG có index /cong-dong/chu-de|danh-muc|tac-gia.
+   * Community collection pages — KHÔNG có index /tin-tuc/chu-de|danh-muc|tac-gia.
    * Bản thân /:slug đã là trang danh sách: Main = feed tin lọc · Sidebar-right = Widget Host riêng
    * (Admin tự thiết kế danh sách đưa lên sidebar). Khác Câu chuyện Knowledge (/cau-chuyen).
    */
@@ -317,15 +317,15 @@
 
   var COMMUNITY_PAGES = [
     communityPage(
-      'PAGE-COM-TOPIC', 'com-topic', 'Chủ đề Cộng đồng', 'chu-de', '/cong-dong/chu-de/:slug',
-      'Trang danh sách theo chủ đề (vd /cong-dong/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar phải: Widget Host riêng (danh sách do Admin thiết kế).'
+      'PAGE-COM-TOPIC', 'com-topic', 'Chủ đề Cộng đồng', 'chu-de', '/tin-tuc/chu-de/:slug',
+      'Trang danh sách theo chủ đề (vd /tin-tuc/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar phải: Widget Host riêng (danh sách do Admin thiết kế).'
     ),
     communityPage(
-      'PAGE-COM-CAT', 'com-cat', 'Danh mục Cộng đồng', 'danh-muc', '/cong-dong/danh-muc/:slug',
+      'PAGE-COM-CAT', 'com-cat', 'Danh mục Cộng đồng', 'danh-muc', '/tin-tuc/danh-muc/:slug',
       'Trang danh sách theo danh mục. Main: feed tin thuộc danh mục · Sidebar phải: Widget Host riêng.'
     ),
     communityPage(
-      'PAGE-COM-AUTHOR', 'com-author', 'Tác giả Cộng đồng', 'tac-gia', '/cong-dong/tac-gia/:username',
+      'PAGE-COM-AUTHOR', 'com-author', 'Tác giả Cộng đồng', 'tac-gia', '/tin-tuc/tac-gia/:username',
       'Trang danh sách theo tác giả. Main: feed tin của tác giả · Sidebar phải: Widget Host riêng.'
     )
   ];
@@ -333,14 +333,14 @@
   /** Community utilities — Viết bài chưa composable Bố cục. */
   var COMMUNITY_UTILITY_PAGES = [
     {
-      id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/cong-dong/bai-viet/:id',
+      id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/tin-tuc/bai-viet/:id',
       order: 40 + COMMUNITY_PAGE_ORDER++, navVisible: false, status: 'active', userCustomizable: false, group: 'Community', dynamic: true,
       description: 'Trang chi tiết bài viết. Main: nội dung bài viết (không composable) · Sidebar phải: Widget Host riêng, chèn trước các block đặc thù (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận).',
       sections: cloneSections([
         { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
       ])
     },
-    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/cong-dong/viet-bai', status: 'inactive' }
+    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/tin-tuc/viet-bai', status: 'inactive' }
   ];
 
   /** Alias tương thích: shape cũ [{group,icon,desc,pages}] cho consumer ngoài. */
@@ -350,7 +350,7 @@
       group: g.group, icon: g.icon, desc: g.desc,
       pages: KNOWLEDGE_PAGES.filter(function (p) { return p.group === g.group; })
     };
-  }).concat([{ group: 'Community', icon: 'ti-users', desc: 'Feed /cong-dong · collection :slug · bài viết · viết bài.', pages: COMMUNITY_ENTITY_PAGES }]);
+  }).concat([{ group: 'Community', icon: 'ti-users', desc: 'Feed /tin-tuc · collection :slug · bài viết · viết bài.', pages: COMMUNITY_ENTITY_PAGES }]);
 
   /** Trang con (tab) của Page composable (account/messages). */
   var CHILD_PAGES = {

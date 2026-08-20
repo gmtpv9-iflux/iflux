@@ -43,7 +43,7 @@
   }
 
   function backHref(ctx) {
-    if (!ctx) return '/cong-dong';
+    if (!ctx) return '/tin-tuc';
     if (seo()) {
       if (ctx.scope === 'post') return seo().postPath(ctx.id);
       if (ctx.scope === 'stock') return seo().stockPath(ctx.id);

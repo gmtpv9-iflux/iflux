@@ -18,7 +18,7 @@
   function routeUrl(key) {
     var R = global.IfluxRoutes;
     if (R && R.to) return R.to(key);
-    var c = key === 'community' ? '/cong-dong' : '/';
+    var c = key === 'community' ? '/tin-tuc' : '/';
     return global.IfluxHref ? IfluxHref.forCanonical(c) : c;
   }
 
@@ -84,9 +84,9 @@
 
   function readCollectionIndex() {
     var path = String(location.pathname || '').replace(/\/+$/, '') || '/';
-    if (path === '/cong-dong/chu-de') return 'topic';
-    if (path === '/cong-dong/tac-gia') return 'author';
-    if (path === '/cong-dong/danh-muc') return 'category';
+    if ((path === '/tin-tuc/chu-de' || path === '/cong-dong/chu-de')) return 'topic';
+    if ((path === '/tin-tuc/tac-gia' || path === '/cong-dong/tac-gia')) return 'author';
+    if ((path === '/tin-tuc/danh-muc' || path === '/cong-dong/danh-muc')) return 'category';
     return null;
   }
 
@@ -94,11 +94,11 @@
     var path = String(location.pathname || '');
     if (readCollectionIndex()) return null;
     var m;
-    m = path.match(/\/cong-dong\/chu-de\/([^/]+)\/?$/);
+    m = path.match(/\/(?:tin-tuc|cong-dong)\/chu-de\/([^/]+)\/?$/);
     if (m) return { type: 'topic', id: decodeURIComponent(m[1]) };
-    m = path.match(/\/cong-dong\/tac-gia\/([^/]+)\/?$/);
+    m = path.match(/\/(?:tin-tuc|cong-dong)\/tac-gia\/([^/]+)\/?$/);
     if (m) return { type: 'author', id: decodeURIComponent(m[1]) };
-    m = path.match(/\/cong-dong\/danh-muc\/([^/]+)\/?$/);
+    m = path.match(/\/(?:tin-tuc|cong-dong)\/danh-muc\/([^/]+)\/?$/);
     if (m) return { type: 'category', id: decodeURIComponent(m[1]) };
     return null;
   }
@@ -151,17 +151,17 @@
       var slug = item.slug || item.id;
       c = (global.IfluxSeoUrl && IfluxSeoUrl.communityTopicHref)
         ? IfluxSeoUrl.communityTopicHref(slug)
-        : '/cong-dong/chu-de/' + encodeURIComponent(slug);
+        : '/tin-tuc/chu-de/' + encodeURIComponent(slug);
     } else if (kind === 'author') {
       var key = item.username || item.id || item.display_name;
       c = (global.IfluxSeoUrl && IfluxSeoUrl.communityAuthorHref)
         ? IfluxSeoUrl.communityAuthorHref(key)
-        : '/cong-dong/tac-gia/' + encodeURIComponent(key);
+        : '/tin-tuc/tac-gia/' + encodeURIComponent(key);
     } else {
       var cat = item.slug || item.id;
       c = (global.IfluxSeoUrl && IfluxSeoUrl.communityCategoryHref)
         ? IfluxSeoUrl.communityCategoryHref(cat)
-        : '/cong-dong/danh-muc/' + encodeURIComponent(cat);
+        : '/tin-tuc/danh-muc/' + encodeURIComponent(cat);
     }
     return idHref(c);
   }

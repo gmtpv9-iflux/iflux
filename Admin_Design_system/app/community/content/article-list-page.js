@@ -109,7 +109,7 @@
       return String(a.external_url);
     }
     var ref = a.slug || a.id;
-    return '/cong-dong/bai-viet/' + encodeURIComponent(ref);
+    return '/tin-tuc/bai-viet/' + encodeURIComponent(ref);
   }
 
   function canPerm(key) {

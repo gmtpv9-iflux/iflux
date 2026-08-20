@@ -16,7 +16,7 @@ var PUBLIC_ORIGIN = 'https://iflux.vn';
 var PAGE_KEY_TO_PATH = {
   dashboard: '/trang-chu',
   market: '/thi-truong',
-  community: '/cong-dong',
+  community: '/tin-tuc',
   flow: '/dong-tien',
   membership: '/thanh-vien',
   faq: '/hoi-dap',
@@ -27,7 +27,7 @@ var PAGE_KEY_TO_PATH = {
   ecosystems: '/he-sinh-thai',
   'cau-chuyen': '/cau-chuyen',
   pricing: '/goi-cuoc',
-  'com-topic': '/cong-dong'
+  'com-topic': '/tin-tuc'
 };
 
 var UTILITY_NOINDEX_KEYS = {

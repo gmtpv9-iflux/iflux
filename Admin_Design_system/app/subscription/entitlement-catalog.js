@@ -58,7 +58,7 @@
     { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash',
       hint: 'Khung trang score dòng tiền · sidebar ngữ cảnh.',
       guestDefault: true, guestNever: false, path: '/flow' },
-    { key: 'community', label: 'Cộng đồng', menu: true, icon: 'ti-users',
+    { key: 'community', label: 'Tin tức', menu: true, icon: 'ti-users',
       hint: 'Khung feed · trending · tin tức cộng đồng.',
       guestDefault: true, guestNever: false, path: '/community' },
     { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown',

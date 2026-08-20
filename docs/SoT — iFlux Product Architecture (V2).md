@@ -51,7 +51,7 @@ Các Page trải nghiệm dành cho người dùng (entry points)\.
 /trang-chu         Trang chủ
 /thi-truong        Thị trường
 /dong-tien         Dòng tiền
-/cong-dong         Cộng đồng
+/tin-tuc           Tin tức
 /...               Và các trang tùy biến khác: Hỏi đáp, Gói cước...
 ```
 
@@ -123,7 +123,8 @@ Câu chuyện (Story)          /cau-chuyen         /cau-chuyen/:slug
 |--------|------------|
 | `/ho-co-phieu`, `/ecosystems` | `/he-sinh-thai` |
 | `/chu-de`, `/stories` | `/cau-chuyen` |
-| `/community/*` | `/cong-dong/*` |
+| `/community/*` | `/tin-tuc/*` |
+| `/cong-dong/*` | `/tin-tuc/*` |
 
 > **Knowledge Layer** là lớp lưu trữ và quản lý các Entity dùng chung của toàn bộ nền tảng. Các Entity tồn tại độc lập với Experience Layer và được mọi trải nghiệm cùng tham chiếu thông qua Canonical URL.
 
@@ -132,26 +133,26 @@ Câu chuyện (Story)          /cau-chuyen         /cau-chuyen/:slug
 Cộng đồng **chỉ sở hữu Bài viết (Post)** và metadata đi kèm — **không** sở hữu Entity Knowledge.
 
 ```Plain Text
-Feed chính              /cong-dong
-Chi tiết bài viết       /cong-dong/bai-viet/:id
-Viết bài                /cong-dong/viet-bai
+Feed chính              /tin-tuc
+Chi tiết bài viết       /tin-tuc/bai-viet/:id
+Viết bài                /tin-tuc/viet-bai
 
-Chủ đề (collection)     /cong-dong/chu-de/:slug      Main: feed lọc theo Topic · Sidebar phải: Widget Host riêng
-Danh mục (collection)   /cong-dong/danh-muc/:slug     Main: feed lọc theo Category · Sidebar phải: Widget Host riêng
-Tác giả (collection)    /cong-dong/tac-gia/:username Main: feed lọc theo Author · Sidebar phải: Widget Host riêng
+Chủ đề (collection)     /tin-tuc/chu-de/:slug      Main: feed lọc theo Topic · Sidebar phải: Widget Host riêng
+Danh mục (collection)   /tin-tuc/danh-muc/:slug     Main: feed lọc theo Category · Sidebar phải: Widget Host riêng
+Tác giả (collection)    /tin-tuc/tac-gia/:username Main: feed lọc theo Author · Sidebar phải: Widget Host riêng
 ```
 
-> **Không có** trang index `/cong-dong/chu-de`, `/cong-dong/danh-muc`, `/cong-dong/tac-gia`.  
+> **Không có** trang index `/tin-tuc/chu-de`, `/tin-tuc/danh-muc`, `/tin-tuc/tac-gia`.  
 > Bản thân trang `/:slug` đã là trang danh sách: Main kế thừa feed tin Cộng đồng (lọc theo collection đã chọn); danh sách phụ do Admin thiết kế và đặt vào **Sidebar phải**.
 
 **Phân tách bắt buộc Chủ đề vs Câu chuyện:**
 
 | Khái niệm | Tầng | URL | Vai trò |
 |-----------|------|-----|---------|
-| **Chủ đề (Topic)** | Community | `/cong-dong/chu-de/:slug` | Metadata gắn 1 bài viết; lọc feed + Widget Host sidebar |
+| **Chủ đề (Topic)** | Community | `/tin-tuc/chu-de/:slug` | Metadata gắn 1 bài viết; lọc feed + Widget Host sidebar |
 | **Câu chuyện (Story)** | Knowledge | `/cau-chuyen/:slug` | Entity thị trường; narrative + mã liên quan |
 
-- Không có `/cong-dong/posts` hay list bài viết độc lập — feed duy nhất tại `/cong-dong` (và các collection `/:slug` là feed đã lọc).
+- Không có `/tin-tuc/posts` hay list bài viết độc lập — feed duy nhất tại `/tin-tuc` (và các collection `/:slug` là feed đã lọc).
 - Cấu trúc bài viết tuân `Content_Entity.md` (tiêu đề, danh mục×1, tác giả, chủ đề×1, đính kèm CP/ngành/HST/sàn, SEO, trạng thái).
 
 **Admin ▸ Cộng đồng (quản lý metadata & bài viết):**
@@ -200,7 +201,7 @@ Legacy English (`/account`, `/messages`, `/search`, `/watchlist`, `/pricing`, `/
 - Community chỉ sở hữu **Bài viết** và metadata (chủ đề, danh mục, tác giả) — **không** sở hữu Entity Knowledge.
 - Bài viết có thể tham chiếu tới nhiều Entity (cổ phiếu, ngành, hệ sinh thái…).
 - Chủ đề chỉ trở thành **Câu chuyện** (Entity) sau khi đạt điều kiện trưởng thành.
-- `/cong-dong/chu-de/:slug` (Topic collection) ≠ `/cau-chuyen/:slug` (Story entity) — hai URL, hai tầng kiến trúc.
+- `/tin-tuc/chu-de/:slug` (Topic collection) ≠ `/cau-chuyen/:slug` (Story entity) — hai URL, hai tầng kiến trúc.
 - Mọi Experience đều truy cập cùng một Entity Knowledge thông qua Canonical URL.
 - Sitemap phải phản ánh đúng bốn tầng: **Experience · Knowledge · Community · Platform**.
 

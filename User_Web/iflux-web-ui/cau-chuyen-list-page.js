@@ -74,7 +74,7 @@
         '<div class="ifx-com-empty">' +
           '<i class="ti ti-book-2" style="font-size:32px"></i>' +
           '<p>Chưa có câu chuyện ở trạng thái Trưởng thành.</p>' +
-          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(global.IfluxHref ? IfluxHref.forCanonical('/cong-dong') : '/cong-dong') + '">Xem Cộng đồng</a>' +
+          '<a class="ix-btn ix-btn-outline ix-btn-sm" href="' + esc(global.IfluxHref ? IfluxHref.forCanonical('/tin-tuc') : '/tin-tuc') + '">Xem Tin tức</a>' +
         '</div>';
       return;
     }

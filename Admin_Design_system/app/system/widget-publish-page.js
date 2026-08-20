@@ -29,10 +29,10 @@
   function baseCommunityDraft() {
     return {
       page: 'community',
-      path: '/cong-dong',
-      title: 'Cộng đồng',
+      path: '/tin-tuc',
+      title: 'Tin tức',
       intro: 'Widget đặc thù từ PagePublished.',
-      documentTitle: 'Cộng đồng · iFlux',
+      documentTitle: 'Tin tức · iFlux',
       sections: [
         { key: 'main', label: 'Main — Widget grid', visible: true, layout: 'grid-12' },
         { key: 'sidebar-right', label: 'Sidebar phải', visible: true, layout: null }

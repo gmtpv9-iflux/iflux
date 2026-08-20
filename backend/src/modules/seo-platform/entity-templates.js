@@ -10,11 +10,11 @@ var TEMPLATE_VERSION = 1;
 
 /** SoT §6 entity title templates (vi). */
 var TITLE_TEMPLATES = {
-  article: '{title} | Cộng đồng iFlux',
+  article: '{title} | Tin tức iFlux',
   stock: '{name} ({ticker}) | iFlux',
   sector: '{name} | Phân tích ngành | iFlux',
   ecosystem: '{name} | iFlux',
-  author: '{name} | Cộng đồng iFlux',
+  author: '{name} | Tin tức iFlux',
   hub: '{title} · iFlux',
   page: '{title} · iFlux'
 };

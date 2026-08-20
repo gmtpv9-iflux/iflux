@@ -55,7 +55,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (global.IfluxRoutes) {
       return IfluxRoutes.to('auth.login') + '?return=' + encodeURIComponent(IfluxRoutes.to('community', { canonical: true, skipDecorate: true }));
     }
-    return '/dang-nhap?return=/cong-dong';
+    return '/dang-nhap?return=/tin-tuc';
   }
 
   /* Top-nav do App Shell (IfluxAppShellHeader, trong platform-boot) sinh ra — MỘT SoT
@@ -103,7 +103,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (!brand) return;
     var href = global.IfluxRoutes
       ? IfluxRoutes.to('community', { canonical: true, skipDecorate: true })
-      : '/cong-dong';
+      : '/tin-tuc';
     brand.setAttribute('href', global.IfluxHref ? IfluxHref.forCanonical(href) : href);
   }
 

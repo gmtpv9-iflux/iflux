@@ -22,7 +22,7 @@ class StaticSitemapProvider {
 
     const pages = [
       '',
-      '/cong-dong',
+      '/tin-tuc',
       '/goi-cuoc',
       '/hoi-dap',
       '/thanh-vien',

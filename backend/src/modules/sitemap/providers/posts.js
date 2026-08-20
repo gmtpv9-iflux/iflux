@@ -16,7 +16,7 @@ class PostsSitemapProvider {
       const ref = row.slug || row.id;
       const lastmod = row.updated_at ? new Date(row.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
       return {
-        loc: `${origin}/cong-dong/bai-viet/${encodeURIComponent(ref)}`,
+        loc: `${origin}/tin-tuc/bai-viet/${encodeURIComponent(ref)}`,
         lastmod
       };
     });
