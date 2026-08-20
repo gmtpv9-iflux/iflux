@@ -137,7 +137,10 @@ refresh_switch() {
     echo "Refusing switch self-update: missing Staging 1 frontend live path" >&2
     exit 1
   fi
-  if grep -F -q 'FRONTEND_LIVE="/var/www/iflux/production"' "$SWITCH_SRC"; then
+  # Assignment-only. Do not embed the old grep -F needle as a literal —
+  # the installed script still searches SWITCH_SRC for that exact string.
+  _prod_fe="/var/www/iflux/production"
+  if grep -E -q "^FRONTEND_LIVE=\"${_prod_fe}\"" "$SWITCH_SRC"; then
     echo "Refusing switch self-update: Production frontend path" >&2
     exit 1
   fi
