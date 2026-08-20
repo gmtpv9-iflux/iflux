@@ -16,9 +16,9 @@ export const meta = {
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
-  /* WP-4: bỏ module mock thị trường — community-market-overview.js đã migrate (WP-1, UNAVAILABLE). */
+  /* WP-4: bỏ module mock thị trường — news-market-overview.js đã migrate (WP-1, UNAVAILABLE). */
   await ensureSequence([
-    { global: 'IfluxCommunityMarketOverview', src: ASSET + 'community-market-overview.js?v=mockRmWp4_20260809' }
+    { global: 'IfluxCommunityMarketOverview', src: ASSET + 'news-market-overview.js?v=mockRmWp4_20260809' }
   ]);
 
   var Overview = window.IfluxCommunityMarketOverview;

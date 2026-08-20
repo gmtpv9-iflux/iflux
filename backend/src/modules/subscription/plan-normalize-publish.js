@@ -11,7 +11,7 @@ const TIER_ORDER = { guest: 0, free: 1, premium: 2, elite: 3 };
 const PAGES = [
   { key: 'market', guestDefault: true, guestNever: false },
   { key: 'flow', guestDefault: true, guestNever: false },
-  { key: 'community', guestDefault: true, guestNever: false },
+  { key: 'news', guestDefault: true, guestNever: false },
   { key: 'pricing', guestDefault: true, guestNever: false },
   { key: 'faq', guestDefault: true, guestNever: false },
   { key: 'loyalty', guestDefault: true, guestNever: false },
@@ -19,7 +19,7 @@ const PAGES = [
 ];
 
 const STATIC_PAGE_BLOCKS = [
-  { id: 'BLK-COM-NEWS', minTier: 'guest', page: 'community' },
+  { id: 'BLK-COM-NEWS', minTier: 'guest', page: 'news' },
   { id: 'BLK-LOY-INTRO', minTier: 'free', page: 'loyalty' },
   { id: 'BLK-LOY-AFFILIATE', minTier: 'free', page: 'loyalty' },
   { id: 'BLK-FAQ-LIST', minTier: 'guest', page: 'faq' },
@@ -66,7 +66,7 @@ const TIERS = ['guest', 'free', 'premium', 'elite'];
 
 function pageForWidget(id) {
   if (/^WGT-FLW|^WGT-FLOW/.test(id)) return ['flow'];
-  if (/^WGT-COM/.test(id)) return ['community'];
+  if (/^WGT-COM/.test(id)) return ['news'];
   if (/^WGT-WAT/.test(id)) return ['dashboard'];
   return ['market', 'dashboard'];
 }
@@ -163,7 +163,7 @@ function defaultBlocksForTier(tier, wl) {
 function defaultCapabilitiesForTier(tier) {
   tier = String(tier || 'guest').toLowerCase();
   const all = { flowRt: false, candles: false, alerts: false, widgets: false,
-    search: false, watchlist: false, communityWrite: false, flowExclusive: false };
+    search: false, watchlist: false, newsWrite: false, flowExclusive: false };
   if (tier === 'guest') return Object.assign({}, all, { search: true });
   if (tier === 'free') return Object.assign({}, all, { search: true, watchlist: true });
   if (tier === 'premium') {
@@ -190,25 +190,25 @@ function defaultLimitsForTier(tier) {
 
 function defaultActionsForTier(tier) {
   tier = String(tier || 'guest').toLowerCase();
-  const keys = ['search', 'watchlist', 'alerts', 'dashboardWidgets', 'communityRead',
-    'communityWrite', 'communityComment', 'flowRt', 'candles', 'flowExclusive', 'checkout', 'profile'];
+  const keys = ['search', 'watchlist', 'alerts', 'dashboardWidgets', 'newsRead',
+    'newsWrite', 'newsComment', 'flowRt', 'candles', 'flowExclusive', 'checkout', 'profile'];
   const out = {};
   keys.forEach((k) => { out[k] = { view: false, add: false, edit: false, delete: false }; });
   const set = (key, ops) => { ops.forEach((op) => { out[key][op] = true; }); };
-  if (tier === 'guest') { set('search', ['view']); set('communityRead', ['view']); return out; }
+  if (tier === 'guest') { set('search', ['view']); set('newsRead', ['view']); return out; }
   if (tier === 'free') {
     set('search', ['view']); set('watchlist', ['view', 'add', 'edit', 'delete']);
-    set('communityRead', ['view']); set('communityComment', ['view', 'add']);
+    set('newsRead', ['view']); set('newsComment', ['view', 'add']);
     set('profile', ['view', 'edit']); set('checkout', ['view']); return out;
   }
   if (tier === 'premium') {
     set('search', ['view']); set('watchlist', ['view', 'add', 'edit', 'delete']);
     set('alerts', ['view', 'add', 'edit', 'delete']); set('dashboardWidgets', ['view', 'add', 'edit', 'delete']);
-    set('communityRead', ['view']); set('communityComment', ['view', 'add', 'edit', 'delete']);
+    set('newsRead', ['view']); set('newsComment', ['view', 'add', 'edit', 'delete']);
     set('flowRt', ['view']); set('candles', ['view']); set('profile', ['view', 'edit']); set('checkout', ['view']);
     return out;
   }
-  keys.forEach((k) => { if (k !== 'communityWrite') set(k, ['view', 'add', 'edit', 'delete']); });
+  keys.forEach((k) => { if (k !== 'newsWrite') set(k, ['view', 'add', 'edit', 'delete']); });
   return out;
 }
 
@@ -227,7 +227,7 @@ function syncLegacyEntFromActions(plan) {
   plan.ent.widgets = op('dashboardWidgets', 'add');
   plan.ent.flowRt = op('flowRt', 'view');
   plan.ent.candles = op('candles', 'view');
-  plan.ent.communityWrite = op('communityWrite', 'add');
+  plan.ent.newsWrite = op('newsWrite', 'add');
   plan.ent.flowExclusive = op('flowExclusive', 'view');
 }
 
@@ -285,8 +285,8 @@ function normalizePlan(plan, wl) {
   syncPageBlocksFromWidgets(plan, wl);
   syncLegacyEntFromActions(plan);
 
-  plan.ent.communityWrite = false;
-  plan.actions.communityWrite = { view: false, add: false, edit: false, delete: false };
+  plan.ent.newsWrite = false;
+  plan.actions.newsWrite = { view: false, add: false, edit: false, delete: false };
 
   if (plan.limits.maxWidgets == null && plan.ent.widgets) {
     plan.limits.maxWidgets = tier === 'free' ? 3 : 99;

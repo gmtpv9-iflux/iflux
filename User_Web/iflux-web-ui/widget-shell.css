@@ -103,7 +103,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   color: var(--ix-text-muted);
   font-size: var(--ifx-font-size-10);
   font-weight: var(--ifx-font-weight-bold);
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -287,7 +287,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 .ifx-widget__header > h3 {
   margin: 0;
   width: 100%;
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-14);
   font-weight: var(--ifx-font-weight-semibold);
   line-height: 1.35;
@@ -297,7 +297,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 .ifx-widget__subtitle {
   margin: 0;
   width: 100%;
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-14);
   color: var(--ix-text-muted);
   line-height: 1.45;
@@ -406,7 +406,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 .ifx-widget__footer a {
   color: var(--ix-accent);
   text-decoration: none;
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
 }
 
 .ifx-widget__body .ifx-wl-block .ifx-stock-row-wrap .ifx-stock-row {
@@ -558,7 +558,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   background: rgba(105, 108, 255, 0.08);
   color: var(--ix-accent);
   cursor: pointer;
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   user-select: none;
   position: relative;
   z-index: 20;

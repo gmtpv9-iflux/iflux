@@ -24,9 +24,9 @@ const LEGACY_WIDGET_RUNTIME = {
   'WGT-FLW-EX_TM_SECTOR_IN': { renderer: 'flow-score-board', module: '/User_Web/iflux-web-ui/widgets/flow-score-board/index.js?v=bpPhaseD20260716' },
   'WGT-FLW-EX_TM_HST_IN': { renderer: 'flow-score-board', module: '/User_Web/iflux-web-ui/widgets/flow-score-board/index.js?v=bpPhaseD20260716' },
   'WGT-FLW-EX_TM_STORY_IN': { renderer: 'flow-score-board', module: '/User_Web/iflux-web-ui/widgets/flow-score-board/index.js?v=bpPhaseD20260716' },
-  'WGT-COM-001': { renderer: 'community-stock-heat', module: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=comStockHeat20260722' },
-  'WGT-COM-CHUDE-TOP': { renderer: 'community-story-top', module: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=stocksOnlyH20260722' },
-  'WGT-COM-002': { renderer: 'community-active', module: '/User_Web/iflux-web-ui/widgets/community-active/index.js?v=bpPhaseD20260716' }
+  'WGT-NEWS-001': { renderer: 'community-stock-heat', module: '/User_Web/iflux-web-ui/widgets/news-stock-heat/index.js?v=comStockHeat20260722' },
+  'WGT-NEWS-TOPIC-TOP': { renderer: 'community-story-top', module: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js?v=stocksOnlyH20260722' },
+  'WGT-NEWS-002': { renderer: 'community-active', module: '/User_Web/iflux-web-ui/widgets/news-active/index.js?v=bpPhaseD20260716' }
 };
 
 const LEGACY_WIDGET_DEPS = {
@@ -68,19 +68,19 @@ const LEGACY_RENDERER_CSS = {
     '/User_Web/iflux-web-ui/market-components.css?v=bpPhaseD20260716'
   ],
   'community-list': [
-    '/User_Web/iflux-web-ui/community.css',
+    '/User_Web/iflux-web-ui/news.css',
     '/User_Web/iflux-web-ui/block-templates.css',
     '/User_Web/iflux-web-ui/watchlist.css'
   ],
   'community-story-top': [
-    '/User_Web/iflux-web-ui/community.css',
+    '/User_Web/iflux-web-ui/news.css',
     '/User_Web/iflux-web-ui/block-templates.css'
   ],
   'community-active': [
-    '/User_Web/iflux-web-ui/community.css'
+    '/User_Web/iflux-web-ui/news.css'
   ],
   'community-stock-heat': [
-    '/User_Web/iflux-web-ui/community.css',
+    '/User_Web/iflux-web-ui/news.css',
     '/User_Web/iflux-web-ui/block-templates.css',
     '/User_Web/iflux-web-ui/watchlist.css'
   ],

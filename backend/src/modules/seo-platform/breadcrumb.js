@@ -12,7 +12,7 @@ var HOME = { name: 'Trang chủ', path: '/trang-chu' };
 
 var HUB = {
   market: { name: 'Thị trường', path: '/thi-truong' },
-  community: { name: 'Tin tức', path: '/tin-tuc' },
+  news: { name: 'Tin tức', path: '/tin-tuc' },
   flow: { name: 'Dòng tiền', path: '/dong-tien' },
   membership: { name: 'Thành viên', path: '/thanh-vien' },
   faq: { name: 'Hỏi đáp', path: '/hoi-dap' },

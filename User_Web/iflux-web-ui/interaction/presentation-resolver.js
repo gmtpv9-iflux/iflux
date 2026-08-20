@@ -30,7 +30,7 @@
 
   function isCommunityPostComments(pd) {
     var key = pd && pd.pageKey;
-    return key === 'comments' || key === 'communityPost';
+    return key === 'comments' || key === 'article';
   }
 
   /**

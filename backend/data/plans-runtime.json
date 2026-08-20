@@ -106,7 +106,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "loyalty": true,
         "dashboard": false,
@@ -145,19 +145,19 @@
           "edit": false,
           "delete": false
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": false,
           "add": false,
           "edit": false,
@@ -195,7 +195,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "loyalty": true,
         "dashboard": true,
@@ -298,19 +298,19 @@
           "edit": false,
           "delete": false
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": false,
@@ -358,7 +358,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "loyalty": true,
         "dashboard": true,
@@ -461,19 +461,19 @@
           "edit": true,
           "delete": true
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": true,
@@ -547,7 +547,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "loyalty": true,
         "dashboard": true,
@@ -650,19 +650,19 @@
           "edit": true,
           "delete": true
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": true,
           "edit": true,
           "delete": true
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": true,
@@ -753,7 +753,7 @@
         "widgets": false,
         "search": true,
         "watchlist": true,
-        "communityWrite": false,
+        "newsWrite": false,
         "flowExclusive": false
       },
       "blocks": {
@@ -856,19 +856,19 @@
           "edit": false,
           "delete": false
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": false,
@@ -909,7 +909,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "faq": true,
         "loyalty": true,
@@ -937,7 +937,7 @@
         "widgets": true,
         "search": true,
         "watchlist": true,
-        "communityWrite": false,
+        "newsWrite": false,
         "flowExclusive": false
       },
       "blocks": {
@@ -1040,19 +1040,19 @@
           "edit": true,
           "delete": true
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": true,
@@ -1093,7 +1093,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "faq": true,
         "loyalty": true,
@@ -1136,7 +1136,7 @@
         "widgets": true,
         "search": true,
         "watchlist": true,
-        "communityWrite": false,
+        "newsWrite": false,
         "flowExclusive": true
       },
       "blocks": {
@@ -1239,19 +1239,19 @@
           "edit": true,
           "delete": true
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": true,
           "edit": true,
           "delete": true
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": true,
           "add": true,
           "edit": true,
@@ -1292,7 +1292,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "faq": true,
         "loyalty": true,
@@ -1333,7 +1333,7 @@
         "widgets": false,
         "search": true,
         "watchlist": false,
-        "communityWrite": false,
+        "newsWrite": false,
         "flowExclusive": false
       },
       "blocks": {
@@ -1436,19 +1436,19 @@
           "edit": false,
           "delete": false
         },
-        "communityRead": {
+        "newsRead": {
           "view": true,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityWrite": {
+        "newsWrite": {
           "view": false,
           "add": false,
           "edit": false,
           "delete": false
         },
-        "communityComment": {
+        "newsComment": {
           "view": false,
           "add": false,
           "edit": false,
@@ -1504,7 +1504,7 @@
       "pages": {
         "market": true,
         "flow": true,
-        "community": true,
+        "news": true,
         "pricing": true,
         "faq": true,
         "loyalty": true,

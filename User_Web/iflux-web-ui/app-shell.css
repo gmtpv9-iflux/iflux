@@ -81,7 +81,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   background: var(--ix-bg-body);
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   overflow-x: hidden;
 }
 
@@ -124,7 +124,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   padding: var(--ifx-space-8) 12px;
   border-radius: var(--ix-radius);
   font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ix-text-secondary);
   text-decoration: none;
   white-space: nowrap;
@@ -558,7 +558,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   padding: 10px 14px;
   text-align: center;
   font-size: var(--ifx-font-size-13);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ix-primary);
   text-decoration: none;
 }
@@ -632,7 +632,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   padding: var(--ifx-space-12) 14px;
   border-radius: var(--ix-radius);
   font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ix-text-secondary);
   text-decoration: none;
   transition: background .15s, color .15s;
@@ -661,7 +661,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   border-radius: 4px;
   border: 1px solid var(--ix-border);
   color: var(--ix-text-muted);
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   line-height: 1.2;
   flex-shrink: 0;
 }

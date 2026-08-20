@@ -13,7 +13,7 @@ Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
 Note: community.manifest css[] load nhầm Owner
 ===== IFX-AUDIT-END ===== */
 
-/* IFX-AUDIT NOTE: Dual-copy heart → community.css (T5A-P2-DUAL-COPY-001); gốc giữ; Community vẫn load file này cho đến B6 */
+/* IFX-AUDIT NOTE: Dual-copy heart → news.css (T5A-P2-DUAL-COPY-001); gốc giữ; Community vẫn load file này cho đến B6 */
 /* Watchlist — block Dashboard + trang đầy đủ */
 
 .ifx-wl-block { display: flex;

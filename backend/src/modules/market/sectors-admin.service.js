@@ -63,10 +63,10 @@ const SELECT_LIST = `
   LEFT JOIN (
     SELECT key, COUNT(*)::int AS post_count
     FROM (
-      SELECT payload->>'sector_id' AS key FROM community_posts
+      SELECT payload->>'sector_id' AS key FROM news_posts
         WHERE payload ? 'sector_id' AND COALESCE(payload->>'sector_id','') <> ''
       UNION ALL
-      SELECT payload->>'sector_code' AS key FROM community_posts
+      SELECT payload->>'sector_code' AS key FROM news_posts
         WHERE payload ? 'sector_code' AND COALESCE(payload->>'sector_code','') <> ''
     ) x
     GROUP BY key
@@ -83,7 +83,7 @@ const SELECT_DETAIL = `
     (SELECT COUNT(*)::int FROM stocks st WHERE st.sector_id = s.id) AS stock_count,
     (
       SELECT COUNT(*)::int
-      FROM community_posts p
+      FROM news_posts p
       WHERE (p.payload->>'sector_id')::text = s.id::text
          OR (p.payload->>'sector_code')::text = s.code
          OR EXISTS (
@@ -227,7 +227,7 @@ async function deleteSector(id) {
 
     const postRes = await client.query(
       `SELECT COUNT(*)::int AS count
-       FROM community_posts p
+       FROM news_posts p
        WHERE (p.payload->>'sector_id')::text = $1::text
           OR (p.payload->>'sector_code')::text = $2
           OR EXISTS (

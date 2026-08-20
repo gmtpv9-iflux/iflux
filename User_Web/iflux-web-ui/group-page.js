@@ -29,13 +29,13 @@
     if (!isMobileShell()) return;
     var layout = root.querySelector('.ifx-stock-layout');
     if (!layout) return;
-    layout.classList.toggle('ifx-stock-layout--mobile-screen', tabKey !== 'news');
-    if (tabKey === 'news') remountLeftColumn(root, detail);
+    layout.classList.toggle('ifx-stock-layout--mobile-screen', tabKey !== 'articles');
+    if (tabKey === 'articles') remountLeftColumn(root, detail);
     else removeLeftColumn(root);
   }
 
-  function comStore() { return global.IfluxCommunityStore; }
-  function comUi() { return global.IfluxCommunityUI; }
+  function comStore() { return global.IfluxNewsStore; }
+  function comUi() { return global.IfluxNewsUI; }
   function cta() { return global.IfluxCommentsCta; }
   function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
@@ -169,7 +169,7 @@
       var posts = comStore() ? comStore().getPosts(newsState.postsFilter || postsFilter(detail)) : [];
       var list = posts.length && comUi() && comUi().compactPostHtml
         ? '<div class="ifx-stock-news-list">' + posts.map(function (p) {
-            return comUi().compactPostHtml(p, { storyBase: '../community/' });
+            return comUi().compactPostHtml(p, { storyBase: '../news/' });
           }).join('') + '</div>'
         : '<div class="ifx-stock-empty">Chưa có bài viết liên quan đến <strong>' + name + '</strong>.</div>';
       articlesBody = list; articlesCount = posts.length;
@@ -313,7 +313,7 @@
     var newsState = {
       entityName: currentDetail.name,
       postsFilter: postsFilter(currentDetail),
-      storyBase: '../community/'
+      storyBase: '../news/'
     };
 
     root.innerHTML =
@@ -330,7 +330,7 @@
       global.addEventListener('resize', function () {
         var tabsWrap = root.querySelector('[data-ec-tabs]');
         var active = tabsWrap && tabsWrap.querySelector('[data-ec-tab].active');
-        var key = active ? active.getAttribute('data-ec-tab') : 'news';
+        var key = active ? active.getAttribute('data-ec-tab') : 'articles';
         syncMobileLeftColumn(root, key, currentDetail);
       });
     }

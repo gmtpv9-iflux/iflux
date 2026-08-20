@@ -3,7 +3,7 @@ AUDIT-ID: T5A-P1-004
 Priority: P1
 STATUS: Multi-owner
 OWNER (hiện tại): block-templates (Template + ifx-com-*)
-Owner đích (map): ifx-com-* → community.css; template → block-templates/TMP
+Owner đích (map): ifx-com-* → news.css; template → block-templates/TMP
 Usage audit: ✓
 Dep động: Có
 Migration ROI: 5
@@ -13,7 +13,7 @@ Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json
 Note: Phải bóc theo Owner trước khi cắt load
 ===== IFX-AUDIT-END ===== */
 
-/* IFX-AUDIT NOTE: Dual-copy ifx-com-* → community.css (T5A-P2-DUAL-COPY-001); gốc giữ đến khi cắt load an toàn */
+/* IFX-AUDIT NOTE: Dual-copy ifx-com-* → news.css (T5A-P2-DUAL-COPY-001); gốc giữ đến khi cắt load an toàn */
 /**
  * iFlux Block Templates — SoT giao diện block (map Design Sandbox §15).
  * Chỉ dùng design tokens (--ix-*, --color-*, --ifx-*). Không hardcode hex/rgba.
@@ -85,7 +85,7 @@ Note: Phải bóc theo Owner trước khi cắt load
 
 /* ── TPL-BREADTH / TMP-BREADTH — CSS owner duy nhất (6-stat + ratio) ──
  * Mật độ mặc định = giao diện sidebar Thị trường (3 cột × 2 hàng).
- * Page placement (community.css) chỉ được override mật độ hẹp — không copy core.
+ * Page placement (news.css) chỉ được override mật độ hẹp — không copy core.
  */
 .ifx-breadth-block { min-width: 0; }
 

@@ -16,7 +16,7 @@
   }
 
   var TYPE_META = {
-    community_post: { icon: 'ti-users', category: 'community', menuKey: 'community' },
+    community_post: { icon: 'ti-users', category: 'news', menuKey: 'news' },
     community_message: { icon: 'ti-message', category: 'community', menuKey: 'community' },
     referral_signup: { icon: 'ti-user-plus', category: 'loyalty', menuKey: 'loyalty' },
     affiliate_commission: { icon: 'ti-coin', category: 'loyalty', menuKey: 'loyalty' },
@@ -25,7 +25,8 @@
   };
 
   var CATEGORY_LABELS = {
-    community: 'Cộng đồng',
+    news: 'Tin tức',
+    community: 'Tin tức',
     loyalty: 'Membership',
     alert: 'Cảnh báo thiết lập'
   };
@@ -325,10 +326,11 @@
   }
 
   function groupedUnread(userId) {
-    var counts = { community: 0, loyalty: 0, dashboard: 0 };
+    var counts = { news: 0, community: 0, loyalty: 0, dashboard: 0 };
     listForUser(userId, { unreadOnly: true }).forEach(function (n) {
       if (counts[n.menuKey] != null) counts[n.menuKey] += 1;
     });
+    counts.news += counts.community;
     return counts;
   }
 
@@ -336,11 +338,11 @@
     opts = opts || {};
     var list = listForUser(userId, { limit: opts.limit || 12 });
     var groups = [
-      { key: 'community', label: CATEGORY_LABELS.community, items: [] },
+      { key: 'news', label: CATEGORY_LABELS.news, items: [] },
       { key: 'loyalty', label: CATEGORY_LABELS.loyalty, items: [] },
       { key: 'alert', label: CATEGORY_LABELS.alert, items: [] }
     ];
-    var map = { community: groups[0], loyalty: groups[1], alert: groups[2] };
+    var map = { news: groups[0], community: groups[0], loyalty: groups[1], alert: groups[2] };
     list.forEach(function (n) {
       var g = map[n.category];
       if (g) g.items.push(n);

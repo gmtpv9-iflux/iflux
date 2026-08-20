@@ -29,7 +29,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     chuDe: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     stories: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     cauChuyen: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
-    community: { public: '/tin-tuc', file: '/User_Web/community/index.html', zone: 'app' },
+    news: { public: '/tin-tuc', file: '/User_Web/news/index.html', zone: 'app' },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -536,7 +536,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   var primary = [
     { key: 'dashboard', route: 'home',      label: 'Trang chủ', icon: 'ti-home',            appOnly: true, onboard: 'home' },
     { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
-    { key: 'community', route: 'community', label: 'Tin tức',   icon: 'ti-users', onboard: 'community' },
+    { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-users', onboard: 'news' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' }
   ];
@@ -567,13 +567,13 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   /* Context nav: tab theo entityType. Mở rộng loại mới → thêm 1 key, không refactor. */
   var GROUP_TABS = [
-    { key: 'news', icon: 'ti-news', label: 'Tin tức' },
+    { key: 'articles', icon: 'ti-news', label: 'Tin tức' },
     { key: 'info', icon: 'ti-info-circle', label: 'Thông tin' },
     { key: 'trading', icon: 'ti-chart-bar', label: 'Thống kê' },
     { key: 'comments', icon: 'ti-message', label: 'Bình luận' }
   ];
   var STOCK_TABS = [
-    { key: 'news', icon: 'ti-news', label: 'Tin tức' },
+    { key: 'articles', icon: 'ti-news', label: 'Tin tức' },
     { key: 'info', icon: 'ti-info-circle', label: 'Thông tin' },
     { key: 'trading', icon: 'ti-chart-bar', label: 'Thống kê' },
     { key: 'events', icon: 'ti-calendar-event', label: 'Lịch sự kiện' },
@@ -591,7 +591,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     story:   { tabs: GROUP_TABS },
     cauChuyen:   { tabs: GROUP_TABS },
     chuDe:   { tabs: GROUP_TABS },
-    communityPost: { tabs: ARTICLE_TABS },
+    article: { tabs: ARTICLE_TABS },
     _default: { tabs: GROUP_TABS }
   };
 
@@ -633,7 +633,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   var LEGACY_HREF = {
     home: '/trang-chu', market: '/thi-truong', flow: '/dong-tien',
-    community: '/tin-tuc', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
+    news: '/tin-tuc', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
   };
   function hrefFor(routeKey) {
     var r = routes();
@@ -718,7 +718,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         if (f.indexOf('/home/') >= 0) return 'dashboard';
         if (f.indexOf('/market/') >= 0) return 'market';
         if (f.indexOf('/flow/') >= 0) return 'flow';
-        if (f.indexOf('/community/') >= 0) return 'community';
+        if (f.indexOf('/news/') >= 0 || f.indexOf('/community/') >= 0) return 'news';
         if (f.indexOf('/pricing/') >= 0) return 'pricing';
         if (f.indexOf('/account/') >= 0) return 'account';
       }
@@ -729,7 +729,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (/\/(trang-chu|nha-cua-toi|home)(\/|$)/.test(path)) return 'dashboard';
     if (/\/(thi-truong|market)(\/|$)/.test(path)) return 'market';
     if (/\/(dong-tien|flow)(\/|$)/.test(path)) return 'flow';
-    if (/\/(cong-dong|community)(\/|$)/.test(path)) return 'community';
+    if (/\/(tin-tuc|cong-dong|community)(\/|$)/.test(path)) return 'news';
     if (/\/(goi-cuoc|pricing)(\/|$)/.test(path)) return 'pricing';
     if (isAccountProfileRoute()) return 'account';
     return '';
@@ -832,14 +832,14 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     { entityType: 'sector', re: /\/(nganh|sectors?)\/[^/]+\/?$/,          list: '/nganh' },
     { entityType: 'family', re: /\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+\/?$/, list: '/he-sinh-thai' },
     { entityType: 'story',  re: /\/(cau-chuyen|chu-de|stories)\/[^/]+\/?$/, list: '/cau-chuyen' },
-    { entityType: 'communityPost', re: /\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?)\/[^/]+\/?$/, list: '/tin-tuc' }
+    { entityType: 'article', re: /\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?)\/[^/]+\/?$/, list: '/tin-tuc' }
   ];
   var FILE_ENTITY = [
     { entityType: 'stock',  re: /\/stock\//,          list: '/co-phieu' },
     { entityType: 'sector', re: /\/sector\//,          list: '/nganh' },
     { entityType: 'family', re: /\/family\//,          list: '/he-sinh-thai' },
     { entityType: 'story',  re: /\/(cau-chuyen|chu-de)\/chi-tiet/,  list: '/cau-chuyen' },
-    { entityType: 'communityPost', re: /\/User_Web\/community\/post/i, list: '/tin-tuc' }
+    { entityType: 'article', re: /\/User_Web\/(?:news|community)\/post/i, list: '/tin-tuc' }
   ];
   function detectContext() {
     if (_entity && _entity.entityType) return _entity;
@@ -1034,7 +1034,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     nav.setAttribute('data-ifx-guest-nav', '');
 
     var brand = document.querySelector('.ifx-topnav-brand');
-    if (brand) brand.setAttribute('href', shell.hrefFor('community'));
+    if (brand) brand.setAttribute('href', shell.hrefFor('news'));
 
     /* Cho header UI (mobile nav / onboard / active-height) gắn lại vào menu vừa dựng. */
     if (global.IfluxWebUI && IfluxWebUI.syncTopnav) {

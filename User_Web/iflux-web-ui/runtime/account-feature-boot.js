@@ -43,8 +43,8 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'profile-chat-store.js',
   ASSET + 'stock-mentions.js',
   ASSET + 'stock-store.js',
-  ASSET + 'community-store.js',
-  ASSET + 'community-ui.js',
+  ASSET + 'news-store.js',
+  ASSET + 'news-ui.js',
   ASSET + 'profile-page.js'
 ];
 

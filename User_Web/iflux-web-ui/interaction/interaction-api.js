@@ -1,6 +1,6 @@
 /**
  * Interaction API client — RC-API-01…12 · IA-003
- * Canonical: /api/interaction/v1 — alias post community giữ tới cutover.
+ * Canonical: /api/interaction/v1 — leftover /api/community chỉ trong migration window.
  */
 (function (global) {
   'use strict';
@@ -14,8 +14,8 @@
     return rootApi() + '/interaction/v1';
   }
 
-  function communityBase() {
-    return rootApi() + '/community';
+  function newsBase() {
+    return rootApi() + '/news';
   }
 
   function authHeaders() {
@@ -95,7 +95,7 @@
     }).catch(function (err) {
       /* Alias post: fallback community summary nếu canonical lỗi mạng cũ */
       if (t.type !== 'post') throw err;
-      var url2 = communityBase() + '/interaction/summary?type=post&id=' + encodeURIComponent(t.id);
+      var url2 = newsBase() + '/interaction/summary?type=post&id=' + encodeURIComponent(t.id);
       return fetch(url2, { headers: authHeaders(), credentials: 'same-origin' }).then(unwrap).then(function (data) {
         return {
           likes: Number(data && data.likes) || 0,
@@ -116,7 +116,7 @@
       '/comments?limit=' + lim;
     return fetch(url, { headers: authHeaders(), credentials: 'same-origin' }).then(unwrap).catch(function (err) {
       if (t.type !== 'post') throw err;
-      var url2 = communityBase() + '/articles/' + encodeURIComponent(t.id) + '/comments?limit=' + lim;
+      var url2 = newsBase() + '/articles/' + encodeURIComponent(t.id) + '/comments?limit=' + lim;
       return fetch(url2, { headers: authHeaders(), credentials: 'same-origin' }).then(unwrap);
     });
   }
@@ -131,7 +131,7 @@
       body: JSON.stringify(payload || {})
     }).then(unwrap).catch(function (err) {
       if (t.type !== 'post') throw err;
-      var url2 = communityBase() + '/articles/' + encodeURIComponent(t.id) + '/comments';
+      var url2 = newsBase() + '/articles/' + encodeURIComponent(t.id) + '/comments';
       return fetch(url2, {
         method: 'POST',
         headers: authHeaders(),
@@ -157,7 +157,7 @@
   function mutate(target, action) {
     var t = normalizeTarget(target);
     /* Mutate AS-IS chỉ post — giữ community alias */
-    var url = communityBase() + '/interaction/' + encodeURIComponent(t.id) + '/mutate';
+    var url = newsBase() + '/interaction/' + encodeURIComponent(t.id) + '/mutate';
     return fetch(url, {
       method: 'POST',
       headers: authHeaders(),

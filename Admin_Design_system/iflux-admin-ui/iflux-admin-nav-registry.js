@@ -42,37 +42,37 @@
     { type: 'group', label: "Quản lý Tin tức" },
     {
       type: 'parent',
-      key: "community-overview",
-      routeKey: "community-content-index",
+      key: "news-overview",
+      routeKey: "news-content-index",
       label: "Quản lý Tin tức",
       icon: "ti-article",
-      urlSegment: "community",
+      urlSegment: "news",
       children: [
-        { type: 'item', key: "community-content-dashboard", routeKey: "community-content-dashboard", label: "Tổng quan", icon: "ti-layout-dashboard", urlSegment: "overview", nav: false },
-        { type: 'item', key: "community-content-index", routeKey: "community-content-index", label: "Danh sách Bài viết", icon: "ti-article", urlSegment: "articles" },
-        { type: 'item', key: "community-categories", routeKey: "community-categories", label: "Danh sách Danh mục", icon: "ti-category", urlSegment: "categories" },
-        { type: 'item', key: "community-chu-de-list", routeKey: "community-chu-de-list", label: "Danh sách Chủ đề", icon: "ti-book-2", urlSegment: "topics" }
+        { type: 'item', key: "news-content-dashboard", routeKey: "news-content-dashboard", label: "Tổng quan", icon: "ti-layout-dashboard", urlSegment: "overview", nav: false },
+        { type: 'item', key: "news-content-index", routeKey: "news-content-index", label: "Danh sách Bài viết", icon: "ti-article", urlSegment: "articles" },
+        { type: 'item', key: "news-categories", routeKey: "news-categories", label: "Danh sách Danh mục", icon: "ti-category", urlSegment: "categories" },
+        { type: 'item', key: "news-chu-de-list", routeKey: "news-chu-de-list", label: "Danh sách Chủ đề", icon: "ti-book-2", urlSegment: "topics" }
       ]
     },
-    { type: 'item', key: "community-content-edit", routeKey: "community-content-edit", label: "Sửa bài viết", icon: "ti-pencil", urlSegment: "community/edit", nav: false },
-    { type: 'item', key: "community-author-list", routeKey: "community-author-list", label: "Danh sách tác giả", icon: "ti-users", urlSegment: "community/authors", nav: false },
-    { type: 'item', key: "community-experts", routeKey: "community-experts", label: "Chuyên gia", icon: "ti-award", urlSegment: "community/experts", nav: false },
+    { type: 'item', key: "news-content-edit", routeKey: "news-content-edit", label: "Sửa bài viết", icon: "ti-pencil", urlSegment: "news/edit", nav: false },
+    { type: 'item', key: "news-author-list", routeKey: "news-author-list", label: "Danh sách tác giả", icon: "ti-users", urlSegment: "news/authors", nav: false },
+    { type: 'item', key: "news-experts", routeKey: "news-experts", label: "Chuyên gia", icon: "ti-award", urlSegment: "news/experts", nav: false },
 
-    /* 6. Quản lý Cộng đồng */
-    { type: 'group', label: "Quản lý Cộng đồng" },
+    /* 6. Kiểm duyệt Tin tức */
+    { type: 'group', label: "Kiểm duyệt Tin tức" },
     {
       type: 'parent',
-      key: "community-moderation",
-      routeKey: "community-comments",
+      key: "news-moderation",
+      routeKey: "news-comments",
       label: "Kiểm duyệt nội dung",
       icon: "ti-shield-check",
-      urlSegment: "community",
+      urlSegment: "news",
       children: [
-        { type: 'item', key: "community-comments", routeKey: "community-comments", label: "Kiểm duyệt bình luận", icon: "ti-message", badge: "GĐ2", urlSegment: "comments" },
-        { type: 'item', key: "community-chu-de-moderation", routeKey: "community-chu-de-moderation", label: "Kiểm duyệt chủ đề", icon: "ti-news", badge: "GĐ2", urlSegment: "topic-moderation" }
+        { type: 'item', key: "news-comments", routeKey: "news-comments", label: "Kiểm duyệt bình luận", icon: "ti-message", badge: "GĐ2", urlSegment: "comments" },
+        { type: 'item', key: "news-chu-de-moderation", routeKey: "news-chu-de-moderation", label: "Kiểm duyệt chủ đề", icon: "ti-news", badge: "GĐ2", urlSegment: "topic-moderation" }
       ]
     },
-    { type: 'item', key: "community-reports", routeKey: "community-reports", label: "Trung tâm báo cáo", icon: "ti-flag", badge: "GĐ2", urlSegment: "community/reports" },
+    { type: 'item', key: "news-reports", routeKey: "news-reports", label: "Trung tâm báo cáo", icon: "ti-flag", badge: "GĐ2", urlSegment: "news/reports" },
 
     /* 7. Quản lý Thị trường — group không urlSegment (mixed market + topics) */
     { type: 'group', label: "Quản lý Thị trường" },
@@ -190,15 +190,15 @@
     },
     {
       type: 'parent',
-      key: "community-rss",
-      routeKey: "community-rss-providers",
+      key: "news-rss",
+      routeKey: "news-rss-providers",
       label: "Quản lý RSS",
       icon: "ti-news",
-      urlSegment: "community",
+      urlSegment: "news",
       children: [
-        { type: 'item', key: "community-rss-providers", routeKey: "community-rss-providers", label: "Danh sách RSS data", icon: "ti-building", urlSegment: "rss-sources" },
-        { type: 'item', key: "community-rss-category-sync", routeKey: "community-rss-category-sync", label: "Đồng bộ danh mục bài viết", icon: "ti-arrows-exchange", urlSegment: "rss-category-sync" },
-        { type: 'item', key: "community-rss-article-schema", routeKey: "community-rss-article-schema", label: "Đồng bộ cấu trúc bài viết", icon: "ti-table", urlSegment: "rss-article-schema" }
+        { type: 'item', key: "news-rss-providers", routeKey: "news-rss-providers", label: "Danh sách RSS data", icon: "ti-building", urlSegment: "rss-sources" },
+        { type: 'item', key: "news-rss-category-sync", routeKey: "news-rss-category-sync", label: "Đồng bộ danh mục bài viết", icon: "ti-arrows-exchange", urlSegment: "rss-category-sync" },
+        { type: 'item', key: "news-rss-article-schema", routeKey: "news-rss-article-schema", label: "Đồng bộ cấu trúc bài viết", icon: "ti-table", urlSegment: "rss-article-schema" }
       ]
     },
 

@@ -35,7 +35,7 @@ var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + P4); },
   home: function () { return import('../pages/home.manifest.js' + P4); },
   flow: function () { return import('../pages/flow.manifest.js?v=sidebarVR01_20260811'); },
-  community: function () { return import('../pages/community.manifest.js?v=stickyRefactor20260811'); },
+  news: function () { return import('../pages/news.manifest.js?v=stickyRefactor20260811'); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js?v=sidebarVR03_20260811'); },
   sectors: function () { return import('../pages/sectors.manifest.js?v=sidebarVR03_20260811'); },
@@ -52,10 +52,10 @@ var MANIFEST_MAP = {
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
   messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  communityPost: function () { return import('../pages/community-post.manifest.js?v=scrollWave4early_20260811'); },
+  article: function () { return import('../pages/news-post.manifest.js?v=scrollWave4early_20260811'); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
-  communityWrite: function () { return import('../pages/community-write.manifest.js' + VER); },
+  newsWrite: function () { return import('../pages/news-write.manifest.js' + VER); },
   share: function () { return import('../pages/share.manifest.js' + VER); },
   stockComment: function () { return import('../pages/stock-comment.manifest.js' + VER); },
   comments: function () { return import('../pages/comments.manifest.js?v=ixShellSlim20260724'); }
@@ -119,21 +119,20 @@ function detectPageKey() {
     return 'checkout';
   }
   /* Viết bài — TRƯỚC nhánh rộng /cong-dong (tránh nhận nhầm pageKey=community → mất AuthGate). */
-  if (/\/(?:tin-tuc|cong-dong)\/(viet|write)/.test(path) || /\/user_web\/community\/write/.test(path) || /\/community\/write/.test(path)) {
-    return 'communityWrite';
+  if (/\/(?:tin-tuc|cong-dong)\/(viet|write)/.test(path) || /\/user_web\/(?:news|community)\/write/.test(path) || /\/community\/write/.test(path)) {
+    return 'newsWrite';
   }
-  if (/\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/community\/post/.test(path)) {
-    return 'communityPost';
+  if (/\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/(?:news|community)\/post/.test(path)) {
+    return 'article';
   }
-  /* Collection Cộng đồng: chủ đề / tác giả / danh mục — cùng runtime community (filter theo path) */
-  if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'community';
+  if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'news';
 
   if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
   if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
   if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
   if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
 
-  if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'community';
+  if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'news';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
   if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
   if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
@@ -399,7 +398,7 @@ export async function start(opts) {
   }
 
   /* Shell-only pages (Feature tự boot sau) — dùng Definition nhưng không mount page-runtime. */
-  var SHELL_ONLY = { account: 1, checkout: 1, communityWrite: 1, share: 1, stockComment: 1, comments: 1 };
+  var SHELL_ONLY = { account: 1, checkout: 1, newsWrite: 1, share: 1, stockComment: 1, comments: 1 };
   if (SHELL_ONLY[pageKey]) {
     applyDefinitionToDocument(manifest);
     window.__IFLUX_SHELL_READY = pageKey;

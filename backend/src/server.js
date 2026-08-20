@@ -27,24 +27,24 @@ async function bootstrap() {
     logger.debug('scheduler heartbeat');
   });
 
-  /* RSS Cộng đồng — mỗi 10 phút → community_posts (đủ field → published_rss; thiếu → pending)
+  /* RSS Cộng đồng — mỗi 10 phút → news_posts (đủ field → published_rss; thiếu → pending)
      Tắt: RSS_COMMUNITY_INGEST_CRON=off */
   const rssCron = process.env.RSS_COMMUNITY_INGEST_CRON || process.env.VNSTOCK_INGEST_CRON || '*/10 * * * *';
   if (rssCron !== 'off' && rssCron !== '0') {
-    registerJob('rss-community-ingest', rssCron, async () => {
+    registerJob('rss-news-ingest', rssCron, async () => {
       try {
-        const { runRssCommunityIngest } = require('./modules/community/rss-ingest.service');
-        const out = await runRssCommunityIngest({});
+        const { runRssNewsIngest } = require('./modules/news/rss-ingest.service');
+        const out = await runRssNewsIngest({});
         logger.info(
           {
             feeds: out && out.feeds,
             created: out && out.created,
             updated: out && out.updated
           },
-          'rss-community-ingest done'
+          'rss-news-ingest done'
         );
       } catch (err) {
-        logger.error({ err: err.message }, 'rss-community-ingest failed');
+        logger.error({ err: err.message }, 'rss-news-ingest failed');
       }
     });
   }

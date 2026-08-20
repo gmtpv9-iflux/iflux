@@ -138,7 +138,7 @@
   function postPath(postOrRef) {
     var ref = postRef(postOrRef);
     if (isFileProto()) {
-      return userWebRoot() + 'community/post.html' + (ref ? '?id=' + encodeURIComponent(ref) : '');
+      return userWebRoot() + 'news/post.html' + (ref ? '?id=' + encodeURIComponent(ref) : '');
     }
     return ref ? '/tin-tuc/bai-viet/' + encodeURIComponent(ref) : '/tin-tuc/bai-viet';
   }
@@ -217,13 +217,13 @@
   }
 
   function communityPath() {
-    if (isFileProto()) return userWebRoot() + 'community/index.html';
+    if (isFileProto()) return userWebRoot() + 'news/index.html';
     return '/tin-tuc';
   }
 
   function pagePath(pageKey) {
     var map = {
-      home: 'home', market: 'market', flow: 'flow', community: 'community',
+      home: 'home', market: 'market', flow: 'flow', news: 'news',
       pricing: 'pricing', loyalty: 'loyalty', membership: 'loyalty',
       faq: 'faq', watchlist: 'watchlist', search: 'search',
       account: 'account', messages: 'account'
@@ -325,7 +325,7 @@
     if (typeof document === 'undefined') return;
     if (document.querySelector('base[data-ifx-path-base]')) return;
     var root = userWebRoot();
-    var dir = pageDir || 'community/';
+    var dir = pageDir || 'news/';
     if (dir.charAt(dir.length - 1) !== '/') dir += '/';
     var b = document.createElement('base');
     b.setAttribute('data-ifx-path-base', '1');
@@ -342,12 +342,12 @@
     if (/^\/cau-chuyen\//i.test(path)) return ensurePathBase('cau-chuyen/');
     if (/^\/chu-de\//i.test(path) && path.indexOf('/tin-tuc/') < 0) return ensurePathBase('cau-chuyen/');
     if (/^\/stories\//i.test(path)) return ensurePathBase('cau-chuyen/');
-    if (/^\/(?:cong-dong\/bai-viet|community\/posts)\//i.test(path)) return ensurePathBase('community/');
+    if (/^\/(?:cong-dong\/bai-viet|community\/posts)\//i.test(path)) return ensurePathBase('news/');
     if (/^\/community\/tag\//i.test(path)) return ensurePathBase('cau-chuyen/');
     if (/\/community\/stocks\//i.test(path)) return ensurePathBase('stock/');
     if (/\/community\/sectors\//i.test(path)) return ensurePathBase('sector/');
     if (/\/community\/ecosystems\//i.test(path)) return ensurePathBase('family/');
-    if (/\/tin-tuc\//i.test(path)) return ensurePathBase('community/');
+    if (/\/tin-tuc\//i.test(path)) return ensurePathBase('news/');
   }
 
   function setMeta(name, content, attr) {

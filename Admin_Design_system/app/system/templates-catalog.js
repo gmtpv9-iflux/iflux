@@ -121,8 +121,8 @@
       render: 'com-stock-heat',
       preview: { type: 'WGT-COM-001', config: { stocksOnly: true } },
       resources: {
-        component: ['squarified-treemap.js', 'community-trending.js'],
-        css: ['community.css', 'block-templates.css', 'watchlist.css'],
+        component: ['squarified-treemap.js', 'news-trending.js'],
+        css: ['news.css', 'block-templates.css', 'watchlist.css'],
         js: ['templates-preview.js'],
         library: []
       },
@@ -300,7 +300,7 @@
       preview: { type: 'WGT-COM-003', config: {} },
       resources: {
         component: [],
-        css: ['community.css'],
+        css: ['news.css'],
         js: ['templates-preview.js'],
         library: ['tabler-icons-3.44.0 (SVG outline)']
       },
@@ -329,7 +329,7 @@
       preview: { type: 'WGT-COM-CHUDE-TOP', config: { storyOnly: true, period: 'week' } },
       resources: {
         component: [],
-        css: ['community.css'],
+        css: ['news.css'],
         js: ['templates-preview.js'],
         library: ['tabler-icons-3.44.0 (SVG outline)']
       },

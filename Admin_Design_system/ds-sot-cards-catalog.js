@@ -142,7 +142,7 @@
         title: 'Community',
         note: 'Cộng đồng · overview · feed',
         items: [
-          card('crd-shell-com-overview', 'Community Overview Card', 'card.community.overview', {
+          card('crd-shell-com-overview', 'Community Overview Card', 'card.news.overview', {
             cardId: 'CRD-SHELL-COM-OVERVIEW',
             className: 'ifx-com-overview',
             previewType: 'shell-com-overview',
@@ -151,9 +151,9 @@
             structure: 'head\n└── body\n    ├── BLK-MKT-OVERVIEW\n    └── BLK-COM-OVERVIEW',
             blockRefs: ['BLK-MKT-OVERVIEW', 'BLK-COM-OVERVIEW'],
             productRefs: ['WGT-MKT-001', 'WGT-COM-001'],
-            file: 'community.css'
+            file: 'news.css'
           }),
-          card('crd-shell-com-breadth', 'Community Breadth Sidebar', 'card.community.breadth', {
+          card('crd-shell-com-breadth', 'Community Breadth Sidebar', 'card.news.breadth', {
             cardId: 'CRD-SHELL-COM-BREADTH',
             className: 'ifx-com-breadth-sidebar',
             previewType: 'shell-com-breadth',
@@ -162,18 +162,18 @@
             structure: 'head\n└── body\n    ├── BLK-MKT-BREADTH\n    └── BLK-COM-BREADTH',
             blockRefs: ['BLK-MKT-BREADTH', 'BLK-COM-BREADTH'],
             productRefs: ['WGT-MKT-002'],
-            file: 'community.css'
+            file: 'news.css'
           }),
-          card('crd-shell-com-post', 'Community Post Card', 'card.community.post', {
+          card('crd-shell-com-post', 'Community Post Card', 'card.news.post', {
             cardId: 'CRD-SHELL-COM-POST',
             className: 'ifx-com-card',
             previewType: 'shell-com-post',
             regions: 'thumb · body · stats',
             anatomy: 'thumb\n├── title · tags\n└── engagement stats',
-            structure: 'thumb\n├── title-row (item.community.title-row)\n├── tags\n└── stats (item.community.stats)\n    └── BLK-COM-FEED\n(author / nguồn chỉ trên bài chi tiết)',
+            structure: 'thumb\n├── title-row (item.news.title-row)\n├── tags\n└── stats (item.news.stats)\n    └── BLK-COM-FEED\n(author / nguồn chỉ trên bài chi tiết)',
             blockRefs: ['BLK-COM-FEED'],
             productRefs: ['WGT-COM-FEED'],
-            file: 'community.css'
+            file: 'news.css'
           })
         ]
       },

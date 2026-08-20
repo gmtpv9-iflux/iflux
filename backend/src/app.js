@@ -13,7 +13,7 @@ const { createLegacyAuthRouter } = require('./modules/legacy-auth/auth.routes');
 const { createUserDataRouter } = require('./modules/user-data/user-data.routes');
 const { createSubscriptionsRouter } = require('./modules/subscriptions/subscriptions.routes');
 const { createMarketRouter } = require('./modules/market/market.routes');
-  const { createCommunityRouter } = require('./modules/community/community.routes');
+  const { createNewsRouter } = require('./modules/news/news.routes');
   const { createMediaRouter } = require('./modules/media/media.routes');
   const { mediaRoot } = require('./modules/media/media-util');
   const { createOnboardingRouter } = require('./modules/onboarding/onboarding.routes');
@@ -135,7 +135,9 @@ function createApp(config) {
   app.use(`${config.LEGACY_API_PREFIX}/affiliate-payouts`, createAffiliatePayoutsRouter({ config, auth: userAndAdminAuth }));
 
   app.use(`${config.LEGACY_API_PREFIX}`, createMarketRouter());
-  app.use(`${config.LEGACY_API_PREFIX}/community`, createCommunityRouter({ auth: userAndAdminAuth, config }));
+  const newsRouter = createNewsRouter({ auth: userAndAdminAuth, config });
+  app.use(`${config.LEGACY_API_PREFIX}/news`, newsRouter);
+  app.use(`${config.LEGACY_API_PREFIX}/community`, newsRouter);
   app.use(`${config.LEGACY_API_PREFIX}/admin/media`, createMediaRouter({ config, auth: adminAuthMw }));
   app.use('/media', express.static(mediaRoot(config), { fallthrough: true, maxAge: '7d', index: false }));
   const { createInteractionV1Router } = require('./modules/interaction/interaction.routes');
@@ -237,7 +239,9 @@ function createApp(config) {
   } = require('./modules/seo-platform/seo-platform.routes');
   app.use(`${config.LEGACY_API_PREFIX}/seo/platform`, createSeoPlatformApiRouter());
   mountSeoPlatformPublicRoots(app);
-  app.use(`${config.LEGACY_API_PREFIX}/admin/community-ops`, createCommunityOpsAdminRouter({ config, auth: adminAuthMw }));
+  const newsOpsRouter = createCommunityOpsAdminRouter({ config, auth: adminAuthMw });
+  app.use(`${config.LEGACY_API_PREFIX}/admin/news-ops`, newsOpsRouter);
+  app.use(`${config.LEGACY_API_PREFIX}/admin/community-ops`, newsOpsRouter);
 
   const {
     createSubscriptionWaveERouter,

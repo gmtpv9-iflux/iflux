@@ -27,7 +27,7 @@ var stylePromises = {};
 function normalizeStyleHref(href) {
   var s = String(href || '');
   if (/\/User_Web\/iflux-web-ui\/community\.css(\?|$)/.test(s)) {
-    return '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811';
+    return '/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811';
   }
   return s;
 }

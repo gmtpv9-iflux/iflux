@@ -33,7 +33,7 @@ const SEED_STEPS = [
     title: 'Tin tức',
     body_text: 'Đọc insight, theo dõi chuyên gia và chia sẻ quan điểm đầu tư.',
     image_url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=640&q=80',
-    target_key: 'community'
+    target_key: 'news'
   },
   {
     channel: 'web',

@@ -155,9 +155,9 @@
         ]
       },
       {
-        title: 'Community',
+        title: 'Tin tức',
         items: [
-          item('com-author', 'Post Author', 'item.community.author', 'ifx-com-article__author', 'user', 'com-author', [
+          item('com-author', 'Post Author', 'item.news.author', 'ifx-com-article__author', 'user', 'com-author', [
             slot('avatar', 'Avatar', 'avatar.sm', 'ifx-com-card__avatar'),
             slot('name', 'Name', 'text.body', 'ifx-profile-link'),
             slot('tier', 'Membership', 'financial.tier.premium', 'ix-chip')
@@ -165,8 +165,8 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-100', '--ifx-font-size-10', 'font-size'),
             sem('color', 'text.muted', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'avatar · name · tier (bài chi tiết — không trên feed card)' }),
-          item('com-title-row', 'Post Title Row', 'item.community.title-row', 'ifx-com-post__title-row', 'user', 'com-title', [
+          ], { file: 'news.css', anatomy: 'avatar · name · tier (bài chi tiết — không trên feed card)' }),
+          item('com-title-row', 'Post Title Row', 'item.news.title-row', 'ifx-com-post__title-row', 'user', 'com-title', [
             slot('time', 'Time', 'label.caption', 'ifx-com-post__time'),
             slot('sep', 'Separator', 'text.muted', 'ifx-com-post__title-sep'),
             slot('title', 'Title', 'text.body', 'ifx-com-post__title-text')
@@ -174,8 +174,8 @@
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'feed-card-title', '--ifx-com-feed-card-title-size', 'font-size'),
             prim('line-clamp', 'feed-card-title-lines', '--ifx-com-feed-card-title-lines', 'line-clamp')
-          ], { file: 'community.css', anatomy: 'time · sep · title (clamp 3 · 15px)' }),
-          item('com-stats', 'Engagement Stats', 'item.community.stats', 'ifx-com-post__stats', 'user', 'com-stats', [
+          ], { file: 'news.css', anatomy: 'time · sep · title (clamp 3 · 15px)' }),
+          item('com-stats', 'Engagement Stats', 'item.news.stats', 'ifx-com-post__stats', 'user', 'com-stats', [
             slot('likes', 'Likes', 'text.muted', 'span'),
             slot('comments', 'Comments', 'text.muted', 'span'),
             slot('shares', 'Shares', 'text.muted', 'span')
@@ -183,23 +183,23 @@
             prim('gap', 'space-14', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'feed-card-stats', '--ifx-com-feed-card-stats-size', 'font-size'),
             sem('color', 'text.muted', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'likes · comments · shares (12px)' }),
-          item('com-story-rank', 'Story Rank Row', 'item.community.story-rank', 'ifx-com-story-rank', 'user', 'story-rank', [
+          ], { file: 'news.css', anatomy: 'likes · comments · shares (12px)' }),
+          item('com-story-rank', 'Story Rank Row', 'item.news.story-rank', 'ifx-com-story-rank', 'user', 'story-rank', [
             slot('rank', 'Rank #', 'badge.info', 'ifx-com-story-rank__num'),
             slot('title', 'Story title', 'text.body', 'ifx-com-story-rank__title'),
             slot('sub', 'Meta', 'text.muted', 'ifx-com-story-rank__sub'),
             slot('heart', 'Reaction', 'button.icon', 'ifx-com-story-rank__heart')
-          ], layoutProps(), { file: 'community.css', anatomy: 'rank · body (title · sub) · heart' }),
-          item('com-topwl-row', 'Top Watchlist Row', 'item.community.topwl-row', 'ifx-com-topwl-row', 'user', 'topwl-row', [
+          ], layoutProps(), { file: 'news.css', anatomy: 'rank · body (title · sub) · heart' }),
+          item('com-topwl-row', 'Top Watchlist Row', 'item.news.topwl-row', 'ifx-com-topwl-row', 'user', 'topwl-row', [
             slot('rank', 'Rank', 'text.body', 'ifx-com-topwl-rank'),
-            slot('user', 'User link', 'item.community.author', 'ifx-com-topwl-user'),
+            slot('user', 'User link', 'item.news.author', 'ifx-com-topwl-user'),
             slot('perf', 'Performance', 'financial.percent.up', 'ifx-com-topwl-perf')
-          ], layoutProps(), { file: 'community.css', anatomy: 'rank · user · performance' }),
-          item('com-follow', 'Follow Action', 'item.community.follow', 'ifx-com-follow-row', 'user', 'follow-row', [
+          ], layoutProps(), { file: 'news.css', anatomy: 'rank · user · performance' }),
+          item('com-follow', 'Follow Action', 'item.news.follow', 'ifx-com-follow-row', 'user', 'follow-row', [
             slot('avatar', 'Avatar', 'avatar.md', 'ix-avatar'),
             slot('name', 'Display name', 'text.body', 'span'),
             slot('action', 'Follow btn', 'button.outline', 'ix-btn')
-          ], layoutProps(), { file: 'community.css', anatomy: 'avatar · name · action' })
+          ], layoutProps(), { file: 'news.css', anatomy: 'avatar · name · action' })
         ]
       },
       {
@@ -258,13 +258,13 @@
             prim('gap', 'space-12', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-100', '--ifx-font-size-10', 'font-size'),
             sem('color', 'text.muted', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'source · time · read-time' }),
+          ], { file: 'news.css', anatomy: 'source · time · read-time' }),
           item('tag-list', 'Tag List', 'item.news.tags', 'ifx-com-post__tags', 'user', 'tag-list', [
             slot('tags', 'Hashtags', 'chip.outline', 'ix-chip'),
             slot('ticker', 'Related stock', 'chip.info', 'ix-chip')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing')
-          ], { file: 'community.css', anatomy: 'tags* · ticker*' }),
+          ], { file: 'news.css', anatomy: 'tags* · ticker*' }),
           item('breaking-badge', 'Breaking Badge', 'item.news.breaking', 'ifx-item-breaking', 'user', 'breaking', [
             slot('badge', 'Badge', 'badge.danger', 'ix-badge'),
             slot('label', 'Label', 'text.body', 'span')
@@ -272,7 +272,7 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('background', 'status.error', '--ifx-item-bg'),
             sem('color', 'text.on.danger', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'badge · label' }),
+          ], { file: 'news.css', anatomy: 'badge · label' }),
           item('hot-badge', 'Hot Badge', 'item.news.hot', 'ifx-item-hot', 'user', 'hot', [
             slot('badge', 'Badge', 'badge.warning', 'ix-badge'),
             slot('label', 'Label', 'text.body', 'span')
@@ -280,12 +280,12 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('background', 'status.warning.soft', '--ifx-item-bg'),
             sem('color', 'status.warning', '--ifx-item-color')
-          ], { file: 'community.css', anatomy: 'badge · label' }),
+          ], { file: 'news.css', anatomy: 'badge · label' }),
           item('category-chip', 'Category Chip', 'item.news.category', 'ifx-item-category', 'user', 'category', [
             slot('chip', 'Category', 'chip.outline', 'ix-chip')
           ], [
             prim('font-size', 'fs-100', '--ifx-font-size-10', 'font-size')
-          ], { file: 'community.css', anatomy: 'chip' })
+          ], { file: 'news.css', anatomy: 'chip' })
         ]
       },
       {

@@ -332,7 +332,7 @@
 
     /* ── Cộng đồng ── */
     {
-      type: 'WGT-COM-001',
+      type: 'WGT-NEWS-001',
       renderAs: 'WGT-COM-TREND',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -342,11 +342,11 @@
       kind: 'chart',
       popularity: 86,
       defaultConfig: { width: 'full' },
-      footerHref: '../community/index.html',
+      footerHref: '../news/index.html',
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-COM-CHUDE-TOP',
+      type: 'WGT-NEWS-TOPIC-TOP',
       renderAs: 'WGT-COM-TREND',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -356,11 +356,11 @@
       kind: 'list',
       popularity: 84,
       defaultConfig: { width: 'full', storyOnly: true, limit: 5, period: 'week' },
-      footerHref: '../community/index.html',
+      footerHref: '../news/index.html',
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-COM-002',
+      type: 'WGT-NEWS-002',
       renderAs: 'WGT-COM-ACTIVE',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -370,11 +370,11 @@
       kind: 'list',
       popularity: 75,
       defaultConfig: { width: 'half' },
-      footerHref: '../community/index.html',
+      footerHref: '../news/index.html',
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-COM-003',
+      type: 'WGT-NEWS-003',
       renderAs: 'WGT-COM-EXPERTS',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -384,11 +384,11 @@
       kind: 'list',
       popularity: 77,
       defaultConfig: { width: 'half' },
-      footerHref: '../community/index.html',
+      footerHref: '../news/index.html',
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-COM-004',
+      type: 'WGT-NEWS-004',
       renderAs: 'WGT-COM-TOPWL',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -398,7 +398,7 @@
       kind: 'list',
       popularity: 83,
       defaultConfig: { width: 'half' },
-      footerHref: '../community/index.html',
+      footerHref: '../news/index.html',
       footerLabel: 'Mở Tin tức'
     },
 

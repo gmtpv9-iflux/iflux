@@ -34,6 +34,6 @@
 
   var target = parseEntity();
   if (target) redirectTo(target);
-  else if (global.IfluxRoutes) redirectTo(IfluxRoutes.to('community'));
+    else if (global.IfluxRoutes) redirectTo(IfluxRoutes.to('news'));
   else redirectTo('/tin-tuc');
 })(window);

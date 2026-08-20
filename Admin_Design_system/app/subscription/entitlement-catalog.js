@@ -40,9 +40,9 @@
     { key: 'watchlist', label: 'Watchlist cá nhân', group: 'Cá nhân' },
     { key: 'alerts', label: 'Cảnh báo giá / thị trường', group: 'Công cụ' },
     { key: 'dashboardWidgets', label: 'Widget dashboard', group: 'Dashboard' },
-    { key: 'communityRead', label: 'Đọc feed cộng đồng', group: 'Cộng đồng' },
-    { key: 'communityWrite', label: 'Viết bài cộng đồng (tạm đóng)', group: 'Cộng đồng' },
-    { key: 'communityComment', label: 'Bình luận cộng đồng', group: 'Cộng đồng' },
+    { key: 'newsRead', label: 'Đọc feed Tin tức', group: 'Tin tức' },
+    { key: 'newsWrite', label: 'Viết bài Tin tức (tạm đóng)', group: 'Tin tức' },
+    { key: 'newsComment', label: 'Bình luận Tin tức', group: 'Tin tức' },
     { key: 'flowRt', label: 'Dòng tiền real-time (WSS)', group: 'Dòng tiền' },
     { key: 'candles', label: 'Biểu đồ nến chi tiết', group: 'Thị trường' },
     { key: 'flowExclusive', label: 'Block Độc quyền Elite', group: 'Dòng tiền' },
@@ -58,9 +58,9 @@
     { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash',
       hint: 'Khung trang score dòng tiền · sidebar ngữ cảnh.',
       guestDefault: true, guestNever: false, path: '/flow' },
-    { key: 'community', label: 'Tin tức', menu: true, icon: 'ti-users',
-      hint: 'Khung feed · trending · tin tức cộng đồng.',
-      guestDefault: true, guestNever: false, path: '/community' },
+    { key: 'news', label: 'Tin tức', menu: true, icon: 'ti-users',
+      hint: 'Khung feed · trending · tin tức.',
+      guestDefault: true, guestNever: false, path: '/tin-tuc' },
     { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown',
       hint: 'Trang bảng giá công khai.',
       guestDefault: true, guestNever: false, path: '/pricing' },
@@ -83,7 +83,7 @@
     { key: 'widgets', label: 'Thêm widget dashboard', group: 'Dashboard' },
     { key: 'search', label: 'Tìm kiếm toàn cục', group: 'Hệ thống' },
     { key: 'watchlist', label: 'Watchlist cá nhân', group: 'Cá nhân' },
-    { key: 'communityWrite', label: 'Viết bài cộng đồng (tạm đóng)', group: 'Cộng đồng' },
+    { key: 'newsWrite', label: 'Viết bài Tin tức (tạm đóng)', group: 'Tin tức' },
     { key: 'flowExclusive', label: 'Block Độc quyền Elite', group: 'Dòng tiền' }
   ];
 
@@ -99,7 +99,7 @@
 
   /* Block trang không map WGT (FAQ · Membership · Tin tức…) */
   var STATIC_PAGE_BLOCKS = [
-    { id: 'BLK-COM-NEWS', label: 'Tin tức', kind: 'page', group: 'Block trang · Cộng đồng', minTier: 'guest', page: 'community' },
+    { id: 'BLK-NEWS-PAGE', label: 'Tin tức', kind: 'page', group: 'Block trang · Tin tức', minTier: 'guest', page: 'news' },
     { id: 'BLK-LOY-INTRO', label: 'Giới thiệu', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
     { id: 'BLK-LOY-AFFILIATE', label: 'Affiliate', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
     { id: 'BLK-FAQ-LIST', label: 'Danh sách FAQ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' },
@@ -450,14 +450,14 @@
 
     if (tier === 'guest') {
       set('search', ['view']);
-      set('communityRead', ['view']);
+      set('newsRead', ['view']);
       return out;
     }
     if (tier === 'free') {
       set('search', ['view']);
       set('watchlist', ['view', 'add', 'edit', 'delete']);
-      set('communityRead', ['view']);
-      set('communityComment', ['view', 'add']);
+      set('newsRead', ['view']);
+      set('newsComment', ['view', 'add']);
       set('profile', ['view', 'edit']);
       set('checkout', ['view']);
       return out;
@@ -467,9 +467,9 @@
       set('watchlist', ['view', 'add', 'edit', 'delete']);
       set('alerts', ['view', 'add', 'edit', 'delete']);
       set('dashboardWidgets', ['view', 'add', 'edit', 'delete']);
-      set('communityRead', ['view']);
-      /* communityWrite: tắt toàn hệ thống — bài chuyên gia giai đoạn sau (Admin). */
-      set('communityComment', ['view', 'add', 'edit', 'delete']);
+      set('newsRead', ['view']);
+      /* newsWrite: tắt toàn hệ thống — bài chuyên gia giai đoạn sau (Admin). */
+      set('newsComment', ['view', 'add', 'edit', 'delete']);
       set('flowRt', ['view']);
       set('candles', ['view']);
       set('profile', ['view', 'edit']);
@@ -477,7 +477,7 @@
       return out;
     }
     ACTIONS.forEach(function (a) {
-      if (a.key === 'communityWrite') return;
+      if (a.key === 'newsWrite') return;
       set(a.key, ['view', 'add', 'edit', 'delete']);
     });
     return out;
@@ -612,7 +612,7 @@
     plan.ent.widgets = op('dashboardWidgets', 'add');
     plan.ent.flowRt = op('flowRt', 'view');
     plan.ent.candles = op('candles', 'view');
-    plan.ent.communityWrite = op('communityWrite', 'add');
+    plan.ent.newsWrite = op('newsWrite', 'add');
     plan.ent.flowExclusive = op('flowExclusive', 'view');
   }
 
@@ -682,9 +682,9 @@
 
     /* SoT tạm thời: không cho User Web viết bài (mọi tier / override). */
     plan.ent = plan.ent || {};
-    plan.ent.communityWrite = false;
+    plan.ent.newsWrite = false;
     plan.actions = plan.actions || {};
-    plan.actions.communityWrite = { view: false, add: false, edit: false, delete: false };
+    plan.actions.newsWrite = { view: false, add: false, edit: false, delete: false };
 
     if (plan.limits.maxWidgets == null && plan.ent.widgets) {
       plan.limits.maxWidgets = tier === 'free' ? 3 : 99;

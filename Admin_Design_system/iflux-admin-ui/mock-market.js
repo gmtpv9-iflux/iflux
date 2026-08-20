@@ -944,7 +944,7 @@
           buy: f.buy,
           sell: f.sell,
           net: f.net,
-          href: (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tk) : '/User_Web/community/stocks/' + encodeURIComponent(tk))
+          href: (global.IfluxSeoUrl ? IfluxSeoUrl.stockHref(tk) : '/User_Web/news/stocks/' + encodeURIComponent(tk))
         });
       });
     } else {
@@ -955,10 +955,10 @@
           ? (scope === 'sector' ? IfluxSeoUrl.sectorHref(g.id)
             : (scope === 'family' ? IfluxSeoUrl.ecosystemHref(g.id) : IfluxSeoUrl.topicHref(g.id)))
           : (scope === 'sector'
-            ? '/User_Web/community/sectors/' + encodeURIComponent(g.id)
+            ? '/User_Web/news/sectors/' + encodeURIComponent(g.id)
             : (scope === 'family'
-              ? '/User_Web/community/ecosystems/' + encodeURIComponent(g.id)
-              : '/User_Web/community/topics/' + encodeURIComponent(g.id)));
+              ? '/User_Web/news/ecosystems/' + encodeURIComponent(g.id)
+              : '/User_Web/news/topics/' + encodeURIComponent(g.id)));
         items.push({
           id: g.id,
           label: g.name,

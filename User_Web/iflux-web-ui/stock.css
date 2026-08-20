@@ -99,7 +99,7 @@
 .ifx-stock-head__chg-abs {
   display: block;
   font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   opacity: 0.85;
   margin-top: 2px;
 }

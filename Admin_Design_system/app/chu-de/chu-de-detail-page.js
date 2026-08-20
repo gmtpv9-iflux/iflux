@@ -31,7 +31,10 @@
   function renderNotFound() {
     var root = document.getElementById('adm-str-detail-root');
     if (!root) return;
-    root.innerHTML = '<div class="ix-card" style="padding:32px;text-align:center"><p>Không tìm thấy chủ đề.</p><a href="/admin/cong-dong/danh-sach-chu-de" class="ix-btn ix-btn-primary ix-btn-sm">Về danh sách chủ đề</a></div>';
+    var listHref = (global.IfluxAdminRoutes && global.IfluxAdminRoutes.hrefFor)
+      ? global.IfluxAdminRoutes.hrefFor('news-chu-de-list')
+      : '/admin/news/topics';
+    root.innerHTML = '<div class="ix-card" style="padding:32px;text-align:center"><p>Không tìm thấy chủ đề.</p><a href="' + listHref + '" class="ix-btn ix-btn-primary ix-btn-sm">Về danh sách chủ đề</a></div>';
   }
 
   function renderHistory(items) {
@@ -68,7 +71,7 @@
     document.title = story.name + ' · Chủ đề · iFlux Admin';
 
     root.innerHTML =
-      '<div class="ix-breadcrumb ix-mb-24"><a href="/admin/cong-dong/danh-sach-chu-de">Danh sách chủ đề</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>' + esc(story.name) + '</span></div>' +
+      '<div class="ix-breadcrumb ix-mb-24"><a href="' + ((global.IfluxAdminRoutes && global.IfluxAdminRoutes.hrefFor) ? global.IfluxAdminRoutes.hrefFor('news-chu-de-list') : '/admin/news/topics') + '">Danh sách chủ đề</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span>' + esc(story.name) + '</span></div>' +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px">' +
         '<div><h1 class="ix-page-title" style="margin:0">' + esc(story.name) + '</h1>' +
         '<p style="font-size:13px;color:var(--ix-text-muted);margin:6px 0 0">' + esc(story.slug) + '</p></div>' +

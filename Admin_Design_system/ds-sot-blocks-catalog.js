@@ -130,8 +130,8 @@
             comp('rows', 'Entity rows', 'item.market.stock-row-wrap', 'item')
           ], { anatomy: 'list rows*' }),
           tpl('tpl-feed-card', 'Feed Post Body', 'block.template.feed-card', 'ifx-com-post', 'com-card', [
-            comp('title', 'Title row', 'item.community.title-row', 'item'),
-            comp('stats', 'Engagement', 'item.community.stats', 'item')
+            comp('title', 'Title row', 'item.news.title-row', 'item'),
+            comp('stats', 'Engagement', 'item.news.stats', 'item')
           ], { anatomy: 'thumb · title · tags · stats (author chỉ bài chi tiết)' })
         ]
       },
@@ -148,7 +148,7 @@
             anatomy: 'head\n└── index grid',
             composition: [comp('grid', 'Index grid', 'block.template.index-grid', 'template')],
             productRefs: ['WGT-MKT-001'],
-            file: 'community-market-overview.js'
+            file: 'news-market-overview.js'
           }),
           block('blk-mkt-breadth', 'Market Breadth', 'block.market.breadth', {
             blockId: 'BLK-MKT-BREADTH',
@@ -322,64 +322,64 @@
       {
         title: 'Community',
         items: [
-          block('blk-com-overview', 'Community Overview', 'block.community.overview', {
+          block('blk-com-overview', 'Community Overview', 'block.news.overview', {
             blockId: 'BLK-COM-OVERVIEW',
             templateId: 'TPL-INDEX-GRID',
             shell: 'sidebar',
             className: 'ifx-com-overview--sidebar',
             previewType: 'com-overview',
             productRefs: ['WGT-MKT-001'],
-            file: 'community-page.js',
+            file: 'news-page.js',
             composition: [comp('grid', 'Index grid', 'block.template.index-grid', 'template')]
           }),
-          block('blk-com-breadth', 'Community Breadth', 'block.community.breadth', {
+          block('blk-com-breadth', 'Community Breadth', 'block.news.breadth', {
             blockId: 'BLK-COM-BREADTH',
             templateId: 'TPL-BREADTH',
             shell: 'sidebar',
             className: 'ifx-com-breadth-sidebar',
             previewType: 'mkt-sidebar',
             productRefs: ['WGT-MKT-002'],
-            file: 'community-page.js',
+            file: 'news-page.js',
             composition: [comp('breadth', 'Breadth', 'block.template.breadth', 'template')]
           }),
-          block('blk-com-trend', 'Community Trending', 'block.community.trend', {
+          block('blk-com-trend', 'Community Trending', 'block.news.trend', {
             blockId: 'BLK-COM-TREND',
             templateId: 'TPL-TREEMAP',
             shell: 'none',
             className: 'ifx-com-trending-row',
             previewType: 'com-trend',
             productRefs: ['WGT-COM-001'],
-            file: 'community-trending.js',
+            file: 'news-trending.js',
             composition: [comp('heatmap', 'Story heat', 'block.template.treemap', 'template')]
           }),
-          block('blk-com-active', 'Active Members', 'block.community.active', {
+          block('blk-com-active', 'Active Members', 'block.news.active', {
             blockId: 'BLK-COM-ACTIVE',
             shell: 'none',
             className: 'ifx-com-active',
             previewType: 'com-active',
             productRefs: ['WGT-COM-002'],
-            file: 'community-active-members.js',
-            composition: [comp('rows', 'Member rows', 'item.community.author', 'item')]
+            file: 'news-active-members.js',
+            composition: [comp('rows', 'Member rows', 'item.news.author', 'item')]
           }),
-          block('blk-com-experts', 'Featured Experts', 'block.community.experts', {
+          block('blk-com-experts', 'Featured Experts', 'block.news.experts', {
             blockId: 'BLK-COM-EXPERTS',
             shell: 'none',
             className: 'ifx-com-experts',
             previewType: 'com-active',
             productRefs: ['WGT-COM-003'],
-            file: 'community-featured-experts.js',
-            composition: [comp('rows', 'Expert rows', 'item.community.author', 'item')]
+            file: 'news-featured-experts.js',
+            composition: [comp('rows', 'Expert rows', 'item.news.author', 'item')]
           }),
-          block('blk-com-topwl', 'Top Watchlist', 'block.community.topwl', {
+          block('blk-com-topwl', 'Top Watchlist', 'block.news.topwl', {
             blockId: 'BLK-COM-TOPWL',
             shell: 'none',
             className: 'ifx-com-topwl',
             previewType: 'com-topwl',
             productRefs: ['WGT-COM-004'],
-            file: 'community-top-watchlist.js',
-            composition: [comp('tabs', 'Period tabs', 'atom.segmented', 'atom'), comp('rows', 'WL rows', 'item.community.topwl-row', 'item')]
+            file: 'news-top-watchlist.js',
+            composition: [comp('tabs', 'Period tabs', 'atom.segmented', 'atom'), comp('rows', 'WL rows', 'item.news.topwl-row', 'item')]
           }),
-          block('blk-com-feed', 'Community Feed', 'block.community.feed', {
+          block('blk-com-feed', 'Community Feed', 'block.news.feed', {
             blockId: 'BLK-COM-FEED',
             templateId: 'TPL-FEED-CARD',
             shell: 'none',
@@ -387,7 +387,7 @@
             previewType: 'com-card',
             regions: 'posts*',
             composition: [comp('posts', 'Post cards', 'block.template.feed-card', 'template')],
-            file: 'community.css'
+            file: 'news.css'
           })
         ]
       },
@@ -421,7 +421,7 @@
             shell: 'none',
             className: 'ifx-stock-cmt',
             previewType: 'comments',
-            composition: [comp('rows', 'Comment rows', 'item.community.author', 'item')],
+            composition: [comp('rows', 'Comment rows', 'item.news.author', 'item')],
             file: 'stock-comments-ui.js'
           }),
           block('blk-wat', 'Watchlist Block', 'block.entity.watchlist', {

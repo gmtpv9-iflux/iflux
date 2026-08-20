@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADM-COM-RSS-003 — Đồng bộ cấu trúc bài viết · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main">
+      <header class="ix-navbar" data-ix-admin-shell="header">
+        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div class="ix-search"><i class="ti ti-search"></i><input type="text" id="rss-schema-q" placeholder="Tìm trường iFlux / nguồn..." /></div>
+        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+      </header>
+      <div class="ix-content">
+        <h1 class="ix-page-title">Đồng bộ cấu trúc bài viết</h1>
+        <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+        <p class="ix-caption" style="margin:-8px 0 20px">Data Mapping Specification: External Source → <strong>community_posts</strong> (SoT DB). Cột 1 = đúng tên field runtime; ô trống = nguồn không có / không dùng. Nguồn trang: API <code>/admin/community-ops/rss-article-schema</code> → bảng <code>community_rss_schema</code> — không hardcode client.</p>
+
+        <div class="ix-card">
+          <div class="ix-table-toolbar">
+            <div class="ix-caption">Tổng: <strong id="rss-schema-count">0</strong> trường iFlux</div>
+          </div>
+          <div class="ix-table-responsive">
+            <table class="ix-table">
+              <thead>
+                <tr>
+                  <th>Trường community_posts</th>
+                  <th>CafeF</th>
+                  <th>VietStock</th>
+                  <th>Báo Đầu Tư</th>
+                  <th>Ghi chú</th>
+                </tr>
+              </thead>
+              <tbody id="rss-schema-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="ix-overlay" id="ix-overlay" style="display:none"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=rssRestore20260808"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=seoBrandLogo36px20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/Admin_Design_system/app/news/rss-article-schema-page.js?v=rssSchemaSot20260810b"></script>
+</body>
+</html>

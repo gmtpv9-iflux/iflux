@@ -19,8 +19,8 @@ var PATH_TO_PAGE_KEY = {
   '/trang-chu': 'dashboard',
   '/nha-cua-toi': 'dashboard',
   '/dong-tien': 'flow',
-  '/tin-tuc': 'community',
-  '/cong-dong': 'community',
+  '/tin-tuc': 'news',
+  '/cong-dong': 'news',
   '/co-phieu': 'stocks',
   '/nganh': 'sectors',
   '/he-sinh-thai': 'ecosystems',
@@ -35,7 +35,7 @@ var PATH_TO_PAGE_KEY = {
 
 var SITEMAP_STATIC = [
   { pageKey: 'market', path: '/thi-truong', changefreq: 'hourly', priority: '1.0' },
-  { pageKey: 'community', path: '/tin-tuc', changefreq: 'hourly', priority: '0.9' },
+  { pageKey: 'news', path: '/tin-tuc', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'flow', path: '/dong-tien', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'stocks', path: '/co-phieu', changefreq: 'daily', priority: '0.8' },
   { pageKey: 'sectors', path: '/nganh', changefreq: 'daily', priority: '0.8' },
@@ -56,7 +56,7 @@ function pageKeyFromPath(path) {
   if (/^\/(?:tin-tuc|cong-dong)\/tac-gia\//i.test(clean)) return 'com-author';
   if (/^\/(?:tin-tuc|cong-dong)\/danh-muc\//i.test(clean)) return 'com-cat';
   if (/^\/(?:tin-tuc|cong-dong)\/chu-de\//i.test(clean)) return 'com-topic';
-  if (/^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(clean)) return 'community';
+  if (/^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(clean)) return 'news';
   return PATH_TO_PAGE_KEY[clean] || 'market';
 }
 
@@ -171,7 +171,7 @@ async function loadEntitySeoContext(path) {
       var authRes = await db.query(
         `SELECT payload->'author'->>'id' AS id,
                 COALESCE(payload->'author'->>'display_name', payload->'author'->>'name') AS display_name
-         FROM community_posts
+         FROM news_posts
          WHERE payload->'author' IS NOT NULL
            AND (
              lower(payload->'author'->>'id') = lower($1)
@@ -199,7 +199,7 @@ async function loadEntitySeoContext(path) {
     var categorySlug = catRef;
     try {
       var catRes = await db.query(
-        `SELECT slug, name FROM community_categories
+        `SELECT slug, name FROM news_categories
          WHERE lower(slug) = lower($1) OR id::text = $1
          LIMIT 1`,
         [catRef]
@@ -376,7 +376,7 @@ async function resolveArticleContract(article, opts) {
   var origin = opts.origin || contractBuilder.PUBLIC_ORIGIN;
   var foundationEffective = {};
   try {
-    foundationEffective = (await siteSeo.getPublicEffective('community')) || {};
+    foundationEffective = (await siteSeo.getPublicEffective('news')) || {};
   } catch (e) {
     foundationEffective = {};
   }
@@ -384,7 +384,7 @@ async function resolveArticleContract(article, opts) {
   var robots = seo.robots || seo.meta_robots || '';
   var contract = contractBuilder.buildSeoContract({
     foundationEffective: foundationEffective,
-    pageKey: 'community',
+    pageKey: 'news',
     entityType: 'article',
     path: cleanPath,
     httpStatus: opts.httpStatus != null ? opts.httpStatus : 200,
@@ -462,7 +462,7 @@ async function listPublishedArticleCandidatesPage(opts) {
             updated_at,
             status,
             content_type
-     FROM community_posts
+     FROM news_posts
      WHERE status IN ('published', 'published_rss')
        AND COALESCE(payload->>'slug', '') <> ''
      ORDER BY updated_at DESC NULLS LAST, id ASC
@@ -535,7 +535,7 @@ function articleContractInputFromCandidate(row, foundationCommunity) {
   var robots = seo.robots || seo.meta_robots || '';
   return {
     foundationEffective: foundationCommunity || {},
-    pageKey: 'community',
+    pageKey: 'news',
     entityType: 'article',
     path: cleanPath,
     httpStatus: 200,
@@ -643,10 +643,10 @@ async function collectSitemapEntries(opts) {
   }
 
   var offset = 0;
-  var foundationCommunity = opts.foundationEffectiveByPageKey && opts.foundationEffectiveByPageKey.community;
+  var foundationCommunity = (opts.foundationEffectiveByPageKey && opts.foundationEffectiveByPageKey.news);
   if (foundationCommunity === undefined && !opts.skipFoundationFetch) {
     try {
-      foundationCommunity = (await siteSeo.getPublicEffective('community')) || {};
+      foundationCommunity = (await siteSeo.getPublicEffective('news')) || {};
     } catch (e) {
       foundationCommunity = {};
     }

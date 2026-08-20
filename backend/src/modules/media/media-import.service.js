@@ -1,6 +1,6 @@
 'use strict';
 
-const articles = require('../community/community-articles.service');
+const articles = require('../news/news-articles.service');
 const mediaService = require('./media.service');
 const processImg = require('./media-process');
 const { isExternalImageUrl, isMediaPublicUrl } = require('./media-util');

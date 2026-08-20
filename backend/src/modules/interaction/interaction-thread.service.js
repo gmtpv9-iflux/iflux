@@ -5,8 +5,8 @@
  */
 const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
-const communityComments = require('../community/community-comments.service');
-const communityInteraction = require('../community/interaction.service');
+const newsComments = require('../news/news-comments.service');
+  const newsInteraction = require('../news/interaction.service');
 
 const REGISTRY = {
   post: 1,
@@ -190,7 +190,7 @@ async function listThread(entityType, entityId, opts) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
   if (type === 'post') {
-    const data = await communityComments.listComments(id, opts);
+    const data = await newsComments.listComments(id, opts);
     return {
       target: { type: 'post', id: data.post_id || id, slug: data.post_slug || '' },
       comments: (data.comments || []).map(function (c) {
@@ -214,7 +214,7 @@ async function createThreadComment(entityType, entityId, user, payload) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
   if (type === 'post') {
-    const data = await communityComments.createComment(id, user, payload);
+    const data = await newsComments.createComment(id, user, payload);
     return {
       comment: {
         id: data.comment.id,
@@ -236,7 +236,7 @@ async function getSummary(entityType, entityId) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
   if (type === 'post') {
-    return communityInteraction.getSummary('post', id);
+    return newsInteraction.getSummary('post', id);
   }
   const comments = await countEntityComments(type, id);
   return {

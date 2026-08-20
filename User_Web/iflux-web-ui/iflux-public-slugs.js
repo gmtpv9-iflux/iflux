@@ -17,10 +17,10 @@
     '/he-sinh-thai': '/User_Web/ecosystems/',
     '/ho-co-phieu': '/User_Web/ecosystems/',
     '/chu-de': '/User_Web/chu-de/',
-    '/tin-tuc': '/User_Web/community/',
-    '/tin-tuc/viet-bai': '/User_Web/community/',
-    '/cong-dong': '/User_Web/community/',
-    '/cong-dong/viet-bai': '/User_Web/community/',
+    '/tin-tuc': '/User_Web/news/',
+    '/tin-tuc/viet-bai': '/User_Web/news/',
+    '/cong-dong': '/User_Web/news/',
+    '/cong-dong/viet-bai': '/User_Web/news/',
     '/goi-cuoc': '/User_Web/pricing/',
     '/hoi-dap': '/User_Web/faq/',
     '/thanh-vien': '/User_Web/loyalty/',
@@ -74,7 +74,7 @@
     { re: /^\/nganh\//i, base: '/User_Web/sector/', legacyRe: /^\/sectors\//i },
     { re: /^\/he-sinh-thai\//i, base: '/User_Web/family/', legacyRe: /^\/(?:ho-co-phieu|ecosystems)\//i },
     { re: /^\/chu-de\//i, base: '/User_Web/chu-de/', legacyRe: /^\/stories\//i },
-    { re: /^\/(?:tin-tuc|cong-dong)\/bai-viet\//i, base: '/User_Web/community/', legacyRe: /^\/community\/posts\//i }
+    { re: /^\/(?:tin-tuc|cong-dong)\/bai-viet\//i, base: '/User_Web/news/', legacyRe: /^\/community\/posts\//i }
   ];
 
   /** Admin: slug module VI → thư mục app/ */
@@ -91,7 +91,7 @@
     'tham-so': 'metadata',
     'tiep-thi': 'marketing',
     'he-thong': 'system',
-    'cong-dong': 'community',
+    'cong-dong': 'news',
     'chu-de': 'chu-de',
     'trung-tam-ai': 'ai',
     'phan-tich': 'analytics',
@@ -108,7 +108,8 @@
     metadata: 'metadata',
     marketing: 'marketing',
     system: 'system',
-    community: 'community',
+    community: 'news',
+    news: 'news',
     story: 'chu-de',
     ai: 'ai',
     analytics: 'analytics',
@@ -127,7 +128,7 @@
     metadata: 'tham-so',
     marketing: 'tiep-thi',
     system: 'he-thong',
-    community: 'cong-dong',
+    news: 'news',
     chuDe: 'chu-de',
     'chu-de': 'chu-de',
     story: 'chu-de',

@@ -54,12 +54,15 @@
   var PAGE_REGIONS = {
     dashboard: ['sidebar', 'main'],
     market: ['sidebar', 'main'],
+    news: ['main', 'sidebar-right'],
     community: ['main', 'sidebar-right'],
-    // Community collection — cùng App Shell feed: Main (tin lọc) + Sidebar phải (Widget Host riêng)
+    'news-topic': ['main', 'sidebar-right'],
+    'news-cat': ['main', 'sidebar-right'],
+    'news-author': ['main', 'sidebar-right'],
     'com-topic': ['main', 'sidebar-right'],
     'com-cat': ['main', 'sidebar-right'],
     'com-author': ['main', 'sidebar-right'],
-    // Chi tiết bài viết — Main là nội dung bài viết (không composable), chỉ Sidebar phải là Widget Host
+    article: ['sidebar-right'],
     'com-post-detail': ['sidebar-right'],
     // Runtime Flow đã có đúng 4 host này. Main là Page Feature, không phải Widget Area.
     flow: ['sidebar', 'basic', 'advanced', 'exclusive'],
@@ -127,8 +130,8 @@
       ])
     },
     {
-      id: 'PAGE-COM',
-      key: 'community',
+      id: 'PAGE-NEWS',
+      key: 'news',
       title: 'Tin tức',
       slug: 'tin-tuc',
       path: '/tin-tuc',
@@ -240,15 +243,17 @@
   ];
 
   var PAGE_LAYER = {
-    dashboard: 'experience', market: 'experience', community: 'experience',
+    dashboard: 'experience', market: 'experience', news: 'experience', community: 'experience',
     flow: 'experience', membership: 'experience', faq: 'experience',
     account: 'platform', messages: 'platform',
     stocks: 'knowledge', 'stock-detail': 'knowledge',
     sectors: 'knowledge', 'sector-detail': 'knowledge',
     ecosystems: 'knowledge', 'eco-detail': 'knowledge',
     'cau-chuyen': 'knowledge', 'cau-chuyen-detail': 'knowledge',
-    'com-topic': 'community', 'com-cat': 'community', 'com-author': 'community',
-    'com-post-detail': 'community'
+    'news-topic': 'news', 'news-cat': 'news', 'news-author': 'news',
+    article: 'news',
+    'com-topic': 'news', 'com-cat': 'news', 'com-author': 'news',
+    'com-post-detail': 'news'
   };
 
   /**
@@ -307,7 +312,7 @@
       id: id, key: key, title: title, slug: slug, path: path,
       order: 40 + COMMUNITY_PAGE_ORDER++,
       navVisible: false, status: 'active', userCustomizable: false,
-      group: 'Community', dynamic: true, description: description || '',
+      group: 'News', dynamic: true, description: description || '',
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12', label: 'Main — Feed tin (lọc theo collection)' },
         { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
@@ -317,15 +322,15 @@
 
   var COMMUNITY_PAGES = [
     communityPage(
-      'PAGE-COM-TOPIC', 'com-topic', 'Chủ đề Cộng đồng', 'chu-de', '/tin-tuc/chu-de/:slug',
+      'PAGE-NEWS-TOPIC', 'news-topic', 'Chủ đề Tin tức', 'chu-de', '/tin-tuc/chu-de/:slug',
       'Trang danh sách theo chủ đề (vd /tin-tuc/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar phải: Widget Host riêng (danh sách do Admin thiết kế).'
     ),
     communityPage(
-      'PAGE-COM-CAT', 'com-cat', 'Danh mục Cộng đồng', 'danh-muc', '/tin-tuc/danh-muc/:slug',
+      'PAGE-NEWS-CAT', 'news-cat', 'Danh mục Tin tức', 'danh-muc', '/tin-tuc/danh-muc/:slug',
       'Trang danh sách theo danh mục. Main: feed tin thuộc danh mục · Sidebar phải: Widget Host riêng.'
     ),
     communityPage(
-      'PAGE-COM-AUTHOR', 'com-author', 'Tác giả Cộng đồng', 'tac-gia', '/tin-tuc/tac-gia/:username',
+      'PAGE-NEWS-AUTHOR', 'news-author', 'Tác giả Tin tức', 'tac-gia', '/tin-tuc/tac-gia/:username',
       'Trang danh sách theo tác giả. Main: feed tin của tác giả · Sidebar phải: Widget Host riêng.'
     )
   ];
@@ -333,14 +338,14 @@
   /** Community utilities — Viết bài chưa composable Bố cục. */
   var COMMUNITY_UTILITY_PAGES = [
     {
-      id: 'PAGE-COM-POST', key: 'com-post-detail', title: 'Chi tiết bài viết', path: '/tin-tuc/bai-viet/:id',
-      order: 40 + COMMUNITY_PAGE_ORDER++, navVisible: false, status: 'active', userCustomizable: false, group: 'Community', dynamic: true,
+      id: 'PAGE-ARTICLE', key: 'article', title: 'Chi tiết bài viết', path: '/tin-tuc/bai-viet/:id',
+      order: 40 + COMMUNITY_PAGE_ORDER++, navVisible: false, status: 'active', userCustomizable: false, group: 'News', dynamic: true,
       description: 'Trang chi tiết bài viết. Main: nội dung bài viết (không composable) · Sidebar phải: Widget Host riêng, chèn trước các block đặc thù (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận).',
       sections: cloneSections([
         { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
       ])
     },
-    { id: 'PAGE-COM-WRITE', key: 'com-write', title: 'Viết bài', path: '/tin-tuc/viet-bai', status: 'inactive' }
+    { id: 'PAGE-NEWS-WRITE', key: 'news-write', title: 'Viết bài', path: '/tin-tuc/viet-bai', status: 'inactive' }
   ];
 
   /** Alias tương thích: shape cũ [{group,icon,desc,pages}] cho consumer ngoài. */

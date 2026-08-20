@@ -62,10 +62,10 @@ const SELECT_LIST = `
   LEFT JOIN (
     SELECT key, COUNT(*)::int AS post_count
     FROM (
-      SELECT payload->>'ecosystem_id' AS key FROM community_posts
+      SELECT payload->>'ecosystem_id' AS key FROM news_posts
         WHERE payload ? 'ecosystem_id' AND COALESCE(payload->>'ecosystem_id','') <> ''
       UNION ALL
-      SELECT payload->>'ecosystem_code' AS key FROM community_posts
+      SELECT payload->>'ecosystem_code' AS key FROM news_posts
         WHERE payload ? 'ecosystem_code' AND COALESCE(payload->>'ecosystem_code','') <> ''
     ) x
     GROUP BY key
@@ -82,7 +82,7 @@ const SELECT_DETAIL = `
     (SELECT COUNT(*)::int FROM stocks st WHERE st.ecosystem_id = e.id) AS stock_count,
     (
       SELECT COUNT(*)::int
-      FROM community_posts p
+      FROM news_posts p
       WHERE (p.payload->>'ecosystem_id')::text = e.id::text
          OR (p.payload->>'ecosystem_code')::text = e.code
          OR EXISTS (
@@ -238,7 +238,7 @@ async function deleteEcosystem(id) {
 
     const postRes = await client.query(
       `SELECT COUNT(*)::int AS count
-       FROM community_posts p
+       FROM news_posts p
        WHERE (p.payload->>'ecosystem_id')::text = $1::text
           OR (p.payload->>'ecosystem_code')::text = $2
           OR EXISTS (

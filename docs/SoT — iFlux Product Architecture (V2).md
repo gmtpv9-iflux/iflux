@@ -27,7 +27,7 @@ Nguyên tắc cốt lõi:
 - Mỗi **Entity** tồn tại **một lần duy nhất** với **một URL top-level** duy nhất\.
 - **Page chỉ là điểm truy cập (entry point)** tới Entity 
 — Page KHÔNG "sở hữu" Entity\.
-- Thị trường, Cộng đồng, Trang chủ, Search, AI, Alert, Notification, Insight Widget, Report… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
+- Thị trường, Tin tức, Trang chủ, Search, AI, Alert, Notification, Insight Widget, Report… đều có thể mở tới cùng một Entity mà URL **không đổi**\.
 - Quan hệ giữa các Entity là **Relationship** (không có cha–con), tạo thành **Knowledge Graph**\.
 
 ```Plain Text
@@ -38,10 +38,11 @@ Nguyên tắc cốt lõi:
                       Hệ sinh thái (Ecosystem)
 ```
 
-> **Chủ đề (Topic)** thuộc **Cộng đồng** — metadata gắn bài viết, chưa phải Entity.  
+> **Chủ đề (Topic)** thuộc **Tin tức** — metadata gắn bài viết, chưa phải Entity.  
 > Khi đạt điều kiện trưởng thành → nâng cấp thành **Câu chuyện** trong Knowledge Layer (`/cau-chuyen/:slug`).
 
-Hệ thống chia làm **bốn tầng** (Experience · Knowledge · Community · Platform):
+Hệ thống chia làm **bốn tầng** (Experience · Knowledge · News · Platform).  
+**Community** là sản phẩm / layer sẽ mở sau (page · Admin · DB · nghiệp vụ riêng) — **không** sở hữu Post.
 
 ## Experience Layer
 
@@ -83,12 +84,12 @@ Câu chuyện (Story)          /cau-chuyen         /cau-chuyen/:slug
 **Vòng đời: Chủ đề → Câu chuyện**
 
 ```Plain Text
-                 Bài viết (Post) — Cộng đồng
+                 Bài viết (Post / Article) — Tin tức
                         │
               gắn đúng 01 Chủ đề (Topic)
                         │
                         ▼
-              Chủ đề (metadata Cộng đồng)
+              Chủ đề (metadata Tin tức)
               trạng thái: Mới | Trưởng thành | Suy yếu | Lưu trữ
                         │
         đạt điều kiện trưởng thành (Topic Engine)
@@ -103,9 +104,9 @@ Câu chuyện (Story)          /cau-chuyen         /cau-chuyen/:slug
       được toàn bộ nền tảng cùng sử dụng
 ```
 
-> Chủ đề ban đầu chỉ tồn tại dưới dạng metadata gắn với Bài viết trong Cộng đồng.
+> Chủ đề ban đầu chỉ tồn tại dưới dạng metadata gắn với Bài viết trong Tin tức.
 > Khi một Chủ đề đạt đủ điều kiện trưởng thành (theo quy tắc Topic Engine), nó được nâng cấp thành **Câu chuyện** Entity trong **Knowledge Layer**.
-> Từ thời điểm đó, Câu chuyện có URL canonical riêng (`/cau-chuyen/:slug`), dữ liệu riêng, quan hệ với các Entity khác và có thể được truy cập từ mọi Experience — không còn phụ thuộc vào feed Cộng đồng.
+> Từ thời điểm đó, Câu chuyện có URL canonical riêng (`/cau-chuyen/:slug`), dữ liệu riêng, quan hệ với các Entity khác và có thể được truy cập từ mọi Experience — không còn phụ thuộc vào feed Tin tức.
 > **Toàn bộ hành trình hình thành Câu chuyện Entity:** `Sot - Topic_Engine (V2).md`
 
 **Quy ước slug (tiếng Việt không dấu, gạch ngang):**
@@ -128,9 +129,13 @@ Câu chuyện (Story)          /cau-chuyen         /cau-chuyen/:slug
 
 > **Knowledge Layer** là lớp lưu trữ và quản lý các Entity dùng chung của toàn bộ nền tảng. Các Entity tồn tại độc lập với Experience Layer và được mọi trải nghiệm cùng tham chiếu thông qua Canonical URL.
 
+## News Layer (Tin tức)
+
+Tin tức **sở hữu Bài viết (Post / Article)** và metadata đi kèm — **không** sở hữu Entity Knowledge.
+
 ## Community Layer
 
-Cộng đồng **chỉ sở hữu Bài viết (Post)** và metadata đi kèm — **không** sở hữu Entity Knowledge.
+Sản phẩm Cộng đồng mới — **chỉ mở sau khi Task 05 Identity Migration PASS** (`community` → `news` toàn hệ thống; `community` = FREE). **Không** sở hữu Post. Post thuộc News Layer. Page / Admin / DB / nghiệp vụ Community sinh trên namespace đã trống — không reuse `/tin-tuc`, `news_posts`, hay `/admin/news`. Leftover `/cong-dong` · `/community` · `/admin/cong-dong` 301 trong migration window rồi retire.
 
 ```Plain Text
 Feed chính              /tin-tuc
@@ -143,28 +148,28 @@ Tác giả (collection)    /tin-tuc/tac-gia/:username Main: feed lọc theo Auth
 ```
 
 > **Không có** trang index `/tin-tuc/chu-de`, `/tin-tuc/danh-muc`, `/tin-tuc/tac-gia`.  
-> Bản thân trang `/:slug` đã là trang danh sách: Main kế thừa feed tin Cộng đồng (lọc theo collection đã chọn); danh sách phụ do Admin thiết kế và đặt vào **Sidebar phải**.
+> Bản thân trang `/:slug` đã là trang danh sách: Main kế thừa feed tin Tin tức (lọc theo collection đã chọn); danh sách phụ do Admin thiết kế và đặt vào **Sidebar phải**.
 
 **Phân tách bắt buộc Chủ đề vs Câu chuyện:**
 
 | Khái niệm | Tầng | URL | Vai trò |
 |-----------|------|-----|---------|
-| **Chủ đề (Topic)** | Community | `/tin-tuc/chu-de/:slug` | Metadata gắn 1 bài viết; lọc feed + Widget Host sidebar |
+| **Chủ đề (Topic)** | News | `/tin-tuc/chu-de/:slug` | Metadata gắn 1 bài viết; lọc feed + Widget Host sidebar |
 | **Câu chuyện (Story)** | Knowledge | `/cau-chuyen/:slug` | Entity thị trường; narrative + mã liên quan |
 
 - Không có `/tin-tuc/posts` hay list bài viết độc lập — feed duy nhất tại `/tin-tuc` (và các collection `/:slug` là feed đã lọc).
 - Cấu trúc bài viết tuân `Content_Entity.md` (tiêu đề, danh mục×1, tác giả, chủ đề×1, đính kèm CP/ngành/HST/sàn, SEO, trạng thái).
 
-**Admin ▸ Cộng đồng (quản lý metadata & bài viết):**
+**Admin ▸ Quản lý Tin tức (metadata & bài viết — URL English `/admin/news`, leftover `/admin/cong-dong` 301):**
 
 | Trang Admin | Slug |
 |-------------|------|
-| Danh sách danh mục | `/admin/cong-dong/categories` |
-| Danh sách chủ đề | `/admin/cong-dong/danh-sach-chu-de` |
-| Danh sách tác giả | `/admin/cong-dong/danh-sach-tac-gia` |
-| Danh sách bài viết | `/admin/cong-dong/danh-sach-bai-viet` |
+| Danh sách danh mục | `/admin/news/categories` |
+| Danh sách chủ đề | `/admin/news/topics` |
+| Danh sách tác giả | `/admin/news/authors` |
+| Danh sách bài viết | `/admin/news/articles` |
 
-**Admin ▸ Câu chuyện (Knowledge entity — module tách khỏi Cộng đồng):**
+**Admin ▸ Câu chuyện (Knowledge entity — module tách khỏi Tin tức):**
 
 | Trang Admin | Slug |
 |-------------|------|
@@ -257,7 +262,7 @@ Ví dụ:
 - Trang chủ
 - Thị trường
 - Dòng tiền
-- Cộng đồng
+- Tin tức
 - Chương trình thành viên
 - Hỏi đáp
 - ...
@@ -592,7 +597,7 @@ Việc tách ranh giới này nhằm bảo đảm mỗi thành phần chỉ có 
 
 # **Runtime Blueprint — Kiến trúc tải & vòng đời tài nguyên của Page**
 
-> Nghiệm thu từ **Pilot trang Cộng đồng** (2026‑07). Đây là **chuẩn chung cho MỌI Page** (Trang chủ, Thị trường, Dòng tiền, Cộng đồng…), KHÔNG mô tả riêng một trang.
+> Nghiệm thu từ **Pilot trang Tin tức** (2026‑07, tên cũ Cộng đồng). Đây là **chuẩn chung cho MỌI Page** (Trang chủ, Thị trường, Dòng tiền, Tin tức…), KHÔNG mô tả riêng một trang.
 >
 > Tài liệu phân biệt rõ **Target** (kiến trúc đích) và **Current** (hiện trạng đã đạt tới đâu). Khi mở một Page mới chỉ cần yêu cầu: **"Áp dụng Runtime Blueprint"** — không tự nghĩ lại kiến trúc.
 
@@ -1449,7 +1454,7 @@ Nếu phát hiện vi phạm, phải khôi phục quyền quyết định về �
 |----------|---------|
 | `SoT — Widget Definition.md` | Widget Definition, Artifact, capabilities |
 | `Sot - Topic_Engine (V2).md` | Vòng đời Chủ đề → Câu chuyện |
-| `Content_Entity.md` | Cấu trúc Bài viết Cộng đồng |
+| `Content_Entity.md` | Cấu trúc Bài viết Tin tức |
 | `Runtime Blueprint — RL-1.0 (FROZEN).md` | Pilot Runtime (tham chiếu; chi tiết đầy đủ trong mục Runtime Blueprint ở trên) |
 | `Admin_Design_system/app/system/page-settings-catalog.js` | Sitemap Admin — Experience · Knowledge · Community · Platform |
 

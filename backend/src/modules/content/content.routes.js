@@ -82,7 +82,7 @@ function createContentRouter(deps) {
 
   router.patch(
     '/articles/:id',
-    perm('community.articles.edit'),
+    perm('news.articles.edit'),
     validate(patchArticleSchema),
     async (req, res, next) => {
       try {
@@ -327,7 +327,7 @@ function createContentRouter(deps) {
 
   router.post(
     '/ingest',
-    perm('community.articles.create'),
+    perm('news.articles.create'),
     validate(ingestSchema),
     async (req, res, next) => {
       try {
@@ -356,7 +356,7 @@ function createContentRouter(deps) {
 
   router.post(
     '/ingest/batch',
-    perm('community.articles.create'),
+    perm('news.articles.create'),
     validate(batchSchema),
     async (req, res, next) => {
       try {
@@ -393,7 +393,7 @@ function createContentRouter(deps) {
     }
   );
 
-  router.post('/ingest/run', perm('community.articles.create'), async (req, res, next) => {
+  router.post('/ingest/run', perm('news.articles.create'), async (req, res, next) => {
     try {
       const { runVnstockNewsIngest } = require('../../../workers/run-vnstock-ingest');
       const body = req.body || {};
