@@ -72,7 +72,7 @@ function pageKeyFromPath(pathname) {
   ) {
     return 'family';
   }
-  if (path === '/nha-cua-toi' || path === '/home') return 'home';
+  if (path === '/trang-chu' || path === '/nha-cua-toi' || path === '/home') return 'home';
   if (path === '/thi-truong' || path === '/market') return 'market';
   if (path === '/dong-tien' || path === '/flow') return 'flow';
   if (path === '/cong-dong' || path === '/community') return 'community';

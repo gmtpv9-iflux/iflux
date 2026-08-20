@@ -11,7 +11,7 @@ export const meta = { id: 'WGT-LOY-PAGE', title: 'Chương trình thành viên' 
 function routeUrl(key) {
   var R = typeof window !== 'undefined' && window.IfluxRoutes;
   if (R && R.to) return R.to(key);
-  var fb = { home: '/nha-cua-toi', pricing: '/goi-cuoc', faq: '/hoi-dap' };
+  var fb = { home: '/trang-chu', pricing: '/goi-cuoc', faq: '/hoi-dap' };
   return fb[key] || '/';
 }
 
@@ -35,7 +35,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
 
     <div class="ifx-loyalty-tabs">
       <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro" data-ifx-ent-block="BLK-LOY-INTRO"><i class="ti ti-sparkles"></i> Giới thiệu</button>
-      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/nha-cua-toi?tab=affiliate" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
+      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/trang-chu?tab=affiliate" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
     </div>
 
     <div id="tab-membership-intro" class="ifx-loyalty-panel active" data-ifx-ent-block="BLK-LOY-INTRO">

@@ -98,10 +98,10 @@
     },
     "dashboard": {
       "pageKey": "dashboard",
-      "path": "/home",
-      "title": "Nhà của tôi",
+      "path": "/trang-chu",
+      "title": "Trang chủ",
       "intro": "Sidebar: Thông tin hồ sơ, Gói Promotion · Main: Watchlist & bộ công cụ tùy chỉnh.",
-      "documentTitle": "Nhà của tôi · iFlux",
+      "documentTitle": "Trang chủ · iFlux",
       "sections": [
         {
           "key": "header",

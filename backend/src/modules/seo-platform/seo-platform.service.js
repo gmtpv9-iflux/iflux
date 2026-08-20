@@ -14,8 +14,9 @@ var db = require('../../core/database/connection');
 var mediaService = require('../media/media.service');
 
 var PATH_TO_PAGE_KEY = {
-  '/': 'community',
+  '/': 'dashboard',
   '/thi-truong': 'market',
+  '/trang-chu': 'dashboard',
   '/nha-cua-toi': 'dashboard',
   '/dong-tien': 'flow',
   '/cong-dong': 'community',

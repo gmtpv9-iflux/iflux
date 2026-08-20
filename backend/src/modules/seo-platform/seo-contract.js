@@ -14,7 +14,7 @@ var breadcrumbMod = require('./breadcrumb');
 var PUBLIC_ORIGIN = 'https://iflux.vn';
 
 var PAGE_KEY_TO_PATH = {
-  dashboard: '/nha-cua-toi',
+  dashboard: '/trang-chu',
   market: '/thi-truong',
   community: '/cong-dong',
   flow: '/dong-tien',

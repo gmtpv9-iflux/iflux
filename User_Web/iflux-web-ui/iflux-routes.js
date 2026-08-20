@@ -7,8 +7,8 @@
   if (global.IfluxRoutes) return;
 
   var ROUTES = {
-    home: { public: '/nha-cua-toi', file: '/User_Web/home/index.html', zone: 'app', auth: true },
-    market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app', landing: true },
+    home: { public: '/trang-chu', file: '/User_Web/home/index.html', zone: 'app', auth: true, landing: true },
+    market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app' },
     flow: { public: '/dong-tien', file: '/User_Web/flow/index.html', zone: 'app' },
     stocks: { public: '/co-phieu', file: '/User_Web/stocks/index.html', zone: 'app', auth: true },
     sectors: { public: '/nganh', file: '/User_Web/sectors/index.html', zone: 'app', auth: true },
@@ -36,6 +36,8 @@
   /* Path English / alias → khớp route (detect + bookmark cũ) */
   var LEGACY_PUBLIC = {
     '/home': 'home',
+    '/nha-cua-toi': 'home',
+    '/trang-chu': 'home',
     '/market': 'market',
     '/flow': 'flow',
     '/stocks': 'stocks',
@@ -65,8 +67,8 @@
     login: 'auth.login',
     register: 'auth.register',
     forgot: 'auth.forgot',
-    root: 'market',
-    landing: 'market',
+    root: 'home',
+    landing: 'home',
     'chu-de': 'chuDe',
     write: 'communityWrite'
   };
@@ -102,7 +104,7 @@
 
   function detectRoute(path) {
     path = normalizePath(path);
-    if (path === '/' || path === '/guest') return ROUTES.market;
+    if (path === '/' || path === '/guest') return ROUTES.home;
     if (LEGACY_PUBLIC[path] && ROUTES[LEGACY_PUBLIC[path]]) return ROUTES[LEGACY_PUBLIC[path]];
     var keys = Object.keys(ROUTES);
     var i;
@@ -165,7 +167,6 @@
 
   function isPublicPage(path) {
     path = normalizePath(path);
-    if (path === '/' || path === '/guest') return true;
     var r = detectRoute(path);
     if (!r) return false;
     if (r.zone === 'auth') return true;
@@ -185,7 +186,7 @@
 
   function loginWithReturn(returnPath) {
     var ret = normalizePath(returnPath || pathname());
-    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('market', { canonical: true, skipDecorate: true });
+    if (isAuthPage(ret) || ret === '/' || ret === '/guest') ret = to('home', { canonical: true, skipDecorate: true });
     return to('auth.login') + '?return=' + encodeURIComponent(ret);
   }
 

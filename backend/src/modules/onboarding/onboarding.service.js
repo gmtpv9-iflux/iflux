@@ -6,7 +6,7 @@ const SEED_STEPS = [
   {
     channel: 'web',
     step_order: 1,
-    title: 'Nhà của tôi',
+    title: 'Trang chủ',
     body_text: 'Trung tâm cá nhân: bảng điều khiển, watchlist và timeline hoạt động của bạn.',
     image_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=640&q=80',
     target_key: 'home'

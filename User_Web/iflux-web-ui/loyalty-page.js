@@ -24,7 +24,7 @@
     try {
       var tab = new URLSearchParams(location.search).get('tab');
       if (tab === 'affiliate') {
-        consumerNavigate('/nha-cua-toi?tab=affiliate');
+        consumerNavigate('/trang-chu?tab=affiliate');
         return;
       }
     } catch (e) { /* ignore */ }

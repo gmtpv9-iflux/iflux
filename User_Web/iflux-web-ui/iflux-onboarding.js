@@ -28,7 +28,7 @@ Note: Dep động onboarding
   var spotlightEl = null;
 
   var FALLBACK_STEPS = [
-    { title: 'Nhà của tôi', body_text: 'Trung tâm cá nhân: bảng điều khiển, watchlist và timeline hoạt động của bạn.', target_key: 'home', image_url: '' },
+    { title: 'Trang chủ', body_text: 'Trung tâm cá nhân: bảng điều khiển, watchlist và timeline hoạt động của bạn.', target_key: 'home', image_url: '' },
     { title: 'Thị trường', body_text: 'Theo dõi VN-Index, biểu đồ và tổng quan thị trường.', target_key: 'market', image_url: '' },
     { title: 'Độc quyền', body_text: 'Nhãn tính năng chỉ có trên iFlux — dòng tiền và insight độc quyền.', target_key: 'flow_exclusive', image_url: '' },
     { title: 'Dòng tiền', body_text: 'Phân tích dòng tiền vào/ra theo thời gian thực.', target_key: 'flow', image_url: '' },

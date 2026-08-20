@@ -70,7 +70,7 @@
     { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift',
       hint: 'Giới thiệu chương trình · affiliate sau đăng nhập.',
       guestDefault: true, guestNever: false, path: '/loyalty' },
-    { key: 'dashboard', label: 'Nhà của tôi', menu: true, icon: 'ti-home',
+    { key: 'dashboard', label: 'Trang chủ', menu: true, icon: 'ti-home',
       hint: 'Dashboard cá nhân — vãng lai không truy cập.',
       guestDefault: false, guestNever: true, path: '/home' }
   ];

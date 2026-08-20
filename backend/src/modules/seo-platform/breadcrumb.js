@@ -8,7 +8,7 @@
 var PUBLIC_ORIGIN = 'https://iflux.vn';
 
 /** Clean Homepage identity (D-SEO-12) — not a second `/` SEO identity. */
-var HOME = { name: 'Trang chủ', path: '/cong-dong' };
+var HOME = { name: 'Trang chủ', path: '/trang-chu' };
 
 var HUB = {
   market: { name: 'Thị trường', path: '/thi-truong' },
@@ -74,7 +74,7 @@ function resolveBreadcrumb(input) {
   }
 
   if (entityType === 'article' || /^\/cong-dong\/bai-viet\//i.test(path)) {
-    /* Homepage Clean = /cong-dong — không nhân đôi Trang chủ + Cộng đồng cùng URL */
+    /* Leaf bài viết; HOME crumb = Trang chủ /trang-chu */
     pushUnique(items, crumb(title || 'Bài viết', path, origin));
   } else if (pageKey === 'stock-detail' || /^\/co-phieu\/[^/]+/i.test(path)) {
     addHub('market');
@@ -115,7 +115,7 @@ function resolveBreadcrumb(input) {
     pushUnique(items, crumb(title || path, path, origin));
   }
 
-  /* Home hub alone: single crumb Trang chủ (Clean /cong-dong). */
+  /* Home hub alone: single crumb Trang chủ (/trang-chu). */
   var jsonLd = null;
   if (items.length) {
     jsonLd = {

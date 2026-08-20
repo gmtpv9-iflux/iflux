@@ -1,5 +1,5 @@
 /**
- * Page Manifest — Nhà của tôi (/nha-cua-toi)
+ * Page Manifest — Trang chủ (/trang-chu)
  *
  * Sidebar: widget trang (PRF) theo Cài đặt trang Admin.
  * Main: shell Tùy chỉnh (toolbar Mặc định / Phổ biến / Tùy chỉnh + canvas).
@@ -21,9 +21,9 @@ var CSS_DASH = [
 
 export default {
   pageKey: 'home',
-  path: '/nha-cua-toi',
-  title: '',
-  documentTitle: '',
+  path: '/trang-chu',
+  title: 'Trang chủ',
+  documentTitle: 'Trang chủ',
   sections: [
     { key: 'sidebar', label: 'Thông tin cá nhân', visible: true, layout: 'stack' },
     { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }
