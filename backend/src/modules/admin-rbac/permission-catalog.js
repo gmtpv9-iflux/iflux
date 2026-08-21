@@ -120,9 +120,9 @@ const MODULES = [
     ]
   },
   /* Module content.* đã H2 (2026-07-26): không hiện trên matrix (không có dòng menu).
-   * Route Content Engine map sang community.articles / stories.registry — xem content.routes.js */
+   * Route Content Engine map sang news.articles / stories.registry — xem content.routes.js */
   {
-    key: 'community',
+    key: 'news',
     pages: [
       { key: 'content_dashboard', actions: VIEW },
       { key: 'articles', actions: CRUD },

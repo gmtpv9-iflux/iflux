@@ -32,7 +32,7 @@ Note: Dep động onboarding
     { title: 'Thị trường', body_text: 'Theo dõi VN-Index, biểu đồ và tổng quan thị trường.', target_key: 'market', image_url: '' },
     { title: 'Độc quyền', body_text: 'Nhãn tính năng chỉ có trên iFlux — dòng tiền và insight độc quyền.', target_key: 'flow_exclusive', image_url: '' },
     { title: 'Dòng tiền', body_text: 'Phân tích dòng tiền vào/ra theo thời gian thực.', target_key: 'flow', image_url: '' },
-    { title: 'Cộng đồng', body_text: 'Insight, chủ đề và quan điểm từ cộng đồng nhà đầu tư.', target_key: 'community', image_url: '' },
+    { title: 'Tin tức', body_text: 'Insight, chủ đề và quan điểm từ cộng đồng nhà đầu tư.', target_key: 'news', image_url: '' },
     { title: 'Gói cước', body_text: 'So sánh gói Miễn phí, Premium và Elite — nâng cấp khi sẵn sàng.', target_key: 'pricing', image_url: '' },
     { title: 'Membership', body_text: 'Ưu đãi, coupon và chương trình thành viên iFlux.', target_key: 'loyalty', image_url: '' },
     { title: 'FAQ', body_text: 'Câu hỏi thường gặp về tài khoản, gói cước và sử dụng nền tảng.', target_key: 'faq', image_url: '' }
@@ -139,7 +139,7 @@ Note: Dep động onboarding
       market: 'a[href*="market/"]:not(.ifx-topnav-link--exclusive)',
       flow_exclusive: resolveFlowMenuLink,
       flow: resolveFlowMenuLink,
-      community: 'a[href*="community/"]',
+      news: 'a[href*="tin-tuc"]',
       pricing: 'a[href*="pricing/"]',
       loyalty: 'a[href*="loyalty/"]',
       faq: 'a[href*="faq/"], a[data-ifx-nav="faq"]'

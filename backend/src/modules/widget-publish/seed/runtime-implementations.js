@@ -28,17 +28,17 @@ const WEB_IMPLEMENTATIONS = {
   'TMP-COM-STOCK-HEAT': {
     status: 'ready',
     renderer: 'community-stock-heat',
-    module: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=comStockHeat20260722b'
+    module: '/User_Web/iflux-web-ui/widgets/news-stock-heat/index.js?v=comStockHeat20260722b'
   },
   'TMP-COM-STORY-TOP': {
     status: 'ready',
     renderer: 'community-story-top',
-    module: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=stocksOnlyH20260722'
+    module: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js?v=stocksOnlyH20260722'
   },
   'TMP-COM-ACTIVE': {
     status: 'ready',
     renderer: 'community-active',
-    module: '/User_Web/iflux-web-ui/widgets/community-active/index.js?v=bpPhaseD20260716'
+    module: '/User_Web/iflux-web-ui/widgets/news-active/index.js?v=bpPhaseD20260716'
   },
 
   /* —— Admin catalog (15) —— */
@@ -55,12 +55,12 @@ const WEB_IMPLEMENTATIONS = {
   'TMP-COMMUNITY-LIST': {
     status: 'ready',
     renderer: 'community-list',
-    module: '/User_Web/iflux-web-ui/widgets/community-list/index.js?v=pubFix20260722'
+    module: '/User_Web/iflux-web-ui/widgets/news-list/index.js?v=pubFix20260722'
   },
   'TMP-COMMUNITY-STORY-TOP': {
     status: 'ready',
     renderer: 'community-story-top',
-    module: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=stocksOnlyH20260722'
+    module: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js?v=stocksOnlyH20260722'
   },
   'TMP-DIVERGING-BARS': {
     status: 'ready',

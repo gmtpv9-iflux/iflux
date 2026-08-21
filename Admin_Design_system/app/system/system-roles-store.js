@@ -11,7 +11,7 @@
     { key: 'subscription', label: 'Gói đăng ký — plan, subscriber, giao dịch (ADM-SUB)', group: 'Kinh doanh' },
     { key: 'notifications', label: 'Thông báo — push, in-app, email (ADM-NOTIF)', group: 'Kinh doanh' },
     { key: 'metadata', label: 'Metadata — enum, theme, lifecycle (ADM-META)', group: 'Cấu hình' },
-    { key: 'community', label: 'Cộng đồng — moderation, báo cáo (ADM-COM)', group: 'Giai đoạn 2' },
+    { key: 'news', label: 'Tin tức — bài, RSS, kiểm duyệt (ADM-NEWS)', group: 'Giai đoạn 2' },
     { key: 'story', label: 'Story Intelligence (ADM-STR)', group: 'Giai đoạn 2' },
     { key: 'ai', label: 'Trung tâm AI — prompt, log, cost (ADM-AI)', group: 'Giai đoạn 2' },
     { key: 'analytics', label: 'Phân tích — user, revenue, funnel (ADM-ANL)', group: 'Báo cáo' },
@@ -24,7 +24,7 @@
   /** Map quyền cũ (5 module generic) → module spec mới */
   var LEGACY_PERM_MAP = {
     users: 'customers',
-    content: 'community',
+    content: 'news',
     finance: 'subscription',
     reporting: 'analytics',
     api: 'system'

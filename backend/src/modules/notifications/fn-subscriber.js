@@ -195,8 +195,8 @@ let registered = false;
 function registerFnNotificationSubscribers() {
   if (registered) return;
   registered = true;
-  bus.subscribe(bus.EVENTS.COMMUNITY_POST_PUBLISHED, onPostPublished);
-  bus.subscribe(bus.EVENTS.COMMUNITY_POST_SHARED, onPostShared);
+  bus.subscribe(bus.EVENTS.NEWS_POST_PUBLISHED, onPostPublished);
+  bus.subscribe(bus.EVENTS.NEWS_POST_SHARED, onPostShared);
   bus.subscribe(bus.EVENTS.ENTITY_COMMENT_CREATED, onEntityComment);
   bus.subscribe(bus.EVENTS.COMMENT_LIKED, onCommentLiked);
 }

@@ -44,9 +44,9 @@ var MARKET_PLATFORM_PAGES = {
  * Nhà: chrome nav không phụ thuộc seed — widget dashboard lazy dep riêng.
  */
 var MARKET_CORE_PAGES = {
-  community: 1,
-  communityPost: 1,
-  communityWrite: 1,
+  news: 1,
+  article: 1,
+  newsWrite: 1,
   comments: 1,
   home: 1,
   dashboard: 1
@@ -237,7 +237,7 @@ export async function bootShell(pageKey) {
     stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
     stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
     watchlist: 1, messages: 1, search: 1,
-    account: 1, checkout: 1, communityWrite: 1, stockComment: 1
+    account: 1, checkout: 1, newsWrite: 1, stockComment: 1
   };
   if (AUTH_PAGES[pageKey]) {
     if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;

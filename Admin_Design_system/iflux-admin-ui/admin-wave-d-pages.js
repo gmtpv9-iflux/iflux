@@ -465,8 +465,8 @@
     },
     initComments: function () {
       crudPage({
-        listPath: '/admin/community-ops/comments', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
-        delPerm: 'community.comments.delete',
+        listPath: '/admin/news-ops/comments', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
+        delPerm: 'news.comments.delete',
         rowHtml: function (r, actions) {
           return '<tr><td>' + esc(r.author) + '</td><td>' + esc(r.body) + '</td><td>' + esc(r.status) +
             '</td><td>' + actions + '</td></tr>';
@@ -475,8 +475,8 @@
     },
     initReports: function () {
       crudPage({
-        listPath: '/admin/community-ops/reports', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
-        editPerm: 'community.reports.edit',
+        listPath: '/admin/news-ops/reports', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
+        editPerm: 'news.reports.edit',
         buildEdit: function () { return { status: 'resolved' }; },
         rowHtml: function (r, actions) {
           return '<tr><td>' + esc(r.target_type) + '/' + esc(r.target_id) + '</td><td>' + esc(r.reason) +
@@ -485,7 +485,7 @@
       });
     },
     initContentDash: function () {
-      request('/admin/community-ops/content-dashboard').then(function (d) {
+      request('/admin/news-ops/content-dashboard').then(function (d) {
         var root = document.getElementById('adm-wd-dash');
         if (!root) return;
         var cards = (d.cards || []).map(function (c) {

@@ -39,13 +39,13 @@
     if (!isMobileShell()) return;
     var layout = root.querySelector('.ifx-stock-layout');
     if (!layout) return;
-    layout.classList.toggle('ifx-stock-layout--mobile-screen', tabKey !== 'news');
-    if (tabKey === 'news') remountLeftColumn(root, ticker, detail);
+    layout.classList.toggle('ifx-stock-layout--mobile-screen', tabKey !== 'articles');
+    if (tabKey === 'articles') remountLeftColumn(root, ticker, detail);
     else removeLeftColumn(root);
   }
 
-  function comStore() { return global.IfluxCommunityStore; }
-  function comUi() { return global.IfluxCommunityUI; }
+  function comStore() { return global.IfluxNewsStore; }
+  function comUi() { return global.IfluxNewsUI; }
   function cta() { return global.IfluxCommentsCta; }
   function stockSt() { return global.IfluxStockStore; }
   function wlUi() { return global.IfluxWatchlistUI; }
@@ -279,7 +279,7 @@
       var posts = comStore() ? comStore().getPosts(newsState.postsFilter) : [];
       var listHtml = posts.length && comUi() && comUi().compactPostHtml
         ? '<div class="ifx-stock-news-list">' + posts.map(function (p) {
-            return comUi().compactPostHtml(p, { storyBase: '../community/' });
+            return comUi().compactPostHtml(p, { storyBase: '../news/' });
           }).join('') + '</div>'
         : '<div class="ifx-stock-empty">Chưa có bài viết liên quan.</div>';
       articlesBody = listHtml; articlesCount = posts.length;
@@ -351,7 +351,7 @@
       '<div class="ifx-stock-not-found">' +
         '<h1 class="ix-page-title">Không tìm thấy mã ' + esc(ticker) + '</h1>' +
         '<p style="color:var(--ix-text-muted);margin-bottom:16px">Mã không có trong dữ liệu sandbox.</p>' +
-        '<a href="../community/index.html" class="ix-btn ix-btn-outline">Về Cộng đồng</a>' +
+        '<a href="../news/index.html" class="ix-btn ix-btn-outline">Về Tin tức</a>' +
       '</div>'
     );
   }
@@ -409,7 +409,7 @@
     var newsState = {
       entityName: detail.name || currentTicker,
       postsFilter: { ticker: currentTicker },
-      storyBase: '../community/'
+      storyBase: '../news/'
     };
 
     root.innerHTML =
@@ -427,7 +427,7 @@
       global.addEventListener('resize', function () {
         var tabsWrap = root.querySelector('[data-ec-tabs]');
         var active = tabsWrap && tabsWrap.querySelector('[data-ec-tab].active');
-        var key = active ? active.getAttribute('data-ec-tab') : 'news';
+        var key = active ? active.getAttribute('data-ec-tab') : 'articles';
         syncMobileLeftColumn(root, key, currentTicker, detail);
       });
     }

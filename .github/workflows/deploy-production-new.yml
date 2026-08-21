@@ -56,6 +56,9 @@ jobs:
           cp "$GITHUB_WORKSPACE/infra/staging-2/iflux-newprod-app.conf" "$META/iflux-newprod-app.conf"
           cp "$GITHUB_WORKSPACE/infra/staging-2/iflux-newprod-deploy-switch.sh" "$META/iflux-newprod-deploy-switch.sh"
 
+      - name: Apply pending Production DB migrations (062+)
+        run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}" --migrate-only
+
       - name: Atomic switch + nginx + refresh switch
         run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}"
 

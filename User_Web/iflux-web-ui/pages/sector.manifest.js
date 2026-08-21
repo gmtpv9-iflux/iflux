@@ -25,7 +25,7 @@ export default {
     css: [
       '/User_Web/iflux-web-ui/market-components.css',
       '/User_Web/iflux-web-ui/watchlist.css',
-      '/User_Web/iflux-web-ui/community.css',
+      '/User_Web/iflux-web-ui/news.css',
       '/User_Web/iflux-web-ui/block-templates.css',
       '/User_Web/iflux-web-ui/stock.css?v=sidebarVR04_20260811'
     ]

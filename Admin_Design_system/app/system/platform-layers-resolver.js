@@ -313,20 +313,20 @@
       },
 
       community_trending: function () {
-        if (!global.IfluxCommunityStore) return fields([field('community.trending[]', 'Trending (demo)', demoTrending())]);
-        var list = IfluxCommunityStore.listTrendingTickers ? IfluxCommunityStore.listTrendingTickers(8) : demoTrending();
+        if (!global.IfluxNewsStore) return fields([field('community.trending[]', 'Trending (demo)', demoTrending())]);
+        var list = IfluxNewsStore.listTrendingTickers ? IfluxNewsStore.listTrendingTickers(8) : demoTrending();
         return fields([field('community.trending[]', 'CP/story trending', list)]);
       },
 
       community_news: function () {
-        if (!global.IfluxCommunityStore || !IfluxCommunityStore.listNewsHero) {
+        if (!global.IfluxNewsStore || !IfluxNewsStore.listNewsHero) {
           return fields([field('community.news[]', 'Tin hero (demo)', [{ title: 'Demo news feed', source: 'sandbox' }])]);
         }
-        return fields([field('community.news[]', 'Tin tức hero', IfluxCommunityStore.listNewsHero(5))]);
+        return fields([field('community.news[]', 'Tin tức hero', IfluxNewsStore.listNewsHero(5))]);
       },
 
       community_experts: function () {
-        return fields([field('community.experts[]', 'Chuyên gia nổi bật', demoExperts())]);
+        return fields([field('news.experts[]', 'Chuyên gia nổi bật', demoExperts())]);
       },
 
       community_active: function () {

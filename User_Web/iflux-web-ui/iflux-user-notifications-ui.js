@@ -47,8 +47,8 @@
     if (/(?:^|\/)home\/index\.html$/.test(href) || (href === 'index.html' && path.indexOf('/home/') >= 0)) {
       return 'dashboard';
     }
-    if (/(?:^|\/)community\/index\.html$/.test(href) || (href === 'index.html' && path.indexOf('/community/') >= 0)) {
-      return 'community';
+    if (/(?:^|\/)(?:news|community)\/index\.html$/.test(href) || (href === 'index.html' && /\/(news|community)\//.test(path))) {
+      return 'news';
     }
     if (/(?:^|\/)loyalty\/index\.html$/.test(href) || (href === 'index.html' && path.indexOf('/loyalty/') >= 0)) {
       return 'loyalty';

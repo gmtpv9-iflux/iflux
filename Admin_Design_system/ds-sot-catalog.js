@@ -152,7 +152,7 @@
         { name: 'Comment / Thread', status: 'ok', cls: '.ifx-stock-cmt*', file: 'stock-comments-ui.js' },
         { name: 'Reaction Bar', status: 'partial', note: 'Inline community icons' },
         { name: 'Share / Insight Card', status: 'ok', cls: '.ifx-insight-*', file: 'foundation/share-action.js' },
-        { name: 'Rich Text Editor', status: 'partial', file: 'community/write.html' },
+        { name: 'Rich Text Editor', status: 'partial', file: 'news/write.html' },
         { name: 'Chat', status: 'ok', cls: '.ix-chat-*', file: 'patterns/chat.html' },
         { name: 'Mention / Tag', status: 'partial', file: 'stock-mentions.js' },
         { name: 'User Presence', status: 'partial', cls: '.ix-avatar-online' }
@@ -174,7 +174,7 @@
         { name: 'DegradedBanner', status: 'ok', cls: '.ifx-degraded-banner', preview: 'banner' },
         { name: 'Order Book Row', status: 'miss' },
         { name: 'Signal Card', status: 'miss' },
-        { name: 'Story Tag / Community Card', status: 'partial', cls: '.ifx-com-card', file: 'community.css' },
+        { name: 'Story Tag / Community Card', status: 'partial', cls: '.ifx-com-card', file: 'news.css' },
         { name: 'Onboarding Spotlight', status: 'ok', cls: '.ifx-onboard-center', file: 'onboarding.css', surface: 'User' }
       ]
     },
@@ -212,7 +212,7 @@
         { name: 'Dashboard widget shell (layout slot)', status: 'ok', surface: 'User', cls: '.ifx-widget, .ifx-widget__header/body', file: 'widget-shell.css', preview: 'widget', note: 'Chỉ Nhà của tôi — khác wrapper trang Thị trường/Dòng tiền' },
         { name: 'Page section wrapper', status: 'ok', surface: 'User', cls: '.ifx-mkt-section, .ifx-mkt-section__title', file: 'market.css', note: 'Nhóm block theo vùng màn hình' },
 
-        { name: 'BLK-MKT-OVERVIEW — Tổng quan thị trường', status: 'ok', surface: 'User', cls: '.ifx-com-overview, .ifx-mkt-sidebar-widget', file: 'community-market-overview.js', preview: 'com-overview', note: 'Sidebar Thị trường + Cộng đồng · WGT-MKT-001' },
+        { name: 'BLK-MKT-OVERVIEW — Tổng quan thị trường', status: 'ok', surface: 'User', cls: '.ifx-com-overview, .ifx-mkt-sidebar-widget', file: 'news-market-overview.js', preview: 'com-overview', note: 'Sidebar Thị trường + Cộng đồng · WGT-MKT-001' },
         { name: 'BLK-MKT-BREADTH — Độ rộng thị trường', status: 'ok', surface: 'User', cls: '.ifx-mkt-sidebar-widget, .ifx-breadth-*', file: 'breadth-block.js', preview: 'mkt-sidebar', note: 'WGT-MKT-002' },
         { name: 'BLK-MKT-HEAT — Heatmap Ngành / Họ / Story', status: 'ok', surface: 'User', cls: '.ifx-mkt-card', file: 'market-heatmap.js', preview: 'mkt-card', note: 'WGT-MKT-004/005/006 · treemap squarified' },
         { name: 'BLK-MKT-LIQ — Thanh khoản KLGD / GTGD', status: 'ok', surface: 'User', cls: '.ifx-mkt-liq-block', file: 'market-liquidity.js', preview: 'mkt-liq', note: 'WGT-MKT-007/008 · Apex area 2 line · slot 5 phút cố định' },
@@ -227,13 +227,13 @@
         { name: 'BLK-FLW-SCORE — Top dòng tiền (radar MCMP)', status: 'ok', surface: 'User', cls: '.ifx-flow-card, .ifx-mcmp', file: 'flow-score-top.js', note: 'WGT-FLW-STAT_* / EX_TM_* · 10 block entity' },
         { name: 'BLK-FLW-SMART — Dòng tiền thông minh tóm tắt', status: 'partial', surface: 'User', cls: '.ifx-flow-panel, .ifx-flow-paywall', file: 'widget-renderers.js', note: 'WGT-FLW-001 · premium gate · spec Block D' },
 
-        { name: 'BLK-COM-OVERVIEW — Sidebar tổng quan', status: 'ok', surface: 'User', cls: '.ifx-com-overview--sidebar', file: 'community-page.js', preview: 'com-overview' },
-        { name: 'BLK-COM-BREADTH — Độ rộng sidebar', status: 'ok', surface: 'User', cls: '.ifx-com-breadth-sidebar', file: 'community-page.js', preview: 'mkt-sidebar' },
-        { name: 'BLK-COM-TREND — Xu hướng cộng đồng', status: 'ok', surface: 'User', cls: '.ifx-com-trend-*', file: 'community-page.js', note: 'WGT-COM-001 · treemap + story chips' },
-        { name: 'BLK-COM-ACTIVE — Thành viên tích cực', status: 'ok', surface: 'User', file: 'community-active-members.js', note: 'WGT-COM-002' },
-        { name: 'BLK-COM-EXPERTS — Chuyên gia nổi bật', status: 'ok', surface: 'User', file: 'community-featured-experts.js', note: 'WGT-COM-003' },
-        { name: 'BLK-COM-TOPWL — Top Watchlist mạnh nhất', status: 'ok', surface: 'User', file: 'community-top-watchlist.js', note: 'WGT-COM-004 · Elite' },
-        { name: 'BLK-COM-FEED — Feed bài viết', status: 'ok', surface: 'User', cls: '.ifx-com-card, .ifx-com-feed', file: 'community.css', preview: 'com-card', note: 'Post Card · reaction · share bar' },
+        { name: 'BLK-COM-OVERVIEW — Sidebar tổng quan', status: 'ok', surface: 'User', cls: '.ifx-com-overview--sidebar', file: 'news-page.js', preview: 'com-overview' },
+        { name: 'BLK-COM-BREADTH — Độ rộng sidebar', status: 'ok', surface: 'User', cls: '.ifx-com-breadth-sidebar', file: 'news-page.js', preview: 'mkt-sidebar' },
+        { name: 'BLK-COM-TREND — Xu hướng cộng đồng', status: 'ok', surface: 'User', cls: '.ifx-com-trend-*', file: 'news-page.js', note: 'WGT-COM-001 · treemap + story chips' },
+        { name: 'BLK-COM-ACTIVE — Thành viên tích cực', status: 'ok', surface: 'User', file: 'news-active-members.js', note: 'WGT-COM-002' },
+        { name: 'BLK-COM-EXPERTS — Chuyên gia nổi bật', status: 'ok', surface: 'User', file: 'news-featured-experts.js', note: 'WGT-COM-003' },
+        { name: 'BLK-COM-TOPWL — Top Watchlist mạnh nhất', status: 'ok', surface: 'User', file: 'news-top-watchlist.js', note: 'WGT-COM-004 · Elite' },
+        { name: 'BLK-COM-FEED — Feed bài viết', status: 'ok', surface: 'User', cls: '.ifx-com-card, .ifx-com-feed', file: 'news.css', preview: 'com-card', note: 'Post Card · reaction · share bar' },
 
         { name: 'BLK-STK-HEAD — Giá & sticker CP', status: 'ok', surface: 'User', cls: '.ifx-stock-head, .ifx-stock-panel', file: 'stock.css', preview: 'price-panel' },
         { name: 'BLK-STK-FLOW — Dòng tiền chi tiết CP/Ngành/Họ/Story', status: 'partial', surface: 'User', file: 'stock-page.js, group-page.js', note: 'Net flow sections · entity pages' },
@@ -254,7 +254,7 @@
     {
       id: '14', title: '14 Widgets (WGT-*)', spec: '§14 / §15.14 · widget-registry.js',
       items: [
-        { name: 'WGT-MKT-001 Tổng quan thị trường', status: 'ok', file: 'community-market-overview.js' },
+        { name: 'WGT-MKT-001 Tổng quan thị trường', status: 'ok', file: 'news-market-overview.js' },
         { name: 'WGT-MKT-002 Độ rộng thị trường', status: 'ok', file: 'breadth-block.js' },
         { name: 'WGT-MKT-003 Top biến động', status: 'ok', file: 'widget-renderers.js' },
         { name: 'WGT-MKT-004 Heatmap Ngành', status: 'ok', file: 'market-heatmap.js' },
@@ -274,10 +274,10 @@
         { name: 'WGT-FLW-SUBJ-STORY Thống kê mua/bán ròng theo chủ đề', status: 'ok', file: 'flow-net-top.js' },
         { name: 'WGT-FLW-STAT_* Top dòng tiền vào/ra (8 entity)', status: 'ok', file: 'flow-score-top.js', note: 'CP · Ngành · HST · Story × in/out' },
         { name: 'WGT-FLW-EX_TM_* Dòng tiền TM đột phá (2 live + 6 planned catalog)', status: 'partial', file: 'flow-score-top.js', note: 'Elite · CP in/out có renderer' },
-        { name: 'WGT-COM-001 Xu hướng cộng đồng', status: 'ok', file: 'community-page.js' },
-        { name: 'WGT-COM-002 Thành viên tích cực', status: 'ok', file: 'community-active-members.js' },
-        { name: 'WGT-COM-003 Chuyên gia nổi bật', status: 'ok', file: 'community-featured-experts.js' },
-        { name: 'WGT-COM-004 Top Watchlist mạnh nhất', status: 'ok', file: 'community-top-watchlist.js' },
+        { name: 'WGT-COM-001 Xu hướng cộng đồng', status: 'ok', file: 'news-page.js' },
+        { name: 'WGT-COM-002 Thành viên tích cực', status: 'ok', file: 'news-active-members.js' },
+        { name: 'WGT-COM-003 Chuyên gia nổi bật', status: 'ok', file: 'news-featured-experts.js' },
+        { name: 'WGT-COM-004 Top Watchlist mạnh nhất', status: 'ok', file: 'news-top-watchlist.js' },
         { name: 'WGT-PRF-001 Thông tin hồ sơ', status: 'ok', file: 'profile-sidebar-widgets.js' },
         { name: 'WGT-PRF-002 Gói cước & ưu đãi', status: 'ok', file: 'profile-sidebar-widgets.js' },
         { name: 'WGT-WAT-001 Watchlist', status: 'ok', file: 'watchlist-block.js', preview: 'watchlist-row' }

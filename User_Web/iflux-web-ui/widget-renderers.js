@@ -17,8 +17,8 @@
   /** Seed local mock (community posts + stock comments) for Widget Library preview. */
   function ensureCommunityPreviewDemo(config) {
     if (!(config && config.previewDemo)) return;
-    if (global.IfluxCommunityStore && IfluxCommunityStore.getPosts) {
-      try { IfluxCommunityStore.getPosts(); } catch (e) { /* ignore */ }
+    if (global.IfluxNewsStore && IfluxNewsStore.getPosts) {
+      try { IfluxNewsStore.getPosts(); } catch (e) { /* ignore */ }
     }
     if (!global.IfluxStockStore || !IfluxStockStore.getComments) return;
     var tickers = ['HPG', 'FPT', 'VCB', 'VHM', 'SSI', 'MWG', 'STB', 'VIC'];

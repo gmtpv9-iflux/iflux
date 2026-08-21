@@ -15,8 +15,8 @@
     ecosystems: { public: '/he-sinh-thai', file: '/User_Web/ecosystems/index.html', zone: 'app', auth: true },
     chuDe: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
     stories: { public: '/chu-de', file: '/User_Web/chu-de/index.html', zone: 'app', auth: true },
-    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },
-    communityWrite: { public: '/cong-dong/viet-bai', file: '/User_Web/community/write.html', zone: 'app' },
+    news: { public: '/tin-tuc', file: '/User_Web/news/index.html', zone: 'app' },
+    newsWrite: { public: '/tin-tuc/viet-bai', file: '/User_Web/news/write.html', zone: 'app' },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -44,8 +44,12 @@
     '/sectors': 'sectors',
     '/ecosystems': 'ecosystems',
     '/stories': 'chuDe',
-    '/community': 'community',
-    '/community/write': 'communityWrite',
+    '/cong-dong': 'news',
+    '/cong-dong/viet-bai': 'newsWrite',
+    '/community': 'news',
+    '/community/write': 'newsWrite',
+    '/tin-tuc': 'news',
+    '/tin-tuc/viet-bai': 'newsWrite',
     '/pricing': 'pricing',
     '/faq': 'faq',
     '/loyalty': 'membership',
@@ -70,7 +74,7 @@
     root: 'home',
     landing: 'home',
     'chu-de': 'chuDe',
-    write: 'communityWrite'
+    write: 'newsWrite'
   };
 
   function normalizePath(path) {
@@ -106,6 +110,8 @@
     path = normalizePath(path);
     if (path === '/' || path === '/guest') return ROUTES.home;
     if (LEGACY_PUBLIC[path] && ROUTES[LEGACY_PUBLIC[path]]) return ROUTES[LEGACY_PUBLIC[path]];
+    if (path === '/cong-dong/viet-bai' || path.indexOf('/cong-dong/viet-bai/') === 0) return ROUTES.newsWrite;
+    if (path === '/cong-dong' || path.indexOf('/cong-dong/') === 0) return ROUTES.news;
     var keys = Object.keys(ROUTES);
     var i;
     for (i = 0; i < keys.length; i++) {

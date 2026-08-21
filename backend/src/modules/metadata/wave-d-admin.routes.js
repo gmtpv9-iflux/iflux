@@ -117,59 +117,59 @@ function createCommunityOpsAdminRouter(deps) {
   const router = express.Router();
   const perm = permFactory(deps);
 
-  router.get('/comments', perm('community.comments.view'), async (req, res, next) => {
+  router.get('/comments', perm('news.comments.view'), async (req, res, next) => {
     try {
       const items = await svc.listComments();
       return success(res, { items, total: items.length });
     } catch (e) { next(e); }
   });
-  router.delete('/comments/:id', perm('community.comments.delete'), async (req, res, next) => {
+  router.delete('/comments/:id', perm('news.comments.delete'), async (req, res, next) => {
     try { return success(res, await svc.deleteComment(req.params.id)); }
     catch (e) { next(e); }
   });
 
-  router.get('/reports', perm('community.reports.view'), async (req, res, next) => {
+  router.get('/reports', perm('news.reports.view'), async (req, res, next) => {
     try {
       const items = await svc.listReports();
       return success(res, { items, total: items.length });
     } catch (e) { next(e); }
   });
-  router.patch('/reports/:id', perm('community.reports.edit'), validate(z.object({
+  router.patch('/reports/:id', perm('news.reports.edit'), validate(z.object({
     body: z.object({ status: z.string().max(20).optional(), reason: z.string().optional() })
   })), async (req, res, next) => {
     try { return success(res, { item: await svc.updateReport(req.params.id, req.validated.body) }); }
     catch (e) { next(e); }
   });
 
-  router.get('/content-dashboard', perm('community.content_dashboard.view'), async (req, res, next) => {
+  router.get('/content-dashboard', perm('news.content_dashboard.view'), async (req, res, next) => {
     try { return success(res, svc.contentDashboard()); }
     catch (e) { next(e); }
   });
 
-  router.get('/rss-category-sync', perm('community.rss_category_sync.view'), async (req, res, next) => {
+  router.get('/rss-category-sync', perm('news.rss_category_sync.view'), async (req, res, next) => {
     try {
       const items = await svc.listRssSync();
       return success(res, { items, total: items.length });
     } catch (e) { next(e); }
   });
-  router.patch('/rss-category-sync/:id', perm('community.rss_category_sync.edit'), validate(z.object({
+  router.patch('/rss-category-sync/:id', perm('news.rss_category_sync.edit'), validate(z.object({
     body: z.object({ name: z.string().min(1).max(200).optional(), config_json: z.record(z.any()).optional() })
   })), async (req, res, next) => {
     try { return success(res, { item: await svc.updateRssSync(req.params.id, req.validated.body) }); }
     catch (e) { next(e); }
   });
-  router.post('/rss-category-sync/:id/execute', perm('community.rss_category_sync.execute'), async (req, res, next) => {
+  router.post('/rss-category-sync/:id/execute', perm('news.rss_category_sync.execute'), async (req, res, next) => {
     try { return success(res, { item: await svc.executeRssSync(req.params.id) }); }
     catch (e) { next(e); }
   });
 
-  router.get('/rss-article-schema', perm('community.rss_article_schema.view'), async (req, res, next) => {
+  router.get('/rss-article-schema', perm('news.rss_article_schema.view'), async (req, res, next) => {
     try {
       const items = await svc.listRssSchema();
       return success(res, { items, total: items.length });
     } catch (e) { next(e); }
   });
-  router.patch('/rss-article-schema/:id', perm('community.rss_article_schema.edit'), validate(z.object({
+  router.patch('/rss-article-schema/:id', perm('news.rss_article_schema.edit'), validate(z.object({
     body: z.object({ name: z.string().min(1).max(200).optional(), mapping_json: z.record(z.any()).optional() })
   })), async (req, res, next) => {
     try { return success(res, { item: await svc.updateRssSchema(req.params.id, req.validated.body) }); }

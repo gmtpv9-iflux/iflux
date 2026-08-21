@@ -628,7 +628,7 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   color: var(--ix-text-muted);
   font-size: var(--ifx-font-size-14);
   font-weight: var(--ifx-font-weight-semibold);
-  font-family: var(--ix-font);
+  font-family: var(--ifx-font-primary);
   cursor: pointer;
   transition: background .15s, color .15s;
 }
@@ -648,7 +648,7 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
 .ifx-mine-val {
   font-size: var(--ifx-font-size-14);
   color: var(--ix-text-primary);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   padding: var(--ifx-space-8) 0 0;
   line-height: 1.5;
   word-break: break-word;

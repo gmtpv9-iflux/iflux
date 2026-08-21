@@ -12,7 +12,7 @@ var HOME = { name: 'Trang chủ', path: '/trang-chu' };
 
 var HUB = {
   market: { name: 'Thị trường', path: '/thi-truong' },
-  community: { name: 'Cộng đồng', path: '/cong-dong' },
+  news: { name: 'Tin tức', path: '/tin-tuc' },
   flow: { name: 'Dòng tiền', path: '/dong-tien' },
   membership: { name: 'Thành viên', path: '/thanh-vien' },
   faq: { name: 'Hỏi đáp', path: '/hoi-dap' },
@@ -73,7 +73,7 @@ function resolveBreadcrumb(input) {
     if (h) pushUnique(items, crumb(h.name, h.path, origin));
   }
 
-  if (entityType === 'article' || /^\/cong-dong\/bai-viet\//i.test(path)) {
+  if (entityType === 'article' || /^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(path)) {
     /* Leaf bài viết; HOME crumb = Trang chủ /trang-chu */
     pushUnique(items, crumb(title || 'Bài viết', path, origin));
   } else if (pageKey === 'stock-detail' || /^\/co-phieu\/[^/]+/i.test(path)) {
@@ -94,11 +94,11 @@ function resolveBreadcrumb(input) {
   } else if (pageKey === 'cau-chuyen-detail' || /^\/cau-chuyen\/[^/]+/i.test(path) || /^\/chu-de\/[^/]+/i.test(path)) {
     addHub('cau-chuyen');
     pushUnique(items, crumb(hints.storyName || title || path.split('/').pop(), path, origin));
-  } else if (pageKey === 'com-author' || /^\/cong-dong\/tac-gia\//i.test(path)) {
+  } else if (pageKey === 'com-author' || /^\/(?:tin-tuc|cong-dong)\/tac-gia\//i.test(path)) {
     pushUnique(items, crumb(hints.authorName || title || 'Tác giả', path, origin));
-  } else if (pageKey === 'com-cat' || /^\/cong-dong\/danh-muc\//i.test(path)) {
+  } else if (pageKey === 'com-cat' || /^\/(?:tin-tuc|cong-dong)\/danh-muc\//i.test(path)) {
     pushUnique(items, crumb(hints.categoryName || title || 'Danh mục', path, origin));
-  } else if (pageKey === 'com-topic' || /^\/cong-dong\/chu-de\//i.test(path)) {
+  } else if (pageKey === 'com-topic' || /^\/(?:tin-tuc|cong-dong)\/chu-de\//i.test(path)) {
     pushUnique(items, crumb(hints.topicName || title || 'Chủ đề', path, origin));
   } else if (pageKey === 'stocks') {
     addHub('market');

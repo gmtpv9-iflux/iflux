@@ -46,7 +46,7 @@ async function counts(userId) {
     `SELECT
        (SELECT COUNT(*)::int FROM user_follows WHERE followee_id = $1) AS followers,
        (SELECT COUNT(*)::int FROM user_follows WHERE follower_id = $1) AS following,
-       (SELECT COUNT(*)::int FROM community_posts
+       (SELECT COUNT(*)::int FROM news_posts
          WHERE user_id = $1 AND status IN ('published', 'published_rss')) AS posts`,
     [userId]
   );

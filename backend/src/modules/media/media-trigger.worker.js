@@ -20,7 +20,7 @@ async function runAutoImportWorker(config) {
 
     // 1. Quét tìm bài viết thỏa mãn: PENDING, FAILED (chưa quá 3 lần), hoặc PROCESSING bị kẹt > 15 phút
     const res = await client.query(
-      `SELECT id FROM community_posts
+      `SELECT id FROM news_posts
        WHERE media_status = 'PENDING'
           OR (media_status = 'FAILED' AND media_retry_count < $1)
           OR (media_status = 'PROCESSING' AND updated_at < NOW() - INTERVAL '15 minutes')
@@ -34,7 +34,7 @@ async function runAutoImportWorker(config) {
 
       // 2. Chuyển trạng thái sang PROCESSING để xác nhận nhận việc
       await client.query(
-        `UPDATE community_posts 
+        `UPDATE news_posts 
          SET media_status = 'PROCESSING', updated_at = NOW() 
          WHERE id = ANY($1::varchar[])`,
         [lockedIds]
@@ -61,7 +61,7 @@ async function runAutoImportWorker(config) {
 
       // Đánh dấu hoàn tất khi bài viết đã được nội địa hóa ảnh sạch sẽ 100%
       await query(
-        `UPDATE community_posts 
+        `UPDATE news_posts 
          SET media_status = 'COMPLETED', media_last_error = NULL, updated_at = NOW() 
          WHERE id = $1`,
         [articleId]
@@ -69,7 +69,7 @@ async function runAutoImportWorker(config) {
     } catch (err) {
       // Tăng số lần thử lại và lưu vết lỗi phục vụ theo dõi
       await query(
-        `UPDATE community_posts 
+        `UPDATE news_posts 
          SET media_status = 'FAILED', 
              media_retry_count = media_retry_count + 1, 
              media_last_error = $2,

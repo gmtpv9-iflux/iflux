@@ -45,24 +45,24 @@
         '/User_Web/iflux-web-ui/market-components.css'
       ]
     },
-    'WGT-COM-001': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js',
+    'WGT-NEWS-001': {
+      lazyModule: '/User_Web/iflux-web-ui/widgets/news-stock-heat/index.js',
       css: [
-        '/User_Web/iflux-web-ui/community.css',
+        '/User_Web/iflux-web-ui/news.css',
         '/User_Web/iflux-web-ui/block-templates.css',
         '/User_Web/iflux-web-ui/watchlist.css'
       ]
     },
-    'WGT-COM-CHUDE-TOP': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js',
+    'WGT-NEWS-TOPIC-TOP': {
+      lazyModule: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js',
       css: [
-        '/User_Web/iflux-web-ui/community.css',
+        '/User_Web/iflux-web-ui/news.css',
         '/User_Web/iflux-web-ui/block-templates.css'
       ]
     },
-    'WGT-COM-002': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-active/index.js',
-      css: ['/User_Web/iflux-web-ui/community.css']
+    'WGT-NEWS-002': {
+      lazyModule: '/User_Web/iflux-web-ui/widgets/news-active/index.js',
+      css: ['/User_Web/iflux-web-ui/news.css']
     }
   };
 

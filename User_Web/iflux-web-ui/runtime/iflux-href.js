@@ -106,7 +106,7 @@
     global.addEventListener('iflux-shell-ready', function () {
       scheduleReconcile(document);
     });
-    global.addEventListener('iflux-community-remount-widgets', function () {
+    global.addEventListener('iflux-news-remount-widgets', function () {
       scheduleReconcile(document);
     });
     global.addEventListener('iflux-incoming-referrer', function () {

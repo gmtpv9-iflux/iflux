@@ -47,7 +47,7 @@
     { id: 'NORM-CONTENT-ARTICLE', label: 'Bài tin chuẩn hóa (Content Engine)', group: 'Nội dung', inputs: ['RAW-CONTENT-VNSTOCK', 'RAW-CONTENT-INTERNAL'], fields: ['article_id', 'title', 'excerpt', 'url', 'published_at', 'source', 'topics[]', 'symbols[]'], adminKeys: [] },
     { id: 'NORM-CONTENT-TOPIC', label: 'Topic tiền-Story', group: 'Nội dung', inputs: ['NORM-CONTENT-ARTICLE'], fields: ['topic_id', 'slug', 'label', 'status', 'interest_score', 'article_count'], adminKeys: ['topic_promote_min_articles'] },
     { id: 'NORM-CONTENT-STORY', label: 'Story entity + mapping mã', group: 'Nội dung', inputs: ['NORM-CONTENT-TOPIC', 'NORM-CONTENT-ARTICLE'], fields: ['story_id', 'slug', 'lifecycle', 'mappings[]', 'flow_net_value', 'top_relevance'], adminKeys: ['topic_auto_promote', 'topic_auto_promote_min_interest', 'topic_auto_promote_min_stocks'] },
-    { id: 'NORM-COMMUNITY', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', inputs: ['NORM-STOCK-SNAP', 'NORM-CONTENT-ARTICLE'], fields: ['posts[]', 'trending_tickers[]', 'experts[]'], adminKeys: ['community_rank_window'] },
+    { id: 'NORM-NEWS', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', inputs: ['NORM-STOCK-SNAP', 'NORM-CONTENT-ARTICLE'], fields: ['posts[]', 'trending_tickers[]', 'experts[]'], adminKeys: ['community_rank_window'] },
     { id: 'NORM-WATCHLIST', label: 'Watchlist user', group: 'Cá nhân', inputs: ['NORM-STOCK-SNAP'], fields: ['folders[]', 'memberships{}'], adminKeys: ['watchlist_max_items'] }
   ];
 
@@ -110,10 +110,10 @@
     'WGT-FLW-STAT_CHUDE_OUT': 'flow_stat_chu_de_out',
     'WGT-FLW-EX_TM_IN': 'flow_ex_tm_in',
     'WGT-FLW-EX_TM_OUT': 'flow_ex_tm_out',
-    'WGT-COM-001': 'community_trending',
-    'WGT-COM-002': 'community_active',
-    'WGT-COM-003': 'community_experts',
-    'WGT-COM-004': 'community_topwl',
+    'WGT-NEWS-001': 'community_trending',
+    'WGT-NEWS-002': 'community_active',
+    'WGT-NEWS-003': 'community_experts',
+    'WGT-NEWS-004': 'community_topwl',
     'WGT-WAT-001': 'watchlist',
     'BLK-MKT-OVERVIEW': 'market_overview',
     'BLK-MKT-BREADTH': 'breadth',
@@ -131,14 +131,14 @@
     'BLK-FLW-SCORE-BASIC': 'flow_score_basic',
     'BLK-FLW-SCORE-ADV': 'flow_score_adv',
     'BLK-FLW-SCORE-EX': 'flow_score_ex',
-    'BLK-COM-TRENDING': 'community_trending',
-    'BLK-COM-CHUDE-TOP': 'community_story_top',
-    'BLK-COM-NEWS': 'community_news',
-    'BLK-COM-EXPERTS': 'community_experts',
-    'BLK-COM-ACTIVE': 'community_active',
-    'BLK-COM-OVERVIEW': 'market_overview',
-    'BLK-COM-BREADTH': 'breadth',
-    'BLK-COM-TOPWL': 'community_topwl',
+    'BLK-NEWS-TRENDING': 'community_trending',
+    'BLK-NEWS-TOPIC-TOP': 'community_story_top',
+    'BLK-NEWS-PAGE': 'community_news',
+    'BLK-NEWS-EXPERTS': 'community_experts',
+    'BLK-NEWS-ACTIVE': 'community_active',
+    'BLK-NEWS-OVERVIEW': 'market_overview',
+    'BLK-NEWS-BREADTH': 'breadth',
+    'BLK-NEWS-TOPWL': 'community_topwl',
     'BLK-LOY-INTRO': 'loyalty_intro',
     'BLK-LOY-AFFILIATE': 'loyalty_affiliate',
     'BLK-FAQ-LIST': 'faq_list',
@@ -146,8 +146,8 @@
   };
 
   var ALGORITHMS = [
-    { id: 'ALG-MKT-OVERVIEW', label: 'Tổng quan thị trường (IG/PG/Breadth)', group: 'Thị trường', outputs: ['WGT-MKT-001', 'BLK-MKT-OVERVIEW', 'BLK-COM-OVERVIEW'], normalized: ['NORM-INDEX-SNAPSHOT', 'NORM-MARKET-AGG', 'NORM-BREADTH'], adminKeys: ['index_weight_method'] },
-    { id: 'ALG-MKT-BREADTH', label: 'Độ rộng thị trường', group: 'Thị trường', outputs: ['WGT-MKT-002', 'BLK-MKT-BREADTH', 'BLK-COM-BREADTH'], normalized: ['NORM-BREADTH'], adminKeys: [] },
+    { id: 'ALG-MKT-OVERVIEW', label: 'Tổng quan thị trường (IG/PG/Breadth)', group: 'Thị trường', outputs: ['WGT-MKT-001', 'BLK-MKT-OVERVIEW', 'BLK-NEWS-OVERVIEW'], normalized: ['NORM-INDEX-SNAPSHOT', 'NORM-MARKET-AGG', 'NORM-BREADTH'], adminKeys: ['index_weight_method'] },
+    { id: 'ALG-MKT-BREADTH', label: 'Độ rộng thị trường', group: 'Thị trường', outputs: ['WGT-MKT-002', 'BLK-MKT-BREADTH', 'BLK-NEWS-BREADTH'], normalized: ['NORM-BREADTH'], adminKeys: [] },
     { id: 'ALG-MKT-HEATMAP', label: 'Heatmap ngành / họ / story', group: 'Thị trường', outputs: ['WGT-MKT-004', 'WGT-MKT-005', 'WGT-MKT-006', 'BLK-MKT-HEAT-SECTOR', 'BLK-MKT-HEAT-FAMILY', 'BLK-MKT-HEAT-CHUDE'], normalized: ['NORM-HEATMAP'], adminKeys: ['heatmap_min_members'] },
     { id: 'ALG-MKT-LIQ', label: 'Thanh khoản lũy kế phiên', group: 'Thị trường', outputs: ['WGT-MKT-007', 'WGT-MKT-008', 'BLK-MKT-LIQ'], normalized: ['NORM-LIQUIDITY'], adminKeys: ['liq_slot_minutes'] },
     { id: 'ALG-MKT-TOP10', label: 'Top 10 hiệu suất', group: 'Thị trường', outputs: ['WGT-TOP-001', 'WGT-TOP-002', 'WGT-TOP-003', 'BLK-MKT-RANKINGS'], normalized: ['NORM-HEATMAP'], adminKeys: [] },
@@ -157,15 +157,15 @@
     { id: 'ALG-FLW-STATS', label: 'TOP 10 dòng tiền vào/ra', group: 'Dòng tiền', outputs: ['WGT-FLW-STAT_STOCK_IN', 'WGT-FLW-STAT_STOCK_OUT', 'WGT-FLW-STAT_SECTOR_IN', 'WGT-FLW-STAT_SECTOR_OUT', 'WGT-FLW-STAT_HST_IN', 'WGT-FLW-STAT_HST_OUT', 'WGT-FLW-STAT_STORY_IN', 'WGT-FLW-STAT_STORY_OUT'], normalized: ['NORM-FLOW-NET'], adminKeys: ['smart_money_threshold'] },
     { id: 'ALG-FLW-ZONE', label: 'Ngữ cảnh vùng Hỗ trợ/Kháng cự', group: 'Dòng tiền', outputs: ['WGT-FLW-CTX', 'BLK-FLW-MKT-SIDE'], normalized: ['NORM-MARKET-AGG'], adminKeys: [] },
     { id: 'ALG-FLW-SCORE', label: 'Score dòng tiền CP', group: 'Dòng tiền', outputs: ['BLK-FLW-SCORE-BASIC', 'BLK-FLW-SCORE-ADV', 'BLK-FLW-SCORE-EX'], normalized: ['NORM-FLOW-NET', 'NORM-STOCK-SNAP'], adminKeys: ['smart_money_threshold'] },
-    { id: 'ALG-COM-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-COM-001', 'BLK-COM-TRENDING', 'BLK-COM-NEWS'], normalized: ['NORM-COMMUNITY', 'NORM-CONTENT-ARTICLE'], adminKeys: ['community_rank_window'] },
-    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-COM-CHUDE-TOP', 'BLK-COM-CHUDE-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-COMMUNITY', 'NORM-CONTENT-ARTICLE'], adminKeys: ['topic_promote_min_articles', 'interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
+    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001', 'BLK-NEWS-TRENDING', 'BLK-NEWS-PAGE'], normalized: ['NORM-NEWS', 'NORM-CONTENT-ARTICLE'], adminKeys: ['community_rank_window'] },
+    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP', 'BLK-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS', 'NORM-CONTENT-ARTICLE'], adminKeys: ['topic_promote_min_articles', 'interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
     { id: 'ALG-STORY-RELEVANCE', label: 'Relevance Score Story ↔ Stock (cumulative)', group: 'Nội dung', outputs: ['WGT-FLW-SUBJ-STORY', 'WGT-MKT-006', 'WGT-TOP-003'], normalized: ['NORM-CONTENT-STORY', 'NORM-CONTENT-ARTICLE', 'NORM-FLOW-NET'], adminKeys: ['relevance_w_mention', 'relevance_w_follow', 'relevance_keep_min', 'topic_auto_promote', 'topic_auto_promote_min_interest', 'topic_auto_promote_min_stocks'] },
-    { id: 'ALG-COM-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-COM-002', 'WGT-COM-003', 'BLK-COM-EXPERTS', 'BLK-COM-ACTIVE'], normalized: ['NORM-COMMUNITY'], adminKeys: [] },
-    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'BLK-COM-TOPWL', 'WGT-COM-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
+    { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-NEWS-002', 'WGT-NEWS-003', 'BLK-NEWS-EXPERTS', 'BLK-NEWS-ACTIVE'], normalized: ['NORM-NEWS'], adminKeys: [] },
+    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'BLK-NEWS-TOPWL', 'WGT-NEWS-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
   ];
 
   var STATIC_DISPLAY_BLOCKS = [
-    { id: 'BLK-COM-NEWS', label: 'Tin tức', kind: 'page', group: 'Block trang · Cộng đồng', minTier: 'guest', page: 'community' },
+    { id: 'BLK-NEWS-PAGE', label: 'Tin tức', kind: 'page', group: 'Block trang · Tin tức', minTier: 'guest', page: 'news' },
     { id: 'BLK-LOY-INTRO', label: 'Giới thiệu', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
     { id: 'BLK-LOY-AFFILIATE', label: 'Affiliate', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
     { id: 'BLK-FAQ-LIST', label: 'Danh sách FAQ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' },
@@ -401,7 +401,7 @@
       out: [f('foreign', 'Khối ngoại (net)', 'tiền'), f('institutional', 'Tổ chức (net)', 'tiền'), f('proprietary', 'Tự doanh (net)', 'tiền'), f('retail', 'Cá nhân (net)', 'tiền')],
       spec: 'Tổng hợp net = mua − bán theo 4 chủ thể (Khối ngoại / Tổ chức / Tự doanh / Cá nhân) trong phiên gần nhất.'
     },
-    'NORM-COMMUNITY': {
+    'NORM-NEWS': {
       inp: [fi('ticker', 'Mã CK được nhắc', 'text', 'L2', 'NORM-STOCK-SNAP'), fi('post_id', 'Bài viết cộng đồng', 'text', 'EXT', 'Community DB'), fi('reaction', 'Lượt tương tác', 'số', 'EXT', 'Community DB'), fi('id', 'Bài Content Engine', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE')],
       out: [f('posts[]', 'Bài viết', 'mảng'), f('trending_tickers[]', 'Mã trending', 'mảng'), f('experts[]', 'Chuyên gia', 'mảng')],
       spec: 'Tổng hợp UGC + bài Content Engine (news-card); xếp trending trong cửa sổ community_rank_window ngày.'
@@ -485,22 +485,22 @@
       out: [f('ticker', 'Mã CK', 'text'), f('score', 'Điểm dòng tiền', 'số'), f('tier', 'Cấp (basic/adv/ex)', 'enum')],
       spec: 'score = tổng hợp cường độ dòng tiền chủ động + tương quan giá; phân tầng theo quyền hiển thị.'
     },
-    'ALG-COM-FEED': {
-      inp: [fi('trending_tickers[]', 'Mã trending', 'mảng', 'L2', 'NORM-COMMUNITY'), fi('id', 'Bài Content', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE'), fi('change_pct', '% thay đổi mã', '%', 'L2', 'NORM-STOCK-SNAP')],
+    'ALG-NEWS-FEED': {
+      inp: [fi('trending_tickers[]', 'Mã trending', 'mảng', 'L2', 'NORM-NEWS'), fi('id', 'Bài Content', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE'), fi('change_pct', '% thay đổi mã', '%', 'L2', 'NORM-STOCK-SNAP')],
       out: [f('ticker', 'Mã CK', 'text'), f('mention_count', 'Lượt quan tâm', 'số'), f('stock_perf', 'Hiệu suất mã', '%'), f('news_cards[]', 'Thẻ tin Content', 'mảng')],
       spec: 'size = mention_count trong cửa sổ community_rank_window; color = stock_perf; news = Content Engine feed.'
     },
     'ALG-TOPIC-TREND': {
       inp: [
         fi('slug', 'Topic / Story', 'text', 'L2', 'NORM-CONTENT-TOPIC'),
-        fi('views', 'Lượt xem', 'số', 'L2', 'NORM-COMMUNITY'),
-        fi('searches', 'Lượt tìm kiếm', 'số', 'L2', 'NORM-COMMUNITY'),
-        fi('likes', 'Lượt thích', 'số', 'L2', 'NORM-COMMUNITY'),
-        fi('favorites', 'Yêu thích', 'số', 'L2', 'NORM-COMMUNITY'),
-        fi('shares', 'Chia sẻ', 'số', 'L2', 'NORM-COMMUNITY'),
-        fi('comments', 'Bình luận', 'số', 'L2', 'NORM-COMMUNITY'),
+        fi('views', 'Lượt xem', 'số', 'L2', 'NORM-NEWS'),
+        fi('searches', 'Lượt tìm kiếm', 'số', 'L2', 'NORM-NEWS'),
+        fi('likes', 'Lượt thích', 'số', 'L2', 'NORM-NEWS'),
+        fi('favorites', 'Yêu thích', 'số', 'L2', 'NORM-NEWS'),
+        fi('shares', 'Chia sẻ', 'số', 'L2', 'NORM-NEWS'),
+        fi('comments', 'Bình luận', 'số', 'L2', 'NORM-NEWS'),
         fi('period', 'Cửa sổ Ngày|Tuần|Tháng', 'enum', 'L3', 'ALG-TOPIC-TREND'),
-        fi('top_n', 'Top N', 'số', 'L4', 'WGT-COM-CHUDE-TOP')
+        fi('top_n', 'Top N', 'số', 'L4', 'WGT-NEWS-TOPIC-TOP')
       ],
       out: [
         f('story', 'Tên Story/Topic', 'text'),
@@ -520,7 +520,7 @@
         'period_days = Ngày→1 · Tuần→7 · Tháng→30.\n' +
         'top_n = số dòng tối đa (mặc định 10).\n' +
         'score = views×1 + searches×3 + likes×5 + favorites×8 + shares×8 + comments×10.\n' +
-        'rank = vị trí sau xếp score giảm dần, lấy Top N. Cấp WGT-COM-CHUDE-TOP.'
+        'rank = vị trí sau xếp score giảm dần, lấy Top N. Cấp WGT-NEWS-TOPIC-TOP.'
     },
     'ALG-STORY-RELEVANCE': {
       inp: [
@@ -545,8 +545,8 @@
       spec: 'relevance = mentions×relevance_w_mention×confidence + views×1 + likes×5 + favorites×8 + shares×8 + comments×10 + follow×12 (lũy kế).\n' +
         'mappings[] ghi content_story_mappings; Admin có thể duyệt/loại. Auto-promote khi topic_auto_promote + đủ Interest + ≥N mã.'
     },
-    'ALG-COM-MEMBERS': {
-      inp: [fi('experts[]', 'Chuyên gia', 'mảng', 'L2', 'NORM-COMMUNITY'), fi('posts[]', 'Bài viết & tương tác', 'mảng', 'L2', 'NORM-COMMUNITY')],
+    'ALG-NEWS-MEMBERS': {
+      inp: [fi('experts[]', 'Chuyên gia', 'mảng', 'L2', 'NORM-NEWS'), fi('posts[]', 'Bài viết & tương tác', 'mảng', 'L2', 'NORM-NEWS')],
       out: [f('name', 'Thành viên / chuyên gia', 'text'), f('metric', 'Điểm / lượt thích', 'số'), f('rank', 'Xếp hạng', 'số')],
       spec: 'metric = điểm tích cực−tiêu cực (thành viên) hoặc Σ lượt thích (chuyên gia). Xếp giảm dần.'
     },

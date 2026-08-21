@@ -41,10 +41,12 @@
     '/ho-co-phieu': '/User_Web/ecosystems/',
     '/ecosystems': '/User_Web/ecosystems/',
     '/chu-de': '/User_Web/chu-de/',
-    '/cong-dong': '/User_Web/community/',
-    '/community': '/User_Web/community/',
-    '/cong-dong/viet-bai': '/User_Web/community/',
-    '/community/write': '/User_Web/community/',
+    '/tin-tuc': '/User_Web/news/',
+    '/cong-dong': '/User_Web/news/',
+    '/community': '/User_Web/news/',
+    '/tin-tuc/viet-bai': '/User_Web/news/',
+    '/cong-dong/viet-bai': '/User_Web/news/',
+    '/community/write': '/User_Web/news/',
     '/goi-cuoc': '/User_Web/pricing/',
     '/pricing': '/User_Web/pricing/',
     '/hoi-dap': '/User_Web/faq/',
@@ -104,8 +106,8 @@
     if (/^\/nganh\//i.test(path) || /^\/sectors\//i.test(path)) return '/User_Web/sector/';
     if (/^\/he-sinh-thai\//i.test(path) || /^\/ho-co-phieu\//i.test(path) || /^\/ecosystems\//i.test(path)) return '/User_Web/family/';
     if (/^\/chu-de\//i.test(path) || /^\/stories\//i.test(path)) return '/User_Web/chu-de/';
-    if (/^\/cong-dong\/bai-viet\//i.test(path) || /^\/community\/posts\//i.test(path)) return '/User_Web/community/';
-    if (/^\/cong-dong\//i.test(path) || /^\/community\//i.test(path)) return '/User_Web/community/';
+    if (/^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(path) || /^\/community\/posts\//i.test(path)) return '/User_Web/news/';
+    if (/^\/(?:tin-tuc|cong-dong)\//i.test(path) || /^\/community\//i.test(path)) return '/User_Web/news/';
 
     return null;
   }

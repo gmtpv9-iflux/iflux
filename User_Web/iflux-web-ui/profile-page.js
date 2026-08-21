@@ -6,7 +6,7 @@
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  var _ctx = { userId: null, stockBase: '../stock/', communityBase: '../community/', readOnlyFollowing: false };
+  var _ctx = { userId: null, stockBase: '../stock/', communityBase: '../news/', readOnlyFollowing: false };
 
   function stockPageHref(ticker) {
     var c = global.IfluxSeoUrl
@@ -152,7 +152,7 @@
     opts = opts || {};
     _ctx.userId = opts.userId || null;
     _ctx.stockBase = opts.stockBase || '../stock/';
-    _ctx.communityBase = opts.communityBase || '../community/';
+    _ctx.communityBase = opts.communityBase || '../news/';
     _ctx.readOnlyFollowing = !!opts.readOnlyFollowing;
     _ctx.profileBase = opts.profileBase || '../account/';
     syncFollowingCount();
@@ -162,7 +162,7 @@
     }
     if (!opts.skipFollowing) renderFollowing();
 
-    document.addEventListener('iflux-community-change', function () {
+    document.addEventListener('iflux-news-change', function () {
       renderRecentPosts();
     });
 

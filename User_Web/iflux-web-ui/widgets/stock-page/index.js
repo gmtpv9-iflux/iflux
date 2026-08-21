@@ -43,12 +43,12 @@ export async function mount(el) {
     return { unmount: function () { if (el) el.innerHTML = ''; } };
   }
   /* Entity Tin tức — FeedCard theo ticker (Data Provider), không dump posts?limit=100 */
-  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadEntityFeed) {
+  if (window.IfluxNewsApiBridge && IfluxNewsApiBridge.loadEntityFeed) {
     var tk = (window.IfluxSeoUrl && IfluxSeoUrl.parseStockTicker && IfluxSeoUrl.parseStockTicker())
       || (window.IfluxStockPage && IfluxStockPage.currentTicker)
       || null;
     try {
-      await IfluxCommunityApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
+      await IfluxNewsApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
     } catch (eHyd) { /* seed fallback */ }
   }
   /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho

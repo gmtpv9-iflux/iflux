@@ -26,7 +26,7 @@
     m = path.match(/\/community\/ecosystems\/([^/?#]+)/i);
     if (m) return '/he-sinh-thai/' + encodeURIComponent(decodeURIComponent(m[1]));
     m = path.match(/\/community\/stories\/([^/?#]+)/i);
-    if (m) return '/cong-dong/bai-viet/' + encodeURIComponent(decodeURIComponent(m[1]));
+    if (m) return '/tin-tuc/bai-viet/' + encodeURIComponent(decodeURIComponent(m[1]));
     m = path.match(/\/stories\/([^/?#]+)/i);
     if (m) return '/chu-de/' + encodeURIComponent(decodeURIComponent(m[1]));
     return null;
@@ -34,6 +34,6 @@
 
   var target = parseEntity();
   if (target) redirectTo(target);
-  else if (global.IfluxRoutes) redirectTo(IfluxRoutes.to('community'));
-  else redirectTo('/cong-dong');
+    else if (global.IfluxRoutes) redirectTo(IfluxRoutes.to('news'));
+  else redirectTo('/tin-tuc');
 })(window);

@@ -13,7 +13,7 @@
 
   function pageForWidget(id) {
     if (/^WGT-FLW|^WGT-FLOW/.test(id)) return ['flow'];
-    if (/^WGT-COM/.test(id)) return ['community'];
+    if (/^WGT-COM/.test(id)) return ['news'];
     if (/^WGT-WAT/.test(id)) return ['dashboard'];
     return ['market', 'dashboard'];
   }

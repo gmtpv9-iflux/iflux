@@ -45,8 +45,8 @@ module.exports = {
   publish,
   resetForTests,
   EVENTS: {
-    COMMUNITY_POST_PUBLISHED: 'community.post.published',
-    COMMUNITY_POST_SHARED: 'community.post.shared',
+    NEWS_POST_PUBLISHED: 'news.post.published',
+    NEWS_POST_SHARED: 'news.post.shared',
     ENTITY_COMMENT_CREATED: 'entity.comment.created',
     COMMENT_LIKED: 'comment.liked'
   }

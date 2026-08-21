@@ -33,11 +33,11 @@ const listEnums = crudList('meta_enums', 'code ASC');
 const listSectorTypes = crudList('meta_sector_types', 'code ASC');
 const listThemes = crudList('meta_themes', 'code ASC');
 const listLifecycle = crudList('meta_story_lifecycle', 'sort_order ASC, code ASC');
-const listComments = crudList('community_admin_comments', 'updated_at DESC');
-const listReports = crudList('community_admin_reports', 'updated_at DESC');
-const listRssSync = crudList('community_rss_sync_jobs', 'code ASC');
+const listComments = crudList('news_admin_comments', 'updated_at DESC');
+const listReports = crudList('news_admin_reports', 'updated_at DESC');
+const listRssSync = crudList('news_rss_sync_jobs', 'code ASC');
 
-const articleSchemaFields = require('../community/community-article-schema-fields');
+const articleSchemaFields = require('../news/news-article-schema-fields');
 
 function enrichRssSchemaRow(row) {
   if (!row) return row;
@@ -54,7 +54,7 @@ function enrichRssSchemaRow(row) {
 async function ensureDefaultArticleSchema() {
   const code = articleSchemaFields.SCHEMA_CODE;
   const existing = await query(
-    `SELECT * FROM community_rss_schema WHERE code = $1 LIMIT 1`,
+    `SELECT * FROM news_rss_schema WHERE code = $1 LIMIT 1`,
     [code]
   );
   const row = existing.rows[0] || null;
@@ -70,27 +70,27 @@ async function ensureDefaultArticleSchema() {
 
   if (row) {
     const res = await query(
-      `UPDATE community_rss_schema
+      `UPDATE news_rss_schema
        SET name = $2, mapping_json = $3::jsonb, updated_at = NOW()
        WHERE id = $1
        RETURNING *`,
-      [row.id, 'Schema bài viết Cộng đồng (community_posts)', JSON.stringify(next)]
+      [row.id, 'Schema bài viết Cộng đồng (news_posts)', JSON.stringify(next)]
     );
     return enrichRssSchemaRow(res.rows[0]);
   }
 
   const ins = await query(
-    `INSERT INTO community_rss_schema (code, name, mapping_json)
+    `INSERT INTO news_rss_schema (code, name, mapping_json)
      VALUES ($1, $2, $3::jsonb)
      RETURNING *`,
-    [code, 'Schema bài viết Cộng đồng (community_posts)', JSON.stringify(next)]
+    [code, 'Schema bài viết Cộng đồng (news_posts)', JSON.stringify(next)]
   );
   return enrichRssSchemaRow(ins.rows[0]);
 }
 
 async function listRssSchema() {
   await ensureDefaultArticleSchema();
-  const rows = (await query(`SELECT * FROM community_rss_schema ORDER BY code ASC`)).rows || [];
+  const rows = (await query(`SELECT * FROM news_rss_schema ORDER BY code ASC`)).rows || [];
   return rows.map(enrichRssSchemaRow);
 }
 
@@ -194,14 +194,14 @@ async function updateBrand(payload) {
 }
 
 async function deleteComment(id) {
-  return crudDelete('community_admin_comments', id);
+  return crudDelete('news_admin_comments', id);
 }
 
 async function updateReport(id, input) {
-  const cur = await crudGet('community_admin_reports', id);
+  const cur = await crudGet('news_admin_reports', id);
   if (!cur) throw AppError.notFound('Không tìm thấy báo cáo');
   const res = await query(
-    `UPDATE community_admin_reports SET status=$2, reason=$3, updated_at=NOW() WHERE id=$1 RETURNING *`,
+    `UPDATE news_admin_reports SET status=$2, reason=$3, updated_at=NOW() WHERE id=$1 RETURNING *`,
     [
       id,
       input.status != null ? String(input.status).trim() : cur.status,
@@ -223,10 +223,10 @@ function contentDashboard() {
 }
 
 async function updateRssSync(id, input) {
-  const cur = await crudGet('community_rss_sync_jobs', id);
+  const cur = await crudGet('news_rss_sync_jobs', id);
   if (!cur) throw AppError.notFound('Không tìm thấy job đồng bộ');
   const res = await query(
-    `UPDATE community_rss_sync_jobs SET name=$2, config_json=$3::jsonb, updated_at=NOW()
+    `UPDATE news_rss_sync_jobs SET name=$2, config_json=$3::jsonb, updated_at=NOW()
      WHERE id=$1 RETURNING *`,
     [
       id,
@@ -238,10 +238,10 @@ async function updateRssSync(id, input) {
 }
 
 async function executeRssSync(id) {
-  const cur = await crudGet('community_rss_sync_jobs', id);
+  const cur = await crudGet('news_rss_sync_jobs', id);
   if (!cur) throw AppError.notFound('Không tìm thấy job đồng bộ');
   const res = await query(
-    `UPDATE community_rss_sync_jobs SET status='success', last_run_at=NOW(), updated_at=NOW()
+    `UPDATE news_rss_sync_jobs SET status='success', last_run_at=NOW(), updated_at=NOW()
      WHERE id=$1 RETURNING *`,
     [id]
   );
@@ -249,7 +249,7 @@ async function executeRssSync(id) {
 }
 
 async function updateRssSchema(id, input) {
-  const cur = await crudGet('community_rss_schema', id);
+  const cur = await crudGet('news_rss_schema', id);
   if (!cur) throw AppError.notFound('Không tìm thấy schema');
   let mappingJson = input.mapping_json != null ? input.mapping_json : cur.mapping_json;
   if (mappingJson && Array.isArray(mappingJson.fields)) {
@@ -259,7 +259,7 @@ async function updateRssSchema(id, input) {
     };
   }
   const res = await query(
-    `UPDATE community_rss_schema SET name=$2, mapping_json=$3::jsonb, updated_at=NOW()
+    `UPDATE news_rss_schema SET name=$2, mapping_json=$3::jsonb, updated_at=NOW()
      WHERE id=$1 RETURNING *`,
     [
       id,

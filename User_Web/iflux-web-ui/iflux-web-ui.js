@@ -1053,7 +1053,7 @@
     }
 
     var SHORT = { dashboard: 'Nhà' };
-    var ORDER = ['dashboard', 'market', 'community', 'flow', 'pricing'];
+    var ORDER = ['dashboard', 'market', 'news', 'flow', 'pricing'];
 
     function tabbarItemHtml(it, label) {
       var chip = it.exclusive ? '<span class="ifx-mobile-tabbar__chip">ĐỘC QUYỀN</span>' : '';
@@ -1215,7 +1215,7 @@
       bar.style.display = '';
       var ctx = shell.detectContext ? shell.detectContext() : null;
       var model = shell.currentNavigationModel ? shell.currentNavigationModel() : null;
-      if (ctx && ctx.entityType === 'communityPost') {
+      if (ctx && ctx.entityType === 'article') {
         renderArticleActions();
       } else if (model && model.modelId === 'accountProfile') {
         renderAccount();

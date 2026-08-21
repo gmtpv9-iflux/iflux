@@ -63,10 +63,10 @@
 
   function resolveCommunityCanonical(target) {
     var id = target && (target.id || target.postId || target.slug);
-    if (global.IfluxCommunityStore && id) {
+    if (global.IfluxNewsStore && id) {
       var post = null;
-      if (IfluxCommunityStore.getPostById) post = IfluxCommunityStore.getPostById(id);
-      if (!post && IfluxCommunityStore.getPostBySlug) post = IfluxCommunityStore.getPostBySlug(id);
+      if (IfluxNewsStore.getPostById) post = IfluxNewsStore.getPostById(id);
+      if (!post && IfluxNewsStore.getPostBySlug) post = IfluxNewsStore.getPostBySlug(id);
       if (post && post.metadata && (post.metadata.canonical || post.metadata.url)) {
         return post.metadata.canonical || post.metadata.url;
       }

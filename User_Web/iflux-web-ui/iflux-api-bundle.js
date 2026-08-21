@@ -345,7 +345,7 @@
     if (params.type) qs.push('type=' + encodeURIComponent(params.type));
     if (params.limit) qs.push('limit=' + encodeURIComponent(params.limit));
     var suffix = qs.length ? '?' + qs.join('&') : '';
-    return request('/community/posts' + suffix);
+    return request('/news/posts' + suffix);
   }
 
   function listContentFeed(params) {
@@ -429,7 +429,7 @@
     if (params.featured) qs.push('featured=1');
     if (params.q) qs.push('q=' + encodeURIComponent(params.q));
     var suffix = qs.length ? '?' + qs.join('&') : '';
-    return request('/community/categories' + suffix);
+    return request('/news/categories' + suffix);
   }
 
   function listCommunityCategoriesAdmin(params) {
@@ -438,15 +438,15 @@
     if (params.q) qs.push('q=' + encodeURIComponent(params.q));
     if (params.parent_id != null) qs.push('parent_id=' + encodeURIComponent(params.parent_id));
     var suffix = qs.length ? '?' + qs.join('&') : '';
-    return request('/community/admin/categories' + suffix, { headers: adminHeaders() });
+    return request('/news/admin/categories' + suffix, { headers: adminHeaders() });
   }
 
   function getCommunityCategoryAdmin(id) {
-    return request('/community/admin/categories/' + encodeURIComponent(id), { headers: adminHeaders() });
+    return request('/news/admin/categories/' + encodeURIComponent(id), { headers: adminHeaders() });
   }
 
   function createCommunityCategoryAdmin(payload) {
-    return request('/community/admin/categories', {
+    return request('/news/admin/categories', {
       method: 'POST',
       headers: adminHeaders(),
       body: payload
@@ -454,7 +454,7 @@
   }
 
   function updateCommunityCategoryAdmin(id, payload) {
-    return request('/community/admin/categories/' + encodeURIComponent(id), {
+    return request('/news/admin/categories/' + encodeURIComponent(id), {
       method: 'PUT',
       headers: adminHeaders(),
       body: payload
@@ -462,14 +462,14 @@
   }
 
   function deleteCommunityCategoryAdmin(id) {
-    return request('/community/admin/categories/' + encodeURIComponent(id), {
+    return request('/news/admin/categories/' + encodeURIComponent(id), {
       method: 'DELETE',
       headers: adminHeaders()
     });
   }
 
   function createCommunityPost(token, payload) {
-    return request('/community/posts', {
+    return request('/news/posts', {
       method: 'POST',
       headers: authHeaders(token),
       body: payload

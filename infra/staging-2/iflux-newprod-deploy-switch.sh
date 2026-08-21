@@ -48,8 +48,30 @@ SWITCH_SRC="${DEPLOY_META}/iflux-newprod-deploy-switch.sh"
 SWITCH_DEST="/usr/local/bin/iflux-newprod-deploy-switch.sh"
 
 run_migrations() {
-  echo "Skip auto-migrate on production-next (schema clone từ Staging 1, không chạy migrate S2)."
-  return 0
+  # schema_migrations chỉ có snapshot cũ. CẤM migrate-only.js full queue
+  # — sẽ replay 001–061 và gãy. Chỉ apply file mới từ Task 05 (062+) lên iflux_production_next.
+  local mig_dir="${BACKEND_RELEASE}/migrations"
+  local f base already
+  if [ ! -d "$BACKEND_RELEASE" ] || [ ! -d "$mig_dir" ]; then
+    echo "Backend release/migrations not found — skip migrate"
+    return 0
+  fi
+  shopt -s nullglob
+  for f in "$mig_dir"/*.sql; do
+    base="$(basename "$f")"
+    case "$base" in
+      06[2-9]_*|0[7-9][0-9]_*|[1-9][0-9][0-9]_*) ;;
+      *) continue ;;
+    esac
+    already="$(sudo -u postgres psql -d iflux_production_next -Atc "SELECT 1 FROM schema_migrations WHERE filename='${base}'")"
+    if [ "$already" = "1" ]; then
+      echo "migrate skip ${base}"
+      continue
+    fi
+    echo "migrate apply ${base}"
+    sudo -u postgres psql -d iflux_production_next -v ON_ERROR_STOP=1 -f "$f"
+    sudo -u postgres psql -d iflux_production_next -v ON_ERROR_STOP=1 -c "INSERT INTO schema_migrations (filename) VALUES ('${base}')"
+  done
 }
 
 refuse_if_forbidden() {
@@ -152,7 +174,7 @@ start_or_restart_api() {
 
 if [ "$MIGRATE_ONLY" = "1" ]; then
   run_migrations
-  echo "OK: migrate-only $RELEASE_ID (no-op)"
+  echo "OK: migrate-only $RELEASE_ID"
   exit 0
 fi
 

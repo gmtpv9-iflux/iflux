@@ -9,8 +9,8 @@
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function store() { return global.IfluxCommunityStore; }
-  function ui() { return global.IfluxCommunityUI; }
+  function store() { return global.IfluxNewsStore; }
+  function ui() { return global.IfluxNewsUI; }
 
   function listHtml(posts, opts) {
     opts = opts || {};
@@ -25,7 +25,7 @@
     }
     return '<div class="ifx-stock-news-list">' +
       posts.map(function (p) {
-        return ui().compactPostHtml(p, { storyBase: opts.storyBase || '../community/' });
+        return ui().compactPostHtml(p, { storyBase: opts.storyBase || '../news/' });
       }).join('') +
     '</div>';
   }
@@ -110,7 +110,7 @@
     if (!host) return;
     root._newsFeedState = state;
 
-    document.addEventListener('iflux-community-change', function onChange() {
+    document.addEventListener('iflux-news-change', function onChange() {
       if (root.querySelector('[data-ifx-stock-news]') || root.querySelector('[data-ifx-stock-articles]')) {
         refreshBody(root, root._newsFeedState);
       }

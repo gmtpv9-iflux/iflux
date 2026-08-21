@@ -36,16 +36,16 @@ var CORE_TIERS = [
   [
     ASSET + 'watchlist-store.js',
     ASSET + 'stock-store.js?v=ix45Purge20260724',
-    ASSET + 'community-store.js?v=feedDto20260724',
-    ASSET + 'iflux-community-api-bridge.js?v=feedDto20260724',
+    ASSET + 'news-store.js?v=feedDto20260724',
+    ASSET + 'iflux-news-api-bridge.js?v=feedDto20260724',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
     ASSET + 'watchlist-ui.js',
-    ASSET + 'community-ui.js?v=mockRmWp1_20260809',
+    ASSET + 'news-ui.js?v=mockRmWp1_20260809',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
     ASSET + 'entity-timeline-feed.js',
-    ASSET + 'community-daily-feed.js?v=entFeed20260724',
+    ASSET + 'news-daily-feed.js?v=entFeed20260724',
     ASSET + 'iflux-market-quotes.js?v=mockRmWp2_20260809',
     ASSET + 'market-liquidity.js?v=mockRmWp4_20260809'
   ],
@@ -93,9 +93,9 @@ export async function mount(el, ctx) {
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
-  if (window.IfluxCommunityApiBridge && IfluxCommunityApiBridge.loadFeed) {
+  if (window.IfluxNewsApiBridge && IfluxNewsApiBridge.loadFeed) {
     try {
-      await IfluxCommunityApiBridge.loadFeed({ limit: 36 });
+      await IfluxNewsApiBridge.loadFeed({ limit: 36 });
     } catch (eHyd) { /* seed fallback */ }
   }
   /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho

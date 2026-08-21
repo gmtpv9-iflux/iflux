@@ -5,7 +5,7 @@
   function st() { return global.IfluxStockStore; }
   function auth() { return global.IfluxAuth; }
   function mn() { return global.IfluxStockMentions; }
-  function comUi() { return global.IfluxCommunityUI; }
+  function comUi() { return global.IfluxNewsUI; }
   function scrollFeed() { return global.IfluxStockScrollFeed; }
 
   var lazyByRoot = typeof WeakMap !== 'undefined' ? new WeakMap() : null;

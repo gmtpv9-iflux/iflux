@@ -6,7 +6,7 @@
   var PAGES = [
     { key: 'market', label: 'Thị trường', menu: true, icon: 'ti-chart-candle', guestNever: false },
     { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash', guestNever: false },
-    { key: 'community', label: 'Cộng đồng', menu: true, icon: 'ti-users', guestNever: false },
+    { key: 'news', label: 'Tin tức', menu: true, icon: 'ti-users', guestNever: false },
     { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown', guestNever: false },
     { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle', guestNever: false },
     { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift', guestNever: false },
@@ -15,7 +15,7 @@
 
   var FALLBACK_GUEST = {
     tier: 'guest',
-    pages: { market: true, flow: true, community: true, pricing: true, faq: true, loyalty: true, dashboard: false },
+    pages: { market: true, flow: true, news: true, pricing: true, faq: true, loyalty: true, dashboard: false },
     ent: { search: true },
     blocks: {},
     limits: { alerts: 0, maxWidgets: 0, watchlistTabs: 0, watchlistItems: 0, apiRate: 30, wssChannels: 0, searchResults: 5 }
@@ -59,8 +59,8 @@
 
   function canAccessPage(pageKey) {
     pageKey = String(pageKey || '').toLowerCase();
-    if (pageKey === 'communitypost') pageKey = 'community';
-    if (pageKey === 'comments') pageKey = 'community';
+    if (pageKey === 'article' || pageKey === 'newswrite') pageKey = 'news';
+    if (pageKey === 'comments') pageKey = 'news';
     if (pageKey === 'dashboard' && isGuest()) return false;
     if (hasPage(pageKey)) return true;
     return hasAnyBlockOnPage(pageKey);
@@ -79,10 +79,35 @@
     return !!(plan && plan.ent && plan.ent[key]);
   }
 
+  var BLOCK_ID_ALIAS = {
+    'BLK-COM-NEWS': 'BLK-NEWS-PAGE',
+    'BLK-COM-TRENDING': 'BLK-NEWS-TRENDING',
+    'BLK-COM-CHUDE-TOP': 'BLK-NEWS-TOPIC-TOP',
+    'BLK-COM-EXPERTS': 'BLK-NEWS-EXPERTS',
+    'BLK-COM-ACTIVE': 'BLK-NEWS-ACTIVE',
+    'BLK-COM-OVERVIEW': 'BLK-NEWS-OVERVIEW',
+    'BLK-COM-BREADTH': 'BLK-NEWS-BREADTH',
+    'BLK-COM-TOPWL': 'BLK-NEWS-TOPWL',
+    'BLK-COM-FEED': 'BLK-NEWS-FEED',
+    'WGT-COM-001': 'WGT-NEWS-001',
+    'WGT-COM-002': 'WGT-NEWS-002',
+    'WGT-COM-003': 'WGT-NEWS-003',
+    'WGT-COM-004': 'WGT-NEWS-004',
+    'WGT-COM-CHUDE-TOP': 'WGT-NEWS-TOPIC-TOP',
+    'WGT-COM-PAGE': 'WGT-NEWS-PAGE'
+  };
+
   function hasBlock(id) {
     var plan = currentPlan();
     if (!plan || !plan.blocks) return false;
-    return !!plan.blocks[id];
+    if (plan.blocks[id]) return true;
+    var aliased = BLOCK_ID_ALIAS[id];
+    if (aliased && plan.blocks[aliased]) return true;
+    var rev;
+    for (rev in BLOCK_ID_ALIAS) {
+      if (BLOCK_ID_ALIAS[rev] === id && plan.blocks[rev]) return true;
+    }
+    return false;
   }
 
   function canShowBlock(id) {

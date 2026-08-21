@@ -7,30 +7,30 @@ import { unloadWidget } from './widget-loader.js?v=cssPin20260808';
 
 var SOFT_VER = 'softNavP1_20260811';
 var HUB_CSS = '/User_Web/iflux-web-ui/hub.css?v=stickyRefactor20260811';
-var COMMUNITY_CSS = '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811';
+var COMMUNITY_CSS = '/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811';
 
 var ALLOW_KEYS = {
   home: 1,
   market: 1,
   flow: 1,
-  community: 1,
+  news: 1,
   pricing: 1,
   stock: 1,
   sector: 1,
   family: 1,
-  communityPost: 1
+  article: 1
 };
 
 var MAIN_CLASS = {
   home: 'ifx-main--hub',
   market: 'ifx-main--market',
   flow: 'ifx-main--flow',
-  community: 'ifx-main--community',
+  news: 'ifx-main--community',
   pricing: 'ifx-main--pricing',
   stock: 'ifx-main--stock',
   sector: 'ifx-main--stock',
   family: 'ifx-main--stock',
-  communityPost: 'ifx-main--community-post'
+  article: 'ifx-main--community-post'
 };
 
 var ALL_MAIN = [
@@ -62,7 +62,7 @@ function normalizePath(pathname) {
 /** Soft P1 allowlist — hub + entity detail / bài viết (cùng pipeline). */
 function pageKeyFromPath(pathname) {
   var path = normalizePath(pathname);
-  if (/\/(cong-dong|community)\/(bai-viet|posts?|story)(\/|$)/.test(path)) return 'communityPost';
+  if (/\/(cong-dong|community)\/(bai-viet|posts?|story)(\/|$)/.test(path)) return 'article';
   if (/^\/co-phieu\/[^/]+$/.test(path) || /^\/stocks\/[^/]+$/.test(path)) return 'stock';
   if (/^\/nganh\/[^/]+$/.test(path) || /^\/sectors\/[^/]+$/.test(path)) return 'sector';
   if (
@@ -75,7 +75,7 @@ function pageKeyFromPath(pathname) {
   if (path === '/trang-chu' || path === '/nha-cua-toi' || path === '/home') return 'home';
   if (path === '/thi-truong' || path === '/market') return 'market';
   if (path === '/dong-tien' || path === '/flow') return 'flow';
-  if (path === '/cong-dong' || path === '/community') return 'community';
+  if (path === '/tin-tuc' || path === '/cong-dong' || path === '/community') return 'news';
   if (path === '/goi-cuoc' || path === '/pricing' || path === '/bang-gia') return 'pricing';
   return null;
 }
@@ -144,7 +144,7 @@ function syncHomeGreet(pageKey) {
   } else if (greet) {
     greet.hidden = true;
   }
-  if (pageKey === 'communityPost' || pageKey === 'community') {
+  if (pageKey === 'article' || pageKey === 'news') {
     ensureStylesheet(COMMUNITY_CSS);
   }
 }

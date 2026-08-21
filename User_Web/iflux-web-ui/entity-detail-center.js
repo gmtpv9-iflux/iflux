@@ -193,7 +193,7 @@
     if (!mountEl || !global.IfluxDailyFeed || !ctx.feedFilter) return;
     global.IfluxDailyFeed.mount(mountEl, {
       filter: ctx.feedFilter,
-      storyBase: ctx.storyBase || '../community/',
+      storyBase: ctx.storyBase || '../news/',
       expertTitle: 'Phân tích của chuyên gia'
     });
   }

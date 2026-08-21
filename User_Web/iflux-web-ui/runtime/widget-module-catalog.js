@@ -112,20 +112,20 @@ export const WIDGET_RUNTIME_MODULES = {
     flowPanel: 'exclusive'
   },
   'WGT-COM-001': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-stock-heat/index.js?v=phaseCW120260721',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/news-stock-heat/index.js?v=phaseCW120260721',
     css: [
-      '/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811',
+      '/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811',
       '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723',
       '/User_Web/iflux-web-ui/watchlist.css'
     ]
   },
   'WGT-COM-CHUDE-TOP': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-story-top/index.js?v=phaseCW120260721',
-    css: ['/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
+    lazyModule: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js?v=phaseCW120260721',
+    css: ['/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811', '/User_Web/iflux-web-ui/block-templates.css?v=feedCard20260723']
   },
   'WGT-COM-002': {
-    lazyModule: '/User_Web/iflux-web-ui/widgets/community-active/index.js?v=bpPhaseD20260716',
-    css: ['/User_Web/iflux-web-ui/community.css?v=stickyRefactor20260811']
+    lazyModule: '/User_Web/iflux-web-ui/widgets/news-active/index.js?v=bpPhaseD20260716',
+    css: ['/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811']
   }
 };
 
@@ -150,7 +150,7 @@ export const WIDGET_DASHBOARD_DEPS = {
     dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=followFound20260724'),
     dashDep('IfluxWatchlistBlock', 'watchlist-block.js?v=followFound20260724')
   ],
-  'WGT-MKT-001': [dashDep('IfluxCommunityMarketOverview', 'community-market-overview.js')],
+  'WGT-MKT-001': [dashDep('IfluxCommunityMarketOverview', 'news-market-overview.js')],
   'WGT-MKT-002': [dashDep('IfluxBreadthBlock', 'breadth-block.js?v=mockRmWp4_20260809')],
   'WGT-MKT-HEAT': [dashDep('IfluxMarketHeatmap', 'market-heatmap.js?v=mockRmWp4_20260809')],
   'WGT-MKT-LIQ': [dashDep('IfluxMarketLiquidity', 'market-liquidity.js?v=mockRmWp4_20260809')],
@@ -166,24 +166,24 @@ export const WIDGET_DASHBOARD_DEPS = {
   ],
   'WGT-COM-TREND': [
     dashDep('IfluxStockStore', 'stock-store.js'),
-    dashDep('IfluxCommunityStore', 'community-store.js'),
+    dashDep('IfluxNewsStore', 'news-store.js'),
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=followFound20260724'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
-    dashDep('IfluxCommunityTrending', 'community-trending.js?v=mockRmWp1_20260809')
+    dashDep('IfluxCommunityTrending', 'news-trending.js?v=mockRmWp1_20260809')
   ],
   'WGT-COM-ACTIVE': [
-    dashDep('IfluxCommunityStore', 'community-store.js'),
-    dashDep('IfluxCommunityActiveMembers', 'community-active-members.js')
+    dashDep('IfluxNewsStore', 'news-store.js'),
+    dashDep('IfluxCommunityActiveMembers', 'news-active-members.js')
   ],
   'WGT-COM-EXPERTS': [
-    dashDep('IfluxCommunityStore', 'community-store.js'),
-    dashDep('IfluxCommunityFeaturedExperts', 'community-featured-experts.js')
+    dashDep('IfluxNewsStore', 'news-store.js'),
+    dashDep('IfluxCommunityFeaturedExperts', 'news-featured-experts.js')
   ],
   'WGT-COM-TOPWL': [
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=followFound20260724'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
     dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=followFound20260724'),
-    dashDep('IfluxCommunityTopWatchlist', 'community-top-watchlist.js?v=followFound20260724')
+    dashDep('IfluxCommunityTopWatchlist', 'news-top-watchlist.js?v=followFound20260724')
   ]
 };
 

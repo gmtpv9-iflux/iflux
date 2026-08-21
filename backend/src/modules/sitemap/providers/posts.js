@@ -7,7 +7,7 @@ class PostsSitemapProvider {
     const origin = config.PUBLIC_SITE_URL || 'https://iflux.vn';
     const res = await query(
       `SELECT id, payload->>'slug' AS slug, updated_at 
-       FROM community_posts 
+       FROM news_posts 
        WHERE status IN ('published', 'published_rss') 
        ORDER BY updated_at DESC`
     );

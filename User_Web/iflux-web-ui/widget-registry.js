@@ -341,72 +341,72 @@
     {
       type: 'WGT-COM-001',
       renderAs: 'WGT-COM-TREND',
-      group: 'community',
-      groupLabel: 'Cộng đồng',
+      group: 'news',
+      groupLabel: 'Tin tức',
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.',
       tier: 'free',
       kind: 'chart',
       popularity: 86,
       defaultConfig: { width: 'full' },
-      footerHref: '/cong-dong',
-      footerLabel: 'Mở Cộng đồng'
+      footerHref: '/tin-tuc',
+      footerLabel: 'Mở Tin tức'
     },
     {
       type: 'WGT-COM-CHUDE-TOP',
       renderAs: 'WGT-COM-TREND',
-      group: 'community',
-      groupLabel: 'Cộng đồng',
+      group: 'news',
+      groupLabel: 'Tin tức',
       title: 'Chủ đề tích cực hàng đầu',
       description: 'Top Topic/Story theo Interest Score — tabs Ngày|Tuần|Tháng',
       tier: 'free',
       kind: 'list',
       popularity: 84,
       defaultConfig: { width: 'full', storyOnly: true, limit: 5, period: 'week' },
-      footerHref: '/cong-dong',
-      footerLabel: 'Mở Cộng đồng'
+      footerHref: '/tin-tuc',
+      footerLabel: 'Mở Tin tức'
     },
     {
       type: 'WGT-COM-002',
       renderAs: 'WGT-COM-ACTIVE',
-      group: 'community',
-      groupLabel: 'Cộng đồng',
+      group: 'news',
+      groupLabel: 'Tin tức',
       title: 'Thành viên tích cực',
       description: 'Xếp hạng Tích cực − Tiêu cực trên bình luận CP',
       tier: 'free',
       kind: 'list',
       popularity: 75,
       defaultConfig: { width: 'half' },
-      footerHref: '/cong-dong',
-      footerLabel: 'Mở Cộng đồng'
+      footerHref: '/tin-tuc',
+      footerLabel: 'Mở Tin tức'
     },
     {
       type: 'WGT-COM-003',
       renderAs: 'WGT-COM-EXPERTS',
-      group: 'community',
-      groupLabel: 'Cộng đồng',
+      group: 'news',
+      groupLabel: 'Tin tức',
       title: 'Chuyên gia nổi bật',
       description: 'Top chuyên gia theo tổng lượt thích bài viết',
       tier: 'free',
       kind: 'list',
       popularity: 77,
       defaultConfig: { width: 'half' },
-      footerHref: '/cong-dong',
-      footerLabel: 'Mở Cộng đồng'
+      footerHref: '/tin-tuc',
+      footerLabel: 'Mở Tin tức'
     },
     {
       type: 'WGT-COM-004',
       renderAs: 'WGT-COM-TOPWL',
-      group: 'community',
-      groupLabel: 'Cộng đồng',
+      group: 'news',
+      groupLabel: 'Tin tức',
       title: 'Top theo dõi mạnh nhất',
       description: 'Hiệu suất TB watchlist · chép danh mục Elite',
       tier: 'elite',
       kind: 'list',
       popularity: 83,
       defaultConfig: { width: 'half' },
-      footerHref: '/cong-dong',
-      footerLabel: 'Mở Cộng đồng'
+      footerHref: '/tin-tuc',
+      footerLabel: 'Mở Tin tức'
     },
 
     /* ── Cá nhân ──
@@ -499,7 +499,7 @@
     var group = 'market';
     var groupLabel = 'Thị trường';
     if (pages.indexOf('flow') >= 0) { group = 'flow'; groupLabel = 'Dòng tiền'; }
-    else if (pages.indexOf('community') >= 0) { group = 'community'; groupLabel = 'Cộng đồng'; }
+    else if (pages.indexOf('news') >= 0) { group = 'news'; groupLabel = 'Tin tức'; }
     else if (/^WGT-WAT/.test(can)) { group = 'personal'; groupLabel = 'Cá nhân'; }
     return {
       type: can,
@@ -522,7 +522,7 @@
    */
   function grouped() {
     var P = global.L4RuntimeReader;
-    var order = ['market', 'flow', 'community', 'personal'];
+    var order = ['market', 'flow', 'news', 'personal'];
     var map = {};
 
     function pushItem(w) {

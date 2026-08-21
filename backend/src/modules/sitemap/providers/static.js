@@ -12,7 +12,7 @@ class StaticSitemapProvider {
       try {
         // Resolve path to backend root directory
         const backendRoot = path.dirname(path.dirname(path.dirname(path.dirname(__dirname))));
-        const targetFile = path.join(backendRoot, 'User_Web', 'community', 'index.html');
+        const targetFile = path.join(backendRoot, 'User_Web', 'news', 'index.html');
         const stats = fs.statSync(targetFile);
         lastmod = stats.mtime.toISOString().split('T')[0];
       } catch (err) {

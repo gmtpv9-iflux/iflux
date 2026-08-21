@@ -822,7 +822,7 @@
     /* ===================== CỘNG ĐỒNG ===================== */
     {
       schemaVersion: 2,
-      id: 'WGT-COM-001',
+      id: 'WGT-NEWS-001',
       iconKey: 'message-circle',
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.',
@@ -848,8 +848,8 @@
       metadata: {
         dataContract: {
           systemRefs: {
-            ticker: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'ticker' },
-            mentions: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'mention_count' },
+            ticker: { layer: 'L2', ref: 'NORM-NEWS', field: 'ticker' },
+            mentions: { layer: 'L2', ref: 'NORM-NEWS', field: 'mention_count' },
             perf: { layer: 'L2', ref: 'NORM-STOCK-SNAP', field: 'stock_perf' }
           },
           calculatedInputs: {}
@@ -861,7 +861,7 @@
        (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
       schemaVersion: 2,
-      id: 'WGT-COM-002',
+      id: 'WGT-NEWS-002',
       iconKey: 'users',
       title: 'Thành viên tích cực',
       description: 'Xếp hạng Tích cực − Tiêu cực trên bình luận cổ phiếu.',
@@ -901,23 +901,23 @@
       metadata: {
         dataContract: {
           systemRefs: {
-            member: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'member_name' }
+            member: { layer: 'L2', ref: 'NORM-NEWS', field: 'member_name' }
           },
           calculatedInputs: {
             member_note: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'negative_count' }
             ],
             avatar_url: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'member_name' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'member_name' }
             ],
             score: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'negative_count' }
             ],
             rank: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'positive_count' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'negative_count' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'positive_count' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'negative_count' }
             ]
           }
         }
@@ -927,7 +927,7 @@
        (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
       schemaVersion: 2,
-      id: 'WGT-COM-003',
+      id: 'WGT-NEWS-003',
       iconKey: 'user-star',
       title: 'Chuyên gia nổi bật',
       description: 'Top chuyên gia theo tổng lượt thích bài viết.',
@@ -966,18 +966,18 @@
       metadata: {
         dataContract: {
           systemRefs: {
-            expert: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'expert_name' },
-            total_likes: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'total_likes' }
+            expert: { layer: 'L2', ref: 'NORM-NEWS', field: 'expert_name' },
+            total_likes: { layer: 'L2', ref: 'NORM-NEWS', field: 'total_likes' }
           },
           calculatedInputs: {
             expert_note: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'post_count' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'post_count' }
             ],
             avatar_url: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'expert_name' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'expert_name' }
             ],
             rank: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'total_likes' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'total_likes' }
             ]
           }
         }
@@ -985,7 +985,7 @@
     },
     {
       schemaVersion: 2,
-      id: 'WGT-COM-CHUDE-TOP',
+      id: 'WGT-NEWS-TOPIC-TOP',
       iconKey: 'flame',
       title: 'Chủ đề tích cực hàng đầu',
       description: 'Top N Topic/Story theo điểm Interest trong cửa sổ Ngày|Tuần|Tháng.',
@@ -1028,19 +1028,19 @@
         dataContract: {
           systemRefs: {
             story: { layer: 'L2', ref: 'NORM-CONTENT-TOPIC', field: 'story_name' },
-            views: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'views' },
-            comments: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'comments' },
-            favorites: { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'favorites' },
+            views: { layer: 'L2', ref: 'NORM-NEWS', field: 'views' },
+            comments: { layer: 'L2', ref: 'NORM-NEWS', field: 'comments' },
+            favorites: { layer: 'L2', ref: 'NORM-NEWS', field: 'favorites' },
             period: { layer: 'L3', ref: 'ALG-TOPIC-TREND', field: 'period' }
           },
           calculatedInputs: {
             score: [
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'views' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'searches' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'likes' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'favorites' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'shares' },
-              { layer: 'L2', ref: 'NORM-COMMUNITY', field: 'comments' }
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'views' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'searches' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'likes' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'favorites' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'shares' },
+              { layer: 'L2', ref: 'NORM-NEWS', field: 'comments' }
             ]
           }
         }
@@ -1060,7 +1060,7 @@
        (Đối tượng · Chú thích phụ · Avatar · Dãy chỉ số). */
     {
       schemaVersion: 2,
-      id: 'WGT-COM-004',
+      id: 'WGT-NEWS-004',
       iconKey: 'bookmarks',
       title: 'Top Watchlist mạnh nhất',
       description: 'Watchlist cộng đồng có hiệu suất trung bình mạnh nhất (Elite).',
@@ -1178,10 +1178,10 @@
     'WGT-MKT-008': { slot: '9:15 | 10:00 | 11:00 | 13:30 | 14:30', cum_today: '1.2 | 3.4 | 5.6 | 7.2 | 9.1', avg_1: '1.1 | 3.2 | 5.4 | 7.0 | 8.8', avg_5: '1.0 | 3.0 | 5.2 | 6.8 | 8.6', avg_10: '0.9 | 2.9 | 5.0 | 6.6 | 8.4' },
     'WGT-SEC-001': { name: 'Ngân hàng | Thép | Chứng khoán | Bất động sản | Bán lẻ', pg: '2.4 | 2.1 | 1.8 | 1.2 | 0.7', rank: '1 | 2 | 3 | 4 | 5' },
     'WGT-FLW-001': { subject: 'Khối ngoại | Tổ chức | Tự doanh | Cá nhân', buy_ratio: '54 | 48 | 51 | 47', net: '320 | -120 | 60 | -260' },
-    'WGT-COM-001': { ticker: 'VIN | VIC | VHM | VCB | HPG | SSI', mentions: '639 | 629 | 569 | 426 | 156 | 180', perf: '1.2 | -0.8 | 2.1 | 0.4 | 3.1 | -0.5' },
-    'WGT-COM-002': { member: 'Minh Trader | Anh Phố | Cô Ba CK | Long Vốn | Hà FA', score: '128 | 96 | 74 | 60 | 41', rank: '1 | 2 | 3 | 4 | 5' },
-    'WGT-COM-003': { expert: 'Nguyễn Văn Minh | Trần Thị B | Lê C | Phạm D | Vũ E', total_likes: '1280 | 864 | 720 | 540 | 410', rank: '1 | 2 | 3 | 4 | 5' },
-    'WGT-COM-CHUDE-TOP': {
+    'WGT-NEWS-001': { ticker: 'VIN | VIC | VHM | VCB | HPG | SSI', mentions: '639 | 629 | 569 | 426 | 156 | 180', perf: '1.2 | -0.8 | 2.1 | 0.4 | 3.1 | -0.5' },
+    'WGT-NEWS-002': { member: 'Minh Trader | Anh Phố | Cô Ba CK | Long Vốn | Hà FA', score: '128 | 96 | 74 | 60 | 41', rank: '1 | 2 | 3 | 4 | 5' },
+    'WGT-NEWS-003': { expert: 'Nguyễn Văn Minh | Trần Thị B | Lê C | Phạm D | Vũ E', total_likes: '1280 | 864 | 720 | 540 | 410', rank: '1 | 2 | 3 | 4 | 5' },
+    'WGT-NEWS-TOPIC-TOP': {
       story: 'EV xe điện | Căn hộ TP.HCM | Tăng vốn NH | AI Việt Nam | Xuất khẩu thép | Đầu tư công | NIM ngân hàng | Bán lẻ hồi phục | Dầu khí | Thép HRC',
       score: '9039 | 5790 | 5341 | 3901 | 3120 | 2880 | 2440 | 2100 | 1860 | 1540',
       views: '3850 | 2450 | 2620 | 2206 | 1840 | 1600 | 1420 | 1280 | 1100 | 980',
@@ -1192,7 +1192,7 @@
       favorites: '146 | 74 | 64 | 44 | 31 | 60 | 40 | 32 | 24 | 18',
       rank: '1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10'
     },
-    'WGT-COM-004': { watchlist: 'Sóng ngành thép | Cổ tức đều | Ngân hàng dẫn dắt | Midcap tăng tốc | Bluechip', avg_perf: '5.2 | 4.1 | 3.6 | 3.0 | 2.4', rank: '1 | 2 | 3 | 4 | 5' },
+    'WGT-NEWS-004': { watchlist: 'Sóng ngành thép | Cổ tức đều | Ngân hàng dẫn dắt | Midcap tăng tốc | Bluechip', avg_perf: '5.2 | 4.1 | 3.6 | 3.0 | 2.4', rank: '1 | 2 | 3 | 4 | 5' },
     'WGT-WAT-001': { ticker: 'VCB | HPG | SSI | MWG', company_name: 'Vietcombank | Hòa Phát | Chứng khoán SSI | Thế Giới Di Động', last_price: '92.5 | 27.8 | 38.4 | 45.1', change_pct: '1.2 | -0.8 | 2.1 | 0.4' }
   };
   WIDGETS.forEach(function (w) {
@@ -1211,15 +1211,15 @@
     'WGT-MKT-008': { slot: 'L2', cum_today: 'L2', avg_1: 'calc', avg_5: 'calc', avg_10: 'calc' },
     'WGT-SEC-001': { name: 'L2', pg: 'L2', rank: 'calc' },
     'WGT-FLW-001': { subject: 'L2', buy_ratio: 'calc', net: 'calc' },
-    'WGT-COM-001': { ticker: 'L2', mentions: 'L2', perf: 'L2' },
-    'WGT-COM-002': { member: 'L2', score: 'calc', rank: 'calc' },
-    'WGT-COM-003': { expert: 'L2', total_likes: 'L2', rank: 'calc' },
-    'WGT-COM-CHUDE-TOP': {
+    'WGT-NEWS-001': { ticker: 'L2', mentions: 'L2', perf: 'L2' },
+    'WGT-NEWS-002': { member: 'L2', score: 'calc', rank: 'calc' },
+    'WGT-NEWS-003': { expert: 'L2', total_likes: 'L2', rank: 'calc' },
+    'WGT-NEWS-TOPIC-TOP': {
       story: 'L2',
       score: 'calc', views: 'L2', searches: 'L2', likes: 'L2',
       comments: 'L2', shares: 'L2', favorites: 'L2', rank: 'calc'
     },
-    'WGT-COM-004': { watchlist: 'L2', avg_perf: 'calc', rank: 'calc' },
+    'WGT-NEWS-004': { watchlist: 'L2', avg_perf: 'calc', rank: 'calc' },
     'WGT-WAT-001': { ticker: 'L2', company_name: 'L2', last_price: 'L1', change_pct: 'L2' }
   };
   WIDGETS.forEach(function (w) {
@@ -1249,14 +1249,14 @@
     'WGT-FLW-EX_TM_SECTOR_OUT': 'elite',
     'WGT-FLW-EX_TM_HST_OUT': 'elite',
     'WGT-FLW-EX_TM_STORY_OUT': 'elite',
-    'WGT-COM-004': 'elite'
+    'WGT-NEWS-004': 'elite'
   };
 
   /* Widget → trang User (pages) + block HTML trên trang (blocks, data-ifx-ent-block).
      Không khai báo = { pages: ['dashboard'], blocks: [] }. */
   var WGT_DEPLOY = {
-    'WGT-MKT-001': { pages: ['market', 'community', 'dashboard'], blocks: ['BLK-MKT-OVERVIEW', 'BLK-COM-OVERVIEW'] },
-    'WGT-MKT-002': { pages: ['market', 'community', 'dashboard'], blocks: ['BLK-MKT-BREADTH', 'BLK-COM-BREADTH'] },
+    'WGT-MKT-001': { pages: ['market', 'news', 'dashboard'], blocks: ['BLK-MKT-OVERVIEW', 'BLK-NEWS-OVERVIEW'] },
+    'WGT-MKT-002': { pages: ['market', 'news', 'dashboard'], blocks: ['BLK-MKT-BREADTH', 'BLK-NEWS-BREADTH'] },
     'WGT-MKT-RISK': { pages: ['flow', 'dashboard'], blocks: [] },
     'WGT-MKT-003': { pages: ['dashboard'], blocks: [] },
     'WGT-MKT-004': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-HEAT-SECTOR'] },
@@ -1285,11 +1285,11 @@
     'WGT-FLW-EX_TM_SECTOR_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
     'WGT-FLW-EX_TM_HST_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
     'WGT-FLW-EX_TM_STORY_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-COM-001': { pages: ['community', 'dashboard'], blocks: ['BLK-COM-TRENDING'] },
-    'WGT-COM-002': { pages: ['community', 'dashboard'], blocks: ['BLK-COM-ACTIVE'] },
-    'WGT-COM-003': { pages: ['community', 'dashboard'], blocks: ['BLK-COM-EXPERTS'] },
-    'WGT-COM-CHUDE-TOP': { pages: ['community', 'dashboard'], blocks: ['BLK-COM-CHUDE-TOP'] },
-    'WGT-COM-004': { pages: ['community', 'dashboard'], blocks: ['BLK-COM-TOPWL'] },
+    'WGT-NEWS-001': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TRENDING'] },
+    'WGT-NEWS-002': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-ACTIVE'] },
+    'WGT-NEWS-003': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-EXPERTS'] },
+    'WGT-NEWS-TOPIC-TOP': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TOPIC-TOP'] },
+    'WGT-NEWS-004': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TOPWL'] },
     'WGT-WAT-001': { pages: ['dashboard'], blocks: [] }
   };
 
@@ -1314,7 +1314,7 @@
     { id: 'GRP-FLW-SMART-OUT', title: 'Bảng xếp hạng dòng tiền thông minh ra (Tiêu cực)', domain: 'Dòng tiền', category: 'rank_smart_out',
       ids: ['WGT-FLW-EX_TM_OUT', 'WGT-FLW-EX_TM_SECTOR_OUT', 'WGT-FLW-EX_TM_HST_OUT', 'WGT-FLW-EX_TM_STORY_OUT'] },
     { id: 'GRP-COM-UNCLASSIFIED', title: 'Widget khác chưa phân loại', domain: 'Cộng đồng', category: 'unclassified',
-      ids: ['WGT-COM-001', 'WGT-COM-002', 'WGT-COM-003', 'WGT-COM-CHUDE-TOP', 'WGT-COM-004'] },
+      ids: ['WGT-NEWS-001', 'WGT-NEWS-002', 'WGT-NEWS-003', 'WGT-NEWS-TOPIC-TOP', 'WGT-NEWS-004'] },
     { id: 'GRP-SPECIAL-WATCHLIST', title: 'Cá nhân (user-defined)', domain: 'Cá nhân', category: 'special',
       ids: ['WGT-WAT-001'] }
   ];

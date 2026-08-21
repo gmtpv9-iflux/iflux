@@ -10,7 +10,7 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function comSt() { return global.IfluxCommunityStore; }
+  function comSt() { return global.IfluxNewsStore; }
   function seo() { return global.IfluxSeoUrl; }
   function store() { return global.IfluxInteractionStore; }
   function catalog() { return global.IfluxInteractionCatalog; }
@@ -287,7 +287,7 @@
     var post = resolvePost(ctx);
     if (!post) {
       root.innerHTML = '<div class="ifx-com-empty">Đang tải bình luận…</div>';
-      var url = '/api/community/articles/' + encodeURIComponent(ctx.id);
+      var url = '/api/news/articles/' + encodeURIComponent(ctx.id);
       fetch(url, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
         .then(function (res) { return res.json().catch(function () { return {}; }); })
         .then(function (body) {

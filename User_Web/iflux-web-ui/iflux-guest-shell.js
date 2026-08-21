@@ -39,7 +39,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       home: '../home/index.html',
       market: '../market/index.html',
       flow: '../flow/index.html',
-      community: '../community/index.html',
+      news: '../news/index.html',
       pricing: '../pricing/index.html',
       faq: '../faq/index.html',
       loyalty: '../loyalty/index.html'
@@ -53,9 +53,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   function loginUrl() {
     if (global.IfluxRoutes) {
-      return IfluxRoutes.to('auth.login') + '?return=' + encodeURIComponent(IfluxRoutes.to('community', { canonical: true, skipDecorate: true }));
+      return IfluxRoutes.to('auth.login') + '?return=' + encodeURIComponent(IfluxRoutes.to('news', { canonical: true, skipDecorate: true }));
     }
-    return '/dang-nhap?return=/cong-dong';
+    return '/dang-nhap?return=/tin-tuc';
   }
 
   /* Top-nav do App Shell (IfluxAppShellHeader, trong platform-boot) sinh ra — MỘT SoT
@@ -102,8 +102,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     var brand = document.querySelector('a.ifx-topnav-brand');
     if (!brand) return;
     var href = global.IfluxRoutes
-      ? IfluxRoutes.to('community', { canonical: true, skipDecorate: true })
-      : '/cong-dong';
+      ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true })
+      : '/tin-tuc';
     brand.setAttribute('href', global.IfluxHref ? IfluxHref.forCanonical(href) : href);
   }
 
@@ -194,7 +194,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     function goAppHomeIfSession() {
       var dest = (global.IfluxAuth && IfluxAuth.appHomePath)
         ? IfluxAuth.appHomePath()
-        : routeTo('community');
+        : routeTo('news');
       if (!isLoggedIn()) {
         goPublic();
         return;

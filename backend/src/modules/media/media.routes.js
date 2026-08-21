@@ -7,7 +7,7 @@ const { AppError } = require('../../shared/exceptions/app-error');
 const mediaService = require('./media.service');
 const mediaImport = require('./media-import.service');
 const storage = require('./media-storage');
-const articles = require('../community/community-articles.service');
+const articles = require('../news/news-articles.service');
 const { mediaRoot } = require('./media-util');
 
 function success(res, data, status) {
@@ -32,7 +32,7 @@ function createMediaRouter(deps) {
   }
 
   var mediaWriteAny = permAny(
-    'community.articles.edit',
+    'news.articles.edit',
     'marketing.seo_system.edit',
     'marketing.seo_pages.edit'
   );
@@ -47,7 +47,7 @@ function createMediaRouter(deps) {
     });
   });
 
-  router.get('/assets', perm('community.articles.view'), async function (req, res, next) {
+  router.get('/assets', perm('news.articles.view'), async function (req, res, next) {
     try {
       const list = await mediaService.listAssets({
         q: req.query.q,
@@ -61,7 +61,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.get('/assets/:id', perm('community.articles.view'), async function (req, res, next) {
+  router.get('/assets/:id', perm('news.articles.view'), async function (req, res, next) {
     try {
       const asset = await mediaService.getAsset(req.params.id);
       if (!asset) throw AppError.notFound('Không tìm thấy media');
@@ -71,7 +71,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.get('/assets/:id/usages', perm('community.articles.view'), async function (req, res, next) {
+  router.get('/assets/:id/usages', perm('news.articles.view'), async function (req, res, next) {
     try {
       const usages = await mediaService.listUsages(req.params.id);
       return success(res, { usages: usages });
@@ -80,7 +80,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.patch('/assets/:id', perm('community.articles.edit'), async function (req, res, next) {
+  router.patch('/assets/:id', perm('news.articles.edit'), async function (req, res, next) {
     try {
       if (req.body && req.body.alt_text != null) {
         const asset = await mediaService.updateAlt(req.params.id, req.body.alt_text);
@@ -92,7 +92,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.delete('/assets/:id', perm('community.articles.delete'), async function (req, res, next) {
+  router.delete('/assets/:id', perm('news.articles.delete'), async function (req, res, next) {
     try {
       const asset = await mediaService.softDeleteAsset(req.params.id);
       return success(res, { asset: asset });
@@ -141,7 +141,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.post('/import', perm('community.articles.edit'), async function (req, res, next) {
+  router.post('/import', perm('news.articles.edit'), async function (req, res, next) {
     try {
       const articleId = req.body && req.body.article_id;
       if (!articleId) throw AppError.badRequest('MEDIA_IMPORT', 'Thiếu article_id');
@@ -153,7 +153,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.get('/import/:jobId', perm('community.articles.view'), async function (req, res, next) {
+  router.get('/import/:jobId', perm('news.articles.view'), async function (req, res, next) {
     try {
       const job = await mediaService.getJob(req.params.jobId);
       if (!job) throw AppError.notFound('Không tìm thấy job');
@@ -163,7 +163,7 @@ function createMediaRouter(deps) {
     }
   });
 
-  router.post('/publish-check', perm('community.articles.edit'), async function (
+  router.post('/publish-check', perm('news.articles.edit'), async function (
     req,
     res,
     next
