@@ -46,17 +46,30 @@ SWITCH_SRC="${DEPLOY_META}/iflux-staging-deploy-switch.sh"
 SWITCH_DEST="/usr/local/bin/iflux-staging-deploy-switch.sh"
 
 run_migrations() {
-  local runner="${BACKEND_RELEASE}/scripts/migrate-only.js"
-  if [ ! -d "$BACKEND_RELEASE" ]; then
-    echo "Backend release not found — skip migrate: $BACKEND_RELEASE"
+  # S1 schema_migrations chỉ có 17 file (snapshot). CẤM migrate-only.js full queue
+  # — sẽ replay 001–061 và gãy. Chỉ apply file mới từ Task 05 (062+) lên iflux_staging.
+  local mig_dir="${BACKEND_RELEASE}/migrations"
+  local f base already
+  if [ ! -d "$BACKEND_RELEASE" ] || [ ! -d "$mig_dir" ]; then
+    echo "Backend release/migrations not found — skip migrate"
     return 0
   fi
-  if [ ! -f "$runner" ]; then
-    echo "No migrate-only.js in release — skip migrate"
-    return 0
-  fi
-  echo "Skip auto-migrate on Staging 1 (không có migrate.sh CI). Runner tồn tại nhưng không gọi từ switch."
-  return 0
+  shopt -s nullglob
+  for f in "$mig_dir"/*.sql; do
+    base="$(basename "$f")"
+    case "$base" in
+      06[2-9]_*|0[7-9][0-9]_*|[1-9][0-9][0-9]_*) ;;
+      *) continue ;;
+    esac
+    already="$(sudo -u postgres psql -d iflux_staging -Atc "SELECT 1 FROM schema_migrations WHERE filename='${base}'")"
+    if [ "$already" = "1" ]; then
+      echo "migrate skip ${base}"
+      continue
+    fi
+    echo "migrate apply ${base}"
+    sudo -u postgres psql -d iflux_staging -v ON_ERROR_STOP=1 -f "$f"
+    sudo -u postgres psql -d iflux_staging -v ON_ERROR_STOP=1 -c "INSERT INTO schema_migrations (filename) VALUES ('${base}')"
+  done
 }
 
 refuse_if_forbidden() {
@@ -150,7 +163,7 @@ refresh_switch() {
 
 if [ "$MIGRATE_ONLY" = "1" ]; then
   run_migrations
-  echo "OK: migrate-only $RELEASE_ID (no-op unless Owner mở migrate CI)"
+  echo "OK: migrate-only $RELEASE_ID (iflux_staging · 062+)"
   exit 0
 fi
 

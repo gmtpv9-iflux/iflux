@@ -57,6 +57,9 @@ jobs:
       - name: Atomic switch + nginx + refresh switch
         run: sudo -n /usr/local/bin/iflux-staging-deploy-switch.sh "${{ steps.rel.outputs.id }}"
 
+      - name: Apply pending Staging DB migrations (062+)
+        run: sudo -n /usr/local/bin/iflux-staging-deploy-switch.sh "${{ steps.rel.outputs.id }}" --migrate-only
+
       - name: Health check (Staging 1 only)
         run: |
           set -euo pipefail
