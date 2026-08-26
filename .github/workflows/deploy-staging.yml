@@ -35,6 +35,8 @@ jobs:
           mkdir -p "$RELEASE_DIR"
           cp -a "$GITHUB_WORKSPACE/User_Web" "$RELEASE_DIR/User_Web"
           cp -a "$GITHUB_WORKSPACE/Admin_Design_system" "$RELEASE_DIR/Admin_Design_system"
+          # Canonical Design System (Sub-01) — serve tại /design_system/ (nginx try_files chung)
+          cp -a "$GITHUB_WORKSPACE/design_system" "$RELEASE_DIR/design_system"
 
       - name: Build backend release (atomic)
         run: |

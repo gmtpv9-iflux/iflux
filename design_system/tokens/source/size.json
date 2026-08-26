@@ -1,0 +1,24 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Size Token SoT (kích thước cố định UI)",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/layout.css (phần size — KHÔNG carry --ifx-bp-* legacy; breakpoint SoT mới ở breakpoints.json) (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "size": {
+      "touch-target": "44px",
+      "icon-sm": "16px",
+      "icon-md": "20px",
+      "icon-lg": "24px",
+      "avatar-sm": "28px",
+      "avatar-md": "36px",
+      "avatar-lg": "48px",
+      "sidebar-w": "260px",
+      "sidebar-w-collapsed": "72px",
+      "navbar-h": "64px",
+      "topnav-h": "56px",
+      "tabbar-h": "60px",
+      "nav-drawer-w": "300px",
+      "container-max": "1280px"
+    }
+  }
+}

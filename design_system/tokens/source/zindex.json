@@ -1,0 +1,20 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Z-index Token SoT",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/z-index.css (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "z": {
+      "base": "0",
+      "raised": "1",
+      "dropdown": "100",
+      "sticky": "200",
+      "topnav": "220",
+      "drawer": "230",
+      "overlay": "240",
+      "modal": "300",
+      "toast": "400",
+      "onboarding": "500"
+    }
+  }
+}

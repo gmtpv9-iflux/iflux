@@ -1,0 +1,67 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: design_system/tokens/source/{color.json}
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ifx-bg-canvas: var(--ifx-color-slate-850);
+  --ifx-bg-surface: var(--ifx-color-slate-800);
+  --ifx-bg-elevated: var(--ifx-color-slate-700);
+  --ifx-bg-subtle: var(--ifx-color-slate-900);
+  --ifx-bg-input: var(--ifx-color-slate-900);
+  --ifx-bg-hover: var(--ifx-color-slate-700);
+  --ifx-bg-active: var(--ifx-alpha-violet-16);
+  --ifx-bg-sidebar: var(--ifx-color-slate-800);
+  --ifx-bg-navbar: var(--ifx-color-slate-800);
+  --ifx-text-primary: var(--ifx-color-slate-200);
+  --ifx-text-secondary: var(--ifx-color-slate-400);
+  --ifx-text-muted: var(--ifx-color-slate-600);
+  --ifx-text-disabled: var(--ifx-color-slate-500);
+  --ifx-text-inverse: var(--ifx-color-slate-850);
+  --ifx-text-card-title: var(--ifx-color-slate-200);
+  --ifx-text-link: var(--ifx-color-violet-500);
+  --ifx-border-default: var(--ifx-color-border-frost);
+  --ifx-border-strong: rgba(207, 211, 236, 0.2);
+  --ifx-border-subtle: rgba(207, 211, 236, 0.08);
+  --ifx-border-focus: var(--ifx-color-violet-500);
+  --ifx-action-primary: var(--ifx-color-violet-500);
+  --ifx-action-primary-hover: var(--ifx-color-violet-600);
+  --ifx-action-primary-soft: var(--ifx-alpha-violet-16);
+  --ifx-action-secondary: var(--ifx-color-orange-500);
+  --ifx-action-secondary-hover: var(--ifx-color-orange-600);
+  --ifx-action-secondary-soft: rgba(242, 101, 34, 0.14);
+  --ifx-success: var(--ifx-color-lime-500);
+  --ifx-success-soft: var(--ifx-alpha-lime-16);
+  --ifx-warning: var(--ifx-color-amber-550);
+  --ifx-warning-soft: var(--ifx-alpha-amber-16);
+  --ifx-danger: var(--ifx-color-red-450);
+  --ifx-danger-soft: var(--ifx-alpha-red-16);
+  --ifx-info: var(--ifx-color-cyan-500);
+  --ifx-info-soft: var(--ifx-alpha-cyan-16);
+  --ifx-overlay-scrim: rgba(0, 0, 0, 0.45);
+  --ifx-topnav-bg: var(--ifx-color-topnav-bg);
+  --ifx-topnav-shadow: var(--ifx-shadow-topnav);
+  --ifx-surface-elevated: var(--ifx-alpha-white-4);
+  --ifx-market-up: var(--ifx-color-lime-500);
+  --ifx-market-up-soft: var(--ifx-alpha-lime-16);
+  --ifx-market-down: var(--ifx-color-red-450);
+  --ifx-market-down-soft: var(--ifx-alpha-red-16);
+  --ifx-market-ref: var(--ifx-color-amber-550);
+  --ifx-market-ref-soft: var(--ifx-alpha-amber-16);
+  --ifx-market-ceiling: var(--ifx-color-purple-500);
+  --ifx-market-ceiling-soft: var(--ifx-alpha-purple-10);
+  --ifx-market-floor: var(--ifx-color-cyan-500);
+  --ifx-market-floor-soft: var(--ifx-alpha-cyan-16);
+  --ifx-flow-in: var(--ifx-color-lime-500);
+  --ifx-flow-out: var(--ifx-color-red-450);
+  --ifx-tier-free: var(--ifx-color-slate-400);
+  --ifx-tier-premium: var(--ifx-color-violet-500);
+  --ifx-tier-elite: var(--ifx-color-orange-500);
+  --ifx-text-on-primary: #ffffff;
+  --ifx-text-on-success: #151d15;
+  --ifx-text-on-warning: #1a1100;
+  --ifx-text-on-danger: #ffffff;
+  --ifx-text-on-info: #00151a;
+}

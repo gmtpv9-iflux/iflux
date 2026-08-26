@@ -1,0 +1,85 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Typography Token SoT (primitives)",
+    "note": "Semantic text styles (--ifx-text-h1..., classes ifx-fs-*) thuộc foundation/typography.css (REUSE tại P2), không thuộc file token này.",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/typography.css §1–§7 (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "font": {
+      "primary": "'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif",
+      "mono": "ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace",
+      "emoji": "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'",
+      "system": "system-ui, sans-serif",
+      "numeric": "{font.primary}",
+      "weight": {
+        "extralight": "200",
+        "regular": "400",
+        "semibold": "600",
+        "extrabold": "800",
+        "thin": "200",
+        "light": "400",
+        "medium": "600",
+        "bold": "800",
+        "black": "800"
+      },
+      "size": {
+        "2xs": "0.625rem",
+        "xs": "0.75rem",
+        "sm": "0.8125rem",
+        "md": "0.9375rem",
+        "lg": "1rem",
+        "xl": "1.125rem",
+        "2xl": "1.25rem",
+        "3xl": "1.5rem",
+        "4xl": "1.875rem",
+        "5xl": "2.25rem",
+        "10": "{font.size.2xs}",
+        "12": "{font.size.xs}",
+        "14": "0.875rem",
+        "16": "{font.size.lg}",
+        "18": "{font.size.xl}",
+        "20": "1.25rem",
+        "24": "{font.size.2xl}",
+        "28": "1.75rem",
+        "32": "{font.size.3xl}",
+        "40": "2.5rem",
+        "48": "{font.size.4xl}",
+        "56": "3.5rem",
+        "64": "{font.size.5xl}",
+        "72": "4.5rem"
+      }
+    },
+    "line-height": {
+      "10": "0.875rem",
+      "12": "1rem",
+      "14": "1.25rem",
+      "16": "1.5rem",
+      "18": "1.75rem",
+      "20": "1.875rem",
+      "24": "2.25rem",
+      "28": "2.625rem",
+      "32": "2.75rem",
+      "40": "3.25rem",
+      "48": "3.5rem",
+      "56": "4rem",
+      "64": "4.5rem",
+      "72": "5rem",
+      "tight": "1.25",
+      "normal": "1.5",
+      "relaxed": "1.625",
+      "loose": "1.75"
+    },
+    "letter-spacing": {
+      "tighter": "-0.02em",
+      "tight": "-0.01em",
+      "normal": "0",
+      "wide": "0.01em",
+      "wider": "0.02em",
+      "caps": "0.06em"
+    },
+    "paragraph": {
+      "spacing": "1em",
+      "indent": "1.5em"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Radius Token SoT",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/radius.css (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "radius": {
+      "none": "0",
+      "xs": "2px",
+      "sm": "4px",
+      "md": "6px",
+      "lg": "8px",
+      "xl": "12px",
+      "2xl": "16px",
+      "full": "9999px"
+    }
+  },
+  "semantic": {
+    "radius": {
+      "button": "{radius.md}",
+      "input": "{radius.md}",
+      "card": "{radius.lg}",
+      "badge": "{radius.full}",
+      "chip": "{radius.full}",
+      "modal": "{radius.lg}",
+      "dropdown": "{radius.lg}"
+    }
+  }
+}

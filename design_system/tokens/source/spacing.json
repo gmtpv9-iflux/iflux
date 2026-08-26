@@ -1,0 +1,119 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Spacing Token SoT",
+    "note": "Base 4px · 8pt grid. Responsive override của --ifx-space-container/section/page (legacy spacing.css §12) thuộc foundation/layout.css (viết lại mobile-first tại P2), không thuộc token tĩnh.",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/spacing.css §1–§13 (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "space": {
+      "unit": "4px",
+      "0": "0",
+      "2": "0.125rem",
+      "4": "0.25rem",
+      "8": "0.5rem",
+      "12": "0.75rem",
+      "16": "1rem",
+      "20": "1.25rem",
+      "24": "1.5rem",
+      "32": "2rem",
+      "40": "2.5rem",
+      "48": "3rem",
+      "56": "3.5rem",
+      "64": "4rem",
+      "80": "5rem",
+      "96": "6rem",
+      "128": "8rem",
+      "160": "10rem",
+      "192": "12rem",
+      "256": "16rem"
+    }
+  },
+  "semantic": {
+    "padding": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.32}"
+    },
+    "margin": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.32}"
+    },
+    "gap": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.32}"
+    },
+    "inset": {
+      "card": "{space.16} {space.20}",
+      "card-header": "{space.16} {space.20} 0",
+      "card-body": "{space.16} {space.20} {space.20}",
+      "card-footer": "{space.12} {space.20}",
+      "widget": "{space.12} {space.16}",
+      "panel": "{space.20} {space.24}",
+      "dialog": "{space.24}",
+      "sheet": "{space.16} {space.20}"
+    },
+    "stack": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.32}"
+    },
+    "inline": {
+      "xs": "{space.4}",
+      "sm": "{space.8}",
+      "md": "{space.12}",
+      "lg": "{space.16}",
+      "xl": "{space.24}"
+    },
+    "grid": {
+      "gutter": "{space.24}",
+      "col-gap": "{space.16}",
+      "row-gap": "{space.24}"
+    },
+    "space": {
+      "container": "{space.24}",
+      "section": "{space.64}",
+      "page": "{space.80}",
+      "sidebar-gap": "{space.16}",
+      "content-gap": "{space.24}",
+      "button-y": "{space.8}",
+      "button-x": "{space.16}",
+      "button-sm-y": "{space.4}",
+      "button-sm-x": "{space.12}",
+      "button-lg-y": "{space.12}",
+      "button-lg-x": "{space.24}",
+      "button-icon-gap": "{space.8}",
+      "input-y": "{space.8}",
+      "input-x": "{space.12}",
+      "input-lg-y": "{space.12}",
+      "chip-y": "{space.4}",
+      "chip-x": "{space.12}",
+      "badge-y": "{space.4}",
+      "badge-x": "{space.8}",
+      "toast": "{space.12} {space.16}",
+      "table-cell-y": "{space.12}",
+      "table-cell-x": "{space.16}",
+      "card": "{inset.card}",
+      "widget": "{inset.widget}",
+      "inline-xs": "{inline.xs}",
+      "inline-sm": "{inline.sm}",
+      "inline-md": "{inline.md}",
+      "stack-xs": "{stack.xs}",
+      "stack-sm": "{stack.sm}",
+      "stack-md": "{stack.md}",
+      "stack-lg": "{stack.lg}",
+      "stack-xl": "{stack.xl}"
+    },
+    "container-margin": "{space.24}",
+    "safe-area-bottom": "env(safe-area-inset-bottom, 0px)"
+  }
+}

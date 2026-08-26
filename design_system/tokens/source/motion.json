@@ -1,0 +1,29 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Motion Token SoT",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/motion.css (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "duration": {
+      "instant": "0ms",
+      "fast": "100ms",
+      "normal": "200ms",
+      "slow": "300ms",
+      "slower": "400ms"
+    },
+    "ease": {
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "in": "cubic-bezier(0.4, 0, 1, 1)",
+      "out": "cubic-bezier(0, 0, 0.2, 1)",
+      "in-out": "cubic-bezier(0.4, 0, 0.2, 1)"
+    }
+  },
+  "semantic": {
+    "transition": {
+      "color": "color {duration.fast} {ease.default}, background-color {duration.fast} {ease.default}, border-color {duration.fast} {ease.default}",
+      "transform": "transform {duration.normal} {ease.out}",
+      "opacity": "opacity {duration.normal} {ease.default}",
+      "drawer": "transform {duration.slow} {ease.out}"
+    }
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>iFlux Canonical Design System — Sandbox Catalog</title>
+  <link rel="stylesheet" href="../tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="assets/sandbox.css">
+</head>
+<body>
+  <header class="sb-header">
+    <div>
+      <h1 class="sb-title">iFlux Canonical Design System</h1>
+      <p class="sb-subtitle">Sandbox Catalog — Sub-01 · nguồn: <code>tokens/source/*.json</code> (generated, readonly)</p>
+    </div>
+    <button type="button" class="sb-theme-toggle" id="sbThemeToggle" aria-label="Đổi theme">Theme: Dark</button>
+  </header>
+
+  <nav class="sb-nav" aria-label="Catalog">
+    <a href="#tokens" class="sb-nav-item is-active">Tokens (P1)</a>
+    <span class="sb-nav-item is-disabled">Foundation (P2)</span>
+    <span class="sb-nav-item is-disabled">Primitives (P3)</span>
+    <span class="sb-nav-item is-disabled">Components (P4)</span>
+    <span class="sb-nav-item is-disabled">Patterns (P5)</span>
+  </nav>
+
+  <main id="tokens" class="sb-main">
+    <section class="sb-section" id="sec-theme">
+      <h2 class="sb-section-title">Semantic Theme Tokens</h2>
+      <p class="sb-section-desc">58 token / theme — đổi Dark/Light để thấy giá trị đổi theo. Tên token giống nhau ở cả hai theme.</p>
+      <div class="sb-grid" data-render="theme-colors"></div>
+    </section>
+
+    <section class="sb-section" id="sec-palette">
+      <h2 class="sb-section-title">Primitive Palette</h2>
+      <p class="sb-section-desc">Bảng màu raw — component KHÔNG dùng trực tiếp, chỉ qua semantic/theme token.</p>
+      <div class="sb-grid" data-render="primitive-colors"></div>
+      <h3 class="sb-sub-title">Alpha</h3>
+      <div class="sb-grid" data-render="alpha"></div>
+      <h3 class="sb-sub-title">Gradient</h3>
+      <div class="sb-grid sb-grid-wide" data-render="gradient"></div>
+    </section>
+
+    <section class="sb-section" id="sec-spacing">
+      <h2 class="sb-section-title">Spacing Scale</h2>
+      <p class="sb-section-desc">Base 4px · 8pt grid.</p>
+      <div class="sb-rows" data-render="spacing"></div>
+    </section>
+
+    <section class="sb-section" id="sec-typography">
+      <h2 class="sb-section-title">Type Scale</h2>
+      <p class="sb-section-desc">Font: Be Vietnam Pro (self-host — nạp tại P2 Foundation; sandbox P1 dùng fallback hệ thống).</p>
+      <div class="sb-rows" data-render="type-scale"></div>
+    </section>
+
+    <section class="sb-section" id="sec-radius-shadow">
+      <h2 class="sb-section-title">Radius &amp; Shadow</h2>
+      <div class="sb-grid" data-render="radius"></div>
+      <h3 class="sb-sub-title">Shadow</h3>
+      <div class="sb-grid" data-render="shadow"></div>
+    </section>
+
+    <section class="sb-section" id="sec-motion-size">
+      <h2 class="sb-section-title">Motion · Size · Z-index</h2>
+      <div class="sb-cols">
+        <div><h3 class="sb-sub-title">Motion</h3><table class="sb-table" data-render="motion"></table></div>
+        <div><h3 class="sb-sub-title">Size</h3><table class="sb-table" data-render="size"></table></div>
+        <div><h3 class="sb-sub-title">Z-index</h3><table class="sb-table" data-render="zindex"></table></div>
+      </div>
+    </section>
+
+    <section class="sb-section" id="sec-breakpoints">
+      <h2 class="sb-section-title">Breakpoints (Owner LOCK 2026-08-26)</h2>
+      <p class="sb-section-desc">Mobile-first: Base &lt; 480px = CSS mặc định, mở rộng dần bằng <code>min-width</code>. Media query dùng literal — CẤM <code>var()</code>.</p>
+      <table class="sb-table" data-render="breakpoints"></table>
+      <p class="sb-viewport-now">Viewport hiện tại: <strong id="sbViewportNow">—</strong></p>
+    </section>
+  </main>
+
+  <footer class="sb-footer">
+    Canonical iFlux Design System · Sub-01 P1 · Token SoT = JSON · generated CSS readonly
+  </footer>
+
+  <script src="../tokens/generated/js/breakpoints.js"></script>
+  <script src="../tokens/generated/js/token-index.js"></script>
+  <script src="assets/sandbox.js"></script>
+</body>
+</html>

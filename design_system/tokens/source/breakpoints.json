@@ -1,0 +1,14 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Breakpoint SoT (Owner LOCK 2026-08-26)",
+    "rule": "Mobile-first. Base (< 480px) = CSS mặc định, không media query. Mở rộng dần bằng min-width. CẤM var() trong @media — generator resolve build-time; CSS viết tay phải dùng literal đúng 5 mốc + comment /* bp:<id> */.",
+    "note": "KHÔNG emit CSS custom property cho breakpoint (tránh cám dỗ dùng var trong @media và tránh đụng --ifx-bp-* legacy). Output: tokens/generated/js/breakpoints.js cho adapter/JS."
+  },
+  "breakpoint": {
+    "sm": "480px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1440px"
+  }
+}
