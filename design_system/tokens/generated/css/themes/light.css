@@ -19,7 +19,6 @@
   --ifx-text-muted: var(--ifx-color-slate-300);
   --ifx-text-disabled: var(--ifx-color-slate-300);
   --ifx-text-inverse: #ffffff;
-  --ifx-text-card-title: #2f3349;
   --ifx-text-link: var(--ifx-color-navy-600);
   --ifx-border-default: rgba(67, 89, 113, 0.14);
   --ifx-border-strong: rgba(67, 89, 113, 0.22);

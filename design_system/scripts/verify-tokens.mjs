@@ -12,9 +12,12 @@
  *   --shadow-X         ↔ --ifx-shadow-X     (card/dropdown/modal)
  *   --transition-X     ↔ --ifx-transition-X
  *
- * Exception đã đăng ký (legacy broken reference — xem gates/P1.md):
- *   dark --color-text-card-title (--ifx-color-text-card-title không được định nghĩa)
- *   dark --color-scrim           (--ifx-color-scrim không được định nghĩa)
+ * Exception đã đăng ký (xem gates/P1.md — trace consumer 2026-08-26):
+ *   REPAIR  dark --color-scrim: legacy broken (--ifx-color-scrim undefined → dark render
+ *           transparent tại .ix-overlay/.ix-modal-overlay). Canonical sửa theo intent
+ *           rgba(0,0,0,0.45) — khác legacy CÓ CHỦ ĐÍCH, không so parity.
+ *   DROP    --color-text-card-title (dark+light): 0 consumer style trên staging +
+ *           production worktree → không promote vào canonical (DROP candidate).
  * Ngoài parity theo thiết kế (không so):
  *   --ifx-bp-* legacy (breakpoint SoT mới do Owner LOCK, khác giá trị cũ)
  */
@@ -33,7 +36,8 @@ const LEGACY_FILES = [
   'spacing.css', 'typography.css', 'semantic/theme.css',
 ];
 
-const EXCEPTIONS = new Set(['dark:--color-text-card-title', 'dark:--color-scrim']);
+const REPAIRED = new Set(['dark:--color-scrim']);
+const DROPPED = new Set(['dark:--color-text-card-title', 'light:--color-text-card-title']);
 
 function stripComments(css) { return css.replace(/\/\*[\s\S]*?\*\//g, ''); }
 
@@ -115,7 +119,8 @@ const genDark = new Map([...genThemes.base, ...genThemes.dark]);
 const genLight = genThemes.light;
 
 let compared = 0;
-let skippedExceptions = 0;
+let skippedRepaired = 0;
+let skippedDropped = 0;
 const mismatches = [];
 
 function compare(label, legacyName, legacyResolve, genName, genResolve, legacyRawMap, genRawMap) {
@@ -169,12 +174,19 @@ for (const [themeName, legacyTheme, genTheme] of [
   void legacyResolve;
   for (const [name] of legacyTheme) {
     if (!name.startsWith('--color-')) continue;
-    if (EXCEPTIONS.has(`${themeName}:${name}`)) { skippedExceptions += 1; continue; }
+    if (REPAIRED.has(`${themeName}:${name}`)) { skippedRepaired += 1; continue; }
+    if (DROPPED.has(`${themeName}:${name}`)) {
+      if (genTheme.has(renameTheme(name))) {
+        mismatches.push(`${themeName}: ${name} đã DROP nhưng vẫn tồn tại trong generated (${renameTheme(name)})`);
+      }
+      skippedDropped += 1;
+      continue;
+    }
     compare(themeName, name, legacyResolveActual, renameTheme(name), genResolve, legacyTheme, genTheme);
   }
 }
 
-console.log(`[verify-tokens] So sánh: ${compared} token · exception đã đăng ký: ${skippedExceptions} · lệch: ${mismatches.length}`);
+console.log(`[verify-tokens] So sánh: ${compared} token · REPAIR đã đăng ký: ${skippedRepaired} · DROP candidate: ${skippedDropped} · lệch: ${mismatches.length}`);
 if (mismatches.length > 0) {
   for (const m of mismatches) console.error('  MISMATCH ' + m);
   process.exit(1);

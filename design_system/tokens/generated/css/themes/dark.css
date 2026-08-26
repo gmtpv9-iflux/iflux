@@ -20,7 +20,6 @@
   --ifx-text-muted: var(--ifx-color-slate-600);
   --ifx-text-disabled: var(--ifx-color-slate-500);
   --ifx-text-inverse: var(--ifx-color-slate-850);
-  --ifx-text-card-title: var(--ifx-color-slate-200);
   --ifx-text-link: var(--ifx-color-violet-500);
   --ifx-border-default: var(--ifx-color-border-frost);
   --ifx-border-strong: rgba(207, 211, 236, 0.2);

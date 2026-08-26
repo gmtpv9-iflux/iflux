@@ -4,8 +4,8 @@
     "note": "File JSON này là SoT duy nhất. CSS trong tokens/generated/ là output — CẤM sửa tay.",
     "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/color.css + semantic/theme.css (audit Sub-01 P1, 2026-08-26)",
     "exceptions": [
-      "theme.dark.text-card-title: legacy tham chiếu --ifx-color-text-card-title KHÔNG được định nghĩa ở đâu → render thực tế kế thừa text-primary (slate-200). Ghi nhận giá trị render thực.",
-      "theme.dark.overlay-scrim: legacy tham chiếu --ifx-color-scrim KHÔNG được định nghĩa trong CSS → giá trị intent theo ds-sot-primitive-catalog.js = rgba(0, 0, 0, 0.45)."
+      "DROP candidate — text-card-title: chuỗi legacy --ifx-color-text-card-title (undefined) → --color-text-card-title → --ix-text-card-title có 0 consumer style trên cả staging lẫn production worktree (.ix-card-title dùng --ix-text-primary). KHÔNG promote vào canonical. Legacy source giữ nguyên đến cleanup.",
+      "REPAIR — theme.dark.overlay-scrim: legacy --ifx-color-scrim KHÔNG được định nghĩa → dark runtime hiện render transparent (background invalid) tại 2 consumer .ix-overlay/.ix-modal-overlay. Canonical sửa theo intent đã document trong ds-sot-primitive-catalog.js = rgba(0, 0, 0, 0.45) — intentional repair, không phải parity miss (evidence gates/P1.md)."
     ]
   },
   "primitive": {
@@ -162,7 +162,6 @@
       "text-muted": "{color.slate.600}",
       "text-disabled": "{color.slate.500}",
       "text-inverse": "{color.slate.850}",
-      "text-card-title": "{color.slate.200}",
       "text-link": "{color.violet.500}",
       "border-default": "{color.border-frost}",
       "border-strong": "rgba(207, 211, 236, 0.2)",
@@ -222,7 +221,6 @@
       "text-muted": "{color.slate.300}",
       "text-disabled": "{color.slate.300}",
       "text-inverse": "#ffffff",
-      "text-card-title": "#2f3349",
       "text-link": "{color.navy.600}",
       "border-default": "rgba(67, 89, 113, 0.14)",
       "border-strong": "rgba(67, 89, 113, 0.22)",

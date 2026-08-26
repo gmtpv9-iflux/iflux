@@ -71,7 +71,7 @@ code { font-family: var(--ifx-font-mono); font-size: var(--ifx-font-size-xs); }
   font-size: var(--ifx-font-size-2xl);
   font-weight: var(--ifx-font-weight-semibold);
   margin: 0 0 var(--ifx-stack-xs);
-  color: var(--ifx-text-card-title);
+  color: var(--ifx-text-primary);
 }
 .sb-sub-title { font-size: var(--ifx-font-size-lg); margin: var(--ifx-stack-lg) 0 var(--ifx-stack-xs); }
 .sb-section-desc { margin: 0 0 var(--ifx-stack-md); color: var(--ifx-text-secondary); font-size: var(--ifx-font-size-sm); }
