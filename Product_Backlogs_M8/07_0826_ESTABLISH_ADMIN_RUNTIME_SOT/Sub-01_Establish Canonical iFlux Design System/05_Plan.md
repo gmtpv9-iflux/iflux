@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P3 = OWNER PASS (2026-08-26)** · P4 mở |
+| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 mở |
 
 ---
 
@@ -154,7 +154,7 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **Owner test (UI):** [sandbox Components](https://staging.iflux.vn/design_system/sandbox/?section=components) — 17 family trên cùng một tab. Dark/Light trên chart phải đổi màu.
 
-**Kết quả technical:** xem `gates/P4.md`.
+**Kết quả: P4 = OWNER PASS (2026-08-26).** Evidence `gates/P4.md`.
 
 ### P5 — Patterns
 
@@ -162,7 +162,9 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **DoD:** pattern chỉ compose primitives/components; đúng chuẩn UI AR-001 Phần III.
 
-**Owner test (UI):** catalog → mục **Patterns**: từng pattern với dữ liệu generic.
+**Owner test (UI):** [sandbox Patterns](https://staging.iflux.vn/design_system/sandbox/?section=patterns) — 6 pattern trên cùng một tab, dữ liệu generic.
+
+**Kết quả technical:** xem `gates/P5.md`.
 
 ### P6 — Canonical Sandbox (rewrite 9 baseline patterns)
 

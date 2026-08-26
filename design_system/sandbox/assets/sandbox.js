@@ -76,6 +76,21 @@
     return chain;
   }
 
+  var PATTERN_CSS = [
+    '../patterns/page-header/page-header.css'
+  ];
+
+  function ensurePatternCss() {
+    PATTERN_CSS.forEach(function (href) {
+      if (doc.querySelector('link[data-ifx-pat="' + href + '"]')) return;
+      var link = doc.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute('data-ifx-pat', href);
+      doc.head.appendChild(link);
+    });
+  }
+
   function bindComponents() {
     if (window.IfxPagination) window.IfxPagination.init();
     if (window.IfxTabs) window.IfxTabs.init();
@@ -429,8 +444,9 @@
           ensurePrimitiveCss();
           bindPrimitives();
         }
-        if (id === 'components') {
+        if (id === 'components' || id === 'patterns') {
           ensurePrimitiveCss();
+          if (id === 'patterns') ensurePatternCss();
           return ensureComponentAssets().then(function () {
             bindComponents();
             scrollPanel();
