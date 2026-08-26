@@ -1,0 +1,47 @@
+<nav class="sb-subnav" aria-label="Visual Test">
+  <a href="?section=visual" data-sb-goto="hub">Catalog</a>
+  <a href="?section=visual&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
+  <a href="?section=visual&amp;panel=theme" data-sb-goto="theme">Theme</a>
+  <a href="?section=visual&amp;panel=regression" data-sb-goto="regression">Regression</a>
+</nav>
+
+<div class="sb-panel" data-sb-panel="hub">
+  <p class="sb-source"><span class="sb-source-k">Layer</span> Sandbox acceptance <span class="sb-source-k">Source</span> consume P1–P5 — không định nghĩa capability</p>
+  <div class="sb-catalog">
+    <a class="sb-catalog-item" href="?section=visual&amp;panel=responsive" data-sb-goto="responsive"><strong>Responsive</strong><span>Viewport × grid playground</span></a>
+    <a class="sb-catalog-item" href="?section=visual&amp;panel=theme" data-sb-goto="theme"><strong>Theme</strong><span>Dark / Light</span></a>
+    <a class="sb-catalog-item" href="?section=visual&amp;panel=regression" data-sb-goto="regression"><strong>Regression</strong><span>W01 surfaces phải còn nhìn thấy</span></a>
+  </div>
+</div>
+
+<div class="sb-panel" data-sb-panel="responsive" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Responsive test</h2>
+    <p class="sb-section-desc">Một preview: viewport selector × grid span. JS chỉ đổi class/viewport và đọc computed.</p>
+    <p><a href="?section=foundation&amp;panel=responsive">Mở Foundation → Responsive Playground</a></p>
+    <p class="sb-section-desc">Mốc: AUTO · 360 · 480 · 768 · 1024 · 1280 · 1440. Span: 1/12 · 2/12 · 3/12 · 4/12 · 6/12 · 12/12.</p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="theme" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Theme test</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 + adapter <span class="sb-source-k">Source</span> <code>adapters/web/theme.js</code></p>
+    <p class="sb-section-desc">Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Không theme logic local.</p>
+    <p><a href="?section=tokens&amp;panel=theme">Xem semantic theme tokens</a></p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="regression" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Regression — W01 phải còn thấy</h2>
+    <p class="sb-section-desc">Canonical artifact có trong source → catalog phải reflect. Thiếu = Normalization chưa PASS.</p>
+    <ul>
+      <li><a href="?section=components&amp;panel=stat-strip">P4 Stat Strip</a></li>
+      <li><a href="?section=components&amp;panel=table">P4 Table interaction</a></li>
+      <li><a href="?section=components&amp;panel=pagination">P4 Pagination</a></li>
+      <li><a href="?section=patterns&amp;panel=data-list">P5 Data List</a></li>
+      <li><a href="?section=references&amp;panel=w01">P6 W01 Bảng danh sách</a></li>
+    </ul>
+  </section>
+</div>

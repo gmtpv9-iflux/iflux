@@ -1,49 +1,94 @@
-<section class="sb-section">
-  <h2 class="sb-section-title">Semantic Theme Tokens</h2>
-  <p class="sb-section-desc">57 token / theme — đổi Dark/Light để thấy giá trị đổi theo.</p>
-  <div class="sb-grid" data-render="theme-colors"></div>
-</section>
+<nav class="sb-subnav" aria-label="Tokens">
+  <a href="?section=tokens" data-sb-goto="hub">Catalog</a>
+  <a href="?section=tokens&amp;panel=theme" data-sb-goto="theme">Theme</a>
+  <a href="?section=tokens&amp;panel=palette" data-sb-goto="palette">Palette</a>
+  <a href="?section=tokens&amp;panel=spacing" data-sb-goto="spacing">Spacing</a>
+  <a href="?section=tokens&amp;panel=type" data-sb-goto="type">Type scale</a>
+  <a href="?section=tokens&amp;panel=radius" data-sb-goto="radius">Radius / Shadow</a>
+  <a href="?section=tokens&amp;panel=motion" data-sb-goto="motion">Motion / Size / Z</a>
+  <a href="?section=tokens&amp;panel=breakpoints" data-sb-goto="breakpoints">Breakpoints</a>
+</nav>
 
-<section class="sb-section">
-  <h2 class="sb-section-title">Primitive Palette</h2>
-  <p class="sb-section-desc">Bảng màu raw — component KHÔNG dùng trực tiếp, chỉ qua semantic/theme token.</p>
-  <div class="sb-grid" data-render="primitive-colors"></div>
-  <h3 class="sb-sub-title">Alpha</h3>
-  <div class="sb-grid" data-render="alpha"></div>
-  <h3 class="sb-sub-title">Gradient</h3>
-  <div class="sb-grid sb-grid-wide" data-render="gradient"></div>
-</section>
-
-<section class="sb-section">
-  <h2 class="sb-section-title">Spacing Scale</h2>
-  <p class="sb-section-desc">Base 4px · 8pt grid.</p>
-  <div class="sb-rows" data-render="spacing"></div>
-</section>
-
-<section class="sb-section">
-  <h2 class="sb-section-title">Type Scale</h2>
-  <p class="sb-section-desc">Font: Be Vietnam Pro (self-host — nạp qua <code>foundation/fonts.css</code>).</p>
-  <div class="sb-rows" data-render="type-scale"></div>
-</section>
-
-<section class="sb-section">
-  <h2 class="sb-section-title">Radius &amp; Shadow</h2>
-  <div class="sb-grid" data-render="radius"></div>
-  <h3 class="sb-sub-title">Shadow</h3>
-  <div class="sb-grid" data-render="shadow"></div>
-</section>
-
-<section class="sb-section">
-  <h2 class="sb-section-title">Motion · Size · Z-index</h2>
-  <div class="sb-cols">
-    <div><h3 class="sb-sub-title">Motion</h3><table class="sb-table" data-render="motion"></table></div>
-    <div><h3 class="sb-sub-title">Size</h3><table class="sb-table" data-render="size"></table></div>
-    <div><h3 class="sb-sub-title">Z-index</h3><table class="sb-table" data-render="zindex"></table></div>
+<div class="sb-panel" data-sb-panel="hub">
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>design_system/tokens/source/</code> → <code>tokens/generated/</code></p>
+  <div class="sb-catalog">
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=theme" data-sb-goto="theme"><strong>Theme</strong><span>tokens/generated/css/themes/</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=palette" data-sb-goto="palette"><strong>Palette</strong><span>tokens/source/color.json</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=spacing" data-sb-goto="spacing"><strong>Spacing</strong><span>tokens/source/spacing.json</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=type" data-sb-goto="type"><strong>Type scale</strong><span>tokens/source/typography.json</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=radius" data-sb-goto="radius"><strong>Radius / Shadow</strong><span>tokens/source/radius.json · shadow.json</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=motion" data-sb-goto="motion"><strong>Motion / Size / Z</strong><span>motion · size · z-index</span></a>
+    <a class="sb-catalog-item" href="?section=tokens&amp;panel=breakpoints" data-sb-goto="breakpoints"><strong>Breakpoints</strong><span>tokens/source/breakpoints.json</span></a>
   </div>
-</section>
+</div>
 
-<section class="sb-section">
-  <h2 class="sb-section-title">Breakpoints (Owner LOCK 2026-08-26)</h2>
-  <p class="sb-section-desc">Mobile-first: Base &lt; 480px = CSS mặc định. Media query dùng literal — CẤM <code>var()</code>.</p>
-  <table class="sb-table" data-render="breakpoints"></table>
-</section>
+<div class="sb-panel" data-sb-panel="theme" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Semantic Theme Tokens</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/generated/css/themes/dark.css</code> · <code>light.css</code></p>
+    <p class="sb-section-desc">Đổi Dark/Light trên header để thấy giá trị đổi theo.</p>
+    <div class="sb-grid" data-render="theme-colors"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="palette" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Primitive Palette</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/color.json</code></p>
+    <p class="sb-section-desc">Raw palette — component không dùng trực tiếp, chỉ qua semantic/theme.</p>
+    <div class="sb-grid" data-render="primitive-colors"></div>
+    <h3 class="sb-sub-title">Alpha</h3>
+    <div class="sb-grid" data-render="alpha"></div>
+    <h3 class="sb-sub-title">Gradient</h3>
+    <div class="sb-grid sb-grid-wide" data-render="gradient"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="spacing" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Spacing Scale</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/spacing.json</code></p>
+    <p class="sb-section-desc">Base 4px · 8pt grid.</p>
+    <div class="sb-rows" data-render="spacing"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="type" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Type Scale</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/typography.json</code></p>
+    <p class="sb-section-desc">Font: Be Vietnam Pro — <code>foundation/fonts.css</code>.</p>
+    <div class="sb-rows" data-render="type-scale"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="radius" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Radius &amp; Shadow</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/radius.json</code> · <code>shadow.json</code></p>
+    <div class="sb-grid" data-render="radius"></div>
+    <h3 class="sb-sub-title">Shadow</h3>
+    <div class="sb-grid" data-render="shadow"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="motion" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Motion · Size · Z-index</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/</code></p>
+    <div class="sb-cols">
+      <div><h3 class="sb-sub-title">Motion</h3><table class="sb-table" data-render="motion"></table></div>
+      <div><h3 class="sb-sub-title">Size</h3><table class="sb-table" data-render="size"></table></div>
+      <div><h3 class="sb-sub-title">Z-index</h3><table class="sb-table" data-render="zindex"></table></div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="breakpoints" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Breakpoints</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 <span class="sb-source-k">Source</span> <code>tokens/source/breakpoints.json</code></p>
+    <p class="sb-section-desc">Mobile-first: Base &lt; 480px. Media query dùng literal — cấm <code>var()</code>.</p>
+    <table class="sb-table" data-render="breakpoints"></table>
+  </section>
+</div>

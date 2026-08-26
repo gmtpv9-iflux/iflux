@@ -1,5 +1,17 @@
+<nav class="sb-subnav" aria-label="Patterns"><a href="?section=patterns" data-sb-goto="hub">Catalog</a><a href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header">Page Header</a><a href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list">Data List</a><a href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail">Record Detail</a><a href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form">Entity Form</a><a href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation">Conversation</a><a href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history">Order History</a></nav>
+<div class="sb-panel" data-sb-panel="hub">
+<div class="sb-catalog">
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header"><strong>Page Header</strong><span>design_system/patterns/page-header/page-header.css</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list"><strong>Data List</strong><span>design_system/patterns/data-list/data-list.js</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail"><strong>Record Detail</strong><span>compose page-header + card + timeline</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form"><strong>Entity Form</strong><span>compose wizard + form</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation"><strong>Conversation</strong><span>compose Chat Family</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history"><strong>Order History</strong><span>compose Timeline Family</span></a>
+</div></div>
+<div class="sb-panel" data-sb-panel="page-header" hidden>
 <section class="sb-section" id="pat-page-header">
-  <h2 class="sb-section-title">Page Header</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/page-header/page-header.css</code></p>
+<h2 class="sb-section-title">Page Header</h2>
   <p class="sb-section-desc">Pattern · AR-001 §25 · compose breadcrumb + title + description + action slot + optional stats.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -59,9 +71,11 @@
     </div>
   </header>
 </section>
-
+</div>
+<div class="sb-panel" data-sb-panel="data-list" hidden>
 <section class="sb-section" id="pat-data-list">
-  <h2 class="sb-section-title">Data List</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/data-list/data-list.js</code> <span class="sb-source-k">Since</span> P6-W01</p>
+<h2 class="sb-section-title">Data List</h2>
   <p class="sb-section-desc">P5 · Search + Table + Pagination wired bởi <code>IfxDataList</code>. Drawer sửa nhỏ — AR-001 §26.1.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -90,7 +104,7 @@
     </div>
     <div class="ifx-table-wrap">
       <table class="ifx-table" data-ifx-table>
-        <thead><tr><th></th><th>Mã</th><th>Tên</th><th>Trạng thái</th><th></th></tr></thead>
+        <thead><tr><th></th><th data-ifx-sort="1">Mã</th><th data-ifx-sort="2">Tên</th><th data-ifx-sort="3">Trạng thái</th><th></th></tr></thead>
         <tbody>
           <tr>
             <td><input type="checkbox" class="ifx-checkbox"></td>
@@ -142,9 +156,11 @@
     </div>
   </aside>
 </section>
-
+</div>
+<div class="sb-panel" data-sb-panel="record-detail" hidden>
 <section class="sb-section" id="pat-record-detail">
-  <h2 class="sb-section-title">Record Detail</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose page-header + card + timeline</code></p>
+<h2 class="sb-section-title">Record Detail</h2>
   <p class="sb-section-desc">Compose page-header + card + timeline + action-bar.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -201,9 +217,11 @@
     <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success">Lưu</button>
   </div>
 </section>
-
+</div>
+<div class="sb-panel" data-sb-panel="entity-form" hidden>
 <section class="sb-section" id="pat-entity-form">
-  <h2 class="sb-section-title">Entity Form</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose wizard + form</code></p>
+<h2 class="sb-section-title">Entity Form</h2>
   <p class="sb-section-desc">Compose page-header + wizard + form + action-bar.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -263,9 +281,11 @@
     <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success">Lưu</button>
   </div>
 </section>
-
+</div>
+<div class="sb-panel" data-sb-panel="conversation" hidden>
 <section class="sb-section" id="pat-conversation">
-  <h2 class="sb-section-title">Conversation</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose Chat Family</code></p>
+<h2 class="sb-section-title">Conversation</h2>
   <p class="sb-section-desc">Compose page-header + Chat Family.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -311,9 +331,11 @@
     </div>
   </div>
 </section>
-
+</div>
+<div class="sb-panel" data-sb-panel="order-history" hidden>
 <section class="sb-section" id="pat-order-history">
-  <h2 class="sb-section-title">Order History</h2>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose Timeline Family</code></p>
+<h2 class="sb-section-title">Order History</h2>
   <p class="sb-section-desc">Compose page-header + Timeline Family.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
@@ -360,3 +382,4 @@
     </div>
   </div>
 </section>
+</div>

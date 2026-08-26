@@ -136,6 +136,20 @@ if (missingCols.length) {
   process.exit(1);
 }
 
+/* Sandbox chrome không được define / override selector canonical .ifx-* */
+const sandboxRoot = path.join(DS, 'sandbox');
+if (fs.existsSync(sandboxRoot)) {
+  for (const file of walk(sandboxRoot)) {
+    if (path.extname(file) !== '.css') continue;
+    const css = stripComments(fs.readFileSync(file, 'utf8'), '.css');
+    css.split('}').forEach((chunk) => {
+      const sel = chunk.split('{')[0];
+      const hits = sel.match(/(?<![\w-])\.ifx-[\w-]+/g);
+      if (hits) violate(file, 'sandbox-ifx-definition', [...new Set(hits)].join(' '));
+    });
+  }
+}
+
 execFileSync('node', [path.join(DS, 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
 
-console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid 1–12 × 6 bp · icons missing=0.');
+console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid 1–12 × 6 bp · icons missing=0 · sandbox .ifx-* definition = 0.');

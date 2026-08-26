@@ -205,17 +205,112 @@ body {
   letter-spacing: var(--ifx-letter-spacing-normal);
 }
 
-/* ── Semantic typography classes ── */
+/* ── Semantic HTML (SEO) — khác visual role .ifx-typo-* ── */
+h1 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h1-size);
+  font-weight: var(--ifx-text-h1-weight);
+  line-height: var(--ifx-text-h1-line);
+  letter-spacing: var(--ifx-text-h1-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h2 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h2-size);
+  font-weight: var(--ifx-text-h2-weight);
+  line-height: var(--ifx-text-h2-line);
+  letter-spacing: var(--ifx-text-h2-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h3 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h3-size);
+  font-weight: var(--ifx-text-h3-weight);
+  line-height: var(--ifx-text-h3-line);
+  letter-spacing: var(--ifx-text-h3-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h4 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h4-size);
+  font-weight: var(--ifx-text-h4-weight);
+  line-height: var(--ifx-text-h4-line);
+  letter-spacing: var(--ifx-text-h4-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h5 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h5-size);
+  font-weight: var(--ifx-text-h5-weight);
+  line-height: var(--ifx-text-h5-line);
+  letter-spacing: var(--ifx-text-h5-tracking);
+  color: var(--ifx-text-secondary);
+  margin: 0 0 var(--ifx-space-4);
+}
+h6 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h6-size);
+  font-weight: var(--ifx-text-h6-weight);
+  line-height: var(--ifx-text-h6-line);
+  letter-spacing: var(--ifx-text-h6-tracking);
+  color: var(--ifx-text-secondary);
+  margin: 0 0 var(--ifx-space-4);
+}
+p { margin: 0 0 var(--ifx-stack-sm); }
+/* a — semantic contract ở foundation/reset.css (color: --ifx-text-link) */
+strong { font-weight: var(--ifx-font-weight-semibold); }
+em { font-style: italic; }
+small {
+  font-size: var(--ifx-text-caption-size);
+  color: var(--ifx-text-muted);
+}
+blockquote {
+  margin: var(--ifx-stack-md) 0;
+  padding-left: var(--ifx-space-16);
+  border-left: var(--ifx-space-4) solid var(--ifx-border-default);
+  color: var(--ifx-text-secondary);
+}
+ul, ol {
+  margin: 0 0 var(--ifx-stack-sm);
+  padding-left: var(--ifx-space-24);
+}
+li + li { margin-top: var(--ifx-space-4); }
+code {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-sm);
+}
+pre {
+  margin: 0 0 var(--ifx-stack-sm);
+  padding: var(--ifx-space-12);
+  overflow-x: auto;
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-sm);
+  background: var(--ifx-bg-elevated);
+  border: 1px solid var(--ifx-border-subtle);
+  border-radius: var(--ifx-radius-card);
+  color: var(--ifx-text-secondary);
+}
+figcaption,
+caption {
+  font-size: var(--ifx-text-caption-size);
+  color: var(--ifx-text-muted);
+}
+
+/* ── Visual typography roles (class) — không thay semantic HTML ── */
 .ifx-typo-display-xl { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-xl-size); font-weight: var(--ifx-text-display-xl-weight); line-height: var(--ifx-text-display-xl-line); letter-spacing: var(--ifx-text-display-xl-tracking); }
 .ifx-typo-display-l  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-l-size); font-weight: var(--ifx-text-display-l-weight); line-height: var(--ifx-text-display-l-line); letter-spacing: var(--ifx-text-display-l-tracking); }
 .ifx-typo-display-m  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-m-size); font-weight: var(--ifx-text-display-m-weight); line-height: var(--ifx-text-display-m-line); letter-spacing: var(--ifx-text-display-m-tracking); }
 .ifx-typo-display-s  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-s-size); font-weight: var(--ifx-text-display-s-weight); line-height: var(--ifx-text-display-s-line); letter-spacing: var(--ifx-text-display-s-tracking); }
 
-.ifx-typo-h1 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h1-size); font-weight: var(--ifx-text-h1-weight); line-height: var(--ifx-text-h1-line); letter-spacing: var(--ifx-text-h1-tracking); color: var(--ifx-text-primary); margin: 0 0 8px; }
-.ifx-typo-h2 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h2-size); font-weight: var(--ifx-text-h2-weight); line-height: var(--ifx-text-h2-line); letter-spacing: var(--ifx-text-h2-tracking); color: var(--ifx-text-primary); margin: 0 0 8px; }
-.ifx-typo-h3 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h3-size); font-weight: var(--ifx-text-h3-weight); line-height: var(--ifx-text-h3-line); letter-spacing: var(--ifx-text-h3-tracking); color: var(--ifx-text-primary); margin: 0 0 6px; }
-.ifx-typo-h4 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h4-size); font-weight: var(--ifx-text-h4-weight); line-height: var(--ifx-text-h4-line); letter-spacing: var(--ifx-text-h4-tracking); color: var(--ifx-text-primary); margin: 0 0 6px; }
-.ifx-typo-h5 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h5-size); font-weight: var(--ifx-text-h5-weight); line-height: var(--ifx-text-h5-line); letter-spacing: var(--ifx-text-h5-tracking); color: var(--ifx-text-secondary); margin: 0 0 4px; }
+.ifx-typo-h1 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h1-size); font-weight: var(--ifx-text-h1-weight); line-height: var(--ifx-text-h1-line); letter-spacing: var(--ifx-text-h1-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
+.ifx-typo-h2 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h2-size); font-weight: var(--ifx-text-h2-weight); line-height: var(--ifx-text-h2-line); letter-spacing: var(--ifx-text-h2-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
+.ifx-typo-h3 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h3-size); font-weight: var(--ifx-text-h3-weight); line-height: var(--ifx-text-h3-line); letter-spacing: var(--ifx-text-h3-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
+.ifx-typo-h4 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h4-size); font-weight: var(--ifx-text-h4-weight); line-height: var(--ifx-text-h4-line); letter-spacing: var(--ifx-text-h4-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
+.ifx-typo-h5 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h5-size); font-weight: var(--ifx-text-h5-weight); line-height: var(--ifx-text-h5-line); letter-spacing: var(--ifx-text-h5-tracking); color: var(--ifx-text-secondary); margin: 0 0 var(--ifx-space-4); }
 .ifx-typo-h6 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h6-size); font-weight: var(--ifx-text-h6-weight); line-height: var(--ifx-text-h6-line); letter-spacing: var(--ifx-text-h6-tracking); color: var(--ifx-text-secondary); }
 
 .ifx-typo-title-lg { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-title-lg-size); font-weight: var(--ifx-text-title-lg-weight); line-height: var(--ifx-text-title-lg-line); letter-spacing: var(--ifx-text-title-lg-tracking); }

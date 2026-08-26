@@ -1,0 +1,68 @@
+<nav class="sb-subnav" aria-label="Contract">
+  <a href="?section=contract" data-sb-goto="hub">Catalog</a>
+  <a href="?section=contract&amp;panel=ownership" data-sb-goto="ownership">Ownership</a>
+  <a href="?section=contract&amp;panel=dependency" data-sb-goto="dependency">Dependency</a>
+  <a href="?section=contract&amp;panel=naming" data-sb-goto="naming">Naming</a>
+  <a href="?section=contract&amp;panel=migration" data-sb-goto="migration">Migration</a>
+</nav>
+
+<div class="sb-panel" data-sb-panel="hub">
+  <p class="sb-source"><span class="sb-source-k">Layer</span> Contract <span class="sb-source-k">Source</span> <code>docs/SoT — Engineering Change Governance.md</code> · Sub-01 Plan</p>
+  <div class="sb-catalog">
+    <a class="sb-catalog-item" href="?section=contract&amp;panel=ownership" data-sb-goto="ownership"><strong>Ownership</strong><span>P1–P5 vs Sandbox vs P6</span></a>
+    <a class="sb-catalog-item" href="?section=contract&amp;panel=dependency" data-sb-goto="dependency"><strong>Dependency</strong><span>Sandbox consume · DS không phụ thuộc sandbox</span></a>
+    <a class="sb-catalog-item" href="?section=contract&amp;panel=naming" data-sb-goto="naming"><strong>Naming</strong><span>--ifx-* · .ifx-* · .sb-*</span></a>
+    <a class="sb-catalog-item" href="?section=contract&amp;panel=migration" data-sb-goto="migration"><strong>Migration</strong><span>Không đụng production / legacy DS</span></a>
+  </div>
+</div>
+
+<div class="sb-panel" data-sb-panel="ownership" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Ownership</h2>
+    <ul>
+      <li>P1 Tokens — JSON SoT, generated CSS/JS readonly</li>
+      <li>P2 Foundation — typography, layout, icons, utilities</li>
+      <li>P3 Primitives — button, chip, badge, avatar, alert, progress, nav</li>
+      <li>P4 Components — card, stat, table, pagination, …</li>
+      <li>P5 Patterns — page-header, data-list, compose only</li>
+      <li>P6 References — candidate pages, không phải layer DS</li>
+      <li>Sandbox — catalog / acceptance consumer</li>
+    </ul>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="dependency" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Dependency</h2>
+    <p>Sandbox → Canonical DS. Không chiều ngược.</p>
+    <p>Xóa <code>design_system/sandbox/</code> → Canonical DS vẫn đầy đủ.</p>
+    <p>Xóa <code>design_system/references/</code> → Canonical DS vẫn đầy đủ.</p>
+    <p>0 Admin runtime load trong <code>design_system/</code>.</p>
+    <p>Gate: canonical <code>.ifx-*</code> definition trong sandbox CSS = 0.</p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="naming" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Naming</h2>
+    <ul>
+      <li>Token / class canonical: <code>--ifx-*</code> / <code>.ifx-*</code></li>
+      <li>Cấm <code>.ix-*</code> trong Canonical DS</li>
+      <li>Sandbox chrome: <code>.sb-*</code> — shell, nav, iframe host, metadata, catalog</li>
+      <li>Sandbox không define / override <code>.ifx-btn</code>, <code>.ifx-grid</code>, <code>.ifx-table</code>, …</li>
+    </ul>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="migration" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Migration</h2>
+    <ul>
+      <li>Không xóa <code>/Admin_Design_system/</code></li>
+      <li>Không migrate production pages trong Sub-01</li>
+      <li>Không cleanup legacy DS</li>
+      <li>Legacy pattern chỉ dùng làm reference visual (P6), không import</li>
+      <li>Artifact mới/sửa → Sandbox catalog phải reflect (Definition of Done mọi wave sau)</li>
+    </ul>
+  </section>
+</div>

@@ -1,161 +1,202 @@
-<section class="sb-section" id="playground">
-  <h2 class="sb-section-title">Responsive / Breakpoint Playground</h2>
-  <p class="sb-section-desc">
-    Owner Acceptance Surface. Bấm viewport để iframe nhận <strong>logical width thật</strong> — CSS <code>@media</code> chạy trên viewport iframe, không phải width giả của div.
-    AUTO = theo chiều rộng trình duyệt hiện tại. 1280/1440 được scale để nhìn hết, logical viewport vẫn đúng.
-    Viewport và Column span độc lập — layout do CSS, JS chỉ chọn preview.
-  </p>
+<nav class="sb-subnav" aria-label="Foundation groups">
+  <a href="?section=foundation&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
+  <a href="?section=foundation&amp;panel=grid" data-sb-goto="grid">Grid</a>
+  <a href="?section=foundation&amp;panel=container" data-sb-goto="container">Container</a>
+  <a href="?section=foundation&amp;panel=spacing" data-sb-goto="spacing">Spacing / Layout</a>
+  <a href="?section=foundation&amp;panel=typography" data-sb-goto="typography">Typography</a>
+  <a href="?section=foundation&amp;panel=icons" data-sb-goto="icons">Icons</a>
+  <a href="?section=foundation&amp;panel=theme" data-sb-goto="theme">Theme</a>
+</nav>
 
-  <p class="ifx-typo-overline">A. Viewport / Breakpoint</p>
-  <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport selector">
-    <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
-    <button type="button" class="sb-vp-btn" data-vp="360">360</button>
-    <button type="button" class="sb-vp-btn" data-vp="480">480</button>
-    <button type="button" class="sb-vp-btn" data-vp="768">768</button>
-    <button type="button" class="sb-vp-btn" data-vp="1024">1024</button>
-    <button type="button" class="sb-vp-btn" data-vp="1280">1280</button>
-    <button type="button" class="sb-vp-btn" data-vp="1440">1440</button>
-  </div>
+<div class="sb-panel" data-sb-panel="responsive">
+  <section class="sb-section">
+    <h2 class="sb-section-title">Responsive Playground</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 Foundation <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code> · <code>tokens/source/breakpoints.json</code></p>
+    <p class="sb-section-desc">Hai input độc lập trên một preview iframe. JS chỉ đổi class/viewport và đọc computed — không set width giả CSS.</p>
+    <p class="sb-kicker">A. Viewport</p>
+    <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport">
+      <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
+      <button type="button" class="sb-vp-btn" data-vp="360">360</button>
+      <button type="button" class="sb-vp-btn" data-vp="480">480</button>
+      <button type="button" class="sb-vp-btn" data-vp="768">768</button>
+      <button type="button" class="sb-vp-btn" data-vp="1024">1024</button>
+      <button type="button" class="sb-vp-btn" data-vp="1280">1280</button>
+      <button type="button" class="sb-vp-btn" data-vp="1440">1440</button>
+    </div>
+    <div class="sb-pg-status">
+      <div class="sb-pg-status-item"><span class="sb-kicker">Logical viewport</span><span id="pgSelected">AUTO</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Actual preview width</span><span id="pgActual">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Active breakpoint</span><span id="pgActiveBp">—</span></div>
+    </div>
+    <div class="sb-pg-markers" id="pgMarkers">
+      <div class="sb-pg-marker" data-bp="base"><strong>BASE</strong><span>&lt; 480</span></div>
+      <div class="sb-pg-marker" data-bp="sm"><strong>sm</strong><span>≥ 480</span></div>
+      <div class="sb-pg-marker" data-bp="md"><strong>md</strong><span>≥ 768</span></div>
+      <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
+      <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
+      <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
+    </div>
+    <p class="sb-kicker">B. Grid span</p>
+    <div class="sb-vp-bar" id="pgSpanBar" role="toolbar" aria-label="Column span">
+      <button type="button" class="sb-vp-btn" data-span="1">1/12</button>
+      <button type="button" class="sb-vp-btn" data-span="2">2/12</button>
+      <button type="button" class="sb-vp-btn" data-span="3">3/12</button>
+      <button type="button" class="sb-vp-btn" data-span="4">4/12</button>
+      <button type="button" class="sb-vp-btn is-active" data-span="6">6/12</button>
+      <button type="button" class="sb-vp-btn" data-span="12">12/12</button>
+    </div>
+    <div class="sb-pg-status">
+      <div class="sb-pg-status-item"><span class="sb-kicker">Viewport</span><span id="pgBoxVp">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Gutter L / R</span><span id="pgBoxGutter">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Usable / content</span><span id="pgBoxContent">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Content / viewport</span><span id="pgBoxRatio">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Expected span</span><span id="pgBoxSpan">6/12 = 50%</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Actual span width</span><span id="pgBoxSpanPx">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">container-max outer</span><span id="pgBoxMaxOuter">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Outer margin</span><span id="pgBoxMaxMargin">—</span></div>
+    </div>
+    <div class="sb-frame-host" id="pgHost">
+      <div class="sb-frame-scale" id="pgScale">
+        <iframe id="pgFrame" title="Responsive playground preview" src="playground/preview.html" scrolling="no"></iframe>
+      </div>
+    </div>
+  </section>
+</div>
 
-  <div class="sb-pg-status">
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Selected viewport</span>
-      <span class="ifx-typo-price-s" id="pgSelected">AUTO</span>
+<div class="sb-panel" data-sb-panel="grid" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Grid 12 cột</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
+    <p class="sb-section-desc">BASE mỗi cell span 12. Mở rộng bằng <code>.ifx-col-{n}</code> và <code>.ifx-col-md-*</code>.</p>
+    <div class="ifx-grid">
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
     </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Actual preview width</span>
-      <span class="ifx-typo-price-s" id="pgActual">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Active breakpoint</span>
-      <span class="ifx-typo-price-s" id="pgActiveBp">—</span>
-    </div>
-  </div>
+  </section>
+</div>
 
-  <div class="sb-pg-markers" id="pgMarkers" aria-label="Breakpoint markers">
-    <div class="sb-pg-marker" data-bp="base"><strong>BASE</strong><span>&lt; 480</span></div>
-    <div class="sb-pg-marker" data-bp="sm"><strong>sm</strong><span>≥ 480</span></div>
-    <div class="sb-pg-marker" data-bp="md"><strong>md</strong><span>≥ 768</span></div>
-    <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
-    <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
-    <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
-  </div>
+<div class="sb-panel" data-sb-panel="container" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Container</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
+    <p class="sb-section-desc"><code>.ifx-container</code> full + gutter token. <code>.ifx-container-max</code> opt-in 1280.</p>
+    <div class="ifx-container sb-pg-gutter-viz">
+      <div class="sb-pg-content-fill">.ifx-container</div>
+    </div>
+    <div class="ifx-container ifx-container-max sb-pg-gutter-viz">
+      <div class="sb-pg-content-fill">.ifx-container.ifx-container-max</div>
+    </div>
+  </section>
+</div>
 
-  <p class="ifx-typo-overline">B. Column span — độc lập với viewport</p>
-  <div class="sb-vp-bar" id="pgSpanBar" role="toolbar" aria-label="Column span">
-    <button type="button" class="sb-vp-btn" data-span="1">1/12</button>
-    <button type="button" class="sb-vp-btn" data-span="2">2/12</button>
-    <button type="button" class="sb-vp-btn" data-span="3">3/12</button>
-    <button type="button" class="sb-vp-btn" data-span="4">4/12</button>
-    <button type="button" class="sb-vp-btn" data-span="5">5/12</button>
-    <button type="button" class="sb-vp-btn is-active" data-span="6">6/12</button>
-    <button type="button" class="sb-vp-btn" data-span="7">7/12</button>
-    <button type="button" class="sb-vp-btn" data-span="8">8/12</button>
-    <button type="button" class="sb-vp-btn" data-span="9">9/12</button>
-    <button type="button" class="sb-vp-btn" data-span="10">10/12</button>
-    <button type="button" class="sb-vp-btn" data-span="11">11/12</button>
-    <button type="button" class="sb-vp-btn" data-span="12">12/12</button>
-  </div>
+<div class="sb-panel" data-sb-panel="spacing" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Spacing / Layout</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/utilities.css</code></p>
+    <p class="sb-section-desc">Stack / inline / gap consume spacing token.</p>
+    <div class="ifx-stack-sm">
+      <div class="ifx-flex ifx-gap-xs sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xs</span><i></i><i></i><i></i></div>
+      <div class="ifx-flex ifx-gap-sm sb-pg-gap-row"><span class="sb-pg-gap-label">gap-sm</span><i></i><i></i><i></i></div>
+      <div class="ifx-flex ifx-gap-md sb-pg-gap-row"><span class="sb-pg-gap-label">gap-md</span><i></i><i></i><i></i></div>
+      <div class="ifx-flex ifx-gap-lg sb-pg-gap-row"><span class="sb-pg-gap-label">gap-lg</span><i></i><i></i><i></i></div>
+    </div>
+    <h3 class="sb-sub-title">Stack → Inline</h3>
+    <div class="ifx-flex-col ifx-flex-row-md ifx-gap-md sb-pg-abc">
+      <div class="sb-pg-cell ifx-flex-1">A</div>
+      <div class="sb-pg-cell ifx-flex-1">B</div>
+      <div class="sb-pg-cell ifx-flex-1">C</div>
+    </div>
+  </section>
+</div>
 
-  <div class="sb-pg-status" id="pgBoxStatus">
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Viewport</span>
-      <span class="ifx-typo-price-s" id="pgBoxVp">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Gutter L / R</span>
-      <span class="ifx-typo-price-s" id="pgBoxGutter">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Content width</span>
-      <span class="ifx-typo-price-s" id="pgBoxContent">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Content / viewport</span>
-      <span class="ifx-typo-price-s" id="pgBoxRatio">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">container-max outer</span>
-      <span class="ifx-typo-price-s" id="pgBoxMaxOuter">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Outer margin × 2</span>
-      <span class="ifx-typo-price-s" id="pgBoxMaxMargin">—</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Selected span</span>
-      <span class="ifx-typo-price-s" id="pgBoxSpan">6/12 = 50%</span>
-    </div>
-    <div class="sb-pg-status-item">
-      <span class="ifx-typo-overline">Span actual width</span>
-      <span class="ifx-typo-price-s" id="pgBoxSpanPx">—</span>
-    </div>
-  </div>
+<div class="sb-panel" data-sb-panel="typography" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Typography</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/typography.css</code></p>
+    <p class="sb-section-desc">HTML semantic ≠ visual role. Heading không class = SEO contract.</p>
 
-  <div class="sb-frame-host" id="pgHost">
-    <div class="sb-frame-scale" id="pgScale">
-      <iframe id="pgFrame" title="Responsive playground preview" src="playground/preview.html" scrolling="no"></iframe>
+    <h3 class="sb-sub-title">Semantic HTML</h3>
+    <div class="sb-typo-sample">
+      <h1>h1 — Tiêu đề trang</h1>
+      <h2>h2 — Nhóm nội dung</h2>
+      <h3>h3 — Mục</h3>
+      <h4>h4 — Mục con</h4>
+      <h5>h5 — Nhãn phụ</h5>
+      <h6>h6 — Nhỏ nhất</h6>
+      <p>Đoạn <strong>strong</strong>, <em>em</em>, <a href="?section=foundation&amp;panel=typography">a — link</a> (reset.css), <small>small</small>.</p>
+      <blockquote>Blockquote — trích dẫn generic.</blockquote>
+      <ul><li>Danh sách không thứ tự</li><li>Mục hai</li></ul>
+      <ol><li>Danh sách có thứ tự</li><li>Mục hai</li></ol>
+      <p>Inline <code>code</code></p>
+      <pre>pre — khối mã generic</pre>
+      <figure>
+        <p class="ifx-typo-body-sm">Figure sample</p>
+        <figcaption>figcaption — chú thích hình</figcaption>
+      </figure>
+      <table>
+        <caption>caption — chú thích bảng</caption>
+        <tbody><tr><td>ô demo</td></tr></tbody>
+      </table>
     </div>
-  </div>
-</section>
 
-<section class="sb-section">
-  <h2 class="sb-section-title">Foundation</h2>
-  <p class="sb-section-desc">
-    <code>reset</code> · <code>fonts</code> · <code>typography</code> · <code>layout</code> ·
-    <code>utilities</code> · <code>icons</code> · <code>adapters/web/theme.js</code>
-  </p>
+    <h3 class="sb-sub-title">Visual roles — .ifx-typo-*</h3>
+    <div class="ifx-stack-sm">
+      <p class="ifx-typo-display-xl">Display XL</p>
+      <p class="ifx-typo-display-l">Display L</p>
+      <p class="ifx-typo-display-m">Display M</p>
+      <p class="ifx-typo-display-s">Display S</p>
+      <p class="ifx-typo-h1">Role H1</p>
+      <p class="ifx-typo-h2">Role H2</p>
+      <p class="ifx-typo-h3">Role H3</p>
+      <p class="ifx-typo-h4">Role H4</p>
+      <p class="ifx-typo-h5">Role H5</p>
+      <p class="ifx-typo-h6">Role H6</p>
+      <p class="ifx-typo-title-lg">Title LG</p>
+      <p class="ifx-typo-title-md">Title MD</p>
+      <p class="ifx-typo-title-sm">Title SM</p>
+      <p class="ifx-typo-body-lg">Body LG — nội dung dài generic.</p>
+      <p class="ifx-typo-body-md">Body MD — nội dung chính.</p>
+      <p class="ifx-typo-body-sm">Body SM — nội dung phụ.</p>
+      <p class="ifx-typo-label-lg">Label LG</p>
+      <p class="ifx-typo-label-md">Label MD</p>
+      <p class="ifx-typo-label-sm">Label SM</p>
+      <p class="ifx-typo-caption">Caption</p>
+      <p class="ifx-typo-overline">Overline</p>
+      <p><span class="ifx-typo-price-xl">1,234.56</span> <span class="ifx-typo-price-l">1,234.56</span> <span class="ifx-typo-price-m">1,234.56</span> <span class="ifx-typo-price-s">1,234.56</span></p>
+      <p class="ifx-typo-table-header">Table header</p>
+      <p class="ifx-typo-table-cell">Table cell</p>
+      <p class="ifx-typo-table-cell-dense">Table cell dense</p>
+      <p class="ifx-typo-table-footer">Table footer</p>
+      <p class="ifx-typo-timestamp">26/08/2026 18:00</p>
+      <p><span class="ifx-typo-status-positive">+2.45%</span> <span class="ifx-typo-status-negative">−1.02%</span> <span class="ifx-typo-status-warning">warning</span> <span class="ifx-typo-status-info">info</span> <span class="ifx-typo-status-neutral">neutral</span></p>
+    </div>
+  </section>
+</div>
 
-  <h3 class="sb-sub-title">Fonts — Be Vietnam Pro self-host (woff2)</h3>
-  <div class="ifx-stack-sm">
-    <p class="ifx-fs-xl ifx-fw-200 sb-pg-font-row">ExtraLight 200 — Thị trường chứng khoán Việt Nam 0123456789</p>
-    <p class="ifx-fs-xl ifx-fw-400 sb-pg-font-row">Regular 400 — Thị trường chứng khoán Việt Nam 0123456789</p>
-    <p class="ifx-fs-xl ifx-fw-600 sb-pg-font-row">SemiBold 600 — Thị trường chứng khoán Việt Nam 0123456789</p>
-    <p class="ifx-fs-xl ifx-fw-800 sb-pg-font-row">ExtraBold 800 — Thị trường chứng khoán Việt Nam 0123456789</p>
-  </div>
+<div class="sb-panel" data-sb-panel="icons" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Icon Catalog</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/icons/vendor/tabler/</code></p>
+    <p class="sb-section-desc">Source: <strong id="iconSourceCount">—</strong> · Canonical: <strong id="iconCanonCount">—</strong> · Missing: <strong id="iconMissing">—</strong></p>
+    <div class="sb-icon-toolbar">
+      <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon" autocomplete="off">
+      <span id="iconPageInfo">—</span>
+    </div>
+    <div class="sb-icon-grid" id="iconGrid"></div>
+    <div class="sb-icon-pager">
+      <button type="button" class="sb-vp-btn" id="iconPrev">Trước</button>
+      <button type="button" class="sb-vp-btn" id="iconNext">Sau</button>
+    </div>
+    <p class="sb-section-desc" id="iconDetail">Bấm một icon để xem class.</p>
+  </section>
+</div>
 
-  <h3 class="sb-sub-title">Semantic typography — <code>.ifx-typo-*</code></h3>
-  <div class="ifx-stack-md sb-pg-typo-list">
-    <p class="ifx-typo-display-s">display-s — Tổng quan thị trường</p>
-    <p class="ifx-typo-h1">h1 — Tổng quan thị trường</p>
-    <p class="ifx-typo-h2">h2 — Tổng quan thị trường</p>
-    <p class="ifx-typo-h3">h3 — Tổng quan thị trường</p>
-    <p class="ifx-typo-title-md">title-md — Tiêu đề card</p>
-    <p class="ifx-typo-body-md">body-md — Nội dung chính của trang, độ dài trung bình, đọc thoải mái trên mọi kích thước màn hình.</p>
-    <p class="ifx-typo-body-sm">body-sm — Nội dung phụ, chú thích chi tiết trong bảng và form.</p>
-    <p class="ifx-typo-caption">caption — Ghi chú nhỏ, mô tả phụ</p>
-    <p class="ifx-typo-overline">overline — nhóm nội dung</p>
-    <p><span class="ifx-typo-price-m">1,234.56</span> <span class="ifx-typo-status-positive">+2.45%</span> <span class="ifx-typo-status-negative">−1.02%</span></p>
-    <p class="ifx-typo-table-header">table header — mã · giá · khối lượng</p>
-    <p class="ifx-typo-timestamp">timestamp — 26/08/2026 14:00</p>
-  </div>
-
-  <h3 class="sb-sub-title">Theme adapter — <code>adapters/web/theme.js</code></h3>
-  <p class="sb-section-desc">
-    Nút Theme gọi <code>IfxTheme.toggle()</code> — key <code>ifx-theme</code>, reload vẫn giữ.
-  </p>
-</section>
-
-<section class="sb-section" id="icons">
-  <h2 class="sb-section-title">Icon Catalog — Tabler vendor</h2>
-  <p class="sb-section-desc">
-    Source Owner chỉ định: <code>foundation/icons/vendor/tabler/tabler-icons.min.css</code>
-    (Tabler 3.44, CSS mask + SVG data-URI, 0 webfont). Tên class giữ nguyên <code>ti ti-*</code>.
-    Custom iFlux icon (nếu có) tách <code>icons/custom/</code> — chưa có artifact.
-  </p>
-  <p class="sb-section-desc">
-    Source: <strong id="iconSourceCount">—</strong>
-    · Canonical: <strong id="iconCanonCount">—</strong>
-    · Missing: <strong id="iconMissing">—</strong>
-  </p>
-  <div class="sb-icon-toolbar">
-    <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon (vd. chart, user, alert)" autocomplete="off">
-    <span class="ifx-typo-caption" id="iconPageInfo">—</span>
-  </div>
-  <div class="sb-icon-grid" id="iconGrid"></div>
-  <div class="sb-icon-pager">
-    <button type="button" class="sb-vp-btn" id="iconPrev">Trước</button>
-    <button type="button" class="sb-vp-btn" id="iconNext">Sau</button>
-  </div>
-  <p class="sb-section-desc" id="iconDetail">Bấm một icon để xem class.</p>
-</section>
+<div class="sb-panel" data-sb-panel="theme" hidden>
+  <section class="sb-section">
+    <h2 class="sb-section-title">Theme</h2>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 + adapter <span class="sb-source-k">Source</span> <code>tokens/generated/css/themes/</code> · <code>adapters/web/theme.js</code></p>
+    <p class="sb-section-desc">Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Foundation không biết DOM.</p>
+    <p>Theme hiện tại đổi toàn catalog. Không logic theme local.</p>
+  </section>
+</div>

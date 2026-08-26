@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 Owner mở P6 · **P6 redo — chỉ W01 OPEN** |
+| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 Owner mở P6 · **P6-W01 = PASS / LOCKED** · **Sandbox Normalization = OPEN** · W02 BLOCKED |
 
 ---
 
@@ -186,7 +186,7 @@ W01 Bảng danh sách → W02 Form thêm/sửa → W03 List + stats strip
 
 Mỗi wave: audit legacy → map P1–P5 → build composition → classify gap → promote đúng layer → re-consume → verify 6 vp × Dark/Light → deploy → Owner.
 
-**Hiện tại:** chỉ W01. Evidence `gates/P6.md` (tracker) + `gates/P6-W01.md`.
+**Hiện tại:** P6-W01 LOCKED. Sandbox Normalization OPEN (`gates/P6-SANDBOX.md`). W02 BLOCKED.
 
 **Owner test (UI):** mở cạnh nhau — không iframe.
 
