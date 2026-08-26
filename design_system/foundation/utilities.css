@@ -1,0 +1,99 @@
+/**
+ * Canonical iFlux Design System — Foundation / Utilities
+ * REUSE bộ spacing/stack/inline utilities token-backed từ foundation đang chạy
+ * (canonical-only, bỏ .ix-* twins và component bridges — thuộc component/platform).
+ * Chỉ chứa primitive GENERIC: spacing · stack · inline · display · text-align.
+ * CẤM biến file này thành misc/fix/override trá hình (rule P2 đã khóa).
+ */
+
+/* ── Padding (primitive scale) ── */
+.ifx-p-0  { padding: var(--ifx-space-0) !important; }
+.ifx-p-2  { padding: var(--ifx-space-2) !important; }
+.ifx-p-4  { padding: var(--ifx-space-4) !important; }
+.ifx-p-8  { padding: var(--ifx-space-8) !important; }
+.ifx-p-12 { padding: var(--ifx-space-12) !important; }
+.ifx-p-16 { padding: var(--ifx-space-16) !important; }
+.ifx-p-20 { padding: var(--ifx-space-20) !important; }
+.ifx-p-24 { padding: var(--ifx-space-24) !important; }
+.ifx-p-32 { padding: var(--ifx-space-32) !important; }
+
+/* ── Margin (primitive scale) ── */
+.ifx-m-0  { margin: var(--ifx-space-0) !important; }
+.ifx-m-4  { margin: var(--ifx-space-4) !important; }
+.ifx-m-8  { margin: var(--ifx-space-8) !important; }
+.ifx-m-12 { margin: var(--ifx-space-12) !important; }
+.ifx-m-16 { margin: var(--ifx-space-16) !important; }
+.ifx-m-24 { margin: var(--ifx-space-24) !important; }
+
+.ifx-mt-0  { margin-top: var(--ifx-space-0) !important; }
+.ifx-mt-4  { margin-top: var(--ifx-space-4) !important; }
+.ifx-mt-8  { margin-top: var(--ifx-space-8) !important; }
+.ifx-mt-12 { margin-top: var(--ifx-space-12) !important; }
+.ifx-mt-16 { margin-top: var(--ifx-space-16) !important; }
+.ifx-mt-24 { margin-top: var(--ifx-space-24) !important; }
+
+.ifx-mb-0  { margin-bottom: var(--ifx-space-0) !important; }
+.ifx-mb-4  { margin-bottom: var(--ifx-space-4) !important; }
+.ifx-mb-8  { margin-bottom: var(--ifx-space-8) !important; }
+.ifx-mb-12 { margin-bottom: var(--ifx-space-12) !important; }
+.ifx-mb-16 { margin-bottom: var(--ifx-space-16) !important; }
+.ifx-mb-24 { margin-bottom: var(--ifx-space-24) !important; }
+
+/* ── Gap (primitive scale) ── */
+.ifx-gap-0  { gap: var(--ifx-space-0) !important; }
+.ifx-gap-4  { gap: var(--ifx-space-4) !important; }
+.ifx-gap-8  { gap: var(--ifx-space-8) !important; }
+.ifx-gap-12 { gap: var(--ifx-space-12) !important; }
+.ifx-gap-16 { gap: var(--ifx-space-16) !important; }
+.ifx-gap-24 { gap: var(--ifx-space-24) !important; }
+
+/* ── Semantic size utilities ── */
+.ifx-p-xs { padding: var(--ifx-padding-xs) !important; }
+.ifx-p-sm { padding: var(--ifx-padding-sm) !important; }
+.ifx-p-md { padding: var(--ifx-padding-md) !important; }
+.ifx-p-lg { padding: var(--ifx-padding-lg) !important; }
+.ifx-p-xl { padding: var(--ifx-padding-xl) !important; }
+
+.ifx-m-xs { margin: var(--ifx-margin-xs) !important; }
+.ifx-m-sm { margin: var(--ifx-margin-sm) !important; }
+.ifx-m-md { margin: var(--ifx-margin-md) !important; }
+.ifx-m-lg { margin: var(--ifx-margin-lg) !important; }
+.ifx-m-xl { margin: var(--ifx-margin-xl) !important; }
+
+.ifx-gap-xs { gap: var(--ifx-gap-xs) !important; }
+.ifx-gap-sm { gap: var(--ifx-gap-sm) !important; }
+.ifx-gap-md { gap: var(--ifx-gap-md) !important; }
+.ifx-gap-lg { gap: var(--ifx-gap-lg) !important; }
+.ifx-gap-xl { gap: var(--ifx-gap-xl) !important; }
+
+/* ── Stack & Inline ── */
+.ifx-stack-xs > * + * { margin-top: var(--ifx-stack-xs); }
+.ifx-stack-sm > * + * { margin-top: var(--ifx-stack-sm); }
+.ifx-stack-md > * + * { margin-top: var(--ifx-stack-md); }
+.ifx-stack-lg > * + * { margin-top: var(--ifx-stack-lg); }
+.ifx-stack-xl > * + * { margin-top: var(--ifx-stack-xl); }
+
+.ifx-inline-xs { display: inline-flex; align-items: center; gap: var(--ifx-inline-xs); }
+.ifx-inline-sm { display: inline-flex; align-items: center; gap: var(--ifx-inline-sm); }
+.ifx-inline-md { display: inline-flex; align-items: center; gap: var(--ifx-inline-md); }
+.ifx-inline-lg { display: inline-flex; align-items: center; gap: var(--ifx-inline-lg); }
+.ifx-inline-xl { display: inline-flex; align-items: center; gap: var(--ifx-inline-xl); }
+
+/* ── Semantic layout regions ── */
+.ifx-space-container {
+  padding-left: var(--ifx-space-container);
+  padding-right: var(--ifx-space-container);
+}
+.ifx-space-section { margin-bottom: var(--ifx-space-section); }
+.ifx-space-page { padding: var(--ifx-space-page) var(--ifx-space-container); }
+.ifx-space-card-inset { padding: var(--ifx-inset-card); }
+.ifx-space-widget-inset { padding: var(--ifx-inset-widget); }
+
+/* ── Display / misc generic ── */
+.ifx-hidden { display: none !important; }
+.ifx-block { display: block; }
+.ifx-w-full { width: 100%; }
+.ifx-text-left { text-align: left; }
+.ifx-text-center { text-align: center; }
+.ifx-text-right { text-align: right; }
+.ifx-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

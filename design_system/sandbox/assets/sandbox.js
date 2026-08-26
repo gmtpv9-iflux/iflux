@@ -1,7 +1,9 @@
 /**
  * Sandbox Catalog — JS CỤC BỘ sandbox (không phải Design System artifact).
  * Render token từ IFX_TOKEN_INDEX (generated) — không hardcode giá trị token.
- * Theme toggle chỉ là demo sandbox; adapter chính thức = adapters/web/theme.js (P2).
+ * Theme: dùng adapter canonical IfxTheme (adapters/web/theme.js).
+ * Playground: JS CHỈ hiển thị viewport/breakpoint/giá trị token —
+ * layout responsive do CSS mobile-first điều khiển.
  */
 (function () {
   'use strict';
@@ -10,7 +12,6 @@
   var rootEl = doc.documentElement;
   var index = window.IFX_TOKEN_INDEX;
   var bps = window.IFX_BREAKPOINTS;
-  var THEME_KEY = 'ifx-sandbox-theme';
 
   function computedValue(varName) {
     return getComputedStyle(rootEl).getPropertyValue(varName).trim();
@@ -136,31 +137,48 @@
     renderTable(doc.querySelector('[data-render="breakpoints"]'), bpRows);
   }
 
-  function currentBp() {
+  function activeBpId() {
     var w = window.innerWidth;
-    var active = 'base (< ' + bps.sm + 'px)';
-    Object.keys(bps).forEach(function (id) { if (w >= bps[id]) active = id + ' (≥ ' + bps[id] + 'px)'; });
-    return w + 'px → ' + active;
+    var active = 'base';
+    Object.keys(bps).forEach(function (id) { if (w >= bps[id]) active = id; });
+    return active;
   }
 
+  function setText(id, text) {
+    var node = doc.getElementById(id);
+    if (node) node.textContent = text;
+  }
+
+  /* Hiển thị số liệu — KHÔNG đổi layout bằng JS */
   function updateViewport() {
-    doc.getElementById('sbViewportNow').textContent = currentBp();
+    var w = window.innerWidth;
+    var active = activeBpId();
+    var label = active === 'base' ? 'BASE (< ' + bps.sm + 'px)' : active + ' (≥ ' + bps[active] + 'px)';
+
+    setText('sbViewportNow', w + 'px → ' + label);
+    setText('pgViewport', w + 'px');
+    setText('pgActiveBp', label);
+
+    doc.querySelectorAll('.sb-pg-marker').forEach(function (m) {
+      m.classList.toggle('is-active', m.getAttribute('data-bp') === active);
+    });
+
+    var demo = doc.querySelector('.sb-pg-container-demo');
+    if (demo) setText('pgContainerPad', getComputedStyle(demo).paddingLeft);
+    setText('pgTokContainer', computedValue('--ifx-space-container'));
+    setText('pgTokGutter', computedValue('--ifx-grid-gutter'));
+    setText('pgTokSection', computedValue('--ifx-space-section'));
   }
 
+  /* Theme — qua adapter canonical IfxTheme */
   var toggle = doc.getElementById('sbThemeToggle');
-  function applyTheme(theme) {
-    rootEl.setAttribute('data-theme', theme);
+  function syncTheme(theme) {
     toggle.textContent = 'Theme: ' + (theme === 'dark' ? 'Dark' : 'Light');
-    try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* sandbox-local, bỏ qua */ }
     renderAll();
   }
-  toggle.addEventListener('click', function () {
-    applyTheme(rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  });
-
-  var saved = null;
-  try { saved = localStorage.getItem(THEME_KEY); } catch (e) { /* noop */ }
-  applyTheme(saved === 'light' ? 'light' : 'dark');
+  toggle.addEventListener('click', function () { window.IfxTheme.toggle(); });
+  window.addEventListener('ifx-theme-change', function (e) { syncTheme(e.detail.theme); });
+  syncTheme(window.IfxTheme.get());
 
   window.addEventListener('resize', updateViewport);
   updateViewport();

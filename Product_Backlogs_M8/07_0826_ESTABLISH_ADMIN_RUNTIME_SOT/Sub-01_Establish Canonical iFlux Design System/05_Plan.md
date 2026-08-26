@@ -132,6 +132,8 @@ Foundation implementation PASS
 
 **Owner test (UI):** catalog → mục **Foundation** (thang typography, theme toggle giữ trạng thái sau reload) + mục **Responsive Playground** (đủ 10 điểm P2.a); bóp/kéo trình duyệt qua từng mốc 360→1440 thấy container/grid/stack đổi thật bằng CSS.
 
+**Kết quả: implementation + playground + matrix PASS (12/12, evidence `gates/P2.md` + `gates/P2-evidence/`) — chờ Owner xác nhận trực tiếp trên sandbox (điều kiện DoD thứ 4).**
+
 ### P3 — Primitives
 
 **Việc làm:** `button` · `chip` · `badge` · `avatar` (size variants thay 15 inline width/height) · `alert` · `progress` + **navigation primitives** (`nav-item/icon/label/group/divider` + states — KHÔNG side-nav/top-bar; platform navigation KHÔNG triển khai ở Sub-01). Naming `ifx-*`, mobile-first, chỉ dùng token generated.
