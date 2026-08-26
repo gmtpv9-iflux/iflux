@@ -1,0 +1,26 @@
+/**
+ * Canonical primitive — Alert
+ * REWRITE naming từ .ix-alert (components.css).
+ */
+.ifx-alert {
+  padding: var(--ifx-inset-widget);
+  border-radius: var(--ifx-radius-card);
+  border-left: 4px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ifx-inline-md);
+}
+.ifx-alert-primary { background: var(--ifx-action-primary-soft); border-color: var(--ifx-action-primary); color: var(--ifx-action-primary); }
+.ifx-alert-success { background: var(--ifx-success-soft); border-color: var(--ifx-success); color: var(--ifx-success); }
+.ifx-alert-warning { background: var(--ifx-warning-soft); border-color: var(--ifx-warning); color: var(--ifx-warning); }
+.ifx-alert-danger  { background: var(--ifx-danger-soft);  border-color: var(--ifx-danger);  color: var(--ifx-danger); }
+.ifx-alert-info    { background: var(--ifx-info-soft);    border-color: var(--ifx-info);    color: var(--ifx-info); }
+.ifx-alert-title {
+  font-weight: var(--ifx-font-weight-semibold);
+  font-size: var(--ifx-font-size-sm);
+}
+.ifx-alert-text {
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-secondary);
+  margin-top: var(--ifx-space-2);
+}

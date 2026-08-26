@@ -16,6 +16,38 @@
     1440: '1440 — 2xl'
   };
   var PAGE_SIZE = 48;
+  var PRIMITIVE_CSS = [
+    '../primitives/button/button.css',
+    '../primitives/chip/chip.css',
+    '../primitives/badge/badge.css',
+    '../primitives/avatar/avatar.css',
+    '../primitives/alert/alert.css',
+    '../primitives/progress/progress.css',
+    '../primitives/navigation/nav.css'
+  ];
+
+  function ensurePrimitiveCss() {
+    PRIMITIVE_CSS.forEach(function (href) {
+      if (doc.querySelector('link[data-ifx-prim="' + href + '"]')) return;
+      var link = doc.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.setAttribute('data-ifx-prim', href);
+      doc.head.appendChild(link);
+    });
+  }
+
+  function bindPrimitives() {
+    var list = doc.getElementById('navDemo');
+    if (!list) return;
+    list.addEventListener('click', function (e) {
+      var item = e.target.closest('.ifx-nav-item');
+      if (!item || item.disabled || item.classList.contains('is-disabled')) return;
+      list.querySelectorAll('.ifx-nav-item').forEach(function (n) {
+        n.classList.toggle('is-active', n === item);
+      });
+    });
+  }
 
   var doc = document;
   var stage = doc.getElementById('sbStage');
@@ -313,6 +345,10 @@
         if (id === 'foundation') {
           bindPlayground();
           bindIcons();
+        }
+        if (id === 'primitives') {
+          ensurePrimitiveCss();
+          bindPrimitives();
         }
         var hash = params().get('panel') || (window.location.hash || '').replace('#', '');
         if (hash) {

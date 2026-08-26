@@ -1,0 +1,36 @@
+/**
+ * Canonical primitive — Badge
+ * REWRITE naming từ .ix-badge (+ atoms-extensions dot/count/status).
+ */
+.ifx-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: 1;
+  padding: var(--ifx-space-badge-y) var(--ifx-space-badge-x);
+  border-radius: var(--ifx-radius-badge);
+}
+.ifx-badge-primary { background: var(--ifx-action-primary); color: var(--ifx-text-on-primary); }
+.ifx-badge-success { background: var(--ifx-success); color: var(--ifx-text-on-success); }
+.ifx-badge-warning { background: var(--ifx-warning); color: var(--ifx-text-on-warning); }
+.ifx-badge-danger  { background: var(--ifx-danger);  color: var(--ifx-text-on-danger); }
+.ifx-badge-info    { background: var(--ifx-info);    color: var(--ifx-text-on-info); }
+
+.ifx-badge-count { min-width: var(--ifx-space-16); }
+.ifx-badge-status {
+  text-transform: uppercase;
+  letter-spacing: var(--ifx-letter-spacing-caps);
+}
+.ifx-badge-dot {
+  width: var(--ifx-space-8);
+  height: var(--ifx-space-8);
+  padding: 0;
+  min-width: 0;
+  background: var(--ifx-danger);
+}
+.ifx-badge-dot.ifx-badge-success { background: var(--ifx-success); }
+.ifx-badge-dot.ifx-badge-warning { background: var(--ifx-warning); }
+.ifx-badge-dot.ifx-badge-info { background: var(--ifx-info); }
+.ifx-badge-dot.ifx-badge-primary { background: var(--ifx-action-primary); }

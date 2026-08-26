@@ -348,6 +348,12 @@ code { font-family: var(--ifx-font-mono); font-size: var(--ifx-font-size-xs); }
 .sb-icon-cell code { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); word-break: break-all; text-align: center; }
 .sb-icon-pager { display: flex; gap: var(--ifx-gap-sm); margin-bottom: var(--ifx-stack-md); }
 
+.sb-pv-25 { --ifx-progress-value: 25%; }
+.sb-pv-40 { --ifx-progress-value: 40%; }
+.sb-pv-50 { --ifx-progress-value: 50%; }
+.sb-pv-75 { --ifx-progress-value: 75%; }
+.sb-pv-90 { --ifx-progress-value: 90%; }
+
 .sb-footer {
   padding: var(--ifx-padding-lg);
   text-align: center;

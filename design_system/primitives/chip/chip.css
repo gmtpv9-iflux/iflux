@@ -1,0 +1,25 @@
+/**
+ * Canonical primitive — Chip
+ * REWRITE naming từ .ix-chip (components.css).
+ */
+.ifx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-inline-xs);
+  padding: var(--ifx-space-chip-y) var(--ifx-space-chip-x);
+  border-radius: var(--ifx-radius-chip);
+  font-size: var(--ifx-text-body-sm-size);
+  font-weight: var(--ifx-font-weight-medium);
+  line-height: 1;
+  border: 1px solid transparent;
+}
+.ifx-chip-primary { background: var(--ifx-action-primary-soft); color: var(--ifx-action-primary); }
+.ifx-chip-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
+.ifx-chip-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
+.ifx-chip-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
+.ifx-chip-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
+.ifx-chip-outline {
+  background: transparent;
+  border-color: var(--ifx-border-default);
+  color: var(--ifx-text-secondary);
+}

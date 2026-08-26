@@ -1,0 +1,23 @@
+/**
+ * Canonical primitive — Progress
+ * REWRITE naming từ .ix-progress. Width = --ifx-progress-value (sandbox/consumer set token, 0 inline).
+ */
+.ifx-progress {
+  height: var(--ifx-space-8);
+  background: var(--ifx-bg-input);
+  border-radius: var(--ifx-radius-full);
+  overflow: hidden;
+}
+.ifx-progress-lg { height: var(--ifx-space-12); }
+.ifx-progress-bar {
+  display: block;
+  height: 100%;
+  width: var(--ifx-progress-value, 0%);
+  border-radius: var(--ifx-radius-full);
+  background: var(--ifx-action-primary);
+  transition: width var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+.ifx-progress-success .ifx-progress-bar { background: var(--ifx-success); }
+.ifx-progress-warning .ifx-progress-bar { background: var(--ifx-warning); }
+.ifx-progress-danger  .ifx-progress-bar { background: var(--ifx-danger); }
+.ifx-progress-info    .ifx-progress-bar { background: var(--ifx-info); }

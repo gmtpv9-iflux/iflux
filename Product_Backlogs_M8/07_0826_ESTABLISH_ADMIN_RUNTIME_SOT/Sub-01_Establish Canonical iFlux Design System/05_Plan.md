@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1 = PASS / OWNER APPROVED (2026-08-26)** · P2 mở sau khi Owner chốt phần bổ sung P2 (§P2 dưới) |
+| Trạng thái | **P1 = PASS / OWNER APPROVED (2026-08-26)** · **P2 = OWNER PASS (2026-08-26)** · P3 mở |
 
 ---
 
@@ -132,7 +132,7 @@ Foundation implementation PASS
 
 **Owner test (UI):** [sandbox Foundation](https://staging.iflux.vn/design_system/sandbox/?section=foundation) — tab Foundation → Responsive Playground: bấm **AUTO | 360 | 480 | 768 | 1024 | 1280 | 1440** (iframe isolation, không resize browser thủ công) → Dark/Light + reload persist → Icon Catalog (Source = Canonical = 331, Missing = 0). Catalog đã tách tab; P3 chưa mở.
 
-**Kết quả technical: PASS** (viewport × span độc lập, grid 72/72, container ladder 16/16/20/24/32/32, max 1280 @1440 margin 80×2, icons missing=0). **OWNER UI ACCEPTANCE = PENDING**. P3 chưa mở.
+**Kết quả: P2 = OWNER PASS (2026-08-26).** Evidence `gates/P2.md`.
 
 ### P3 — Primitives
 
@@ -140,7 +140,9 @@ Foundation implementation PASS
 
 **DoD:** mỗi primitive có demo đủ variant/state; 0 màu hardcode; 0 media query ngoài 5 mốc.
 
-**Owner test (UI):** catalog → mục **Primitives**: từng primitive đủ variant, hover/active/disabled, 2 theme.
+**Owner test (UI):** [sandbox Primitives](https://staging.iflux.vn/design_system/sandbox/?section=primitives) — từng primitive đủ variant, hover/active/disabled, Dark/Light. Navigation chỉ primitive (không sidebar/top-bar).
+
+**Kết quả technical:** xem `gates/P3.md`.
 
 ### P4 — Components
 

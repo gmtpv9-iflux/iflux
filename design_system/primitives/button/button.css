@@ -1,0 +1,87 @@
+/**
+ * Canonical primitive — Button
+ * REWRITE naming từ .ix-btn (components.css + atoms-extensions secondary).
+ * Existing owner: Admin_Design_system/iflux-admin-ui/components.css
+ * Why new file: Solution §1 / §2.3 — primitive colocate, không nhét vào foundation.
+ */
+.ifx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-button-icon-gap);
+  padding: var(--ifx-space-button-y) var(--ifx-space-button-x);
+  border-radius: var(--ifx-radius-button);
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-btn-md-size);
+  font-weight: var(--ifx-text-btn-md-weight);
+  line-height: var(--ifx-text-btn-md-line);
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--ifx-transition-color), var(--ifx-transition-transform);
+}
+.ifx-btn:disabled,
+.ifx-btn.is-disabled {
+  cursor: default;
+  pointer-events: none;
+  color: var(--ifx-text-disabled);
+  background: var(--ifx-bg-subtle);
+  border-color: var(--ifx-border-subtle);
+}
+
+.ifx-btn-primary {
+  background: var(--ifx-action-primary);
+  color: var(--ifx-text-on-primary);
+}
+.ifx-btn-primary:hover { background: var(--ifx-action-primary-hover); }
+.ifx-btn-primary:active { transform: scale(0.98); }
+
+.ifx-btn-secondary {
+  background: var(--ifx-action-secondary);
+  color: var(--ifx-text-on-primary);
+}
+.ifx-btn-secondary:hover { background: var(--ifx-action-secondary-hover); }
+
+.ifx-btn-success { background: var(--ifx-success); color: var(--ifx-text-on-success); }
+.ifx-btn-danger  { background: var(--ifx-danger);  color: var(--ifx-text-on-danger); }
+.ifx-btn-warning { background: var(--ifx-warning); color: var(--ifx-text-on-warning); }
+
+.ifx-btn-outline {
+  background: transparent;
+  color: var(--ifx-text-secondary);
+  border-color: var(--ifx-border-default);
+}
+.ifx-btn-outline:hover {
+  background: var(--ifx-bg-hover);
+  color: var(--ifx-text-primary);
+}
+
+.ifx-btn-ghost {
+  background: transparent;
+  color: var(--ifx-text-secondary);
+  border-color: transparent;
+}
+.ifx-btn-ghost:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
+
+.ifx-btn-icon {
+  width: var(--ifx-space-32);
+  height: var(--ifx-space-32);
+  padding: 0;
+  background: transparent;
+  color: var(--ifx-text-secondary);
+}
+.ifx-btn-icon:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
+
+.ifx-btn-sm {
+  padding: var(--ifx-space-button-sm-y) var(--ifx-space-button-sm-x);
+  font-size: var(--ifx-text-btn-sm-size);
+  font-weight: var(--ifx-text-btn-sm-weight);
+  line-height: var(--ifx-text-btn-sm-line);
+}
+.ifx-btn-lg {
+  padding: var(--ifx-space-button-lg-y) var(--ifx-space-button-lg-x);
+  font-size: var(--ifx-text-btn-lg-size);
+  font-weight: var(--ifx-text-btn-lg-weight);
+  line-height: var(--ifx-text-btn-lg-line);
+}

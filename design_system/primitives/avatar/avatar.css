@@ -1,0 +1,57 @@
+/**
+ * Canonical primitive — Avatar
+ * REWRITE naming từ .ix-avatar. Size = token --ifx-size-avatar-* (không hardcode 28/38/56).
+ */
+.ifx-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--ifx-radius-full);
+  font-weight: var(--ifx-font-weight-semibold);
+  width: var(--ifx-size-avatar-md);
+  height: var(--ifx-size-avatar-md);
+  font-size: var(--ifx-font-size-sm);
+  background: var(--ifx-action-primary-soft);
+  color: var(--ifx-action-primary);
+}
+.ifx-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ifx-avatar-sm {
+  width: var(--ifx-size-avatar-sm);
+  height: var(--ifx-size-avatar-sm);
+  font-size: var(--ifx-font-size-2xs);
+}
+.ifx-avatar-lg {
+  width: var(--ifx-size-avatar-lg);
+  height: var(--ifx-size-avatar-lg);
+  font-size: var(--ifx-font-size-md);
+}
+.ifx-avatar-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
+.ifx-avatar-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
+.ifx-avatar-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
+.ifx-avatar-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
+
+.ifx-avatar-online { position: relative; }
+.ifx-avatar-online::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--ifx-space-8);
+  height: var(--ifx-space-8);
+  border-radius: var(--ifx-radius-full);
+  background: var(--ifx-success);
+  border: 2px solid var(--ifx-bg-surface);
+}
+
+.ifx-avatar-group { display: inline-flex; align-items: center; }
+.ifx-avatar-group .ifx-avatar {
+  margin-left: calc(var(--ifx-space-8) * -1);
+  border: 2px solid var(--ifx-bg-canvas);
+}
+.ifx-avatar-group .ifx-avatar:first-child { margin-left: 0; }
