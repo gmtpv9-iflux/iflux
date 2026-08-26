@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Form thêm/sửa · Canonical DS</title>
+  <link rel="stylesheet" href="assets/entry.css">
+</head>
+<body>
+<div class="sb-app">
+
+      <aside class="sb-aside">
+        <div class="sb-brand">iFlux DS</div>
+        <nav class="ifx-nav-group" aria-label="Baseline patterns">
+          <span class="ifx-nav-group-label">Patterns</span>
+          <a class="ifx-nav-item" href="table-list.html" data-sb-nav="table-list"><i class="ti ti-table ifx-nav-icon"></i><span class="ifx-nav-label">Bảng danh sách</span></a>
+          <a class="ifx-nav-item" href="form-add.html" data-sb-nav="form-add"><i class="ti ti-forms ifx-nav-icon"></i><span class="ifx-nav-label">Form thêm/sửa</span></a>
+          <a class="ifx-nav-item" href="order-list.html" data-sb-nav="order-list"><i class="ti ti-clipboard-list ifx-nav-icon"></i><span class="ifx-nav-label">Danh sách</span></a>
+          <a class="ifx-nav-item" href="order-detail.html" data-sb-nav="order-detail"><i class="ti ti-file-description ifx-nav-icon"></i><span class="ifx-nav-label">Chi tiết</span></a>
+          <a class="ifx-nav-item" href="user-profile.html" data-sb-nav="user-profile"><i class="ti ti-user ifx-nav-icon"></i><span class="ifx-nav-label">Hồ sơ</span></a>
+          <a class="ifx-nav-item" href="wizard.html" data-sb-nav="wizard"><i class="ti ti-stairs-up ifx-nav-icon"></i><span class="ifx-nav-label">Wizard</span></a>
+          <a class="ifx-nav-item" href="chat.html" data-sb-nav="chat"><i class="ti ti-messages ifx-nav-icon"></i><span class="ifx-nav-label">Chat</span></a>
+          <a class="ifx-nav-item" href="referrals.html" data-sb-nav="referrals"><i class="ti ti-users-group ifx-nav-icon"></i><span class="ifx-nav-label">Giới thiệu</span></a>
+          <a class="ifx-nav-item" href="charts.html" data-sb-nav="charts"><i class="ti ti-chart-pie ifx-nav-icon"></i><span class="ifx-nav-label">Biểu đồ</span></a>
+        </nav>
+        <hr class="ifx-nav-divider">
+        <nav class="ifx-nav-group">
+          <a class="ifx-nav-item" href="../?section=baseline"><i class="ti ti-arrow-left ifx-nav-icon"></i><span class="ifx-nav-label">Catalog</span></a>
+        </nav>
+      </aside>
+
+  <div class="sb-main">
+    <header class="sb-top">
+      <label class="ifx-search"><i class="ti ti-search ifx-icon ifx-icon-sm"></i><input type="search" placeholder="Tìm…"></label>
+      <button type="button" class="sb-theme-toggle" id="sbThemeToggle">Theme: Dark</button>
+      <span class="ifx-avatar">DS</span>
+    </header>
+    <div class="sb-body">
+
+      <header class="ifx-page-header">
+        <nav aria-label="Breadcrumb"><ol class="ifx-breadcrumb">
+          <li><a href="table-list.html">Danh sách</a></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li class="ifx-breadcrumb-current">Thêm</li>
+        </ol></nav>
+        <div class="ifx-page-header-bar">
+          <div>
+            <h1 class="ifx-page-header-title">Thêm bản ghi</h1>
+            <p class="ifx-page-header-desc">Form hai cột — generic, không domain.</p>
+          </div>
+          <div class="ifx-page-header-actions">
+            <button type="button" class="ifx-btn ifx-btn-outline">Hủy</button>
+            <button type="button" class="ifx-btn ifx-btn-outline">Nháp</button>
+            <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success" data-ifx-toast-msg="Đã lưu (demo)">Lưu</button>
+          </div>
+        </div>
+      </header>
+      <div class="sb-pat-split">
+        <div class="sb-pat-split-main ifx-flex-col ifx-gap-24">
+          <div class="ifx-card">
+            <div class="ifx-card-header"><h2 class="ifx-card-title">Thông tin</h2></div>
+            <div class="ifx-card-body">
+              <div class="ifx-form-group"><label class="ifx-label" for="fa-name">Tên</label><input class="ifx-input" id="fa-name" placeholder="Tên bản ghi"></div>
+              <div class="ifx-form-row">
+                <div class="ifx-form-group"><label class="ifx-label" for="fa-code">Mã</label><input class="ifx-input" id="fa-code" placeholder="A-00"></div>
+                <div class="ifx-form-group"><label class="ifx-label" for="fa-tag">Nhãn</label><input class="ifx-input" id="fa-tag" placeholder="Nhãn"></div>
+              </div>
+              <div class="ifx-form-group ifx-mb-0"><label class="ifx-label" for="fa-note">Mô tả</label><textarea class="ifx-textarea" id="fa-note"></textarea></div>
+            </div>
+          </div>
+          <div class="ifx-card">
+            <div class="ifx-card-header"><h2 class="ifx-card-title">Tệp</h2></div>
+            <div class="ifx-card-body">
+              <div class="ifx-dropzone"><div class="ifx-dropzone-title">Kéo file vào đây</div><div class="ifx-dropzone-sub">Demo generic — không upload.</div></div>
+            </div>
+          </div>
+          <div class="ifx-card" data-ifx-tabs-root>
+            <div class="ifx-card-header"><h2 class="ifx-card-title">Thuộc tính</h2></div>
+            <div class="ifx-card-body">
+              <div class="sb-pat-inv">
+                <div class="sb-pat-pills ifx-tabs" data-ifx-tabs>
+                  <button type="button" class="ifx-tab is-active" data-ifx-tab="inv-a">Kho</button>
+                  <button type="button" class="ifx-tab" data-ifx-tab="inv-b">Vận chuyển</button>
+                  <button type="button" class="ifx-tab" data-ifx-tab="inv-c">Nâng cao</button>
+                </div>
+                <div class="sb-pat-inv-body">
+                  <div class="ifx-tab-panel is-active" data-ifx-panel="inv-a">
+                    <div class="ifx-form-group"><label class="ifx-label" for="fa-qty">Số lượng</label><input class="ifx-input" id="fa-qty" value="12"></div>
+                  </div>
+                  <div class="ifx-tab-panel" data-ifx-panel="inv-b">
+                    <label class="ifx-label"><input type="checkbox" class="ifx-checkbox"> Giao tiêu chuẩn</label>
+                  </div>
+                  <div class="ifx-tab-panel" data-ifx-panel="inv-c">Tùy chọn nâng cao — demo generic.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sb-pat-split-side ifx-flex-col ifx-gap-24">
+          <div class="ifx-card">
+            <div class="ifx-card-header"><h2 class="ifx-card-title">Giá</h2></div>
+            <div class="ifx-card-body">
+              <div class="ifx-form-group"><label class="ifx-label" for="fa-price">Giá gốc</label><input class="ifx-input" id="fa-price" placeholder="0"></div>
+              <div class="ifx-form-group ifx-mb-0"><label class="ifx-label"><input type="checkbox" class="ifx-checkbox"> Còn hàng</label></div>
+            </div>
+          </div>
+          <div class="ifx-card">
+            <div class="ifx-card-header"><h2 class="ifx-card-title">Phân loại</h2></div>
+            <div class="ifx-card-body">
+              <div class="ifx-form-group"><label class="ifx-label" for="fa-group">Nhóm</label><select class="ifx-select" id="fa-group"><option>A</option><option>B</option></select></div>
+              <div class="ifx-form-group ifx-mb-0"><label class="ifx-label" for="fa-st">Trạng thái</label><select class="ifx-select" id="fa-st"><option>active</option><option>pending</option></select></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../../adapters/web/theme.js"></script>
+<script src="../../components/pagination/pagination.js"></script>
+<script src="../../components/drawer/drawer.js"></script>
+<script src="../../components/modal/modal.js"></script>
+<script src="../../components/toast/toast.js"></script>
+<script src="../../components/dropdown/dropdown.js"></script>
+<script src="../../components/tabs/tabs.js"></script>
+<script src="../../components/wizard/wizard.js"></script>
+<script src="../../components/chat/chat.js"></script>
+<script src="../../components/chart/chart-adapter.js"></script>
+<script src="js/boot.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Bảng danh sách · Canonical DS</title>
+  <link rel="stylesheet" href="assets/entry.css">
+</head>
+<body>
+<div class="sb-app">
+
+      <aside class="sb-aside">
+        <div class="sb-brand">iFlux DS</div>
+        <nav class="ifx-nav-group" aria-label="Baseline patterns">
+          <span class="ifx-nav-group-label">Patterns</span>
+          <a class="ifx-nav-item" href="table-list.html" data-sb-nav="table-list"><i class="ti ti-table ifx-nav-icon"></i><span class="ifx-nav-label">Bảng danh sách</span></a>
+          <a class="ifx-nav-item" href="form-add.html" data-sb-nav="form-add"><i class="ti ti-forms ifx-nav-icon"></i><span class="ifx-nav-label">Form thêm/sửa</span></a>
+          <a class="ifx-nav-item" href="order-list.html" data-sb-nav="order-list"><i class="ti ti-clipboard-list ifx-nav-icon"></i><span class="ifx-nav-label">Danh sách</span></a>
+          <a class="ifx-nav-item" href="order-detail.html" data-sb-nav="order-detail"><i class="ti ti-file-description ifx-nav-icon"></i><span class="ifx-nav-label">Chi tiết</span></a>
+          <a class="ifx-nav-item" href="user-profile.html" data-sb-nav="user-profile"><i class="ti ti-user ifx-nav-icon"></i><span class="ifx-nav-label">Hồ sơ</span></a>
+          <a class="ifx-nav-item" href="wizard.html" data-sb-nav="wizard"><i class="ti ti-stairs-up ifx-nav-icon"></i><span class="ifx-nav-label">Wizard</span></a>
+          <a class="ifx-nav-item" href="chat.html" data-sb-nav="chat"><i class="ti ti-messages ifx-nav-icon"></i><span class="ifx-nav-label">Chat</span></a>
+          <a class="ifx-nav-item" href="referrals.html" data-sb-nav="referrals"><i class="ti ti-users-group ifx-nav-icon"></i><span class="ifx-nav-label">Giới thiệu</span></a>
+          <a class="ifx-nav-item" href="charts.html" data-sb-nav="charts"><i class="ti ti-chart-pie ifx-nav-icon"></i><span class="ifx-nav-label">Biểu đồ</span></a>
+        </nav>
+        <hr class="ifx-nav-divider">
+        <nav class="ifx-nav-group">
+          <a class="ifx-nav-item" href="../?section=baseline"><i class="ti ti-arrow-left ifx-nav-icon"></i><span class="ifx-nav-label">Catalog</span></a>
+        </nav>
+      </aside>
+
+  <div class="sb-main">
+    <header class="sb-top">
+      <label class="ifx-search"><i class="ti ti-search ifx-icon ifx-icon-sm"></i><input type="search" placeholder="Tìm…"></label>
+      <button type="button" class="sb-theme-toggle" id="sbThemeToggle">Theme: Dark</button>
+      <span class="ifx-avatar">DS</span>
+    </header>
+    <div class="sb-body">
+
+      <header class="ifx-page-header">
+        <nav aria-label="Breadcrumb"><ol class="ifx-breadcrumb">
+          <li><a href="../?section=baseline">Catalog</a></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li class="ifx-breadcrumb-current">Danh sách</li>
+        </ol></nav>
+        <div class="ifx-page-header-bar">
+          <div>
+            <h1 class="ifx-page-header-title">Bản ghi</h1>
+            <p class="ifx-page-header-desc">Bảng + lọc + phân trang. Dữ liệu generic.</p>
+          </div>
+          <div class="ifx-page-header-actions">
+            <button type="button" class="ifx-btn ifx-btn-outline">Xuất</button>
+            <a class="ifx-btn ifx-btn-primary" href="form-add.html">Thêm</a>
+          </div>
+        </div>
+      </header>
+      <div class="ifx-grid ifx-mb-24">
+        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3"><div class="ifx-stat"><div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div><div><div class="ifx-stat-label">Tổng</div><div class="ifx-stat-value">128</div></div></div></div>
+        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3"><div class="ifx-stat"><div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div><div><div class="ifx-stat-label">Active</div><div class="ifx-stat-value">96</div></div></div></div>
+        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3"><div class="ifx-stat"><div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div><div><div class="ifx-stat-label">Chờ</div><div class="ifx-stat-value">14</div></div></div></div>
+        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3"><div class="ifx-stat"><div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div><div><div class="ifx-stat-label">Chặn</div><div class="ifx-stat-value">18</div></div></div></div>
+      </div>
+      <div class="ifx-card">
+        <div class="ifx-card-body">
+          <p class="ifx-typo-caption ifx-mb-12">Lọc</p>
+          <div class="ifx-form-row">
+            <div class="ifx-form-group"><label class="ifx-label" for="tl-st">Trạng thái</label><select class="ifx-select" id="tl-st"><option>Tất cả</option><option>active</option><option>pending</option></select></div>
+            <div class="ifx-form-group"><label class="ifx-label" for="tl-gr">Nhóm</label><select class="ifx-select" id="tl-gr"><option>Tất cả</option><option>A</option><option>B</option></select></div>
+          </div>
+        </div>
+        <div class="ifx-table-toolbar">
+          <label class="ifx-search"><i class="ti ti-search ifx-icon ifx-icon-sm"></i><input type="search" placeholder="Tìm bản ghi…"></label>
+        </div>
+        <div class="ifx-table-wrap">
+          <table class="ifx-table">
+            <thead><tr><th></th><th>Mã</th><th>Tên</th><th>Nhóm</th><th>Trạng thái</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-01</td><td>Bản ghi một</td><td>A</td><td><span class="ifx-chip ifx-chip-success">active</span></td><td><a class="ifx-btn ifx-btn-ghost ifx-btn-sm" href="order-detail.html">Xem</a></td></tr>
+              <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-02</td><td>Bản ghi hai</td><td>B</td><td><span class="ifx-chip ifx-chip-warning">pending</span></td><td><a class="ifx-btn ifx-btn-ghost ifx-btn-sm" href="order-detail.html">Xem</a></td></tr>
+              <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-03</td><td>Bản ghi ba</td><td>A</td><td><span class="ifx-chip ifx-chip-danger">blocked</span></td><td><a class="ifx-btn ifx-btn-ghost ifx-btn-sm" href="order-detail.html">Xem</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="ifx-pagination" data-ifx-pagination>
+          <button type="button" class="ifx-page-btn" data-ifx-page-nav disabled>‹</button>
+          <button type="button" class="ifx-page-btn is-active">1</button>
+          <button type="button" class="ifx-page-btn">2</button>
+          <button type="button" class="ifx-page-btn" data-ifx-page-nav>›</button>
+          <span class="ifx-page-info">Trang 1</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="../../adapters/web/theme.js"></script>
+<script src="../../components/pagination/pagination.js"></script>
+<script src="../../components/drawer/drawer.js"></script>
+<script src="../../components/modal/modal.js"></script>
+<script src="../../components/toast/toast.js"></script>
+<script src="../../components/dropdown/dropdown.js"></script>
+<script src="../../components/tabs/tabs.js"></script>
+<script src="../../components/wizard/wizard.js"></script>
+<script src="../../components/chat/chat.js"></script>
+<script src="../../components/chart/chart-adapter.js"></script>
+<script src="js/boot.js"></script>
+
+</body>
+</html>

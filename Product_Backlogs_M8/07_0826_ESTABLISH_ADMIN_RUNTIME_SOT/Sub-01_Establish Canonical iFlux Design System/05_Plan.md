@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 mở |
+| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 Owner mở P6 · P6 mở |
 
 ---
 
@@ -164,7 +164,7 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **Owner test (UI):** [sandbox Patterns](https://staging.iflux.vn/design_system/sandbox/?section=patterns) — 6 pattern trên cùng một tab, dữ liệu generic.
 
-**Kết quả technical:** xem `gates/P5.md`.
+**Kết quả technical:** xem `gates/P5.md`. Owner mở P6 (2026-08-26).
 
 ### P6 — Canonical Sandbox (rewrite 9 baseline patterns)
 
@@ -172,12 +172,9 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **DoD:** 9/9 mở được · 0 inline · 0 `.ix-*` · 0 Admin runtime dependency.
 
-**Owner test (UI):** mở cạnh nhau từng cặp:
+**Owner test (UI):** [index 9 cặp](https://staging.iflux.vn/design_system/sandbox/?section=baseline) — mở cạnh nhau baseline vs candidate. Evidence `gates/P6.md`.
 
-```text
-Baseline : https://staging.iflux.vn/Admin_Design_system/patterns/<x>.html
-Candidate: https://staging.iflux.vn/design_system/sandbox/patterns/<x>.html
-```
+**Kết quả technical:** xem `gates/P6.md`.
 
 ### P7 — Design System Regression (regression của CHÍNH DS, không phải hệ thống)
 

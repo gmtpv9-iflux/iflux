@@ -1,0 +1,116 @@
+/**
+ * Sandbox pattern-local — composition chỉ dùng trong 9 baseline pages (§8).
+ * Không promote lên Global DS.
+ */
+.sb-pat-split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-lg);
+}
+/* bp:md */
+@media (min-width: 768px) {
+  .sb-pat-split { flex-direction: row; align-items: flex-start; }
+  .sb-pat-split-main { flex: 1; min-width: 0; }
+  .sb-pat-split-side { width: var(--ifx-space-256); flex-shrink: 0; }
+}
+
+.sb-pat-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-gap-sm);
+  font-size: var(--ifx-font-size-sm);
+}
+.sb-pat-info-label { color: var(--ifx-text-muted); }
+.sb-pat-info-value { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-primary); }
+
+.sb-pat-radios {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ifx-space-12);
+  margin-bottom: var(--ifx-stack-md);
+}
+/* bp:md */
+@media (min-width: 768px) {
+  .sb-pat-radios { grid-template-columns: repeat(3, 1fr); }
+}
+.sb-pat-radio {
+  border: 2px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  padding: var(--ifx-space-16) var(--ifx-space-12);
+  text-align: center;
+  cursor: pointer;
+  background: var(--ifx-bg-surface);
+  color: inherit;
+  font: inherit;
+  transition: var(--ifx-transition-color);
+}
+.sb-pat-radio:hover,
+.sb-pat-radio.is-selected {
+  border-color: var(--ifx-action-primary);
+  background: var(--ifx-action-primary-soft);
+}
+.sb-pat-radio-icon {
+  font-size: var(--ifx-font-size-2xl);
+  color: var(--ifx-action-primary);
+  margin-bottom: var(--ifx-space-8);
+}
+.sb-pat-radio-title {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.sb-pat-radio-sub { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
+
+.sb-pat-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-stack-lg);
+  justify-content: space-between;
+}
+.sb-pat-step {
+  flex: 1;
+  min-width: var(--ifx-space-160);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--ifx-space-8);
+}
+.sb-pat-step-icon {
+  width: var(--ifx-space-80);
+  height: var(--ifx-space-80);
+  border-radius: var(--ifx-radius-full);
+  border: 2px dashed var(--ifx-action-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ifx-font-size-2xl);
+  color: var(--ifx-action-primary);
+}
+.sb-pat-step-title { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-secondary); }
+.sb-pat-step-reward { font-size: var(--ifx-font-size-sm); font-weight: var(--ifx-font-weight-bold); color: var(--ifx-action-primary); }
+
+.sb-pat-chart { min-height: var(--ifx-space-192); }
+.sb-pat-chart-sm { min-height: var(--ifx-space-128); }
+
+.sb-pat-pills {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-2);
+  min-width: var(--ifx-space-160);
+}
+.sb-pat-inv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-md);
+}
+/* bp:md */
+@media (min-width: 768px) {
+  .sb-pat-inv { flex-direction: row; }
+  .sb-pat-pills {
+    border-right: 1px solid var(--ifx-border-default);
+    padding-right: var(--ifx-space-16);
+  }
+  .sb-pat-inv-body { flex: 1; min-width: 0; }
+}
