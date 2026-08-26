@@ -1,0 +1,108 @@
+<section class="sb-section" id="playground">
+  <h2 class="sb-section-title">Responsive / Breakpoint Playground</h2>
+  <p class="sb-section-desc">
+    Owner Acceptance Surface. Bấm viewport để iframe nhận <strong>logical width thật</strong> — CSS <code>@media</code> chạy trên viewport iframe, không phải width giả của div.
+    AUTO = theo chiều rộng trình duyệt hiện tại. 1280/1440 được scale để nhìn hết, logical viewport vẫn đúng.
+  </p>
+
+  <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport selector">
+    <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
+    <button type="button" class="sb-vp-btn" data-vp="360">360</button>
+    <button type="button" class="sb-vp-btn" data-vp="480">480</button>
+    <button type="button" class="sb-vp-btn" data-vp="768">768</button>
+    <button type="button" class="sb-vp-btn" data-vp="1024">1024</button>
+    <button type="button" class="sb-vp-btn" data-vp="1280">1280</button>
+    <button type="button" class="sb-vp-btn" data-vp="1440">1440</button>
+  </div>
+
+  <div class="sb-pg-status">
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Selected viewport</span>
+      <span class="ifx-typo-price-s" id="pgSelected">AUTO</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Actual preview width</span>
+      <span class="ifx-typo-price-s" id="pgActual">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Active breakpoint</span>
+      <span class="ifx-typo-price-s" id="pgActiveBp">—</span>
+    </div>
+  </div>
+
+  <div class="sb-pg-markers" id="pgMarkers" aria-label="Breakpoint markers">
+    <div class="sb-pg-marker" data-bp="base"><strong>BASE</strong><span>&lt; 480</span></div>
+    <div class="sb-pg-marker" data-bp="sm"><strong>sm</strong><span>≥ 480</span></div>
+    <div class="sb-pg-marker" data-bp="md"><strong>md</strong><span>≥ 768</span></div>
+    <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
+    <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
+    <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
+  </div>
+
+  <div class="sb-frame-host" id="pgHost">
+    <div class="sb-frame-scale" id="pgScale">
+      <iframe id="pgFrame" title="Responsive playground preview" src="playground/preview.html" scrolling="no"></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section">
+  <h2 class="sb-section-title">Foundation</h2>
+  <p class="sb-section-desc">
+    <code>reset</code> · <code>fonts</code> · <code>typography</code> · <code>layout</code> ·
+    <code>utilities</code> · <code>icons</code> · <code>adapters/web/theme.js</code>
+  </p>
+
+  <h3 class="sb-sub-title">Fonts — Be Vietnam Pro self-host (woff2)</h3>
+  <div class="ifx-stack-sm">
+    <p class="ifx-fs-xl ifx-fw-200 sb-pg-font-row">ExtraLight 200 — Thị trường chứng khoán Việt Nam 0123456789</p>
+    <p class="ifx-fs-xl ifx-fw-400 sb-pg-font-row">Regular 400 — Thị trường chứng khoán Việt Nam 0123456789</p>
+    <p class="ifx-fs-xl ifx-fw-600 sb-pg-font-row">SemiBold 600 — Thị trường chứng khoán Việt Nam 0123456789</p>
+    <p class="ifx-fs-xl ifx-fw-800 sb-pg-font-row">ExtraBold 800 — Thị trường chứng khoán Việt Nam 0123456789</p>
+  </div>
+
+  <h3 class="sb-sub-title">Semantic typography — <code>.ifx-typo-*</code></h3>
+  <div class="ifx-stack-md sb-pg-typo-list">
+    <p class="ifx-typo-display-s">display-s — Tổng quan thị trường</p>
+    <p class="ifx-typo-h1">h1 — Tổng quan thị trường</p>
+    <p class="ifx-typo-h2">h2 — Tổng quan thị trường</p>
+    <p class="ifx-typo-h3">h3 — Tổng quan thị trường</p>
+    <p class="ifx-typo-title-md">title-md — Tiêu đề card</p>
+    <p class="ifx-typo-body-md">body-md — Nội dung chính của trang, độ dài trung bình, đọc thoải mái trên mọi kích thước màn hình.</p>
+    <p class="ifx-typo-body-sm">body-sm — Nội dung phụ, chú thích chi tiết trong bảng và form.</p>
+    <p class="ifx-typo-caption">caption — Ghi chú nhỏ, mô tả phụ</p>
+    <p class="ifx-typo-overline">overline — nhóm nội dung</p>
+    <p><span class="ifx-typo-price-m">1,234.56</span> <span class="ifx-typo-status-positive">+2.45%</span> <span class="ifx-typo-status-negative">−1.02%</span></p>
+    <p class="ifx-typo-table-header">table header — mã · giá · khối lượng</p>
+    <p class="ifx-typo-timestamp">timestamp — 26/08/2026 14:00</p>
+  </div>
+
+  <h3 class="sb-sub-title">Theme adapter — <code>adapters/web/theme.js</code></h3>
+  <p class="sb-section-desc">
+    Nút Theme gọi <code>IfxTheme.toggle()</code> — key <code>ifx-theme</code>, reload vẫn giữ.
+  </p>
+</section>
+
+<section class="sb-section" id="icons">
+  <h2 class="sb-section-title">Icon Catalog — Tabler vendor</h2>
+  <p class="sb-section-desc">
+    Source Owner chỉ định: <code>foundation/icons/vendor/tabler/tabler-icons.min.css</code>
+    (Tabler 3.44, CSS mask + SVG data-URI, 0 webfont). Tên class giữ nguyên <code>ti ti-*</code>.
+    Custom iFlux icon (nếu có) tách <code>icons/custom/</code> — chưa có artifact.
+  </p>
+  <p class="sb-section-desc">
+    Source: <strong id="iconSourceCount">—</strong>
+    · Canonical: <strong id="iconCanonCount">—</strong>
+    · Missing: <strong id="iconMissing">—</strong>
+  </p>
+  <div class="sb-icon-toolbar">
+    <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon (vd. chart, user, alert)" autocomplete="off">
+    <span class="ifx-typo-caption" id="iconPageInfo">—</span>
+  </div>
+  <div class="sb-icon-grid" id="iconGrid"></div>
+  <div class="sb-icon-pager">
+    <button type="button" class="sb-vp-btn" id="iconPrev">Trước</button>
+    <button type="button" class="sb-vp-btn" id="iconNext">Sau</button>
+  </div>
+  <p class="sb-section-desc" id="iconDetail">Bấm một icon để xem class.</p>
+</section>

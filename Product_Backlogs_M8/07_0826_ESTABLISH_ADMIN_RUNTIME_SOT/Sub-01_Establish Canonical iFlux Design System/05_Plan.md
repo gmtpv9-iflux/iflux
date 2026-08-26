@@ -130,9 +130,9 @@ Foundation implementation PASS
 + Owner nhìn trực tiếp trên sandbox và xác nhận
 ```
 
-**Owner test (UI):** catalog → mục **Foundation** (thang typography, theme toggle giữ trạng thái sau reload) + mục **Responsive Playground** (đủ 10 điểm P2.a); bóp/kéo trình duyệt qua từng mốc 360→1440 thấy container/grid/stack đổi thật bằng CSS.
+**Owner test (UI):** [sandbox Foundation](https://staging.iflux.vn/design_system/sandbox/?section=foundation) — tab Foundation → Responsive Playground: bấm **AUTO | 360 | 480 | 768 | 1024 | 1280 | 1440** (iframe isolation, không resize browser thủ công) → Dark/Light + reload persist → Icon Catalog (Source = Canonical = 331, Missing = 0). Catalog đã tách tab; P3 chưa mở.
 
-**Kết quả: implementation + playground + matrix PASS (12/12, evidence `gates/P2.md` + `gates/P2-evidence/`) — chờ Owner xác nhận trực tiếp trên sandbox (điều kiện DoD thứ 4).**
+**Kết quả technical: PASS** (matrix nút+iframe 12/12, icons missing=0, tabs sẵn). **OWNER UI ACCEPTANCE = PENDING** — P2 chỉ OWNER PASS khi đủ 10 bước trong `gates/P2.md`. P3 chưa mở.
 
 ### P3 — Primitives
 

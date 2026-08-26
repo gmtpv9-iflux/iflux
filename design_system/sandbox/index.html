@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>iFlux Canonical Design System — Sandbox Catalog</title>
+  <title>iFlux Canonical Design System — Catalog</title>
   <link rel="stylesheet" href="../tokens/generated/css/primitives.css">
   <link rel="stylesheet" href="../tokens/generated/css/semantic.css">
   <link rel="stylesheet" href="../tokens/generated/css/themes/dark.css">
@@ -22,230 +22,24 @@
   <header class="sb-header">
     <div>
       <h1 class="sb-title">iFlux Canonical Design System</h1>
-      <p class="sb-subtitle">Sandbox Catalog — Sub-01 · nguồn: <code>tokens/source/*.json</code> (generated, readonly)</p>
+      <p class="sb-subtitle">Catalog · Token JSON SoT · Foundation canonical <code>ifx-*</code></p>
     </div>
     <button type="button" class="sb-theme-toggle" id="sbThemeToggle" aria-label="Đổi theme">Theme: Dark</button>
   </header>
 
-  <nav class="sb-nav" aria-label="Catalog">
-    <a href="#tokens" class="sb-nav-item">Tokens (P1)</a>
-    <a href="#foundation" class="sb-nav-item">Foundation (P2)</a>
-    <a href="#playground" class="sb-nav-item is-active">Responsive Playground (P2)</a>
-    <span class="sb-nav-item is-disabled">Primitives (P3)</span>
-    <span class="sb-nav-item is-disabled">Components (P4)</span>
-    <span class="sb-nav-item is-disabled">Patterns (P5)</span>
+  <nav class="sb-nav" id="sbNav" aria-label="Catalog">
+    <a class="sb-nav-item" href="?section=tokens" data-section="tokens">Tokens</a>
+    <a class="sb-nav-item" href="?section=foundation" data-section="foundation">Foundation</a>
+    <a class="sb-nav-item" href="?section=primitives" data-section="primitives">Primitives</a>
+    <a class="sb-nav-item" href="?section=components" data-section="components">Components</a>
+    <a class="sb-nav-item" href="?section=patterns" data-section="patterns">Patterns</a>
+    <a class="sb-nav-item" href="?section=baseline" data-section="baseline">Baseline / Visual Test</a>
   </nav>
 
-  <!-- ═══════════ RESPONSIVE / BREAKPOINT PLAYGROUND (P2 — Owner Acceptance Surface) ═══════════
-       Full-bleed (ngoài .sb-main max-width) để demo container/max-width theo viewport thật. -->
-  <section class="sb-section sb-full-bleed" id="playground">
-      <h2 class="sb-section-title">Responsive / Breakpoint Playground</h2>
-      <p class="sb-section-desc">
-        Owner Acceptance Surface của responsive foundation. Resize cửa sổ trình duyệt để thấy layout đổi thật.
-        <strong>Layout do CSS mobile-first điều khiển — JS chỉ hiển thị số liệu viewport/breakpoint.</strong>
-      </p>
-
-      <!-- 1+2. Viewport width + breakpoint active (JS display-only) -->
-      <div class="sb-pg-status">
-        <div class="sb-pg-status-item">
-          <span class="ifx-typo-overline">Viewport width</span>
-          <span class="ifx-typo-price-m" id="pgViewport">—</span>
-        </div>
-        <div class="sb-pg-status-item">
-          <span class="ifx-typo-overline">Breakpoint active</span>
-          <span class="ifx-typo-price-m" id="pgActiveBp">—</span>
-        </div>
-      </div>
-
-      <!-- 3. Breakpoint markers -->
-      <div class="sb-pg-markers" id="pgMarkers" aria-label="Breakpoint markers">
-        <div class="sb-pg-marker" data-bp="base"><strong>BASE</strong><span>&lt; 480</span></div>
-        <div class="sb-pg-marker" data-bp="sm"><strong>sm</strong><span>≥ 480</span></div>
-        <div class="sb-pg-marker" data-bp="md"><strong>md</strong><span>≥ 768</span></div>
-        <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
-        <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
-        <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
-      </div>
-
-      <!-- 4. Container demo -->
-      <h3 class="sb-sub-title">Container — <code>.ifx-container</code></h3>
-      <p class="sb-section-desc">
-        Padding gutter đổi theo breakpoint qua token <code>--ifx-space-container</code>:
-        BASE 16px → md 20px → lg 24px → 2xl 32px.
-        Max-width là opt-in qua <code>.ifx-container-max</code> (token <code>--ifx-size-container-max</code> = 1280px).
-        Gutter hiện tại: <strong id="pgContainerPad">—</strong>
-      </p>
-      <div class="sb-pg-container-frame">
-        <div class="ifx-container sb-pg-container-demo">
-          <div class="sb-pg-container-inner">.ifx-container — full width + gutter token responsive</div>
-        </div>
-      </div>
-      <div class="sb-pg-container-frame">
-        <div class="ifx-container ifx-container-max sb-pg-container-demo">
-          <div class="sb-pg-container-inner">.ifx-container.ifx-container-max — giới hạn 1280px, căn giữa</div>
-        </div>
-      </div>
-
-      <!-- 5. Responsive Grid demo -->
-      <h3 class="sb-sub-title">Grid 12 cột — <code>.ifx-grid</code> mobile-first</h3>
-      <p class="sb-section-desc">
-        Cell khai báo <code>ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3</code> →
-        BASE: 1 cột · md: 2 cột · lg: 3 cột · 2xl: 4 cột. Gap = <code>--ifx-grid-gutter</code> (16px → md 24px).
-      </p>
-      <div class="ifx-grid sb-pg-grid">
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">1</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">2</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">3</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">4</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">5</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">6</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">7</div>
-        <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">8</div>
-      </div>
-
-      <!-- 6. Stack / Inline demo -->
-      <h3 class="sb-sub-title">Stack → Inline — <code>.ifx-flex-col.ifx-flex-row-md</code></h3>
-      <p class="sb-section-desc">BASE: A B C xếp dọc · từ md (≥ 768px): xếp ngang. Điều khiển 100% bằng CSS.</p>
-      <div class="ifx-flex-col ifx-flex-row-md ifx-gap-md sb-pg-abc">
-        <div class="sb-pg-cell ifx-flex-1">A</div>
-        <div class="sb-pg-cell ifx-flex-1">B</div>
-        <div class="sb-pg-cell ifx-flex-1">C</div>
-      </div>
-
-      <!-- 7. Gap / spacing demo -->
-      <h3 class="sb-sub-title">Gap / Spacing — semantic token, không hardcode</h3>
-      <p class="sb-section-desc">
-        Mỗi hàng dùng một gap token. Token responsive hiện tại:
-        <code>--ifx-space-container</code> = <strong id="pgTokContainer">—</strong> ·
-        <code>--ifx-grid-gutter</code> = <strong id="pgTokGutter">—</strong> ·
-        <code>--ifx-space-section</code> = <strong id="pgTokSection">—</strong>
-      </p>
-      <div class="ifx-stack-sm">
-        <div class="ifx-flex ifx-gap-xs sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xs</span><i></i><i></i><i></i><i></i></div>
-        <div class="ifx-flex ifx-gap-sm sb-pg-gap-row"><span class="sb-pg-gap-label">gap-sm</span><i></i><i></i><i></i><i></i></div>
-        <div class="ifx-flex ifx-gap-md sb-pg-gap-row"><span class="sb-pg-gap-label">gap-md</span><i></i><i></i><i></i><i></i></div>
-        <div class="ifx-flex ifx-gap-lg sb-pg-gap-row"><span class="sb-pg-gap-label">gap-lg</span><i></i><i></i><i></i><i></i></div>
-        <div class="ifx-flex ifx-gap-xl sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xl</span><i></i><i></i><i></i><i></i></div>
-      </div>
-
-      <!-- 8. Typography responsive -->
-      <h3 class="sb-sub-title">Typography responsive</h3>
-      <p class="sb-section-desc">
-        <strong>N/A — Typography dùng fixed token scale, responsive do composition quyết định.</strong>
-        Contract typography của iFlux không đổi font-size theo breakpoint (tránh mobile lớn / desktop nhỏ lệch).
-      </p>
-
-      <!-- 9+10. Theme + rule ghi ngay trên UI -->
-      <p class="sb-section-desc">
-        Dark / Light: dùng nút <em>Theme</em> góc phải trên — toàn bộ playground đổi theo theme.
-        JS trong playground chỉ ghi số (viewport, breakpoint, giá trị token); mọi thay đổi bố cục là CSS
-        <code>@media (min-width: …)</code> literal theo 5 mốc đã LOCK.
-      </p>
-  </section>
-
-  <main class="sb-main">
-    <!-- ═══════════ FOUNDATION (P2) ═══════════ -->
-    <section class="sb-section" id="foundation">
-      <h2 class="sb-section-title">Foundation</h2>
-      <p class="sb-section-desc">
-        <code>reset</code> · <code>fonts</code> · <code>typography</code> · <code>layout</code> ·
-        <code>utilities</code> · <code>icons</code> · adapter <code>adapters/web/theme.js</code> — canonical <code>ifx-*</code>, 0 <code>.ix-*</code>.
-      </p>
-
-      <h3 class="sb-sub-title">Fonts — Be Vietnam Pro self-host (woff2)</h3>
-      <div class="ifx-stack-sm">
-        <p class="ifx-fs-xl ifx-fw-200 sb-pg-font-row">ExtraLight 200 — Thị trường chứng khoán Việt Nam 0123456789</p>
-        <p class="ifx-fs-xl ifx-fw-400 sb-pg-font-row">Regular 400 — Thị trường chứng khoán Việt Nam 0123456789</p>
-        <p class="ifx-fs-xl ifx-fw-600 sb-pg-font-row">SemiBold 600 — Thị trường chứng khoán Việt Nam 0123456789</p>
-        <p class="ifx-fs-xl ifx-fw-800 sb-pg-font-row">ExtraBold 800 — Thị trường chứng khoán Việt Nam 0123456789</p>
-      </div>
-
-      <h3 class="sb-sub-title">Semantic typography — <code>.ifx-typo-*</code></h3>
-      <div class="ifx-stack-md sb-pg-typo-list">
-        <p class="ifx-typo-display-s">display-s — Tổng quan thị trường</p>
-        <p class="ifx-typo-h1">h1 — Tổng quan thị trường</p>
-        <p class="ifx-typo-h2">h2 — Tổng quan thị trường</p>
-        <p class="ifx-typo-h3">h3 — Tổng quan thị trường</p>
-        <p class="ifx-typo-title-md">title-md — Tiêu đề card</p>
-        <p class="ifx-typo-body-md">body-md — Nội dung chính của trang, độ dài trung bình, đọc thoải mái trên mọi kích thước màn hình.</p>
-        <p class="ifx-typo-body-sm">body-sm — Nội dung phụ, chú thích chi tiết trong bảng và form.</p>
-        <p class="ifx-typo-caption">caption — Ghi chú nhỏ, mô tả phụ</p>
-        <p class="ifx-typo-overline">overline — nhóm nội dung</p>
-        <p><span class="ifx-typo-price-m">1,234.56</span> <span class="ifx-typo-status-positive">+2.45%</span> <span class="ifx-typo-status-negative">−1.02%</span></p>
-        <p class="ifx-typo-table-header">table header — mã · giá · khối lượng</p>
-        <p class="ifx-typo-timestamp">timestamp — 26/08/2026 14:00</p>
-      </div>
-
-      <h3 class="sb-sub-title">Icons — Tabler (vendor local, self-contained) · size token <code>--ifx-size-icon-*</code></h3>
-      <div class="ifx-flex ifx-flex-wrap ifx-gap-lg ifx-items-center">
-        <span class="ifx-inline-sm"><i class="ti ti-home ifx-icon ifx-icon-sm"></i><span class="ifx-typo-caption">sm 16</span></span>
-        <span class="ifx-inline-sm"><i class="ti ti-layout-dashboard ifx-icon"></i><span class="ifx-typo-caption">md 20</span></span>
-        <span class="ifx-inline-sm"><i class="ti ti-chart-line ifx-icon ifx-icon-lg"></i><span class="ifx-typo-caption">lg 24</span></span>
-        <span class="ifx-inline-sm"><i class="ti ti-wallet ifx-icon ifx-icon-lg"></i><i class="ti ti-news ifx-icon ifx-icon-lg"></i><i class="ti ti-bell ifx-icon ifx-icon-lg"></i><i class="ti ti-search ifx-icon ifx-icon-lg"></i><i class="ti ti-settings ifx-icon ifx-icon-lg"></i><i class="ti ti-user ifx-icon ifx-icon-lg"></i></span>
-      </div>
-
-      <h3 class="sb-sub-title">Theme adapter — <code>adapters/web/theme.js</code></h3>
-      <p class="sb-section-desc">
-        Nút Theme của sandbox gọi <code>IfxTheme.toggle()</code> — storage key <code>ifx-theme</code>,
-        chưa chọn tay thì theo <code>prefers-color-scheme</code> trình duyệt. Adapter không tự inject nút vào DOM (việc của platform).
-      </p>
-    </section>
-
-    <!-- ═══════════ TOKENS (P1) ═══════════ -->
-    <section class="sb-section" id="tokens">
-      <h2 class="sb-section-title">Semantic Theme Tokens</h2>
-      <p class="sb-section-desc">57 token / theme — đổi Dark/Light để thấy giá trị đổi theo. Tên token giống nhau ở cả hai theme.</p>
-      <div class="sb-grid" data-render="theme-colors"></div>
-    </section>
-
-    <section class="sb-section" id="sec-palette">
-      <h2 class="sb-section-title">Primitive Palette</h2>
-      <p class="sb-section-desc">Bảng màu raw — component KHÔNG dùng trực tiếp, chỉ qua semantic/theme token.</p>
-      <div class="sb-grid" data-render="primitive-colors"></div>
-      <h3 class="sb-sub-title">Alpha</h3>
-      <div class="sb-grid" data-render="alpha"></div>
-      <h3 class="sb-sub-title">Gradient</h3>
-      <div class="sb-grid sb-grid-wide" data-render="gradient"></div>
-    </section>
-
-    <section class="sb-section" id="sec-spacing">
-      <h2 class="sb-section-title">Spacing Scale</h2>
-      <p class="sb-section-desc">Base 4px · 8pt grid.</p>
-      <div class="sb-rows" data-render="spacing"></div>
-    </section>
-
-    <section class="sb-section" id="sec-typography">
-      <h2 class="sb-section-title">Type Scale</h2>
-      <p class="sb-section-desc">Font: Be Vietnam Pro (self-host — nạp qua <code>foundation/fonts.css</code>).</p>
-      <div class="sb-rows" data-render="type-scale"></div>
-    </section>
-
-    <section class="sb-section" id="sec-radius-shadow">
-      <h2 class="sb-section-title">Radius &amp; Shadow</h2>
-      <div class="sb-grid" data-render="radius"></div>
-      <h3 class="sb-sub-title">Shadow</h3>
-      <div class="sb-grid" data-render="shadow"></div>
-    </section>
-
-    <section class="sb-section" id="sec-motion-size">
-      <h2 class="sb-section-title">Motion · Size · Z-index</h2>
-      <div class="sb-cols">
-        <div><h3 class="sb-sub-title">Motion</h3><table class="sb-table" data-render="motion"></table></div>
-        <div><h3 class="sb-sub-title">Size</h3><table class="sb-table" data-render="size"></table></div>
-        <div><h3 class="sb-sub-title">Z-index</h3><table class="sb-table" data-render="zindex"></table></div>
-      </div>
-    </section>
-
-    <section class="sb-section" id="sec-breakpoints">
-      <h2 class="sb-section-title">Breakpoints (Owner LOCK 2026-08-26)</h2>
-      <p class="sb-section-desc">Mobile-first: Base &lt; 480px = CSS mặc định, mở rộng dần bằng <code>min-width</code>. Media query dùng literal — CẤM <code>var()</code>.</p>
-      <table class="sb-table" data-render="breakpoints"></table>
-      <p class="sb-viewport-now">Viewport hiện tại: <strong id="sbViewportNow">—</strong></p>
-    </section>
-  </main>
+  <main class="sb-stage" id="sbStage"></main>
 
   <footer class="sb-footer">
-    Canonical iFlux Design System · Sub-01 P1–P2 · Token SoT = JSON · generated CSS readonly · Foundation canonical ifx-*
+    Canonical iFlux Design System · Sub-01 · deep-link <code>?section=foundation</code>
   </footer>
 
   <script src="../tokens/generated/js/breakpoints.js"></script>

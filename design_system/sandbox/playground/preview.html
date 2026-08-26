@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" class="sb-preview-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Playground Preview</title>
+  <link rel="stylesheet" href="../../tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../foundation/fonts.css">
+  <link rel="stylesheet" href="../../foundation/reset.css">
+  <link rel="stylesheet" href="../../foundation/typography.css">
+  <link rel="stylesheet" href="../../foundation/layout.css">
+  <link rel="stylesheet" href="../../foundation/utilities.css">
+  <link rel="stylesheet" href="../assets/sandbox.css">
+</head>
+<body class="sb-preview sb-preview-isolate">
+  <p class="sb-section-desc">
+    Isolation iframe — <code>@media</code> dùng chiều rộng iframe (logical viewport), không phải width của div ngoài.
+    Layout do CSS mobile-first trong <code>foundation/layout.css</code>.
+  </p>
+
+  <div class="ifx-container sb-pg-container-demo">
+    <div class="sb-pg-container-inner">.ifx-container — full width + gutter token responsive</div>
+  </div>
+  <div class="ifx-container ifx-container-max sb-pg-container-demo">
+    <div class="sb-pg-container-inner">.ifx-container.ifx-container-max — giới hạn 1280px, căn giữa</div>
+  </div>
+
+  <h3 class="sb-sub-title">Grid 12 cột — mobile-first</h3>
+  <p class="sb-section-desc">
+    <code>ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3</code> →
+    BASE 1 cột · md 2 · lg 3 · 2xl 4. Gap = <code>--ifx-grid-gutter</code>.
+  </p>
+  <div class="ifx-grid sb-pg-grid">
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">1</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">2</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">3</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">4</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">5</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">6</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">7</div>
+    <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">8</div>
+  </div>
+
+  <h3 class="sb-sub-title">Stack → Inline</h3>
+  <p class="sb-section-desc">BASE: A B C xếp dọc · từ md (≥ 768px): xếp ngang.</p>
+  <div class="ifx-flex-col ifx-flex-row-md ifx-gap-md sb-pg-abc">
+    <div class="sb-pg-cell ifx-flex-1">A</div>
+    <div class="sb-pg-cell ifx-flex-1">B</div>
+    <div class="sb-pg-cell ifx-flex-1">C</div>
+  </div>
+
+  <h3 class="sb-sub-title">Gap / Spacing</h3>
+  <p class="sb-section-desc">
+    Token: <code>--ifx-space-container</code> = <strong id="pgTokContainer">—</strong> ·
+    <code>--ifx-grid-gutter</code> = <strong id="pgTokGutter">—</strong> ·
+    <code>--ifx-space-section</code> = <strong id="pgTokSection">—</strong> ·
+    gutter container = <strong id="pgContainerPad">—</strong>
+  </p>
+  <div class="ifx-stack-sm">
+    <div class="ifx-flex ifx-gap-xs sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xs</span><i></i><i></i><i></i><i></i></div>
+    <div class="ifx-flex ifx-gap-sm sb-pg-gap-row"><span class="sb-pg-gap-label">gap-sm</span><i></i><i></i><i></i><i></i></div>
+    <div class="ifx-flex ifx-gap-md sb-pg-gap-row"><span class="sb-pg-gap-label">gap-md</span><i></i><i></i><i></i><i></i></div>
+    <div class="ifx-flex ifx-gap-lg sb-pg-gap-row"><span class="sb-pg-gap-label">gap-lg</span><i></i><i></i><i></i><i></i></div>
+    <div class="ifx-flex ifx-gap-xl sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xl</span><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <h3 class="sb-sub-title">Typography responsive</h3>
+  <p class="sb-section-desc">
+    <strong>N/A — Typography dùng fixed token scale, responsive do composition quyết định.</strong>
+  </p>
+
+  <script src="../../tokens/generated/js/breakpoints.js"></script>
+  <script src="../../adapters/web/theme.js"></script>
+  <script src="preview.js"></script>
+</body>
+</html>

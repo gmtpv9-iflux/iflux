@@ -123,4 +123,6 @@ if (violations.length > 0) {
   for (const v of violations) console.error('  ✗ ' + v);
   process.exit(1);
 }
-console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator.');
+execFileSync('node', [path.join(DS, 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
+
+console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · icons missing=0.');
