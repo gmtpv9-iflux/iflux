@@ -150,9 +150,9 @@ Foundation implementation PASS
 
 Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → breadcrumb → form → table → pagination → drawer → action-bar → modal → toast → dropdown → tabs → search → timeline → wizard → chat → chart.
 
-**DoD:** mỗi component 1 trang demo; JS 0 phụ thuộc Admin runtime/business; chart đổi theme tự đổi màu; đủ component để phủ toàn bộ visual capability của 9 patterns.
+**DoD:** catalog một trang (liệt kê như Tokens / Foundation / Primitives); JS 0 phụ thuộc Admin runtime/business; chart đổi theme tự đổi màu; đủ component để phủ toàn bộ visual capability của 9 patterns.
 
-**Owner test (UI):** [sandbox Components](https://staging.iflux.vn/design_system/sandbox/?section=components) — mỗi family một trang (`&family=`). Duyệt lần lượt; Dark/Light trên chart phải đổi màu.
+**Owner test (UI):** [sandbox Components](https://staging.iflux.vn/design_system/sandbox/?section=components) — 17 family trên cùng một tab. Dark/Light trên chart phải đổi màu.
 
 **Kết quả technical:** xem `gates/P4.md`.
 

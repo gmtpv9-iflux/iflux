@@ -16,26 +16,36 @@
     1440: '1440 — 2xl'
   };
   var PAGE_SIZE = 48;
-  var FAMILIES = ['card', 'stat', 'breadcrumb', 'form', 'table', 'pagination', 'drawer', 'action-bar', 'modal', 'toast', 'dropdown', 'tabs', 'search', 'timeline', 'wizard', 'chat', 'chart'];
-  var FAMILY_FILES = {
-    card: { css: ['../components/card/card.css'], js: [] },
-    stat: { css: ['../components/stat/stat.css'], js: [] },
-    breadcrumb: { css: ['../components/breadcrumb/breadcrumb.css'], js: [] },
-    form: { css: ['../components/form/form.css'], js: [] },
-    table: { css: ['../components/table/table.css', '../components/form/form.css'], js: [] },
-    pagination: { css: ['../components/pagination/pagination.css'], js: ['../components/pagination/pagination.js'] },
-    drawer: { css: ['../components/drawer/drawer.css'], js: ['../components/drawer/drawer.js'] },
-    'action-bar': { css: ['../components/action-bar/action-bar.css'], js: [] },
-    modal: { css: ['../components/modal/modal.css'], js: ['../components/modal/modal.js'] },
-    toast: { css: ['../components/toast/toast.css'], js: ['../components/toast/toast.js'] },
-    dropdown: { css: ['../components/dropdown/dropdown.css'], js: ['../components/dropdown/dropdown.js'] },
-    tabs: { css: ['../components/tabs/tabs.css'], js: ['../components/tabs/tabs.js'] },
-    search: { css: ['../components/search/search.css'], js: [] },
-    timeline: { css: ['../components/timeline/timeline.css'], js: [] },
-    wizard: { css: ['../components/wizard/wizard.css', '../components/form/form.css', '../components/toast/toast.css'], js: ['../components/toast/toast.js', '../components/wizard/wizard.js'] },
-    chat: { css: ['../components/chat/chat.css'], js: ['../components/chat/chat.js'] },
-    chart: { css: ['../components/chart/chart.css'], js: ['../components/chart/chart-adapter.js'] }
-  };
+  var COMPONENT_CSS = [
+    '../components/card/card.css',
+    '../components/stat/stat.css',
+    '../components/breadcrumb/breadcrumb.css',
+    '../components/form/form.css',
+    '../components/table/table.css',
+    '../components/pagination/pagination.css',
+    '../components/drawer/drawer.css',
+    '../components/action-bar/action-bar.css',
+    '../components/modal/modal.css',
+    '../components/toast/toast.css',
+    '../components/dropdown/dropdown.css',
+    '../components/tabs/tabs.css',
+    '../components/search/search.css',
+    '../components/timeline/timeline.css',
+    '../components/wizard/wizard.css',
+    '../components/chat/chat.css',
+    '../components/chart/chart.css'
+  ];
+  var COMPONENT_JS = [
+    '../components/pagination/pagination.js',
+    '../components/drawer/drawer.js',
+    '../components/modal/modal.js',
+    '../components/toast/toast.js',
+    '../components/dropdown/dropdown.js',
+    '../components/tabs/tabs.js',
+    '../components/wizard/wizard.js',
+    '../components/chat/chat.js',
+    '../components/chart/chart-adapter.js'
+  ];
 
   function ensureHref(href, kind) {
     var sel = (kind === 'script' ? 'script' : 'link') + '[data-ifx-comp="' + href + '"]';
@@ -59,38 +69,23 @@
     });
   }
 
-  function ensureFamilyAssets(fam) {
-    var spec = FAMILY_FILES[fam];
-    if (!spec) return Promise.resolve();
+  function ensureComponentAssets() {
+    COMPONENT_CSS.forEach(function (h) { ensureHref(h, 'css'); });
     var chain = Promise.resolve();
-    spec.css.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'css'); }); });
-    spec.js.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
+    COMPONENT_JS.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
     return chain;
   }
 
-  function bindComponentFamily(fam) {
-    if (window.IfxPagination && fam === 'pagination') window.IfxPagination.init();
-    if (window.IfxTabs && fam === 'tabs') window.IfxTabs.init();
-    if (window.IfxWizard && fam === 'wizard') window.IfxWizard.init();
-    if (window.IfxChat && fam === 'chat') window.IfxChat.init();
-    if (window.IfxChart && fam === 'chart') window.IfxChart.init();
-    if (fam === 'toast' || fam === 'wizard') {
-      doc.querySelectorAll('[data-ifx-toast]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (window.IfxToast) window.IfxToast.show('Toast ' + btn.getAttribute('data-ifx-toast'), btn.getAttribute('data-ifx-toast'));
-        });
+  function bindComponents() {
+    if (window.IfxPagination) window.IfxPagination.init();
+    if (window.IfxTabs) window.IfxTabs.init();
+    if (window.IfxWizard) window.IfxWizard.init();
+    if (window.IfxChat) window.IfxChat.init();
+    if (window.IfxChart) window.IfxChart.init();
+    doc.querySelectorAll('[data-ifx-toast]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (window.IfxToast) window.IfxToast.show('Toast ' + btn.getAttribute('data-ifx-toast'), btn.getAttribute('data-ifx-toast'));
       });
-    }
-  }
-
-  function bindComponentIndex() {
-    var nav = doc.getElementById('compIndex');
-    if (!nav) return;
-    nav.addEventListener('click', function (e) {
-      var a = e.target.closest('[data-family]');
-      if (!a) return;
-      e.preventDefault();
-      loadSection('components', true, { family: a.getAttribute('data-family') });
     });
   }
   var PRIMITIVE_CSS = [
@@ -408,20 +403,20 @@
     });
   }
 
-  function loadSection(id, push, opts) {
-    opts = opts || {};
+  function scrollPanel() {
+    var hash = params().get('panel') || (window.location.hash || '').replace('#', '');
+    if (!hash) return;
+    var target = doc.getElementById(hash);
+    if (target) target.scrollIntoView();
+  }
+
+  function loadSection(id, push) {
     if (SECTIONS.indexOf(id) === -1) id = 'foundation';
     syncNav(id);
-    var fam = null;
-    if (id === 'components') {
-      fam = opts.family || (opts.keepFamily ? params().get('family') : null);
-      if (FAMILIES.indexOf(fam) === -1) fam = null;
-    }
-    var url = '?section=' + id + (fam ? '&family=' + fam : '');
-    if (push === false) window.history.replaceState({ section: id, family: fam }, '', url);
-    else window.history.pushState({ section: id, family: fam }, '', url);
-    var path = (id === 'components' && fam) ? ('sections/components/' + fam + '.html') : ('sections/' + id + '.html');
-    return fetch(path)
+    var url = '?section=' + id;
+    if (push === false) window.history.replaceState({ section: id }, '', url);
+    else window.history.pushState({ section: id }, '', url);
+    return fetch('sections/' + id + '.html')
       .then(function (r) { return r.text(); })
       .then(function (html) {
         stage.innerHTML = html;
@@ -436,16 +431,12 @@
         }
         if (id === 'components') {
           ensurePrimitiveCss();
-          if (fam) {
-            return ensureFamilyAssets(fam).then(function () { bindComponentFamily(fam); });
-          }
-          bindComponentIndex();
+          return ensureComponentAssets().then(function () {
+            bindComponents();
+            scrollPanel();
+          });
         }
-        var hash = params().get('panel') || (window.location.hash || '').replace('#', '');
-        if (hash) {
-          var target = doc.getElementById(hash);
-          if (target) target.scrollIntoView();
-        }
+        scrollPanel();
       });
   }
 
@@ -455,7 +446,7 @@
     e.preventDefault();
     loadSection(a.getAttribute('data-section'));
   });
-  window.addEventListener('popstate', function () { loadSection(currentSection(), false, { keepFamily: true }); });
+  window.addEventListener('popstate', function () { loadSection(currentSection(), false); });
   window.addEventListener('resize', function () {
     if (selectedVp === 'auto') applyFrameSize();
   });
@@ -474,5 +465,5 @@
   window.addEventListener('ifx-theme-change', function (e) { syncTheme(e.detail.theme); });
   syncTheme(window.IfxTheme.get());
 
-  loadSection(currentSection(), false, { keepFamily: true });
+  loadSection(currentSection(), false);
 })();

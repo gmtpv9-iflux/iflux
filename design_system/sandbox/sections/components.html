@@ -1,25 +1,303 @@
-<section class="sb-section">
-  <h2 class="sb-section-title">Components</h2>
-  <p class="sb-section-desc">
-    Mỗi family một trang. CSS/JS chỉ nạp family đang xem. Deep-link <code>?section=components&amp;family=card</code>.
-  </p>
-  <nav class="ifx-nav-group" id="compIndex" aria-label="Component families">
-    <a class="ifx-nav-item" href="?section=components&amp;family=card" data-family="card"><span class="ifx-nav-label">Card</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=stat" data-family="stat"><span class="ifx-nav-label">Stat</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=breadcrumb" data-family="breadcrumb"><span class="ifx-nav-label">Breadcrumb</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=form" data-family="form"><span class="ifx-nav-label">Form</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=table" data-family="table"><span class="ifx-nav-label">Table</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=pagination" data-family="pagination"><span class="ifx-nav-label">Pagination</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=drawer" data-family="drawer"><span class="ifx-nav-label">Drawer</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=action-bar" data-family="action-bar"><span class="ifx-nav-label">Action Bar</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=modal" data-family="modal"><span class="ifx-nav-label">Modal</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=toast" data-family="toast"><span class="ifx-nav-label">Toast</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=dropdown" data-family="dropdown"><span class="ifx-nav-label">Dropdown</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=tabs" data-family="tabs"><span class="ifx-nav-label">Tabs</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=search" data-family="search"><span class="ifx-nav-label">Search</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=timeline" data-family="timeline"><span class="ifx-nav-label">Timeline</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=wizard" data-family="wizard"><span class="ifx-nav-label">Wizard</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=chat" data-family="chat"><span class="ifx-nav-label">Chat Family</span></a>
-    <a class="ifx-nav-item" href="?section=components&amp;family=chart" data-family="chart"><span class="ifx-nav-label">Chart</span></a>
+<section class="sb-section" id="comp-card">
+  <h2 class="sb-section-title">Card</h2>
+  <div class="ifx-card">
+    <div class="ifx-card-header"><h3 class="ifx-card-title">Tiêu đề card</h3></div>
+    <div class="ifx-card-body">Nội dung generic — compose primitive typography, không business copy.</div>
+    <div class="ifx-card-footer"><button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm">Action</button></div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-stat">
+  <h2 class="sb-section-title">Stat</h2>
+  <div class="ifx-grid">
+    <div class="ifx-col-12 ifx-col-md-6">
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon"><i class="ti ti-users ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Người dùng</div>
+          <div class="ifx-stat-value">1,248</div>
+          <div class="ifx-stat-trend ifx-stat-trend-up">+4.2%</div>
+        </div>
+      </div>
+    </div>
+    <div class="ifx-col-12 ifx-col-md-6">
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-alert-triangle ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Cảnh báo</div>
+          <div class="ifx-stat-value">12</div>
+          <div class="ifx-stat-trend ifx-stat-trend-down">−1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-breadcrumb">
+  <h2 class="sb-section-title">Breadcrumb</h2>
+  <nav aria-label="Breadcrumb">
+    <ol class="ifx-breadcrumb">
+      <li><a href="?section=components">Catalog</a></li>
+      <li class="ifx-breadcrumb-sep">/</li>
+      <li><a href="?section=components">Components</a></li>
+      <li class="ifx-breadcrumb-sep">/</li>
+      <li class="ifx-breadcrumb-current">Breadcrumb</li>
+    </ol>
   </nav>
+</section>
+
+<section class="sb-section" id="comp-form">
+  <h2 class="sb-section-title">Form</h2>
+  <div class="ifx-form-row">
+    <div class="ifx-form-group">
+      <label class="ifx-label" for="f-name">Tên</label>
+      <input class="ifx-input" id="f-name" placeholder="Nhập tên">
+    </div>
+    <div class="ifx-form-group">
+      <label class="ifx-label" for="f-sel">Nhóm</label>
+      <select class="ifx-select" id="f-sel"><option>A</option><option>B</option></select>
+    </div>
+  </div>
+  <div class="ifx-form-group">
+    <label class="ifx-label" for="f-note">Ghi chú</label>
+    <textarea class="ifx-textarea" id="f-note" placeholder="Nội dung"></textarea>
+  </div>
+  <div class="ifx-form-group">
+    <label class="ifx-label"><input type="checkbox" class="ifx-checkbox"> Đồng ý điều khoản</label>
+  </div>
+  <div class="ifx-form-group">
+    <label class="ifx-label" for="f-ro">Chỉ đọc</label>
+    <input class="ifx-input" id="f-ro" value="Readonly" readonly>
+  </div>
+  <div class="ifx-dropzone">
+    <div class="ifx-dropzone-title">Kéo file vào đây</div>
+    <div class="ifx-dropzone-sub">Demo generic — không upload.</div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-table">
+  <h2 class="sb-section-title">Table</h2>
+  <div class="ifx-table-toolbar">
+    <span class="ifx-typo-caption">3 bản ghi demo</span>
+  </div>
+  <div class="ifx-table-wrap">
+    <table class="ifx-table">
+      <thead><tr><th></th><th>Mã</th><th>Tên</th><th>Trạng thái</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-01</td><td>Bản ghi một</td><td><span class="ifx-chip ifx-chip-success">active</span></td></tr>
+        <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-02</td><td>Bản ghi hai</td><td><span class="ifx-chip ifx-chip-warning">pending</span></td></tr>
+        <tr><td><input type="checkbox" class="ifx-checkbox"></td><td>A-03</td><td>Bản ghi ba</td><td><span class="ifx-chip ifx-chip-danger">blocked</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-pagination">
+  <h2 class="sb-section-title">Pagination</h2>
+  <div class="ifx-pagination" data-ifx-pagination>
+    <button type="button" class="ifx-page-btn" data-ifx-page-nav disabled>‹</button>
+    <button type="button" class="ifx-page-btn is-active">1</button>
+    <button type="button" class="ifx-page-btn">2</button>
+    <button type="button" class="ifx-page-btn">3</button>
+    <button type="button" class="ifx-page-btn">4</button>
+    <button type="button" class="ifx-page-btn" data-ifx-page-nav>›</button>
+    <span class="ifx-page-info">Trang 1</span>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-drawer">
+  <h2 class="sb-section-title">Drawer</h2>
+  <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-drawer="demoDrawer">Mở drawer</button>
+  <div class="ifx-drawer-overlay" id="demoDrawerOv"></div>
+  <aside class="ifx-drawer" id="demoDrawer" data-ifx-overlay="demoDrawerOv" aria-label="Drawer demo">
+    <div class="ifx-drawer-header">
+      <h3 class="ifx-drawer-title">Chi tiết</h3>
+      <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="drawer" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
+    </div>
+    <div class="ifx-drawer-body">Nội dung generic. Overlay + panel dùng token scrim / surface.</div>
+    <div class="ifx-drawer-footer">
+      <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-dismiss="drawer">Đóng</button>
+      <button type="button" class="ifx-btn ifx-btn-primary">Lưu</button>
+    </div>
+  </aside>
+</section>
+
+<section class="sb-section" id="comp-action-bar">
+  <h2 class="sb-section-title">Action Bar</h2>
+  <p class="sb-section-desc">Sticky đáy · min-height token <code>--ifx-space-48</code>.</p>
+  <p class="ifx-typo-body-md">Cuộn trang demo — thanh nút bám đáy vùng nội dung.</p>
+  <div class="ifx-action-bar">
+    <span class="ifx-action-bar-start">3 mục đã chọn</span>
+    <button type="button" class="ifx-btn ifx-btn-outline">Hủy</button>
+    <button type="button" class="ifx-btn ifx-btn-primary">Áp dụng</button>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-modal">
+  <h2 class="sb-section-title">Modal</h2>
+  <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-modal="demoModal">Mở modal</button>
+  <div class="ifx-modal-overlay" id="demoModal">
+    <div class="ifx-modal" role="dialog" aria-labelledby="demoModalTitle">
+      <div class="ifx-modal-header">
+        <h3 class="ifx-modal-title" id="demoModalTitle">Xác nhận</h3>
+        <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="modal" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
+      </div>
+      <div class="ifx-modal-body">Nội dung generic. Overlay = <code>--ifx-overlay-scrim</code>.</div>
+      <div class="ifx-modal-footer">
+        <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-dismiss="modal">Hủy</button>
+        <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-dismiss="modal">Đồng ý</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-toast">
+  <h2 class="sb-section-title">Toast</h2>
+  <p class="sb-section-desc">IfxToast.show — dùng primitive alert, không inline style.</p>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="primary">Primary</button>
+    <button type="button" class="ifx-btn ifx-btn-success" data-ifx-toast="success">Success</button>
+    <button type="button" class="ifx-btn ifx-btn-warning" data-ifx-toast="warning">Warning</button>
+    <button type="button" class="ifx-btn ifx-btn-danger" data-ifx-toast="danger">Danger</button>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-dropdown">
+  <h2 class="sb-section-title">Dropdown</h2>
+  <div class="ifx-dropdown">
+    <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-toggle="dropdown">Menu ▾</button>
+    <div class="ifx-dropdown-menu">
+      <button type="button" class="ifx-dropdown-item">Mục một</button>
+      <button type="button" class="ifx-dropdown-item">Mục hai</button>
+      <hr class="ifx-dropdown-divider">
+      <button type="button" class="ifx-dropdown-item">Xóa</button>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-tabs" data-ifx-tabs-root>
+  <h2 class="sb-section-title">Tabs</h2>
+  <div class="ifx-tabs" data-ifx-tabs>
+    <button type="button" class="ifx-tab is-active" data-ifx-tab="one">Một</button>
+    <button type="button" class="ifx-tab" data-ifx-tab="two">Hai</button>
+    <button type="button" class="ifx-tab" data-ifx-tab="three">Ba</button>
+  </div>
+  <div class="ifx-tab-panel is-active" data-ifx-panel="one">Panel một — nội dung generic.</div>
+  <div class="ifx-tab-panel" data-ifx-panel="two">Panel hai.</div>
+  <div class="ifx-tab-panel" data-ifx-panel="three">Panel ba.</div>
+</section>
+
+<section class="sb-section" id="comp-search">
+  <h2 class="sb-section-title">Search</h2>
+  <label class="ifx-search">
+    <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
+    <input type="search" placeholder="Tìm kiếm…">
+  </label>
+</section>
+
+<section class="sb-section" id="comp-timeline">
+  <h2 class="sb-section-title">Timeline</h2>
+  <ol class="ifx-timeline">
+    <li class="ifx-timeline-item">
+      <span class="ifx-timeline-marker is-filled"></span>
+      <div class="ifx-timeline-header">
+        <span class="ifx-timeline-title">Tạo bản ghi</span>
+        <span class="ifx-timeline-meta">09:00</span>
+      </div>
+      <div class="ifx-timeline-body">Sự kiện đầu — demo generic.</div>
+    </li>
+    <li class="ifx-timeline-item">
+      <span class="ifx-timeline-marker ifx-timeline-marker-success is-filled"></span>
+      <div class="ifx-timeline-header">
+        <span class="ifx-timeline-title">Cập nhật</span>
+        <span class="ifx-timeline-meta">10:15</span>
+      </div>
+      <div class="ifx-timeline-body">Sự kiện giữa.</div>
+    </li>
+    <li class="ifx-timeline-item">
+      <span class="ifx-timeline-marker ifx-timeline-marker-muted"></span>
+      <div class="ifx-timeline-header">
+        <span class="ifx-timeline-title">Chờ xử lý</span>
+        <span class="ifx-timeline-meta">—</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="sb-section" id="comp-wizard">
+  <h2 class="sb-section-title">Wizard</h2>
+  <div class="ifx-wizard" data-ifx-wizard>
+    <div class="ifx-wizard-steps">
+      <button type="button" class="ifx-wizard-step is-active"><span class="ifx-wizard-circle">1</span><span><span class="ifx-wizard-step-title">Thông tin</span><span class="ifx-wizard-step-sub">Bước 1</span></span></button>
+      <button type="button" class="ifx-wizard-step"><span class="ifx-wizard-circle">2</span><span><span class="ifx-wizard-step-title">Chi tiết</span><span class="ifx-wizard-step-sub">Bước 2</span></span></button>
+      <button type="button" class="ifx-wizard-step"><span class="ifx-wizard-circle">3</span><span><span class="ifx-wizard-step-title">Xác nhận</span><span class="ifx-wizard-step-sub">Bước 3</span></span></button>
+    </div>
+    <div class="ifx-wizard-body">
+      <div class="ifx-wizard-panel is-active">
+        <label class="ifx-label" for="w1">Tên</label>
+        <input class="ifx-input" id="w1" placeholder="Bước 1">
+      </div>
+      <div class="ifx-wizard-panel">
+        <label class="ifx-label" for="w2">Mô tả</label>
+        <textarea class="ifx-textarea" id="w2"></textarea>
+      </div>
+      <div class="ifx-wizard-panel">Xem lại rồi lưu — demo generic.</div>
+      <div class="ifx-wizard-nav">
+        <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-wizard-prev>Trước</button>
+        <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-wizard-next>Tiếp</button>
+        <button type="button" class="ifx-btn ifx-btn-success" data-ifx-wizard-submit>Lưu</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-chat">
+  <h2 class="sb-section-title">Chat Family</h2>
+  <div class="ifx-chat" data-ifx-chat>
+    <div class="ifx-chat-thread">
+      <button type="button" class="ifx-chat-item is-active" data-ifx-chat-name="Nhóm A">
+        <span class="ifx-avatar ifx-avatar-sm">A</span>
+        <span><span class="ifx-chat-item-name">Nhóm A</span><span class="ifx-chat-item-preview">Tin nhắn gần nhất</span></span>
+      </button>
+      <button type="button" class="ifx-chat-item" data-ifx-chat-name="Nhóm B">
+        <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success">B</span>
+        <span><span class="ifx-chat-item-name">Nhóm B</span><span class="ifx-chat-item-preview">Preview</span></span>
+      </button>
+    </div>
+    <div class="ifx-chat-main">
+      <div class="ifx-chat-header" data-ifx-chat-title>Nhóm A</div>
+      <div class="ifx-chat-body" data-ifx-chat-body>
+        <div class="ifx-chat-message">
+          <span class="ifx-avatar ifx-avatar-sm">A</span>
+          <div><div class="ifx-chat-bubble">Xin chào — demo generic.</div><div class="ifx-chat-meta">09:01</div></div>
+        </div>
+        <div class="ifx-chat-message is-sent">
+          <div><div class="ifx-chat-bubble">Đã nhận.</div><div class="ifx-chat-meta">09:02</div></div>
+        </div>
+      </div>
+      <form class="ifx-chat-input-bar" data-ifx-chat-form>
+        <input class="ifx-chat-input" placeholder="Nhắn…">
+        <button type="submit" class="ifx-btn ifx-btn-primary">Gửi</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="sb-section" id="comp-chart">
+  <h2 class="sb-section-title">Chart</h2>
+  <p class="sb-section-desc">IfxChart đọc semantic token. Đổi Dark/Light — cột đổi màu. Height = token sandbox, không inline.</p>
+  <div class="ifx-chart" data-ifx-chart>
+    <div class="ifx-chart-col"><div class="ifx-chart-bar sb-ch-a" data-ifx-chart-bar></div><span class="ifx-chart-label">A</span></div>
+    <div class="ifx-chart-col"><div class="ifx-chart-bar sb-ch-b" data-ifx-chart-bar></div><span class="ifx-chart-label">B</span></div>
+    <div class="ifx-chart-col"><div class="ifx-chart-bar sb-ch-c" data-ifx-chart-bar></div><span class="ifx-chart-label">C</span></div>
+    <div class="ifx-chart-col"><div class="ifx-chart-bar sb-ch-d" data-ifx-chart-bar></div><span class="ifx-chart-label">D</span></div>
+    <div class="ifx-chart-col"><div class="ifx-chart-bar sb-ch-e" data-ifx-chart-bar></div><span class="ifx-chart-label">E</span></div>
+  </div>
+  <div class="ifx-chart-legend">
+    <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>primary</span>
+    <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>success</span>
+    <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>warning</span>
+    <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>danger</span>
+    <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>info</span>
+  </div>
 </section>
