@@ -38,3 +38,6 @@
   flex-wrap: wrap;
   padding: var(--ifx-space-12) 0;
 }
+.ifx-table th[data-ifx-sort] { cursor: pointer; }
+.ifx-table tbody tr.is-hidden { display: none; }
+.ifx-table tbody tr.is-selected td { background: var(--ifx-action-primary-soft); }

@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 Owner mở P6 · P6 mở |
+| Trạng thái | **P1–P4 = OWNER PASS (2026-08-26)** · P5 Owner mở P6 · **P6 redo — chỉ W01 OPEN** |
 
 ---
 
@@ -53,8 +53,10 @@ P3  Primitives              building blocks generic + navigation primitives
 P4  Components              reusable structured UI + Chat Family + Timeline Family
 P5  Patterns                page-header · data-list · record-detail · entity-form
                             · conversation · order-history
-P6  Canonical Sandbox       rewrite 9 baseline patterns
-                            0 inline · 0 legacy naming · 0 Admin dependency
+P6  Reference Implementations
+                            10 wave tuần tự (W01–W10)
+                            compose P1–P5 · gap → đúng layer
+                            không phải DS layer mới
 P7  DS Regression           component catalog + 9/9 visual parity
                             6 viewport canonical × 2 theme + automated governance checks
 P8  CANONICAL LOCK          Owner acceptance · ghi SoT status
@@ -166,15 +168,30 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **Kết quả technical:** xem `gates/P5.md`. Owner mở P6 (2026-08-26).
 
-### P6 — Canonical Sandbox (rewrite 9 baseline patterns)
+### P6 — Reference Implementations (Owner directive 2026-08-26 — LOCKED)
 
-**Việc làm:** rewrite 9 file `Admin_Design_system/patterns/*.html` → `design_system/sandbox/patterns/*.html`: markup `ifx-*` · **0 inline style** (526 inline theo cây quyết định Solution §8) · demo data generic · bỏ `admin-auth.js`/`admin-view-gate.js` · sidebar/header = chrome demo cục bộ sandbox dựng từ nav primitives. **Không sửa bản gốc** (baseline so sánh — chưa xóa trong Sub-01).
+P6 **không** phải layer mới. Canonical DS vẫn chỉ P1–P5. P6 = reference + integration validation + gap discovery.
 
-**DoD:** 9/9 mở được · 0 inline · 0 `.ix-*` · 0 Admin runtime dependency.
+Đặt tại `design_system/references/patterns/` (consumer). Invariant: xóa `references/` → DS vẫn đầy đủ. CẤM import/iframe/copy legacy; CẤM CSS/JS local để che gap reusable.
 
-**Owner test (UI):** [index 9 cặp](https://staging.iflux.vn/design_system/sandbox/?section=baseline) — mở cạnh nhau baseline vs candidate. Evidence `gates/P6.md`.
+**P6 lần 1 (9 trang `sandbox/patterns/` + chrome local + Apex) = INVALIDATED — đã dọn.**
 
-**Kết quả technical:** xem `gates/P6.md`.
+10 wave tuần tự, một wave OPEN. W(n+1) chỉ sau Owner PASS W(n):
+
+```text
+W01 Bảng danh sách → W02 Form thêm/sửa → W03 List + stats strip
+→ W04 Chi tiết + timeline → W05 User profile → W06 Wizard
+→ W07 Chat → W08 Referrals → W09 Biểu đồ → W10 Auth
+```
+
+Mỗi wave: audit legacy → map P1–P5 → build composition → classify gap → promote đúng layer → re-consume → verify 6 vp × Dark/Light → deploy → Owner.
+
+**Hiện tại:** chỉ W01. Evidence `gates/P6.md` (tracker) + `gates/P6-W01.md`.
+
+**Owner test (UI):** mở cạnh nhau — không iframe.
+
+- Candidate: https://staging.iflux.vn/design_system/references/patterns/table-list/
+- Legacy: https://staging.iflux.vn/Admin_Design_system/patterns/table-list.html
 
 ### P7 — Design System Regression (regression của CHÍNH DS, không phải hệ thống)
 
@@ -225,7 +242,7 @@ Legacy DS    = FROZEN · EXISTING CONSUMERS ONLY · MIGRATION SOURCE ONLY
 9. Chat + Timeline là Component Family theo quyết định Owner.
 10. Pattern canonical dựng đúng classification (Page Header = Pattern).
 11. Navigation: Global DS chỉ chứa generic primitives; platform navigation chưa triển khai ở Sub-01.
-12. 9/9 baseline patterns render lại bằng Canonical DS.
+12. 10/10 reference pages compose từ Canonical DS (P6 waves; từng wave Owner PASS).
 13. 9/9 đạt Visual Acceptance.
 14. 0 inline presentation trong canonical patterns.
 15. 0 legacy `.ix-*` trong canonical DS.

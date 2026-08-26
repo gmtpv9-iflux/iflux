@@ -36,6 +36,7 @@
     '../components/chart/chart.css'
   ];
   var COMPONENT_JS = [
+    '../components/table/table.js',
     '../components/pagination/pagination.js',
     '../components/drawer/drawer.js',
     '../components/modal/modal.js',
@@ -92,6 +93,7 @@
   }
 
   function bindComponents() {
+    if (window.IfxTable) window.IfxTable.init();
     if (window.IfxPagination) window.IfxPagination.init();
     if (window.IfxTabs) window.IfxTabs.init();
     if (window.IfxWizard) window.IfxWizard.init();

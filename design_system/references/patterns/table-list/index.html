@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>P6-W01 — Bảng danh sách · Canonical reference</title>
+  <link rel="stylesheet" href="../../../tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../../foundation/fonts.css">
+  <link rel="stylesheet" href="../../../foundation/reset.css">
+  <link rel="stylesheet" href="../../../foundation/typography.css">
+  <link rel="stylesheet" href="../../../foundation/layout.css">
+  <link rel="stylesheet" href="../../../foundation/utilities.css">
+  <link rel="stylesheet" href="../../../foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../../foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../../primitives/button/button.css">
+  <link rel="stylesheet" href="../../../primitives/chip/chip.css">
+  <link rel="stylesheet" href="../../../primitives/avatar/avatar.css">
+  <link rel="stylesheet" href="../../../components/card/card.css">
+  <link rel="stylesheet" href="../../../components/stat/stat.css">
+  <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../../components/form/form.css">
+  <link rel="stylesheet" href="../../../components/table/table.css">
+  <link rel="stylesheet" href="../../../components/pagination/pagination.css">
+  <link rel="stylesheet" href="../../../components/search/search.css">
+  <link rel="stylesheet" href="../../../patterns/page-header/page-header.css">
+</head>
+<body>
+  <main class="ifx-container ifx-container-max ifx-p-24">
+    <div class="ifx-inline-md ifx-mb-16">
+      <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
+      <span class="ifx-typo-caption">P6-W01 · Reference Implementation · compose P1–P5</span>
+    </div>
+
+    <header class="ifx-page-header">
+      <nav aria-label="Breadcrumb">
+        <ol class="ifx-breadcrumb">
+          <li><a href="../../../sandbox/?section=baseline">Catalog</a></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li><span>References</span></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li class="ifx-breadcrumb-current">Bảng danh sách</li>
+        </ol>
+      </nav>
+      <div class="ifx-page-header-bar">
+        <div>
+          <h1 class="ifx-page-header-title">Bảng danh sách</h1>
+          <p class="ifx-page-header-desc">Danh sách bản ghi generic — không eCommerce, không AppShell Admin.</p>
+        </div>
+        <div class="ifx-page-header-actions">
+          <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm"><i class="ti ti-download ifx-icon ifx-icon-sm"></i> Xuất</button>
+          <button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm"><i class="ti ti-plus ifx-icon ifx-icon-sm"></i> Thêm</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="ifx-grid ifx-mb-24">
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
+          <div>
+            <div class="ifx-stat-label">Tổng</div>
+            <div class="ifx-stat-value">128</div>
+            <div class="ifx-stat-trend">5k bản ghi <span class="ifx-chip ifx-chip-success">+5.7%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div>
+          <div>
+            <div class="ifx-stat-label">Đang mở</div>
+            <div class="ifx-stat-value">96</div>
+            <div class="ifx-stat-trend">21k bản ghi <span class="ifx-chip ifx-chip-success">+12.4%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
+          <div>
+            <div class="ifx-stat-label">Chờ</div>
+            <div class="ifx-stat-value">14</div>
+            <div class="ifx-stat-trend">6k bản ghi</div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div>
+          <div>
+            <div class="ifx-stat-label">Chặn</div>
+            <div class="ifx-stat-value">18</div>
+            <div class="ifx-stat-trend">150 bản ghi <span class="ifx-chip ifx-chip-danger">−3.5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifx-card" data-ifx-table data-ifx-page-size="5">
+      <div class="ifx-card-header">
+        <h2 class="ifx-card-title">Bộ lọc</h2>
+      </div>
+      <div class="ifx-card-body">
+        <div class="ifx-grid ifx-mb-16">
+          <div class="ifx-col-12 ifx-col-md-4">
+            <div class="ifx-form-group ifx-mb-0">
+              <label class="ifx-label" for="ref-filter-status">Trạng thái</label>
+              <select class="ifx-select" id="ref-filter-status">
+                <option value="">Tất cả</option>
+                <option>active</option>
+                <option>pending</option>
+                <option>scheduled</option>
+                <option>blocked</option>
+              </select>
+            </div>
+          </div>
+          <div class="ifx-col-12 ifx-col-md-4">
+            <div class="ifx-form-group ifx-mb-0">
+              <label class="ifx-label" for="ref-filter-group">Nhóm</label>
+              <select class="ifx-select" id="ref-filter-group">
+                <option value="">Tất cả</option>
+                <option>Nhóm A</option>
+                <option>Nhóm B</option>
+                <option>Nhóm C</option>
+              </select>
+            </div>
+          </div>
+          <div class="ifx-col-12 ifx-col-md-4">
+            <div class="ifx-form-group ifx-mb-0">
+              <label class="ifx-label" for="ref-filter-stock">Tồn</label>
+              <select class="ifx-select" id="ref-filter-stock">
+                <option value="">Tất cả</option>
+                <option>Còn</option>
+                <option>Hết</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="ifx-table-toolbar">
+          <label class="ifx-search">
+            <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
+            <input type="search" placeholder="Tìm bản ghi…" data-ifx-table-search>
+          </label>
+          <div class="ifx-inline-sm">
+            <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm"><i class="ti ti-download ifx-icon ifx-icon-sm"></i> Xuất</button>
+            <button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm"><i class="ti ti-plus ifx-icon ifx-icon-sm"></i> Thêm</button>
+          </div>
+        </div>
+        <div class="ifx-table-wrap">
+          <table class="ifx-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="ifx-checkbox" aria-label="Chọn tất cả"></th>
+                <th data-ifx-sort="1">Bản ghi</th>
+                <th data-ifx-sort="2">Nhóm</th>
+                <th data-ifx-sort="3">Tồn</th>
+                <th data-ifx-sort="4">Mã</th>
+                <th data-ifx-sort="5">Giá trị</th>
+                <th data-ifx-sort="6">Số lượng</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-01"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true"><i class="ti ti-file ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi một</span>
+                      <span class="ifx-typo-caption">A-01</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm A</td><td>Còn</td><td>REC-1001</td>
+                <td><span class="ifx-typo-title-sm">1.200</span></td><td>48</td>
+                <td><span class="ifx-chip ifx-chip-success">active</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-02"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true"><i class="ti ti-folder ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi hai</span>
+                      <span class="ifx-typo-caption">A-02</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm A</td><td>Còn</td><td>REC-1002</td>
+                <td><span class="ifx-typo-title-sm">99</span></td><td>125</td>
+                <td><span class="ifx-chip ifx-chip-success">active</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-03"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true"><i class="ti ti-box ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi ba</span>
+                      <span class="ifx-typo-caption">A-03</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm B</td><td>Hết</td><td>REC-1003</td>
+                <td><span class="ifx-typo-title-sm">249</span></td><td>0</td>
+                <td><span class="ifx-chip ifx-chip-warning">pending</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-04"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true"><i class="ti ti-package ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi bốn</span>
+                      <span class="ifx-typo-caption">A-04</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm C</td><td>Còn</td><td>REC-1004</td>
+                <td><span class="ifx-typo-title-sm">38</span></td><td>320</td>
+                <td><span class="ifx-chip ifx-chip-success">active</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-05"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true"><i class="ti ti-notes ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi năm</span>
+                      <span class="ifx-typo-caption">A-05</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm A</td><td>Còn</td><td>REC-1005</td>
+                <td><span class="ifx-typo-title-sm">1.299</span></td><td>22</td>
+                <td><span class="ifx-chip ifx-chip-primary">scheduled</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-06"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true"><i class="ti ti-bookmark ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi sáu</span>
+                      <span class="ifx-typo-caption">A-06</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm B</td><td>Còn</td><td>REC-1006</td>
+                <td><span class="ifx-typo-title-sm">75</span></td><td>18</td>
+                <td><span class="ifx-chip ifx-chip-success">active</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-07"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true"><i class="ti ti-lock ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi bảy</span>
+                      <span class="ifx-typo-caption">A-07</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm C</td><td>Hết</td><td>REC-1007</td>
+                <td><span class="ifx-typo-title-sm">410</span></td><td>0</td>
+                <td><span class="ifx-chip ifx-chip-danger">blocked</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-08"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true"><i class="ti ti-clock ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi tám</span>
+                      <span class="ifx-typo-caption">A-08</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm A</td><td>Còn</td><td>REC-1008</td>
+                <td><span class="ifx-typo-title-sm">56</span></td><td>90</td>
+                <td><span class="ifx-chip ifx-chip-warning">pending</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-09"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true"><i class="ti ti-circle-check ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi chín</span>
+                      <span class="ifx-typo-caption">A-09</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm B</td><td>Còn</td><td>REC-1009</td>
+                <td><span class="ifx-typo-title-sm">880</span></td><td>11</td>
+                <td><span class="ifx-chip ifx-chip-success">active</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="ifx-checkbox" aria-label="Chọn A-10"></td>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true"><i class="ti ti-calendar ifx-icon ifx-icon-sm"></i></span>
+                    <span>
+                      <span class="ifx-typo-title-sm ifx-block">Bản ghi mười</span>
+                      <span class="ifx-typo-caption">A-10</span>
+                    </span>
+                  </div>
+                </td>
+                <td>Nhóm C</td><td>Còn</td><td>REC-1010</td>
+                <td><span class="ifx-typo-title-sm">15</span></td><td>540</td>
+                <td><span class="ifx-chip ifx-chip-primary">scheduled</span></td>
+                <td>
+                  <div class="ifx-inline-xs">
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xem"><i class="ti ti-eye ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Sửa"><i class="ti ti-edit ifx-icon ifx-icon-sm"></i></button>
+                    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Xóa"><i class="ti ti-trash ifx-icon ifx-icon-sm"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ifx-card-footer">
+        <div class="ifx-pagination" data-ifx-pagination></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../../adapters/web/theme.js"></script>
+  <script src="../../../components/table/table.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>
