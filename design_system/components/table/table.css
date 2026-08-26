@@ -1,0 +1,40 @@
+/**
+ * Component — Table
+ * REWRITE .ix-table. Hover = --ifx-bg-hover (không rgba hardcode).
+ */
+.ifx-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.ifx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ifx-font-size-sm);
+}
+.ifx-table th {
+  text-align: left;
+  padding: var(--ifx-space-table-cell-y) var(--ifx-space-table-cell-x);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--ifx-text-muted);
+  border-bottom: 1px solid var(--ifx-border-default);
+  white-space: nowrap;
+}
+.ifx-table td {
+  padding: var(--ifx-space-12);
+  border-bottom: 1px solid var(--ifx-border-subtle);
+  color: var(--ifx-text-secondary);
+  vertical-align: middle;
+}
+.ifx-table tbody tr:last-child td { border-bottom: none; }
+.ifx-table tbody tr:hover td { background: var(--ifx-bg-hover); }
+.ifx-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-gap-sm);
+  flex-wrap: wrap;
+  padding: var(--ifx-space-12) 0;
+}

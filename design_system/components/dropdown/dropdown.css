@@ -1,0 +1,39 @@
+/**
+ * Component — Dropdown
+ */
+.ifx-dropdown { position: relative; display: inline-block; }
+.ifx-dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--ifx-space-4));
+  right: 0;
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-dropdown);
+  min-width: var(--ifx-space-160);
+  padding: var(--ifx-space-4) 0;
+  z-index: var(--ifx-z-dropdown);
+  box-shadow: var(--ifx-shadow-dropdown);
+  display: none;
+}
+.ifx-dropdown.is-open .ifx-dropdown-menu { display: block; }
+.ifx-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-inline-sm);
+  padding: var(--ifx-space-8) var(--ifx-space-16);
+  color: var(--ifx-text-secondary);
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  transition: var(--ifx-transition-color);
+}
+.ifx-dropdown-item:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
+.ifx-dropdown-divider {
+  border: 0;
+  border-top: 1px solid var(--ifx-border-subtle);
+  margin: var(--ifx-space-4) 0;
+}

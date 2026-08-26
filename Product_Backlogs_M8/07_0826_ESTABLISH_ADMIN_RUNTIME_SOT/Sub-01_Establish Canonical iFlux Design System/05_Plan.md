@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1 = PASS / OWNER APPROVED (2026-08-26)** · **P2 = OWNER PASS (2026-08-26)** · P3 mở |
+| Trạng thái | **P1–P3 = OWNER PASS (2026-08-26)** · P4 mở |
 
 ---
 
@@ -142,7 +142,7 @@ Foundation implementation PASS
 
 **Owner test (UI):** [sandbox Primitives](https://staging.iflux.vn/design_system/sandbox/?section=primitives) — từng primitive đủ variant, hover/active/disabled, Dark/Light. Navigation chỉ primitive (không sidebar/top-bar).
 
-**Kết quả technical:** xem `gates/P3.md`.
+**Kết quả: P3 = OWNER PASS (2026-08-26).** Evidence `gates/P3.md`.
 
 ### P4 — Components
 
@@ -152,7 +152,9 @@ Thứ tự (đơn giản → phức tạp, lỗi lộ sớm): card → stat → 
 
 **DoD:** mỗi component 1 trang demo; JS 0 phụ thuộc Admin runtime/business; chart đổi theme tự đổi màu; đủ component để phủ toàn bộ visual capability của 9 patterns.
 
-**Owner test (UI):** catalog → mục **Components**: mỗi family một trang, tôi báo từng cụm xong để Owner duyệt lần lượt.
+**Owner test (UI):** [sandbox Components](https://staging.iflux.vn/design_system/sandbox/?section=components) — mỗi family một trang (`&family=`). Duyệt lần lượt; Dark/Light trên chart phải đổi màu.
+
+**Kết quả technical:** xem `gates/P4.md`.
 
 ### P5 — Patterns
 

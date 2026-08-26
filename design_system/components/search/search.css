@@ -1,0 +1,27 @@
+/**
+ * Component — Search
+ * REWRITE .ix-search. Height = --ifx-size-avatar-md.
+ */
+.ifx-search {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  background: var(--ifx-bg-input);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-input);
+  padding: 0 var(--ifx-space-12);
+  height: var(--ifx-size-avatar-md);
+  color: var(--ifx-text-muted);
+  max-width: var(--ifx-space-256);
+  width: 100%;
+}
+.ifx-search input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--ifx-text-primary);
+  font-size: var(--ifx-font-size-sm);
+  width: 100%;
+  font-family: inherit;
+}
+.ifx-search input::placeholder { color: var(--ifx-text-muted); }

@@ -353,6 +353,11 @@ code { font-family: var(--ifx-font-mono); font-size: var(--ifx-font-size-xs); }
 .sb-pv-50 { --ifx-progress-value: 50%; }
 .sb-pv-75 { --ifx-progress-value: 75%; }
 .sb-pv-90 { --ifx-progress-value: 90%; }
+.sb-ch-a { --ifx-chart-h: var(--ifx-space-48); }
+.sb-ch-b { --ifx-chart-h: var(--ifx-space-80); }
+.sb-ch-c { --ifx-chart-h: var(--ifx-space-64); }
+.sb-ch-d { --ifx-chart-h: var(--ifx-space-96); }
+.sb-ch-e { --ifx-chart-h: var(--ifx-space-32); }
 
 .sb-footer {
   padding: var(--ifx-padding-lg);

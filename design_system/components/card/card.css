@@ -1,0 +1,28 @@
+/**
+ * Component — Card
+ * REWRITE .ix-card. Existing: iflux-admin-ui/components.css
+ */
+.ifx-card {
+  background: var(--ifx-bg-surface);
+  border-radius: var(--ifx-radius-card);
+  border: 1px solid var(--ifx-border-default);
+  box-shadow: var(--ifx-shadow-card);
+}
+.ifx-card-header {
+  padding: var(--ifx-inset-card-header);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ifx-gap-sm);
+}
+.ifx-card-title {
+  margin: 0;
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-card-body { padding: var(--ifx-inset-card-body); color: var(--ifx-text-secondary); }
+.ifx-card-footer {
+  padding: var(--ifx-inset-card-footer);
+  border-top: 1px solid var(--ifx-border-subtle);
+}

@@ -1,0 +1,39 @@
+/**
+ * Component — Pagination
+ */
+.ifx-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-4);
+}
+.ifx-page-btn {
+  min-width: var(--ifx-space-32);
+  height: var(--ifx-space-32);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifx-radius-button);
+  font-size: var(--ifx-font-size-sm);
+  cursor: pointer;
+  color: var(--ifx-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: var(--ifx-transition-color);
+}
+.ifx-page-btn:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
+.ifx-page-btn.is-active {
+  background: var(--ifx-action-primary);
+  color: var(--ifx-text-on-primary);
+}
+.ifx-page-btn:disabled {
+  color: var(--ifx-text-disabled);
+  cursor: default;
+  pointer-events: none;
+}
+.ifx-page-info {
+  margin-left: auto;
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-muted);
+}

@@ -1,0 +1,71 @@
+/**
+ * Component — Wizard / stepper
+ * REWRITE .ix-wizard-*. Mobile-first: stack; md = steps | body.
+ */
+.ifx-wizard {
+  display: flex;
+  flex-direction: column;
+  background: var(--ifx-bg-surface);
+  border-radius: var(--ifx-radius-card);
+  border: 1px solid var(--ifx-border-default);
+  overflow: hidden;
+}
+.ifx-wizard-steps {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--ifx-border-default);
+  padding: var(--ifx-space-12) 0;
+}
+.ifx-wizard-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-space-12) var(--ifx-space-16);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+.ifx-wizard-circle {
+  width: var(--ifx-space-32);
+  height: var(--ifx-space-32);
+  border-radius: var(--ifx-radius-full);
+  border: 2px solid var(--ifx-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifx-text-muted);
+  background: var(--ifx-bg-surface);
+  flex-shrink: 0;
+}
+.ifx-wizard-step.is-active .ifx-wizard-circle {
+  border-color: var(--ifx-action-primary);
+  color: var(--ifx-action-primary);
+  background: var(--ifx-action-primary-soft);
+}
+.ifx-wizard-step.is-done .ifx-wizard-circle {
+  border-color: var(--ifx-success);
+  color: var(--ifx-text-on-success);
+  background: var(--ifx-success);
+}
+.ifx-wizard-step-title { font-size: var(--ifx-font-size-sm); font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-text-primary); }
+.ifx-wizard-step-sub { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
+.ifx-wizard-body { padding: var(--ifx-space-24); min-width: 0; }
+.ifx-wizard-panel { display: none; }
+.ifx-wizard-panel.is-active { display: block; }
+.ifx-wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--ifx-space-24);
+}
+/* bp:md */
+@media (min-width: 768px) {
+  .ifx-wizard { flex-direction: row; }
+  .ifx-wizard-steps {
+    width: var(--ifx-space-256);
+    border-bottom: 0;
+    border-right: 1px solid var(--ifx-border-default);
+  }
+}

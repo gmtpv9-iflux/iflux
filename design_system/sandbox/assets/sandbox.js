@@ -16,6 +16,83 @@
     1440: '1440 — 2xl'
   };
   var PAGE_SIZE = 48;
+  var FAMILIES = ['card', 'stat', 'breadcrumb', 'form', 'table', 'pagination', 'drawer', 'action-bar', 'modal', 'toast', 'dropdown', 'tabs', 'search', 'timeline', 'wizard', 'chat', 'chart'];
+  var FAMILY_FILES = {
+    card: { css: ['../components/card/card.css'], js: [] },
+    stat: { css: ['../components/stat/stat.css'], js: [] },
+    breadcrumb: { css: ['../components/breadcrumb/breadcrumb.css'], js: [] },
+    form: { css: ['../components/form/form.css'], js: [] },
+    table: { css: ['../components/table/table.css', '../components/form/form.css'], js: [] },
+    pagination: { css: ['../components/pagination/pagination.css'], js: ['../components/pagination/pagination.js'] },
+    drawer: { css: ['../components/drawer/drawer.css'], js: ['../components/drawer/drawer.js'] },
+    'action-bar': { css: ['../components/action-bar/action-bar.css'], js: [] },
+    modal: { css: ['../components/modal/modal.css'], js: ['../components/modal/modal.js'] },
+    toast: { css: ['../components/toast/toast.css'], js: ['../components/toast/toast.js'] },
+    dropdown: { css: ['../components/dropdown/dropdown.css'], js: ['../components/dropdown/dropdown.js'] },
+    tabs: { css: ['../components/tabs/tabs.css'], js: ['../components/tabs/tabs.js'] },
+    search: { css: ['../components/search/search.css'], js: [] },
+    timeline: { css: ['../components/timeline/timeline.css'], js: [] },
+    wizard: { css: ['../components/wizard/wizard.css', '../components/form/form.css', '../components/toast/toast.css'], js: ['../components/toast/toast.js', '../components/wizard/wizard.js'] },
+    chat: { css: ['../components/chat/chat.css'], js: ['../components/chat/chat.js'] },
+    chart: { css: ['../components/chart/chart.css'], js: ['../components/chart/chart-adapter.js'] }
+  };
+
+  function ensureHref(href, kind) {
+    var sel = (kind === 'script' ? 'script' : 'link') + '[data-ifx-comp="' + href + '"]';
+    if (doc.querySelector(sel)) return Promise.resolve();
+    return new Promise(function (resolve) {
+      var node;
+      if (kind === 'script') {
+        node = doc.createElement('script');
+        node.src = href;
+        node.onload = resolve;
+        doc.body.appendChild(node);
+      } else {
+        node = doc.createElement('link');
+        node.rel = 'stylesheet';
+        node.href = href;
+        node.onload = resolve;
+        doc.head.appendChild(node);
+      }
+      node.setAttribute('data-ifx-comp', href);
+      if (kind !== 'script') resolve();
+    });
+  }
+
+  function ensureFamilyAssets(fam) {
+    var spec = FAMILY_FILES[fam];
+    if (!spec) return Promise.resolve();
+    var chain = Promise.resolve();
+    spec.css.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'css'); }); });
+    spec.js.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
+    return chain;
+  }
+
+  function bindComponentFamily(fam) {
+    if (window.IfxPagination && fam === 'pagination') window.IfxPagination.init();
+    if (window.IfxTabs && fam === 'tabs') window.IfxTabs.init();
+    if (window.IfxWizard && fam === 'wizard') window.IfxWizard.init();
+    if (window.IfxChat && fam === 'chat') window.IfxChat.init();
+    if (window.IfxChart && fam === 'chart') window.IfxChart.init();
+    if (fam === 'toast' || fam === 'wizard') {
+      doc.querySelectorAll('[data-ifx-toast]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (window.IfxToast) window.IfxToast.show('Toast ' + btn.getAttribute('data-ifx-toast'), btn.getAttribute('data-ifx-toast'));
+        });
+      });
+    }
+  }
+
+  function bindComponentIndex() {
+    var nav = doc.getElementById('compIndex');
+    if (!nav) return;
+    nav.addEventListener('click', function (e) {
+      var a = e.target.closest('[data-family]');
+      if (!a) return;
+      e.preventDefault();
+      loadSection('components', true, { family: a.getAttribute('data-family') });
+    });
+  }
   var PRIMITIVE_CSS = [
     '../primitives/button/button.css',
     '../primitives/chip/chip.css',
@@ -331,13 +408,20 @@
     });
   }
 
-  function loadSection(id, push) {
+  function loadSection(id, push, opts) {
+    opts = opts || {};
     if (SECTIONS.indexOf(id) === -1) id = 'foundation';
     syncNav(id);
-    var url = '?section=' + id;
-    if (push === false) window.history.replaceState({ section: id }, '', url);
-    else window.history.pushState({ section: id }, '', url);
-    return fetch('sections/' + id + '.html')
+    var fam = null;
+    if (id === 'components') {
+      fam = opts.family || (opts.keepFamily ? params().get('family') : null);
+      if (FAMILIES.indexOf(fam) === -1) fam = null;
+    }
+    var url = '?section=' + id + (fam ? '&family=' + fam : '');
+    if (push === false) window.history.replaceState({ section: id, family: fam }, '', url);
+    else window.history.pushState({ section: id, family: fam }, '', url);
+    var path = (id === 'components' && fam) ? ('sections/components/' + fam + '.html') : ('sections/' + id + '.html');
+    return fetch(path)
       .then(function (r) { return r.text(); })
       .then(function (html) {
         stage.innerHTML = html;
@@ -349,6 +433,13 @@
         if (id === 'primitives') {
           ensurePrimitiveCss();
           bindPrimitives();
+        }
+        if (id === 'components') {
+          ensurePrimitiveCss();
+          if (fam) {
+            return ensureFamilyAssets(fam).then(function () { bindComponentFamily(fam); });
+          }
+          bindComponentIndex();
         }
         var hash = params().get('panel') || (window.location.hash || '').replace('#', '');
         if (hash) {
@@ -364,7 +455,7 @@
     e.preventDefault();
     loadSection(a.getAttribute('data-section'));
   });
-  window.addEventListener('popstate', function () { loadSection(currentSection(), false); });
+  window.addEventListener('popstate', function () { loadSection(currentSection(), false, { keepFamily: true }); });
   window.addEventListener('resize', function () {
     if (selectedVp === 'auto') applyFrameSize();
   });
@@ -377,10 +468,11 @@
       frame.contentWindow.postMessage({ type: 'ifx-theme', theme: theme }, '*');
     }
     if (currentSection() === 'tokens') renderTokens();
+    if (window.IfxChart) window.IfxChart.paint();
   }
   toggle.addEventListener('click', function () { window.IfxTheme.toggle(); });
   window.addEventListener('ifx-theme-change', function (e) { syncTheme(e.detail.theme); });
   syncTheme(window.IfxTheme.get());
 
-  loadSection(currentSection(), false);
+  loadSection(currentSection(), false, { keepFamily: true });
 })();

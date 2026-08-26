@@ -1,0 +1,48 @@
+/**
+ * Component — Chart (token-driven)
+ * Adapter đọc semantic token; bar height = --ifx-chart-h (sandbox set, 0 inline).
+ */
+.ifx-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ifx-gap-sm);
+  min-height: var(--ifx-space-128);
+  padding: var(--ifx-space-16);
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+}
+.ifx-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  min-width: 0;
+}
+.ifx-chart-bar {
+  width: 100%;
+  max-width: var(--ifx-space-32);
+  height: var(--ifx-chart-h, var(--ifx-space-48));
+  border-radius: var(--ifx-radius-xs);
+  background: var(--ifx-chart-fill, var(--ifx-action-primary));
+  transition: height var(--ifx-duration-slow) var(--ifx-ease-out), background-color var(--ifx-duration-fast) var(--ifx-ease-default);
+}
+.ifx-chart-label { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
+.ifx-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-gap-md);
+  margin-top: var(--ifx-stack-sm);
+  font-size: var(--ifx-font-size-xs);
+  color: var(--ifx-text-secondary);
+}
+.ifx-chart-swatch {
+  display: inline-block;
+  width: var(--ifx-space-12);
+  height: var(--ifx-space-12);
+  border-radius: var(--ifx-radius-xs);
+  background: var(--ifx-chart-fill, var(--ifx-action-primary));
+  margin-right: var(--ifx-space-4);
+  vertical-align: middle;
+}

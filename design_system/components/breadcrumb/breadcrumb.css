@@ -1,0 +1,22 @@
+/**
+ * Component — Breadcrumb
+ * REWRITE .ix-breadcrumb. Page Header compose cái này ở P5.
+ */
+.ifx-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ifx-inline-sm);
+  font-size: var(--ifx-text-body-sm-size);
+  color: var(--ifx-text-muted);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ifx-breadcrumb a {
+  color: var(--ifx-text-secondary);
+  text-decoration: none;
+}
+.ifx-breadcrumb a:hover { color: var(--ifx-action-primary); }
+.ifx-breadcrumb-sep { color: var(--ifx-text-muted); }
+.ifx-breadcrumb-current { color: var(--ifx-text-primary); }

@@ -1,0 +1,55 @@
+/**
+ * Component — Drawer (offcanvas phải)
+ * REWRITE .ix-offcanvas. Overlay = --ifx-overlay-scrim.
+ */
+.ifx-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--ifx-overlay-scrim);
+  z-index: var(--ifx-z-overlay);
+  display: none;
+}
+.ifx-drawer-overlay.is-open { display: block; }
+.ifx-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--ifx-size-nav-drawer-w);
+  max-width: 100vw;
+  background: var(--ifx-bg-surface);
+  border-left: 1px solid var(--ifx-border-default);
+  z-index: var(--ifx-z-drawer);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: var(--ifx-transition-drawer);
+}
+.ifx-drawer.is-open { transform: none; }
+.ifx-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ifx-inset-card);
+  border-bottom: 1px solid var(--ifx-border-default);
+  flex-shrink: 0;
+}
+.ifx-drawer-title {
+  margin: 0;
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ifx-inset-panel);
+  color: var(--ifx-text-secondary);
+}
+.ifx-drawer-footer {
+  padding: var(--ifx-inset-card);
+  border-top: 1px solid var(--ifx-border-default);
+  display: flex;
+  gap: var(--ifx-space-8);
+  flex-shrink: 0;
+}

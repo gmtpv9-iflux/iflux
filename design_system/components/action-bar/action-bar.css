@@ -1,0 +1,19 @@
+/**
+ * Component — Action Bar (AR-001 §27)
+ * Thanh nút đáy sticky. Không có artifact ix-action-bar — dựng từ contract + token.
+ */
+.ifx-action-bar {
+  position: sticky;
+  bottom: 0;
+  min-height: var(--ifx-space-48);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--ifx-gap-sm);
+  padding: var(--ifx-space-8) var(--ifx-space-16);
+  background: var(--ifx-bg-surface);
+  border-top: 1px solid var(--ifx-border-default);
+  z-index: var(--ifx-z-sticky);
+}
+.ifx-action-bar-start { margin-right: auto; color: var(--ifx-text-muted); font-size: var(--ifx-font-size-sm); }

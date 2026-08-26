@@ -1,0 +1,40 @@
+/**
+ * Component — Stat
+ * REWRITE .ix-stat-card / .ix-stat-card-h. Icon size = --ifx-size-touch-target.
+ */
+.ifx-stat {
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  padding: var(--ifx-inset-card);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-gap-md);
+}
+.ifx-stat-icon {
+  width: var(--ifx-size-touch-target);
+  height: var(--ifx-size-touch-target);
+  border-radius: var(--ifx-radius-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ifx-size-icon-lg);
+  flex-shrink: 0;
+  background: var(--ifx-action-primary-soft);
+  color: var(--ifx-action-primary);
+}
+.ifx-stat-icon-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
+.ifx-stat-icon-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
+.ifx-stat-icon-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
+.ifx-stat-icon-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
+.ifx-stat-label { color: var(--ifx-text-muted); font-size: var(--ifx-font-size-sm); margin-bottom: var(--ifx-space-4); }
+.ifx-stat-value {
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  line-height: 1;
+}
+.ifx-stat-trend { margin-top: var(--ifx-space-4); font-size: var(--ifx-font-size-xs); }
+.ifx-stat-trend-up { color: var(--ifx-success); }
+.ifx-stat-trend-down { color: var(--ifx-danger); }
+.ifx-stat-row { display: flex; justify-content: space-between; }

@@ -1,0 +1,45 @@
+/**
+ * Component Family — Timeline
+ * REWRITE .ix-timeline. Marker / line / meta.
+ */
+.ifx-timeline { list-style: none; padding: 0; margin: 0; }
+.ifx-timeline-item {
+  position: relative;
+  padding-left: var(--ifx-space-32);
+  padding-bottom: var(--ifx-space-20);
+}
+.ifx-timeline-item:last-child { padding-bottom: 0; }
+.ifx-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: var(--ifx-space-20);
+  bottom: 0;
+  width: 2px;
+  background: var(--ifx-border-default);
+}
+.ifx-timeline-item:last-child::before { display: none; }
+.ifx-timeline-marker {
+  position: absolute;
+  left: 0;
+  top: var(--ifx-space-4);
+  width: var(--ifx-space-16);
+  height: var(--ifx-space-16);
+  border-radius: var(--ifx-radius-full);
+  border: 2px solid var(--ifx-action-primary);
+  background: var(--ifx-bg-surface);
+}
+.ifx-timeline-marker.is-filled { background: var(--ifx-action-primary); }
+.ifx-timeline-marker-success { border-color: var(--ifx-success); }
+.ifx-timeline-marker-success.is-filled { background: var(--ifx-success); }
+.ifx-timeline-marker-muted { border-color: var(--ifx-border-default); }
+.ifx-timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-gap-sm);
+  margin-bottom: var(--ifx-space-4);
+}
+.ifx-timeline-title { font-size: var(--ifx-font-size-sm); font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-text-primary); }
+.ifx-timeline-meta { font-size: var(--ifx-font-size-xs); color: var(--ifx-text-muted); }
+.ifx-timeline-body { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-muted); }

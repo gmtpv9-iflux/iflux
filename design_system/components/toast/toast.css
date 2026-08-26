@@ -1,0 +1,28 @@
+/**
+ * Component — Toast
+ * REWRITE ixToast: host + alert primitive, 0 inline style.
+ */
+.ifx-toast-host {
+  position: fixed;
+  right: var(--ifx-space-24);
+  bottom: var(--ifx-space-24);
+  z-index: var(--ifx-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-gap-xs);
+  pointer-events: none;
+}
+.ifx-toast {
+  pointer-events: auto;
+  min-width: var(--ifx-space-256);
+  max-width: 22.5rem;
+  box-shadow: var(--ifx-shadow-modal);
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateX(var(--ifx-space-16));
+  transition: var(--ifx-transition-opacity), var(--ifx-transition-transform);
+}
+.ifx-toast.is-in {
+  opacity: 1;
+  transform: none;
+}

@@ -1,0 +1,95 @@
+/**
+ * Component — Form
+ * REWRITE .ix-form-group / label / input / select / textarea / checkbox / dropzone.
+ */
+.ifx-form-group { margin-bottom: var(--ifx-stack-md); }
+.ifx-label {
+  display: block;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-medium);
+  color: var(--ifx-text-secondary);
+  margin-bottom: var(--ifx-inline-sm);
+}
+.ifx-input,
+.ifx-select,
+.ifx-textarea {
+  width: 100%;
+  background: var(--ifx-bg-input);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-input);
+  padding: var(--ifx-space-input-y) var(--ifx-space-input-x);
+  color: var(--ifx-text-primary);
+  font-size: var(--ifx-font-size-sm);
+  font-family: var(--ifx-font-primary);
+  outline: none;
+  transition: var(--ifx-transition-color);
+}
+.ifx-input:focus,
+.ifx-select:focus,
+.ifx-textarea:focus {
+  border-color: var(--ifx-border-focus);
+  box-shadow: 0 0 0 3px var(--ifx-action-primary-soft);
+}
+.ifx-input::placeholder,
+.ifx-textarea::placeholder { color: var(--ifx-text-muted); }
+.ifx-textarea { resize: vertical; min-height: var(--ifx-space-80); }
+.ifx-select { appearance: none; cursor: pointer; }
+.ifx-input:disabled,
+.ifx-input[readonly] {
+  color: var(--ifx-text-disabled);
+  background: var(--ifx-bg-subtle);
+}
+
+.ifx-checkbox {
+  width: var(--ifx-space-16);
+  height: var(--ifx-space-16);
+  border-radius: var(--ifx-radius-xs);
+  border: 2px solid var(--ifx-border-default);
+  background: var(--ifx-bg-input);
+  cursor: pointer;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--ifx-transition-color);
+}
+.ifx-checkbox:checked,
+.ifx-checkbox:indeterminate {
+  background: var(--ifx-action-primary);
+  border-color: var(--ifx-action-primary);
+}
+.ifx-checkbox:checked::after {
+  content: "";
+  width: var(--ifx-space-8);
+  height: var(--ifx-space-4);
+  border-left: 2px solid var(--ifx-text-on-primary);
+  border-bottom: 2px solid var(--ifx-text-on-primary);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.ifx-dropzone {
+  border: 2px dashed var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  padding: var(--ifx-space-40) var(--ifx-space-20);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--ifx-transition-color);
+}
+.ifx-dropzone:hover {
+  border-color: var(--ifx-action-primary);
+  background: var(--ifx-action-primary-soft);
+}
+.ifx-dropzone-title { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-primary); }
+.ifx-dropzone-sub { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-muted); }
+
+.ifx-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ifx-space-16);
+  margin-bottom: var(--ifx-space-16);
+}
+/* bp:md */
+@media (min-width: 768px) {
+  .ifx-form-row { grid-template-columns: 1fr 1fr; }
+}
