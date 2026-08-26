@@ -20,6 +20,7 @@
   var doc = document;
   var stage = doc.getElementById('sbStage');
   var selectedVp = 'auto';
+  var selectedSpan = 6;
   var iconState = { all: [], filtered: [], page: 0, q: '' };
 
   function params() {
@@ -163,14 +164,20 @@
     var scale = logical > hostW ? hostW / logical : 1;
     scaleEl.style.transform = scale === 1 ? 'none' : 'scale(' + scale + ')';
     scaleEl.style.width = logical + 'px';
-    var h = parseInt(frame.getAttribute('data-content-height') || '1100', 10);
+    var h = parseInt(frame.getAttribute('data-content-height') || '1400', 10);
     frame.style.height = h + 'px';
     host.style.height = Math.ceil(h * scale) + 'px';
     setText('pgSelected', VP_LABEL[selectedVp] || selectedVp);
   }
 
+  function postToFrame(payload) {
+    var frame = doc.getElementById('pgFrame');
+    if (frame && frame.contentWindow) frame.contentWindow.postMessage(payload, '*');
+  }
+
   function bindPlayground() {
     var bar = doc.getElementById('pgVpBar');
+    var spanBar = doc.getElementById('pgSpanBar');
     var frame = doc.getElementById('pgFrame');
     if (!bar || !frame) return;
     bar.addEventListener('click', function (e) {
@@ -182,6 +189,17 @@
       });
       applyFrameSize();
     });
+    if (spanBar) {
+      spanBar.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-span]');
+        if (!btn) return;
+        selectedSpan = parseInt(btn.getAttribute('data-span'), 10);
+        spanBar.querySelectorAll('.sb-vp-btn').forEach(function (b) {
+          b.classList.toggle('is-active', b === btn);
+        });
+        postToFrame({ type: 'ifx-pg-span', span: selectedSpan });
+      });
+    }
     window.addEventListener('message', function (e) {
       if (!e.data || e.data.type !== 'ifx-pg-metrics') return;
       if (e.data.height) {
@@ -189,6 +207,20 @@
       }
       setText('pgActual', e.data.width + 'px');
       setText('pgActiveBp', e.data.label);
+      setText('pgBoxVp', e.data.width + 'px');
+      if (e.data.fluid) {
+        setText('pgBoxGutter', e.data.fluid.gutterL + 'px × 2');
+        setText('pgBoxContent', e.data.fluid.content + 'px');
+        setText('pgBoxRatio', e.data.fluidRatio + '%');
+      }
+      if (e.data.max) {
+        setText('pgBoxMaxOuter', e.data.max.outer + 'px');
+        setText('pgBoxMaxMargin', e.data.maxOuterMargin + 'px × 2');
+      }
+      if (e.data.span) {
+        setText('pgBoxSpan', e.data.span + '/12 = ' + e.data.spanNominal);
+        setText('pgBoxSpanPx', e.data.spanPx + 'px · ' + e.data.spanOfGrid + '% grid');
+      }
       doc.querySelectorAll('#pgMarkers .sb-pg-marker').forEach(function (m) {
         m.classList.toggle('is-active', m.getAttribute('data-bp') === e.data.breakpoint);
       });
@@ -198,6 +230,7 @@
       if (window.IfxTheme) {
         frame.contentWindow.postMessage({ type: 'ifx-theme', theme: window.IfxTheme.get() }, '*');
       }
+      postToFrame({ type: 'ifx-pg-span', span: selectedSpan });
       applyFrameSize();
     });
     applyFrameSize();

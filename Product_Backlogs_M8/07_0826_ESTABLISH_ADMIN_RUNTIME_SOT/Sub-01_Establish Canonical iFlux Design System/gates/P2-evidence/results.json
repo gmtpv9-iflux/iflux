@@ -1,290 +1,414 @@
 [
   {
     "theme": "dark",
-    "vp": "360",
+    "label": "grid classes 1–12 × 6 bp",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "360 — Mobile Base",
-      "actual": "360px",
-      "label": "BASE (< 480px)",
-      "marker": "base",
+      "missing": [],
+      "count": 72
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "360 base",
+    "pass": true,
+    "failed": [],
+    "meta": {
       "iframeWidth": 360,
       "cols": 1,
       "direction": "column",
       "pad": 16,
-      "frameCssWidth": "360px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 360,
+      "content": 328,
+      "maxOuter": 360,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "360px",
+      "marker": "base",
+      "ratio": 0.9111111111111111
     }
   },
   {
     "theme": "dark",
-    "vp": "480",
+    "label": "480 sm",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "480 — sm",
-      "actual": "480px",
-      "label": "sm (≥ 480px)",
-      "marker": "sm",
       "iframeWidth": 480,
       "cols": 1,
       "direction": "column",
       "pad": 16,
-      "frameCssWidth": "480px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 480,
+      "content": 448,
+      "maxOuter": 480,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "480px",
+      "marker": "sm",
+      "ratio": 0.9333333333333333
     }
   },
   {
     "theme": "dark",
-    "vp": "768",
+    "label": "768 md",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "768 — md",
-      "actual": "768px",
-      "label": "md (≥ 768px)",
-      "marker": "md",
       "iframeWidth": 768,
       "cols": 2,
       "direction": "row",
       "pad": 20,
-      "frameCssWidth": "768px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 768,
+      "content": 728,
+      "maxOuter": 768,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "768px",
+      "marker": "md",
+      "ratio": 0.9479166666666666
     }
   },
   {
     "theme": "dark",
-    "vp": "1024",
+    "label": "1024 lg",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "1024 — lg",
-      "actual": "1024px",
-      "label": "lg (≥ 1024px)",
-      "marker": "lg",
       "iframeWidth": 1024,
       "cols": 3,
       "direction": "row",
       "pad": 24,
-      "frameCssWidth": "1024px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 1024,
+      "content": 976,
+      "maxOuter": 1024,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "1024px",
+      "marker": "lg",
+      "ratio": 0.953125
     }
   },
   {
     "theme": "dark",
-    "vp": "1280",
+    "label": "1280 xl",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "1280 — xl",
-      "actual": "1280px",
-      "label": "xl (≥ 1280px)",
-      "marker": "xl",
       "iframeWidth": 1280,
       "cols": 3,
       "direction": "row",
-      "pad": 24,
-      "frameCssWidth": "1280px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "pad": 32,
+      "fluidOuter": 1280,
+      "content": 1216,
+      "maxOuter": 1280,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "1280px",
+      "marker": "xl",
+      "ratio": 0.95
     }
   },
   {
     "theme": "dark",
-    "vp": "1440",
+    "label": "1440 2xl",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "dark",
-      "selected": "1440 — 2xl",
-      "actual": "1440px",
-      "label": "2xl (≥ 1440px)",
-      "marker": "2xl",
       "iframeWidth": 1440,
       "cols": 4,
       "direction": "row",
       "pad": 32,
-      "frameCssWidth": "1440px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 1440,
+      "content": 1376,
+      "maxOuter": 1280,
+      "maxLeft": 80,
+      "maxToken": "1280px",
+      "theme": "dark",
+      "actual": "1440px",
+      "marker": "2xl",
+      "ratio": 0.9555555555555556
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "span 12/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-12 sb-pg-cell sb-pg-span-fill",
+      "cellW": 992,
+      "gridW": 992,
+      "restHidden": true,
+      "sameRow": false,
+      "share": 1
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "span 6/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-6 sb-pg-cell sb-pg-span-fill",
+      "cellW": 484,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.4879032258064516
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "span 4/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-4 sb-pg-cell sb-pg-span-fill",
+      "cellW": 314.65625,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.3171938004032258
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "span 3/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-3 sb-pg-cell sb-pg-span-fill",
+      "cellW": 230,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.2318548387096774
+    }
+  },
+  {
+    "theme": "dark",
+    "label": "span 2/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-2 sb-pg-cell sb-pg-span-fill",
+      "cellW": 145.328125,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.14650012600806453
     }
   },
   {
     "theme": "light",
-    "vp": "360",
+    "label": "grid classes 1–12 × 6 bp",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "360 — Mobile Base",
-      "actual": "360px",
-      "label": "BASE (< 480px)",
-      "marker": "base",
+      "missing": [],
+      "count": 72
+    }
+  },
+  {
+    "theme": "light",
+    "label": "360 base",
+    "pass": true,
+    "failed": [],
+    "meta": {
       "iframeWidth": 360,
       "cols": 1,
       "direction": "column",
       "pad": 16,
-      "frameCssWidth": "360px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 360,
+      "content": 328,
+      "maxOuter": 360,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "360px",
+      "marker": "base",
+      "ratio": 0.9111111111111111
     }
   },
   {
     "theme": "light",
-    "vp": "480",
+    "label": "480 sm",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "480 — sm",
-      "actual": "480px",
-      "label": "sm (≥ 480px)",
-      "marker": "sm",
       "iframeWidth": 480,
       "cols": 1,
       "direction": "column",
       "pad": 16,
-      "frameCssWidth": "480px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 480,
+      "content": 448,
+      "maxOuter": 480,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "480px",
+      "marker": "sm",
+      "ratio": 0.9333333333333333
     }
   },
   {
     "theme": "light",
-    "vp": "768",
+    "label": "768 md",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "768 — md",
-      "actual": "768px",
-      "label": "md (≥ 768px)",
-      "marker": "md",
       "iframeWidth": 768,
       "cols": 2,
       "direction": "row",
       "pad": 20,
-      "frameCssWidth": "768px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 768,
+      "content": 728,
+      "maxOuter": 768,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "768px",
+      "marker": "md",
+      "ratio": 0.9479166666666666
     }
   },
   {
     "theme": "light",
-    "vp": "1024",
+    "label": "1024 lg",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "1024 — lg",
-      "actual": "1024px",
-      "label": "lg (≥ 1024px)",
-      "marker": "lg",
       "iframeWidth": 1024,
       "cols": 3,
       "direction": "row",
       "pad": 24,
-      "frameCssWidth": "1024px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 1024,
+      "content": 976,
+      "maxOuter": 1024,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "1024px",
+      "marker": "lg",
+      "ratio": 0.953125
     }
   },
   {
     "theme": "light",
-    "vp": "1280",
+    "label": "1280 xl",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "1280 — xl",
-      "actual": "1280px",
-      "label": "xl (≥ 1280px)",
-      "marker": "xl",
       "iframeWidth": 1280,
       "cols": 3,
       "direction": "row",
-      "pad": 24,
-      "frameCssWidth": "1280px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "pad": 32,
+      "fluidOuter": 1280,
+      "content": 1216,
+      "maxOuter": 1280,
+      "maxLeft": 0,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "1280px",
+      "marker": "xl",
+      "ratio": 0.95
     }
   },
   {
     "theme": "light",
-    "vp": "1440",
+    "label": "1440 2xl",
     "pass": true,
     "failed": [],
     "meta": {
-      "theme": "light",
-      "selected": "1440 — 2xl",
-      "actual": "1440px",
-      "label": "2xl (≥ 1440px)",
-      "marker": "2xl",
       "iframeWidth": 1440,
       "cols": 4,
       "direction": "row",
       "pad": 32,
-      "frameCssWidth": "1440px"
-    },
-    "icons": {
-      "source": "331",
-      "canon": "331",
-      "missing": "0",
-      "cells": 48
+      "fluidOuter": 1440,
+      "content": 1376,
+      "maxOuter": 1280,
+      "maxLeft": 80,
+      "maxToken": "1280px",
+      "theme": "light",
+      "actual": "1440px",
+      "marker": "2xl",
+      "ratio": 0.9555555555555556
+    }
+  },
+  {
+    "theme": "light",
+    "label": "span 12/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-12 sb-pg-cell sb-pg-span-fill",
+      "cellW": 992,
+      "gridW": 992,
+      "restHidden": true,
+      "sameRow": false,
+      "share": 1
+    }
+  },
+  {
+    "theme": "light",
+    "label": "span 6/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-6 sb-pg-cell sb-pg-span-fill",
+      "cellW": 484,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.4879032258064516
+    }
+  },
+  {
+    "theme": "light",
+    "label": "span 4/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-4 sb-pg-cell sb-pg-span-fill",
+      "cellW": 314.65625,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.3171938004032258
+    }
+  },
+  {
+    "theme": "light",
+    "label": "span 3/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-3 sb-pg-cell sb-pg-span-fill",
+      "cellW": 230,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.2318548387096774
+    }
+  },
+  {
+    "theme": "light",
+    "label": "span 2/12",
+    "pass": true,
+    "failed": [],
+    "meta": {
+      "className": "ifx-col-2 sb-pg-cell sb-pg-span-fill",
+      "cellW": 145.328125,
+      "gridW": 992,
+      "restHidden": false,
+      "sameRow": true,
+      "share": 0.14650012600806453
     }
   }
 ]

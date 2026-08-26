@@ -3,8 +3,10 @@
   <p class="sb-section-desc">
     Owner Acceptance Surface. Bấm viewport để iframe nhận <strong>logical width thật</strong> — CSS <code>@media</code> chạy trên viewport iframe, không phải width giả của div.
     AUTO = theo chiều rộng trình duyệt hiện tại. 1280/1440 được scale để nhìn hết, logical viewport vẫn đúng.
+    Viewport và Column span độc lập — layout do CSS, JS chỉ chọn preview.
   </p>
 
+  <p class="ifx-typo-overline">A. Viewport / Breakpoint</p>
   <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport selector">
     <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
     <button type="button" class="sb-vp-btn" data-vp="360">360</button>
@@ -37,6 +39,57 @@
     <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
     <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
     <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
+  </div>
+
+  <p class="ifx-typo-overline">B. Column span — độc lập với viewport</p>
+  <div class="sb-vp-bar" id="pgSpanBar" role="toolbar" aria-label="Column span">
+    <button type="button" class="sb-vp-btn" data-span="1">1/12</button>
+    <button type="button" class="sb-vp-btn" data-span="2">2/12</button>
+    <button type="button" class="sb-vp-btn" data-span="3">3/12</button>
+    <button type="button" class="sb-vp-btn" data-span="4">4/12</button>
+    <button type="button" class="sb-vp-btn" data-span="5">5/12</button>
+    <button type="button" class="sb-vp-btn is-active" data-span="6">6/12</button>
+    <button type="button" class="sb-vp-btn" data-span="7">7/12</button>
+    <button type="button" class="sb-vp-btn" data-span="8">8/12</button>
+    <button type="button" class="sb-vp-btn" data-span="9">9/12</button>
+    <button type="button" class="sb-vp-btn" data-span="10">10/12</button>
+    <button type="button" class="sb-vp-btn" data-span="11">11/12</button>
+    <button type="button" class="sb-vp-btn" data-span="12">12/12</button>
+  </div>
+
+  <div class="sb-pg-status" id="pgBoxStatus">
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Viewport</span>
+      <span class="ifx-typo-price-s" id="pgBoxVp">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Gutter L / R</span>
+      <span class="ifx-typo-price-s" id="pgBoxGutter">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Content width</span>
+      <span class="ifx-typo-price-s" id="pgBoxContent">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Content / viewport</span>
+      <span class="ifx-typo-price-s" id="pgBoxRatio">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">container-max outer</span>
+      <span class="ifx-typo-price-s" id="pgBoxMaxOuter">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Outer margin × 2</span>
+      <span class="ifx-typo-price-s" id="pgBoxMaxMargin">—</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Selected span</span>
+      <span class="ifx-typo-price-s" id="pgBoxSpan">6/12 = 50%</span>
+    </div>
+    <div class="sb-pg-status-item">
+      <span class="ifx-typo-overline">Span actual width</span>
+      <span class="ifx-typo-price-s" id="pgBoxSpanPx">—</span>
+    </div>
   </div>
 
   <div class="sb-frame-host" id="pgHost">

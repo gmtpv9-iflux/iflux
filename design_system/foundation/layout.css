@@ -5,12 +5,14 @@
  * Media query phải là literal đúng 5 mốc trên (build-time resolution) —
  * CẤM mốc tự phát, CẤM var() trong @media.
  *
- * Responsive semantic spacing: viết lại MOBILE-FIRST từ bộ đang chạy
- * (legacy dùng max-width — computed value từng viewport giữ nguyên parity):
- *   BASE   : container 16 · section 48 · page 64 · gutter 16 · margin 16 · panel 16 · dialog 16
- *   ≥ 768  : container 20 · section 56 · page 64 · gutter 24 · margin 24 · panel 20/24 · dialog 24
- *   ≥ 1024 : container 24 · section 64 · page 80
- *   ≥ 1440 : container 32 · section 80 · page 96
+ * Responsive semantic spacing — mobile-first, bám primitive space token:
+ *   BASE / sm : container 16 · section 48 · page 64 · grid-gutter 16 · margin 16
+ *   md  ≥ 768 : container 20 · section 56 · page 64 · grid-gutter 24 · margin 20 · panel 20/24 · dialog 24
+ *   lg  ≥1024 : container 24 · section 64 · page 80 · margin 24
+ *   xl  ≥1280 : container 32 · margin 32
+ *   2xl ≥1440 : container 32 · section 80 · page 96
+ * Gutter container nhỏ nhất ở mobile (content chiếm tỷ lệ viewport lớn hơn);
+ * tăng dần theo màn hình. .ifx-container-max (1280) tạo khoảng trống ngoài từ khi viewport > 1280.
  */
 
 /* ── Responsive semantic spacing (mobile-first base) ── */
@@ -29,7 +31,7 @@
     --ifx-space-container: var(--ifx-space-20);
     --ifx-space-section: var(--ifx-space-56);
     --ifx-grid-gutter: var(--ifx-space-24);
-    --ifx-container-margin: var(--ifx-space-24);
+    --ifx-container-margin: var(--ifx-space-20);
     --ifx-inset-panel: var(--ifx-space-20) var(--ifx-space-24);
     --ifx-inset-dialog: var(--ifx-space-24);
   }
@@ -40,6 +42,14 @@
     --ifx-space-container: var(--ifx-space-24);
     --ifx-space-section: var(--ifx-space-64);
     --ifx-space-page: var(--ifx-space-80);
+    --ifx-container-margin: var(--ifx-space-24);
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-32);
+    --ifx-container-margin: var(--ifx-space-32);
   }
 }
 
@@ -48,6 +58,7 @@
     --ifx-space-container: var(--ifx-space-32);
     --ifx-space-section: var(--ifx-space-80);
     --ifx-space-page: var(--ifx-space-96);
+    --ifx-container-margin: var(--ifx-space-32);
   }
 }
 

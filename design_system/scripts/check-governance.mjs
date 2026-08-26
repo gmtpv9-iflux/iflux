@@ -123,6 +123,19 @@ if (violations.length > 0) {
   for (const v of violations) console.error('  ✗ ' + v);
   process.exit(1);
 }
+const layoutCss = fs.readFileSync(path.join(DS, 'foundation', 'layout.css'), 'utf8');
+const missingCols = [];
+['', 'sm-', 'md-', 'lg-', 'xl-', '2xl-'].forEach((bp) => {
+  for (let n = 1; n <= 12; n += 1) {
+    const cls = `.ifx-col-${bp}${n}`;
+    if (!new RegExp(cls.replace('.', '\\.') + '\\s*\\{').test(layoutCss)) missingCols.push(cls);
+  }
+});
+if (missingCols.length) {
+  console.error('[check-governance] FAIL — thiếu grid span:', missingCols.join(' '));
+  process.exit(1);
+}
+
 execFileSync('node', [path.join(DS, 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
 
-console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · icons missing=0.');
+console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid 1–12 × 6 bp · icons missing=0.');
