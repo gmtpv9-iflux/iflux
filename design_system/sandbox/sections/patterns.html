@@ -62,7 +62,7 @@
 
 <section class="sb-section" id="pat-data-list">
   <h2 class="sb-section-title">Data List</h2>
-  <p class="sb-section-desc">Compose page-header + table + pagination + drawer (sửa nhỏ — AR-001 §26.1).</p>
+  <p class="sb-section-desc">P5 · Search + Table + Pagination wired bởi <code>IfxDataList</code>. Drawer sửa nhỏ — AR-001 §26.1.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
@@ -81,15 +81,15 @@
       </div>
     </div>
   </header>
-  <div class="ifx-card">
+  <div class="ifx-card" data-ifx-data-list data-ifx-page-size="2">
     <div class="ifx-table-toolbar">
       <label class="ifx-search">
         <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
-        <input type="search" placeholder="Tìm bản ghi…">
+        <input type="search" placeholder="Tìm bản ghi…" data-ifx-search>
       </label>
     </div>
     <div class="ifx-table-wrap">
-      <table class="ifx-table">
+      <table class="ifx-table" data-ifx-table>
         <thead><tr><th></th><th>Mã</th><th>Tên</th><th>Trạng thái</th><th></th></tr></thead>
         <tbody>
           <tr>

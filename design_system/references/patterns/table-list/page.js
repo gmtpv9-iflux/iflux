@@ -1,6 +1,6 @@
 /**
- * P6-W01 harness — theme toggle + IfxTable.init.
- * Không sở hữu table/search/pagination/theme.
+ * P6-W01 harness — theme toggle + IfxDataList.init.
+ * Không sở hữu table / search / pagination / theme / stat-strip.
  */
 (function () {
   'use strict';
@@ -14,5 +14,5 @@
     window.addEventListener('ifx-theme-change', function (e) { sync(e.detail.theme); });
     sync(window.IfxTheme.get());
   }
-  if (window.IfxTable) window.IfxTable.init();
+  if (window.IfxDataList) window.IfxDataList.init();
 })();

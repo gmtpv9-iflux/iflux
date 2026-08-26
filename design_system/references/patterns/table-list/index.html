@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="../../../primitives/avatar/avatar.css">
   <link rel="stylesheet" href="../../../components/card/card.css">
   <link rel="stylesheet" href="../../../components/stat/stat.css">
+  <link rel="stylesheet" href="../../../components/stat/stat-strip.css">
   <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
   <link rel="stylesheet" href="../../../components/form/form.css">
   <link rel="stylesheet" href="../../../components/table/table.css">
@@ -57,50 +58,45 @@
       </div>
     </header>
 
-    <div class="ifx-grid ifx-mb-24">
-      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
-        <div class="ifx-stat">
-          <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
-          <div>
-            <div class="ifx-stat-label">Tổng</div>
-            <div class="ifx-stat-value">128</div>
-            <div class="ifx-stat-trend">5k bản ghi <span class="ifx-chip ifx-chip-success">+5.7%</span></div>
-          </div>
+    <div class="ifx-stat-strip ifx-mb-24">
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Tổng</div>
+          <div class="ifx-stat-value">128</div>
+          <div class="ifx-stat-trend">5k bản ghi <span class="ifx-chip ifx-chip-success">+5.7%</span></div>
         </div>
       </div>
-      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
-        <div class="ifx-stat">
-          <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div>
-          <div>
-            <div class="ifx-stat-label">Đang mở</div>
-            <div class="ifx-stat-value">96</div>
-            <div class="ifx-stat-trend">21k bản ghi <span class="ifx-chip ifx-chip-success">+12.4%</span></div>
-          </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Đang mở</div>
+          <div class="ifx-stat-value">96</div>
+          <div class="ifx-stat-trend">21k bản ghi <span class="ifx-chip ifx-chip-success">+12.4%</span></div>
         </div>
       </div>
-      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
-        <div class="ifx-stat">
-          <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
-          <div>
-            <div class="ifx-stat-label">Chờ</div>
-            <div class="ifx-stat-value">14</div>
-            <div class="ifx-stat-trend">6k bản ghi</div>
-          </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Chờ</div>
+          <div class="ifx-stat-value">14</div>
+          <div class="ifx-stat-trend">6k bản ghi</div>
         </div>
       </div>
-      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
-        <div class="ifx-stat">
-          <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div>
-          <div>
-            <div class="ifx-stat-label">Chặn</div>
-            <div class="ifx-stat-value">18</div>
-            <div class="ifx-stat-trend">150 bản ghi <span class="ifx-chip ifx-chip-danger">−3.5%</span></div>
-          </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div>
+        <div>
+          <div class="ifx-stat-label">Chặn</div>
+          <div class="ifx-stat-value">18</div>
+          <div class="ifx-stat-trend">150 bản ghi <span class="ifx-chip ifx-chip-danger">−3.5%</span></div>
         </div>
       </div>
     </div>
 
-    <div class="ifx-card" data-ifx-table data-ifx-page-size="5">
+    <div class="ifx-card" data-ifx-data-list data-ifx-page-size="5">
       <div class="ifx-card-header">
         <h2 class="ifx-card-title">Bộ lọc</h2>
       </div>
@@ -143,7 +139,7 @@
         <div class="ifx-table-toolbar">
           <label class="ifx-search">
             <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
-            <input type="search" placeholder="Tìm bản ghi…" data-ifx-table-search>
+            <input type="search" placeholder="Tìm bản ghi…" data-ifx-search>
           </label>
           <div class="ifx-inline-sm">
             <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm"><i class="ti ti-download ifx-icon ifx-icon-sm"></i> Xuất</button>
@@ -151,7 +147,7 @@
           </div>
         </div>
         <div class="ifx-table-wrap">
-          <table class="ifx-table">
+          <table class="ifx-table" data-ifx-table>
             <thead>
               <tr>
                 <th><input type="checkbox" class="ifx-checkbox" aria-label="Chọn tất cả"></th>
@@ -397,6 +393,8 @@
   </main>
   <script src="../../../adapters/web/theme.js"></script>
   <script src="../../../components/table/table.js"></script>
+  <script src="../../../components/pagination/pagination.js"></script>
+  <script src="../../../patterns/data-list/data-list.js"></script>
   <script src="page.js"></script>
 </body>
 </html>

@@ -19,6 +19,7 @@
   var COMPONENT_CSS = [
     '../components/card/card.css',
     '../components/stat/stat.css',
+    '../components/stat/stat-strip.css',
     '../components/breadcrumb/breadcrumb.css',
     '../components/form/form.css',
     '../components/table/table.css',
@@ -80,6 +81,9 @@
   var PATTERN_CSS = [
     '../patterns/page-header/page-header.css'
   ];
+  var PATTERN_JS = [
+    '../patterns/data-list/data-list.js'
+  ];
 
   function ensurePatternCss() {
     PATTERN_CSS.forEach(function (href) {
@@ -92,9 +96,16 @@
     });
   }
 
+  function ensurePatternJs() {
+    var chain = Promise.resolve();
+    PATTERN_JS.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
+    return chain;
+  }
+
   function bindComponents() {
     if (window.IfxTable) window.IfxTable.init();
     if (window.IfxPagination) window.IfxPagination.init();
+    if (window.IfxDataList) window.IfxDataList.initAll();
     if (window.IfxTabs) window.IfxTabs.init();
     if (window.IfxWizard) window.IfxWizard.init();
     if (window.IfxChat) window.IfxChat.init();
@@ -450,6 +461,8 @@
           ensurePrimitiveCss();
           if (id === 'patterns') ensurePatternCss();
           return ensureComponentAssets().then(function () {
+            if (id === 'patterns') return ensurePatternJs();
+          }).then(function () {
             bindComponents();
             scrollPanel();
           });

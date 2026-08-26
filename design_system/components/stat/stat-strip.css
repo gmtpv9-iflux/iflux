@@ -1,0 +1,48 @@
+/**
+ * Component — Stat Strip (Stat Group)
+ * REWRITE .ix-widget-separator. Compose .ifx-stat + divider trên một shared surface.
+ * Existing owner: stat/stat.css (một KPI card).
+ * Why cannot modify that file only: strip = group contract (surface · n items · separator · wrap),
+ * không phải variant của một Stat.
+ */
+.ifx-stat-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  box-shadow: var(--ifx-shadow-card);
+  overflow: hidden;
+}
+.ifx-stat-strip > .ifx-stat {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ifx-stat-strip-divider {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 1px;
+  background: var(--ifx-border-default);
+  pointer-events: none;
+}
+/* bp:md — hàng ngang, wrap khi không đủ min-width */
+@media (min-width: 768px) {
+  .ifx-stat-strip {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .ifx-stat-strip > .ifx-stat {
+    flex: 1 1 var(--ifx-space-160);
+  }
+  .ifx-stat-strip-divider {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+  }
+}
