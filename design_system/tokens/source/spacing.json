@@ -1,7 +1,7 @@
 {
   "$meta": {
     "sot": "Canonical iFlux Design System — Spacing Token SoT",
-    "note": "Base 4px · 8pt grid. Responsive override của --ifx-space-container/section/page (legacy spacing.css §12) thuộc foundation/layout.css (viết lại mobile-first tại P2), không thuộc token tĩnh.",
+    "note": "Base 4px · 8pt grid. Responsive --ifx-space-container belongs to foundation/layout.css. Page/Section sibling rhythm is Stack tokens, not space-page/section.",
     "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/spacing.css §1–§13 (audit Sub-01 P1, 2026-08-26)"
   },
   "primitive": {

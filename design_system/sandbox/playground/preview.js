@@ -88,7 +88,7 @@
     if (ofGrid) setText('pgSpanPct', ofGrid.toFixed(1) + '%');
     setText('pgTokContainer', getComputedStyle(document.documentElement).getPropertyValue('--ifx-space-container').trim());
     setText('pgTokGutter', getComputedStyle(document.documentElement).getPropertyValue('--ifx-grid-gutter').trim());
-    setText('pgTokSection', getComputedStyle(document.documentElement).getPropertyValue('--ifx-space-section').trim());
+    setText('pgTokSection', getComputedStyle(document.documentElement).getPropertyValue('--ifx-stack-md').trim());
     if (fluid) {
       document.getElementById('pgFluidInner').textContent =
         'CONTENT  ' + fluid.content + 'px  ·  ' + (fluid.content / w * 100).toFixed(1) + '% viewport';
