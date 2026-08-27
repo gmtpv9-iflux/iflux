@@ -55,20 +55,20 @@
     <div class="ifx-col-12 ifx-col-md-6">
       <div class="ifx-stat">
         <div class="ifx-stat-icon"><i class="ti ti-users ifx-icon"></i></div>
-        <div>
+        <div class="ifx-stat-content">
           <div class="ifx-stat-label">Người dùng</div>
           <div class="ifx-stat-value">1,248</div>
-          <div class="ifx-stat-trend ifx-stat-trend-up">+4.2%</div>
+          <div class="ifx-stat-trend">+4.2%</div>
         </div>
       </div>
     </div>
     <div class="ifx-col-12 ifx-col-md-6">
       <div class="ifx-stat">
         <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-alert-triangle ifx-icon"></i></div>
-        <div>
+        <div class="ifx-stat-content">
           <div class="ifx-stat-label">Cảnh báo</div>
           <div class="ifx-stat-value">12</div>
-          <div class="ifx-stat-trend ifx-stat-trend-down">−1</div>
+          <div class="ifx-stat-trend">−1</div>
         </div>
       </div>
     </div>
@@ -80,36 +80,33 @@
   <p class="sb-source"><span class="sb-source-k">Layer</span> P4 <span class="sb-source-k">Source</span> <code>design_system/components/stat/stat-strip.css</code> <span class="sb-source-k">Since</span> P6-W01</p>
 <div class="ifx-section-title">
       <h2>Stat Strip</h2>
-      <p>P4 · shared surface + divider · compose <code>.ifx-stat</code> · n items.</p>
+      <p>P4 · shared surface · compose <code>.ifx-stat</code> · n items.</p>
     </div>
   <div class="ifx-stat-strip">
     <div class="ifx-stat">
       <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
-      <div>
+      <div class="ifx-stat-content">
         <div class="ifx-stat-label">Tổng</div>
         <div class="ifx-stat-value">128</div>
       </div>
     </div>
-    <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
     <div class="ifx-stat">
       <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div>
-      <div>
+      <div class="ifx-stat-content">
         <div class="ifx-stat-label">Mở</div>
         <div class="ifx-stat-value">96</div>
       </div>
     </div>
-    <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
     <div class="ifx-stat">
       <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
-      <div>
+      <div class="ifx-stat-content">
         <div class="ifx-stat-label">Chờ</div>
         <div class="ifx-stat-value">14</div>
       </div>
     </div>
-    <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
     <div class="ifx-stat">
       <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div>
-      <div>
+      <div class="ifx-stat-content">
         <div class="ifx-stat-label">Chặn</div>
         <div class="ifx-stat-value">18</div>
       </div>
@@ -281,7 +278,7 @@
   <div class="ifx-modal-overlay" id="demoModal">
     <div class="ifx-modal" role="dialog" aria-labelledby="demoModalTitle">
       <div class="ifx-modal-header">
-        <h3 class="ifx-modal-title" id="demoModalTitle">Xác nhận</h3>
+        <h3 id="demoModalTitle">Xác nhận</h3>
         <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="modal" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
       </div>
       <div class="ifx-modal-body">Nội dung generic. Overlay = <code>--ifx-overlay-scrim</code>.</div>

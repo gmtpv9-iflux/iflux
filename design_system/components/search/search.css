@@ -15,6 +15,10 @@
   max-width: var(--ifx-space-256);
   width: 100%;
 }
+.ifx-search:focus-within {
+  border-color: var(--ifx-border-focus);
+  box-shadow: 0 0 0 3px var(--ifx-action-primary-soft);
+}
 .ifx-search input {
   background: none;
   border: none;

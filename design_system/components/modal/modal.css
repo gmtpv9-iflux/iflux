@@ -1,6 +1,7 @@
 /**
  * Component — Modal
  * REWRITE .ix-modal. Open = .is-open (không JS style.display).
+ * Header/Body/Footer = structural. Heading typography = Foundation.
  */
 .ifx-modal-overlay {
   position: fixed;
@@ -30,13 +31,15 @@
   padding: var(--ifx-inset-card-header);
   border-bottom: 1px solid var(--ifx-border-default);
 }
-.ifx-modal-title {
+.ifx-modal-header > h1,
+.ifx-modal-header > h2,
+.ifx-modal-header > h3,
+.ifx-modal-header > h4,
+.ifx-modal-header > h5,
+.ifx-modal-header > h6 {
   margin: 0;
-  font-size: var(--ifx-font-size-md);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
 }
-.ifx-modal-body { padding: var(--ifx-inset-dialog); overflow-y: auto; flex: 1; color: var(--ifx-text-secondary); }
+.ifx-modal-body { padding: var(--ifx-inset-dialog); overflow-y: auto; flex: 1; }
 .ifx-modal-footer {
   padding: var(--ifx-inset-card-footer);
   border-top: 1px solid var(--ifx-border-default);
