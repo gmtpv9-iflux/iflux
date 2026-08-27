@@ -10,9 +10,9 @@
 </div></div>
 <div class="sb-panel" data-sb-panel="page-header" hidden>
 <section class="sb-section" id="pat-page-header">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/page-header/page-header.css</code></p>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/page-header/page-header.css</code> · consume <code>primitives/title/title.css</code></p>
 <h2 class="sb-section-title">Page Header</h2>
-  <p class="sb-section-desc">Pattern · AR-001 §25 · compose breadcrumb + title + description + action slot + optional stats.</p>
+  <p class="sb-section-desc">Pattern · AR-001 §25 · breadcrumb + Title Primitive + actions + optional stats. Không sở hữu typography heading.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
@@ -21,10 +21,10 @@
         <li class="ifx-breadcrumb-current">Danh sách</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Danh sách bản ghi</h3>
-        <p class="ifx-page-header-desc">Trang liệt kê — dữ liệu generic, không business.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Danh sách bản ghi</h1>
+        <p>Trang liệt kê — dữ liệu generic, không business.</p>
       </div>
       <div class="ifx-page-header-actions">
         <button type="button" class="ifx-btn ifx-btn-outline">Xuất</button>
@@ -85,10 +85,10 @@
         <li class="ifx-breadcrumb-current">Danh sách</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Bản ghi</h3>
-        <p class="ifx-page-header-desc">Bảng + phân trang. Sửa nhanh mở drawer.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Bản ghi</h1>
+        <p>Bảng + phân trang. Sửa nhanh mở drawer.</p>
       </div>
       <div class="ifx-page-header-actions">
         <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
@@ -172,10 +172,10 @@
         <li class="ifx-breadcrumb-current">A-01</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Bản ghi A-01</h3>
-        <p class="ifx-page-header-desc">Chi tiết generic — không domain copy.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Bản ghi A-01</h1>
+        <p>Chi tiết generic — không domain copy.</p>
       </div>
       <div class="ifx-page-header-actions">
         <span class="ifx-chip ifx-chip-success">active</span>
@@ -231,10 +231,10 @@
         <li class="ifx-breadcrumb-current">Thêm</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Thêm bản ghi</h3>
-        <p class="ifx-page-header-desc">Compose card + form. Không thống kê.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Thêm bản ghi</h1>
+        <p>Compose card + form. Không thống kê.</p>
       </div>
     </div>
   </header>
@@ -295,10 +295,10 @@
         <li class="ifx-breadcrumb-current">Hội thoại</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Hội thoại</h3>
-        <p class="ifx-page-header-desc">Nền Conversation — compose Chat Family, không business.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Hội thoại</h1>
+        <p>Nền Conversation — compose Chat Family, không business.</p>
       </div>
     </div>
   </header>
@@ -345,10 +345,10 @@
         <li class="ifx-breadcrumb-current">Lịch sử</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-bar">
-      <div>
-        <h3 class="ifx-page-header-title">Lịch sử sự kiện</h3>
-        <p class="ifx-page-header-desc">Nền Order History — compose Timeline Family, không domain đơn hàng.</p>
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Lịch sử sự kiện</h1>
+        <p>Nền Order History — compose Timeline Family, không domain đơn hàng.</p>
       </div>
     </div>
   </header>

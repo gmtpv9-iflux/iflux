@@ -137,7 +137,8 @@
     '../primitives/avatar/avatar.css',
     '../primitives/alert/alert.css',
     '../primitives/progress/progress.css',
-    '../primitives/navigation/nav.css'
+    '../primitives/navigation/nav.css',
+    '../primitives/title/title.css'
   ];
 
   function ensurePrimitiveCss() {
