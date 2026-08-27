@@ -9,6 +9,7 @@
   <a href="?section=references&amp;panel=w07" data-sb-goto="w07">W07 — Chat</a>
   <a href="?section=references&amp;panel=w08" data-sb-goto="w08">W08 — Referrals</a>
   <a href="?section=references&amp;panel=w09" data-sb-goto="w09">W09 — Biểu đồ</a>
+  <a href="?section=references&amp;panel=w10" data-sb-goto="w10">W10 — Auth</a>
 </nav>
 
 <div class="sb-panel" data-sb-panel="hub">
@@ -49,9 +50,12 @@
     </a>
     <a class="sb-catalog-item" href="?section=references&amp;panel=w09" data-sb-goto="w09">
       <strong>W09 — Biểu đồ</strong>
-      <span>OPEN · references/patterns/charts/</span>
+      <span>PASS / LOCKED · references/patterns/charts/</span>
     </a>
-    <span class="sb-catalog-item is-blocked"><strong>W10 — Auth</strong><span>BLOCKED / not built</span></span>
+    <a class="sb-catalog-item" href="?section=references&amp;panel=w10" data-sb-goto="w10">
+      <strong>W10 — Auth</strong>
+      <span>OPEN · references/patterns/auth/</span>
+    </a>
   </div>
 </div>
 
@@ -283,7 +287,7 @@
     <div class="ifx-section-title">
       <h2>W09 — Biểu đồ</h2>
     </div>
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/charts/</code> <span class="sb-source-k">Status</span> OPEN</p>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/charts/</code> <span class="sb-source-k">Status</span> PASS / LOCKED</p>
 
     <p class="sb-kicker">Links</p>
     <p><a href="../references/patterns/charts/">Candidate</a> — compose page-header + card + tabs + dropdown + IfxChart. Không AppShell, không Apex.</p>
@@ -298,6 +302,32 @@
 
     <p class="sb-kicker">Gaps discovered</p>
     <p>Bar height → <code>data-ifx-chart-h</code> trên <code>chart.css</code> (sửa file hiện có). Apex / Top 10 / nến = DROP. Xóa <code>.sb-ch-*</code>.</p>
+
+    <p class="sb-kicker">Final status</p>
+    <p><span class="ifx-chip ifx-chip-success">PASS / LOCKED</span></p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="w10" hidden>
+  <section class="sb-section">
+    <div class="ifx-section-title">
+      <h2>W10 — Auth</h2>
+    </div>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/auth/</code> <span class="sb-source-k">Status</span> OPEN</p>
+
+    <p class="sb-kicker">Links</p>
+    <p><a href="../references/patterns/auth/">Candidate</a> — compose page-header + card + tabs + form + toast. Không AppShell, không <code>ifx-auth</code>.</p>
+    <p>Legacy baseline (mở tab khác, không phải dependency): staging.iflux.vn + path Admin_Design_system/auth/login.html</p>
+
+    <p class="sb-kicker">Canonical capabilities consumed</p>
+    <ul>
+      <li>P5 Page Header</li>
+      <li>P4 Card · Tabs · Form · Toast</li>
+      <li>P3 Alert · button full width</li>
+    </ul>
+
+    <p class="sb-kicker">Gaps discovered</p>
+    <p>Reusable gap mở = 0. Không thêm file Canonical DS. <code>ix-auth</code> / Google / Admin runtime = DROP (platform).</p>
 
     <p class="sb-kicker">Final status</p>
     <p><span class="ifx-chip ifx-chip-warning">OPEN — Owner review</span></p>

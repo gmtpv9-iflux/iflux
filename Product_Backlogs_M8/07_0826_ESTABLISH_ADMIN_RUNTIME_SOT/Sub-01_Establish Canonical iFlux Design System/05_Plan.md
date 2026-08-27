@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P4 = OWNER PASS** · **P6-W01 + Sandbox + W02–W08 = LOCKED** · **P6-W09 = OPEN** · W10 BLOCKED |
+| Trạng thái | **P1–P4 = OWNER PASS** · **P6-W01 + Sandbox + W02–W09 = LOCKED** · **P6-W10 = OPEN** · P7 BLOCKED |
 
 ---
 
@@ -186,12 +186,12 @@ W01 Bảng danh sách → W02 Form thêm/sửa → W03 List + stats strip
 
 Mỗi wave: audit legacy → map P1–P5 → build composition → classify gap → promote đúng layer → re-consume → verify 6 vp × Dark/Light → deploy → Owner.
 
-**Hiện tại:** P6-W09 OPEN. Evidence `gates/P6.md` + `gates/P6-W09.md`.
+**Hiện tại:** P6-W10 OPEN. Evidence `gates/P6.md` + `gates/P6-W10.md`.
 
 **Owner test (UI):** mở cạnh nhau — không iframe.
 
-- Candidate: https://staging.iflux.vn/design_system/references/patterns/charts/
-- Legacy: staging.iflux.vn + path Admin_Design_system/patterns/charts.html
+- Candidate: https://staging.iflux.vn/design_system/references/patterns/auth/
+- Legacy: staging.iflux.vn + path Admin_Design_system/auth/login.html
 
 ### P7 — Design System Regression (regression của CHÍNH DS, không phải hệ thống)
 

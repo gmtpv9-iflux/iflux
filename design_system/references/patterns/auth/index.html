@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>P6-W10 — Auth · Canonical reference</title>
+  <link rel="stylesheet" href="../../../tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../../foundation/fonts.css">
+  <link rel="stylesheet" href="../../../foundation/reset.css">
+  <link rel="stylesheet" href="../../../foundation/typography.css">
+  <link rel="stylesheet" href="../../../foundation/layout.css">
+  <link rel="stylesheet" href="../../../foundation/utilities.css">
+  <link rel="stylesheet" href="../../../foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../../foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../../primitives/button/button.css">
+  <link rel="stylesheet" href="../../../primitives/alert/alert.css">
+  <link rel="stylesheet" href="../../../components/card/card.css">
+  <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../../components/form/form.css">
+  <link rel="stylesheet" href="../../../components/tabs/tabs.css">
+  <link rel="stylesheet" href="../../../components/toast/toast.css">
+  <link rel="stylesheet" href="../../../primitives/title/title.css">
+  <link rel="stylesheet" href="../../../patterns/page-header/page-header.css">
+</head>
+<body>
+  <main class="ifx-container ifx-container-max ifx-p-24">
+    <div class="ifx-inline-md ifx-mb-16">
+      <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
+      <small>P6-W10 · Reference Implementation · compose P1–P5</small>
+    </div>
+
+    <header class="ifx-page-header">
+      <nav aria-label="Breadcrumb">
+        <ol class="ifx-breadcrumb">
+          <li><a href="../../../sandbox/?section=references&amp;panel=w10">Catalog</a></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li><span>References</span></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li class="ifx-breadcrumb-current">Vào hệ thống</li>
+        </ol>
+      </nav>
+      <div class="ifx-page-header-main">
+        <div class="ifx-page-title">
+          <h1>Vào hệ thống</h1>
+          <p>Card + tabs + form — generic, không AppShell, không Google, không Admin auth runtime.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="ifx-grid">
+      <div class="ifx-col-12 ifx-col-lg-6">
+        <div class="ifx-card" data-ifx-tabs-root>
+          <div class="ifx-card-header">
+            <div>
+              <h2 class="ifx-card-title">Phiên</h2>
+              <small>Bốn bước generic — không xác thực thật.</small>
+            </div>
+          </div>
+          <div class="ifx-card-body">
+            <div class="ifx-tabs ifx-mb-16" data-ifx-tabs>
+              <button type="button" class="ifx-tab is-active" data-ifx-tab="in">Vào</button>
+              <button type="button" class="ifx-tab" data-ifx-tab="new">Tạo</button>
+              <button type="button" class="ifx-tab" data-ifx-tab="reset">Quên</button>
+              <button type="button" class="ifx-tab" data-ifx-tab="code">Mã</button>
+            </div>
+
+            <div class="ifx-tab-panel is-active" data-ifx-panel="in">
+              <div class="ifx-alert ifx-alert-info ifx-mb-16">
+                <div>
+                  <div class="ifx-alert-title">Demo</div>
+                  <div class="ifx-alert-text">Không gọi runtime. Chỉ compose form.</div>
+                </div>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-email">Email</label>
+                <input class="ifx-input" id="auth-email" type="email" placeholder="a1@example.com" autocomplete="username">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-pw">Mật khẩu</label>
+                <input class="ifx-input" id="auth-pw" type="password" placeholder="············" autocomplete="current-password">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-choice">
+                  <input type="checkbox" class="ifx-checkbox" checked>
+                  <span class="ifx-choice-title">Ghi nhớ trên máy này</span>
+                </label>
+              </div>
+              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã vào — demo">
+                <i class="ti ti-login ifx-icon ifx-icon-sm"></i> Vào
+              </button>
+              <button type="button" class="ifx-btn ifx-btn-outline ifx-w-full ifx-mt-8" data-ifx-toast="info" data-ifx-toast-msg="Liên kết ngoài — demo">
+                Tiếp tục bằng liên kết
+              </button>
+            </div>
+
+            <div class="ifx-tab-panel" data-ifx-panel="new">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-name">Tên</label>
+                <input class="ifx-input" id="auth-name" type="text" placeholder="Người A" autocomplete="name">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-email-new">Email</label>
+                <input class="ifx-input" id="auth-email-new" type="email" placeholder="a2@example.com" autocomplete="email">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-pw-new">Mật khẩu</label>
+                <input class="ifx-input" id="auth-pw-new" type="password" placeholder="············" autocomplete="new-password">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-choice">
+                  <input type="checkbox" class="ifx-checkbox">
+                  <span class="ifx-choice-title">Đồng ý điều khoản</span>
+                </label>
+              </div>
+              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi yêu cầu — demo">Tạo</button>
+            </div>
+
+            <div class="ifx-tab-panel" data-ifx-panel="reset">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-email-reset">Email</label>
+                <input class="ifx-input" id="auth-email-reset" type="email" placeholder="a1@example.com">
+              </div>
+              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi hướng dẫn — demo">
+                <i class="ti ti-send ifx-icon ifx-icon-sm"></i> Gửi
+              </button>
+            </div>
+
+            <div class="ifx-tab-panel" data-ifx-panel="code">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="auth-code">Mã 6 số</label>
+                <input class="ifx-input ifx-text-center" id="auth-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                <small>Làm mới theo chu kỳ. Không chia sẻ.</small>
+              </div>
+              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã xác nhận — demo">Xác nhận</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../../../adapters/web/theme.js"></script>
+  <script src="../../../components/tabs/tabs.js"></script>
+  <script src="../../../components/toast/toast.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>
