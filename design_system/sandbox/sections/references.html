@@ -7,6 +7,7 @@
   <a href="?section=references&amp;panel=w05" data-sb-goto="w05">W05 — User profile</a>
   <a href="?section=references&amp;panel=w06" data-sb-goto="w06">W06 — Wizard</a>
   <a href="?section=references&amp;panel=w07" data-sb-goto="w07">W07 — Chat</a>
+  <a href="?section=references&amp;panel=w08" data-sb-goto="w08">W08 — Referrals</a>
 </nav>
 
 <div class="sb-panel" data-sb-panel="hub">
@@ -39,9 +40,12 @@
     </a>
     <a class="sb-catalog-item" href="?section=references&amp;panel=w07" data-sb-goto="w07">
       <strong>W07 — Chat</strong>
-      <span>OPEN · references/patterns/chat/</span>
+      <span>PASS / LOCKED · references/patterns/chat/</span>
     </a>
-    <span class="sb-catalog-item is-blocked"><strong>W08 — Referrals</strong><span>BLOCKED / not built</span></span>
+    <a class="sb-catalog-item" href="?section=references&amp;panel=w08" data-sb-goto="w08">
+      <strong>W08 — Referrals</strong>
+      <span>OPEN · references/patterns/referrals/</span>
+    </a>
     <span class="sb-catalog-item is-blocked"><strong>W09 — Biểu đồ</strong><span>BLOCKED / not built</span></span>
     <span class="sb-catalog-item is-blocked"><strong>W10 — Auth</strong><span>BLOCKED / not built</span></span>
   </div>
@@ -222,7 +226,7 @@
     <div class="ifx-section-title">
       <h2>W07 — Chat</h2>
     </div>
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/chat/</code> <span class="sb-source-k">Status</span> OPEN</p>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/chat/</code> <span class="sb-source-k">Status</span> PASS / LOCKED</p>
 
     <p class="sb-kicker">Links</p>
     <p><a href="../references/patterns/chat/">Candidate</a> — compose page-header + IfxChat + search + card. Không AppShell.</p>
@@ -238,6 +242,32 @@
 
     <p class="sb-kicker">Gaps discovered</p>
     <p>Reusable gap mở = 0. Không thêm file Canonical DS. 3 pane = Chat 2-pane + card. Video / template store = DROP.</p>
+
+    <p class="sb-kicker">Final status</p>
+    <p><span class="ifx-chip ifx-chip-success">PASS / LOCKED</span></p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="w08" hidden>
+  <section class="sb-section">
+    <div class="ifx-section-title">
+      <h2>W08 — Referrals</h2>
+    </div>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/referrals/</code> <span class="sb-source-k">Status</span> OPEN</p>
+
+    <p class="sb-kicker">Links</p>
+    <p><a href="../references/patterns/referrals/">Candidate</a> — compose page-header + stat-strip + form + IfxDataList. Không AppShell.</p>
+    <p>Legacy baseline (mở tab khác, không phải dependency): staging.iflux.vn + path Admin_Design_system/patterns/referrals.html</p>
+
+    <p class="sb-kicker">Canonical capabilities consumed</p>
+    <ul>
+      <li>P5 Page Header + IfxDataList</li>
+      <li>P4 Stat Strip · Card · Form · Toast</li>
+      <li>P2 Grid 8/4 + 3 cột bước · flex 3 tầng</li>
+    </ul>
+
+    <p class="sb-kicker">Gaps discovered</p>
+    <p>Reusable gap mở = 0. Không thêm file Canonical DS. <code>ix-referral-step</code> = compose. $ / brand hex / hoa hồng = DROP.</p>
 
     <p class="sb-kicker">Final status</p>
     <p><span class="ifx-chip ifx-chip-warning">OPEN — Owner review</span></p>

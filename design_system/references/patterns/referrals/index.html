@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>P6-W08 — Referrals · Canonical reference</title>
+  <link rel="stylesheet" href="../../../tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../../foundation/fonts.css">
+  <link rel="stylesheet" href="../../../foundation/reset.css">
+  <link rel="stylesheet" href="../../../foundation/typography.css">
+  <link rel="stylesheet" href="../../../foundation/layout.css">
+  <link rel="stylesheet" href="../../../foundation/utilities.css">
+  <link rel="stylesheet" href="../../../foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../../foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../../primitives/button/button.css">
+  <link rel="stylesheet" href="../../../primitives/chip/chip.css">
+  <link rel="stylesheet" href="../../../primitives/avatar/avatar.css">
+  <link rel="stylesheet" href="../../../components/card/card.css">
+  <link rel="stylesheet" href="../../../components/stat/stat.css">
+  <link rel="stylesheet" href="../../../components/stat/stat-strip.css">
+  <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../../components/form/form.css">
+  <link rel="stylesheet" href="../../../components/table/table.css">
+  <link rel="stylesheet" href="../../../components/pagination/pagination.css">
+  <link rel="stylesheet" href="../../../components/search/search.css">
+  <link rel="stylesheet" href="../../../components/toast/toast.css">
+  <link rel="stylesheet" href="../../../primitives/title/title.css">
+  <link rel="stylesheet" href="../../../patterns/page-header/page-header.css">
+</head>
+<body>
+  <main class="ifx-container ifx-container-max ifx-p-24">
+    <div class="ifx-inline-md ifx-mb-16">
+      <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
+      <small>P6-W08 · Reference Implementation · compose P1–P5</small>
+    </div>
+
+    <header class="ifx-page-header">
+      <nav aria-label="Breadcrumb">
+        <ol class="ifx-breadcrumb">
+          <li><a href="../../../sandbox/?section=references&amp;panel=w08">Catalog</a></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li><span>References</span></li>
+          <li class="ifx-breadcrumb-sep">/</li>
+          <li class="ifx-breadcrumb-current">Liên kết</li>
+        </ol>
+      </nav>
+      <div class="ifx-page-header-main">
+        <div class="ifx-page-title">
+          <h1>Liên kết giới thiệu</h1>
+          <p>Stat strip + form + Data List — generic, không $, không AppShell, không hoa hồng.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="ifx-stat-strip ifx-mb-24">
+      <div class="ifx-stat">
+        <div>
+          <div class="ifx-stat-label">Tổng liên kết</div>
+          <div class="ifx-stat-value">249</div>
+        </div>
+        <div class="ifx-stat-icon ifx-stat-icon-info"><i class="ti ti-link ifx-icon"></i></div>
+      </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div>
+          <div class="ifx-stat-label">Chờ</div>
+          <div class="ifx-stat-value">18</div>
+        </div>
+        <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
+      </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div>
+          <div class="ifx-stat-label">Người</div>
+          <div class="ifx-stat-value">2,367</div>
+        </div>
+        <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-users ifx-icon"></i></div>
+      </div>
+      <div class="ifx-stat-strip-divider" aria-hidden="true"></div>
+      <div class="ifx-stat">
+        <div>
+          <div class="ifx-stat-label">Tỉ lệ</div>
+          <div class="ifx-stat-value">4.5%</div>
+        </div>
+        <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-percentage ifx-icon"></i></div>
+      </div>
+    </div>
+
+    <div class="ifx-grid ifx-mb-24">
+      <div class="ifx-col-12 ifx-col-lg-8">
+        <div class="ifx-card">
+          <div class="ifx-card-header">
+            <div>
+              <h2 class="ifx-card-title">Cách dùng</h2>
+              <small>Ba bước generic — không thưởng tiền.</small>
+            </div>
+          </div>
+          <div class="ifx-card-body">
+            <div class="ifx-grid">
+              <div class="ifx-col-12 ifx-col-md-4">
+                <div class="ifx-flex-col ifx-gap-8">
+                  <span class="ifx-avatar ifx-avatar-success" aria-hidden="true"><i class="ti ti-bulb ifx-icon"></i></span>
+                  <span class="ifx-typo-title-sm">Tạo liên kết</span>
+                  <small>Bước 1 — mã A1.</small>
+                </div>
+              </div>
+              <div class="ifx-col-12 ifx-col-md-4">
+                <div class="ifx-flex-col ifx-gap-8">
+                  <span class="ifx-avatar ifx-avatar-info" aria-hidden="true"><i class="ti ti-user-plus ifx-icon"></i></span>
+                  <span class="ifx-typo-title-sm">Mời người mới</span>
+                  <small>Bước 2 — gửi email.</small>
+                </div>
+              </div>
+              <div class="ifx-col-12 ifx-col-md-4">
+                <div class="ifx-flex-col ifx-gap-8">
+                  <span class="ifx-avatar ifx-avatar-warning" aria-hidden="true"><i class="ti ti-send ifx-icon"></i></span>
+                  <span class="ifx-typo-title-sm">Chia sẻ tiếp</span>
+                  <small>Bước 3 — liên kết công khai.</small>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <small>Mạng — số tầng generic, không F0–F2 / hoa hồng.</small>
+            <div class="ifx-flex ifx-w-full">
+              <div class="ifx-flex-1 ifx-text-center">
+                <div class="ifx-typo-title-sm">12</div>
+                <small>Tầng A</small>
+              </div>
+              <div class="ifx-flex-1 ifx-text-center">
+                <div class="ifx-typo-title-sm">48</div>
+                <small>Tầng B</small>
+              </div>
+              <div class="ifx-flex-1 ifx-text-center">
+                <div class="ifx-typo-title-sm">9</div>
+                <small>Tầng C</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ifx-col-12 ifx-col-lg-4">
+        <div class="ifx-card">
+          <div class="ifx-card-header">
+            <h2 class="ifx-card-title">Mời</h2>
+          </div>
+          <div class="ifx-card-body">
+            <div class="ifx-form-group">
+              <label class="ifx-label" for="ref-email">Email</label>
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ifx-gap-8">
+                <input class="ifx-input ifx-flex-1" id="ref-email" type="email" placeholder="a2@example.com">
+                <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi">Gửi</button>
+              </div>
+            </div>
+            <div class="ifx-form-group ifx-mb-0">
+              <label class="ifx-label" for="ref-link">Liên kết</label>
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ifx-gap-8">
+                <input class="ifx-input ifx-flex-1" id="ref-link" type="text" value="https://example.com/s/A1" readonly>
+                <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-toast="success" data-ifx-toast-msg="Đã sao chép">
+                  <i class="ti ti-copy ifx-icon ifx-icon-sm"></i> Sao chép
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifx-card" data-ifx-data-list data-ifx-page-size="5">
+      <div class="ifx-card-body">
+        <div class="ifx-table-toolbar">
+          <label class="ifx-search">
+            <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
+            <input type="search" placeholder="Tìm người…" data-ifx-search>
+          </label>
+        </div>
+        <div class="ifx-table-wrap">
+          <table class="ifx-table" data-ifx-table>
+            <thead>
+              <tr>
+                <th data-ifx-sort="0">Người</th>
+                <th data-ifx-sort="1">Mã</th>
+                <th>Trạng thái</th>
+                <th data-ifx-sort="3">Giá trị</th>
+                <th data-ifx-sort="4">Điểm</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true">A</span>
+                    <span class="ifx-typo-title-sm">Người A</span>
+                  </div>
+                </td>
+                <td>LNK-47961</td>
+                <td><span class="ifx-chip ifx-chip-success">xong</span></td>
+                <td><span class="ifx-typo-price-s">830</span></td>
+                <td><span class="ifx-typo-price-s">83</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">B</span>
+                    <span class="ifx-typo-title-sm">Người B</span>
+                  </div>
+                </td>
+                <td>LNK-47962</td>
+                <td><span class="ifx-chip ifx-chip-warning">chờ</span></td>
+                <td><span class="ifx-typo-price-s">210</span></td>
+                <td><span class="ifx-typo-price-s">21</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true">C</span>
+                    <span class="ifx-typo-title-sm">Người C</span>
+                  </div>
+                </td>
+                <td>LNK-47963</td>
+                <td><span class="ifx-chip ifx-chip-success">xong</span></td>
+                <td><span class="ifx-typo-price-s">1,200</span></td>
+                <td><span class="ifx-typo-price-s">120</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">D</span>
+                    <span class="ifx-typo-title-sm">Người D</span>
+                  </div>
+                </td>
+                <td>LNK-47964</td>
+                <td><span class="ifx-chip ifx-chip-danger">hủy</span></td>
+                <td><span class="ifx-typo-price-s">0</span></td>
+                <td><span class="ifx-typo-price-s">0</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true">E</span>
+                    <span class="ifx-typo-title-sm">Người E</span>
+                  </div>
+                </td>
+                <td>LNK-47965</td>
+                <td><span class="ifx-chip ifx-chip-success">xong</span></td>
+                <td><span class="ifx-typo-price-s">560</span></td>
+                <td><span class="ifx-typo-price-s">56</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="ifx-inline-md">
+                    <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true">F</span>
+                    <span class="ifx-typo-title-sm">Người F</span>
+                  </div>
+                </td>
+                <td>LNK-47966</td>
+                <td><span class="ifx-chip ifx-chip-warning">chờ</span></td>
+                <td><span class="ifx-typo-price-s">90</span></td>
+                <td><span class="ifx-typo-price-s">9</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ifx-card-footer">
+        <div class="ifx-pagination" data-ifx-pagination></div>
+      </div>
+    </div>
+  </main>
+  <script src="../../../adapters/web/theme.js"></script>
+  <script src="../../../components/toast/toast.js"></script>
+  <script src="../../../components/table/table.js"></script>
+  <script src="../../../components/pagination/pagination.js"></script>
+  <script src="../../../patterns/data-list/data-list.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>
