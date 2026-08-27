@@ -1,6 +1,6 @@
 /**
  * Component — Chart (token-driven)
- * Adapter đọc semantic token; bar height = --ifx-chart-h (sandbox set, 0 inline).
+ * Adapter đọc semantic token; bar height = --ifx-chart-h từ data-ifx-chart-h → space token.
  */
 .ifx-chart {
   display: flex;
@@ -28,6 +28,12 @@
   background: var(--ifx-chart-fill, var(--ifx-action-primary));
   transition: height var(--ifx-duration-slow) var(--ifx-ease-out), background-color var(--ifx-duration-fast) var(--ifx-ease-default);
 }
+.ifx-chart-bar[data-ifx-chart-h="32"]  { --ifx-chart-h: var(--ifx-space-32); }
+.ifx-chart-bar[data-ifx-chart-h="48"]  { --ifx-chart-h: var(--ifx-space-48); }
+.ifx-chart-bar[data-ifx-chart-h="64"]  { --ifx-chart-h: var(--ifx-space-64); }
+.ifx-chart-bar[data-ifx-chart-h="80"]  { --ifx-chart-h: var(--ifx-space-80); }
+.ifx-chart-bar[data-ifx-chart-h="96"]  { --ifx-chart-h: var(--ifx-space-96); }
+.ifx-chart-bar[data-ifx-chart-h="128"] { --ifx-chart-h: var(--ifx-space-128); }
 .ifx-chart-label { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
 .ifx-chart-legend {
   display: flex;
