@@ -27,5 +27,17 @@
   background: var(--ifx-action-primary-soft);
   color: var(--ifx-action-primary);
 }
+.ifx-tabs-col {
+  flex-direction: column;
+  width: 100%;
+  align-items: stretch;
+}
+.ifx-tabs-col .ifx-tab {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-gap-xs);
+}
 .ifx-tab-panel { display: none; padding-top: var(--ifx-stack-md); color: var(--ifx-text-secondary); }
 .ifx-tab-panel.is-active { display: block; }

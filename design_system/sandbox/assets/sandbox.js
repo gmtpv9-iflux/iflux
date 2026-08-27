@@ -110,7 +110,7 @@
       doc.querySelectorAll('[data-ifx-pagination]').forEach(function (el) { window.IfxPagination.init(el); });
     }
     if (window.IfxDataList) window.IfxDataList.initAll();
-    if (window.IfxTabs) window.IfxTabs.init();
+    if (window.IfxTabs) window.IfxTabs.initAll();
     if (window.IfxWizard) window.IfxWizard.init();
     if (window.IfxChat) window.IfxChat.init();
     if (window.IfxChart) window.IfxChart.init();

@@ -133,13 +133,42 @@
     <textarea class="ifx-textarea" id="f-note" placeholder="Nội dung"></textarea>
   </div>
   <div class="ifx-form-group">
-    <label class="ifx-label"><input type="checkbox" class="ifx-checkbox"> Đồng ý điều khoản</label>
+    <label class="ifx-choice">
+      <input type="checkbox" class="ifx-checkbox">
+      <span class="ifx-choice-title">Đồng ý điều khoản</span>
+    </label>
+  </div>
+  <div class="ifx-form-group">
+    <p class="ifx-typo-label-md ifx-mb-8">Radio</p>
+    <div class="ifx-flex-col ifx-gap-8">
+      <label class="ifx-choice">
+        <input type="radio" class="ifx-radio" name="f-radio" checked>
+        <span>
+          <span class="ifx-choice-title">Tuỳ chọn A</span>
+          <span class="ifx-choice-desc">Mô tả ngắn.</span>
+        </span>
+      </label>
+      <label class="ifx-choice">
+        <input type="radio" class="ifx-radio" name="f-radio">
+        <span class="ifx-choice-title">Tuỳ chọn B</span>
+      </label>
+    </div>
+  </div>
+  <div class="ifx-form-group">
+    <div class="ifx-flex ifx-items-center ifx-justify-between">
+      <span class="ifx-typo-body-sm">Switch</span>
+      <label class="ifx-switch">
+        <input type="checkbox" checked>
+        <span class="ifx-switch-track"></span>
+      </label>
+    </div>
   </div>
   <div class="ifx-form-group">
     <label class="ifx-label" for="f-ro">Chỉ đọc</label>
     <input class="ifx-input" id="f-ro" value="Readonly" readonly>
   </div>
   <div class="ifx-dropzone">
+    <div class="ifx-dropzone-icon"><i class="ti ti-photo-up ifx-icon ifx-icon-lg"></i></div>
     <div class="ifx-dropzone-title">Kéo file vào đây</div>
     <div class="ifx-dropzone-sub">Demo generic — không upload.</div>
   </div>
@@ -261,17 +290,32 @@
 </section>
 </div>
 <div class="sb-panel" data-sb-panel="tabs" hidden>
-<section class="sb-section" id="comp-tabs" data-ifx-tabs-root>
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P4 <span class="sb-source-k">Source</span> <code>design_system/components/tabs/tabs.css</code></p>
+<section class="sb-section" id="comp-tabs">
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P4 <span class="sb-source-k">Source</span> <code>design_system/components/tabs/tabs.css</code> <span class="sb-source-k">Since</span> P6-W02 tabs-col</p>
 <h2 class="sb-section-title">Tabs</h2>
-  <div class="ifx-tabs" data-ifx-tabs>
-    <button type="button" class="ifx-tab is-active" data-ifx-tab="one">Một</button>
-    <button type="button" class="ifx-tab" data-ifx-tab="two">Hai</button>
-    <button type="button" class="ifx-tab" data-ifx-tab="three">Ba</button>
+  <div data-ifx-tabs-root>
+    <div class="ifx-tabs" data-ifx-tabs>
+      <button type="button" class="ifx-tab is-active" data-ifx-tab="one">Một</button>
+      <button type="button" class="ifx-tab" data-ifx-tab="two">Hai</button>
+      <button type="button" class="ifx-tab" data-ifx-tab="three">Ba</button>
+    </div>
+    <div class="ifx-tab-panel is-active" data-ifx-panel="one">Panel một — nội dung generic.</div>
+    <div class="ifx-tab-panel" data-ifx-panel="two">Panel hai.</div>
+    <div class="ifx-tab-panel" data-ifx-panel="three">Panel ba.</div>
   </div>
-  <div class="ifx-tab-panel is-active" data-ifx-panel="one">Panel một — nội dung generic.</div>
-  <div class="ifx-tab-panel" data-ifx-panel="two">Panel hai.</div>
-  <div class="ifx-tab-panel" data-ifx-panel="three">Panel ba.</div>
+  <p class="sb-sub-title">Vertical — .ifx-tabs-col</p>
+  <div class="ifx-grid" data-ifx-tabs-root>
+    <div class="ifx-col-12 ifx-col-md-4">
+      <div class="ifx-tabs ifx-tabs-col" data-ifx-tabs>
+        <button type="button" class="ifx-tab is-active" data-ifx-tab="va">A</button>
+        <button type="button" class="ifx-tab" data-ifx-tab="vb">B</button>
+      </div>
+    </div>
+    <div class="ifx-col-12 ifx-col-md-8">
+      <div class="ifx-tab-panel is-active" data-ifx-panel="va">Cột A</div>
+      <div class="ifx-tab-panel" data-ifx-panel="vb">Cột B</div>
+    </div>
+  </div>
 </section>
 </div>
 <div class="sb-panel" data-sb-panel="search" hidden>

@@ -4,18 +4,25 @@
 (function (global) {
   'use strict';
   function init(root) {
-    var wrap = root || document.querySelector('[data-ifx-tabs]');
-    if (!wrap) return;
-    var root = wrap.closest('[data-ifx-tabs-root]') || wrap.parentElement;
+    var wrap = root && root.matches && root.matches('[data-ifx-tabs]')
+      ? root
+      : (root || document).querySelector('[data-ifx-tabs]');
+    if (!wrap || wrap.getAttribute('data-ifx-bound') === '1') return wrap;
+    wrap.setAttribute('data-ifx-bound', '1');
+    var scope = wrap.closest('[data-ifx-tabs-root]') || wrap.parentElement;
     wrap.addEventListener('click', function (e) {
       var tab = e.target.closest('.ifx-tab');
       if (!tab || !wrap.contains(tab)) return;
       var id = tab.getAttribute('data-ifx-tab');
       wrap.querySelectorAll('.ifx-tab').forEach(function (t) { t.classList.toggle('is-active', t === tab); });
-      root.querySelectorAll('[data-ifx-panel]').forEach(function (p) {
+      scope.querySelectorAll('[data-ifx-panel]').forEach(function (p) {
         p.classList.toggle('is-active', p.getAttribute('data-ifx-panel') === id);
       });
     });
+    return wrap;
   }
-  global.IfxTabs = { init: init };
+  function initAll() {
+    document.querySelectorAll('[data-ifx-tabs]').forEach(init);
+  }
+  global.IfxTabs = { init: init, initAll: initAll };
 })(window);

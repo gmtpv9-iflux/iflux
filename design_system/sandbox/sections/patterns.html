@@ -4,7 +4,7 @@
 <a class="sb-catalog-item" href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header"><strong>Page Header</strong><span>design_system/patterns/page-header/page-header.css</span></a>
 <a class="sb-catalog-item" href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list"><strong>Data List</strong><span>design_system/patterns/data-list/data-list.js</span></a>
 <a class="sb-catalog-item" href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail"><strong>Record Detail</strong><span>compose page-header + card + timeline</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form"><strong>Entity Form</strong><span>compose wizard + form</span></a>
+<a class="sb-catalog-item" href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form"><strong>Entity Form</strong><span>compose page-header + form + tabs + action-bar · P6-W02</span></a>
 <a class="sb-catalog-item" href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation"><strong>Conversation</strong><span>compose Chat Family</span></a>
 <a class="sb-catalog-item" href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history"><strong>Order History</strong><span>compose Timeline Family</span></a>
 </div></div>
@@ -220,9 +220,9 @@
 </div>
 <div class="sb-panel" data-sb-panel="entity-form" hidden>
 <section class="sb-section" id="pat-entity-form">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose wizard + form</code></p>
+  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> compose page-header + form + tabs + action-bar <span class="sb-source-k">Since</span> P6-W02</p>
 <h2 class="sb-section-title">Entity Form</h2>
-  <p class="sb-section-desc">Compose page-header + wizard + form + action-bar.</p>
+  <p class="sb-section-desc">Trang form lớn — không wizard (W06). Reference đầy đủ: <a href="../references/patterns/form-add/">W02 candidate</a>.</p>
   <header class="ifx-page-header">
     <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
@@ -234,42 +234,42 @@
     <div class="ifx-page-header-bar">
       <div>
         <h3 class="ifx-page-header-title">Thêm bản ghi</h3>
-        <p class="ifx-page-header-desc">Luồng nhiều bước — compose wizard, không business.</p>
+        <p class="ifx-page-header-desc">Compose card + form. Không thống kê.</p>
       </div>
     </div>
   </header>
-  <div class="ifx-card ifx-mb-24">
-    <div class="ifx-card-body">
-      <div class="ifx-wizard" data-ifx-wizard>
-        <div class="ifx-wizard-steps">
-          <button type="button" class="ifx-wizard-step is-active"><span class="ifx-wizard-circle">1</span><span><span class="ifx-wizard-step-title">Thông tin</span><span class="ifx-wizard-step-sub">Bước 1</span></span></button>
-          <button type="button" class="ifx-wizard-step"><span class="ifx-wizard-circle">2</span><span><span class="ifx-wizard-step-title">Chi tiết</span><span class="ifx-wizard-step-sub">Bước 2</span></span></button>
-          <button type="button" class="ifx-wizard-step"><span class="ifx-wizard-circle">3</span><span><span class="ifx-wizard-step-title">Xác nhận</span><span class="ifx-wizard-step-sub">Bước 3</span></span></button>
-        </div>
-        <div class="ifx-wizard-body">
-          <div class="ifx-wizard-panel is-active">
-            <div class="ifx-form-row">
-              <div class="ifx-form-group">
-                <label class="ifx-label" for="ef-name">Tên</label>
-                <input class="ifx-input" id="ef-name" placeholder="Tên bản ghi">
-              </div>
-              <div class="ifx-form-group">
-                <label class="ifx-label" for="ef-group">Nhóm</label>
-                <select class="ifx-select" id="ef-group"><option>A</option><option>B</option></select>
-              </div>
-            </div>
-          </div>
-          <div class="ifx-wizard-panel">
+  <div class="ifx-grid ifx-mb-24">
+    <div class="ifx-col-12 ifx-col-lg-8">
+      <div class="ifx-card">
+        <div class="ifx-card-header"><h3 class="ifx-card-title">Thông tin</h3></div>
+        <div class="ifx-card-body">
+          <div class="ifx-form-row">
             <div class="ifx-form-group">
-              <label class="ifx-label" for="ef-note">Mô tả</label>
-              <textarea class="ifx-textarea" id="ef-note" placeholder="Nội dung"></textarea>
+              <label class="ifx-label" for="ef-name">Tên</label>
+              <input class="ifx-input" id="ef-name" placeholder="Tên bản ghi">
+            </div>
+            <div class="ifx-form-group">
+              <label class="ifx-label" for="ef-group">Nhóm</label>
+              <select class="ifx-select" id="ef-group"><option>A</option><option>B</option></select>
             </div>
           </div>
-          <div class="ifx-wizard-panel">Xem lại rồi lưu — demo generic.</div>
-          <div class="ifx-wizard-nav">
-            <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-wizard-prev>Trước</button>
-            <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-wizard-next>Tiếp</button>
-            <button type="button" class="ifx-btn ifx-btn-success" data-ifx-wizard-submit>Lưu</button>
+          <label class="ifx-choice">
+            <input type="checkbox" class="ifx-checkbox">
+            <span class="ifx-choice-title">Áp dụng phụ phí</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="ifx-col-12 ifx-col-lg-4">
+      <div class="ifx-card">
+        <div class="ifx-card-header"><h3 class="ifx-card-title">Trạng thái</h3></div>
+        <div class="ifx-card-body">
+          <div class="ifx-flex ifx-items-center ifx-justify-between">
+            <span class="ifx-typo-body-sm">Đang mở</span>
+            <label class="ifx-switch">
+              <input type="checkbox" checked>
+              <span class="ifx-switch-track"></span>
+            </label>
           </div>
         </div>
       </div>
@@ -277,7 +277,7 @@
   </div>
   <div class="ifx-action-bar">
     <span class="ifx-action-bar-start">Thao tác form</span>
-    <button type="button" class="ifx-btn ifx-btn-outline">Hủy</button>
+    <button type="button" class="ifx-btn ifx-btn-outline">Huỷ</button>
     <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success">Lưu</button>
   </div>
 </section>
