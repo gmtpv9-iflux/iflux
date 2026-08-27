@@ -2,7 +2,6 @@
  * Component — Form
  * REWRITE .ix-form-group / label / input / select / textarea / checkbox / dropzone.
  */
-.ifx-form-group { margin-bottom: var(--ifx-stack-md); }
 .ifx-label {
   display: block;
   font-size: var(--ifx-font-size-sm);
@@ -183,7 +182,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--ifx-space-16);
-  margin-bottom: var(--ifx-space-16);
 }
 /* bp:md */
 @media (min-width: 768px) {

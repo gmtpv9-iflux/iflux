@@ -8,9 +8,6 @@
   gap: var(--ifx-gap-sm);
   min-height: var(--ifx-space-128);
   padding: var(--ifx-space-16);
-  background: var(--ifx-bg-surface);
-  border: 1px solid var(--ifx-border-default);
-  border-radius: var(--ifx-radius-card);
 }
 .ifx-chart-col {
   flex: 1;
@@ -39,7 +36,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--ifx-gap-md);
-  margin-top: var(--ifx-stack-sm);
   font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-secondary);
 }

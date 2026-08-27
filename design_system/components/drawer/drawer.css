@@ -34,17 +34,18 @@
   border-bottom: 1px solid var(--ifx-border-default);
   flex-shrink: 0;
 }
-.ifx-drawer-title {
+.ifx-drawer-header > h1,
+.ifx-drawer-header > h2,
+.ifx-drawer-header > h3,
+.ifx-drawer-header > h4,
+.ifx-drawer-header > h5,
+.ifx-drawer-header > h6 {
   margin: 0;
-  font-size: var(--ifx-font-size-md);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
 }
 .ifx-drawer-body {
   flex: 1;
   overflow-y: auto;
   padding: var(--ifx-inset-panel);
-  color: var(--ifx-text-secondary);
 }
 .ifx-drawer-footer {
   padding: var(--ifx-inset-card);
