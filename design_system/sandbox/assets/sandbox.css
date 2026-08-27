@@ -46,7 +46,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--ifx-gap-xs);
-  margin-bottom: var(--ifx-stack-md);
 }
 .sb-subnav a {
   text-decoration: none;
@@ -69,13 +68,11 @@
   margin: 0 auto;
 }
 
-.sb-section { margin-bottom: var(--ifx-stack-lg); }
-
 .sb-source {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ifx-gap-sm);
-  margin: 0 0 var(--ifx-stack-md);
+  margin: 0;
   padding: var(--ifx-space-8) var(--ifx-space-12);
   background: var(--ifx-bg-elevated);
   border: 1px solid var(--ifx-border-subtle);
