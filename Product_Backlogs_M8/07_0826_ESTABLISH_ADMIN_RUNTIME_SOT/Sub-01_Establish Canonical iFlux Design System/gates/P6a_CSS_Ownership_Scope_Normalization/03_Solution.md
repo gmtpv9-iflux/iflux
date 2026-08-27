@@ -1,5 +1,134 @@
 # SOLUTION — CSS Ownership Normalization Procedure
 
+## 0. TWO-GATE PROCESS — LOCKED (mọi CSS file)
+
+Solution này chỉ duyệt **PHƯƠNG PHÁP**.
+
+Không tồn tại:
+
+> Solution đã được duyệt nên được quyền tự sửa mọi file.
+
+Mỗi file = một mini change control:
+
+```text
+PHASE A — AUDIT & FILE PLAN
+        ↓
+OWNER GATE A  (APPROVE ALL | APPROVE PARTIAL | CHANGE ACTION | REJECT)
+        ↓
+PHASE B — EXECUTION  (chỉ phần Owner đã approve)
+        ↓
+OWNER GATE B
+        ↓
+FILE LOCK
+```
+
+CẤM gộp audit + plan + execution thành một lượt.
+
+Agent KHÔNG tự chọn file kế tiếp. Owner phải chỉ định, ví dụ:
+
+> Apply P6a Solution to `form.css`
+
+---
+
+## 0.1 Phase A — Audit & File Plan ONLY
+
+Khi Owner chỉ định một CSS file, Agent chỉ được:
+
+1. READ file
+2. INVENTORY 100%
+3. TRACE consumer
+4. TRACE dependencies
+5. TRACE override/cascade
+6. CLASSIFY từng rule
+7. Xác định correct ownership
+8. Đề xuất KEEP / MOVE / DELETE / NORMALIZE / KEEP LOCAL OWNER + REMOVE DECLARATION
+9. Impact analysis
+10. Regression plan của file
+11. Lập FILE EXECUTION PLAN
+12. STOP
+
+Trong Phase A **CẤM** sửa implementation:
+
+- delete selector / token
+- move CSS
+- migrate consumer
+- rewrite Reference
+- chỉnh Sandbox implementation
+- đổi runtime CSS
+- cleanup stale code
+
+Chỉ được tạo/update tài liệu audit/proposal.
+
+UNKNOWN phải = 0 trước khi gửi Owner Gate A.
+
+---
+
+## 0.2 FILE EXECUTION PLAN (bắt buộc trước Gate A)
+
+Mỗi file phải có plan riêng với các mục:
+
+A. Current responsibility  
+B. Inventory (rule / consumer / current responsibility)  
+C. Classification (UNKNOWN = 0)  
+D. Override matrix  
+E. Proposed actions (PROPOSAL)  
+F. Consumer migration plan  
+G. Regression plan  
+H. Expected result  
+
+Sau khi gửi plan:
+
+```text
+FILE_AUDIT = PASS CANDIDATE
+FILE_PLAN = PENDING OWNER
+EXECUTION = BLOCKED
+```
+
+Không được sửa một dòng implementation.
+
+Owner có thể APPROVE ALL / APPROVE PARTIAL / CHANGE ACTION / REJECT.
+
+Agent chỉ thực hiện đúng phần được approve.
+
+---
+
+## 0.3 Phase B — Execution
+
+Chỉ bắt đầu sau Owner Gate A.
+
+Thực hiện đúng approved plan. Không tự mở rộng scope.
+
+Finding mới chưa có trong approved plan → STOP → bổ sung plan → chờ Owner approve tiếp.
+
+Thứ tự execution khi đã approve:
+
+1. Owner allocation
+2. MOVE: điều chỉnh owner đích → migrate consumer → verify → delete old source
+3. DELETE: migrate/remove consumers đã approve → delete thật (không comment-out)
+4. Override normalization: chỉ xóa declaration đã approve — không phát minh giá trị thay thế
+5. Update Reference liên quan
+6. Update Sandbox nếu catalog canonical đổi
+7. Search stale consumer
+8. Run regression
+
+---
+
+## 0.4 Owner Gate B — Execution Acceptance
+
+Sau execution: STOP.
+
+Báo: Approved action | Actual action | Files changed | Result  
+kèm stale consumer / stale token / regression / responsive / theme / references / unresolved.
+
+```text
+EXECUTION = COMPLETE
+OWNER_ACCEPTANCE = PENDING
+```
+
+Chỉ khi Owner nói PASS: FILE = LOCKED.
+
+---
+
 ## 1. Mục đích
 
 Solution này là SOP dùng lặp lại cho MỌI CSS file.
@@ -13,13 +142,9 @@ Không viết Solution riêng cho:
 - pattern CSS;
 - các CSS file khác.
 
-Owner chỉ cần chỉ định:
+Owner chỉ định file → Agent chạy **Phase A** → chờ Gate A → mới Phase B.
 
-> Apply Solution to `<file>`.
-
-Agent phải thực hiện toàn bộ procedure bên dưới.
-
-Không cần Plan riêng.
+Mỗi file vẫn phải có FILE AUDIT + FILE PLAN + OWNER APPROVAL + EXECUTION + REGRESSION + OWNER PASS.
 
 ---
 
@@ -29,23 +154,17 @@ Một lần chỉ xử lý:
 
 ONE CSS FILE.
 
-Không chỉnh nhiều file source song song trừ khi MOVE responsibility yêu cầu cập nhật owner đích.
+Không chỉnh nhiều file source song song trừ khi MOVE responsibility đã được Owner approve và yêu cầu cập nhật owner đích.
 
-Flow canonical:
+Flow canonical (Two-Gate):
 
-AUDIT
-→ INVENTORY
-→ TRACE CONSUMER
-→ CLASSIFY
-→ OWNERSHIP DECISION
-→ MOVE / DELETE / KEEP
-→ OVERRIDE AUDIT
-→ NORMALIZE LOCAL PATTERN
-→ REGRESSION
-→ REPORT
-→ FILE COMPLETE
-
-Đây là thứ tự bắt buộc.
+```text
+PHASE A: AUDIT → INVENTORY → TRACE → CLASSIFY → FILE PLAN → STOP
+OWNER GATE A
+PHASE B: KEEP/MOVE/DELETE/NORMALIZE (approved only) → OVERRIDE (approved) → PATTERN/SANDBOX → REGRESSION → REPORT → STOP
+OWNER GATE B
+FILE LOCK
+```
 
 ---
 
@@ -67,9 +186,9 @@ Xác định:
 
 Nếu chưa có ownership header:
 
-→ bổ sung theo SoT.
+→ ghi đề xuất header vào FILE PLAN. Chỉ ghi header vào file CSS ở Phase B sau Gate A.
 
-Không bắt đầu cleanup trước khi hiểu responsibility của file.
+Không bắt đầu cleanup trước khi hiểu responsibility của file. Không sửa file CSS trong Phase A.
 
 ---
 
@@ -562,20 +681,23 @@ Unresolved = 0.
 
 # 21. File completion gate
 
-Một CSS file chỉ COMPLETE khi:
+Một CSS file chỉ LOCKED khi:
 
+* Phase A + Owner Gate A đã duyệt plan;
+* Phase B chỉ thực hiện phần approved;
 * audit 100%;
 * selector ownership 100%;
 * UNKNOWN = 0;
-* MOVE hoàn tất;
-* duplicate removed;
-* lower-scope unnecessary overrides removed;
-* pattern/reference updated;
+* MOVE hoàn tất (nếu approved);
+* duplicate removed (nếu approved);
+* lower-scope unnecessary overrides removed (nếu approved);
+* pattern/reference updated (nếu approved);
 * stale consumer = 0;
 * regression PASS;
-* ownership comment updated.
+* ownership comment updated;
+* Owner Gate B = PASS.
 
-Sau đó mới xử lý file khác.
+Không tự mở file khác. Owner chỉ định file tiếp theo.
 
 ---
 
@@ -614,17 +736,17 @@ Không tạo một bộ CSS migration rule khác.
 
 ---
 
-# 24. Current first execution
+# 24. Current first file
 
 File đầu tiên:
 
 `typography.css`
 
-Áp dụng TOÀN BỘ Solution này.
+Áp dụng Phase A trước. Không execution trước Owner Gate A.
 
 Không coi typography là trường hợp đặc biệt.
 
-Sau typography COMPLETE:
+Sau typography LOCKED (Gate B PASS):
 
 Owner chỉ định file kế tiếp.
 

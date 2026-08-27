@@ -1,7 +1,7 @@
 {
   "$meta": {
     "sot": "Canonical iFlux Design System — Typography Token SoT (primitives)",
-    "note": "Semantic text styles (--ifx-text-h1..., visual roles .ifx-typo-*) thuộc foundation/typography.css. P6a: không còn ifx-fs-* utility.",
+    "note": "Semantic text styles (--ifx-text-h1..., classes ifx-fs-*) thuộc foundation/typography.css (REUSE tại P2), không thuộc file token này.",
     "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/typography.css §1–§7 (audit Sub-01 P1, 2026-08-26)"
   },
   "primitive": {
