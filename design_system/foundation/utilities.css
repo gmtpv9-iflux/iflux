@@ -7,6 +7,7 @@
 
 .ifx-stack-sm > * + * { margin-top: var(--ifx-stack-sm); }
 .ifx-stack-md > * + * { margin-top: var(--ifx-stack-md); }
+.ifx-stack-lg > * + * { margin-top: var(--ifx-stack-lg); }
 
 .ifx-inline-xs { display: inline-flex; align-items: center; gap: var(--ifx-inline-xs); }
 .ifx-inline-sm { display: inline-flex; align-items: center; gap: var(--ifx-inline-sm); }
