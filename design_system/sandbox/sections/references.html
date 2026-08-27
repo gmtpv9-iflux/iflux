@@ -3,6 +3,7 @@
   <a href="?section=references&amp;panel=w01" data-sb-goto="w01">W01 — Bảng danh sách</a>
   <a href="?section=references&amp;panel=w02" data-sb-goto="w02">W02 — Form thêm/sửa</a>
   <a href="?section=references&amp;panel=w03" data-sb-goto="w03">W03 — List + stats strip</a>
+  <a href="?section=references&amp;panel=w04" data-sb-goto="w04">W04 — Chi tiết + timeline</a>
 </nav>
 
 <div class="sb-panel" data-sb-panel="hub">
@@ -19,9 +20,12 @@
     </a>
     <a class="sb-catalog-item" href="?section=references&amp;panel=w03" data-sb-goto="w03">
       <strong>W03 — List + stats strip</strong>
-      <span>OPEN · references/patterns/order-list/</span>
+      <span>PASS / LOCKED · references/patterns/order-list/</span>
     </a>
-    <span class="sb-catalog-item is-blocked"><strong>W04 — Chi tiết + timeline</strong><span>BLOCKED / not built</span></span>
+    <a class="sb-catalog-item" href="?section=references&amp;panel=w04" data-sb-goto="w04">
+      <strong>W04 — Chi tiết + timeline</strong>
+      <span>OPEN · references/patterns/order-detail/</span>
+    </a>
     <span class="sb-catalog-item is-blocked"><strong>W05 — User profile</strong><span>BLOCKED / not built</span></span>
     <span class="sb-catalog-item is-blocked"><strong>W06 — Wizard</strong><span>BLOCKED / not built</span></span>
     <span class="sb-catalog-item is-blocked"><strong>W07 — Chat</strong><span>BLOCKED / not built</span></span>
@@ -100,7 +104,7 @@
     <div class="ifx-section-title">
       <h2>W03 — List + stats strip</h2>
     </div>
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/order-list/</code> <span class="sb-source-k">Status</span> OPEN</p>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/order-list/</code> <span class="sb-source-k">Status</span> PASS / LOCKED</p>
 
     <p class="sb-kicker">Links</p>
     <p><a href="../references/patterns/order-list/">Candidate</a> — compose Stat Strip + IfxDataList. Không AppShell.</p>
@@ -115,6 +119,33 @@
 
     <p class="sb-kicker">Gaps discovered</p>
     <p>Reusable gap mở = 0. Không thêm file Canonical DS.</p>
+
+    <p class="sb-kicker">Final status</p>
+    <p><span class="ifx-chip ifx-chip-success">PASS / LOCKED</span></p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="w04" hidden>
+  <section class="sb-section">
+    <div class="ifx-section-title">
+      <h2>W04 — Chi tiết + timeline</h2>
+    </div>
+    <p class="sb-source"><span class="sb-source-k">Layer</span> P6 Reference <span class="sb-source-k">Source</span> <code>design_system/references/patterns/order-detail/</code> <span class="sb-source-k">Status</span> OPEN</p>
+
+    <p class="sb-kicker">Links</p>
+    <p><a href="../references/patterns/order-detail/">Candidate</a> — compose page-header + 8/4 + card + table + timeline + toast. Không AppShell.</p>
+    <p>Legacy baseline (mở tab khác, không phải dependency): staging.iflux.vn + path Admin_Design_system/patterns/order-detail.html</p>
+
+    <p class="sb-kicker">Canonical capabilities consumed</p>
+    <ul>
+      <li>P5 Page Header + Title Primitive</li>
+      <li>P2 Grid 8/4 · flex label/value · <code>hr</code></li>
+      <li>P4 Card · Table · Timeline (success / muted) · Toast · stat-icon</li>
+      <li>P3 avatar · chip · button</li>
+    </ul>
+
+    <p class="sb-kicker">Gaps discovered</p>
+    <p>Reusable gap mở = 0. Không thêm file Canonical DS. Info row = compose flex. Sửa không link W05.</p>
 
     <p class="sb-kicker">Final status</p>
     <p><span class="ifx-chip ifx-chip-warning">OPEN — Owner review</span></p>

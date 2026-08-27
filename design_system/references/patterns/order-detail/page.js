@@ -1,0 +1,24 @@
+/**
+ * P6-W04 harness — theme toggle + toast.
+ * Không sở hữu header / card / table / timeline / theme.
+ */
+(function () {
+  'use strict';
+  var btn = document.getElementById('refThemeToggle');
+  function sync(theme) {
+    if (!btn) return;
+    btn.textContent = 'Theme: ' + (theme === 'light' ? 'Light' : 'Dark');
+  }
+  if (btn && window.IfxTheme) {
+    btn.addEventListener('click', function () { window.IfxTheme.toggle(); });
+    window.addEventListener('ifx-theme-change', function (e) { sync(e.detail.theme); });
+    sync(window.IfxTheme.get());
+  }
+  document.querySelectorAll('[data-ifx-toast]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (window.IfxToast) {
+        window.IfxToast.show(el.getAttribute('data-ifx-toast-msg') || 'Đã lưu', el.getAttribute('data-ifx-toast'));
+      }
+    });
+  });
+})();
