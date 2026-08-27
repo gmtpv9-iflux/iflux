@@ -25,255 +25,305 @@
 /* =========================================================
  * LAYER 2 — PLATFORM
  * FUTURE TARGET: platform/admin/ · platform/web/ · platform/app/
+ *
+ * References are AppShell-free. No platform chrome to restore.
  * ========================================================= */
-
-/* ---------- table-list ---------- */
-/* ---------- form-add ---------- */
-/* ---------- order-list ---------- */
-/* ---------- order-detail ---------- */
-/* ---------- user-profile ---------- */
-/* ---------- wizard ---------- */
-/* ---------- chat ---------- */
-/* ---------- referrals ---------- */
-/* ---------- charts ---------- */
-/* ---------- auth ---------- */
 
 /* =========================================================
  * LAYER 3 — MODULE / FEATURE
  * FUTURE TARGET: modules/<domain>/
  * ========================================================= */
 
-/* ---------- table-list ---------- */
-/* ---------- form-add ---------- */
-
-/* ---------- order-list ---------- */
+/* ---------- orders (W03 + W04) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
+ * SOURCE: Legacy order-detail / order-list inline identity
+ *   name 13/500 primary · sku 11 muted · code/value 600 primary
+ *   (comments previously cited typo-price-s; live Legacy used table density)
  * FUTURE OWNER: modules/orders/
  */
-.ref-module-order-value {
-}
+.ref-module-order-item-name,
+.ref-module-order-person,
 .ref-module-order-code {
-}
-.ref-module-order-person {
+  display: block;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+  line-height: var(--ifx-line-height-tight);
 }
 
-/* ---------- order-detail ---------- */
-/**
- * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
- * FUTURE OWNER: modules/orders/
- */
-.ref-module-order-item-name {
-}
-.ref-module-order-item-sku {
-}
+.ref-module-order-item-sku,
 .ref-module-order-person-id {
+  display: block;
 }
+
+.ref-module-order-value {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
 .ref-module-order-group {
+  margin: 0;
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
 }
 
-/* ---------- user-profile ---------- */
-/* ---------- wizard ---------- */
-
-/* ---------- chat ---------- */
+/* ---------- chat (W07) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-title-sm / .ifx-typo-title-md)
- *         + utilities.css (.ifx-p-16 / .ifx-gap-8 / .ifx-w-full)
+ * SOURCE: Legacy chat sidebar header / section label / person name
  * FUTURE OWNER: modules/conversation/
+ * Chat Component already owns item-name, bubble, meta, thread chrome.
  */
-.ref-module-chat-person {
-}
 .ref-module-chat-thread-section {
-}
-.ref-module-chat-section-label {
-}
-.ref-module-chat-actions {
-}
-.ref-module-chat-action {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+  padding: var(--ifx-space-12) var(--ifx-space-16);
 }
 
-/* ---------- referrals ---------- */
+.ref-module-chat-person {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+
+.ref-module-chat-section-label {
+  margin: 0;
+  padding: var(--ifx-space-8) var(--ifx-space-16) var(--ifx-space-4);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-muted);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+}
+
+.ref-module-chat-section-label small {
+  font-size: inherit;
+  color: inherit;
+}
+
+.ref-module-chat-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+}
+
+.ref-module-chat-action {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* ---------- referrals (W08) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
+ * SOURCE: Legacy ix-user-name + table value weight
  * FUTURE OWNER: modules/referrals/
  */
-.ref-module-referral-value {
-}
 .ref-module-referral-label {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
 }
 
-/* ---------- charts ---------- */
-/* ---------- auth ---------- */
+.ref-module-referral-value {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+  font-variant-numeric: tabular-nums;
+}
 
 /* =========================================================
  * LAYER 4 — PAGE
  * FUTURE TARGET: pages/<platform>/<page>/
  * ========================================================= */
 
-/* ---------- table-list ---------- */
+/* ---------- table-list (W01) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-title-sm)
+ * SOURCE: Legacy ix-user-name / primary cell
  * FUTURE OWNER: pages/.../table-list/
  */
 .ref-page-table-list-primary {
-}
-.ref-page-table-list-stats {
-}
-.ref-page-table-list-filters {
-}
-
-/* ---------- form-add ---------- */
-/**
- * SOURCE: migrated from typography.css (.ifx-typo-label-md / .ifx-typo-body-sm)
- * FUTURE OWNER: pages/.../form-add/
- */
-.ref-page-form-add-group-label {
-}
-.ref-page-form-add-switch-text {
-}
-.ref-page-form-add-layout {
-}
-.ref-page-form-add-column {
-}
-.ref-page-form-add-options {
-}
-.ref-page-form-add-choice-list {
-}
-.ref-page-form-add-choice {
-}
-.ref-page-form-add-switch-row {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
 }
 
-/* ---------- order-list ---------- */
-/**
- * SOURCE: migrated from utilities.css (.ifx-mb-24)
- * FUTURE OWNER: pages/.../order-list/
- */
-.ref-page-order-list-stats {
-}
+/* ---------- form-add (W02 control) ---------- */
+/* layout/group hooks: Grid + Form + Stack already own. No page CSS. */
 
-/* ---------- order-detail ---------- */
+/* ---------- order-list (W03 control) ---------- */
+/* .ref-page-order-list-stats: Stat Strip already owns surface. */
+
+/* ---------- order-detail (W04) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-price-m / .ifx-typo-title-sm)
+ * SOURCE: Legacy totals column (ix-info-row gap 6, total 16/700)
  * FUTURE OWNER: pages/.../order-detail/
  */
-.ref-page-order-detail-summary-value {
-}
-.ref-page-order-detail-total {
-}
-.ref-page-order-detail-total-label {
-}
-.ref-page-order-detail-column {
-}
 .ref-page-order-detail-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-4);
+  min-width: 12rem;
+  margin-inline-start: auto;
 }
-.ref-page-order-detail-person {
+
+.ref-page-order-detail-summary-value {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-medium);
+  color: var(--ifx-text-primary);
+  font-variant-numeric: tabular-nums;
 }
+
+.ref-page-order-detail-total-label {
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+
+.ref-page-order-detail-total {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-lg);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
 .ref-page-order-detail-record-count {
+  color: var(--ifx-text-secondary);
 }
 
-/* ---------- user-profile ---------- */
+/* ---------- user-profile (W05) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-title-md / .ifx-typo-title-sm)
+ * SOURCE: Legacy .ix-profile-name / .ix-profile-stat-value / setting title
  * FUTURE OWNER: pages/.../user-profile/
+ * Not restored: 90px avatar ring, bleed stats, hero 40px inset.
  */
-.ref-page-user-profile-name {
-}
-.ref-page-user-profile-stat-value {
-}
-.ref-page-user-profile-setting-title {
-}
 .ref-page-user-profile-identity {
+  gap: var(--ifx-space-8);
+  text-align: center;
 }
+
+.ref-page-user-profile-name {
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  line-height: var(--ifx-line-height-tight);
+}
+
 .ref-page-user-profile-stats {
+  width: 100%;
+  border-block: 1px solid var(--ifx-border-default);
 }
+
 .ref-page-user-profile-stat {
+  padding-block: var(--ifx-space-12);
+  text-align: center;
+  border-right: 1px solid var(--ifx-border-default);
 }
+
+.ref-page-user-profile-stat:last-child {
+  border-right: none;
+}
+
+.ref-page-user-profile-stat-value {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
 .ref-page-user-profile-actions {
+  width: 100%;
+  gap: var(--ifx-space-8);
 }
-.ref-page-user-profile-tabs {
+
+.ref-page-user-profile-setting-title {
+  margin: 0;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
 }
-.ref-page-user-profile-settings {
-}
+
 .ref-page-user-profile-setting-row {
+  gap: var(--ifx-space-8);
 }
 
-/* ---------- wizard ---------- */
-/**
- * SOURCE: migrated from utilities.css (.ifx-mt-16 / .ifx-mb-16)
- * FUTURE OWNER: pages/.../wizard/
- */
-.ref-page-wizard-step-grid {
-}
-.ref-page-wizard-step-row {
-}
+/* ---------- wizard (W06) ---------- */
+/* step-grid / step-row: Grid + Form Row already own. */
 
-/* ---------- chat ---------- */
+/* ---------- chat (W07) ---------- */
 /**
- * SOURCE: migrated from utilities.css (.ifx-text-center / .ifx-mb-*)
+ * SOURCE: Legacy right-rail identity + personal-info rows
  * FUTURE OWNER: pages/.../chat/
  */
 .ref-page-chat-identity {
-}
-.ref-page-chat-meta {
+  gap: var(--ifx-space-8);
+  text-align: center;
 }
 
-/* ---------- referrals ---------- */
+.ref-page-chat-meta > :last-child {
+  font-weight: var(--ifx-font-weight-medium);
+  color: var(--ifx-text-primary);
+}
+
+/* ---------- referrals (W08) ---------- */
 /**
- * SOURCE: migrated from typography.css (.ifx-typo-title-sm)
+ * SOURCE: Legacy in-card layer counts (canonical scale, not 32px F-tier)
  * FUTURE OWNER: pages/.../referrals/
  */
-.ref-page-referrals-stat-value {
-}
-.ref-page-referrals-stats {
-}
-.ref-page-referrals-steps {
-}
 .ref-page-referrals-step {
+  align-items: center;
+  text-align: center;
+  gap: var(--ifx-space-8);
 }
+
 .ref-page-referrals-stat-row {
+  width: 100%;
 }
+
 .ref-page-referrals-stat {
+  text-align: center;
 }
+
+.ref-page-referrals-stat-value {
+  font-family: var(--ifx-font-numeric);
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
 .ref-page-referrals-invite {
+  gap: var(--ifx-space-8);
+  align-items: stretch;
 }
 
-/* ---------- charts ---------- */
+/* ---------- auth (W10) ---------- */
 /**
- * SOURCE: migrated from utilities.css (.ifx-mb-24)
- * FUTURE OWNER: pages/.../charts/
- */
-.ref-page-charts-section {
-}
-
-/* ---------- auth ---------- */
-/**
- * SOURCE: migrated from utilities.css (.ifx-w-full / .ifx-text-center / .ifx-mb-16 / .ifx-mt-8)
+ * SOURCE: Legacy auth full-width submit + OTP tracking
  * FUTURE OWNER: pages/.../auth/
+ * Tabs / Alert / Form remain Component-owned.
  */
-.ref-page-auth-tabs {
-}
-.ref-page-auth-alert {
-}
-.ref-page-auth-submit {
-}
+.ref-page-auth-submit,
 .ref-page-auth-alt {
+  width: 100%;
 }
+
 .ref-page-auth-otp {
+  text-align: center;
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--ifx-font-size-xl);
 }
 
 /* =========================================================
  * LAYER 5 — WIDGET
  * FUTURE TARGET: widgets/<widget-id>/
+ *
+ * No independent Widget artifact in W01–W10 References.
  * ========================================================= */
-
-/* ---------- table-list ---------- */
-/* ---------- form-add ---------- */
-/* ---------- order-list ---------- */
-/* ---------- order-detail ---------- */
-/* ---------- user-profile ---------- */
-/* ---------- wizard ---------- */
-/* ---------- chat ---------- */
-/* ---------- referrals ---------- */
-/* ---------- charts ---------- */
-/* ---------- auth ---------- */
