@@ -72,15 +72,59 @@
 
 /* ---------- chat (W07) ---------- */
 /**
- * SOURCE: Legacy chat sidebar header / section label / person name
+ * SOURCE: Legacy .ix-chat-layout 3-pane (Admin_Design_system/patterns/chat.html)
  * FUTURE OWNER: modules/conversation/
- * Chat Component already owns item-name, bubble, meta, thread chrome.
+ * Geometry 280/240 and min-height 37.5rem are Module-only — not Global tokens.
  */
-.ref-module-chat-thread-section {
+.ref-module-chat-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 37.5rem;
+  overflow: hidden;
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  background: var(--ifx-bg-surface);
+}
+
+.ref-module-chat-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 16rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ifx-border-default);
+}
+
+.ref-module-chat-sidebar-header {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: var(--ifx-space-8);
-  padding: var(--ifx-space-12) var(--ifx-space-16);
+  padding: var(--ifx-inset-widget);
+  border-bottom: 1px solid var(--ifx-border-default);
+}
+
+.ref-module-chat-search {
+  max-width: none;
+}
+
+.ref-module-chat-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--ifx-space-8) 0;
+}
+
+.ref-module-chat-section-label {
+  margin: 0;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-muted);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+}
+
+.ref-module-chat-list .ref-module-chat-section-label {
+  padding: var(--ifx-space-8) var(--ifx-space-16) var(--ifx-space-4);
 }
 
 .ref-module-chat-person {
@@ -89,19 +133,123 @@
   color: var(--ifx-text-primary);
 }
 
-.ref-module-chat-section-label {
-  margin: 0;
-  padding: var(--ifx-space-8) var(--ifx-space-16) var(--ifx-space-4);
-  font-size: var(--ifx-font-size-xs);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-muted);
-  letter-spacing: var(--ifx-letter-spacing-caps);
-  text-transform: uppercase;
+.ref-module-chat-item-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
-.ref-module-chat-section-label small {
-  font-size: inherit;
-  color: inherit;
+.ref-module-chat-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-inline-sm);
+}
+
+.ref-module-chat-item-time {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+  white-space: nowrap;
+}
+
+.ref-module-chat-conversation {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 20rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+.ref-module-chat-conversation-header {
+  flex-shrink: 0;
+  padding: var(--ifx-space-12) var(--ifx-space-20);
+}
+
+.ref-module-chat-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--ifx-space-4);
+}
+
+.ref-module-chat-title {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+  line-height: var(--ifx-line-height-tight);
+}
+
+.ref-module-chat-role {
+  font-size: var(--ifx-font-size-xs);
+  color: var(--ifx-text-muted);
+}
+
+.ref-module-chat-messages {
+  padding: var(--ifx-space-20);
+}
+
+.ref-module-chat-message-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+  min-width: 0;
+}
+
+.ref-module-chat-bubble {
+  max-width: 60%;
+  border-radius: var(--ifx-radius-xl);
+  line-height: var(--ifx-line-height-normal);
+}
+
+.ref-module-chat-time {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+
+.ref-module-chat-composer-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.ref-module-chat-profile {
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  overflow-y: auto;
+  padding: var(--ifx-space-20) var(--ifx-space-16);
+  gap: var(--ifx-space-20);
+  border-top: 1px solid var(--ifx-border-default);
+}
+
+.ref-module-chat-profile-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--ifx-space-8);
+}
+
+.ref-module-chat-profile-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+}
+
+.ref-module-chat-profile-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+}
+
+.ref-module-chat-profile-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-xs);
+  color: var(--ifx-text-secondary);
 }
 
 .ref-module-chat-actions {
@@ -113,6 +261,49 @@
 .ref-module-chat-action {
   justify-content: flex-start;
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .ref-module-chat-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: calc(100vh - 12.5rem);
+  }
+  .ref-module-chat-sidebar {
+    min-height: 0;
+    border-bottom: 0;
+    border-right: 1px solid var(--ifx-border-default);
+  }
+  .ref-module-chat-conversation {
+    min-height: 0;
+    height: 100%;
+  }
+  .ref-module-chat-profile {
+    grid-column: 1 / -1;
+    min-height: 0;
+    max-height: 14rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ref-module-chat-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+  .ref-module-chat-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+  }
+  .ref-module-chat-profile {
+    grid-column: auto;
+    flex: 0 0 240px;
+    width: 240px;
+    max-height: none;
+    border-top: 0;
+    border-left: 1px solid var(--ifx-border-default);
+  }
 }
 
 /* ---------- referrals (W08) ---------- */
@@ -256,19 +447,7 @@
 /* step-grid / step-row: Grid + Form Row already own. */
 
 /* ---------- chat (W07) ---------- */
-/**
- * SOURCE: Legacy right-rail identity + personal-info rows
- * FUTURE OWNER: pages/.../chat/
- */
-.ref-page-chat-identity {
-  gap: var(--ifx-space-8);
-  text-align: center;
-}
-
-.ref-page-chat-meta > :last-child {
-  font-weight: var(--ifx-font-weight-medium);
-  color: var(--ifx-text-primary);
-}
+/* Profile is Module pane — no Page CSS. */
 
 /* ---------- referrals (W08) ---------- */
 /**

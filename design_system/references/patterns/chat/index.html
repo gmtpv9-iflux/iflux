@@ -16,10 +16,9 @@
   <link rel="stylesheet" href="../../../foundation/icons/vendor/tabler/tabler-icons.min.css">
   <link rel="stylesheet" href="../../../foundation/icons/icons.css">
   <link rel="stylesheet" href="../../../primitives/button/button.css">
-  <link rel="stylesheet" href="../../../primitives/chip/chip.css">
   <link rel="stylesheet" href="../../../primitives/avatar/avatar.css">
-  <link rel="stylesheet" href="../../../components/card/card.css">
   <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../../components/form/form.css">
   <link rel="stylesheet" href="../../../components/search/search.css">
   <link rel="stylesheet" href="../../../components/chat/chat.css">
   <link rel="stylesheet" href="../../../primitives/title/title.css">
@@ -52,172 +51,166 @@
     </header>
 
     <section class="ifx-stack-lg">
-
-    <div class="ifx-grid">
-      <div class="ifx-col-12 ifx-col-lg-8">
-        <div class="ifx-chat" data-ifx-chat>
-          <div class="ifx-chat-thread">
-            <div class="ref-module-chat-thread-section">
-              <div class="ifx-inline-md">
-                <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
-                <span class="ref-module-chat-person">Tôi</span>
-              </div>
-              <label class="ifx-search">
-                <i class="ti ti-search ifx-icon ifx-icon-sm" aria-hidden="true"></i>
-                <input type="search" placeholder="Tìm hội thoại…">
-              </label>
-            </div>
-            <p class="ref-module-chat-section-label"><small>Hội thoại</small></p>
-            <button type="button" class="ifx-chat-item is-active" data-ifx-chat-name="Người A">
-              <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-flex ifx-justify-between ifx-items-center">
-                  <span class="ifx-chat-item-name">Người A</span>
-                  <small>5 phút</small>
-                </span>
-                <span class="ifx-chat-item-preview">Đã nhận bản ghi.</span>
-              </span>
-            </button>
-            <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người B">
-              <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info ifx-avatar-online" aria-hidden="true">B</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-flex ifx-justify-between ifx-items-center">
-                  <span class="ifx-chat-item-name">Người B</span>
-                  <small>30 phút</small>
-                </span>
-                <span class="ifx-chat-item-preview">Xem lại nhóm B.</span>
-              </span>
-            </button>
-            <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người C">
-              <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true">C</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-flex ifx-justify-between ifx-items-center">
-                  <span class="ifx-chat-item-name">Người C</span>
-                  <small>1 ngày</small>
-                </span>
-                <span class="ifx-chat-item-preview">Gửi lại khi xong.</span>
-              </span>
-            </button>
-            <p class="ref-module-chat-section-label"><small>Danh bạ</small></p>
-            <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người D">
-              <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true">D</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-chat-item-name">Người D</span>
-                <span class="ifx-chat-item-preview">Nhóm A</span>
-              </span>
-            </button>
-            <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người E">
-              <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">E</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-chat-item-name">Người E</span>
-                <span class="ifx-chat-item-preview">Nhóm B</span>
-              </span>
-            </button>
-            <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người F">
-              <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">F</span>
-              <span class="ifx-flex-1">
-                <span class="ifx-chat-item-name">Người F</span>
-                <span class="ifx-chat-item-preview">Nhóm C</span>
-              </span>
-            </button>
+    <div class="ref-module-chat-layout" data-ifx-chat>
+      <aside class="ref-module-chat-sidebar">
+        <div class="ref-module-chat-sidebar-header">
+          <div class="ifx-inline-md">
+            <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
+            <span class="ref-module-chat-person">Tôi</span>
           </div>
+          <label class="ifx-search ref-module-chat-search">
+            <i class="ti ti-search ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+            <input type="search" placeholder="Tìm hội thoại…">
+          </label>
+        </div>
+        <div class="ref-module-chat-list">
+          <p class="ref-module-chat-section-label">Hội thoại</p>
+          <button type="button" class="ifx-chat-item is-active" data-ifx-chat-name="Người A">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ref-module-chat-item-row">
+                <span class="ifx-chat-item-name">Người A</span>
+                <span class="ref-module-chat-item-time">5 phút</span>
+              </span>
+              <span class="ifx-chat-item-preview">Đã nhận bản ghi.</span>
+            </span>
+          </button>
+          <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người B">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info ifx-avatar-online" aria-hidden="true">B</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ref-module-chat-item-row">
+                <span class="ifx-chat-item-name">Người B</span>
+                <span class="ref-module-chat-item-time">30 phút</span>
+              </span>
+              <span class="ifx-chat-item-preview">Xem lại nhóm B.</span>
+            </span>
+          </button>
+          <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người C">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true">C</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ref-module-chat-item-row">
+                <span class="ifx-chat-item-name">Người C</span>
+                <span class="ref-module-chat-item-time">1 ngày</span>
+              </span>
+              <span class="ifx-chat-item-preview">Gửi lại khi xong.</span>
+            </span>
+          </button>
+          <p class="ref-module-chat-section-label">Danh bạ</p>
+          <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người D">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true">D</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ifx-chat-item-name">Người D</span>
+              <span class="ifx-chat-item-preview">Nhóm A</span>
+            </span>
+          </button>
+          <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người E">
+            <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">E</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ifx-chat-item-name">Người E</span>
+              <span class="ifx-chat-item-preview">Nhóm B</span>
+            </span>
+          </button>
+          <button type="button" class="ifx-chat-item" data-ifx-chat-name="Người F">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">F</span>
+            <span class="ref-module-chat-item-content">
+              <span class="ifx-chat-item-name">Người F</span>
+              <span class="ifx-chat-item-preview">Nhóm C</span>
+            </span>
+          </button>
+        </div>
+      </aside>
 
-          <div class="ifx-chat-main">
-            <div class="ifx-chat-header">
-              <div class="ifx-inline-md">
-                <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
-                <span class="ifx-flex-col">
-                  <span data-ifx-chat-title>Người A</span>
-                  <small>Nhóm A</small>
-                </span>
-              </div>
-              <div class="ifx-inline-sm">
-                <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Gọi"><i class="ti ti-phone ifx-icon ifx-icon-sm"></i></button>
-                <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Tìm trong hội thoại"><i class="ti ti-search ifx-icon ifx-icon-sm"></i></button>
-                <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Thêm"><i class="ti ti-dots-vertical ifx-icon ifx-icon-sm"></i></button>
-              </div>
-            </div>
-            <div class="ifx-chat-body" data-ifx-chat-body>
-              <div class="ifx-chat-message is-sent">
-                <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
-                <div>
-                  <div class="ifx-chat-bubble">Xin chào — cần hỗ trợ bản ghi này.</div>
-                  <div class="ifx-chat-meta">10:00</div>
-                </div>
-              </div>
-              <div class="ifx-chat-message">
-                <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">A</span>
-                <div>
-                  <div class="ifx-chat-bubble">Đã mở. Đang xem nhóm A.</div>
-                  <div class="ifx-chat-bubble">Cần thêm trường nào?</div>
-                  <div class="ifx-chat-meta">10:02</div>
-                </div>
-              </div>
-              <div class="ifx-chat-message is-sent">
-                <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
-                <div>
-                  <div class="ifx-chat-bubble">Chỉ xác nhận trạng thái hiện tại.</div>
-                  <div class="ifx-chat-meta">10:03</div>
-                </div>
-              </div>
-              <div class="ifx-chat-message">
-                <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">A</span>
-                <div>
-                  <div class="ifx-chat-bubble">Đã nhận bản ghi.</div>
-                  <div class="ifx-chat-meta">10:08</div>
-                </div>
-              </div>
-            </div>
-            <form class="ifx-chat-input-bar" data-ifx-chat-form>
-              <input class="ifx-input ifx-chat-input" placeholder="Nhắn…">
-              <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Đính kèm"><i class="ti ti-paperclip ifx-icon ifx-icon-sm"></i></button>
-              <button type="submit" class="ifx-btn ifx-btn-primary">Gửi</button>
-            </form>
+      <div class="ifx-chat-main ref-module-chat-conversation">
+        <div class="ifx-chat-header ref-module-chat-conversation-header">
+          <div class="ifx-inline-md">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
+            <span class="ref-module-chat-identity">
+              <span class="ref-module-chat-title" data-ifx-chat-title>Người A</span>
+              <span class="ref-module-chat-role">Nhóm A</span>
+            </span>
+          </div>
+          <div class="ifx-inline-sm">
+            <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Gọi"><i class="ti ti-phone ifx-icon ifx-icon-sm"></i></button>
+            <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Tìm trong hội thoại"><i class="ti ti-search ifx-icon ifx-icon-sm"></i></button>
+            <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Thêm"><i class="ti ti-dots-vertical ifx-icon ifx-icon-sm"></i></button>
           </div>
         </div>
-      </div>
-
-      <div class="ifx-col-12 ifx-col-lg-4">
-        <div class="ifx-card ifx-stack-md">
-          <div class="ifx-card-body ifx-stack-md">
-            <div class="ifx-flex-col ifx-items-center ref-page-chat-identity">
-              <span class="ifx-avatar ifx-avatar-lg ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
-              <span class="ref-module-chat-person">Người A</span>
-              <span class="ifx-chip ifx-chip-info">nhóm A</span>
+        <div class="ifx-chat-body ref-module-chat-messages" data-ifx-chat-body>
+          <div class="ifx-chat-message is-sent">
+            <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
+            <div class="ref-module-chat-message-group">
+              <div class="ifx-chat-bubble ref-module-chat-bubble">Xin chào — cần hỗ trợ bản ghi này.</div>
+              <div class="ifx-chat-meta ref-module-chat-time">10:00</div>
             </div>
-            <div class="ifx-stack-sm">
-              <small>Liên hệ</small>
-              <div class="ifx-flex ifx-justify-between ref-page-chat-meta">
-                <small>Email</small>
-                <span>a1@example.com</span>
-              </div>
-              <div class="ifx-flex ifx-justify-between ref-page-chat-meta">
-                <small>Điện thoại</small>
-                <span>0123 456 789</span>
-              </div>
-              <div class="ifx-flex ifx-justify-between ref-page-chat-meta">
-                <small>Giờ</small>
-                <span>T2–T6 09:00–17:00</span>
-              </div>
+          </div>
+          <div class="ifx-chat-message">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">A</span>
+            <div class="ref-module-chat-message-group">
+              <div class="ifx-chat-bubble ref-module-chat-bubble">Đã mở. Đang xem nhóm A.</div>
+              <div class="ifx-chat-bubble ref-module-chat-bubble">Cần thêm trường nào?</div>
+              <div class="ifx-chat-meta ref-module-chat-time">10:02</div>
             </div>
-            <hr>
-            <div class="ifx-stack-sm">
-              <small>Tuỳ chọn</small>
-            <div class="ifx-flex-col ref-module-chat-actions">
-              <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm ref-module-chat-action">
-                <i class="ti ti-star ifx-icon ifx-icon-sm"></i> Gắn sao
-              </button>
-              <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm ref-module-chat-action">
-                <i class="ti ti-photo ifx-icon ifx-icon-sm"></i> Media chung
-              </button>
-              <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm ref-module-chat-action">
-                <i class="ti ti-ban ifx-icon ifx-icon-sm"></i> Chặn
-              </button>
+          </div>
+          <div class="ifx-chat-message is-sent">
+            <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">T</span>
+            <div class="ref-module-chat-message-group">
+              <div class="ifx-chat-bubble ref-module-chat-bubble">Chỉ xác nhận trạng thái hiện tại.</div>
+              <div class="ifx-chat-meta ref-module-chat-time">10:03</div>
             </div>
+          </div>
+          <div class="ifx-chat-message">
+            <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">A</span>
+            <div class="ref-module-chat-message-group">
+              <div class="ifx-chat-bubble ref-module-chat-bubble">Đã nhận bản ghi.</div>
+              <div class="ifx-chat-meta ref-module-chat-time">10:08</div>
             </div>
           </div>
         </div>
+        <form class="ifx-chat-input-bar ref-module-chat-composer" data-ifx-chat-form>
+          <input class="ifx-input ifx-chat-input ref-module-chat-composer-input" placeholder="Nhắn…">
+          <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Đính kèm"><i class="ti ti-paperclip ifx-icon ifx-icon-sm"></i></button>
+          <button type="submit" class="ifx-btn ifx-btn-primary">Gửi</button>
+        </form>
       </div>
+
+      <aside class="ref-module-chat-profile">
+        <div class="ref-module-chat-profile-identity">
+          <span class="ifx-avatar ifx-avatar-lg ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
+          <span class="ref-module-chat-person">Người A</span>
+          <span class="ref-module-chat-role">Nhóm A</span>
+        </div>
+        <div class="ref-module-chat-profile-group">
+          <p class="ref-module-chat-section-label">Liên hệ</p>
+          <div class="ref-module-chat-profile-rows">
+            <div class="ref-module-chat-profile-row">
+              <i class="ti ti-mail ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+              <span>a1@example.com</span>
+            </div>
+            <div class="ref-module-chat-profile-row">
+              <i class="ti ti-phone-call ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+              <span>0123 456 789</span>
+            </div>
+            <div class="ref-module-chat-profile-row">
+              <i class="ti ti-clock ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+              <span>T2–T6 09:00–17:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="ref-module-chat-profile-group">
+          <p class="ref-module-chat-section-label">Tuỳ chọn</p>
+          <div class="ref-module-chat-actions">
+            <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm ref-module-chat-action">
+              <i class="ti ti-star ifx-icon ifx-icon-sm"></i> Gắn sao
+            </button>
+            <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm ref-module-chat-action">
+              <i class="ti ti-photo ifx-icon ifx-icon-sm"></i> Media chung
+            </button>
+            <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm ref-module-chat-action">
+              <i class="ti ti-ban ifx-icon ifx-icon-sm"></i> Chặn
+            </button>
+          </div>
+        </div>
+      </aside>
     </div>
     </section>
   </main>
