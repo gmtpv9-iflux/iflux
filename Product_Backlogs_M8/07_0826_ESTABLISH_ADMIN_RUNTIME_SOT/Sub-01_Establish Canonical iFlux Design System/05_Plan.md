@@ -6,7 +6,7 @@
 | Căn cứ | `01_Request.md` (13 Owner Decision) · `04_Solution.md` (**APPROVED 2026-08-26** — không mở lại quyết định đã khóa) · `docs/SoT — Admin Runtime (AR-001).md` v1.2 |
 | Scope | **ESTABLISH + VERIFY + LOCK** một Canonical Design System hoàn chỉnh, độc lập. **KHÔNG migration Admin/User Web page nào trong Sub-01.** |
 | Deploy & test | Cuối mỗi phase = commit + push branch `staging` → CI deploy → Owner test trên `https://staging.iflux.vn/...` (URL ghi rõ ở từng phase) |
-| Trạng thái | **P1–P4 = OWNER PASS** · **P6-W01 + Sandbox + W02–W09 = LOCKED** · **P6-W10 = OPEN** · **P6a = OPEN** · `typography.css` = **FAIL / Phase A plan PENDING OWNER** · EXECUTION BLOCKED · P7 BLOCKED |
+| Trạng thái | **P1–P4 = OWNER PASS** · **P6-W01 + Sandbox + W02–W09 = LOCKED** · **P6-W10 = OPEN** · **P6a = OPEN** · `typography.css` Gate B PENDING · next CSS BLOCKED · P7 BLOCKED |
 
 ---
 
@@ -195,11 +195,11 @@ Mỗi wave: audit legacy → map P1–P5 → build composition → classify gap 
 
 ### P6a — CSS Ownership & Scope Normalization (trước P7)
 
-SoT: `gates/P6a_CSS_Ownership_Scope_Normalization/` — `01_Request.md` · `02_CSS_Ownership_Rules_SoT.md` · `03_Solution.md` (**Two-Gate LOCKED**).
+SoT: `gates/P6a_CSS_Ownership_Scope_Normalization/new_solution.md` · `03_Solution.md`. Readiness: `00_Readiness.md`.
 
-Mỗi file = Phase A plan → Owner Gate A → Phase B → Owner Gate B → LOCK. Không execution trước Gate A.
+Global sạch + Reference đủ = lower-layer CSS hội tụ tại `sandbox/index.html` (simulation, không phải production SoT). Agent không tự classify. Owner gửi từng file + allocation (`KEEP` / `DELETE` / `MOVE TO …`) rồi Agent audit + execute.
 
-`typography.css` = FAIL / RESTART. File plan: `gates/P6a_CSS_Ownership_Scope_Normalization/css-normalization/01_typography.md`. EXECUTION = BLOCKED. Next CSS file = BLOCKED.
+`typography.css` implementation = baseline `4741d70`. EXECUTION BLOCKED. Next CSS file = BLOCKED đến khi Owner chỉ thị.
 
 P7 chỉ mở sau khi Owner chốt P6a (và W10).
 

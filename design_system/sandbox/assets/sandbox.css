@@ -118,9 +118,9 @@
 .sb-kicker {
   display: block;
   margin-bottom: var(--ifx-space-4);
-  font-size: var(--ifx-text-overline-size);
-  font-weight: var(--ifx-text-overline-weight);
-  letter-spacing: var(--ifx-text-overline-tracking);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: var(--ifx-letter-spacing-caps);
   text-transform: uppercase;
   color: var(--ifx-text-muted);
 }

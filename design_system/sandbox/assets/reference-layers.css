@@ -1,0 +1,172 @@
+/**
+ * P6a — Reference CSS Ownership Simulation
+ *
+ * NOT GLOBAL DESIGN SYSTEM.
+ *
+ * This file temporarily hosts lower-layer CSS needed by
+ * Canonical Reference Patterns before production migration.
+ *
+ * Layers:
+ * 2. PLATFORM
+ * 3. MODULE / FEATURE
+ * 4. PAGE
+ * 5. WIDGET
+ *
+ * Every rule must identify:
+ * - layer;
+ * - source Reference Pattern;
+ * - future production owner.
+ *
+ * No canonical `.ifx-*` definitions.
+ * No !important.
+ * No specificity patch chain.
+ */
+
+/* =========================================================
+ * LAYER 2 — PLATFORM
+ * FUTURE TARGET: platform/admin/ · platform/web/ · platform/app/
+ * ========================================================= */
+
+/* ---------- table-list ---------- */
+/* ---------- form-add ---------- */
+/* ---------- order-list ---------- */
+/* ---------- order-detail ---------- */
+/* ---------- user-profile ---------- */
+/* ---------- wizard ---------- */
+/* ---------- chat ---------- */
+/* ---------- referrals ---------- */
+/* ---------- charts ---------- */
+/* ---------- auth ---------- */
+
+/* =========================================================
+ * LAYER 3 — MODULE / FEATURE
+ * FUTURE TARGET: modules/<domain>/
+ * ========================================================= */
+
+/* ---------- table-list ---------- */
+/* ---------- form-add ---------- */
+
+/* ---------- order-list ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
+ * FUTURE OWNER: modules/orders/
+ */
+.ref-module-order-value {
+}
+.ref-module-order-code {
+}
+.ref-module-order-person {
+}
+
+/* ---------- order-detail ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
+ * FUTURE OWNER: modules/orders/
+ */
+.ref-module-order-item-name {
+}
+.ref-module-order-group {
+}
+
+/* ---------- user-profile ---------- */
+/* ---------- wizard ---------- */
+
+/* ---------- chat ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-title-sm / .ifx-typo-title-md)
+ * FUTURE OWNER: modules/conversation/
+ */
+.ref-module-chat-person {
+}
+
+/* ---------- referrals ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-title-sm)
+ * FUTURE OWNER: modules/referrals/
+ */
+.ref-module-referral-value {
+}
+.ref-module-referral-label {
+}
+
+/* ---------- charts ---------- */
+/* ---------- auth ---------- */
+
+/* =========================================================
+ * LAYER 4 — PAGE
+ * FUTURE TARGET: pages/<platform>/<page>/
+ * ========================================================= */
+
+/* ---------- table-list ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-title-sm)
+ * FUTURE OWNER: pages/.../table-list/
+ */
+.ref-page-table-list-primary {
+}
+
+/* ---------- form-add ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-label-md / .ifx-typo-body-sm)
+ * FUTURE OWNER: pages/.../form-add/
+ */
+.ref-page-form-add-group-label {
+}
+.ref-page-form-add-switch-text {
+}
+
+/* ---------- order-list ---------- */
+
+/* ---------- order-detail ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-price-s / .ifx-typo-price-m / .ifx-typo-title-sm)
+ * FUTURE OWNER: pages/.../order-detail/
+ */
+.ref-page-order-detail-summary-value {
+}
+.ref-page-order-detail-total {
+}
+.ref-page-order-detail-total-label {
+}
+
+/* ---------- user-profile ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-title-md / .ifx-typo-title-sm)
+ * FUTURE OWNER: pages/.../user-profile/
+ */
+.ref-page-user-profile-name {
+}
+.ref-page-user-profile-stat-value {
+}
+.ref-page-user-profile-setting-title {
+}
+
+/* ---------- wizard ---------- */
+/* ---------- chat ---------- */
+
+/* ---------- referrals ---------- */
+/**
+ * SOURCE: migrated from typography.css (.ifx-typo-title-sm)
+ * FUTURE OWNER: pages/.../referrals/
+ */
+.ref-page-referrals-stat-value {
+}
+
+/* ---------- charts ---------- */
+/* ---------- auth ---------- */
+
+/* =========================================================
+ * LAYER 5 — WIDGET
+ * FUTURE TARGET: widgets/<widget-id>/
+ * ========================================================= */
+
+/* ---------- table-list ---------- */
+/* ---------- form-add ---------- */
+/* ---------- order-list ---------- */
+/* ---------- order-detail ---------- */
+/* ---------- user-profile ---------- */
+/* ---------- wizard ---------- */
+/* ---------- chat ---------- */
+/* ---------- referrals ---------- */
+/* ---------- charts ---------- */
+/* ---------- auth ---------- */
