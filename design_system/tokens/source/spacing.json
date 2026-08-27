@@ -102,7 +102,6 @@
       "toast": "{space.12} {space.16}",
       "table-cell-y": "{space.12}",
       "table-cell-x": "{space.16}",
-      "card": "{inset.card}",
       "widget": "{inset.widget}",
       "inline-xs": "{inline.xs}",
       "inline-sm": "{inline.sm}",

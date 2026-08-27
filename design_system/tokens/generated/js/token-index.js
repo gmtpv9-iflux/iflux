@@ -349,7 +349,6 @@
       "--ifx-space-toast",
       "--ifx-space-table-cell-y",
       "--ifx-space-table-cell-x",
-      "--ifx-space-card",
       "--ifx-space-widget",
       "--ifx-space-inline-xs",
       "--ifx-space-inline-sm",

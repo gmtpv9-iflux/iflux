@@ -15,8 +15,7 @@
   justify-content: space-between;
   gap: var(--ifx-gap-sm);
 }
-.ifx-card-body { padding: var(--ifx-inset-card-body); color: var(--ifx-text-secondary); }
-.ifx-card-body p { font-size: var(--ifx-text-body-sm-size); }
+.ifx-card-body { padding: var(--ifx-inset-card-body); }
 .ifx-card-footer {
   padding: var(--ifx-inset-card-footer);
   border-top: 1px solid var(--ifx-border-subtle);

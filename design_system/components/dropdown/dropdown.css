@@ -17,9 +17,6 @@
 }
 .ifx-dropdown.is-open .ifx-dropdown-menu { display: block; }
 .ifx-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: var(--ifx-inline-sm);
   padding: var(--ifx-space-8) var(--ifx-space-16);
   color: var(--ifx-text-secondary);
   cursor: pointer;
@@ -32,8 +29,3 @@
   transition: var(--ifx-transition-color);
 }
 .ifx-dropdown-item:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
-.ifx-dropdown-divider {
-  border: 0;
-  border-top: 1px solid var(--ifx-border-subtle);
-  margin: var(--ifx-space-4) 0;
-}

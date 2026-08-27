@@ -18,5 +18,6 @@
   text-decoration: none;
 }
 .ifx-breadcrumb a:hover { color: var(--ifx-action-primary); }
+.ifx-breadcrumb > li + li { margin-top: 0; }
 .ifx-breadcrumb-sep { color: var(--ifx-text-muted); }
 .ifx-breadcrumb-current { color: var(--ifx-text-primary); }
