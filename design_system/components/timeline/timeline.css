@@ -3,6 +3,7 @@
  * REWRITE .ix-timeline. Marker / line / meta.
  */
 .ifx-timeline { list-style: none; padding: 0; margin: 0; }
+.ifx-timeline > li + li { margin-top: 0; }
 .ifx-timeline-item {
   position: relative;
   padding-left: var(--ifx-space-32);

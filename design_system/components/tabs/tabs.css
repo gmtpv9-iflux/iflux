@@ -39,5 +39,5 @@
   align-items: center;
   gap: var(--ifx-gap-xs);
 }
-.ifx-tab-panel { display: none; padding-top: var(--ifx-stack-md); color: var(--ifx-text-secondary); }
+.ifx-tab-panel { display: none; }
 .ifx-tab-panel.is-active { display: block; }

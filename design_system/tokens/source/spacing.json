@@ -99,7 +99,6 @@
       "chip-x": "{space.12}",
       "badge-y": "{space.4}",
       "badge-x": "{space.8}",
-      "toast": "{space.12} {space.16}",
       "table-cell-y": "{space.12}",
       "table-cell-x": "{space.16}",
       "widget": "{inset.widget}",

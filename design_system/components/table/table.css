@@ -23,9 +23,8 @@
   white-space: nowrap;
 }
 .ifx-table td {
-  padding: var(--ifx-space-12);
+  padding: var(--ifx-space-table-cell-y) var(--ifx-space-table-cell-x);
   border-bottom: 1px solid var(--ifx-border-subtle);
-  color: var(--ifx-text-secondary);
   vertical-align: middle;
 }
 .ifx-table tbody tr:last-child td { border-bottom: none; }
@@ -36,7 +35,6 @@
   justify-content: space-between;
   gap: var(--ifx-gap-sm);
   flex-wrap: wrap;
-  padding: var(--ifx-space-12) 0;
 }
 .ifx-table th[data-ifx-sort] { cursor: pointer; }
 .ifx-table tbody tr.is-hidden { display: none; }

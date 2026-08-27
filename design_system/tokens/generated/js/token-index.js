@@ -346,7 +346,6 @@
       "--ifx-space-chip-x",
       "--ifx-space-badge-y",
       "--ifx-space-badge-x",
-      "--ifx-space-toast",
       "--ifx-space-table-cell-y",
       "--ifx-space-table-cell-x",
       "--ifx-space-widget",
