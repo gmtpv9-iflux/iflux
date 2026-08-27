@@ -32,8 +32,8 @@
   <link rel="stylesheet" href="../../../sandbox/assets/reference-layers.css">
 </head>
 <body>
-  <main class="ifx-container ifx-container-max ifx-p-24">
-    <div class="ifx-inline-md ifx-mb-16">
+  <main class="ifx-container ifx-container-max">
+    <div class="ifx-inline-md">
       <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
       <small>P6-W05 · Reference Implementation · compose P1–P5</small>
     </div>
@@ -60,27 +60,27 @@
       <div class="ifx-col-12 ifx-col-lg-4">
         <div class="ifx-card">
           <div class="ifx-card-body">
-            <div class="ifx-flex-col ifx-items-center ifx-text-center ifx-mb-16">
+            <div class="ifx-flex-col ifx-items-center ref-page-user-profile-identity">
               <span class="ifx-avatar ifx-avatar-lg" aria-hidden="true">A1</span>
               <span class="ref-page-user-profile-name">Người A</span>
               <span class="ifx-chip ifx-chip-info">nhóm A</span>
             </div>
-            <div class="ifx-flex ifx-w-full ifx-mb-16">
-              <div class="ifx-flex-1 ifx-text-center">
+            <div class="ifx-flex ref-page-user-profile-stats">
+              <div class="ifx-flex-1 ref-page-user-profile-stat">
                 <div class="ref-page-user-profile-stat-value">12</div>
                 <small>Bản ghi</small>
               </div>
-              <div class="ifx-flex-1 ifx-text-center">
+              <div class="ifx-flex-1 ref-page-user-profile-stat">
                 <div class="ref-page-user-profile-stat-value">48</div>
                 <small>Liên kết</small>
               </div>
-              <div class="ifx-flex-1 ifx-text-center">
+              <div class="ifx-flex-1 ref-page-user-profile-stat">
                 <div class="ref-page-user-profile-stat-value">9</div>
                 <small>Nhóm</small>
               </div>
             </div>
             <hr>
-            <div class="ifx-stack-sm ifx-mb-16">
+            <div class="ifx-stack-sm">
               <div class="ifx-flex ifx-justify-between">
                 <small>Mã</small>
                 <span>PER-A1</span>
@@ -110,7 +110,7 @@
                 <span>Khu A</span>
               </div>
             </div>
-            <div class="ifx-flex ifx-gap-sm">
+            <div class="ifx-flex ref-page-user-profile-actions">
               <button type="button" class="ifx-btn ifx-btn-primary ifx-flex-1" data-ifx-modal="editModal">
                 <i class="ti ti-edit ifx-icon ifx-icon-sm"></i> Sửa
               </button>
@@ -121,7 +121,7 @@
       </div>
 
       <div class="ifx-col-12 ifx-col-lg-8" data-ifx-tabs-root>
-        <div class="ifx-tabs ifx-mb-16" data-ifx-tabs>
+        <div class="ifx-tabs ref-page-user-profile-tabs" data-ifx-tabs>
           <button type="button" class="ifx-tab is-active" data-ifx-tab="account"><i class="ti ti-user-check ifx-icon ifx-icon-sm"></i> Tài khoản</button>
           <button type="button" class="ifx-tab" data-ifx-tab="activity"><i class="ti ti-activity ifx-icon ifx-icon-sm"></i> Hoạt động</button>
           <button type="button" class="ifx-tab" data-ifx-tab="security"><i class="ti ti-lock ifx-icon ifx-icon-sm"></i> Bảo mật</button>
@@ -139,36 +139,36 @@
               <div class="ifx-form-row">
                 <div>
                   <label class="ifx-label">Tên</label>
-                  <p class="ifx-mb-0">A</p>
+                  <p>A</p>
                 </div>
                 <div>
                   <label class="ifx-label">Họ</label>
-                  <p class="ifx-mb-0">Một</p>
+                  <p>Một</p>
                 </div>
               </div>
               <div class="ifx-form-row">
                 <div>
                   <label class="ifx-label">Mã</label>
-                  <p class="ifx-mb-0">PER-A1</p>
+                  <p>PER-A1</p>
                 </div>
                 <div>
                   <label class="ifx-label">Email</label>
-                  <p class="ifx-mb-0">a1@example.com</p>
+                  <p>a1@example.com</p>
                 </div>
               </div>
               <div class="ifx-form-row">
                 <div>
                   <label class="ifx-label">Liên hệ</label>
-                  <p class="ifx-mb-0">0900 000 001</p>
+                  <p>0900 000 001</p>
                 </div>
                 <div>
                   <label class="ifx-label">Khu vực</label>
-                  <p class="ifx-mb-0">Khu A</p>
+                  <p>Khu A</p>
                 </div>
               </div>
               <div>
                 <label class="ifx-label">Mô tả</label>
-                <p class="ifx-mb-0">Mô tả generic — không business copy.</p>
+                <p>Mô tả generic — không business copy.</p>
               </div>
             </div>
           </div>
@@ -217,7 +217,7 @@
         </div>
 
         <div class="ifx-tab-panel" data-ifx-panel="security">
-          <div class="ifx-flex-col ifx-gap-24">
+          <div class="ifx-flex-col ref-page-user-profile-settings">
             <div class="ifx-card">
               <div class="ifx-card-header"><h2 class="ifx-card-title">Đổi mật khẩu</h2></div>
               <div class="ifx-card-body">
@@ -239,9 +239,9 @@
             <div class="ifx-card">
               <div class="ifx-card-header"><h2 class="ifx-card-title">Xác thực hai bước</h2></div>
               <div class="ifx-card-body">
-                <div class="ifx-flex ifx-justify-between ifx-items-center ifx-flex-wrap ifx-gap-sm">
+                <div class="ifx-flex ifx-justify-between ifx-items-center ifx-flex-wrap ref-page-user-profile-setting-row">
                   <div>
-                    <p class="ref-page-user-profile-setting-title ifx-mb-0">Ứng dụng xác thực</p>
+                    <p class="ref-page-user-profile-setting-title">Ứng dụng xác thực</p>
                     <small>Mã một lần từ ứng dụng đã gắn.</small>
                   </div>
                   <div class="ifx-inline-sm">
@@ -265,11 +265,11 @@
       </div>
       <div class="ifx-modal-body">
         <div class="ifx-form-row">
-          <div class="ifx-form-group ifx-mb-0">
+          <div class="ifx-form-group">
             <label class="ifx-label" for="edit-first">Tên</label>
             <input class="ifx-input" id="edit-first" value="A">
           </div>
-          <div class="ifx-form-group ifx-mb-0">
+          <div class="ifx-form-group">
             <label class="ifx-label" for="edit-last">Họ</label>
             <input class="ifx-input" id="edit-last" value="Một">
           </div>
@@ -282,12 +282,12 @@
           <label class="ifx-label" for="edit-email">Email</label>
           <input class="ifx-input" id="edit-email" type="email" value="a1@example.com">
         </div>
-        <div class="ifx-form-row ifx-mb-0">
-          <div class="ifx-form-group ifx-mb-0">
+        <div class="ifx-form-row">
+          <div class="ifx-form-group">
             <label class="ifx-label" for="edit-phone">Liên hệ</label>
             <input class="ifx-input" id="edit-phone" value="0900 000 001">
           </div>
-          <div class="ifx-form-group ifx-mb-0">
+          <div class="ifx-form-group">
             <label class="ifx-label" for="edit-region">Khu vực</label>
             <input class="ifx-input" id="edit-region" value="Khu A">
           </div>

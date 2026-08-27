@@ -30,8 +30,8 @@
   <link rel="stylesheet" href="../../../sandbox/assets/reference-layers.css">
 </head>
 <body>
-  <main class="ifx-container ifx-container-max ifx-p-24">
-    <div class="ifx-inline-md ifx-mb-16">
+  <main class="ifx-container ifx-container-max">
+    <div class="ifx-inline-md">
       <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
       <small>P6-W02 · Reference Implementation · compose P1–P5</small>
     </div>
@@ -54,9 +54,9 @@
       </div>
     </header>
 
-    <div class="ifx-grid ifx-mb-24">
+    <div class="ifx-grid ref-page-form-add-layout">
       <div class="ifx-col-12 ifx-col-lg-8">
-        <div class="ifx-flex-col ifx-gap-24">
+        <div class="ifx-flex-col ref-page-form-add-column">
           <div class="ifx-card">
             <div class="ifx-card-header"><h2 class="ifx-card-title">Thông tin</h2></div>
             <div class="ifx-card-body">
@@ -65,16 +65,16 @@
                 <input class="ifx-input" id="ref-name" placeholder="Tên bản ghi">
               </div>
               <div class="ifx-form-row">
-                <div class="ifx-form-group ifx-mb-0">
+                <div class="ifx-form-group">
                   <label class="ifx-label" for="ref-code">Mã</label>
                   <input class="ifx-input" id="ref-code" type="text" placeholder="REC-0001">
                 </div>
-                <div class="ifx-form-group ifx-mb-0">
+                <div class="ifx-form-group">
                   <label class="ifx-label" for="ref-aux">Phụ</label>
                   <input class="ifx-input" id="ref-aux" placeholder="Mã phụ">
                 </div>
               </div>
-              <div class="ifx-form-group ifx-mb-0">
+              <div class="ifx-form-group">
                 <label class="ifx-label" for="ref-desc">Mô tả (tuỳ chọn)</label>
                 <textarea class="ifx-textarea" id="ref-desc" placeholder="Mô tả generic"></textarea>
               </div>
@@ -111,23 +111,23 @@
                 </div>
                 <div class="ifx-col-12 ifx-col-md-8">
                   <div class="ifx-tab-panel is-active" data-ifx-panel="qty">
-                    <p class="ref-page-form-add-group-label ifx-mb-12">Tuỳ chọn</p>
+                    <p class="ref-page-form-add-group-label">Tuỳ chọn</p>
                     <div class="ifx-form-group">
                       <label class="ifx-label" for="ref-qty">Thêm vào tồn</label>
-                      <div class="ifx-flex ifx-gap-sm ifx-items-center">
+                      <div class="ifx-flex ifx-items-center ref-page-form-add-options">
                         <div class="ifx-flex-1">
                           <input class="ifx-input" id="ref-qty" type="number" placeholder="Số lượng">
                         </div>
                         <button type="button" class="ifx-btn ifx-btn-primary">Xác nhận</button>
                       </div>
                     </div>
-                    <small class="ifx-mb-0">Tồn hiện tại: <strong>54</strong></small>
-                    <small class="ifx-mb-0">Đang chuyển: <strong>390</strong></small>
-                    <small class="ifx-mb-0">Cập nhật gần nhất: <strong>24/06/2024</strong></small>
+                    <small>Tồn hiện tại: <strong>54</strong></small>
+                    <small>Đang chuyển: <strong>390</strong></small>
+                    <small>Cập nhật gần nhất: <strong>24/06/2024</strong></small>
                   </div>
                   <div class="ifx-tab-panel" data-ifx-panel="ship">
-                    <p class="ref-page-form-add-group-label ifx-mb-12">Cách xử lý</p>
-                    <div class="ifx-flex-col ifx-gap-12">
+                    <p class="ref-page-form-add-group-label">Cách xử lý</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
                       <label class="ifx-choice">
                         <input type="radio" class="ifx-radio" name="ref-ship">
                         <span>
@@ -145,16 +145,16 @@
                     </div>
                   </div>
                   <div class="ifx-tab-panel" data-ifx-panel="scope">
-                    <p class="ref-page-form-add-group-label ifx-mb-12">Phạm vi</p>
-                    <div class="ifx-flex-col ifx-gap-12">
+                    <p class="ref-page-form-add-group-label">Phạm vi</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
                       <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope"><span class="ifx-choice-title">Toàn cục</span></label>
                       <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope" checked><span class="ifx-choice-title">Một số nhóm</span></label>
                       <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope"><span class="ifx-choice-title">Nội bộ</span></label>
                     </div>
                   </div>
                   <div class="ifx-tab-panel" data-ifx-panel="attr">
-                    <p class="ref-page-form-add-group-label ifx-mb-12">Thuộc tính</p>
-                    <div class="ifx-flex-col ifx-gap-12">
+                    <p class="ref-page-form-add-group-label">Thuộc tính</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
                       <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox"><span class="ifx-choice-title">Dễ vỡ</span></label>
                       <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox"><span class="ifx-choice-title">Phân huỷ được</span></label>
                       <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox" checked><span class="ifx-choice-title">Cần bảo quản lạnh</span></label>
@@ -162,13 +162,13 @@
                     </div>
                   </div>
                   <div class="ifx-tab-panel" data-ifx-panel="adv">
-                    <p class="ref-page-form-add-group-label ifx-mb-12">Nâng cao</p>
+                    <p class="ref-page-form-add-group-label">Nâng cao</p>
                     <div class="ifx-form-row">
-                      <div class="ifx-form-group ifx-mb-0">
+                      <div class="ifx-form-group">
                         <label class="ifx-label" for="ref-id-type">Loại mã</label>
                         <select class="ifx-select" id="ref-id-type"><option>ISBN</option><option>UPC</option><option>EAN</option></select>
                       </div>
-                      <div class="ifx-form-group ifx-mb-0">
+                      <div class="ifx-form-group">
                         <label class="ifx-label" for="ref-id-val">Giá trị mã</label>
                         <input class="ifx-input" id="ref-id-val" placeholder="Mã">
                       </div>
@@ -182,7 +182,7 @@
       </div>
 
       <div class="ifx-col-12 ifx-col-lg-4">
-        <div class="ifx-flex-col ifx-gap-24">
+        <div class="ifx-flex-col ref-page-form-add-column">
           <div class="ifx-card">
             <div class="ifx-card-header"><h2 class="ifx-card-title">Giá trị</h2></div>
             <div class="ifx-card-body">
@@ -194,12 +194,12 @@
                 <label class="ifx-label" for="ref-disc">Giá trị điều chỉnh</label>
                 <input class="ifx-input" id="ref-disc" type="number" placeholder="0">
               </div>
-              <label class="ifx-choice ifx-mb-16">
+              <label class="ifx-choice ref-page-form-add-choice">
                 <input type="checkbox" class="ifx-checkbox" checked>
                 <span class="ifx-choice-title">Áp dụng phụ phí</span>
               </label>
               <hr>
-              <div class="ifx-flex ifx-items-center ifx-justify-between ifx-mt-16">
+              <div class="ifx-flex ifx-items-center ifx-justify-between ref-page-form-add-switch-row">
                 <span class="ref-page-form-add-switch-text">Đang mở</span>
                 <label class="ifx-switch">
                   <input type="checkbox" checked>
@@ -228,7 +228,7 @@
                 <label class="ifx-label" for="ref-status">Trạng thái</label>
                 <select class="ifx-select" id="ref-status"><option>Công bố</option><option>Hẹn giờ</option><option>Nháp</option></select>
               </div>
-              <div class="ifx-form-group ifx-mb-0">
+              <div class="ifx-form-group">
                 <label class="ifx-label" for="ref-tags">Nhãn</label>
                 <input class="ifx-input" id="ref-tags" value="Normal, Standard, Premium">
               </div>

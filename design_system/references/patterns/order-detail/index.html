@@ -31,8 +31,8 @@
   <link rel="stylesheet" href="../../../sandbox/assets/reference-layers.css">
 </head>
 <body>
-  <main class="ifx-container ifx-container-max ifx-p-24">
-    <div class="ifx-inline-md ifx-mb-16">
+  <main class="ifx-container ifx-container-max">
+    <div class="ifx-inline-md">
       <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
       <small>P6-W04 · Reference Implementation · compose P1–P5</small>
     </div>
@@ -64,7 +64,7 @@
 
     <div class="ifx-grid">
       <div class="ifx-col-12 ifx-col-lg-8">
-        <div class="ifx-flex-col ifx-gap-24">
+        <div class="ifx-flex-col ref-page-order-detail-column">
           <div class="ifx-card">
             <div class="ifx-table-wrap">
               <table class="ifx-table">
@@ -83,7 +83,7 @@
                         <span class="ifx-stat-icon" aria-hidden="true"><i class="ti ti-box ifx-icon"></i></span>
                         <span>
                           <span class="ref-module-order-item-name">Mục A</span>
-                          <small class="ifx-block">SKU-4567</small>
+                          <small class="ref-module-order-item-sku">SKU-4567</small>
                         </span>
                       </div>
                     </td>
@@ -97,7 +97,7 @@
                         <span class="ifx-stat-icon ifx-stat-icon-success" aria-hidden="true"><i class="ti ti-package ifx-icon"></i></span>
                         <span>
                           <span class="ref-module-order-item-name">Mục B</span>
-                          <small class="ifx-block">SKU-9485</small>
+                          <small class="ref-module-order-item-sku">SKU-9485</small>
                         </span>
                       </div>
                     </td>
@@ -109,7 +109,7 @@
               </table>
             </div>
             <div class="ifx-card-footer">
-              <div class="ifx-stack-sm ifx-w-full">
+              <div class="ifx-stack-sm ref-page-order-detail-summary">
                 <div class="ifx-flex ifx-justify-between">
                   <small>Tạm tính</small>
                   <span class="ref-page-order-detail-summary-value">2,093</span>
@@ -182,18 +182,18 @@
       </div>
 
       <div class="ifx-col-12 ifx-col-lg-4">
-        <div class="ifx-flex-col ifx-gap-24">
+        <div class="ifx-flex-col ref-page-order-detail-column">
           <div class="ifx-card">
             <div class="ifx-card-header"><h2 class="ifx-card-title">Người liên quan</h2></div>
             <div class="ifx-card-body">
-              <div class="ifx-inline-md ifx-mb-16">
+              <div class="ifx-inline-md ref-page-order-detail-person">
                 <span class="ifx-avatar" aria-hidden="true">A1</span>
                 <span>
                   <span class="ref-module-order-person">Người A</span>
-                  <small class="ifx-block">PER-58909</small>
+                  <small class="ref-module-order-person-id">PER-58909</small>
                 </span>
               </div>
-              <div class="ifx-inline-sm ifx-mb-12">
+              <div class="ifx-inline-sm ref-page-order-detail-record-count">
                 <i class="ti ti-list ifx-icon ifx-icon-sm" aria-hidden="true"></i>
                 <span>12 bản ghi</span>
               </div>
@@ -228,8 +228,8 @@
             <div class="ifx-card-body">
               <p>45 Roker Terrace<br>Latheronwheel<br>KW5 8NW</p>
               <hr>
-              <p class="ref-module-order-group ifx-mb-0">Nhóm A</p>
-              <small class="ifx-mb-0">Mã ****4291</small>
+              <p class="ref-module-order-group">Nhóm A</p>
+              <small>Mã ****4291</small>
             </div>
           </div>
         </div>

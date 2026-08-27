@@ -33,8 +33,8 @@
   <link rel="stylesheet" href="../../../sandbox/assets/reference-layers.css">
 </head>
 <body>
-  <main class="ifx-container ifx-container-max ifx-p-24">
-    <div class="ifx-inline-md ifx-mb-16">
+  <main class="ifx-container ifx-container-max">
+    <div class="ifx-inline-md">
       <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
       <small>P6-W08 · Reference Implementation · compose P1–P5</small>
     </div>
@@ -57,7 +57,7 @@
       </div>
     </header>
 
-    <div class="ifx-stat-strip ifx-mb-24">
+    <div class="ifx-stat-strip ref-page-referrals-stats">
       <div class="ifx-stat">
         <div>
           <div class="ifx-stat-label">Tổng liên kết</div>
@@ -91,7 +91,7 @@
       </div>
     </div>
 
-    <div class="ifx-grid ifx-mb-24">
+    <div class="ifx-grid ref-page-referrals-steps">
       <div class="ifx-col-12 ifx-col-lg-8">
         <div class="ifx-card">
           <div class="ifx-card-header">
@@ -103,21 +103,21 @@
           <div class="ifx-card-body">
             <div class="ifx-grid">
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ifx-gap-8">
+                <div class="ifx-flex-col ref-page-referrals-step">
                   <span class="ifx-avatar ifx-avatar-success" aria-hidden="true"><i class="ti ti-bulb ifx-icon"></i></span>
                   <span class="ref-module-referral-label">Tạo liên kết</span>
                   <small>Bước 1 — mã A1.</small>
                 </div>
               </div>
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ifx-gap-8">
+                <div class="ifx-flex-col ref-page-referrals-step">
                   <span class="ifx-avatar ifx-avatar-info" aria-hidden="true"><i class="ti ti-user-plus ifx-icon"></i></span>
                   <span class="ref-module-referral-label">Mời người mới</span>
                   <small>Bước 2 — gửi email.</small>
                 </div>
               </div>
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ifx-gap-8">
+                <div class="ifx-flex-col ref-page-referrals-step">
                   <span class="ifx-avatar ifx-avatar-warning" aria-hidden="true"><i class="ti ti-send ifx-icon"></i></span>
                   <span class="ref-module-referral-label">Chia sẻ tiếp</span>
                   <small>Bước 3 — liên kết công khai.</small>
@@ -126,16 +126,16 @@
             </div>
             <hr>
             <small>Mạng — số tầng generic, không F0–F2 / hoa hồng.</small>
-            <div class="ifx-flex ifx-w-full">
-              <div class="ifx-flex-1 ifx-text-center">
+            <div class="ifx-flex ref-page-referrals-stat-row">
+              <div class="ifx-flex-1 ref-page-referrals-stat">
                 <div class="ref-page-referrals-stat-value">12</div>
                 <small>Tầng A</small>
               </div>
-              <div class="ifx-flex-1 ifx-text-center">
+              <div class="ifx-flex-1 ref-page-referrals-stat">
                 <div class="ref-page-referrals-stat-value">48</div>
                 <small>Tầng B</small>
               </div>
-              <div class="ifx-flex-1 ifx-text-center">
+              <div class="ifx-flex-1 ref-page-referrals-stat">
                 <div class="ref-page-referrals-stat-value">9</div>
                 <small>Tầng C</small>
               </div>
@@ -152,14 +152,14 @@
           <div class="ifx-card-body">
             <div class="ifx-form-group">
               <label class="ifx-label" for="ref-email">Email</label>
-              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ifx-gap-8">
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ref-page-referrals-invite">
                 <input class="ifx-input ifx-flex-1" id="ref-email" type="email" placeholder="a2@example.com">
                 <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi">Gửi</button>
               </div>
             </div>
-            <div class="ifx-form-group ifx-mb-0">
+            <div class="ifx-form-group">
               <label class="ifx-label" for="ref-link">Liên kết</label>
-              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ifx-gap-8">
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ref-page-referrals-invite">
                 <input class="ifx-input ifx-flex-1" id="ref-link" type="text" value="https://example.com/s/A1" readonly>
                 <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-toast="success" data-ifx-toast-msg="Đã sao chép">
                   <i class="ti ti-copy ifx-icon ifx-icon-sm"></i> Sao chép

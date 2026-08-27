@@ -3,7 +3,8 @@
 **Ngày:** 2026-08-27  
 **SOP:** `new_solution.md` / `03_Solution.md`  
 **Delivery:** Option B = `sandbox/assets/reference-layers.css`  
-**typography.css:** EXECUTION COMPLETE · OWNER_ACCEPTANCE PENDING · `01c_typography_execution.md`
+**typography.css:** EXECUTION COMPLETE · OWNER_ACCEPTANCE PENDING · `01c_typography_execution.md`  
+**utilities.css:** EXECUTION COMPLETE · OWNER_ACCEPTANCE PENDING · `02c_utilities_execution.md`
 
 ---
 

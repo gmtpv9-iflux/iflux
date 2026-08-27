@@ -278,19 +278,6 @@
 }
 .sb-pg-grid { margin-bottom: var(--ifx-stack-lg); }
 .sb-pg-abc { margin-bottom: var(--ifx-stack-lg); }
-.sb-pg-gap-row { align-items: center; }
-.sb-pg-gap-label {
-  flex: 0 0 4.5rem;
-  font-family: var(--ifx-font-mono);
-  font-size: var(--ifx-font-size-2xs);
-  color: var(--ifx-text-muted);
-}
-.sb-pg-gap-row i {
-  width: var(--ifx-space-40);
-  height: var(--ifx-space-16);
-  background: var(--ifx-action-primary);
-  border-radius: var(--ifx-radius-xs);
-}
 
 .sb-vp-bar {
   display: flex;

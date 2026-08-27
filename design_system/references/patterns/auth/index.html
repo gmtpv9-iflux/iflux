@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="../../../sandbox/assets/reference-layers.css">
 </head>
 <body>
-  <main class="ifx-container ifx-container-max ifx-p-24">
-    <div class="ifx-inline-md ifx-mb-16">
+  <main class="ifx-container ifx-container-max">
+    <div class="ifx-inline-md">
       <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="refThemeToggle">Theme: Dark</button>
       <small>P6-W10 · Reference Implementation · compose P1–P5</small>
     </div>
@@ -62,7 +62,7 @@
             </div>
           </div>
           <div class="ifx-card-body">
-            <div class="ifx-tabs ifx-mb-16" data-ifx-tabs>
+            <div class="ifx-tabs ref-page-auth-tabs" data-ifx-tabs>
               <button type="button" class="ifx-tab is-active" data-ifx-tab="in">Vào</button>
               <button type="button" class="ifx-tab" data-ifx-tab="new">Tạo</button>
               <button type="button" class="ifx-tab" data-ifx-tab="reset">Quên</button>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="ifx-tab-panel is-active" data-ifx-panel="in">
-              <div class="ifx-alert ifx-alert-info ifx-mb-16">
+              <div class="ifx-alert ifx-alert-info ref-page-auth-alert">
                 <div>
                   <div class="ifx-alert-title">Demo</div>
                   <div class="ifx-alert-text">Không gọi runtime. Chỉ compose form.</div>
@@ -90,10 +90,10 @@
                   <span class="ifx-choice-title">Ghi nhớ trên máy này</span>
                 </label>
               </div>
-              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã vào — demo">
+              <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit" data-ifx-toast="success" data-ifx-toast-msg="Đã vào — demo">
                 <i class="ti ti-login ifx-icon ifx-icon-sm"></i> Vào
               </button>
-              <button type="button" class="ifx-btn ifx-btn-outline ifx-w-full ifx-mt-8" data-ifx-toast="info" data-ifx-toast-msg="Liên kết ngoài — demo">
+              <button type="button" class="ifx-btn ifx-btn-outline ref-page-auth-alt" data-ifx-toast="info" data-ifx-toast-msg="Liên kết ngoài — demo">
                 Tiếp tục bằng liên kết
               </button>
             </div>
@@ -117,7 +117,7 @@
                   <span class="ifx-choice-title">Đồng ý điều khoản</span>
                 </label>
               </div>
-              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi yêu cầu — demo">Tạo</button>
+              <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi yêu cầu — demo">Tạo</button>
             </div>
 
             <div class="ifx-tab-panel" data-ifx-panel="reset">
@@ -125,7 +125,7 @@
                 <label class="ifx-label" for="auth-email-reset">Email</label>
                 <input class="ifx-input" id="auth-email-reset" type="email" placeholder="a1@example.com">
               </div>
-              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi hướng dẫn — demo">
+              <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi hướng dẫn — demo">
                 <i class="ti ti-send ifx-icon ifx-icon-sm"></i> Gửi
               </button>
             </div>
@@ -133,10 +133,10 @@
             <div class="ifx-tab-panel" data-ifx-panel="code">
               <div class="ifx-form-group">
                 <label class="ifx-label" for="auth-code">Mã 6 số</label>
-                <input class="ifx-input ifx-text-center" id="auth-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                <input class="ifx-input ref-page-auth-otp" id="auth-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
                 <small>Làm mới theo chu kỳ. Không chia sẻ.</small>
               </div>
-              <button type="button" class="ifx-btn ifx-btn-primary ifx-w-full" data-ifx-toast="success" data-ifx-toast-msg="Đã xác nhận — demo">Xác nhận</button>
+              <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit" data-ifx-toast="success" data-ifx-toast-msg="Đã xác nhận — demo">Xác nhận</button>
             </div>
           </div>
         </div>

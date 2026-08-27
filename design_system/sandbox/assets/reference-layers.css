@@ -65,6 +65,10 @@
  */
 .ref-module-order-item-name {
 }
+.ref-module-order-item-sku {
+}
+.ref-module-order-person-id {
+}
 .ref-module-order-group {
 }
 
@@ -74,9 +78,18 @@
 /* ---------- chat ---------- */
 /**
  * SOURCE: migrated from typography.css (.ifx-typo-title-sm / .ifx-typo-title-md)
+ *         + utilities.css (.ifx-p-16 / .ifx-gap-8 / .ifx-w-full)
  * FUTURE OWNER: modules/conversation/
  */
 .ref-module-chat-person {
+}
+.ref-module-chat-thread-section {
+}
+.ref-module-chat-section-label {
+}
+.ref-module-chat-actions {
+}
+.ref-module-chat-action {
 }
 
 /* ---------- referrals ---------- */
@@ -104,6 +117,10 @@
  */
 .ref-page-table-list-primary {
 }
+.ref-page-table-list-stats {
+}
+.ref-page-table-list-filters {
+}
 
 /* ---------- form-add ---------- */
 /**
@@ -114,8 +131,26 @@
 }
 .ref-page-form-add-switch-text {
 }
+.ref-page-form-add-layout {
+}
+.ref-page-form-add-column {
+}
+.ref-page-form-add-options {
+}
+.ref-page-form-add-choice-list {
+}
+.ref-page-form-add-choice {
+}
+.ref-page-form-add-switch-row {
+}
 
 /* ---------- order-list ---------- */
+/**
+ * SOURCE: migrated from utilities.css (.ifx-mb-24)
+ * FUTURE OWNER: pages/.../order-list/
+ */
+.ref-page-order-list-stats {
+}
 
 /* ---------- order-detail ---------- */
 /**
@@ -127,6 +162,14 @@
 .ref-page-order-detail-total {
 }
 .ref-page-order-detail-total-label {
+}
+.ref-page-order-detail-column {
+}
+.ref-page-order-detail-summary {
+}
+.ref-page-order-detail-person {
+}
+.ref-page-order-detail-record-count {
 }
 
 /* ---------- user-profile ---------- */
@@ -140,9 +183,40 @@
 }
 .ref-page-user-profile-setting-title {
 }
+.ref-page-user-profile-identity {
+}
+.ref-page-user-profile-stats {
+}
+.ref-page-user-profile-stat {
+}
+.ref-page-user-profile-actions {
+}
+.ref-page-user-profile-tabs {
+}
+.ref-page-user-profile-settings {
+}
+.ref-page-user-profile-setting-row {
+}
 
 /* ---------- wizard ---------- */
+/**
+ * SOURCE: migrated from utilities.css (.ifx-mt-16 / .ifx-mb-16)
+ * FUTURE OWNER: pages/.../wizard/
+ */
+.ref-page-wizard-step-grid {
+}
+.ref-page-wizard-step-row {
+}
+
 /* ---------- chat ---------- */
+/**
+ * SOURCE: migrated from utilities.css (.ifx-text-center / .ifx-mb-*)
+ * FUTURE OWNER: pages/.../chat/
+ */
+.ref-page-chat-identity {
+}
+.ref-page-chat-meta {
+}
 
 /* ---------- referrals ---------- */
 /**
@@ -151,9 +225,42 @@
  */
 .ref-page-referrals-stat-value {
 }
+.ref-page-referrals-stats {
+}
+.ref-page-referrals-steps {
+}
+.ref-page-referrals-step {
+}
+.ref-page-referrals-stat-row {
+}
+.ref-page-referrals-stat {
+}
+.ref-page-referrals-invite {
+}
 
 /* ---------- charts ---------- */
+/**
+ * SOURCE: migrated from utilities.css (.ifx-mb-24)
+ * FUTURE OWNER: pages/.../charts/
+ */
+.ref-page-charts-section {
+}
+
 /* ---------- auth ---------- */
+/**
+ * SOURCE: migrated from utilities.css (.ifx-w-full / .ifx-text-center / .ifx-mb-16 / .ifx-mt-8)
+ * FUTURE OWNER: pages/.../auth/
+ */
+.ref-page-auth-tabs {
+}
+.ref-page-auth-alert {
+}
+.ref-page-auth-submit {
+}
+.ref-page-auth-alt {
+}
+.ref-page-auth-otp {
+}
 
 /* =========================================================
  * LAYER 5 — WIDGET
