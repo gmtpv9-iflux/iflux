@@ -94,7 +94,7 @@
   --ifx-text-body-sm-tracking: var(--ifx-letter-spacing-normal);
 
   /* ── Caption / Overline ── */
-  --ifx-text-caption-size: var(--ifx-font-size-xs);
+  --ifx-text-caption-size: var(--ifx-font-size-sm);
   --ifx-text-caption-weight: var(--ifx-font-weight-regular);
   --ifx-text-caption-line: var(--ifx-line-height-normal);
   --ifx-text-caption-tracking: var(--ifx-letter-spacing-normal);
@@ -321,7 +321,6 @@ caption {
 .ifx-typo-body-md { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-body-md-size); font-weight: var(--ifx-text-body-md-weight); line-height: var(--ifx-text-body-md-line); letter-spacing: var(--ifx-text-body-md-tracking); }
 .ifx-typo-body-sm { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-body-sm-size); font-weight: var(--ifx-text-body-sm-weight); line-height: var(--ifx-text-body-sm-line); letter-spacing: var(--ifx-text-body-sm-tracking); }
 
-.ifx-typo-caption { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-caption-size); font-weight: var(--ifx-text-caption-weight); line-height: var(--ifx-text-caption-line); letter-spacing: var(--ifx-text-caption-tracking); color: var(--ifx-text-muted); }
 .ifx-typo-overline { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-overline-size); font-weight: var(--ifx-text-overline-weight); line-height: var(--ifx-text-overline-line); letter-spacing: var(--ifx-text-overline-tracking); text-transform: uppercase; }
 
 .ifx-typo-label-lg { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-label-lg-size); font-weight: var(--ifx-text-label-lg-weight); line-height: var(--ifx-text-label-lg-line); }
