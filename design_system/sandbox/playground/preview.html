@@ -13,31 +13,42 @@
   <link rel="stylesheet" href="../../foundation/typography.css">
   <link rel="stylesheet" href="../../foundation/layout.css">
   <link rel="stylesheet" href="../../foundation/utilities.css">
+  <link rel="stylesheet" href="../../primitives/title/title.css">
   <link rel="stylesheet" href="../assets/sandbox.css">
 </head>
 <body class="sb-preview-isolate">
   <div class="sb-pg-vp-shell" id="pgVpShell">
-    <p class="sb-pg-vp-caption ifx-typo-overline">viewport = iframe logical width</p>
+    <p class="sb-kicker sb-pg-vp-caption">viewport = iframe logical width</p>
 
-    <p class="sb-sub-title">.ifx-container — full width + gutter token</p>
+    <div class="sb-pg-vp-label">
+    <div class="ifx-section-title">
+      <h2>.ifx-container — full width + gutter token</h2>
+    </div>
+    </div>
     <div class="ifx-container sb-pg-gutter-viz" id="pgFluid">
       <div class="sb-pg-content-fill" id="pgFluidInner">CONTENT</div>
     </div>
 
-    <p class="sb-sub-title">.ifx-container.ifx-container-max — max 1280px</p>
+    <div class="sb-pg-vp-label">
+    <div class="ifx-section-title">
+      <h2>.ifx-container.ifx-container-max — max 1280px</h2>
+    </div>
+    </div>
     <div class="ifx-container ifx-container-max sb-pg-gutter-viz" id="pgMax">
       <div class="sb-pg-content-fill" id="pgMaxInner">CONTENT</div>
     </div>
   </div>
 
   <div class="sb-preview">
-    <h3 class="sb-sub-title">Grid Width Test — span độc lập</h3>
-    <p class="sb-section-desc">
+    <div class="ifx-section-title">
+      <h2>Grid Width Test — span độc lập</h2>
+      <p>
       Class canonical <code id="pgSpanClass">.ifx-col-6</code>
       · width <strong id="pgSpanPx">—</strong>
       · <strong id="pgSpanShare">6/12 = 50%</strong>
       · of grid <strong id="pgSpanPct">—</strong>
     </p>
+    </div>
     <div class="ifx-grid sb-pg-ruler" id="pgRuler" aria-hidden="true">
       <i class="ifx-col-1"></i><i class="ifx-col-1"></i><i class="ifx-col-1"></i><i class="ifx-col-1"></i>
       <i class="ifx-col-1"></i><i class="ifx-col-1"></i><i class="ifx-col-1"></i><i class="ifx-col-1"></i>
@@ -48,11 +59,13 @@
       <div id="pgSpanRest" class="ifx-col-6 sb-pg-cell sb-pg-span-rest">phần còn lại 6/12</div>
     </div>
 
-    <h3 class="sb-sub-title">Responsive Composition</h3>
-    <p class="sb-section-desc">
+    <div class="ifx-section-title">
+      <h2>Responsive Composition</h2>
+      <p>
       <code>ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3</code> →
       BASE 1 cột · md 2 · lg 3 · 2xl 4. Không thay Grid Width Test.
     </p>
+    </div>
     <div class="ifx-grid sb-pg-grid">
       <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">1</div>
       <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">2</div>
@@ -64,20 +77,24 @@
       <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-4 ifx-col-2xl-3 sb-pg-cell">8</div>
     </div>
 
-    <h3 class="sb-sub-title">Stack → Inline</h3>
-    <p class="sb-section-desc">BASE: A B C xếp dọc · từ md (≥ 768px): xếp ngang.</p>
+    <div class="ifx-section-title">
+      <h2>Stack → Inline</h2>
+      <p>BASE: A B C xếp dọc · từ md (≥ 768px): xếp ngang.</p>
+    </div>
     <div class="ifx-flex-col ifx-flex-row-md ifx-gap-md sb-pg-abc">
       <div class="sb-pg-cell ifx-flex-1">A</div>
       <div class="sb-pg-cell ifx-flex-1">B</div>
       <div class="sb-pg-cell ifx-flex-1">C</div>
     </div>
 
-    <h3 class="sb-sub-title">Gap / Spacing</h3>
-    <p class="sb-section-desc">
+    <div class="ifx-section-title">
+      <h2>Gap / Spacing</h2>
+      <p>
       Token: <code>--ifx-space-container</code> = <strong id="pgTokContainer">—</strong> ·
       <code>--ifx-grid-gutter</code> = <strong id="pgTokGutter">—</strong> ·
       <code>--ifx-space-section</code> = <strong id="pgTokSection">—</strong>
     </p>
+    </div>
     <div class="ifx-stack-sm">
       <div class="ifx-flex ifx-gap-xs sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xs</span><i></i><i></i><i></i><i></i></div>
       <div class="ifx-flex ifx-gap-sm sb-pg-gap-row"><span class="sb-pg-gap-label">gap-sm</span><i></i><i></i><i></i><i></i></div>
@@ -86,10 +103,12 @@
       <div class="ifx-flex ifx-gap-xl sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xl</span><i></i><i></i><i></i><i></i></div>
     </div>
 
-    <h3 class="sb-sub-title">Typography responsive</h3>
-    <p class="sb-section-desc">
+    <div class="ifx-section-title">
+      <h2>Typography responsive</h2>
+      <p>
       <strong>N/A — Typography dùng fixed token scale, responsive do composition quyết định.</strong>
     </p>
+    </div>
   </div>
 
   <script src="../../tokens/generated/js/breakpoints.js"></script>

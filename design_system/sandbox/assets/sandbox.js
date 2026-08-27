@@ -474,6 +474,7 @@
       .then(function (html) {
         stage.innerHTML = html;
         showPanel(panel);
+        ensureHref('../primitives/title/title.css', 'css');
         if (id === 'tokens') renderTokens();
         if (id === 'foundation') {
           bindPlayground();

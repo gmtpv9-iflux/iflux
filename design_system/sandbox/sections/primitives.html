@@ -13,8 +13,10 @@
 <div class="sb-panel" data-sb-panel="title" hidden>
 <section class="sb-section" id="prim-title">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/title/title.css</code></p>
-  <h2 class="sb-section-title">Title</h2>
-  <p class="sb-section-desc">Context heading + optional <code>p</code>. <code>h1</code>/<code>h2</code>/<code>h3</code> lấy style từ Foundation. Title Primitive chỉ set 2 declaration trên <code>p</code>.</p>
+  <div class="ifx-section-title">
+      <h2>Title</h2>
+      <p>Context heading + optional <code>p</code>. <code>h1</code>/<code>h2</code>/<code>h3</code> lấy style từ Foundation. Title Primitive chỉ set 2 declaration trên <code>p</code>.</p>
+    </div>
 
   <p class="sb-kicker">Page Title</p>
   <div class="ifx-page-title">
@@ -47,8 +49,10 @@
 <div class="sb-panel" data-sb-panel="button" hidden>
 <section class="sb-section" id="prim-button">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/button/button.css</code></p>
-<h2 class="sb-section-title">Button</h2>
-  <p class="sb-section-desc"><code>.ifx-btn</code> · tone · size · icon · disabled. Hover/active = CSS.</p>
+<div class="ifx-section-title">
+      <h2>Button</h2>
+      <p><code>.ifx-btn</code> · tone · size · icon · disabled. Hover/active = CSS.</p>
+    </div>
   <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
     <button type="button" class="ifx-btn ifx-btn-primary">Primary</button>
     <button type="button" class="ifx-btn ifx-btn-secondary">Secondary</button>
@@ -59,7 +63,9 @@
     <button type="button" class="ifx-btn ifx-btn-ghost">Ghost</button>
     <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Tìm"><i class="ti ti-search ifx-icon"></i></button>
   </div>
-  <p class="sb-sub-title">Size + disabled</p>
+  <div class="ifx-widget-title">
+      <h3>Size + disabled</h3>
+    </div>
   <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
     <button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm">Small</button>
     <button type="button" class="ifx-btn ifx-btn-primary">Medium</button>
@@ -72,7 +78,9 @@
 <div class="sb-panel" data-sb-panel="chip" hidden>
 <section class="sb-section" id="prim-chip">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/chip/chip.css</code></p>
-<h2 class="sb-section-title">Chip</h2>
+<div class="ifx-section-title">
+      <h2>Chip</h2>
+    </div>
   <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
     <span class="ifx-chip ifx-chip-primary">Primary</span>
     <span class="ifx-chip ifx-chip-success">Success</span>
@@ -86,7 +94,9 @@
 <div class="sb-panel" data-sb-panel="badge" hidden>
 <section class="sb-section" id="prim-badge">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/badge/badge.css</code></p>
-<h2 class="sb-section-title">Badge</h2>
+<div class="ifx-section-title">
+      <h2>Badge</h2>
+    </div>
   <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
     <span class="ifx-badge ifx-badge-primary">Primary</span>
     <span class="ifx-badge ifx-badge-success">Success</span>
@@ -103,8 +113,10 @@
 <div class="sb-panel" data-sb-panel="avatar" hidden>
 <section class="sb-section" id="prim-avatar">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/avatar/avatar.css</code></p>
-<h2 class="sb-section-title">Avatar</h2>
-  <p class="sb-section-desc">Size token <code>--ifx-size-avatar-sm|md|lg</code> (28 / 36 / 48).</p>
+<div class="ifx-section-title">
+      <h2>Avatar</h2>
+      <p>Size token <code>--ifx-size-avatar-sm|md|lg</code> (28 / 36 / 48).</p>
+    </div>
   <div class="ifx-flex ifx-flex-wrap ifx-gap-md">
     <span class="ifx-avatar ifx-avatar-sm">A</span>
     <span class="ifx-avatar">B</span>
@@ -124,7 +136,9 @@
 <div class="sb-panel" data-sb-panel="alert" hidden>
 <section class="sb-section" id="prim-alert">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/alert/alert.css</code></p>
-<h2 class="sb-section-title">Alert</h2>
+<div class="ifx-section-title">
+      <h2>Alert</h2>
+    </div>
   <div class="ifx-stack-sm">
     <div class="ifx-alert ifx-alert-primary"><div><div class="ifx-alert-title">Primary</div><div class="ifx-alert-text">Thông báo generic — không business copy.</div></div></div>
     <div class="ifx-alert ifx-alert-success"><div><div class="ifx-alert-title">Success</div><div class="ifx-alert-text">Hành động hoàn tất.</div></div></div>
@@ -137,8 +151,10 @@
 <div class="sb-panel" data-sb-panel="progress" hidden>
 <section class="sb-section" id="prim-progress">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/progress/progress.css</code></p>
-<h2 class="sb-section-title">Progress</h2>
-  <p class="sb-section-desc">Fill = <code>--ifx-progress-value</code> (sandbox set qua class demo, không inline style).</p>
+<div class="ifx-section-title">
+      <h2>Progress</h2>
+      <p>Fill = <code>--ifx-progress-value</code> (sandbox set qua class demo, không inline style).</p>
+    </div>
   <div class="ifx-stack-md">
     <div class="ifx-progress sb-pv-25"><span class="ifx-progress-bar"></span></div>
     <div class="ifx-progress ifx-progress-success sb-pv-50"><span class="ifx-progress-bar"></span></div>
@@ -151,11 +167,13 @@
 <div class="sb-panel" data-sb-panel="nav" hidden>
 <section class="sb-section" id="prim-nav">
   <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/navigation/nav.css</code></p>
-<h2 class="sb-section-title">Navigation primitives</h2>
-  <p class="sb-section-desc">
+<div class="ifx-section-title">
+      <h2>Navigation primitives</h2>
+      <p>
     Chỉ <code>nav-item / icon / label / group / divider</code> + state.
     Không side-nav, top-bar, bottom-nav — structure thuộc platform.
   </p>
+    </div>
   <div class="ifx-nav-group" id="navDemo">
     <div class="ifx-nav-group-label">Nhóm A</div>
     <button type="button" class="ifx-nav-item is-active">

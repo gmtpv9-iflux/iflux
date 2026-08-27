@@ -1,6 +1,9 @@
 /**
  * Sandbox chrome only. Không define / override .ifx-*.
  * Consume token + foundation. Media literal 5 mốc LOCK.
+ * Title / description = Title Primitive
+ * (.ifx-page-title / .ifx-section-title / .ifx-widget-title).
+ * Cấm .sb-title .sb-subtitle .sb-section-title .sb-sub-title .sb-section-desc.
  */
 .sb-header {
   display: flex;
@@ -15,19 +18,6 @@
   top: 0;
   z-index: var(--ifx-z-topnav);
 }
-.sb-title {
-  margin: 0;
-  font-size: var(--ifx-font-size-lg);
-  font-weight: var(--ifx-font-weight-semibold);
-  line-height: var(--ifx-line-height-normal);
-  color: var(--ifx-text-primary);
-}
-.sb-subtitle {
-  margin: 0;
-  color: var(--ifx-text-secondary);
-  font-size: var(--ifx-font-size-xs);
-}
-
 .sb-nav {
   display: flex;
   gap: var(--ifx-gap-xs);
@@ -80,22 +70,6 @@
 }
 
 .sb-section { margin-bottom: var(--ifx-stack-lg); }
-.sb-section-title {
-  margin: 0 0 var(--ifx-stack-xs);
-  font-size: var(--ifx-font-size-xl);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
-}
-.sb-sub-title {
-  margin: var(--ifx-stack-md) 0 var(--ifx-stack-xs);
-  font-size: var(--ifx-font-size-md);
-  font-weight: var(--ifx-font-weight-semibold);
-}
-.sb-section-desc {
-  margin: 0 0 var(--ifx-stack-md);
-  color: var(--ifx-text-secondary);
-  font-size: var(--ifx-font-size-sm);
-}
 
 .sb-source {
   display: flex;
@@ -260,7 +234,7 @@
   margin: 0 var(--ifx-space-12) var(--ifx-space-8);
   color: var(--ifx-text-muted);
 }
-.sb-pg-vp-shell .sb-sub-title { margin-inline: var(--ifx-space-12); }
+.sb-pg-vp-label { margin-inline: var(--ifx-space-12); }
 .sb-pg-gutter-viz {
   background: var(--ifx-action-primary-soft);
   outline: 1px dashed var(--ifx-action-primary);

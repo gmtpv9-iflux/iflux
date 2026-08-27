@@ -18,11 +18,13 @@
 
 <div class="sb-panel" data-sb-panel="ownership" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Ownership</h2>
+    <div class="ifx-section-title">
+      <h2>Ownership</h2>
+    </div>
     <ul>
       <li>P1 Tokens — JSON SoT, generated CSS/JS readonly</li>
       <li>P2 Foundation — typography, layout, icons, utilities</li>
-      <li>P3 Primitives — button, chip, badge, avatar, alert, progress, nav</li>
+      <li>P3 Primitives — button, chip, badge, avatar, alert, progress, nav, title</li>
       <li>P4 Components — card, stat, table, pagination, …</li>
       <li>P5 Patterns — page-header, data-list, compose only</li>
       <li>P6 References — candidate pages, không phải layer DS</li>
@@ -33,7 +35,9 @@
 
 <div class="sb-panel" data-sb-panel="dependency" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Dependency</h2>
+    <div class="ifx-section-title">
+      <h2>Dependency</h2>
+    </div>
     <p>Sandbox → Canonical DS. Không chiều ngược.</p>
     <p>Xóa <code>design_system/sandbox/</code> → Canonical DS vẫn đầy đủ.</p>
     <p>Xóa <code>design_system/references/</code> → Canonical DS vẫn đầy đủ.</p>
@@ -44,11 +48,13 @@
 
 <div class="sb-panel" data-sb-panel="naming" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Naming</h2>
+    <div class="ifx-section-title">
+      <h2>Naming</h2>
+    </div>
     <ul>
       <li>Token / class canonical: <code>--ifx-*</code> / <code>.ifx-*</code></li>
       <li>Cấm <code>.ix-*</code> trong Canonical DS</li>
-      <li>Sandbox chrome: <code>.sb-*</code> — shell, nav, iframe host, metadata, catalog</li>
+      <li>Sandbox chrome: <code>.sb-*</code> — shell, nav, iframe host, metadata, catalog. Title / mô tả = Title Primitive, không <code>.sb-*-title</code></li>
       <li>Sandbox không define / override <code>.ifx-btn</code>, <code>.ifx-grid</code>, <code>.ifx-table</code>, …</li>
     </ul>
   </section>
@@ -56,7 +62,9 @@
 
 <div class="sb-panel" data-sb-panel="migration" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Migration</h2>
+    <div class="ifx-section-title">
+      <h2>Migration</h2>
+    </div>
     <ul>
       <li>Không xóa <code>/Admin_Design_system/</code></li>
       <li>Không migrate production pages trong Sub-01</li>

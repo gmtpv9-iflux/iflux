@@ -10,9 +10,11 @@
 
 <div class="sb-panel" data-sb-panel="responsive">
   <section class="sb-section">
-    <h2 class="sb-section-title">Responsive Playground</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 Foundation <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code> · <code>tokens/source/breakpoints.json</code></p>
-    <p class="sb-section-desc">Hai input độc lập trên một preview iframe. JS chỉ đổi class/viewport và đọc computed — không set width giả CSS.</p>
+    <div class="ifx-section-title">
+      <h2>Responsive Playground</h2>
+      <p>Hai input độc lập trên một preview iframe. JS chỉ đổi class/viewport và đọc computed — không set width giả CSS.</p>
+    </div>
     <p class="sb-kicker">A. Viewport</p>
     <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport">
       <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
@@ -65,9 +67,11 @@
 
 <div class="sb-panel" data-sb-panel="grid" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Grid 12 cột</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
-    <p class="sb-section-desc">BASE mỗi cell span 12. Mở rộng bằng <code>.ifx-col-{n}</code> và <code>.ifx-col-md-*</code>.</p>
+    <div class="ifx-section-title">
+      <h2>Grid 12 cột</h2>
+      <p>BASE mỗi cell span 12. Mở rộng bằng <code>.ifx-col-{n}</code> và <code>.ifx-col-md-*</code>.</p>
+    </div>
     <div class="ifx-grid">
       <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
       <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
@@ -78,9 +82,11 @@
 
 <div class="sb-panel" data-sb-panel="container" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Container</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
-    <p class="sb-section-desc"><code>.ifx-container</code> full + gutter token. <code>.ifx-container-max</code> opt-in 1280.</p>
+    <div class="ifx-section-title">
+      <h2>Container</h2>
+      <p><code>.ifx-container</code> full + gutter token. <code>.ifx-container-max</code> opt-in 1280.</p>
+    </div>
     <div class="ifx-container sb-pg-gutter-viz">
       <div class="sb-pg-content-fill">.ifx-container</div>
     </div>
@@ -92,16 +98,20 @@
 
 <div class="sb-panel" data-sb-panel="spacing" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Spacing / Layout</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/utilities.css</code></p>
-    <p class="sb-section-desc">Stack / inline / gap consume spacing token.</p>
+    <div class="ifx-section-title">
+      <h2>Spacing / Layout</h2>
+      <p>Stack / inline / gap consume spacing token.</p>
+    </div>
     <div class="ifx-stack-sm">
       <div class="ifx-flex ifx-gap-xs sb-pg-gap-row"><span class="sb-pg-gap-label">gap-xs</span><i></i><i></i><i></i></div>
       <div class="ifx-flex ifx-gap-sm sb-pg-gap-row"><span class="sb-pg-gap-label">gap-sm</span><i></i><i></i><i></i></div>
       <div class="ifx-flex ifx-gap-md sb-pg-gap-row"><span class="sb-pg-gap-label">gap-md</span><i></i><i></i><i></i></div>
       <div class="ifx-flex ifx-gap-lg sb-pg-gap-row"><span class="sb-pg-gap-label">gap-lg</span><i></i><i></i><i></i></div>
     </div>
-    <h3 class="sb-sub-title">Stack → Inline</h3>
+    <div class="ifx-widget-title">
+      <h3>Stack → Inline</h3>
+    </div>
     <div class="ifx-flex-col ifx-flex-row-md ifx-gap-md sb-pg-abc">
       <div class="sb-pg-cell ifx-flex-1">A</div>
       <div class="sb-pg-cell ifx-flex-1">B</div>
@@ -112,11 +122,15 @@
 
 <div class="sb-panel" data-sb-panel="typography" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Typography</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/typography.css</code></p>
-    <p class="sb-section-desc">HTML semantic ≠ visual role. Heading không class = SEO contract.</p>
+    <div class="ifx-section-title">
+      <h2>Typography</h2>
+      <p>HTML semantic ≠ visual role. Heading không class = SEO contract.</p>
+    </div>
 
-    <h3 class="sb-sub-title">Semantic HTML</h3>
+    <div class="ifx-widget-title">
+      <h3>Semantic HTML</h3>
+    </div>
     <div class="sb-typo-sample">
       <h1>h1 — Tiêu đề trang</h1>
       <h2>h2 — Nhóm nội dung</h2>
@@ -140,7 +154,9 @@
       </table>
     </div>
 
-    <h3 class="sb-sub-title">Visual roles — .ifx-typo-*</h3>
+    <div class="ifx-widget-title">
+      <h3>Visual roles — .ifx-typo-*</h3>
+    </div>
     <div class="ifx-stack-sm">
       <p class="ifx-typo-display-xl">Display XL</p>
       <p class="ifx-typo-display-l">Display L</p>
@@ -176,9 +192,11 @@
 
 <div class="sb-panel" data-sb-panel="icons" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Icon Catalog</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/icons/vendor/tabler/</code></p>
-    <p class="sb-section-desc">Source: <strong id="iconSourceCount">—</strong> · Canonical: <strong id="iconCanonCount">—</strong> · Missing: <strong id="iconMissing">—</strong></p>
+    <div class="ifx-section-title">
+      <h2>Icon Catalog</h2>
+      <p>Source: <strong id="iconSourceCount">—</strong> · Canonical: <strong id="iconCanonCount">—</strong> · Missing: <strong id="iconMissing">—</strong></p>
+    </div>
     <div class="sb-icon-toolbar">
       <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon" autocomplete="off">
       <span id="iconPageInfo">—</span>
@@ -188,15 +206,17 @@
       <button type="button" class="sb-vp-btn" id="iconPrev">Trước</button>
       <button type="button" class="sb-vp-btn" id="iconNext">Sau</button>
     </div>
-    <p class="sb-section-desc" id="iconDetail">Bấm một icon để xem class.</p>
+    <p id="iconDetail">Bấm một icon để xem class.</p>
   </section>
 </div>
 
 <div class="sb-panel" data-sb-panel="theme" hidden>
   <section class="sb-section">
-    <h2 class="sb-section-title">Theme</h2>
     <p class="sb-source"><span class="sb-source-k">Layer</span> P1 + adapter <span class="sb-source-k">Source</span> <code>tokens/generated/css/themes/</code> · <code>adapters/web/theme.js</code></p>
-    <p class="sb-section-desc">Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Foundation không biết DOM.</p>
+    <div class="ifx-section-title">
+      <h2>Theme</h2>
+      <p>Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Foundation không biết DOM.</p>
+    </div>
     <p>Theme hiện tại đổi toàn catalog. Không logic theme local.</p>
   </section>
 </div>

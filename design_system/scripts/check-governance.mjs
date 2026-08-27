@@ -136,12 +136,21 @@ if (missingCols.length) {
   process.exit(1);
 }
 
-/* Sandbox chrome không được define / override selector canonical .ifx-* */
 const sandboxRoot = path.join(DS, 'sandbox');
 if (fs.existsSync(sandboxRoot)) {
   for (const file of walk(sandboxRoot)) {
-    if (path.extname(file) !== '.css') continue;
-    const css = stripComments(fs.readFileSync(file, 'utf8'), '.css');
+    const ext = path.extname(file);
+    const raw = fs.readFileSync(file, 'utf8');
+    if (ext === '.html') {
+      const html = stripComments(raw, '.html');
+      const cls = html.match(/class\s*=\s*["'][^"']*\b(sb-section-title|sb-sub-title|sb-section-desc|sb-subtitle|sb-title)\b[^"']*/g);
+      if (cls) violate(file, 'sandbox-dead-title', cls.join(' | '));
+    }
+    if (ext !== '.css') continue;
+    const css = stripComments(raw, '.css');
+    if (/\.sb-(section-title|sub-title|section-desc|subtitle|title)(?![\w-])/.test(css)) {
+      violate(file, 'sandbox-dead-title', 'selector .sb-*-title / .sb-section-desc');
+    }
     css.split('}').forEach((chunk) => {
       const sel = chunk.split('{')[0];
       const hits = sel.match(/(?<![\w-])\.ifx-[\w-]+/g);
@@ -149,7 +158,12 @@ if (fs.existsSync(sandboxRoot)) {
     });
   }
 }
+if (violations.length > 0) {
+  console.error(`[check-governance] FAIL — ${violations.length} vi phạm sandbox:`);
+  for (const v of violations) console.error('  ✗ ' + v);
+  process.exit(1);
+}
 
 execFileSync('node', [path.join(DS, 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
 
-console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid 1–12 × 6 bp · icons missing=0 · sandbox .ifx-* definition = 0.');
+console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid 1–12 × 6 bp · icons missing=0 · sandbox .ifx-* definition = 0 · sandbox dead title class = 0.');
