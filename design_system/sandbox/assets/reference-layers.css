@@ -79,8 +79,10 @@
 .ref-module-chat-thread-section {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: var(--ifx-space-8);
   padding: var(--ifx-space-12) var(--ifx-space-16);
+  border-bottom: 1px solid var(--ifx-border-default);
 }
 
 .ref-module-chat-person {

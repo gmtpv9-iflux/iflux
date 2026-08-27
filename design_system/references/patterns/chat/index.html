@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="../../../components/card/card.css">
   <link rel="stylesheet" href="../../../components/breadcrumb/breadcrumb.css">
   <link rel="stylesheet" href="../../../components/search/search.css">
+  <link rel="stylesheet" href="../../../components/form/form.css">
   <link rel="stylesheet" href="../../../components/chat/chat.css">
   <link rel="stylesheet" href="../../../primitives/title/title.css">
   <link rel="stylesheet" href="../../../patterns/page-header/page-header.css">
@@ -67,13 +68,14 @@
                 <input type="search" placeholder="Tìm hội thoại…">
               </label>
             </div>
+            <div class="ifx-chat-thread-list">
             <p class="ref-module-chat-section-label"><small>Hội thoại</small></p>
             <button type="button" class="ifx-chat-item is-active" data-ifx-chat-name="Người A">
               <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success ifx-avatar-online" aria-hidden="true">A</span>
               <span class="ifx-flex-1">
                 <span class="ifx-flex ifx-justify-between ifx-items-center">
                   <span class="ifx-chat-item-name">Người A</span>
-                  <small>5 phút</small>
+                  <span class="ifx-chat-item-time">5 phút</span>
                 </span>
                 <span class="ifx-chat-item-preview">Đã nhận bản ghi.</span>
               </span>
@@ -83,7 +85,7 @@
               <span class="ifx-flex-1">
                 <span class="ifx-flex ifx-justify-between ifx-items-center">
                   <span class="ifx-chat-item-name">Người B</span>
-                  <small>30 phút</small>
+                  <span class="ifx-chat-item-time">30 phút</span>
                 </span>
                 <span class="ifx-chat-item-preview">Xem lại nhóm B.</span>
               </span>
@@ -93,7 +95,7 @@
               <span class="ifx-flex-1">
                 <span class="ifx-flex ifx-justify-between ifx-items-center">
                   <span class="ifx-chat-item-name">Người C</span>
-                  <small>1 ngày</small>
+                  <span class="ifx-chat-item-time">1 ngày</span>
                 </span>
                 <span class="ifx-chat-item-preview">Gửi lại khi xong.</span>
               </span>
@@ -120,6 +122,7 @@
                 <span class="ifx-chat-item-preview">Nhóm C</span>
               </span>
             </button>
+            </div>
           </div>
 
           <div class="ifx-chat-main">
