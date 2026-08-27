@@ -84,13 +84,16 @@
   transition: var(--ifx-transition-color);
   vertical-align: middle;
 }
-.ifx-radio:checked { border-color: var(--ifx-action-primary); }
+.ifx-radio:checked {
+  background: var(--ifx-action-primary);
+  border-color: var(--ifx-action-primary);
+}
 .ifx-radio:checked::after {
   content: "";
   width: var(--ifx-space-8);
   height: var(--ifx-space-8);
   border-radius: var(--ifx-radius-full);
-  background: var(--ifx-action-primary);
+  background: var(--ifx-text-on-primary);
 }
 
 .ifx-choice {
