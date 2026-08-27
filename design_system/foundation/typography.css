@@ -1,12 +1,33 @@
 /**
- * Canonical iFlux Design System — Foundation / Typography
- * REUSE hệ semantic text style + class ifx-* từ typography foundation đang chạy.
- * Canonical-only: KHÔNG mang theo .ix-* twins, alias không prefix, Domain Matrix v1
- * aliases, shell/component rules (.ix-badge, .ifx-topnav-link — thuộc platform/component).
- * Màu chữ tham chiếu semantic theme token --ifx-* (generated).
+ * iFlux CSS Ownership
  *
- * Responsive: Typography dùng FIXED token scale — KHÔNG override size theo media
- * (tránh mobile lớn / desktop nhỏ lệch). Responsive do composition quyết định.
+ * OWNER: GLOBAL DESIGN SYSTEM
+ * LAYER: Foundation
+ * CAPABILITY: Typography
+ *
+ * SCOPE:
+ * - Generic
+ * - Semantic
+ * - Domain-independent
+ * - Platform-independent
+ *
+ * ALLOWED:
+ * - Semantic text tokens (display / heading / title / body / caption / overline / label)
+ * - Button text tokens consumed by Primitive Button (Component owns classes)
+ * - Semantic HTML (h1–h6, p, strong, em, small, lists, code, pre, caption/figcaption)
+ * - Independent visual roles: display, title, body, label, overline
+ * - Generic tabular numeric family (.ifx-font-numeric)
+ *
+ * NOT ALLOWED:
+ * - Platform-specific CSS
+ * - Module/business CSS (price / volume / index / market)
+ * - Page-specific CSS
+ * - Widget-specific CSS
+ * - Component-internal roles (button / table / chart classes)
+ * - Duplicate of semantic HTML (.ifx-typo-h*)
+ * - one-off utility / override
+ *
+ * P6a 2026-08-27 — see gates/P6a_CSS_Ownership_Scope_Normalization/css-normalization/01_typography.md
  */
 :root {
   /* ── Display ── */
@@ -120,7 +141,7 @@
   --ifx-text-label-sm-line: var(--ifx-line-height-tight);
   --ifx-text-label-sm-tracking: var(--ifx-letter-spacing-wide);
 
-  /* ── Button ── */
+  /* ── Button text tokens — Primitive Button consumes; no .ifx-typo-btn-* ── */
   --ifx-text-btn-lg-size: var(--ifx-font-size-md);
   --ifx-text-btn-lg-weight: var(--ifx-font-weight-semibold);
   --ifx-text-btn-lg-line: var(--ifx-line-height-normal);
@@ -132,60 +153,6 @@
   --ifx-text-btn-sm-size: var(--ifx-font-size-xs);
   --ifx-text-btn-sm-weight: var(--ifx-font-weight-semibold);
   --ifx-text-btn-sm-line: var(--ifx-line-height-tight);
-
-  /* ── Numeric (giá / chỉ số thị trường) ── */
-  --ifx-text-price-xl-size: var(--ifx-font-size-48);
-  --ifx-text-price-xl-weight: var(--ifx-font-weight-bold);
-  --ifx-text-price-l-size: var(--ifx-font-size-32);
-  --ifx-text-price-l-weight: var(--ifx-font-weight-bold);
-  --ifx-text-price-m-size: var(--ifx-font-size-24);
-  --ifx-text-price-m-weight: var(--ifx-font-weight-bold);
-  --ifx-text-price-s-size: var(--ifx-font-size-18);
-  --ifx-text-price-s-weight: var(--ifx-font-weight-bold);
-  --ifx-text-percentage-size: var(--ifx-font-size-16);
-  --ifx-text-percentage-weight: var(--ifx-font-weight-semibold);
-  --ifx-text-volume-size: var(--ifx-font-size-14);
-  --ifx-text-volume-weight: var(--ifx-font-weight-medium);
-  --ifx-text-money-size: var(--ifx-font-size-16);
-  --ifx-text-money-weight: var(--ifx-font-weight-semibold);
-  --ifx-text-index-size: var(--ifx-font-size-28);
-  --ifx-text-index-weight: var(--ifx-font-weight-bold);
-  --ifx-text-change-size: var(--ifx-font-size-14);
-  --ifx-text-change-weight: var(--ifx-font-weight-semibold);
-  --ifx-text-timestamp-size: var(--ifx-font-size-12);
-  --ifx-text-timestamp-weight: var(--ifx-font-weight-regular);
-
-  /* ── Table ── */
-  --ifx-text-table-header-size: var(--ifx-font-size-12);
-  --ifx-text-table-header-weight: var(--ifx-font-weight-semibold);
-  --ifx-text-table-cell-size: var(--ifx-font-size-14);
-  --ifx-text-table-cell-weight: var(--ifx-font-weight-regular);
-  --ifx-text-table-cell-dense-size: var(--ifx-font-size-12);
-  --ifx-text-table-cell-dense-weight: var(--ifx-font-weight-regular);
-  --ifx-text-table-footer-size: var(--ifx-font-size-12);
-  --ifx-text-table-footer-weight: var(--ifx-font-weight-medium);
-
-  /* ── Chart ── */
-  --ifx-text-chart-axis-size: var(--ifx-font-size-10);
-  --ifx-text-chart-legend-size: var(--ifx-font-size-12);
-  --ifx-text-chart-tooltip-size: var(--ifx-font-size-12);
-  --ifx-text-chart-value-size: var(--ifx-font-size-14);
-  --ifx-text-chart-annotation-size: var(--ifx-font-size-10);
-
-  /* ── Widget ── */
-  --ifx-text-widget-title-size: var(--ifx-text-title-sm-size);
-  --ifx-text-widget-title-weight: var(--ifx-text-title-sm-weight);
-  --ifx-text-widget-title-line: var(--ifx-text-title-sm-line);
-  --ifx-text-widget-subtitle-size: var(--ifx-font-size-xs);
-  --ifx-text-widget-subtitle-weight: var(--ifx-font-weight-regular);
-  --ifx-text-widget-value-size: var(--ifx-font-size-2xl);
-  --ifx-text-widget-value-weight: var(--ifx-font-weight-bold);
-  --ifx-text-widget-change-size: var(--ifx-font-size-sm);
-  --ifx-text-widget-change-weight: var(--ifx-font-weight-semibold);
-  --ifx-text-widget-footer-size: var(--ifx-font-size-2xs);
-  --ifx-text-widget-footer-weight: var(--ifx-font-weight-regular);
-  --ifx-text-ranking-num-size: var(--ifx-font-size-12);
-  --ifx-text-ranking-num-weight: var(--ifx-font-weight-bold);
 }
 
 /* ── Base document ─────────────────────────────────────────────
@@ -300,18 +267,11 @@ caption {
   color: var(--ifx-text-muted);
 }
 
-/* ── Visual typography roles (class) — không thay semantic HTML ── */
+/* ── Visual roles — không trùng semantic HTML ── */
 .ifx-typo-display-xl { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-xl-size); font-weight: var(--ifx-text-display-xl-weight); line-height: var(--ifx-text-display-xl-line); letter-spacing: var(--ifx-text-display-xl-tracking); }
 .ifx-typo-display-l  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-l-size); font-weight: var(--ifx-text-display-l-weight); line-height: var(--ifx-text-display-l-line); letter-spacing: var(--ifx-text-display-l-tracking); }
 .ifx-typo-display-m  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-m-size); font-weight: var(--ifx-text-display-m-weight); line-height: var(--ifx-text-display-m-line); letter-spacing: var(--ifx-text-display-m-tracking); }
 .ifx-typo-display-s  { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-display-s-size); font-weight: var(--ifx-text-display-s-weight); line-height: var(--ifx-text-display-s-line); letter-spacing: var(--ifx-text-display-s-tracking); }
-
-.ifx-typo-h1 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h1-size); font-weight: var(--ifx-text-h1-weight); line-height: var(--ifx-text-h1-line); letter-spacing: var(--ifx-text-h1-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
-.ifx-typo-h2 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h2-size); font-weight: var(--ifx-text-h2-weight); line-height: var(--ifx-text-h2-line); letter-spacing: var(--ifx-text-h2-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
-.ifx-typo-h3 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h3-size); font-weight: var(--ifx-text-h3-weight); line-height: var(--ifx-text-h3-line); letter-spacing: var(--ifx-text-h3-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
-.ifx-typo-h4 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h4-size); font-weight: var(--ifx-text-h4-weight); line-height: var(--ifx-text-h4-line); letter-spacing: var(--ifx-text-h4-tracking); color: var(--ifx-text-primary); margin: 0 0 var(--ifx-space-8); }
-.ifx-typo-h5 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h5-size); font-weight: var(--ifx-text-h5-weight); line-height: var(--ifx-text-h5-line); letter-spacing: var(--ifx-text-h5-tracking); color: var(--ifx-text-secondary); margin: 0 0 var(--ifx-space-4); }
-.ifx-typo-h6 { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-h6-size); font-weight: var(--ifx-text-h6-weight); line-height: var(--ifx-text-h6-line); letter-spacing: var(--ifx-text-h6-tracking); color: var(--ifx-text-secondary); }
 
 .ifx-typo-title-lg { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-title-lg-size); font-weight: var(--ifx-text-title-lg-weight); line-height: var(--ifx-text-title-lg-line); letter-spacing: var(--ifx-text-title-lg-tracking); }
 .ifx-typo-title-md { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-title-md-size); font-weight: var(--ifx-text-title-md-weight); line-height: var(--ifx-text-title-md-line); letter-spacing: var(--ifx-text-title-md-tracking); color: var(--ifx-text-primary); }
@@ -327,100 +287,4 @@ caption {
 .ifx-typo-label-md { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-label-md-size); font-weight: var(--ifx-text-label-md-weight); line-height: var(--ifx-text-label-md-line); }
 .ifx-typo-label-sm { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-label-sm-size); font-weight: var(--ifx-text-label-sm-weight); line-height: var(--ifx-text-label-sm-line); }
 
-.ifx-typo-btn-lg { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-btn-lg-size); font-weight: var(--ifx-text-btn-lg-weight); line-height: var(--ifx-text-btn-lg-line); }
-.ifx-typo-btn-md { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-btn-md-size); font-weight: var(--ifx-text-btn-md-weight); line-height: var(--ifx-text-btn-md-line); }
-.ifx-typo-btn-sm { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-btn-sm-size); font-weight: var(--ifx-text-btn-sm-weight); line-height: var(--ifx-text-btn-sm-line); }
-
-/* Numeric */
-.ifx-typo-price-xl { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-price-xl-size); font-weight: var(--ifx-text-price-xl-weight); line-height: 1.1; font-variant-numeric: tabular-nums; }
-.ifx-typo-price-l  { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-price-l-size); font-weight: var(--ifx-text-price-l-weight); line-height: 1.15; font-variant-numeric: tabular-nums; }
-.ifx-typo-price-m  { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-price-m-size); font-weight: var(--ifx-text-price-m-weight); line-height: 1.2; font-variant-numeric: tabular-nums; }
-.ifx-typo-price-s  { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-price-s-size); font-weight: var(--ifx-text-price-s-weight); line-height: 1.25; font-variant-numeric: tabular-nums; }
-.ifx-typo-percentage { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-percentage-size); font-weight: var(--ifx-text-percentage-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-volume { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-volume-size); font-weight: var(--ifx-text-volume-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-money { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-money-size); font-weight: var(--ifx-text-money-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-index { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-index-size); font-weight: var(--ifx-text-index-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-change { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-change-size); font-weight: var(--ifx-text-change-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-timestamp { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-timestamp-size); font-weight: var(--ifx-text-timestamp-weight); color: var(--ifx-text-muted); }
-
-/* Table */
-.ifx-typo-table-header { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-table-header-size); font-weight: var(--ifx-text-table-header-weight); letter-spacing: var(--ifx-letter-spacing-caps); text-transform: uppercase; }
-.ifx-typo-table-cell { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-table-cell-size); font-weight: var(--ifx-text-table-cell-weight); }
-.ifx-typo-table-cell-dense { font-size: var(--ifx-text-table-cell-dense-size); font-weight: var(--ifx-text-table-cell-dense-weight); }
-.ifx-typo-table-footer { font-size: var(--ifx-text-table-footer-size); font-weight: var(--ifx-text-table-footer-weight); }
-
-/* Chart */
-.ifx-typo-chart-axis { font-size: var(--ifx-text-chart-axis-size); }
-.ifx-typo-chart-legend { font-size: var(--ifx-text-chart-legend-size); }
-.ifx-typo-chart-tooltip { font-size: var(--ifx-text-chart-tooltip-size); font-weight: var(--ifx-font-weight-medium); }
-.ifx-typo-chart-value { font-size: var(--ifx-text-chart-value-size); font-weight: var(--ifx-font-weight-semibold); font-variant-numeric: tabular-nums; }
-.ifx-typo-chart-annotation { font-size: var(--ifx-text-chart-annotation-size); color: var(--ifx-text-muted); }
-
-/* Widget */
-.ifx-typo-widget-title { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-widget-title-size); font-weight: var(--ifx-text-widget-title-weight); line-height: var(--ifx-text-widget-title-line); color: var(--ifx-text-primary); }
-.ifx-typo-widget-subtitle { font-size: var(--ifx-text-widget-subtitle-size); font-weight: var(--ifx-text-widget-subtitle-weight); color: var(--ifx-text-muted); }
-.ifx-typo-widget-value { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-widget-value-size); font-weight: var(--ifx-text-widget-value-weight); line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ifx-text-primary); }
-.ifx-typo-widget-change { font-size: var(--ifx-text-widget-change-size); font-weight: var(--ifx-text-widget-change-weight); font-variant-numeric: tabular-nums; }
-.ifx-typo-widget-footer { font-size: var(--ifx-text-widget-footer-size); font-weight: var(--ifx-text-widget-footer-weight); color: var(--ifx-text-muted); }
-.ifx-typo-ranking-num { font-family: var(--ifx-font-numeric); font-size: var(--ifx-text-ranking-num-size); font-weight: var(--ifx-text-ranking-num-weight); font-variant-numeric: tabular-nums; }
-
-/* Status (màu từ semantic theme token) */
-.ifx-typo-status-positive { font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-success); font-variant-numeric: tabular-nums; }
-.ifx-typo-status-negative { font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-danger); font-variant-numeric: tabular-nums; }
-.ifx-typo-status-neutral { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-secondary); }
-.ifx-typo-status-warning { font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-warning); }
-.ifx-typo-status-info { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-info); }
-
-/* ── Primitive size utilities (token-backed) ── */
-.ifx-fs-2xs { font-size: var(--ifx-font-size-2xs); }
-.ifx-fs-xs  { font-size: var(--ifx-font-size-xs); }
-.ifx-fs-sm  { font-size: var(--ifx-font-size-sm); }
-.ifx-fs-md  { font-size: var(--ifx-font-size-md); }
-.ifx-fs-lg  { font-size: var(--ifx-font-size-lg); }
-.ifx-fs-xl  { font-size: var(--ifx-font-size-xl); }
-.ifx-fs-2xl { font-size: var(--ifx-font-size-2xl); }
-.ifx-fs-3xl { font-size: var(--ifx-font-size-3xl); }
-.ifx-fs-4xl { font-size: var(--ifx-font-size-4xl); }
-.ifx-fs-5xl { font-size: var(--ifx-font-size-5xl); }
-
-.ifx-fs-10 { font-size: var(--ifx-font-size-10); }
-.ifx-fs-12 { font-size: var(--ifx-font-size-12); }
-.ifx-fs-14 { font-size: var(--ifx-font-size-14); }
-.ifx-fs-16 { font-size: var(--ifx-font-size-16); }
-.ifx-fs-18 { font-size: var(--ifx-font-size-18); }
-.ifx-fs-20 { font-size: var(--ifx-font-size-20); }
-.ifx-fs-24 { font-size: var(--ifx-font-size-24); }
-.ifx-fs-28 { font-size: var(--ifx-font-size-28); }
-.ifx-fs-32 { font-size: var(--ifx-font-size-32); }
-
-.ifx-fw-100 { font-weight: var(--ifx-font-weight-thin); }
-.ifx-fw-200 { font-weight: var(--ifx-font-weight-extralight); }
-.ifx-fw-300 { font-weight: var(--ifx-font-weight-light); }
-.ifx-fw-400 { font-weight: var(--ifx-font-weight-regular); }
-.ifx-fw-500 { font-weight: var(--ifx-font-weight-medium); }
-.ifx-fw-600 { font-weight: var(--ifx-font-weight-semibold); }
-.ifx-fw-700 { font-weight: var(--ifx-font-weight-bold); }
-.ifx-fw-800 { font-weight: var(--ifx-font-weight-extrabold); }
-.ifx-fw-900 { font-weight: var(--ifx-font-weight-black); }
-
-.ifx-lh-tight { line-height: var(--ifx-line-height-tight); }
-.ifx-lh-normal { line-height: var(--ifx-line-height-normal); }
-.ifx-lh-relaxed { line-height: var(--ifx-line-height-relaxed); }
-.ifx-lh-loose { line-height: var(--ifx-line-height-loose); }
-
-.ifx-tracking-tighter { letter-spacing: var(--ifx-letter-spacing-tighter); }
-.ifx-tracking-tight { letter-spacing: var(--ifx-letter-spacing-tight); }
-.ifx-tracking-normal { letter-spacing: var(--ifx-letter-spacing-normal); }
-.ifx-tracking-wide { letter-spacing: var(--ifx-letter-spacing-wide); }
-.ifx-tracking-wider { letter-spacing: var(--ifx-letter-spacing-wider); }
-
-.ifx-uppercase { text-transform: uppercase; }
-.ifx-lowercase { text-transform: lowercase; }
-.ifx-capitalize { text-transform: capitalize; }
-
-.ifx-underline { text-decoration: underline; }
-.ifx-line-through { text-decoration: line-through; }
-.ifx-no-underline { text-decoration: none; }
-
-.ifx-font-mono { font-family: var(--ifx-font-mono); }
 .ifx-font-numeric { font-family: var(--ifx-font-numeric); font-variant-numeric: tabular-nums; }
