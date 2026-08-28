@@ -36,8 +36,6 @@
   --ifx-info: var(--ifx-color-cyan-500);
   --ifx-info-soft: rgba(3, 195, 236, 0.12);
   --ifx-overlay-scrim: rgba(58, 59, 85, 0.45);
-  --ifx-topnav-bg: rgba(255, 255, 255, 0.94);
-  --ifx-topnav-shadow: 0 4px 24px rgba(67, 89, 113, 0.08);
   --ifx-surface-elevated: rgba(67, 89, 113, 0.04);
   --ifx-market-up: var(--ifx-color-green-500);
   --ifx-market-up-soft: rgba(0, 166, 126, 0.12);

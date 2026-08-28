@@ -1,0 +1,12 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: platform/admin/tokens/source/{size.json}
+ * owner : platform-admin
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root {
+  /* ── size · size ── */
+  --ifx-size-sidebar-w: 260px;
+  --ifx-size-sidebar-w-collapsed: 72px;
+  --ifx-size-navbar-h: 64px;
+}

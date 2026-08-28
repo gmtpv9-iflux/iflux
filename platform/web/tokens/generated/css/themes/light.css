@@ -1,0 +1,11 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: platform/web/tokens/source/{chrome.json}
+ * owner : platform-web
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+[data-theme="light"] {
+  color-scheme: light;
+  --ifx-topnav-bg: rgba(255, 255, 255, 0.94);
+  --ifx-topnav-shadow: 0 4px 24px rgba(67, 89, 113, 0.08);
+}

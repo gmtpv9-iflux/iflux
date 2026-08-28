@@ -1,0 +1,31 @@
+{
+  "$meta": {
+    "owner": "platform-web",
+    "layer": "platform",
+    "sot": "User Web platform chrome tokens",
+    "origin": "Moved from design_system/tokens/source — Token 03B. Values unchanged.",
+    "note": "--ifx-size-tabbar-h stays 60px (canonical). User_Web live --ifx-tabbar-h: 72px is runtime debt, not resolved in 03B."
+  },
+  "primitive": {
+    "size": {
+      "topnav-h": "56px",
+      "tabbar-h": "60px"
+    },
+    "color": {
+      "topnav-bg": "rgba(43, 44, 64, 0.94)"
+    },
+    "shadow": {
+      "topnav": "0 4px 24px rgba(0, 0, 0, 0.18)"
+    }
+  },
+  "theme": {
+    "dark": {
+      "topnav-bg": "{color.topnav-bg}",
+      "topnav-shadow": "{shadow.topnav}"
+    },
+    "light": {
+      "topnav-bg": "rgba(255, 255, 255, 0.94)",
+      "topnav-shadow": "0 4px 24px rgba(67, 89, 113, 0.08)"
+    }
+  }
+}

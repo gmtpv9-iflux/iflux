@@ -61,7 +61,6 @@
       "--ifx-color-slate-950",
       "--ifx-color-white",
       "--ifx-color-border-frost",
-      "--ifx-color-topnav-bg",
       "--ifx-color-chart-1",
       "--ifx-color-chart-2",
       "--ifx-color-chart-3",
@@ -226,8 +225,7 @@
       "--ifx-shadow-sm",
       "--ifx-shadow-md",
       "--ifx-shadow-lg",
-      "--ifx-shadow-xl",
-      "--ifx-shadow-topnav"
+      "--ifx-shadow-xl"
     ],
     "duration": [
       "--ifx-duration-instant",
@@ -250,11 +248,6 @@
       "--ifx-size-avatar-sm",
       "--ifx-size-avatar-md",
       "--ifx-size-avatar-lg",
-      "--ifx-size-sidebar-w",
-      "--ifx-size-sidebar-w-collapsed",
-      "--ifx-size-navbar-h",
-      "--ifx-size-topnav-h",
-      "--ifx-size-tabbar-h",
       "--ifx-size-nav-drawer-w",
       "--ifx-size-container-max"
     ],
@@ -394,8 +387,6 @@
       "--ifx-info",
       "--ifx-info-soft",
       "--ifx-overlay-scrim",
-      "--ifx-topnav-bg",
-      "--ifx-topnav-shadow",
       "--ifx-surface-elevated",
       "--ifx-market-up",
       "--ifx-market-up-soft",
@@ -447,8 +438,6 @@
       "--ifx-info",
       "--ifx-info-soft",
       "--ifx-overlay-scrim",
-      "--ifx-topnav-bg",
-      "--ifx-topnav-shadow",
       "--ifx-surface-elevated",
       "--ifx-market-up",
       "--ifx-market-up-soft",
@@ -489,7 +478,7 @@
       "id": "platform-admin",
       "owner": "admin",
       "layer": "platform",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "platform/admin/tokens/source",
       "generatedRoot": "platform/admin/tokens/generated"
     },
@@ -497,7 +486,7 @@
       "id": "platform-web",
       "owner": "web",
       "layer": "platform",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "platform/web/tokens/source",
       "generatedRoot": "platform/web/tokens/generated"
     },
@@ -885,13 +874,6 @@
     },
     {
       "name": "--ifx-color-border-frost",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-topnav-bg",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/color.json",
@@ -1487,20 +1469,6 @@
     },
     {
       "name": "--ifx-overlay-scrim",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-topnav-bg",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-topnav-shadow",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/color.json",
@@ -2711,13 +2679,6 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-shadow-topnav",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/shadow.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-shadow-card",
       "owner": "global",
       "layer": "global",
@@ -2879,41 +2840,6 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-size-sidebar-w",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/size.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-sidebar-w-collapsed",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/size.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-navbar-h",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/size.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-topnav-h",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/size.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-tabbar-h",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/size.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-size-nav-drawer-w",
       "owner": "global",
       "layer": "global",
@@ -2996,6 +2922,69 @@
       "layer": "global",
       "source": "design_system/tokens/source/zindex.json",
       "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-sidebar-w",
+      "owner": "admin",
+      "layer": "platform",
+      "source": "platform/admin/tokens/source/size.json",
+      "generated": "platform/admin/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-sidebar-w-collapsed",
+      "owner": "admin",
+      "layer": "platform",
+      "source": "platform/admin/tokens/source/size.json",
+      "generated": "platform/admin/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-navbar-h",
+      "owner": "admin",
+      "layer": "platform",
+      "source": "platform/admin/tokens/source/size.json",
+      "generated": "platform/admin/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-topnav-h",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-tabbar-h",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-topnav-bg",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-topnav",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-topnav-bg",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-topnav-shadow",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/themes/{dark,light}.css"
     }
   ]
 };

@@ -1,0 +1,17 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: platform/web/tokens/source/{chrome.json}
+ * owner : platform-web
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root {
+  /* ── chrome · size ── */
+  --ifx-size-topnav-h: 56px;
+  --ifx-size-tabbar-h: 60px;
+
+  /* ── chrome · color ── */
+  --ifx-color-topnav-bg: rgba(43, 44, 64, 0.94);
+
+  /* ── chrome · shadow ── */
+  --ifx-shadow-topnav: 0 4px 24px rgba(0, 0, 0, 0.18);
+}

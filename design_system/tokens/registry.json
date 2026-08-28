@@ -18,19 +18,17 @@
       "id": "platform-admin",
       "owner": "admin",
       "layer": "platform",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "platform/admin/tokens/source",
-      "generatedRoot": "platform/admin/tokens/generated",
-      "activatedWhen": "Token 03B — first Admin platform token move"
+      "generatedRoot": "platform/admin/tokens/generated"
     },
     {
       "id": "platform-web",
       "owner": "web",
       "layer": "platform",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "platform/web/tokens/source",
-      "generatedRoot": "platform/web/tokens/generated",
-      "activatedWhen": "Token 03B — first Web platform token move"
+      "generatedRoot": "platform/web/tokens/generated"
     },
     {
       "id": "module-market",

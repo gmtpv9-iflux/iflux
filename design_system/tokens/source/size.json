@@ -12,11 +12,6 @@
       "avatar-sm": "28px",
       "avatar-md": "36px",
       "avatar-lg": "48px",
-      "sidebar-w": "260px",
-      "sidebar-w-collapsed": "72px",
-      "navbar-h": "64px",
-      "topnav-h": "56px",
-      "tabbar-h": "60px",
       "nav-drawer-w": "300px",
       "container-max": "1280px"
     }

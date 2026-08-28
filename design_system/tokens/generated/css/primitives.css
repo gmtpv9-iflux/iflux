@@ -58,7 +58,6 @@
   --ifx-color-slate-950: #16161f;
   --ifx-color-white: #ffffff;
   --ifx-color-border-frost: rgba(207, 211, 236, 0.12);
-  --ifx-color-topnav-bg: rgba(43, 44, 64, 0.94);
   --ifx-color-chart-1: var(--ifx-color-violet-500);
   --ifx-color-chart-2: var(--ifx-color-lime-500);
   --ifx-color-chart-3: var(--ifx-color-amber-550);
@@ -224,7 +223,6 @@
   --ifx-shadow-md: 0 4px 16px var(--ifx-alpha-black-12);
   --ifx-shadow-lg: 0 8px 24px var(--ifx-alpha-black-16);
   --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
-  --ifx-shadow-topnav: 0 4px 24px rgba(0, 0, 0, 0.18);
 
   /* ── motion · duration ── */
   --ifx-duration-instant: 0ms;
@@ -247,11 +245,6 @@
   --ifx-size-avatar-sm: 28px;
   --ifx-size-avatar-md: 36px;
   --ifx-size-avatar-lg: 48px;
-  --ifx-size-sidebar-w: 260px;
-  --ifx-size-sidebar-w-collapsed: 72px;
-  --ifx-size-navbar-h: 64px;
-  --ifx-size-topnav-h: 56px;
-  --ifx-size-tabbar-h: 60px;
   --ifx-size-nav-drawer-w: 300px;
   --ifx-size-container-max: 1280px;
 
