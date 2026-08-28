@@ -475,6 +475,2528 @@
     "lg": "1024px",
     "xl": "1280px",
     "2xl": "1440px"
-  }
+  },
+  "sources": [
+    {
+      "id": "global",
+      "owner": "global",
+      "layer": "global",
+      "status": "active",
+      "sourceRoot": "design_system/tokens/source",
+      "generatedRoot": "design_system/tokens/generated"
+    },
+    {
+      "id": "platform-admin",
+      "owner": "admin",
+      "layer": "platform",
+      "status": "reserved",
+      "sourceRoot": "platform/admin/tokens/source",
+      "generatedRoot": "platform/admin/tokens/generated"
+    },
+    {
+      "id": "platform-web",
+      "owner": "web",
+      "layer": "platform",
+      "status": "reserved",
+      "sourceRoot": "platform/web/tokens/source",
+      "generatedRoot": "platform/web/tokens/generated"
+    },
+    {
+      "id": "module-market",
+      "owner": "market",
+      "layer": "module",
+      "status": "reserved",
+      "sourceRoot": "modules/market/tokens/source",
+      "generatedRoot": "modules/market/tokens/generated"
+    },
+    {
+      "id": "module-money-flow",
+      "owner": "money-flow",
+      "layer": "module",
+      "status": "reserved",
+      "sourceRoot": "modules/money-flow/tokens/source",
+      "generatedRoot": "modules/money-flow/tokens/generated"
+    }
+  ],
+  "inventory": [
+    {
+      "name": "--ifx-color-navy-50",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-100",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-200",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-300",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-700",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-800",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-navy-900",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-50",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-100",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-200",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-300",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-700",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-800",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-orange-900",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-green-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-green-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-green-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-red-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-red-450",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-red-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-red-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-amber-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-amber-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-amber-550",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-amber-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-cyan-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-cyan-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-cyan-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-purple-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-violet-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-violet-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-violet-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-lime-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-50",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-100",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-200",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-300",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-400",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-500",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-600",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-700",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-800",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-850",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-900",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-slate-950",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-white",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-border-frost",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-topnav-bg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-1",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-2",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-3",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-5",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-6",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-7",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-9",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-10",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-white-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-white-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-white-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-white-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-white-20",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-45",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-black-60",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-violet-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-lime-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-amber-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-cyan-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-purple-10",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-orange-35",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-orange-14",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-orange-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-orange-45",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-35",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-green-500-50",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-green-500-45",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-green-500-25",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-green-500-22",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-green-500-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-500-45",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-500-25",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-500-22",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-500-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-red-500-10",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-violet-500-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-violet-500-6",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-violet-500-3",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-violet-500-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-amber-550-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-muted-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-alpha-shell-55",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-gradient-zone-track",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-gradient-zone-fill",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-gradient-mcmp-energy",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-gradient-brand-cta",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-bg-canvas",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-surface",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-elevated",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-subtle",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-input",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-hover",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-active",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-navbar",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-primary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-secondary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-muted",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-disabled",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-link",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-border-default",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-border-strong",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-border-subtle",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-border-focus",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-primary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-primary-hover",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-primary-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-secondary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-secondary-hover",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-success",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-success-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-warning",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-warning-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-danger",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-danger-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-info",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-info-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-overlay-scrim",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-topnav-bg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-topnav-shadow",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-surface-elevated",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-up",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-up-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-down",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-down-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ref",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ref-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ceiling",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ceiling-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-floor",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-floor-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-flow-in",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-flow-out",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-on-primary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-on-success",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-on-warning",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-on-danger",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-text-on-info",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/color.json",
+      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-font-primary",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-mono",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-emoji",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-system",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-numeric",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-extralight",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-regular",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-semibold",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-extrabold",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-thin",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-light",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-medium",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-bold",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-weight-black",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-10",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-14",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-18",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-20",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-24",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-28",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-32",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-40",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-48",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-56",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-64",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-72",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-2xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-2xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-3xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-4xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-font-size-5xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-10",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-14",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-18",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-20",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-24",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-28",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-32",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-40",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-48",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-56",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-64",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-72",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-tight",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-normal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-relaxed",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-line-height-loose",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-tighter",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-tight",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-normal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-wide",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-wider",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-letter-spacing-caps",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/typography.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-0",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-2",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-12",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-16",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-20",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-24",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-32",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-40",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-48",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-56",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-64",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-80",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-96",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-128",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-160",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-192",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-256",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-unit",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-padding-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-padding-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-padding-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-padding-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-padding-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-margin-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-margin-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-margin-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-margin-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-margin-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-gap-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-gap-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-gap-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-gap-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-gap-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-card",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-card-header",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-card-body",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-card-footer",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-widget",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-panel",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inset-dialog",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-stack-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-stack-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-stack-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-stack-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-stack-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inline-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inline-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inline-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inline-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-inline-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-grid-gutter",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-container",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-section",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-page",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-sm-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-sm-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-lg-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-lg-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-button-icon-gap",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-input-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-input-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-input-lg-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-chip-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-chip-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-badge-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-badge-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-table-cell-y",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-space-table-cell-x",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/spacing.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-none",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-2xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-full",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-radius-button",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-input",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-card",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-badge",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-chip",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-modal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-radius-dropdown",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/radius.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-shadow-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-topnav",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-shadow-card",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-shadow-dropdown",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-shadow-modal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/shadow.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-duration-instant",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-duration-fast",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-duration-normal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-duration-slow",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-duration-slower",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-ease-default",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-ease-in",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-ease-out",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-ease-in-out",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-transition-color",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-transition-transform",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-transition-opacity",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-transition-drawer",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/motion.json",
+      "generated": "design_system/tokens/generated/css/semantic.css"
+    },
+    {
+      "name": "--ifx-size-touch-target",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-icon-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-icon-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-icon-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-avatar-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-avatar-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-avatar-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-sidebar-w",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-sidebar-w-collapsed",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-navbar-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-topnav-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-tabbar-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-nav-drawer-w",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-container-max",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/size.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-base",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-raised",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-dropdown",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-sticky",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-topnav",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-drawer",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-overlay",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-modal",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-toast",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-z-onboarding",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/tokens/source/zindex.json",
+      "generated": "design_system/tokens/generated/css/primitives.css"
+    }
+  ]
 };
 })(typeof window !== 'undefined' ? window : globalThis);

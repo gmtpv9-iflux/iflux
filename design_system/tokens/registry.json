@@ -1,0 +1,54 @@
+{
+  "$meta": {
+    "sot": "Canonical token source registry — Token 03A",
+    "compiler": "design_system/scripts/build-tokens.mjs",
+    "principle": "ONE TOKEN = ONE OWNER = ONE SOURCE DEFINITION. One compiler. Multiple source roots by owner.",
+    "activation": "status=active is ingested. status=reserved is the approved destination; flip to active in the same wave as the first JSON in that sourceRoot (Token 03B/03C). Do not add placeholder token definitions to reserved roots."
+  },
+  "sources": [
+    {
+      "id": "global",
+      "owner": "global",
+      "layer": "global",
+      "status": "active",
+      "sourceRoot": "design_system/tokens/source",
+      "generatedRoot": "design_system/tokens/generated"
+    },
+    {
+      "id": "platform-admin",
+      "owner": "admin",
+      "layer": "platform",
+      "status": "reserved",
+      "sourceRoot": "platform/admin/tokens/source",
+      "generatedRoot": "platform/admin/tokens/generated",
+      "activatedWhen": "Token 03B — first Admin platform token move"
+    },
+    {
+      "id": "platform-web",
+      "owner": "web",
+      "layer": "platform",
+      "status": "reserved",
+      "sourceRoot": "platform/web/tokens/source",
+      "generatedRoot": "platform/web/tokens/generated",
+      "activatedWhen": "Token 03B — first Web platform token move"
+    },
+    {
+      "id": "module-market",
+      "owner": "market",
+      "layer": "module",
+      "status": "reserved",
+      "sourceRoot": "modules/market/tokens/source",
+      "generatedRoot": "modules/market/tokens/generated",
+      "activatedWhen": "Token 03C — market / chart-series move"
+    },
+    {
+      "id": "module-money-flow",
+      "owner": "money-flow",
+      "layer": "module",
+      "status": "reserved",
+      "sourceRoot": "modules/money-flow/tokens/source",
+      "generatedRoot": "modules/money-flow/tokens/generated",
+      "activatedWhen": "Token 03C — flow / zone / mcmp move"
+    }
+  ]
+}
