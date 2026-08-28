@@ -3721,3 +3721,36 @@ Note: 0 selector Community refined; vẫn không cắt @import bundle
 .ix-hub-partial { color: var(--ix-warning); }
 .ix-hub-miss { color: var(--ix-danger); }
 .ix-hub-gd2 { color: var(--ix-text-muted); }
+
+/* P6a Step 3B — page residuals after Canonical consume.
+ * Canonical owns shared chrome. This page keeps accepted local differences.
+ * Not a new Primitive / Component / token API.
+ */
+
+/* Filled buttons: Legacy used border:none. Canonical uses 1px transparent
+   (border-box would grow the box). Outline buttons keep their 1px border. */
+.ix-content .ifx-btn-primary,
+.ix-content .ifx-btn-success {
+  border-width: 0;
+}
+
+/* sm buttons: Canonical sets tight btn-sm line-height.
+   Legacy .ix-btn-sm only changed padding/font-size; line-height stayed btn-md. */
+.ix-content .ifx-btn-sm {
+  line-height: var(--ifx-text-btn-md-line);
+}
+
+/* Chip: Canonical adds 1px transparent border + line-height:1 + radius-full.
+   Accepted chips: no border, inherit body line-height, 20px radius. */
+.ix-content .ifx-chip {
+  border-width: 0;
+  line-height: inherit;
+  border-radius: 20px;
+}
+
+/* Form type: Canonical Form uses --ifx-font-size-sm (13).
+   Accepted User Profile labels/inputs use --ifx-font-size-14. */
+.ix-content .ifx-label,
+.ix-content .ifx-input {
+  font-size: var(--ifx-font-size-14);
+}

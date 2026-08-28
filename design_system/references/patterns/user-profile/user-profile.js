@@ -1,7 +1,8 @@
 /* P6a User Profile — template isolation.
  * AppShell sidebar / navbar / notifications / theme-toggle JS removed.
  * Legacy Edit Profile modal removed.
- * Profile tabs, copy-ref, toast, table search/paginate retained.
+ * Profile tabs, copy-ref, table search/paginate retained.
+ * Toast: Canonical IfxToast.show (Legacy ixToast removed).
  */
 
 /* ===== SOURCE: Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js (AppShell trimmed) ===== */
@@ -78,64 +79,8 @@
 
 
   /* ------------------------------------------------------------------
-     5. TOAST NOTIFICATION
-     Usage: ixToast('Message', 'success') — types: success|danger|warning|info|primary
+     5. TOAST — Canonical IfxToast (P6a Step 3B). Legacy ixToast removed.
      ------------------------------------------------------------------ */
-  function ixToast(message, type, duration) {
-    type     = type     || 'primary';
-    duration = duration || 3500;
-
-    let container = document.getElementById('ix-toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'ix-toast-container';
-      Object.assign(container.style, {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-        zIndex: '9999',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-      });
-      document.body.appendChild(container);
-    }
-
-    const icons = {
-      success: 'ti-circle-check',
-      danger:  'ti-alert-circle',
-      warning: 'ti-alert-triangle',
-      info:    'ti-info-circle',
-      primary: 'ti-bell',
-    };
-
-    const toast = document.createElement('div');
-    toast.className = 'ix-alert ix-alert-' + type;
-    Object.assign(toast.style, {
-      minWidth: '260px',
-      maxWidth: '360px',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-      transition: 'opacity 0.3s, transform 0.3s',
-      opacity: '0',
-      transform: 'translateX(20px)',
-    });
-    toast.innerHTML =
-      '<i class="ti ' + (icons[type] || icons.primary) + '" style="font-size:18px;flex-shrink:0"></i>' +
-      '<span style="font-size:13px">' + message + '</span>';
-
-    container.appendChild(toast);
-    requestAnimationFrame(function () {
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateX(0)';
-    });
-
-    setTimeout(function () {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(20px)';
-      setTimeout(function () { toast.remove(); }, 300);
-    }, duration);
-  }
-  window.ixToast = ixToast;
 
 
   /* ------------------------------------------------------------------
@@ -165,7 +110,7 @@
      7. RIPPLE EFFECT on buttons
      ------------------------------------------------------------------ */
   document.addEventListener('click', function (e) {
-    const btn = e.target.closest('.ix-btn:not(.ix-btn-icon)');
+    const btn = e.target.closest('.ifx-btn:not(.ifx-btn-icon)');
     if (!btn) return;
     const circle = document.createElement('span');
     const rect   = btn.getBoundingClientRect();
@@ -424,12 +369,12 @@ document.querySelectorAll('.ix-perm-select-all').forEach(function (cb) {
   function copyText(text, inputEl) {
     text = String(text || '').trim();
     if (!text) {
-      if (global.ixToast) global.ixToast('Không có nội dung để sao chép', 'warning');
+      if (global.IfxToast) global.IfxToast.show('Không có nội dung để sao chép', 'warning');
       return;
     }
     function notify(ok) {
-      if (!global.ixToast) return;
-      global.ixToast(
+      if (!global.IfxToast) return;
+      global.IfxToast.show(
         ok ? 'Đã sao chép!' : 'Không sao chép được — hãy chọn nội dung và copy thủ công (Ctrl/Cmd+C)',
         ok ? 'success' : 'warning'
       );

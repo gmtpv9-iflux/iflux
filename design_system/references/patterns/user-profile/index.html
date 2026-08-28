@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css" />
   <link rel="stylesheet" href="user-profile.css" />
+  <!-- Canonical contracts consumed this wave. No Foundation (rem / heading scale stays Legacy). -->
+  <link rel="stylesheet" href="../../../tokens/generated/css/semantic.css" />
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/dark.css" />
+  <link rel="stylesheet" href="../../../tokens/generated/css/themes/light.css" />
+  <link rel="stylesheet" href="../../../primitives/button/button.css" />
+  <link rel="stylesheet" href="../../../primitives/chip/chip.css" />
+  <link rel="stylesheet" href="../../../primitives/alert/alert.css" />
+  <link rel="stylesheet" href="../../../components/form/form.css" />
+  <link rel="stylesheet" href="../../../components/card/card.css" />
+  <link rel="stylesheet" href="../../../components/toast/toast.css" />
 </head>
 <body>
 <div class="ix-content">
@@ -29,7 +39,7 @@
               <div class="ix-profile-hero">
                 <div class="ix-profile-avatar">VM</div>
                 <div class="ix-profile-name">Violet Mendoza</div>
-                <span class="ix-chip ix-chip-primary" style="font-size:11px">Pro Member</span>
+                <span class="ifx-chip ifx-chip-primary" style="font-size:11px">Pro Member</span>
 
                 <!-- Community stats -->
                 <div class="ix-profile-stats">
@@ -54,17 +64,17 @@
                 <ul class="ix-detail-list">
                   <li><span class="ix-detail-label">Username</span><span class="ix-detail-val">@violet.dev</span></li>
                   <li><span class="ix-detail-label">Email</span><span class="ix-detail-val">violet@iflux.io</span></li>
-                  <li><span class="ix-detail-label">Status</span><span class="ix-chip ix-chip-success" style="font-size:11px">Active</span></li>
+                  <li><span class="ix-detail-label">Status</span><span class="ifx-chip ifx-chip-success" style="font-size:11px">Active</span></li>
                   <li><span class="ix-detail-label">Role</span><span class="ix-detail-val">Content Creator</span></li>
                   <li><span class="ix-detail-label">Phone</span><span class="ix-detail-val">+84 912 345 678</span></li>
                   <li><span class="ix-detail-label">Joined</span><span class="ix-detail-val">Jan 15, 2024</span></li>
                   <li><span class="ix-detail-label">Country</span><span class="ix-detail-val">Vietnam 🇻🇳</span></li>
                 </ul>
                 <div style="display:flex;gap:10px;margin-top:16px">
-                  <button type="button" class="ix-btn ix-btn-primary" style="flex:1">
+                  <button type="button" class="ifx-btn ifx-btn-primary" style="flex:1;justify-content:flex-start">
                     <i class="ti ti-edit" style="font-size:13px"></i> Edit Profile
                   </button>
-                  <button class="ix-btn ix-btn-outline" style="color:var(--ix-danger);border-color:var(--ix-danger);flex:1" onclick="ixToast('Account suspended','warning')">
+                  <button class="ifx-btn ifx-btn-outline" style="color:var(--ix-danger);border-color:var(--ix-danger);flex:1;justify-content:flex-start" onclick="IfxToast.show('Account suspended','warning')">
                     Suspend
                   </button>
                 </div>
@@ -73,9 +83,9 @@
 
             <!-- Plan card -->
             <div class="ix-card ix-plan-card ix-mb-24">
-              <div class="ix-card-body">
+              <div class="ifx-card-body">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-                  <span class="ix-chip ix-chip-primary">Pro Plan</span>
+                  <span class="ifx-chip ifx-chip-primary">Pro Plan</span>
                   <div class="ix-plan-price">
                     <span class="ix-plan-price-cur">$</span>
                     <span class="ix-plan-price-num">29</span>
@@ -95,7 +105,7 @@
                   </div>
                   <div style="font-size:11px;color:var(--ix-text-muted);margin-top:4px">4 days remaining</div>
                 </div>
-                <button class="ix-btn ix-btn-primary" style="width:100%;margin-top:8px" onclick="ixToast('Redirecting to upgrade...','info')">
+                <button class="ifx-btn ifx-btn-primary" style="width:100%;margin-top:8px;justify-content:flex-start" onclick="IfxToast.show('Redirecting to upgrade...','info')">
                   <i class="ti ti-arrow-up-circle" style="font-size:13px"></i> Upgrade Plan
                 </button>
               </div>
@@ -103,25 +113,25 @@
 
             <!-- Referral link & code -->
             <div class="ix-card">
-              <div class="ix-card-body">
+              <div class="ifx-card-body">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
                   <div class="ix-stat-icon accent" style="width:32px;height:32px;font-size:14px"><i class="ti ti-share"></i></div>
                   <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Referral Link & Code</div>
                 </div>
                 <div style="font-size:12px;color:var(--ix-text-muted);margin-bottom:14px">Share to earn affiliate commissions</div>
 
-                <label class="ix-label">Referral Link</label>
+                <label class="ifx-label">Referral Link</label>
                 <div class="ix-ref-row" style="margin-bottom:12px">
                   <input class="ix-ref-input" readonly value="https://iflux.io/r/violet.dev" id="ref-link" />
-                  <button class="ix-btn ix-btn-primary ix-btn-sm" data-ix-copy-ref="ref-link">
+                  <button class="ifx-btn ifx-btn-primary ifx-btn-sm" data-ix-copy-ref="ref-link">
                     <i class="ti ti-copy" style="font-size:13px"></i>
                   </button>
                 </div>
 
-                <label class="ix-label">Referral Code</label>
+                <label class="ifx-label">Referral Code</label>
                 <div class="ix-ref-row">
                   <input class="ix-ref-input" readonly value="VIOLET10" id="ref-code" style="font-size:15px;font-weight:700;letter-spacing:2px;text-align:center" />
-                  <button class="ix-btn ix-btn-primary ix-btn-sm" data-ix-copy-ref="ref-code">
+                  <button class="ifx-btn ifx-btn-primary ifx-btn-sm" data-ix-copy-ref="ref-code">
                     <i class="ti ti-copy" style="font-size:13px"></i>
                   </button>
                 </div>
@@ -163,40 +173,40 @@
             <!-- ── TAB: ACCOUNT ── -->
             <div id="tab-account" class="ix-tab-content active">
               <div class="ix-card">
-                <div class="ix-card-header" style="justify-content:space-between">
+                <div class="ifx-card-header">
                   <div class="ix-card-title">Account Information</div>
-                  <button type="button" class="ix-btn ix-btn-outline ix-btn-sm">
+                  <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm">
                     <i class="ti ti-edit" style="font-size:12px"></i> Edit
                   </button>
                 </div>
-                <div class="ix-card-body">
+                <div class="ifx-card-body">
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
                     <div>
-                      <label class="ix-label">First Name</label>
+                      <label class="ifx-label">First Name</label>
                       <div style="font-size:14px;color:var(--ix-text-primary);font-weight:500;padding:8px 0">Violet</div>
                     </div>
                     <div>
-                      <label class="ix-label">Last Name</label>
+                      <label class="ifx-label">Last Name</label>
                       <div style="font-size:14px;color:var(--ix-text-primary);font-weight:500;padding:8px 0">Mendoza</div>
                     </div>
                     <div>
-                      <label class="ix-label">Username</label>
+                      <label class="ifx-label">Username</label>
                       <div style="font-size:14px;color:var(--ix-accent);font-weight:500;padding:8px 0">@violet.dev</div>
                     </div>
                     <div>
-                      <label class="ix-label">Email</label>
+                      <label class="ifx-label">Email</label>
                       <div style="font-size:14px;color:var(--ix-text-primary);font-weight:500;padding:8px 0">violet@iflux.io</div>
                     </div>
                     <div>
-                      <label class="ix-label">Phone</label>
+                      <label class="ifx-label">Phone</label>
                       <div style="font-size:14px;color:var(--ix-text-primary);font-weight:500;padding:8px 0">+84 912 345 678</div>
                     </div>
                     <div>
-                      <label class="ix-label">Country</label>
+                      <label class="ifx-label">Country</label>
                       <div style="font-size:14px;color:var(--ix-text-primary);font-weight:500;padding:8px 0">Vietnam 🇻🇳</div>
                     </div>
                     <div>
-                      <label class="ix-label">Bio</label>
+                      <label class="ifx-label">Bio</label>
                       <div style="font-size:13px;color:var(--ix-text-secondary);padding:8px 0;grid-column:span 2;line-height:1.6">Content creator & community builder. Passionate about digital finance and growth hacking.</div>
                     </div>
                   </div>
@@ -207,8 +217,8 @@
             <!-- ── TAB: ACTIVITY ── -->
             <div id="tab-activity" class="ix-tab-content">
               <div class="ix-card">
-                <div class="ix-card-header"><div class="ix-card-title">Activity Timeline</div></div>
-                <div class="ix-card-body">
+                <div class="ifx-card-header"><div class="ix-card-title">Activity Timeline</div></div>
+                <div class="ifx-card-body">
                   <ul class="ix-act-timeline">
                     <li class="ix-act-item">
                       <div class="ix-act-dot ix-stat-icon accent" style="width:32px;height:32px;font-size:14px"><i class="ti ti-affiliate"></i></div>
@@ -302,7 +312,7 @@
                     Số dư khả dụng: <strong style="color:var(--ix-success);font-size:16px">$42.00</strong>
                     <span style="font-size:11px;color:var(--ix-text-muted)">(min. rút $20)</span>
                   </div>
-                  <button class="ix-btn ix-btn-success ix-btn-sm" onclick="ixToast('Yêu cầu rút tiền đã gửi!','success')">
+                  <button class="ifx-btn ifx-btn-success ifx-btn-sm" onclick="IfxToast.show('Yêu cầu rút tiền đã gửi!','success')">
                     <i class="ti ti-cash" style="font-size:13px"></i> Rút hoa hồng
                   </button>
                 </div>
@@ -314,7 +324,7 @@
                   <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary)">Lịch sử hoa hồng</div>
                   <div style="display:flex;gap:8px;align-items:center">
                     <div class="ix-table-search" style="margin:0"><i class="ti ti-search"></i><input type="text" placeholder="Tìm..." data-ix-search="aff-table" /></div>
-                    <button class="ix-btn ix-btn-outline ix-btn-sm"><i class="ti ti-download" style="font-size:12px"></i> Export</button>
+                    <button class="ifx-btn ifx-btn-outline ifx-btn-sm"><i class="ti ti-download" style="font-size:12px"></i> Export</button>
                   </div>
                 </div>
                 <div class="ix-table-responsive">
@@ -338,7 +348,7 @@
                         <td style="color:var(--ix-accent);font-weight:600">10%</td>
                         <td style="color:var(--ix-success);font-weight:700">+$2.90</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 26, 2024</td>
-                        <td><span class="ix-chip ix-chip-success" style="font-size:11px">Paid</span></td>
+                        <td><span class="ifx-chip ifx-chip-success" style="font-size:11px">Paid</span></td>
                       </tr>
                       <tr>
                         <td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-success">TB</div><div><div class="ix-user-name">Trần Thị B</div><div style="font-size:11px;color:var(--ix-text-muted)">via code VIOLET10</div></div></div></td>
@@ -348,7 +358,7 @@
                         <td style="color:var(--ix-accent);font-weight:600">10%</td>
                         <td style="color:var(--ix-success);font-weight:700">+$7.90</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 20, 2024</td>
-                        <td><span class="ix-chip ix-chip-success" style="font-size:11px">Paid</span></td>
+                        <td><span class="ifx-chip ifx-chip-success" style="font-size:11px">Paid</span></td>
                       </tr>
                       <tr>
                         <td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-info">LC</div><div><div class="ix-user-name">Lê Văn C</div><div style="font-size:11px;color:var(--ix-text-muted)">F0 của Nguyễn A</div></div></div></td>
@@ -358,7 +368,7 @@
                         <td style="color:var(--ix-success);font-weight:600">5%</td>
                         <td style="color:var(--ix-success);font-weight:700">+$1.45</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 18, 2024</td>
-                        <td><span class="ix-chip ix-chip-success" style="font-size:11px">Paid</span></td>
+                        <td><span class="ifx-chip ifx-chip-success" style="font-size:11px">Paid</span></td>
                       </tr>
                       <tr>
                         <td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-warning">PD</div><div><div class="ix-user-name">Phạm Thị D</div><div style="font-size:11px;color:var(--ix-text-muted)">F1 → F2 chain</div></div></div></td>
@@ -368,7 +378,7 @@
                         <td style="color:var(--ix-warning);font-weight:600">2.5%</td>
                         <td style="color:var(--ix-success);font-weight:700">+$3.73</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 15, 2024</td>
-                        <td><span class="ix-chip ix-chip-warning" style="font-size:11px">Pending</span></td>
+                        <td><span class="ifx-chip ifx-chip-warning" style="font-size:11px">Pending</span></td>
                       </tr>
                       <tr>
                         <td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-danger">HM</div><div><div class="ix-user-name">Hoàng Văn M</div><div style="font-size:11px;color:var(--ix-text-muted)">via link</div></div></div></td>
@@ -378,7 +388,7 @@
                         <td style="color:var(--ix-accent);font-weight:600">10%</td>
                         <td style="color:var(--ix-success);font-weight:700">+$27.90</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 10, 2024</td>
-                        <td><span class="ix-chip ix-chip-success" style="font-size:11px">Paid</span></td>
+                        <td><span class="ifx-chip ifx-chip-success" style="font-size:11px">Paid</span></td>
                       </tr>
                       <tr>
                         <td><div class="ix-user-cell"><div class="ix-avatar-sm ix-avatar-accent">NK</div><div><div class="ix-user-name">Ngô Thị K</div><div style="font-size:11px;color:var(--ix-text-muted)">F0 của Trần B</div></div></div></td>
@@ -388,7 +398,7 @@
                         <td style="color:var(--ix-success);font-weight:600">5%</td>
                         <td style="color:var(--ix-warning);font-weight:700">+$3.95</td>
                         <td style="font-size:12px;color:var(--ix-text-muted)">Jun 8, 2024</td>
-                        <td><span class="ix-chip ix-chip-warning" style="font-size:11px">Pending</span></td>
+                        <td><span class="ifx-chip ifx-chip-warning" style="font-size:11px">Pending</span></td>
                       </tr>
                     </tbody>
                   </table>
@@ -398,8 +408,8 @@
 
               <!-- Network tree (simplified) -->
               <div class="ix-card" style="margin-top:24px">
-                <div class="ix-card-header"><div class="ix-card-title">Referral Network Overview</div></div>
-                <div class="ix-card-body">
+                <div class="ifx-card-header"><div class="ix-card-title">Referral Network Overview</div></div>
+                <div class="ifx-card-body">
                   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center">
                     <!-- F0 -->
                     <div style="background:rgba(105,108,255,.07);border:1px solid rgba(105,108,255,.2);border-radius:var(--ix-radius-lg);padding:20px">
@@ -436,29 +446,29 @@
             <!-- ── TAB: SECURITY ── -->
             <div id="tab-security" class="ix-tab-content">
               <div class="ix-card ix-mb-24">
-                <div class="ix-card-header"><div class="ix-card-title">Change Password</div></div>
-                <div class="ix-card-body">
+                <div class="ifx-card-header"><div class="ix-card-title">Change Password</div></div>
+                <div class="ifx-card-body">
                   <div style="display:flex;flex-direction:column;gap:16px;max-width:480px">
-                    <div class="ix-form-group"><label class="ix-label">Current Password</label><input type="password" class="ix-input" placeholder="············" /></div>
-                    <div class="ix-form-group"><label class="ix-label">New Password</label><input type="password" class="ix-input" placeholder="············" /></div>
-                    <div class="ix-form-group"><label class="ix-label">Confirm Password</label><input type="password" class="ix-input" placeholder="············" /></div>
+                    <div class="ix-form-group"><label class="ifx-label">Current Password</label><input type="password" class="ifx-input" placeholder="············" /></div>
+                    <div class="ix-form-group"><label class="ifx-label">New Password</label><input type="password" class="ifx-input" placeholder="············" /></div>
+                    <div class="ix-form-group"><label class="ifx-label">Confirm Password</label><input type="password" class="ifx-input" placeholder="············" /></div>
                     <div>
-                      <button class="ix-btn ix-btn-primary" onclick="ixToast('Password updated!','success')">Save Changes</button>
+                      <button class="ifx-btn ifx-btn-primary" onclick="IfxToast.show('Password updated!','success')">Save Changes</button>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="ix-card">
-                <div class="ix-card-header"><div class="ix-card-title">Two-Factor Authentication</div></div>
-                <div class="ix-card-body">
+                <div class="ifx-card-header"><div class="ix-card-title">Two-Factor Authentication</div></div>
+                <div class="ifx-card-body">
                   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
                     <div>
                       <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary);margin-bottom:4px">Authenticator App</div>
                       <div style="font-size:13px;color:var(--ix-text-muted)">Use an authenticator app to generate one-time codes</div>
                     </div>
                     <div style="display:flex;align-items:center;gap:10px">
-                      <span class="ix-chip ix-chip-success" style="font-size:11px">Enabled</span>
-                      <button class="ix-btn ix-btn-outline ix-btn-sm" onclick="ixToast('2FA disabled','warning')">Disable</button>
+                      <span class="ifx-chip ifx-chip-success" style="font-size:11px">Enabled</span>
+                      <button class="ifx-btn ifx-btn-outline ifx-btn-sm" onclick="IfxToast.show('2FA disabled','warning')">Disable</button>
                     </div>
                   </div>
                 </div>
@@ -470,6 +480,7 @@
         </div>
 </div>
 
+<script src="../../../components/toast/toast.js"></script>
 <script src="user-profile.js"></script>
 <script>PatternUserProfile.init();</script>
 </body>
