@@ -122,6 +122,15 @@ html.ifx-appshell-root body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.ifx-appshell-auth-states {
+  display: none;
+  width: auto;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 36rem;
+}
+.ifx-appshell-auth-states.is-visible { display: flex; }
 
 .ifx-appshell-host {
   flex: 1;

@@ -1,18 +1,7 @@
-<nav class="sb-subnav" aria-label="Primitives"><a href="?section=primitives" data-sb-goto="hub">Catalog</a><a href="?section=primitives&amp;panel=title" data-sb-goto="title">Title</a><a href="?section=primitives&amp;panel=button" data-sb-goto="button">Button</a><a href="?section=primitives&amp;panel=chip" data-sb-goto="chip">Chip</a><a href="?section=primitives&amp;panel=badge" data-sb-goto="badge">Badge</a><a href="?section=primitives&amp;panel=avatar" data-sb-goto="avatar">Avatar</a><a href="?section=primitives&amp;panel=alert" data-sb-goto="alert">Alert</a><a href="?section=primitives&amp;panel=progress" data-sb-goto="progress">Progress</a><a href="?section=primitives&amp;panel=nav" data-sb-goto="nav">Navigation primitives</a></nav>
-<div class="sb-panel" data-sb-panel="hub">
-<div class="sb-catalog">
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=title" data-sb-goto="title"><strong>Title</strong><span>design_system/primitives/title/title.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=button" data-sb-goto="button"><strong>Button</strong><span>design_system/primitives/button/button.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=chip" data-sb-goto="chip"><strong>Chip</strong><span>design_system/primitives/chip/chip.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=badge" data-sb-goto="badge"><strong>Badge</strong><span>design_system/primitives/badge/badge.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=avatar" data-sb-goto="avatar"><strong>Avatar</strong><span>design_system/primitives/avatar/avatar.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=alert" data-sb-goto="alert"><strong>Alert</strong><span>design_system/primitives/alert/alert.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=progress" data-sb-goto="progress"><strong>Progress</strong><span>design_system/primitives/progress/progress.css</span></a>
-<a class="sb-catalog-item" href="?section=primitives&amp;panel=nav" data-sb-goto="nav"><strong>Navigation primitives</strong><span>design_system/primitives/navigation/nav.css</span></a>
-</div></div>
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Primitives"><a class="ifx-tab" href="?section=primitives&amp;panel=title" data-sb-goto="title">Title</a><a class="ifx-tab" href="?section=primitives&amp;panel=button" data-sb-goto="button">Button</a><a class="ifx-tab" href="?section=primitives&amp;panel=chip" data-sb-goto="chip">Chip</a><a class="ifx-tab" href="?section=primitives&amp;panel=badge" data-sb-goto="badge">Badge</a><a class="ifx-tab" href="?section=primitives&amp;panel=avatar" data-sb-goto="avatar">Avatar</a><a class="ifx-tab" href="?section=primitives&amp;panel=alert" data-sb-goto="alert">Alert</a><a class="ifx-tab" href="?section=primitives&amp;panel=progress" data-sb-goto="progress">Progress</a><a class="ifx-tab" href="?section=primitives&amp;panel=nav" data-sb-goto="nav">Navigation primitives</a></nav>
+
 <div class="sb-panel" data-sb-panel="title" hidden>
 <section class="sb-section ifx-stack-md" id="prim-title">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/title/title.css</code></p>
   <div class="ifx-section-title">
       <h2>Title</h2>
       <p>Context heading + optional <code>p</code>. <code>h1</code>/<code>h2</code>/<code>h3</code> lấy style từ Foundation. Title Primitive chỉ set 2 declaration trên <code>p</code>.</p>
@@ -48,7 +37,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="button" hidden>
 <section class="sb-section ifx-stack-md" id="prim-button">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/button/button.css</code></p>
 <div class="ifx-section-title">
       <h2>Button</h2>
       <p><code>.ifx-btn</code> · tone · size · icon · disabled. Hover/active = CSS.</p>
@@ -63,6 +51,8 @@
     <button type="button" class="ifx-btn ifx-btn-outline-danger">Outline Danger</button>
     <button type="button" class="ifx-btn ifx-btn-ghost">Ghost</button>
     <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Tìm"><i class="ti ti-search ifx-icon"></i></button>
+    <button type="button" class="ifx-btn ifx-btn-primary"><i class="ti ti-plus ifx-icon ifx-icon-sm"></i> Thêm</button>
+    <button type="button" class="ifx-btn ifx-btn-outline"><i class="ti ti-download ifx-icon ifx-icon-sm"></i> Xuất</button>
   </div>
   <div class="ifx-widget-title">
       <h3>Size + disabled</h3>
@@ -78,7 +68,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="chip" hidden>
 <section class="sb-section ifx-stack-md" id="prim-chip">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/chip/chip.css</code></p>
 <div class="ifx-section-title">
       <h2>Chip</h2>
     </div>
@@ -94,7 +83,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="badge" hidden>
 <section class="sb-section ifx-stack-md" id="prim-badge">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/badge/badge.css</code></p>
 <div class="ifx-section-title">
       <h2>Badge</h2>
     </div>
@@ -106,14 +94,16 @@
     <span class="ifx-badge ifx-badge-info">Info</span>
     <span class="ifx-badge ifx-badge-primary ifx-badge-count">12</span>
     <span class="ifx-badge ifx-badge-success ifx-badge-status">live</span>
-    <span class="ifx-badge ifx-badge-dot ifx-badge-danger" aria-label="dot danger"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-primary" aria-label="dot primary"></span>
     <span class="ifx-badge ifx-badge-dot ifx-badge-success" aria-label="dot success"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-warning" aria-label="dot warning"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-danger" aria-label="dot danger"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-info" aria-label="dot info"></span>
   </div>
 </section>
 </div>
 <div class="sb-panel" data-sb-panel="avatar" hidden>
 <section class="sb-section ifx-stack-md" id="prim-avatar">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/avatar/avatar.css</code></p>
 <div class="ifx-section-title">
       <h2>Avatar</h2>
       <p>Size token <code>--ifx-size-avatar-sm|md|lg</code> (28 / 36 / 48).</p>
@@ -136,7 +126,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="alert" hidden>
 <section class="sb-section ifx-stack-md" id="prim-alert">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/alert/alert.css</code></p>
 <div class="ifx-section-title">
       <h2>Alert</h2>
     </div>
@@ -151,7 +140,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="progress" hidden>
 <section class="sb-section ifx-stack-md" id="prim-progress">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/progress/progress.css</code></p>
 <div class="ifx-section-title">
       <h2>Progress</h2>
       <p>Fill = <code>--ifx-progress-value</code> (sandbox set qua class demo, không inline style).</p>
@@ -171,7 +159,6 @@
 </div>
 <div class="sb-panel" data-sb-panel="nav" hidden>
 <section class="sb-section ifx-stack-md" id="prim-nav">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P3 Primitive <span class="sb-source-k">Source</span> <code>design_system/primitives/navigation/nav.css</code></p>
 <div class="ifx-section-title">
       <h2>Navigation primitives</h2>
       <p>

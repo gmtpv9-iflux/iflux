@@ -2,9 +2,16 @@
  * Component — Form
  * REWRITE .ix-form-group / label / input / select / textarea / checkbox / dropzone.
  */
+.ifx-form-group { margin-bottom: var(--ifx-stack-md); }
+.ifx-form-row > .ifx-form-group { margin-bottom: 0; }
+.ifx-stack-sm > .ifx-form-group,
+.ifx-stack-md > .ifx-form-group,
+.ifx-stack-lg > .ifx-form-group,
+.ifx-stack-xl > .ifx-form-group { margin-bottom: 0; }
+
 .ifx-label {
   display: block;
-  font-size: var(--ifx-font-size-sm);
+  font-size: var(--ifx-font-size-14);
   font-weight: var(--ifx-font-weight-medium);
   color: var(--ifx-text-secondary);
   margin-bottom: var(--ifx-inline-sm);
@@ -18,7 +25,7 @@
   border-radius: var(--ifx-radius-input);
   padding: var(--ifx-space-input-y) var(--ifx-space-input-x);
   color: var(--ifx-text-primary);
-  font-size: var(--ifx-font-size-sm);
+  font-size: var(--ifx-font-size-14);
   font-family: var(--ifx-font-primary);
   outline: none;
   transition: var(--ifx-transition-color);
@@ -112,6 +119,15 @@
   color: var(--ifx-text-muted);
   font-size: var(--ifx-font-size-xs);
 }
+.ifx-choice-dense {
+  align-items: center;
+  gap: var(--ifx-space-8);
+}
+.ifx-choice-dense .ifx-choice-title {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-regular);
+  color: var(--ifx-text-secondary);
+}
 
 .ifx-switch {
   position: relative;
@@ -191,6 +207,33 @@
   margin: var(--ifx-space-4) 0 0;
   font-size: var(--ifx-text-caption-size);
   color: var(--ifx-text-muted);
+}
+.ifx-field-hint-tight {
+  margin-top: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-12);
+}
+
+.ifx-input-password { position: relative; }
+.ifx-input-password .ifx-input { padding-right: var(--ifx-space-40); }
+.ifx-input-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ifx-text-muted);
+  font-size: var(--ifx-font-size-16);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ifx-input-otp {
+  text-align: center;
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-20);
+  letter-spacing: 0.25em;
 }
 
 .ifx-form-row {

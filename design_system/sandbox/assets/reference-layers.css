@@ -26,8 +26,23 @@
  * LAYER 2 — PLATFORM
  * FUTURE TARGET: platform/admin/ · platform/web/ · platform/app/
  *
- * References are AppShell-free. No platform chrome to restore.
+ * References are AppShell-free except Auth splash (W10 size parity).
  * ========================================================= */
+
+/* ---------- auth (W10) ---------- */
+/**
+ * SOURCE: Legacy .ix-auth-root — 100vh flex center
+ * FUTURE OWNER: platform/admin/ (auth splash, not AppShell)
+ */
+.ref-platform-auth {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-16);
+  background: var(--ifx-bg-canvas);
+}
 
 /* =========================================================
  * LAYER 3 — MODULE / FEATURE
@@ -307,25 +322,105 @@
 
 /* ---------- auth (W10) ---------- */
 /**
- * SOURCE: Legacy auth full-width submit + OTP tracking
- * FUTURE OWNER: pages/.../auth/
- * Tabs / Alert / Form remain Component-owned.
+ * SOURCE: Legacy .ix-auth-card / brand / title / sub / remember / footer / back
+ * FUTURE OWNER: pages/admin/auth/
+ * Tabs dense / Form group / OTP / eye = Component. No .ifx-auth-*.
  */
-.ref-page-auth-submit,
-.ref-page-auth-alt {
+.ref-page-auth-card {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 420px;
+  padding: 36px 40px;
+}
+.ref-page-auth-card.ifx-card { box-shadow: none; }
+.ref-page-auth-card .ifx-alert[hidden] { display: none; }
+
+.ref-page-auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-inline-md);
+  margin-bottom: var(--ifx-space-24);
+  font-size: var(--ifx-font-size-20);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
 }
 
-.ref-page-auth-otp {
-  text-align: center;
-  letter-spacing: var(--ifx-letter-spacing-caps);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--ifx-font-size-xl);
+.ref-page-auth-heading h2 { margin: 0 0 var(--ifx-space-4); }
+.ref-page-auth-heading p {
+  margin: 0 0 var(--ifx-space-24);
+  font-size: var(--ifx-font-size-14);
+  color: var(--ifx-text-muted);
 }
+
+.ref-page-auth-methods { margin: var(--ifx-space-12) auto var(--ifx-space-20); }
+
+.ref-page-auth-submit { width: 100%; }
+.ref-page-auth-submit-login { margin-top: var(--ifx-space-8); }
+.ref-page-auth-submit-register { margin-bottom: var(--ifx-space-16); }
+.ref-page-auth-submit-forgot { margin-bottom: var(--ifx-space-8); }
+.ref-page-auth-submit-otp { margin-bottom: var(--ifx-space-16); }
+
+.ref-page-auth-session { margin-top: 18px; }
+.ref-page-auth-session-note {
+  display: block;
+  margin-top: var(--ifx-space-16);
+  text-align: center;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ifx-text-muted);
+}
+
+.ref-page-auth-terms { margin: var(--ifx-space-16) 0; }
+
+.ref-page-auth-footer {
+  margin-top: var(--ifx-space-16);
+  text-align: center;
+  font-size: var(--ifx-font-size-14);
+  color: var(--ifx-text-muted);
+}
+
+.ref-page-auth-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4);
+  margin-top: var(--ifx-space-16);
+  font-size: var(--ifx-font-size-14);
+  color: var(--ifx-action-primary);
+  text-decoration: none;
+}
+.ref-page-auth-back i { font-size: var(--ifx-font-size-sm); }
+.ref-page-auth-back-hub { margin-top: var(--ifx-space-20); }
 
 /* =========================================================
  * LAYER 5 — WIDGET
  * FUTURE TARGET: widgets/<widget-id>/
- *
- * No independent Widget artifact in W01–W10 References.
  * ========================================================= */
+
+/* ---------- charts (W09) — series compare ---------- */
+/**
+ * SOURCE: Legacy top10-market-block chrome (yaxis + plot + ranked legend)
+ * FUTURE OWNER: widgets/series-compare/
+ * Plot / line / legend-rail = Chart Component.
+ * Palette stays on this widget — not Global chart-1…10.
+ */
+.ref-widget-series-compare {
+  --ifx-chart-series-1: var(--ifx-action-primary);
+  --ifx-chart-series-2: var(--ifx-success);
+  --ifx-chart-series-3: var(--ifx-warning);
+  --ifx-chart-series-4: var(--ifx-danger);
+  --ifx-chart-series-5: var(--ifx-info);
+  --ifx-chart-series-6: var(--ifx-color-orange-500);
+  --ifx-chart-series-7: var(--ifx-color-violet-500);
+  --ifx-chart-series-8: var(--ifx-color-green-500);
+  --ifx-chart-series-9: var(--ifx-color-cyan-500);
+  --ifx-chart-series-10: var(--ifx-text-muted);
+}
+
+/* ---------- charts (W09) — page ---------- */
+/**
+ * SOURCE: Legacy charts.html candle+volume stack
+ * FUTURE OWNER: pages/.../charts/
+ */
+.ref-page-charts-ohlc {
+}

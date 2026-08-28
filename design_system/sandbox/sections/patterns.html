@@ -1,39 +1,32 @@
-<nav class="sb-subnav" aria-label="Patterns"><a href="?section=patterns" data-sb-goto="hub">Catalog</a><a href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header">Page Header</a><a href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list">Data List</a><a href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail">Record Detail</a><a href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form">Entity Form</a><a href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation">Conversation</a><a href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history">Order History</a></nav>
-<div class="sb-panel" data-sb-panel="hub">
-<div class="sb-catalog">
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header"><strong>Page Header</strong><span>design_system/patterns/page-header/page-header.css</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list"><strong>Data List</strong><span>design_system/patterns/data-list/data-list.js</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail"><strong>Record Detail</strong><span>compose page-header + card + timeline</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form"><strong>Entity Form</strong><span>compose page-header + form + tabs + action-bar · P6-W02</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation"><strong>Conversation</strong><span>compose Chat Family</span></a>
-<a class="sb-catalog-item" href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history"><strong>Order History</strong><span>compose Timeline Family</span></a>
-</div></div>
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Patterns"><a class="ifx-tab" href="?section=patterns&amp;panel=page-header" data-sb-goto="page-header">Page Header</a><a class="ifx-tab" href="?section=patterns&amp;panel=data-list" data-sb-goto="data-list">Data List</a><a class="ifx-tab" href="?section=patterns&amp;panel=record-detail" data-sb-goto="record-detail">Record Detail</a><a class="ifx-tab" href="?section=patterns&amp;panel=entity-form" data-sb-goto="entity-form">Entity Form</a><a class="ifx-tab" href="?section=patterns&amp;panel=conversation" data-sb-goto="conversation">Conversation</a><a class="ifx-tab" href="?section=patterns&amp;panel=order-history" data-sb-goto="order-history">Order History</a></nav>
+
 <div class="sb-panel" data-sb-panel="page-header" hidden>
 <section class="sb-section ifx-stack-md" id="pat-page-header">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/page-header/page-header.css</code> · consume <code>primitives/title/title.css</code></p>
 <div class="ifx-section-title">
       <h2>Page Header</h2>
-      <p>Pattern · AR-001 §25 · breadcrumb + Title Primitive + actions + optional stats. Không sở hữu typography heading.</p>
+      <p>Tiêu đề, breadcrumb, mô tả và action.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
-      <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
-        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
-        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
-      </ol>
-    </nav>
-    <div class="ifx-page-header-main">
+      <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Danh sách bản ghi</h1>
-        <p>Trang liệt kê — dữ liệu generic, không business.</p>
-      </div>
+          <h1>Danh sách bản ghi</h1>
+        </div>
       <div class="ifx-page-header-actions">
         <button type="button" class="ifx-btn ifx-btn-outline">Xuất</button>
         <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
       </div>
     </div>
-    <div class="ifx-grid">
+      <nav aria-label="Breadcrumb">
+      <ol class="ifx-breadcrumb">
+        <li><span>Patterns</span></li>
+        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
+      </ol>
+    </nav>
+      <div class="ifx-page-title">
+          <p>Trang liệt kê — dữ liệu generic, không business.</p>
+        </div>
+      <div class="ifx-grid">
       <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
         <div class="ifx-stat">
           <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
@@ -71,34 +64,35 @@
         </div>
       </div>
     </div>
-  </header>
+    </header>
 </section>
 </div>
 <div class="sb-panel" data-sb-panel="data-list" hidden>
 <section class="sb-section ifx-stack-md" id="pat-data-list">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>design_system/patterns/data-list/data-list.js</code> <span class="sb-source-k">Since</span> P6-W01</p>
 <div class="ifx-section-title">
       <h2>Data List</h2>
       <p>P5 · Search + Table + Pagination wired bởi <code>IfxDataList</code>. Drawer sửa nhỏ — AR-001 §26.1.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
-      <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
-        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
-        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
-      </ol>
-    </nav>
-    <div class="ifx-page-header-main">
+      <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Bản ghi</h1>
-        <p>Bảng + phân trang. Sửa nhanh mở drawer.</p>
-      </div>
+          <h1>Bản ghi</h1>
+        </div>
       <div class="ifx-page-header-actions">
         <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
       </div>
     </div>
-  </header>
+      <nav aria-label="Breadcrumb">
+      <ol class="ifx-breadcrumb">
+        <li><span>Patterns</span></li>
+        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
+      </ol>
+    </nav>
+      <div class="ifx-page-title">
+          <p>Bảng + phân trang. Sửa nhanh mở drawer.</p>
+        </div>
+    </header>
   <div class="ifx-card" data-ifx-data-list data-ifx-page-size="2">
     <div class="ifx-stack-sm">
     <div class="ifx-table-toolbar">
@@ -167,31 +161,30 @@
 </div>
 <div class="sb-panel" data-sb-panel="record-detail" hidden>
 <section class="sb-section ifx-stack-md" id="pat-record-detail">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> compose page-header + card + timeline <span class="sb-source-k">Since</span> P6-W04</p>
 <div class="ifx-section-title">
       <h2>Record Detail</h2>
       <p>Compose page-header + card + timeline. Reference đầy đủ: <a href="../references/patterns/order-detail/">W04 candidate</a>.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Bản ghi A-01</h1>
+        </div>
+      <div class="ifx-page-header-actions">
+        <span class="ifx-chip ifx-chip-success">active</span>
+      </div>
+    </div>
+      <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
-        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
         <li><a href="?section=patterns">Danh sách</a></li>
         <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
         <li class="ifx-breadcrumb-current" aria-current="page">A-01</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Bản ghi A-01</h1>
-        <p>Chi tiết generic — không domain copy.</p>
-      </div>
-      <div class="ifx-page-header-actions">
-        <span class="ifx-chip ifx-chip-success">active</span>
-      </div>
-    </div>
-  </header>
+          <p>Chi tiết generic — không domain copy.</p>
+        </div>
+    </header>
   <div class="ifx-card">
     <div class="ifx-card-header">
       <div class="ifx-widget-title">
@@ -233,26 +226,27 @@
 </div>
 <div class="sb-panel" data-sb-panel="entity-form" hidden>
 <section class="sb-section ifx-stack-md" id="pat-entity-form">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> compose page-header + form + tabs + action-bar <span class="sb-source-k">Since</span> P6-W02</p>
 <div class="ifx-section-title">
       <h2>Entity Form</h2>
       <p>Trang form lớn — không wizard (W06). Reference đầy đủ: <a href="../references/patterns/form-add/">W02 candidate</a>.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Thêm bản ghi</h1>
+        </div>
+    </div>
+      <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
+        <li><span>Patterns</span></li>
         <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
         <li class="ifx-breadcrumb-current" aria-current="page">Thêm</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Thêm bản ghi</h1>
-        <p>Compose card + form. Không thống kê.</p>
-      </div>
-    </div>
-  </header>
+          <p>Compose card + form. Không thống kê.</p>
+        </div>
+    </header>
   <div class="ifx-grid">
     <div class="ifx-col-12 ifx-col-lg-8">
       <div class="ifx-card">
@@ -307,26 +301,27 @@
 </div>
 <div class="sb-panel" data-sb-panel="conversation" hidden>
 <section class="sb-section ifx-stack-md" id="pat-conversation">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose Chat Family</code></p>
 <div class="ifx-section-title">
       <h2>Conversation</h2>
       <p>Compose page-header + Chat Family.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Hội thoại</h1>
+        </div>
+    </div>
+      <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
+        <li><span>Patterns</span></li>
         <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
         <li class="ifx-breadcrumb-current" aria-current="page">Hội thoại</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Hội thoại</h1>
-        <p>Nền Conversation — compose Chat Family, không business.</p>
-      </div>
-    </div>
-  </header>
+          <p>Nền Conversation — compose Chat Family, không business.</p>
+        </div>
+    </header>
   <div class="ifx-chat" data-ifx-chat>
     <div class="ifx-chat-thread">
       <button type="button" class="ifx-chat-item is-active" data-ifx-chat-name="Nhóm A">
@@ -359,26 +354,27 @@
 </div>
 <div class="sb-panel" data-sb-panel="order-history" hidden>
 <section class="sb-section ifx-stack-md" id="pat-order-history">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> P5 <span class="sb-source-k">Source</span> <code>compose Timeline Family</code></p>
 <div class="ifx-section-title">
       <h2>Order History</h2>
       <p>Compose page-header + Timeline Family.</p>
     </div>
   <header class="ifx-page-header">
-    <nav aria-label="Breadcrumb">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Lịch sử sự kiện</h1>
+        </div>
+    </div>
+      <nav aria-label="Breadcrumb">
       <ol class="ifx-breadcrumb">
-        <li><a href="?section=patterns">Catalog</a></li>
+        <li><span>Patterns</span></li>
         <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
         <li class="ifx-breadcrumb-current" aria-current="page">Lịch sử</li>
       </ol>
     </nav>
-    <div class="ifx-page-header-main">
       <div class="ifx-page-title">
-        <h1>Lịch sử sự kiện</h1>
-        <p>Nền Order History — compose Timeline Family, không domain đơn hàng.</p>
-      </div>
-    </div>
-  </header>
+          <p>Nền Order History — compose Timeline Family, không domain đơn hàng.</p>
+        </div>
+    </header>
   <div class="ifx-card">
     <div class="ifx-card-body">
       <ol class="ifx-timeline">

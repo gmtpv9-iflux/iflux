@@ -1,6 +1,7 @@
 /**
  * Component — Chart (token-driven)
- * Adapter đọc semantic token; bar height = --ifx-chart-h từ data-ifx-chart-h → space token.
+ * Types: bar · group · area · line · donut · radial · scatter · heatmap · candle · volume
+ * Adapter đọc semantic token. Height = --ifx-chart-plot-h / data-ifx-plot.
  */
 .ifx-chart {
   display: flex;
@@ -9,6 +10,40 @@
   min-height: var(--ifx-space-128);
   padding: var(--ifx-space-16);
 }
+.ifx-chart.is-plot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 0;
+  padding: var(--ifx-space-8) 0 0;
+  gap: var(--ifx-gap-sm);
+}
+.ifx-chart[data-ifx-legend="rail"] {
+  display: grid;
+  grid-template-columns: 1fr var(--ifx-space-160);
+  align-items: stretch;
+  gap: var(--ifx-gap-sm);
+}
+.ifx-chart[data-ifx-legend="rail"] .ifx-chart-plot { grid-column: 1; }
+.ifx-chart[data-ifx-legend="rail"] .ifx-chart-legend { grid-column: 2; grid-row: 1; }
+
+.ifx-chart[data-ifx-plot="sm"] { --ifx-chart-plot-h: var(--ifx-space-128); }
+.ifx-chart[data-ifx-plot="md"] { --ifx-chart-plot-h: calc(var(--ifx-space-128) + var(--ifx-space-80)); }
+.ifx-chart[data-ifx-plot="lg"] { --ifx-chart-plot-h: var(--ifx-space-256); }
+.ifx-chart[data-ifx-plot="xl"] { --ifx-chart-plot-h: calc(var(--ifx-space-256) + var(--ifx-space-80)); }
+
+.ifx-chart-plot {
+  display: block;
+  width: 100%;
+  height: var(--ifx-chart-plot-h, var(--ifx-space-128));
+  min-width: 0;
+}
+.ifx-chart-plot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .ifx-chart-col {
   flex: 1;
   display: flex;
@@ -17,6 +52,15 @@
   gap: var(--ifx-space-8);
   min-width: 0;
 }
+.ifx-chart-group {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--ifx-space-2);
+  width: 100%;
+}
+.ifx-chart-group .ifx-chart-bar { max-width: var(--ifx-space-16); }
+
 .ifx-chart-bar {
   width: 100%;
   max-width: var(--ifx-space-32);
@@ -31,6 +75,7 @@
 .ifx-chart-bar[data-ifx-chart-h="80"]  { --ifx-chart-h: var(--ifx-space-80); }
 .ifx-chart-bar[data-ifx-chart-h="96"]  { --ifx-chart-h: var(--ifx-space-96); }
 .ifx-chart-bar[data-ifx-chart-h="128"] { --ifx-chart-h: var(--ifx-space-128); }
+
 .ifx-chart-label { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
 .ifx-chart-legend {
   display: flex;
@@ -39,6 +84,27 @@
   font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-secondary);
 }
+.ifx-chart-legend-rail {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: var(--ifx-space-8);
+  justify-content: space-between;
+}
+.ifx-chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  min-width: 0;
+}
+.ifx-chart-legend-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ifx-chart-legend-val {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--ifx-font-weight-semibold);
+  flex-shrink: 0;
+}
+.ifx-chart-legend-val.is-up { color: var(--ifx-success); }
+.ifx-chart-legend-val.is-down { color: var(--ifx-danger); }
 .ifx-chart-swatch {
   display: inline-block;
   width: var(--ifx-space-12);
@@ -47,4 +113,29 @@
   background: var(--ifx-chart-fill, var(--ifx-action-primary));
   margin-right: var(--ifx-space-4);
   vertical-align: middle;
+  flex-shrink: 0;
 }
+.ifx-chart-legend-rail .ifx-chart-swatch {
+  width: var(--ifx-space-8);
+  height: var(--ifx-space-8);
+  border-radius: var(--ifx-radius-full);
+  margin-right: 0;
+}
+
+.ifx-chart-heat-row {
+  display: grid;
+  grid-template-columns: var(--ifx-space-32) repeat(12, minmax(0, 1fr));
+  gap: var(--ifx-space-2);
+  align-items: center;
+}
+.ifx-chart-heat {
+  aspect-ratio: 1;
+  border-radius: var(--ifx-radius-xs);
+  background: var(--ifx-chart-fill, var(--ifx-action-primary));
+  opacity: var(--ifx-chart-heat, 0.4);
+}
+.ifx-chart-heat[data-ifx-heat="1"] { --ifx-chart-heat: 0.16; }
+.ifx-chart-heat[data-ifx-heat="2"] { --ifx-chart-heat: 0.36; }
+.ifx-chart-heat[data-ifx-heat="3"] { --ifx-chart-heat: 0.56; }
+.ifx-chart-heat[data-ifx-heat="4"] { --ifx-chart-heat: 0.76; }
+.ifx-chart-heat[data-ifx-heat="5"] { --ifx-chart-heat: 1; }

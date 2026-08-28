@@ -1,5 +1,5 @@
 /**
- * Sandbox Catalog shell — routing, theme, token render, playground iframe, icon catalog.
+ * Sandbox shell — routing, theme, token render, playground iframe, icon list.
  * Không điều khiển layout responsive bằng JS.
  */
 (function () {
@@ -44,25 +44,28 @@
     '../components/toast/toast.js',
     '../components/dropdown/dropdown.js',
     '../components/tabs/tabs.js',
+    '../components/form/form.js',
     '../components/wizard/wizard.js',
     '../components/chat/chat.js',
-    '../components/chart/chart-adapter.js'
+    '../components/chart/chart-adapter.js?v=5'
   ];
 
   function ensureHref(href, kind) {
+    var url = new URL(href, SANDBOX_DIR).href;
     var sel = (kind === 'script' ? 'script' : 'link') + '[data-ifx-comp="' + href + '"]';
     if (doc.querySelector(sel)) return Promise.resolve();
     return new Promise(function (resolve) {
       var node;
       if (kind === 'script') {
         node = doc.createElement('script');
-        node.src = href;
+        node.src = url;
         node.onload = resolve;
+        node.onerror = resolve;
         doc.body.appendChild(node);
       } else {
         node = doc.createElement('link');
         node.rel = 'stylesheet';
-        node.href = href;
+        node.href = url;
         node.onload = resolve;
         doc.head.appendChild(node);
       }
@@ -111,9 +114,15 @@
     }
     if (window.IfxDataList) window.IfxDataList.initAll();
     if (window.IfxTabs) window.IfxTabs.initAll();
+    if (window.IfxForm) window.IfxForm.initAll();
     if (window.IfxWizard) window.IfxWizard.init();
     if (window.IfxChat) window.IfxChat.init();
-    if (window.IfxChart) window.IfxChart.init();
+    if (window.IfxChart) {
+      window.IfxChart.init();
+      var chartPanel = stage && stage.querySelector('[data-sb-panel="chart"]:not([hidden])');
+      if (chartPanel) window.IfxChart.paint(chartPanel);
+      else window.IfxChart.paint(stage || document);
+    }
     doc.querySelectorAll('[data-ifx-toast]').forEach(function (btn) {
       if (btn.getAttribute('data-sb-bound') === '1') return;
       btn.setAttribute('data-sb-bound', '1');
@@ -205,6 +214,9 @@
     stage.querySelectorAll('[data-sb-goto]').forEach(function (a) {
       a.classList.toggle('is-active', a.getAttribute('data-sb-goto') === active);
     });
+    if (window.IfxChart) {
+      requestAnimationFrame(function () { window.IfxChart.paint(target); });
+    }
   }
 
   function setText(id, text) {
@@ -473,6 +485,7 @@
 
   function afterSection(id, panel) {
     showPanel(panel);
+    if (window.IfxChart) window.IfxChart.paint(stage);
     ensureHref('../primitives/title/title.css', 'css');
     if (id === 'tokens') renderTokens();
     if (id === 'foundation') {

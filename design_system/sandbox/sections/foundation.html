@@ -1,16 +1,15 @@
-<nav class="sb-subnav" aria-label="Foundation groups">
-  <a href="?section=foundation&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
-  <a href="?section=foundation&amp;panel=grid" data-sb-goto="grid">Grid</a>
-  <a href="?section=foundation&amp;panel=container" data-sb-goto="container">Container</a>
-  <a href="?section=foundation&amp;panel=spacing" data-sb-goto="spacing">Spacing / Layout</a>
-  <a href="?section=foundation&amp;panel=typography" data-sb-goto="typography">Typography</a>
-  <a href="?section=foundation&amp;panel=icons" data-sb-goto="icons">Icons</a>
-  <a href="?section=foundation&amp;panel=theme" data-sb-goto="theme">Theme</a>
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Foundation groups">
+  <a class="ifx-tab" href="?section=foundation&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=grid" data-sb-goto="grid">Grid</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=container" data-sb-goto="container">Container</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=spacing" data-sb-goto="spacing">Spacing / Layout</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=typography" data-sb-goto="typography">Typography</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=icons" data-sb-goto="icons">Icons</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=theme" data-sb-goto="theme">Theme</a>
 </nav>
 
 <div class="sb-panel" data-sb-panel="responsive">
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 Foundation <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code> · <code>tokens/source/breakpoints.json</code></p>
     <div class="ifx-section-title">
       <h2>Responsive Playground</h2>
       <p>Hai input độc lập trên một preview iframe. JS chỉ đổi class/viewport và đọc computed — không set width giả CSS.</p>
@@ -67,7 +66,6 @@
 
 <div class="sb-panel" data-sb-panel="grid" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
     <div class="ifx-section-title">
       <h2>Grid 12 cột</h2>
       <p>BASE mỗi cell span 12. Mở rộng bằng <code>.ifx-col-{n}</code> và <code>.ifx-col-md-*</code>.</p>
@@ -82,7 +80,6 @@
 
 <div class="sb-panel" data-sb-panel="container" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
     <div class="ifx-section-title">
       <h2>Container</h2>
       <p><code>.ifx-container</code> full + gutter token. <code>.ifx-container-max</code> opt-in 1280.</p>
@@ -98,7 +95,6 @@
 
 <div class="sb-panel" data-sb-panel="spacing" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/layout.css</code></p>
     <div class="ifx-section-title">
       <h2>Stack / Inline</h2>
       <p>Global layout primitives. Stack = sibling rhythm. Inline = inline-flex + center + semantic gap.</p>
@@ -115,6 +111,10 @@
       <div>stack-lg A</div>
       <div>stack-lg B</div>
     </div>
+    <div class="ifx-stack-xl">
+      <div>stack-xl A</div>
+      <div>stack-xl B</div>
+    </div>
     <div class="ifx-widget-title">
       <h3>Inline</h3>
     </div>
@@ -123,6 +123,12 @@
       <div class="ifx-inline-sm"><span>inline-sm</span><span>A</span><span>B</span></div>
       <div class="ifx-inline-md"><span>inline-md</span><span>A</span><span>B</span></div>
     </div>
+    <div class="ifx-widget-title">
+      <h3>Gap</h3>
+    </div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-xs"><span>gap-xs</span><span>A</span><span>B</span></div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-sm"><span>gap-sm</span><span>A</span><span>B</span></div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-md"><span>gap-md</span><span>A</span><span>B</span></div>
     <div class="ifx-widget-title">
       <h3>Stack → row (layout.css)</h3>
     </div>
@@ -136,7 +142,6 @@
 
 <div class="sb-panel" data-sb-panel="typography" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/typography.css</code></p>
     <div class="ifx-section-title">
       <h2>Typography</h2>
       <p>Foundation = document + semantic HTML + heading/body/caption tokens. Button tokens tạm nằm đây vì Button đang consume.</p>
@@ -172,10 +177,15 @@
 
 <div class="sb-panel" data-sb-panel="icons" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P2 <span class="sb-source-k">Source</span> <code>design_system/foundation/icons/vendor/tabler/</code></p>
     <div class="ifx-section-title">
       <h2>Icon Catalog</h2>
       <p>Source: <strong id="iconSourceCount">—</strong> · Canonical: <strong id="iconCanonCount">—</strong> · Missing: <strong id="iconMissing">—</strong></p>
+    </div>
+    <p class="sb-kicker">Size</p>
+    <div class="ifx-flex ifx-items-center ifx-gap-md">
+      <i class="ti ti-star ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+      <i class="ti ti-star ifx-icon" aria-hidden="true"></i>
+      <i class="ti ti-star ifx-icon ifx-icon-lg" aria-hidden="true"></i>
     </div>
     <div class="sb-icon-toolbar">
       <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon" autocomplete="off">
@@ -192,7 +202,6 @@
 
 <div class="sb-panel" data-sb-panel="theme" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 + adapter <span class="sb-source-k">Source</span> <code>tokens/generated/css/themes/</code> · <code>adapters/web/theme.js</code></p>
     <div class="ifx-section-title">
       <h2>Theme</h2>
       <p>Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Foundation không biết DOM.</p>

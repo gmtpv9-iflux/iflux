@@ -18,6 +18,18 @@
     'user-profile': 'User Profile',
     wizard: 'Wizard'
   };
+  var AUTH_STATES = {
+    login: 'login.html',
+    register: 'register.html',
+    forgot: 'forgot.html',
+    'verify-2fa': 'verify-2fa.html'
+  };
+  var AUTH_STATE_LABEL = {
+    login: 'Login',
+    register: 'Register',
+    forgot: 'Forgot Password',
+    'verify-2fa': 'Verify 2FA'
+  };
   var SECTION_LABEL = {
     tokens: 'Tokens',
     foundation: 'Foundation',
@@ -40,6 +52,7 @@
   var titleEl = doc.getElementById('ifxAppshellTitle');
   var themeBtn = doc.getElementById('ifxAppshellTheme');
   var menuBtn = doc.getElementById('ifxAppshellMenu');
+  var authStatesEl = doc.getElementById('ifxAppshellAuthStates');
   var patternFrame = null;
 
   function params() {
@@ -58,11 +71,19 @@
     if (module !== 'sandbox' && module !== 'patterns') module = 'sandbox';
     if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
+    if (module === 'patterns' && !pattern) pattern = 'auth';
+    var state = q.get('state') || '';
+    if (pattern === 'auth') {
+      if (!AUTH_STATES[state]) state = 'login';
+    } else {
+      state = '';
+    }
     return {
       module: module,
       section: section,
       panel: q.get('panel') || '',
-      pattern: pattern
+      pattern: pattern,
+      state: state
     };
   }
 
@@ -74,6 +95,7 @@
       if (route.panel) p.set('panel', route.panel);
     } else if (route.pattern) {
       p.set('pattern', route.pattern);
+      if (route.pattern === 'auth' && route.state) p.set('state', route.state);
     }
     return '?' + p.toString();
   }
@@ -110,7 +132,11 @@
 
   function titleFor(route) {
     if (route.module === 'patterns') {
-      return route.pattern ? ('Patterns · ' + PATTERNS[route.pattern]) : 'Patterns · Catalog';
+      var name = PATTERNS[route.pattern] || PATTERNS.auth;
+      if (route.pattern === 'auth' && route.state) {
+        return 'Patterns · ' + name + ' · ' + (AUTH_STATE_LABEL[route.state] || route.state);
+      }
+      return 'Patterns · ' + name;
     }
     var label = SECTION_LABEL[route.section] || route.section;
     return route.panel ? ('Sandbox · ' + label + ' · ' + route.panel) : ('Sandbox · ' + label);
@@ -128,6 +154,14 @@
       a.classList.toggle('is-active', active);
     });
     titleEl.textContent = titleFor(route);
+    var showAuth = route.module === 'patterns' && route.pattern === 'auth';
+    if (authStatesEl) {
+      authStatesEl.hidden = !showAuth;
+      authStatesEl.classList.toggle('is-visible', showAuth);
+      authStatesEl.querySelectorAll('[data-wb-auth-state]').forEach(function (a) {
+        a.classList.toggle('is-active', a.getAttribute('data-wb-auth-state') === route.state);
+      });
+    }
   }
 
   function ensureSandboxStage() {
@@ -149,22 +183,16 @@
     patternFrame.contentWindow.postMessage({ type: 'ifx-theme', theme: window.IfxTheme.get() }, '*');
   }
 
-  function mountPattern(id) {
+  function mountPattern(id, state) {
     host.classList.add('is-pattern');
     host.textContent = '';
-    if (!id) {
-      host.classList.remove('is-pattern');
-      return fetch('patterns-catalog.html')
-        .then(function (r) { return r.text(); })
-        .then(function (html) {
-          host.innerHTML = html;
-          host.className = 'ifx-appshell-host';
-        });
-    }
+    if (!id) id = 'auth';
+    var file = '';
+    if (id === 'auth') file = AUTH_STATES[state] || AUTH_STATES.login;
     patternFrame = doc.createElement('iframe');
     patternFrame.className = 'ifx-appshell-frame';
     patternFrame.title = PATTERNS[id] || id;
-    patternFrame.src = '../references/patterns/' + id + '/';
+    patternFrame.src = '../references/patterns/' + id + '/' + file;
     patternFrame.addEventListener('load', postThemeToFrame);
     host.appendChild(patternFrame);
     return Promise.resolve();
@@ -178,7 +206,7 @@
     if (!isDesktop()) closeMobile();
 
     if (route.module === 'patterns') {
-      return mountPattern(route.pattern);
+      return mountPattern(route.pattern, route.state);
     }
     patternFrame = null;
     ensureSandboxStage();
@@ -195,11 +223,19 @@
     if (module !== 'sandbox' && module !== 'patterns') module = 'sandbox';
     if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
+    if (module === 'patterns' && !pattern) pattern = 'auth';
+    var state = q.get('state') || '';
+    if (pattern === 'auth') {
+      if (!AUTH_STATES[state]) state = 'login';
+    } else {
+      state = '';
+    }
     return {
       module: module,
       section: section,
       panel: q.get('panel') || '',
-      pattern: pattern
+      pattern: pattern,
+      state: state
     };
   }
 
@@ -224,9 +260,37 @@
       next.panel = partial.panel != null ? partial.panel : '';
     } else {
       next.pattern = partial.pattern || '';
+      next.state = next.pattern === 'auth' ? (partial.state || cur.state || 'login') : '';
     }
     return applyRoute(next, push !== false);
   }
+
+  if (authStatesEl) {
+    authStatesEl.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href]');
+      if (!a || !authStatesEl.contains(a)) return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      followLink(a, true);
+    });
+  }
+
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.type !== 'ifx-auth-state') return;
+    var cur = readRoute();
+    if (cur.module !== 'patterns' || cur.pattern !== 'auth') return;
+    if (cur.state === e.data.state) return;
+    if (!AUTH_STATES[e.data.state]) return;
+    var next = {
+      module: cur.module,
+      section: cur.section,
+      panel: cur.panel,
+      pattern: cur.pattern,
+      state: e.data.state
+    };
+    window.history.replaceState(next, '', routeUrl(next));
+    syncNav(next);
+  });
 
   nav.addEventListener('click', function (e) {
     var a = e.target.closest('a[href]');

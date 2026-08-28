@@ -19,9 +19,11 @@
   <link rel="stylesheet" href="../primitives/button/button.css">
   <link rel="stylesheet" href="../primitives/title/title.css">
   <link rel="stylesheet" href="../primitives/navigation/nav.css">
+  <link rel="stylesheet" href="../components/tabs/tabs.css">
   <link rel="stylesheet" href="workbench.css">
   <link rel="stylesheet" href="../sandbox/assets/sandbox.css">
   <link rel="stylesheet" href="../sandbox/assets/reference-layers.css">
+  <link rel="stylesheet" href="../components/chart/chart.css">
 </head>
 <body>
   <div class="ifx-appshell" id="ifxAppshell">
@@ -50,11 +52,8 @@
           <i class="ti ti-file-text ifx-nav-icon"></i><span class="ifx-nav-label">Contract</span>
         </a>
 
-        <a class="ifx-nav-group-label" href="?module=patterns">Patterns</a>
-        <a class="ifx-nav-item" href="?module=patterns" data-wb-module="patterns" data-wb-pattern="">
-          <i class="ti ti-layout-grid ifx-nav-icon"></i><span class="ifx-nav-label">Catalog</span>
-        </a>
-        <a class="ifx-nav-item" href="?module=patterns&amp;pattern=auth" data-wb-module="patterns" data-wb-pattern="auth">
+        <a class="ifx-nav-group-label" href="?module=patterns&amp;pattern=auth&amp;state=login">Patterns</a>
+        <a class="ifx-nav-item" href="?module=patterns&amp;pattern=auth&amp;state=login" data-wb-module="patterns" data-wb-pattern="auth">
           <i class="ti ti-login ifx-nav-icon"></i><span class="ifx-nav-label">Auth</span>
         </a>
         <a class="ifx-nav-item" href="?module=patterns&amp;pattern=charts" data-wb-module="patterns" data-wb-pattern="charts">
@@ -93,6 +92,12 @@
           <i class="ti ti-menu-2 ifx-icon"></i>
         </button>
         <div class="ifx-appshell-title" id="ifxAppshellTitle">Sandbox</div>
+        <nav class="ifx-tabs ifx-tabs-nav ifx-appshell-auth-states" id="ifxAppshellAuthStates" hidden aria-label="Auth states">
+          <a class="ifx-tab" href="?module=patterns&amp;pattern=auth&amp;state=login" data-wb-auth-state="login">Login</a>
+          <a class="ifx-tab" href="?module=patterns&amp;pattern=auth&amp;state=register" data-wb-auth-state="register">Register</a>
+          <a class="ifx-tab" href="?module=patterns&amp;pattern=auth&amp;state=forgot" data-wb-auth-state="forgot">Forgot Password</a>
+          <a class="ifx-tab" href="?module=patterns&amp;pattern=auth&amp;state=verify-2fa" data-wb-auth-state="verify-2fa">Verify 2FA</a>
+        </nav>
         <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="ifxAppshellTheme">Theme: Dark</button>
       </header>
       <main class="ifx-appshell-host" id="ifxAppshellHost"></main>
@@ -103,7 +108,8 @@
   <script src="../tokens/generated/js/breakpoints.js"></script>
   <script src="../tokens/generated/js/token-index.js"></script>
   <script src="../adapters/web/theme.js"></script>
-  <script src="../sandbox/assets/sandbox.js?v=wb2"></script>
-  <script src="workbench.js?v=wb2"></script>
+  <script src="../components/chart/chart-adapter.js?v=5"></script>
+  <script src="../sandbox/assets/sandbox.js?v=wb7"></script>
+  <script src="workbench.js?v=wb7"></script>
 </body>
 </html>

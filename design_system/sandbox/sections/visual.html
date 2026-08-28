@@ -1,18 +1,11 @@
-<nav class="sb-subnav" aria-label="Visual Test">
-  <a href="?section=visual" data-sb-goto="hub">Catalog</a>
-  <a href="?section=visual&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
-  <a href="?section=visual&amp;panel=theme" data-sb-goto="theme">Theme</a>
-  <a href="?section=visual&amp;panel=regression" data-sb-goto="regression">Regression</a>
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Visual Test">
+  
+  <a class="ifx-tab" href="?section=visual&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
+  <a class="ifx-tab" href="?section=visual&amp;panel=theme" data-sb-goto="theme">Theme</a>
+  <a class="ifx-tab" href="?section=visual&amp;panel=regression" data-sb-goto="regression">Regression</a>
 </nav>
 
-<div class="sb-panel" data-sb-panel="hub">
-  <p class="sb-source"><span class="sb-source-k">Layer</span> Sandbox acceptance <span class="sb-source-k">Source</span> consume P1–P5 — không định nghĩa capability</p>
-  <div class="sb-catalog">
-    <a class="sb-catalog-item" href="?section=visual&amp;panel=responsive" data-sb-goto="responsive"><strong>Responsive</strong><span>Viewport × grid playground</span></a>
-    <a class="sb-catalog-item" href="?section=visual&amp;panel=theme" data-sb-goto="theme"><strong>Theme</strong><span>Dark / Light</span></a>
-    <a class="sb-catalog-item" href="?section=visual&amp;panel=regression" data-sb-goto="regression"><strong>Regression</strong><span>W01 surfaces phải còn nhìn thấy</span></a>
-  </div>
-</div>
+
 
 <div class="sb-panel" data-sb-panel="responsive" hidden>
   <section class="sb-section ifx-stack-md">
@@ -27,7 +20,6 @@
 
 <div class="sb-panel" data-sb-panel="theme" hidden>
   <section class="sb-section ifx-stack-md">
-    <p class="sb-source"><span class="sb-source-k">Layer</span> P1 + adapter <span class="sb-source-k">Source</span> <code>adapters/web/theme.js</code></p>
     <div class="ifx-section-title">
       <h2>Theme test</h2>
       <p>Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Không theme logic local.</p>

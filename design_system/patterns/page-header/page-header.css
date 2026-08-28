@@ -1,6 +1,6 @@
 /**
  * Pattern — Page Header (AR-001 §25)
- * Composition: breadcrumb + Title Primitive + optional actions + optional stats.
+ * Composition: title + breadcrumb + description + optional actions + stats.
  * Không sở hữu typography title/description.
  */
 .ifx-page-header {

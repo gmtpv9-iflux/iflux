@@ -39,5 +39,29 @@
   align-items: center;
   gap: var(--ifx-gap-xs);
 }
+.ifx-tabs-nav {
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  border-radius: 0;
+  gap: var(--ifx-gap-xs);
+}
+.ifx-tabs-nav .ifx-tab {
+  border: 1px solid transparent;
+}
+a.ifx-tab { text-decoration: none; }
+.ifx-tabs-nav .ifx-tab.is-active {
+  background: var(--ifx-bg-surface);
+  color: var(--ifx-text-primary);
+  border-color: var(--ifx-border-default);
+}
+.ifx-tabs-dense {
+  padding: 3px;
+}
+.ifx-tabs-dense .ifx-tab {
+  padding: 6px 14px;
+  font-size: var(--ifx-font-size-14);
+  border-radius: calc(var(--ifx-radius-button) - 2px);
+}
 /* Hide only. Active display stays with Stack (flex+gap) or UA block. */
 .ifx-tab-panel:not(.is-active) { display: none; }

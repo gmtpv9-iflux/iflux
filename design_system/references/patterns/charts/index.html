@@ -28,81 +28,48 @@
 <body>
   <main class="ifx-container ifx-container-max ifx-stack-xl">
     <header class="ifx-page-header">
+      <div class="ifx-page-header-main">
+        <div class="ifx-page-title">
+          <h1>Biểu đồ</h1>
+        </div>
+      </div>
       <nav aria-label="Breadcrumb">
         <ol class="ifx-breadcrumb">
-          <li><a href="../../../sandbox/?section=references&amp;panel=w09">Catalog</a></li>
-          <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
           <li><span>References</span></li>
           <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
           <li class="ifx-breadcrumb-current" aria-current="page">Biểu đồ</li>
         </ol>
       </nav>
-      <div class="ifx-page-header-main">
-        <div class="ifx-page-title">
-          <h1>Biểu đồ</h1>
-          <p>IfxChart + card + tabs — generic, không Apex, không Top 10 thị trường, không AppShell.</p>
+      <div class="ifx-page-title">
+          <p>IfxChart — line · area · group · donut · radial · scatter · heatmap · candle · volume. Không Apex, không AppShell.</p>
         </div>
-      </div>
     </header>
 
     <section class="ifx-stack-lg">
 
-    <div class="ifx-card ifx-stack-md ref-page-charts-section" data-ifx-tabs-root>
+    <div class="ifx-card ifx-stack-md ref-page-charts-section ref-widget-series-compare" data-ifx-compare>
       <div class="ifx-card-header">
         <div class="ifx-section-title">
-          <h2>Nhóm A</h2>
-          <p>Cường độ theo kỳ — số generic.</p>
+          <h2>So sánh chuỗi</h2>
+          <p>Nhiều series trên một plot — compose line + legend rail.</p>
         </div>
-        <div class="ifx-tabs" data-ifx-tabs>
-          <button type="button" class="ifx-tab is-active" data-ifx-tab="w">Tuần</button>
-          <button type="button" class="ifx-tab" data-ifx-tab="m">Tháng</button>
-          <button type="button" class="ifx-tab" data-ifx-tab="q">Quý</button>
-          <button type="button" class="ifx-tab" data-ifx-tab="h">Nửa năm</button>
+        <div class="ifx-tabs" data-ifx-compare-range>
+          <button type="button" class="ifx-tab is-active" data-range="5">Tuần</button>
+          <button type="button" class="ifx-tab" data-range="8">Tháng</button>
+          <button type="button" class="ifx-tab" data-range="10">Quý</button>
+          <button type="button" class="ifx-tab" data-range="12">Nửa năm</button>
         </div>
       </div>
       <div class="ifx-card-body ifx-stack-md">
-        <div class="ifx-tab-panel is-active" data-ifx-panel="w">
-          <div class="ifx-chart" data-ifx-chart>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">A</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">B</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">C</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">D</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="32"></div><span class="ifx-chart-label">E</span></div>
-          </div>
+        <div class="ifx-tabs" data-ifx-compare-set>
+          <button type="button" class="ifx-tab is-active" data-set="g1">Nhóm</button>
+          <button type="button" class="ifx-tab" data-set="g2">Tập</button>
+          <button type="button" class="ifx-tab" data-set="g3">Chủ đề</button>
         </div>
-        <div class="ifx-tab-panel" data-ifx-panel="m">
-          <div class="ifx-chart" data-ifx-chart>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">A</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">B</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">C</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">D</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">E</span></div>
-          </div>
-        </div>
-        <div class="ifx-tab-panel" data-ifx-panel="q">
-          <div class="ifx-chart" data-ifx-chart>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">A</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">B</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">C</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="32"></div><span class="ifx-chart-label">D</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">E</span></div>
-          </div>
-        </div>
-        <div class="ifx-tab-panel" data-ifx-panel="h">
-          <div class="ifx-chart" data-ifx-chart>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="32"></div><span class="ifx-chart-label">A</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">B</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">C</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">D</span></div>
-            <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">E</span></div>
-          </div>
-        </div>
-        <div class="ifx-chart-legend">
-          <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>primary</span>
-          <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>success</span>
-          <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>warning</span>
-          <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>danger</span>
-          <span><i class="ifx-chart-swatch" data-ifx-chart-swatch></i>info</span>
+        <div class="ifx-chart" data-ifx-chart="line" data-ifx-plot="xl" data-ifx-legend="rail" id="compareChart">
+          <div class="ifx-chart-plot"></div>
+          <div class="ifx-chart-legend ifx-chart-legend-rail"></div>
+          <template data-ifx-chart-data>{"labels":["T8","T9","T10","T11","T12"],"series":[{"name":"N1","values":[1.2,1.8,1.4,2.1,2.6]}]}</template>
         </div>
       </div>
     </div>
@@ -111,7 +78,7 @@
       <div class="ifx-card-header">
         <div class="ifx-section-title">
           <h2>Cập nhật</h2>
-          <p>Mạng lưới generic.</p>
+          <p>Area — chuỗi một series.</p>
         </div>
         <div class="ifx-dropdown">
           <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" data-ifx-toggle="dropdown" aria-label="Kỳ">
@@ -125,12 +92,32 @@
         </div>
       </div>
       <div class="ifx-card-body">
-        <div class="ifx-chart" data-ifx-chart>
-          <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">T2</span></div>
-          <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">T3</span></div>
-          <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">T4</span></div>
-          <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">T5</span></div>
-          <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="32"></div><span class="ifx-chart-label">T6</span></div>
+        <div class="ifx-chart" data-ifx-chart="area" data-ifx-plot="md">
+          <div class="ifx-chart-plot"></div>
+          <script type="application/json">{"labels":["09:00","09:15","09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","13:00","14:00"],"series":[{"name":"A","values":[12,18,15,22,19,28,24,31,26,35,29,33]}]}</script>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifx-card ifx-stack-md ref-page-charts-section">
+      <div class="ifx-card-header">
+        <div class="ifx-section-title">
+          <h2>Nhóm cột</h2>
+        </div>
+        <div class="ifx-dropdown">
+          <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" data-ifx-toggle="dropdown" aria-label="Kỳ">
+            <i class="ti ti-calendar ifx-icon ifx-icon-sm"></i>
+          </button>
+          <div class="ifx-dropdown-menu">
+            <button type="button" class="ifx-dropdown-item">Tháng trước</button>
+            <button type="button" class="ifx-dropdown-item">Năm trước</button>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-card-body">
+        <div class="ifx-chart" data-ifx-chart="group" data-ifx-plot="md">
+          <div class="ifx-chart-plot"></div>
+          <script type="application/json">{"labels":["A","B","C","D","E","F","G","H","I"],"series":[{"name":"Thực tế","values":[44,55,57,56,61,58,63,60,66]},{"name":"Kỳ vọng","values":[76,85,101,98,87,105,91,114,94]}]}</script>
         </div>
       </div>
     </div>
@@ -141,14 +128,13 @@
           <div class="ifx-card-header">
             <div class="ifx-section-title">
               <h2>Tỉ lệ</h2>
-              <p>Phân bổ nhóm.</p>
+              <p>Donut — phân bổ nhóm.</p>
             </div>
           </div>
           <div class="ifx-card-body">
-            <div class="ifx-chart" data-ifx-chart>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="96"></div><span class="ifx-chart-label">A</span></div>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">B</span></div>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="48"></div><span class="ifx-chart-label">C</span></div>
+            <div class="ifx-chart" data-ifx-chart="donut" data-ifx-plot="lg">
+              <div class="ifx-chart-plot"></div>
+              <script type="application/json">{"labels":["Nhóm A","Nhóm B","Nhóm C","Nhóm D","Nhóm E"],"values":[42,18,15,14,11]}</script>
             </div>
           </div>
         </div>
@@ -158,16 +144,72 @@
           <div class="ifx-card-header">
             <div class="ifx-section-title">
               <h2>Thống kê</h2>
+              <p>Radial.</p>
             </div>
           </div>
           <div class="ifx-card-body">
-            <div class="ifx-chart" data-ifx-chart>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="32"></div><span class="ifx-chart-label">1</span></div>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="80"></div><span class="ifx-chart-label">2</span></div>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="64"></div><span class="ifx-chart-label">3</span></div>
-              <div class="ifx-chart-col"><div class="ifx-chart-bar" data-ifx-chart-bar data-ifx-chart-h="128"></div><span class="ifx-chart-label">4</span></div>
+            <div class="ifx-chart" data-ifx-chart="radial" data-ifx-plot="lg">
+              <div class="ifx-chart-plot"></div>
+              <script type="application/json">{"labels":["Uptime","Phủ","SLA"],"values":[99,98,95]}</script>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifx-grid">
+      <div class="ifx-col-12 ifx-col-lg-6">
+        <div class="ifx-card ifx-stack-md">
+          <div class="ifx-card-header">
+            <div class="ifx-section-title">
+              <h2>Phân tán</h2>
+            </div>
+            <div class="ifx-flex ifx-gap-xs">
+              <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm">Ngày</button>
+              <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm">Tháng</button>
+              <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm">Năm</button>
+            </div>
+          </div>
+          <div class="ifx-card-body">
+            <div class="ifx-chart" data-ifx-chart="scatter" data-ifx-plot="md">
+              <div class="ifx-chart-plot"></div>
+              <script type="application/json">{"series":[{"name":"A","points":[[16.4,5.4],[21.7,2],[25.4,3],[19,2],[10.9,1],[13.6,3.2],[10.9,7.4],[13.6,6.2]]},{"name":"B","points":[[36.4,13.4],[1.7,11],[5.4,8],[9,17],[1.9,4],[3.6,12.2],[1.9,14.4],[3.6,3.2]]}]}</script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-lg-6">
+        <div class="ifx-card ifx-stack-md">
+          <div class="ifx-card-header">
+            <div class="ifx-section-title">
+              <h2>Nhiệt</h2>
+            </div>
+          </div>
+          <div class="ifx-card-body">
+            <div class="ifx-chart" data-ifx-chart="heatmap" data-ifx-plot="md">
+              <div class="ifx-chart-plot"></div>
+              <script type="application/json">{"x":["09","09:15","09:30","09:45","10","10:15","10:30","10:45","11","13","14","14:30"],"y":["T2","T3","T4","T5","T6"],"values":[[22,48,31,70,18,55,40,28,62,16,44,35],[30,16,62,22,48,34,71,19,40,52,28,60],[8,52,20,44,66,14,33,58,21,47,69,25],[41,27,55,12,39,63,18,50,36,72,24,45],[15,59,38,26,51,17,64,29,43,11,57,32]]}</script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifx-card ifx-stack-md ref-page-charts-ohlc">
+      <div class="ifx-card-header">
+        <div class="ifx-section-title">
+          <h2>Nến + khối lượng</h2>
+          <p>Candle + volume — hai plot xếp dọc.</p>
+        </div>
+      </div>
+      <div class="ifx-card-body ifx-stack-sm">
+        <div class="ifx-chart" data-ifx-chart="candle" data-ifx-plot="lg">
+          <div class="ifx-chart-plot"></div>
+          <script type="application/json">{"ohlc":[[100,108,96,104],[104,112,101,109],[109,111,103,105],[105,107,98,99],[99,106,95,104],[104,118,102,116],[116,120,110,112],[112,115,107,108],[108,114,104,113],[113,119,111,117],[117,118,109,110],[110,116,106,114],[114,122,112,121],[121,124,115,116],[116,119,111,118],[118,125,116,123],[123,126,118,119],[119,122,112,113],[113,117,108,115],[115,121,113,120]]}</script>
+        </div>
+        <div class="ifx-chart" data-ifx-chart="volume" data-ifx-plot="sm">
+          <div class="ifx-chart-plot"></div>
+          <script type="application/json">{"labels":["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],"series":[{"name":"Vol","values":[12,18,9,22,15,28,11,19,24,16,21,14,26,10,17,23,13,20,8,25]}]}</script>
         </div>
       </div>
     </div>
