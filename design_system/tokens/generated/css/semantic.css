@@ -48,11 +48,7 @@
   --ifx-inline-lg: var(--ifx-space-16);
   --ifx-inline-xl: var(--ifx-space-24);
 
-  /* ── spacing · grid ── */
-  --ifx-grid-gutter: var(--ifx-space-24);
-
   /* ── spacing · space ── */
-  --ifx-space-container: var(--ifx-space-24);
   --ifx-space-section: var(--ifx-space-64);
   --ifx-space-page: var(--ifx-space-80);
   --ifx-space-button-y: var(--ifx-space-8);

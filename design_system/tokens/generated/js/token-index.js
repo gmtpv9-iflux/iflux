@@ -284,11 +284,7 @@
       "--ifx-inline-lg",
       "--ifx-inline-xl"
     ],
-    "grid": [
-      "--ifx-grid-gutter"
-    ],
     "space": [
-      "--ifx-space-container",
       "--ifx-space-section",
       "--ifx-space-page",
       "--ifx-space-button-y",
@@ -2146,20 +2142,6 @@
     },
     {
       "name": "--ifx-inline-xl",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/spacing.json",
-      "generated": "design_system/tokens/generated/css/semantic.css"
-    },
-    {
-      "name": "--ifx-grid-gutter",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/spacing.json",
-      "generated": "design_system/tokens/generated/css/semantic.css"
-    },
-    {
-      "name": "--ifx-space-container",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/spacing.json",

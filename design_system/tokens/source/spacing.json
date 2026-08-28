@@ -1,7 +1,7 @@
 {
   "$meta": {
     "sot": "Canonical iFlux Design System — Spacing Token SoT",
-    "note": "Base 4px · 8pt grid. Responsive --ifx-space-container belongs to foundation/layout.css. Page/Section sibling rhythm is Stack tokens, not space-page/section.",
+    "note": "Base 4px · 8pt grid. --ifx-space-container and --ifx-grid-gutter are Foundation-owned responsive custom properties in foundation/layout.css — not token-source definitions. Page/Section sibling rhythm is Stack tokens, not space-page/section.",
     "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/spacing.css §1–§13 (audit Sub-01 P1, 2026-08-26)"
   },
   "primitive": {
@@ -73,11 +73,7 @@
       "lg": "{space.16}",
       "xl": "{space.24}"
     },
-    "grid": {
-      "gutter": "{space.24}"
-    },
     "space": {
-      "container": "{space.24}",
       "section": "{space.64}",
       "page": "{space.80}",
       "button-y": "{space.8}",
