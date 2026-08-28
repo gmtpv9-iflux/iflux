@@ -14,6 +14,9 @@
     window.addEventListener('ifx-theme-change', function (e) { sync(e.detail.theme); });
     sync(window.IfxTheme.get());
   }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'ifx-theme' && window.IfxTheme) window.IfxTheme.apply(e.data.theme);
+  });
   document.querySelectorAll('[data-ifx-toast]').forEach(function (el) {
     el.addEventListener('click', function () {
       if (window.IfxToast) {

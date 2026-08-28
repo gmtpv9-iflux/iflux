@@ -1,0 +1,199 @@
+/**
+ * Design System Workbench — AppShell
+ *
+ * Existing owner: none in design_system (nav.css LOCK: no side-nav / top-bar).
+ * Why cannot modify Foundation/nav/sandbox: those owners are layout atoms,
+ * nav units, and module content. AppShell is the workbench platform layer.
+ * New responsibility: persistent shell + sidebar chrome + main/pattern host.
+ * Removal: sandbox primary horizontal nav is no longer the shell.
+ *
+ * Does not own: Token contracts · Admin runtime · Pattern visual CSS.
+ *
+ * Local residuals (Admin table-list measure; Canonical has no sidebar-w token —
+ * --ifx-size-sidebar-w is admin-platform only, must not be imported here):
+ *   sidebar width 260px · collapsed 72px · active rail 3px
+ */
+html.ifx-appshell-root,
+html.ifx-appshell-root body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.ifx-appshell {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ifx-bg-canvas);
+  color: var(--ifx-text-primary);
+}
+
+.ifx-appshell-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ifx-bg-surface);
+  border-right: 1px solid var(--ifx-border-default);
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: var(--ifx-z-dropdown);
+  transition: width var(--ifx-duration-slow) var(--ifx-ease-out),
+    transform var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+.ifx-appshell-sidebar::-webkit-scrollbar { width: 4px; }
+.ifx-appshell-sidebar::-webkit-scrollbar-thumb {
+  background: var(--ifx-border-default);
+  border-radius: var(--ifx-radius-xs);
+}
+
+.ifx-appshell-brand {
+  height: var(--ifx-space-64);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-inline-md);
+  padding: 0 var(--ifx-space-20);
+  border-bottom: 1px solid var(--ifx-border-default);
+  flex-shrink: 0;
+}
+.ifx-appshell-brand-name {
+  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-lg);
+  color: var(--ifx-text-primary);
+  letter-spacing: var(--ifx-letter-spacing-tight);
+  white-space: nowrap;
+}
+
+.ifx-appshell-nav {
+  flex: 1;
+  padding: var(--ifx-space-12) 0;
+}
+
+.ifx-appshell-nav .ifx-nav-item {
+  position: relative;
+  width: 100%;
+  padding-inline: var(--ifx-space-20);
+  border-radius: 0;
+}
+.ifx-appshell-nav .ifx-nav-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--ifx-space-4);
+  bottom: var(--ifx-space-4);
+  width: 3px;
+  background: var(--ifx-action-primary);
+  border-radius: 0 var(--ifx-radius-xs) var(--ifx-radius-xs) 0;
+}
+
+.ifx-appshell-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ifx-appshell-bar {
+  height: var(--ifx-space-64);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-gap-sm);
+  padding: 0 var(--ifx-space-container);
+  background: var(--ifx-bg-surface);
+  border-bottom: 1px solid var(--ifx-border-default);
+  z-index: var(--ifx-z-sticky);
+}
+.ifx-appshell-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ifx-appshell-host {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.ifx-appshell-host.is-pattern {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.ifx-appshell-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--ifx-bg-canvas);
+  flex: 1;
+  min-height: 0;
+}
+
+.ifx-appshell-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--ifx-overlay-scrim);
+  z-index: var(--ifx-z-overlay);
+}
+.ifx-appshell-overlay.is-visible { display: block; }
+
+.ifx-appshell.is-sidebar-collapsed .ifx-appshell-sidebar { width: 72px; }
+.ifx-appshell.is-sidebar-collapsed .ifx-appshell-brand {
+  justify-content: center;
+  padding: 0;
+}
+.ifx-appshell.is-sidebar-collapsed .ifx-appshell-brand-name,
+.ifx-appshell.is-sidebar-collapsed .ifx-nav-group-label,
+.ifx-appshell.is-sidebar-collapsed .ifx-nav-label {
+  display: none;
+}
+.ifx-appshell.is-sidebar-collapsed .ifx-appshell-nav .ifx-nav-item {
+  justify-content: center;
+  padding-inline: 0;
+}
+.ifx-appshell.is-sidebar-collapsed .ifx-appshell-nav .ifx-nav-item.is-active::before {
+  display: none;
+}
+
+/* Desktop persistent sidebar · below lg = overlay (Canonical bp, not Admin 1200). */
+@media (max-width: 1023.98px) {
+  .ifx-appshell-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    width: 260px;
+  }
+  .ifx-appshell.is-sidebar-open .ifx-appshell-sidebar {
+    transform: translateX(0);
+  }
+  .ifx-appshell.is-sidebar-collapsed .ifx-appshell-sidebar { width: 260px; }
+  .ifx-appshell.is-sidebar-collapsed .ifx-appshell-brand {
+    justify-content: flex-start;
+    padding: 0 var(--ifx-space-20);
+  }
+  .ifx-appshell.is-sidebar-collapsed .ifx-appshell-brand-name,
+  .ifx-appshell.is-sidebar-collapsed .ifx-nav-group-label,
+  .ifx-appshell.is-sidebar-collapsed .ifx-nav-label {
+    display: revert;
+  }
+  .ifx-appshell.is-sidebar-collapsed .ifx-appshell-nav .ifx-nav-item {
+    justify-content: flex-start;
+    padding-inline: var(--ifx-space-20);
+  }
+  .ifx-appshell.is-sidebar-collapsed .ifx-appshell-nav .ifx-nav-item.is-active::before {
+    display: block;
+  }
+}

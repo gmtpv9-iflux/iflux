@@ -112,6 +112,9 @@
 .ifx-items-center { align-items: center; }
 .ifx-justify-between { justify-content: space-between; }
 .ifx-flex-1 { flex: 1 1 0%; }
+.ifx-gap-xs { gap: var(--ifx-gap-xs); }
+.ifx-gap-sm { gap: var(--ifx-gap-sm); }
+.ifx-gap-md { gap: var(--ifx-gap-md); }
 
 @media (min-width: 768px) {
   .ifx-flex-row-md { flex-direction: row; }

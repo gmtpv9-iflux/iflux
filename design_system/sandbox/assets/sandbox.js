@@ -165,10 +165,16 @@
   }
 
   var doc = document;
+  var SANDBOX_DIR = new URL('../sandbox/', doc.baseURI);
   var stage = doc.getElementById('sbStage');
   var selectedVp = 'auto';
   var selectedSpan = 6;
   var iconState = { all: [], filtered: [], page: 0, q: '' };
+  var hosted = !!doc.getElementById('ifxAppshell');
+
+  function sectionHref(id) {
+    return new URL('sections/' + id + '.html', SANDBOX_DIR).href;
+  }
 
   function params() {
     return new URLSearchParams(window.location.search);
@@ -227,12 +233,12 @@
     return card;
   }
   function renderGrid(container, varNames, opts) {
-    if (!container) return;
+    if (!container || !varNames) return;
     container.textContent = '';
     varNames.forEach(function (name) { container.appendChild(swatchCard(name, opts)); });
   }
   function renderRows(container, varNames, build) {
-    if (!container) return;
+    if (!container || !varNames) return;
     container.textContent = '';
     varNames.forEach(function (name) {
       var row = el('div', 'sb-row');
@@ -425,7 +431,7 @@
 
   function bindIcons() {
     if (!doc.getElementById('iconGrid')) return;
-    fetch('../foundation/icons/vendor/tabler/icon-index.json')
+    fetch(new URL('../foundation/icons/vendor/tabler/icon-index.json', doc.baseURI).href)
       .then(function (r) { return r.json(); })
       .then(function (data) {
         iconState.all = data.icons || [];
@@ -462,78 +468,110 @@
     });
   }
 
+  function afterSection(id, panel) {
+    showPanel(panel);
+    ensureHref('../primitives/title/title.css', 'css');
+    if (id === 'tokens') renderTokens();
+    if (id === 'foundation') {
+      bindPlayground();
+      bindIcons();
+    }
+    if (id === 'primitives') {
+      ensurePrimitiveCss();
+      bindPrimitives();
+    }
+    if (id === 'references') {
+      ensurePrimitiveCss();
+      ensureHref('../components/table/table.css', 'css');
+    }
+    if (id === 'components' || id === 'patterns') {
+      ensurePrimitiveCss();
+      if (id === 'patterns') ensurePatternCss();
+      return ensureComponentAssets().then(function () {
+        if (id === 'patterns') return ensurePatternJs();
+      }).then(function () {
+        bindComponents();
+      });
+    }
+  }
+
   function loadSection(id, push, panel) {
     if (SECTIONS.indexOf(id) === -1) id = 'foundation';
     if (panel == null) panel = currentPanel();
     syncNav(id);
-    var url = '?section=' + id + (panel ? '&panel=' + panel : '');
-    if (push === false) window.history.replaceState({ section: id, panel: panel }, '', url);
-    else window.history.pushState({ section: id, panel: panel }, '', url);
-    return fetch('sections/' + id + '.html')
+    if (!hosted) {
+      var url = '?section=' + id + (panel ? '&panel=' + panel : '');
+      if (push === false) window.history.replaceState({ section: id, panel: panel }, '', url);
+      else window.history.pushState({ section: id, panel: panel }, '', url);
+    }
+    if (!stage) return Promise.resolve();
+    return fetch(sectionHref(id))
       .then(function (r) { return r.text(); })
       .then(function (html) {
         stage.innerHTML = html;
-        showPanel(panel);
-        ensureHref('../primitives/title/title.css', 'css');
-        if (id === 'tokens') renderTokens();
-        if (id === 'foundation') {
-          bindPlayground();
-          bindIcons();
-        }
-        if (id === 'primitives') {
-          ensurePrimitiveCss();
-          bindPrimitives();
-        }
-        if (id === 'references') {
-          ensurePrimitiveCss();
-          ensureHref('../components/table/table.css', 'css');
-        }
-        if (id === 'components' || id === 'patterns') {
-          ensurePrimitiveCss();
-          if (id === 'patterns') ensurePatternCss();
-          return ensureComponentAssets().then(function () {
-            if (id === 'patterns') return ensurePatternJs();
-          }).then(function () {
-            bindComponents();
-          });
-        }
+        return afterSection(id, panel);
       });
   }
 
-  stage.addEventListener('click', function (e) {
-    var a = e.target.closest('[data-sb-goto]');
-    if (!a) return;
-    e.preventDefault();
-    var section = currentSection();
-    var panel = a.getAttribute('data-sb-goto');
-    window.history.pushState({ section: section, panel: panel }, '', '?section=' + section + '&panel=' + panel);
-    showPanel(panel);
-  });
+  function bindStage(el) {
+    stage = el;
+  }
 
-  doc.getElementById('sbNav').addEventListener('click', function (e) {
-    var a = e.target.closest('[data-section]');
-    if (!a) return;
-    e.preventDefault();
-    loadSection(a.getAttribute('data-section'), true, '');
-  });
-  window.addEventListener('popstate', function () { loadSection(currentSection(), false, currentPanel()); });
-  window.addEventListener('resize', function () {
-    if (selectedVp === 'auto') applyFrameSize();
-  });
-
-  var toggle = doc.getElementById('sbThemeToggle');
-  function syncTheme(theme) {
-    toggle.textContent = 'Theme: ' + (theme === 'dark' ? 'Dark' : 'Light');
+  function onTheme(theme) {
+    var toggle = doc.getElementById('sbThemeToggle');
+    if (toggle) toggle.textContent = 'Theme: ' + (theme === 'dark' ? 'Dark' : 'Light');
     var frame = doc.getElementById('pgFrame');
     if (frame && frame.contentWindow) {
       frame.contentWindow.postMessage({ type: 'ifx-theme', theme: theme }, '*');
     }
-    if (currentSection() === 'tokens') renderTokens();
+    if (stage && stage.querySelector('[data-render="theme-colors"]')) renderTokens();
     if (window.IfxChart) window.IfxChart.paint();
   }
-  toggle.addEventListener('click', function () { window.IfxTheme.toggle(); });
-  window.addEventListener('ifx-theme-change', function (e) { syncTheme(e.detail.theme); });
-  syncTheme(window.IfxTheme.get());
 
-  loadSection(currentSection(), false);
+  doc.addEventListener('click', function (e) {
+    if (!stage || !stage.contains(e.target)) return;
+    var a = e.target.closest('[data-sb-goto]');
+    if (!a) return;
+    e.preventDefault();
+    var panel = a.getAttribute('data-sb-goto');
+    if (hosted) {
+      window.dispatchEvent(new CustomEvent('ifx-sandbox-panel', { detail: { panel: panel } }));
+      showPanel(panel);
+      return;
+    }
+    var section = currentSection();
+    window.history.pushState({ section: section, panel: panel }, '', '?section=' + section + '&panel=' + panel);
+    showPanel(panel);
+  });
+
+  window.addEventListener('resize', function () {
+    if (selectedVp === 'auto') applyFrameSize();
+  });
+
+  window.IfxSandbox = {
+    bindStage: bindStage,
+    render: function (id, panel) { return loadSection(id, false, panel || ''); },
+    onTheme: onTheme,
+    showPanel: showPanel
+  };
+
+  if (!hosted) {
+    var navEl = doc.getElementById('sbNav');
+    if (navEl) {
+      navEl.addEventListener('click', function (e) {
+        var a = e.target.closest('[data-section]');
+        if (!a) return;
+        e.preventDefault();
+        loadSection(a.getAttribute('data-section'), true, '');
+      });
+    }
+    window.addEventListener('popstate', function () { loadSection(currentSection(), false, currentPanel()); });
+    var toggle = doc.getElementById('sbThemeToggle');
+    if (toggle) {
+      toggle.addEventListener('click', function () { window.IfxTheme.toggle(); });
+      window.addEventListener('ifx-theme-change', function (e) { onTheme(e.detail.theme); });
+      onTheme(window.IfxTheme.get());
+    }
+    loadSection(currentSection(), false);
+  }
 })();

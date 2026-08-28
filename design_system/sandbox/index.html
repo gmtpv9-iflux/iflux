@@ -1,54 +1,23 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="dark">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>iFlux Canonical Design System — Catalog</title>
-  <link rel="stylesheet" href="../tokens/generated/css/primitives.css">
-  <link rel="stylesheet" href="../tokens/generated/css/semantic.css">
-  <link rel="stylesheet" href="../tokens/generated/css/themes/dark.css">
-  <link rel="stylesheet" href="../tokens/generated/css/themes/light.css">
-  <link rel="stylesheet" href="../foundation/fonts.css">
-  <link rel="stylesheet" href="../foundation/reset.css">
-  <link rel="stylesheet" href="../foundation/typography.css">
-  <link rel="stylesheet" href="../foundation/layout.css">
-  <link rel="stylesheet" href="../foundation/icons/vendor/tabler/tabler-icons.min.css">
-  <link rel="stylesheet" href="../foundation/icons/icons.css">
-  <link rel="stylesheet" href="../primitives/button/button.css">
-  <link rel="stylesheet" href="../primitives/title/title.css" data-ifx-comp="../primitives/title/title.css">
-  <link rel="stylesheet" href="assets/sandbox.css">
-  <link rel="stylesheet" href="assets/reference-layers.css">
+  <title>iFlux Design System</title>
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      if (!p.get('module')) {
+        if (p.get('pattern')) p.set('module', 'patterns');
+        else p.set('module', 'sandbox');
+      }
+      var q = p.toString();
+      window.location.replace('../workbench/' + (q ? '?' + q : '') + window.location.hash);
+    })();
+  </script>
 </head>
 <body>
-  <header class="sb-header">
-    <div class="ifx-page-title">
-      <h1>iFlux Canonical Design System</h1>
-      <p>Catalog · Acceptance Surface · consumer of P1–P5</p>
-    </div>
-    <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" id="sbThemeToggle">Theme: Dark</button>
-  </header>
-
-  <nav class="sb-nav" id="sbNav" aria-label="Catalog">
-    <a class="sb-nav-item" href="?section=tokens" data-section="tokens">Tokens</a>
-    <a class="sb-nav-item" href="?section=foundation" data-section="foundation">Foundation</a>
-    <a class="sb-nav-item" href="?section=primitives" data-section="primitives">Primitives</a>
-    <a class="sb-nav-item" href="?section=components" data-section="components">Components</a>
-    <a class="sb-nav-item" href="?section=patterns" data-section="patterns">Patterns</a>
-    <a class="sb-nav-item" href="?section=references" data-section="references">References</a>
-    <a class="sb-nav-item" href="?section=visual" data-section="visual">Visual Test</a>
-    <a class="sb-nav-item" href="?section=contract" data-section="contract">Contract</a>
-  </nav>
-
-  <main class="sb-stage ifx-stack-lg" id="sbStage"></main>
-
-  <footer class="sb-footer">
-    Sandbox = consumer · deep-link <code>?section=foundation&amp;panel=responsive</code>
-  </footer>
-
-  <script src="../tokens/generated/js/breakpoints.js"></script>
-  <script src="../tokens/generated/js/token-index.js"></script>
-  <script src="../adapters/web/theme.js"></script>
-  <script src="assets/sandbox.js"></script>
+  <p>Redirecting to Design System Workbench…</p>
 </body>
 </html>

@@ -63,7 +63,7 @@
 .sb-subnav a:hover { text-decoration: none; color: var(--ifx-text-primary); }
 
 .sb-stage {
-  padding: var(--ifx-padding-md);
+  padding: var(--ifx-space-container);
   max-width: var(--ifx-size-container-max);
   margin: 0 auto;
 }
