@@ -193,23 +193,6 @@
   color: var(--ifx-text-muted);
 }
 
-.ifx-info-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--ifx-space-8);
-}
-.ifx-info-label {
-  font-size: var(--ifx-font-size-sm);
-  color: var(--ifx-text-muted);
-}
-.ifx-info-value {
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-medium);
-  color: var(--ifx-text-primary);
-  text-align: right;
-}
-
 .ifx-form-row {
   display: grid;
   grid-template-columns: 1fr;

@@ -10,16 +10,11 @@
     var items = wrap.querySelectorAll('.ifx-wizard-step');
     var panels = wrap.querySelectorAll('.ifx-wizard-panel');
     function paint() {
-      var last = step === items.length - 1;
       items.forEach(function (item, i) {
         item.classList.toggle('is-active', i === step);
         item.classList.toggle('is-done', i < step);
       });
       panels.forEach(function (p, i) { p.classList.toggle('is-active', i === step); });
-      wrap.classList.toggle('is-last-step', last);
-      wrap.querySelectorAll('[data-ifx-wizard-prev]').forEach(function (btn) {
-        btn.disabled = step === 0;
-      });
     }
     wrap.querySelectorAll('[data-ifx-wizard-next]').forEach(function (btn) {
       btn.addEventListener('click', function () {

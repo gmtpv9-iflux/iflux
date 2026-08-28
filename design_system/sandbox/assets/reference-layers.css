@@ -92,7 +92,18 @@
 }
 
 .ref-module-chat-section-label {
+  margin: 0;
   padding: var(--ifx-space-8) var(--ifx-space-16) var(--ifx-space-4);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-muted);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+}
+
+.ref-module-chat-section-label small {
+  font-size: inherit;
+  color: inherit;
 }
 
 .ref-module-chat-actions {
@@ -104,18 +115,6 @@
 .ref-module-chat-action {
   justify-content: flex-start;
   width: 100%;
-}
-
-.ref-module-chat-info {
-  display: flex;
-  align-items: center;
-  gap: var(--ifx-space-8);
-  font-size: var(--ifx-font-size-sm);
-  color: var(--ifx-text-secondary);
-}
-
-.ref-module-chat-info .ifx-icon {
-  color: var(--ifx-action-primary);
 }
 
 /* ---------- referrals (W08) ---------- */
@@ -215,11 +214,6 @@
   line-height: var(--ifx-line-height-tight);
 }
 
-.ref-page-user-profile-role {
-  font-size: var(--ifx-font-size-sm);
-  color: var(--ifx-text-muted);
-}
-
 .ref-page-user-profile-stats {
   width: 100%;
   border-block: 1px solid var(--ifx-border-default);
@@ -260,38 +254,6 @@
   gap: var(--ifx-space-8);
 }
 
-.ref-module-profile-heading {
-  margin: 0;
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
-}
-
-.ref-module-profile-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--ifx-space-8);
-  padding-block: var(--ifx-space-8);
-  border-bottom: 1px solid var(--ifx-border-subtle);
-}
-
-.ref-module-profile-row:last-child {
-  border-bottom: none;
-}
-
-.ref-module-profile-key {
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
-}
-
-.ref-module-profile-val {
-  font-size: var(--ifx-font-size-sm);
-  color: var(--ifx-text-secondary);
-  text-align: right;
-}
-
 /* ---------- wizard (W06) ---------- */
 /* step-grid / step-row: Grid + Form Row already own. */
 
@@ -305,9 +267,9 @@
   text-align: center;
 }
 
-.ref-page-chat-role {
-  font-size: var(--ifx-font-size-sm);
-  color: var(--ifx-text-muted);
+.ref-page-chat-meta > :last-child {
+  font-weight: var(--ifx-font-weight-medium);
+  color: var(--ifx-text-primary);
 }
 
 /* ---------- referrals (W08) ---------- */
@@ -323,17 +285,10 @@
 
 .ref-page-referrals-stat-row {
   width: 100%;
-  border-block: 1px solid var(--ifx-border-default);
 }
 
 .ref-page-referrals-stat {
   text-align: center;
-  padding-block: var(--ifx-space-12);
-  border-right: 1px solid var(--ifx-border-default);
-}
-
-.ref-page-referrals-stat:last-child {
-  border-right: none;
 }
 
 .ref-page-referrals-stat-value {
