@@ -10,3 +10,14 @@
   font-size: var(--ifx-text-body-sm-size);
   color: var(--ifx-text-muted);
 }
+
+/* Group label — typography only. Parent owns inset / gap / divider.
+   Prefer h3 inside Card: .ifx-card-body p owns anonymous paragraph size. */
+.ifx-group-title {
+  margin: 0;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--ifx-text-muted);
+}

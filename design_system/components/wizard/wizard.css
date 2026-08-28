@@ -84,6 +84,8 @@
   display: flex;
   justify-content: space-between;
 }
+.ifx-wizard:not(.is-last-step) [data-ifx-wizard-submit] { display: none; }
+.ifx-wizard.is-last-step [data-ifx-wizard-next] { display: none; }
 /* bp:md */
 @media (min-width: 768px) {
   .ifx-wizard { flex-direction: row; }
