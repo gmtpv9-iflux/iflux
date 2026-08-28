@@ -165,7 +165,10 @@
   }
 
   var doc = document;
-  var SANDBOX_DIR = new URL('../sandbox/', doc.baseURI);
+  var sandboxScript = doc.querySelector('script[src*="sandbox/assets/sandbox.js"]');
+  var SANDBOX_DIR = sandboxScript
+    ? new URL('../', sandboxScript.src)
+    : new URL('../sandbox/', doc.baseURI);
   var stage = doc.getElementById('sbStage');
   var selectedVp = 'auto';
   var selectedSpan = 6;
@@ -504,9 +507,12 @@
       if (push === false) window.history.replaceState({ section: id, panel: panel }, '', url);
       else window.history.pushState({ section: id, panel: panel }, '', url);
     }
-    if (!stage) return Promise.resolve();
+    if (!stage) return Promise.reject(new Error('sandbox stage missing'));
     return fetch(sectionHref(id))
-      .then(function (r) { return r.text(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('sandbox section ' + id + ' HTTP ' + r.status);
+        return r.text();
+      })
       .then(function (html) {
         stage.innerHTML = html;
         return afterSection(id, panel);

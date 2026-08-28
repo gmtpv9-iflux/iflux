@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>iFlux Design System</title>
+  <base href="/design_system/workbench/">
   <link rel="stylesheet" href="../tokens/generated/css/primitives.css">
   <link rel="stylesheet" href="../tokens/generated/css/semantic.css">
   <link rel="stylesheet" href="../tokens/generated/css/themes/dark.css">
@@ -29,7 +30,7 @@
         <span class="ifx-appshell-brand-name">Design System</span>
       </div>
       <nav class="ifx-appshell-nav" id="ifxAppshellNav">
-        <div class="ifx-nav-group-label">Sandbox</div>
+        <a class="ifx-nav-group-label" href="?module=sandbox&amp;section=tokens">Sandbox</a>
         <a class="ifx-nav-item" href="?module=sandbox&amp;section=tokens" data-wb-module="sandbox" data-wb-section="tokens">
           <i class="ti ti-palette ifx-nav-icon"></i><span class="ifx-nav-label">Tokens</span>
         </a>
@@ -49,7 +50,7 @@
           <i class="ti ti-file-text ifx-nav-icon"></i><span class="ifx-nav-label">Contract</span>
         </a>
 
-        <div class="ifx-nav-group-label">Patterns</div>
+        <a class="ifx-nav-group-label" href="?module=patterns">Patterns</a>
         <a class="ifx-nav-item" href="?module=patterns" data-wb-module="patterns" data-wb-pattern="">
           <i class="ti ti-layout-grid ifx-nav-icon"></i><span class="ifx-nav-label">Catalog</span>
         </a>
@@ -102,7 +103,7 @@
   <script src="../tokens/generated/js/breakpoints.js"></script>
   <script src="../tokens/generated/js/token-index.js"></script>
   <script src="../adapters/web/theme.js"></script>
-  <script src="../sandbox/assets/sandbox.js"></script>
-  <script src="workbench.js"></script>
+  <script src="../sandbox/assets/sandbox.js?v=wb2"></script>
+  <script src="workbench.js?v=wb2"></script>
 </body>
 </html>

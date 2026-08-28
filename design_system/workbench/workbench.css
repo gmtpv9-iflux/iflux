@@ -69,6 +69,11 @@ html.ifx-appshell-root body {
   flex: 1;
   padding: var(--ifx-space-12) 0;
 }
+.ifx-appshell-nav .ifx-nav-group-label {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
 
 .ifx-appshell-nav .ifx-nav-item {
   position: relative;

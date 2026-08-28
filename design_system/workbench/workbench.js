@@ -182,8 +182,33 @@
     }
     patternFrame = null;
     ensureSandboxStage();
-    if (!window.IfxSandbox) return Promise.resolve();
+    if (!window.IfxSandbox) return Promise.reject(new Error('IfxSandbox missing'));
     return window.IfxSandbox.render(route.section, route.panel);
+  }
+
+  function routeFromHref(href) {
+    var url = new URL(href, location.href);
+    var q = url.searchParams;
+    var module = q.get('module') || (q.get('pattern') ? 'patterns' : 'sandbox');
+    var section = q.get('section');
+    var pattern = q.get('pattern') || '';
+    if (module !== 'sandbox' && module !== 'patterns') module = 'sandbox';
+    if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
+    if (pattern && !PATTERNS[pattern]) pattern = '';
+    return {
+      module: module,
+      section: section,
+      panel: q.get('panel') || '',
+      pattern: pattern
+    };
+  }
+
+  function followLink(a, push) {
+    var href = a.getAttribute('href');
+    if (!href) return;
+    applyRoute(routeFromHref(a.href), push !== false).catch(function () {
+      window.location.assign(a.href);
+    });
   }
 
   function navigate(partial, push) {
@@ -204,27 +229,21 @@
   }
 
   nav.addEventListener('click', function (e) {
-    var a = e.target.closest('[data-wb-module]');
-    if (!a) return;
+    var a = e.target.closest('a[href]');
+    if (!a || !nav.contains(a)) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    navigate({
-      module: a.getAttribute('data-wb-module'),
-      section: a.getAttribute('data-wb-section') || '',
-      panel: '',
-      pattern: a.getAttribute('data-wb-pattern') || ''
-    }, true);
+    followLink(a, true);
   });
 
   host.addEventListener('click', function (e) {
-    var a = e.target.closest('[data-wb-module]');
-    if (!a) return;
+    var a = e.target.closest('a[href]');
+    if (!a || !host.contains(a)) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var url = new URL(a.href, location.href);
+    if (url.pathname.indexOf('/design_system/workbench') === -1) return;
     e.preventDefault();
-    navigate({
-      module: a.getAttribute('data-wb-module'),
-      section: a.getAttribute('data-wb-section') || '',
-      panel: a.getAttribute('data-wb-panel') || '',
-      pattern: a.getAttribute('data-wb-pattern') || ''
-    }, true);
+    followLink(a, true);
   });
 
   window.addEventListener('popstate', function () {
@@ -265,5 +284,7 @@
 
   window.IfxWorkbench = { navigate: navigate, readRoute: readRoute };
   syncCollapsedPref();
-  applyRoute(readRoute(), false);
+  applyRoute(readRoute(), false).catch(function (err) {
+    console.error(err);
+  });
 })();
