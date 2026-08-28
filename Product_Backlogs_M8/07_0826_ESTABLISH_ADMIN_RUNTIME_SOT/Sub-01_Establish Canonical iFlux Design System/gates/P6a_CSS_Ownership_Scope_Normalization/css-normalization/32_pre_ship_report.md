@@ -106,4 +106,5 @@ Xóa `design_system/patterns/`, `design_system/references/`, `sections/patterns.
 | `CLEANUP_LIVE_CONSUMER` | PASS |
 | **PRE_SHIP** | **PASS** |
 
-POST-DEPLOY: chưa. Chat rebuild: **NO**.
+POST-DEPLOY: **PASS** — [`33_post_deploy_final_lock.md`](33_post_deploy_final_lock.md).  
+`ARCHITECTURE_READY_FOR_CHAT_REBUILD` = **YES**.

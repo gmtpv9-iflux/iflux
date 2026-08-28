@@ -1,6 +1,7 @@
 # SoT — Canonical UI Architecture (Design System ↔ Pattern)
 
-> **Trạng thái:** LOCK — Owner 2026-08-28  
+> **Trạng thái:** LOCK — Owner 2026-08-28 · **FINAL 2026-08-28** (`fc4b3cf` POST-DEPLOY PASS)  
+> `ARCHITECTURE_READY_FOR_CHAT_REBUILD = YES`  
 > **Phạm vi:** UI Architecture của Canonical Design System và Pattern Library.  
 > **Cấp trên:** [`docs/SoT — iFlux Product Architecture (V2).md`](SoT%20—%20iFlux%20Product%20Architecture%20(V2).md)  
 > Nếu xung đột với V2 về Product / Page / Widget (Content Unit), **V2 thắng**.  
@@ -390,7 +391,8 @@ ARCHITECTURE_READY_FOR_CHAT_REBUILD = YES
      VÀ FINAL architecture lock đã ghi
 ```
 
-Trước POST-DEPLOY PASS: **NO**.
+Trước POST-DEPLOY PASS: **NO**.  
+Sau Phase 12 (`33_post_deploy_final_lock.md`): **YES**.
 
 Xóa obsolete: `move → rewrite → repo-wide scan → LIVE_CONSUMER = 0 → delete`. “Folder empty” không đủ.
 
