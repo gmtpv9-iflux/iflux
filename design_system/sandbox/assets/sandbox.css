@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--ifx-padding-md);
-  background: var(--ifx-bg-navbar);
+  background: var(--ifx-bg-surface);
   border-bottom: 1px solid var(--ifx-border-default);
   position: sticky;
   top: 0;

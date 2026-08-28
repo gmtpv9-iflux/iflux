@@ -81,8 +81,7 @@
         "900": "#1e1e2d",
         "950": "#16161f"
       },
-      "white": "#ffffff",
-      "border-frost": "rgba(207, 211, 236, 0.12)"
+      "white": "#ffffff"
     },
     "alpha": {
       "white-4": "rgba(255, 255, 255, 0.04)",
@@ -136,13 +135,12 @@
       "bg-input": "{color.slate.900}",
       "bg-hover": "{color.slate.700}",
       "bg-active": "{alpha.violet-16}",
-      "bg-navbar": "{color.slate.800}",
       "text-primary": "{color.slate.200}",
       "text-secondary": "{color.slate.400}",
       "text-muted": "{color.slate.600}",
       "text-disabled": "{color.slate.500}",
       "text-link": "{color.violet.500}",
-      "border-default": "{color.border-frost}",
+      "border-default": "rgba(207, 211, 236, 0.12)",
       "border-strong": "rgba(207, 211, 236, 0.2)",
       "border-subtle": "rgba(207, 211, 236, 0.08)",
       "border-focus": "{color.violet.500}",
@@ -175,7 +173,6 @@
       "bg-input": "#ffffff",
       "bg-hover": "{color.slate.100}",
       "bg-active": "rgba(27, 53, 135, 0.1)",
-      "bg-navbar": "#ffffff",
       "text-primary": "{color.slate.700}",
       "text-secondary": "{color.slate.500}",
       "text-muted": "{color.slate.300}",

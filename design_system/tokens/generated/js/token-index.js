@@ -59,8 +59,7 @@
       "--ifx-color-slate-850",
       "--ifx-color-slate-900",
       "--ifx-color-slate-950",
-      "--ifx-color-white",
-      "--ifx-color-border-frost"
+      "--ifx-color-white"
     ],
     "alpha": [
       "--ifx-alpha-white-4",
@@ -339,7 +338,6 @@
       "--ifx-bg-input",
       "--ifx-bg-hover",
       "--ifx-bg-active",
-      "--ifx-bg-navbar",
       "--ifx-text-primary",
       "--ifx-text-secondary",
       "--ifx-text-muted",
@@ -378,7 +376,6 @@
       "--ifx-bg-input",
       "--ifx-bg-hover",
       "--ifx-bg-active",
-      "--ifx-bg-navbar",
       "--ifx-text-primary",
       "--ifx-text-secondary",
       "--ifx-text-muted",
@@ -825,13 +822,6 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-color-border-frost",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-alpha-white-4",
       "owner": "global",
       "layer": "global",
@@ -1155,13 +1145,6 @@
     },
     {
       "name": "--ifx-bg-active",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-bg-navbar",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/color.json",

@@ -16,7 +16,7 @@
   pointer-events: auto;
   min-width: var(--ifx-space-256);
   max-width: 22.5rem;
-  box-shadow: var(--ifx-shadow-modal);
+  box-shadow: var(--ifx-shadow-xl);
   opacity: 0;
   transform: translateX(var(--ifx-space-16));
   transition: var(--ifx-transition-opacity), var(--ifx-transition-transform);
