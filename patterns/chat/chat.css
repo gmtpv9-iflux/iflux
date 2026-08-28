@@ -1,0 +1,1232 @@
+/* P6a Chat Phase 4 R4-B. Pattern-local Chat + required dump tokens. Unused Legacy selectors removed. */
+
+:root {
+  /* Brand — Navy */
+  --ifx-color-navy-50:  #eef1fa;
+  --ifx-color-navy-100: #d5dcf2;
+  --ifx-color-navy-200: #aab8e5;
+  --ifx-color-navy-300: #7f94d8;
+  --ifx-color-navy-400: #5470cb;
+  --ifx-color-navy-500: #3a56b5;
+  --ifx-color-navy-600: #1b3587;
+  --ifx-color-navy-700: #152a6b;
+  --ifx-color-navy-800: #0f1f50;
+  --ifx-color-navy-900: #0a1438;
+
+  /* Brand — Orange */
+  --ifx-color-orange-50:  #fff4ed;
+  --ifx-color-orange-100: #ffe4d1;
+  --ifx-color-orange-200: #ffc9a3;
+  --ifx-color-orange-300: #ffa96f;
+  --ifx-color-orange-400: #ff8840;
+  --ifx-color-orange-500: #f26522;
+  --ifx-color-orange-600: #d95518;
+  --ifx-color-orange-700: #b34412;
+  --ifx-color-orange-800: #8c350e;
+  --ifx-color-orange-900: #662709;
+
+  /* Feedback */
+  --ifx-color-green-400:  #33b894;
+  --ifx-color-green-500:  #00a67e;
+  --ifx-color-green-600:  #008566;
+  --ifx-color-red-400:    #ef5a6f;
+  --ifx-color-red-500:    #e8304a;
+  --ifx-color-red-600:    #c4243b;
+  --ifx-color-amber-400:  #fcd34d;
+  --ifx-color-amber-500:  #fbbf24;
+  --ifx-color-amber-600:  #d97706;
+  --ifx-color-cyan-400:   #38d9f5;
+  --ifx-color-cyan-500:   #03c3ec;
+  --ifx-color-cyan-600:   #0299b8;
+
+  /* Market — trần / sàn (VN) */
+  --ifx-color-purple-500: #a855f7;
+  --ifx-alpha-purple-10:  rgba(168, 85, 247, 0.10);
+
+  /* Neutral — UI slate (dark surfaces) */
+  --ifx-color-slate-50:  #f5f5f9;
+  --ifx-color-slate-100: #ececf1;
+  --ifx-color-slate-200: #cfd3ec;
+  --ifx-color-slate-300: #a1acb8;
+  --ifx-color-slate-400: #8592a3;
+  --ifx-color-slate-500: #697a8d;
+  --ifx-color-slate-600: #5f6582;
+  --ifx-color-slate-700: #3a3b55;
+  --ifx-color-slate-800: #2b2c40;
+  --ifx-color-slate-850: #232333;
+  --ifx-color-slate-900: #1e1e2d;
+  --ifx-color-slate-950: #16161f;
+
+  /* Chart palette — series Top 10 / compare (10 màu, token only) */
+  --ifx-color-chart-1:  var(--ifx-color-violet-500);
+  --ifx-color-chart-2:  var(--ifx-color-lime-500);
+  --ifx-color-chart-3:  var(--ifx-color-amber-550);
+  --ifx-color-chart-4:  var(--ifx-color-red-450);
+  --ifx-color-chart-5:  var(--ifx-color-cyan-500);
+  --ifx-color-chart-6:  var(--ifx-color-orange-500);
+  --ifx-color-chart-7:  var(--ifx-color-violet-400);
+  --ifx-color-chart-8:  var(--ifx-color-green-500);
+  --ifx-color-chart-9:  #e91e8c;
+  --ifx-color-chart-10: #b4b7bd;
+
+  /* Alpha helpers */
+  --ifx-alpha-white-4:  rgba(255, 255, 255, 0.04);
+  --ifx-alpha-white-8:  rgba(255, 255, 255, 0.08);
+  --ifx-alpha-white-12: rgba(255, 255, 255, 0.12);
+  --ifx-alpha-white-16: rgba(255, 255, 255, 0.16);
+  --ifx-alpha-white-20: rgba(207, 211, 236, 0.2);
+  --ifx-alpha-black-4:  rgba(0, 0, 0, 0.04);
+  --ifx-alpha-black-8:  rgba(0, 0, 0, 0.08);
+  --ifx-alpha-black-12: rgba(0, 0, 0, 0.12);
+  --ifx-alpha-black-16: rgba(0, 0, 0, 0.16);
+  --ifx-alpha-black-45: rgba(0, 0, 0, 0.45);
+  --ifx-alpha-black-60: rgba(0, 0, 0, 0.60);
+
+  /* UI accent — violet (dark shell) */
+  --ifx-color-violet-500: #696cff;
+  --ifx-color-violet-600: #5f61e6;
+  --ifx-color-violet-400: #8592ff;
+  --ifx-alpha-violet-16: rgba(105, 108, 255, 0.16);
+
+  /* Feedback — dark shell highlights */
+  --ifx-color-lime-500: #71dd37;
+  --ifx-alpha-lime-16: rgba(113, 221, 55, 0.16);
+  --ifx-color-amber-550: #ffab00;
+  --ifx-alpha-amber-16: rgba(255, 171, 0, 0.16);
+  --ifx-color-red-450: #ff3e1d;
+  --ifx-alpha-red-16: rgba(255, 62, 29, 0.16);
+  --ifx-alpha-cyan-16: rgba(3, 195, 236, 0.16);
+
+  /* Chrome — dark shell */
+  --ifx-color-white: #ffffff;
+  --ifx-color-border-frost: rgba(207, 211, 236, 0.12);
+  --ifx-color-topnav-bg: rgba(43, 44, 64, 0.94);
+  --ifx-shadow-topnav: 0 4px 24px rgba(0, 0, 0, 0.18);
+  --ifx-alpha-orange-35: rgba(242, 101, 34, 0.35);
+  --ifx-alpha-orange-14: rgba(242, 101, 34, 0.14);
+  --ifx-alpha-orange-8:  rgba(242, 101, 34, 0.08);
+  --ifx-alpha-orange-45: rgba(242, 101, 34, 0.45);
+  --ifx-alpha-red-35:    rgba(255, 76, 81, 0.35);
+  --ifx-alpha-red-12:    rgba(255, 76, 81, 0.12);
+
+  /* Flow / MCMP tints (giữ đúng màu iFlux legacy) */
+  --ifx-alpha-green-500-50: rgba(0, 166, 126, 0.50);
+  --ifx-alpha-green-500-45: rgba(0, 166, 126, 0.45);
+  --ifx-alpha-green-500-25: rgba(0, 166, 126, 0.25);
+  --ifx-alpha-green-500-22: rgba(0, 166, 126, 0.22);
+  --ifx-alpha-green-500-12: rgba(0, 166, 126, 0.12);
+  --ifx-alpha-red-500-45:   rgba(232, 48, 74, 0.45);
+  --ifx-alpha-red-500-25:   rgba(232, 48, 74, 0.25);
+  --ifx-alpha-red-500-22:   rgba(232, 48, 74, 0.22);
+  --ifx-alpha-red-500-12:   rgba(232, 48, 74, 0.12);
+  --ifx-alpha-red-500-10:   rgba(232, 48, 74, 0.10);
+  --ifx-alpha-violet-500-4:  rgba(105, 108, 255, 0.04);
+  --ifx-alpha-violet-500-6:  rgba(105, 108, 255, 0.06);
+  --ifx-alpha-violet-500-3:  rgba(105, 108, 255, 0.03);
+  --ifx-alpha-violet-500-12: rgba(105, 108, 255, 0.12);
+  --ifx-alpha-amber-550-12:  rgba(255, 171, 0, 0.12);
+  --ifx-alpha-muted-12:      rgba(133, 146, 163, 0.12);
+  --ifx-alpha-shell-55:      rgba(15, 17, 28, 0.55);
+  --ifx-gradient-zone-track: linear-gradient(90deg, var(--ifx-alpha-green-500-25) 0%, var(--ifx-alpha-violet-500-12) 50%, var(--ifx-alpha-red-500-25) 100%);
+  --ifx-gradient-zone-fill:  linear-gradient(90deg, var(--ifx-alpha-green-500-45), var(--ifx-alpha-violet-500-12));
+  --ifx-gradient-mcmp-energy: linear-gradient(180deg, var(--ifx-color-amber-550), var(--ifx-color-red-500));
+  --ifx-gradient-brand-cta: linear-gradient(135deg, var(--ifx-color-orange-500) 0%, var(--ifx-color-red-500) 100%);
+}
+
+:root {
+  --ifx-radius-none: 0;
+  --ifx-radius-xs: 2px;
+  --ifx-radius-sm: 4px;
+  --ifx-radius-md: 6px;
+  --ifx-radius-lg: 8px;
+  --ifx-radius-xl: 12px;
+  --ifx-radius-2xl: 16px;
+  --ifx-radius-full: 9999px;
+
+  --radius-button: var(--ifx-radius-md);
+  --radius-input: var(--ifx-radius-md);
+  --radius-card: var(--ifx-radius-lg);
+  --radius-badge: var(--ifx-radius-full);
+  --radius-chip: var(--ifx-radius-full);
+  --radius-modal: var(--ifx-radius-lg);
+  --radius-dropdown: var(--ifx-radius-lg);
+}
+
+:root {
+  --ifx-shadow-xs: 0 1px 2px var(--ifx-alpha-black-8);
+  --ifx-shadow-sm: 0 2px 6px var(--ifx-alpha-black-8);
+  --ifx-shadow-md: 0 4px 16px var(--ifx-alpha-black-12);
+  --ifx-shadow-lg: 0 8px 24px var(--ifx-alpha-black-16);
+  --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
+
+  --shadow-card: var(--ifx-shadow-sm);
+  --shadow-dropdown: var(--ifx-shadow-lg);
+  --shadow-modal: var(--ifx-shadow-xl);
+  --shadow-topnav: var(--ifx-shadow-md);
+}
+
+:root {
+  --ifx-duration-instant: 0ms;
+  --ifx-duration-fast: 100ms;
+  --ifx-duration-normal: 200ms;
+  --ifx-duration-slow: 300ms;
+  --ifx-duration-slower: 400ms;
+
+  --ifx-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ifx-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ifx-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ifx-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --transition-color: color var(--ifx-duration-fast) var(--ifx-ease-default),
+    background-color var(--ifx-duration-fast) var(--ifx-ease-default),
+    border-color var(--ifx-duration-fast) var(--ifx-ease-default);
+  --transition-transform: transform var(--ifx-duration-normal) var(--ifx-ease-out);
+  --transition-opacity: opacity var(--ifx-duration-normal) var(--ifx-ease-default);
+  --transition-drawer: transform var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+
+:root {
+  --ifx-z-base: 0;
+  --ifx-z-raised: 1;
+  --ifx-z-dropdown: 100;
+  --ifx-z-sticky: 200;
+  --ifx-z-topnav: 220;
+  --ifx-z-drawer: 230;
+  --ifx-z-overlay: 240;
+  --ifx-z-modal: 300;
+  --ifx-z-toast: 400;
+  --ifx-z-onboarding: 500;
+}
+
+:root {
+  /* Breakpoints — Foundation catalog (7 tokens) */
+  --ifx-bp-xs: 375px;   /* bp-xs */
+  --ifx-bp-sm: 640px;   /* bp-sm */
+  --ifx-bp-md: 768px;   /* bp-md */
+  --ifx-bp-lg: 1024px;  /* bp-lg */
+  --ifx-bp-xl: 1280px;  /* bp-xl */
+  --ifx-bp-2xl: 1440px; /* bp-2xl */
+  --ifx-bp-3xl: 1600px; /* bp-3xl */
+
+  /* Touch / icon */
+  --ifx-size-touch-target: 44px;
+  --ifx-size-icon-sm: 16px;
+  --ifx-size-icon-md: 20px;
+  --ifx-size-icon-lg: 24px;
+
+  /* Avatar */
+  --ifx-size-avatar-sm: 28px;
+  --ifx-size-avatar-md: 36px;
+  --ifx-size-avatar-lg: 48px;
+
+  /* Admin shell */
+  --ifx-size-sidebar-w: 260px;
+  --ifx-size-sidebar-w-collapsed: 72px;
+  --ifx-size-navbar-h: 64px;
+
+  /* User Web shell */
+  --ifx-size-topnav-h: 56px;
+  --ifx-size-tabbar-h: 60px;
+  --ifx-size-nav-drawer-w: 300px;
+  --ifx-size-container-max: 1280px;
+}
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surface */
+  --color-bg-canvas: var(--ifx-color-slate-850);
+  --color-bg-surface: var(--ifx-color-slate-800);
+  --color-bg-elevated: var(--ifx-color-slate-700);
+  --color-bg-subtle: var(--ifx-color-slate-900);
+  --color-bg-input: var(--ifx-color-slate-900);
+  --color-bg-hover: var(--ifx-color-slate-700);
+  --color-bg-active: var(--ifx-alpha-violet-16);
+  --color-bg-sidebar: var(--ifx-color-slate-800);
+  --color-bg-navbar: var(--ifx-color-slate-800);
+
+  /* Text */
+  --color-text-primary: var(--ifx-color-slate-200);
+  --color-text-secondary: var(--ifx-color-slate-400);
+  --color-text-muted: var(--ifx-color-slate-600);
+  --color-text-disabled: var(--ifx-color-slate-500);
+  --color-text-inverse: var(--ifx-color-slate-850);
+  --color-text-card-title: var(--ifx-color-text-card-title);
+  --color-text-link: var(--ifx-color-violet-500);
+
+  /* Border */
+  --color-border-default: var(--ifx-color-border-frost);
+  --color-border-strong: rgba(207, 211, 236, 0.2);
+  --color-border-subtle: rgba(207, 211, 236, 0.08);
+  --color-border-focus: var(--ifx-color-violet-500);
+
+  /* Action */
+  --color-action-primary: var(--ifx-color-violet-500);
+  --color-action-primary-hover: var(--ifx-color-violet-600);
+  --color-action-primary-soft: var(--ifx-alpha-violet-16);
+  --color-action-secondary: var(--ifx-color-orange-500);
+  --color-action-secondary-hover: var(--ifx-color-orange-600);
+  --color-action-secondary-soft: rgba(242, 101, 34, 0.14);
+
+  /* Feedback */
+  --color-success: var(--ifx-color-lime-500);
+  --color-success-soft: var(--ifx-alpha-lime-16);
+  --color-warning: var(--ifx-color-amber-550);
+  --color-warning-soft: var(--ifx-alpha-amber-16);
+  --color-danger: var(--ifx-color-red-450);
+  --color-danger-soft: var(--ifx-alpha-red-16);
+  --color-info: var(--ifx-color-cyan-500);
+  --color-info-soft: var(--ifx-alpha-cyan-16);
+
+  /* Overlay / chrome */
+  --color-scrim: var(--ifx-color-scrim);
+  --color-topnav-bg: var(--ifx-color-topnav-bg);
+  --color-topnav-shadow: var(--ifx-shadow-topnav);
+  --color-surface-elevated: var(--ifx-alpha-white-4);
+
+  /* Market */
+  --color-market-up: var(--ifx-color-lime-500);
+  --color-market-up-soft: var(--ifx-alpha-lime-16);
+  --color-market-down: var(--ifx-color-red-450);
+  --color-market-down-soft: var(--ifx-alpha-red-16);
+  --color-market-ref: var(--ifx-color-amber-550);
+  --color-market-ref-soft: var(--ifx-alpha-amber-16);
+  --color-market-ceiling: var(--ifx-color-purple-500);
+  --color-market-ceiling-soft: var(--ifx-alpha-purple-10);
+  --color-market-floor: var(--ifx-color-cyan-500);
+  --color-market-floor-soft: var(--ifx-alpha-cyan-16);
+  --color-flow-in: var(--ifx-color-lime-500);
+  --color-flow-out: var(--ifx-color-red-450);
+
+  /* Membership tiers */
+  --color-tier-free: var(--ifx-color-slate-400);
+  --color-tier-premium: var(--ifx-color-violet-500);
+  --color-tier-elite: var(--ifx-color-orange-500);
+
+  /* Text on filled surfaces */
+  --color-text-on-primary: #ffffff;
+  --color-text-on-success: #151d15;
+  --color-text-on-warning: #1a1100;
+  --color-text-on-danger: #ffffff;
+  --color-text-on-info: #00151a;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg-canvas: var(--ifx-color-slate-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: var(--ifx-color-slate-100);
+  --color-bg-subtle: var(--ifx-color-slate-100);
+  --color-bg-input: #ffffff;
+  --color-bg-hover: var(--ifx-color-slate-100);
+  --color-bg-active: rgba(27, 53, 135, 0.1);
+  --color-bg-sidebar: #ffffff;
+  --color-bg-navbar: #ffffff;
+
+  --color-text-primary: var(--ifx-color-slate-700);
+  --color-text-secondary: var(--ifx-color-slate-500);
+  --color-text-muted: var(--ifx-color-slate-300);
+  --color-text-disabled: var(--ifx-color-slate-300);
+  --color-text-inverse: #ffffff;
+  --color-text-card-title: #2f3349;
+  --color-text-link: var(--ifx-color-navy-600);
+
+  --color-border-default: rgba(67, 89, 113, 0.14);
+  --color-border-strong: rgba(67, 89, 113, 0.22);
+  --color-border-subtle: rgba(67, 89, 113, 0.08);
+  --color-border-focus: var(--ifx-color-navy-500);
+
+  --color-action-primary: var(--ifx-color-navy-600);
+  --color-action-primary-hover: var(--ifx-color-navy-700);
+  --color-action-primary-soft: rgba(27, 53, 135, 0.1);
+  --color-action-secondary: var(--ifx-color-orange-500);
+  --color-action-secondary-hover: var(--ifx-color-orange-600);
+  --color-action-secondary-soft: rgba(242, 101, 34, 0.12);
+
+  --color-success: var(--ifx-color-green-500);
+  --color-success-soft: rgba(0, 166, 126, 0.12);
+  --color-warning: var(--ifx-color-amber-500);
+  --color-warning-soft: rgba(251, 191, 36, 0.14);
+  --color-danger: var(--ifx-color-red-500);
+  --color-danger-soft: rgba(232, 48, 74, 0.1);
+  --color-info: var(--ifx-color-cyan-500);
+  --color-info-soft: rgba(3, 195, 236, 0.12);
+
+  --color-scrim: rgba(58, 59, 85, 0.45);
+  --color-topnav-bg: rgba(255, 255, 255, 0.94);
+  --color-topnav-shadow: 0 4px 24px rgba(67, 89, 113, 0.08);
+  --color-surface-elevated: rgba(67, 89, 113, 0.04);
+
+  --color-market-up: var(--ifx-color-green-500);
+  --color-market-up-soft: rgba(0, 166, 126, 0.12);
+  --color-market-down: var(--ifx-color-red-500);
+  --color-market-down-soft: rgba(232, 48, 74, 0.1);
+  --color-market-ref: var(--ifx-color-amber-600);
+  --color-market-ref-soft: rgba(251, 191, 36, 0.14);
+  --color-market-ceiling: var(--ifx-color-purple-500);
+  --color-market-ceiling-soft: var(--ifx-alpha-purple-10);
+  --color-market-floor: var(--ifx-color-cyan-500);
+  --color-market-floor-soft: var(--ifx-alpha-cyan-16);
+  --color-flow-in: var(--ifx-color-green-500);
+  --color-flow-out: var(--ifx-color-red-500);
+
+  --color-tier-free: var(--ifx-color-slate-500);
+  --color-tier-premium: var(--ifx-color-navy-600);
+  --color-tier-elite: var(--ifx-color-orange-500);
+
+  --color-text-on-primary: #ffffff;
+  --color-text-on-success: #151d15;
+  --color-text-on-warning: #1a1100;
+  --color-text-on-danger: #ffffff;
+  --color-text-on-info: #00151a;
+}
+
+:root,
+[data-theme="dark"] {
+  --biz-money-flow-strong-in: var(--color-flow-in);
+  --biz-money-flow-strong-out: var(--color-flow-out);
+
+  --biz-signal-confirmed: var(--color-success);
+  --biz-signal-pending: var(--color-warning);
+  --biz-signal-invalid: var(--color-danger);
+
+  --biz-portfolio-profit: var(--color-market-up);
+  --biz-portfolio-loss: var(--color-market-down);
+
+  --biz-heatmap-1: var(--ifx-color-chart-1);
+  --biz-heatmap-2: var(--ifx-color-chart-2);
+  --biz-heatmap-3: var(--ifx-color-chart-3);
+  --biz-heatmap-4: var(--ifx-color-chart-4);
+  --biz-heatmap-5: var(--ifx-color-chart-5);
+  --biz-heatmap-6: var(--ifx-color-chart-6);
+  --biz-heatmap-7: var(--ifx-color-chart-7);
+  --biz-heatmap-8: var(--ifx-color-chart-8);
+  --biz-heatmap-9: var(--ifx-color-chart-9);
+  --biz-heatmap-10: var(--ifx-color-chart-10);
+}
+
+[data-theme="light"] {
+  --biz-money-flow-strong-in: var(--color-flow-in);
+  --biz-money-flow-strong-out: var(--color-flow-out);
+
+  --biz-signal-confirmed: var(--color-success);
+  --biz-signal-pending: var(--color-warning);
+  --biz-signal-invalid: var(--color-danger);
+
+  --biz-portfolio-profit: var(--color-market-up);
+  --biz-portfolio-loss: var(--color-market-down);
+}
+
+:root {
+  /* Brand shorthand */
+  --iflux-navy: var(--ifx-color-navy-600);
+  --iflux-navy-hover: var(--ifx-color-navy-700);
+  --iflux-orange: var(--ifx-color-orange-500);
+  --iflux-success: var(--ifx-color-green-500);
+  --iflux-danger: var(--ifx-color-red-500);
+  --iflux-warning: var(--ifx-color-amber-500);
+
+  /* Vuexy-compat semantic (--ix-*) */
+  --ix-bg-body: var(--color-bg-canvas);
+  --ix-bg-card: var(--color-bg-surface);
+  --ix-bg-sidebar: var(--color-bg-sidebar);
+  --ix-bg-navbar: var(--color-bg-navbar);
+  --ix-bg-hover: var(--color-bg-hover);
+  --ix-bg-active: var(--color-bg-active);
+  --ix-bg-input: var(--color-bg-input);
+
+  --ix-accent: var(--color-action-primary);
+  --ix-accent-hover: var(--color-action-primary-hover);
+  --ix-accent-soft: var(--color-action-primary-soft);
+
+  --ix-success: var(--color-success);
+  --ix-success-soft: var(--color-success-soft);
+  --ix-warning: var(--color-warning);
+  --ix-warning-soft: var(--color-warning-soft);
+  --ix-danger: var(--color-danger);
+  --ix-danger-soft: var(--color-danger-soft);
+  --ix-info: var(--color-info);
+  --ix-info-soft: var(--color-info-soft);
+
+  --ix-text-primary: var(--color-text-primary);
+  --ix-text-secondary: var(--color-text-secondary);
+  --ix-text-card-title: var(--color-text-card-title);
+  --ix-text-muted: var(--color-text-muted);
+
+  --ix-border: var(--color-border-default);
+
+  /* Layout */
+  --ix-sidebar-w: var(--ifx-size-sidebar-w);
+  --ix-sidebar-w-collapsed: var(--ifx-size-sidebar-w-collapsed);
+  --ix-navbar-h: var(--ifx-size-navbar-h);
+
+  /* Radius */
+  --ix-radius: var(--radius-button);
+  --ix-radius-lg: var(--radius-card);
+
+  /* User Web chrome */
+  --ifx-topnav-bg: var(--color-topnav-bg);
+  --ifx-topnav-shadow: var(--color-topnav-shadow);
+  --ifx-surface-elevated: var(--color-surface-elevated);
+  --ifx-overlay-scrim: var(--color-scrim);
+  --ifx-nav-drawer-w: var(--ifx-size-nav-drawer-w);
+  --ifx-topnav-h: var(--ifx-size-topnav-h);
+  --ifx-tabbar-h: var(--ifx-size-tabbar-h);
+
+  /* Market semantic shortcuts */
+  --ifx-market-up: var(--color-market-up);
+  --ifx-market-down: var(--color-market-down);
+  --ifx-market-up-soft: var(--color-market-up-soft);
+  --ifx-market-down-soft: var(--color-market-down-soft);
+  --ifx-market-ref: var(--color-market-ref);
+  --ifx-market-ref-soft: var(--color-market-ref-soft);
+  --ifx-market-ceiling: var(--color-market-ceiling);
+  --ifx-market-ceiling-soft: var(--color-market-ceiling-soft);
+  --ifx-market-floor: var(--color-market-floor);
+  --ifx-market-floor-soft: var(--color-market-floor-soft);
+  --ifx-flow-in: var(--color-flow-in);
+  --ifx-flow-out: var(--color-flow-out);
+
+  /* Chart runtime (ApexCharts / SVG) */
+  --ifx-chart-grid: var(--ifx-color-border-frost);
+  --ifx-chart-label: var(--ix-text-secondary);
+  --ifx-chart-text: var(--ix-text-muted);
+  --ifx-chart-annotation-bg: var(--ix-accent-soft);
+  --ifx-chart-marker-stroke: var(--color-text-on-primary);
+}
+
+:root {
+  /* ── 1. Font Family ───────────────────────────────────────── */
+  /* Be Vietnam Pro self-host (fonts.css). Không còn Inter/JetBrains (Google). */
+  --ifx-font-primary: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifx-font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
+  --ifx-font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+  --ifx-font-system: system-ui, sans-serif;
+  --ifx-font-numeric: var(--ifx-font-primary);
+
+  /* Legacy alias */
+  --ix-font: var(--ifx-font-primary);
+  --ix-font-mono: var(--ifx-font-mono);
+
+  /* ── 2. Font Weight ───────────────────────────────────────────
+   * Hệ thống chỉ nạp 4 weight thật: 200 / 400 / 600 / 800.
+   * Các tên cũ (thin/light/medium/bold/black = 100/300/500/700/900)
+   * được gộp về weight gần nhất để không faux-bold & không vỡ tham chiếu.
+   */
+  --ifx-font-weight-extralight: 200;
+  --ifx-font-weight-regular: 400;
+  --ifx-font-weight-semibold: 600;
+  --ifx-font-weight-extrabold: 800;
+
+  /* Alias gộp → 4 weight thật (không sinh thêm request font) */
+  --ifx-font-weight-thin: 200;     /* 100 → 200 */
+  --ifx-font-weight-light: 400;    /* 300 → 400 */
+  --ifx-font-weight-medium: 600;   /* 500 → 600 */
+  --ifx-font-weight-bold: 800;     /* 700 → 800 */
+  --ifx-font-weight-black: 800;    /* 900 → 800 */
+
+  /* ── 3. Font Size Scale (static — gần bản gốc 12/14/16, body +1px) ──
+   * SoT duy nhất cho cỡ chữ. KHÔNG hardcode px ở component.
+   * Gốc: caption 12 · widget/body 14 · title 16 · heading 18+
+   * Body đọc: 15px (+1 so với gốc). Token 12/14 giữ đúng px cũ.
+   */
+  --ifx-font-size-2xs: 0.625rem;   /* 10px */
+  --ifx-font-size-xs:  0.75rem;    /* 12px */
+  --ifx-font-size-sm:  0.8125rem;  /* 13px */
+  --ifx-font-size-md:  0.9375rem;  /* 15px — body, lớn hơn gốc một chút */
+  --ifx-font-size-lg:  1rem;       /* 16px */
+  --ifx-font-size-xl:  1.125rem;   /* 18px */
+  --ifx-font-size-2xl: 1.25rem;    /* 20px */
+  --ifx-font-size-3xl: 1.5rem;     /* 24px */
+  --ifx-font-size-4xl: 1.875rem;   /* 30px */
+  --ifx-font-size-5xl: 2.25rem;    /* 36px */
+
+  /* Alias không prefix — cùng SoT */
+  --font-size-2xs: var(--ifx-font-size-2xs);
+  --font-size-xs:  var(--ifx-font-size-xs);
+  --font-size-sm:  var(--ifx-font-size-sm);
+  --font-size-md:  var(--ifx-font-size-md);
+  --font-size-lg:  var(--ifx-font-size-lg);
+  --font-size-xl:  var(--ifx-font-size-xl);
+  --font-size-2xl: var(--ifx-font-size-2xl);
+  --font-size-3xl: var(--ifx-font-size-3xl);
+  --font-size-4xl: var(--ifx-font-size-4xl);
+  --font-size-5xl: var(--ifx-font-size-5xl);
+
+  /* Legacy numeric tokens — map ĐÚNG px cũ (không upscale lên md/lg) */
+  --ifx-font-size-10: var(--ifx-font-size-2xs);
+  --ifx-font-size-12: var(--ifx-font-size-xs);
+  --ifx-font-size-14: 0.875rem;   /* 14px — widget title, table cell */
+  --ifx-font-size-16: var(--ifx-font-size-lg);
+  --ifx-font-size-18: var(--ifx-font-size-xl);
+  --ifx-font-size-20: 1.25rem;     /* 20px */
+  --ifx-font-size-24: var(--ifx-font-size-2xl);
+  --ifx-font-size-28: 1.75rem;    /* 28px */
+  --ifx-font-size-32: var(--ifx-font-size-3xl);
+  --ifx-font-size-40: 2.5rem;     /* 40px */
+  --ifx-font-size-48: var(--ifx-font-size-4xl);
+  --ifx-font-size-56: 3.5rem;     /* 56px */
+  --ifx-font-size-64: var(--ifx-font-size-5xl);
+  --ifx-font-size-72: 4.5rem;     /* 72px */
+
+  /* Legacy size aliases */
+  --ix-font-size-base: var(--ifx-font-size-14);
+  --ix-font-size-card-title: var(--ifx-font-size-16);
+
+  /* Community feed card (Card nhỏ ~1/3) — semantic SoT
+   * Title: 14→15→16 (+2px) · Stats icon+số: 10→12 (+2px) · clamp 3 dòng
+   */
+  --ifx-com-feed-card-title-size: var(--ifx-font-size-lg);   /* 16px */
+  --ifx-com-feed-card-stats-size: var(--ifx-font-size-12);   /* 12px */
+  --ifx-com-feed-card-title-lines: 3;
+
+  /* ── 4. Line Height (paired + named) ─────────────────────── */
+  --ifx-line-height-10: 0.875rem;  /* 14px */
+  --ifx-line-height-12: 1rem;      /* 16px */
+  --ifx-line-height-14: 1.25rem;   /* 20px */
+  --ifx-line-height-16: 1.5rem;    /* 24px */
+  --ifx-line-height-18: 1.75rem;   /* 28px */
+  --ifx-line-height-20: 1.875rem;  /* 30px */
+  --ifx-line-height-24: 2.25rem;   /* 36px */
+  --ifx-line-height-28: 2.625rem;  /* 42px */
+  --ifx-line-height-32: 2.75rem;   /* 44px */
+  --ifx-line-height-40: 3.25rem;   /* 52px */
+  --ifx-line-height-48: 3.5rem;    /* 56px */
+  --ifx-line-height-56: 4rem;      /* 64px */
+  --ifx-line-height-64: 4.5rem;    /* 72px */
+  --ifx-line-height-72: 5rem;      /* 80px */
+
+  --ifx-line-height-tight: 1.25;
+  --ifx-line-height-normal: 1.5;
+  --ifx-line-height-relaxed: 1.625;
+  --ifx-line-height-loose: 1.75;
+
+  /* ── 5. Letter Spacing ────────────────────────────────────── */
+  --ifx-letter-spacing-tighter: -0.02em;
+  --ifx-letter-spacing-tight: -0.01em;
+  --ifx-letter-spacing-normal: 0;
+  --ifx-letter-spacing-wide: 0.01em;
+  --ifx-letter-spacing-wider: 0.02em;
+  --ifx-letter-spacing-caps: 0.06em;
+
+  /* ── 7. Paragraph ─────────────────────────────────────────── */
+  --ifx-paragraph-spacing: 1em;
+  --ifx-paragraph-indent: 1.5em;
+
+  /* ── 9. Semantic Typography (mobile-first) ────────────────── */
+  /* Display */
+  /* Display — dùng 4xl/5xl fluid; line-height unitless để theo scale */
+  --ifx-text-display-xl-size: var(--ifx-font-size-5xl);
+  --ifx-text-display-xl-weight: var(--ifx-font-weight-bold);
+  --ifx-text-display-xl-line: var(--ifx-line-height-tight);
+  --ifx-text-display-xl-tracking: var(--ifx-letter-spacing-tight);
+
+  --ifx-text-display-l-size: var(--ifx-font-size-4xl);
+  --ifx-text-display-l-weight: var(--ifx-font-weight-bold);
+  --ifx-text-display-l-line: var(--ifx-line-height-tight);
+  --ifx-text-display-l-tracking: var(--ifx-letter-spacing-tight);
+
+  --ifx-text-display-m-size: var(--ifx-font-size-3xl);
+  --ifx-text-display-m-weight: var(--ifx-font-weight-bold);
+  --ifx-text-display-m-line: var(--ifx-line-height-tight);
+  --ifx-text-display-m-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-display-s-size: var(--ifx-font-size-2xl);
+  --ifx-text-display-s-weight: var(--ifx-font-weight-bold);
+  --ifx-text-display-s-line: var(--ifx-line-height-tight);
+  --ifx-text-display-s-tracking: var(--ifx-letter-spacing-normal);
+
+  /* Heading hierarchy — bước đều trên modular scale */
+  --ifx-text-h1-size: var(--ifx-font-size-3xl);
+  --ifx-text-h1-weight: var(--ifx-font-weight-bold);
+  --ifx-text-h1-line: var(--ifx-line-height-tight);
+  --ifx-text-h1-tracking: var(--ifx-letter-spacing-tight);
+
+  --ifx-text-h2-size: var(--ifx-font-size-2xl);
+  --ifx-text-h2-weight: var(--ifx-font-weight-bold);
+  --ifx-text-h2-line: var(--ifx-line-height-tight);
+  --ifx-text-h2-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h3-size: var(--ifx-font-size-xl);
+  --ifx-text-h3-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h3-line: var(--ifx-line-height-normal);
+  --ifx-text-h3-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h4-size: var(--ifx-font-size-lg);
+  --ifx-text-h4-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h4-line: var(--ifx-line-height-normal);
+  --ifx-text-h4-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h5-size: var(--ifx-font-size-md);
+  --ifx-text-h5-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h5-line: var(--ifx-line-height-normal);
+  --ifx-text-h5-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h6-size: var(--ifx-font-size-sm);
+  --ifx-text-h6-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h6-line: var(--ifx-line-height-normal);
+  --ifx-text-h6-tracking: var(--ifx-letter-spacing-normal);
+
+  /* Title */
+  --ifx-text-title-lg-size: var(--ifx-font-size-xl);
+  --ifx-text-title-lg-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-title-lg-line: var(--ifx-line-height-normal);
+  --ifx-text-title-lg-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-title-md-size: var(--ifx-font-size-lg);
+  --ifx-text-title-md-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-title-md-line: var(--ifx-line-height-normal);
+  --ifx-text-title-md-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-title-sm-size: var(--ifx-font-size-md);
+  --ifx-text-title-sm-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-title-sm-line: var(--ifx-line-height-normal);
+  --ifx-text-title-sm-tracking: var(--ifx-letter-spacing-normal);
+
+  /* Body — dễ đọc: Body = md (16→18), Large = lg, Small = sm */
+  --ifx-text-body-lg-size: var(--ifx-font-size-lg);
+  --ifx-text-body-lg-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-lg-line: var(--ifx-line-height-relaxed);
+  --ifx-text-body-lg-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-body-md-size: var(--ifx-font-size-md);
+  --ifx-text-body-md-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-md-line: var(--ifx-line-height-normal);
+  --ifx-text-body-md-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-body-sm-size: var(--ifx-font-size-sm);
+  --ifx-text-body-sm-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-sm-line: var(--ifx-line-height-normal);
+  --ifx-text-body-sm-tracking: var(--ifx-letter-spacing-normal);
+
+  /* Caption / Overline */
+  --ifx-text-caption-size: var(--ifx-font-size-xs);
+  --ifx-text-caption-weight: var(--ifx-font-weight-regular);
+  --ifx-text-caption-line: var(--ifx-line-height-normal);
+  --ifx-text-caption-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-overline-size: var(--ifx-font-size-2xs);
+  --ifx-text-overline-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-overline-line: var(--ifx-line-height-tight);
+  --ifx-text-overline-tracking: var(--ifx-letter-spacing-caps);
+
+  /* Label */
+  --ifx-text-label-lg-size: var(--ifx-font-size-sm);
+  --ifx-text-label-lg-weight: var(--ifx-font-weight-medium);
+  --ifx-text-label-lg-line: var(--ifx-line-height-normal);
+  --ifx-text-label-lg-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-label-md-size: var(--ifx-font-size-xs);
+  --ifx-text-label-md-weight: var(--ifx-font-weight-medium);
+  --ifx-text-label-md-line: var(--ifx-line-height-normal);
+  --ifx-text-label-md-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-label-sm-size: var(--ifx-font-size-2xs);
+  --ifx-text-label-sm-weight: var(--ifx-font-weight-medium);
+  --ifx-text-label-sm-line: var(--ifx-line-height-tight);
+  --ifx-text-label-sm-tracking: var(--ifx-letter-spacing-wide);
+
+  /* Button */
+  --ifx-text-btn-lg-size: var(--ifx-font-size-md);
+  --ifx-text-btn-lg-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-lg-line: var(--ifx-line-height-normal);
+
+  --ifx-text-btn-md-size: var(--ifx-font-size-sm);
+  --ifx-text-btn-md-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-md-line: var(--ifx-line-height-normal);
+
+  --ifx-text-btn-sm-size: var(--ifx-font-size-xs);
+  --ifx-text-btn-sm-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-sm-line: var(--ifx-line-height-tight);
+
+  /* ── 10. Numeric ──────────────────────────────────────────── */
+  --ifx-text-price-xl-size: var(--ifx-font-size-48);
+  --ifx-text-price-xl-weight: var(--ifx-font-weight-bold);
+  --ifx-text-price-l-size: var(--ifx-font-size-32);
+  --ifx-text-price-l-weight: var(--ifx-font-weight-bold);
+  --ifx-text-price-m-size: var(--ifx-font-size-24);
+  --ifx-text-price-m-weight: var(--ifx-font-weight-bold);
+  --ifx-text-price-s-size: var(--ifx-font-size-18);
+  --ifx-text-price-s-weight: var(--ifx-font-weight-bold);
+  --ifx-text-percentage-size: var(--ifx-font-size-16);
+  --ifx-text-percentage-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-volume-size: var(--ifx-font-size-14);
+  --ifx-text-volume-weight: var(--ifx-font-weight-medium);
+  --ifx-text-money-size: var(--ifx-font-size-16);
+  --ifx-text-money-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-index-size: var(--ifx-font-size-28);
+  --ifx-text-index-weight: var(--ifx-font-weight-bold);
+  --ifx-text-change-size: var(--ifx-font-size-14);
+  --ifx-text-change-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-timestamp-size: var(--ifx-font-size-12);
+  --ifx-text-timestamp-weight: var(--ifx-font-weight-regular);
+
+  /* ── 11. Table ────────────────────────────────────────────── */
+  --ifx-text-table-header-size: var(--ifx-font-size-12);
+  --ifx-text-table-header-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-table-cell-size: var(--ifx-font-size-14);
+  --ifx-text-table-cell-weight: var(--ifx-font-weight-regular);
+  --ifx-text-table-cell-dense-size: var(--ifx-font-size-12);
+  --ifx-text-table-cell-dense-weight: var(--ifx-font-weight-regular);
+  --ifx-text-table-footer-size: var(--ifx-font-size-12);
+  --ifx-text-table-footer-weight: var(--ifx-font-weight-medium);
+
+  /* ── 12. Chart ────────────────────────────────────────────── */
+  --ifx-text-chart-axis-size: var(--ifx-font-size-10);
+  --ifx-text-chart-legend-size: var(--ifx-font-size-12);
+  --ifx-text-chart-tooltip-size: var(--ifx-font-size-12);
+  --ifx-text-chart-value-size: var(--ifx-font-size-14);
+  --ifx-text-chart-annotation-size: var(--ifx-font-size-10);
+
+  /* ── 13. Widget ───────────────────────────────────────────── */
+  --ifx-text-widget-title-size: var(--ifx-text-title-sm-size);
+  --ifx-text-widget-title-weight: var(--ifx-text-title-sm-weight);
+  --ifx-text-widget-title-line: var(--ifx-text-title-sm-line);
+  --ifx-text-widget-subtitle-size: var(--ifx-font-size-xs);
+  --ifx-text-widget-subtitle-weight: var(--ifx-font-weight-regular);
+  --ifx-text-widget-value-size: var(--ifx-font-size-2xl);
+  --ifx-text-widget-value-weight: var(--ifx-font-weight-bold);
+  --ifx-text-widget-change-size: var(--ifx-font-size-sm);
+  --ifx-text-widget-change-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-widget-footer-size: var(--ifx-font-size-2xs);
+  --ifx-text-widget-footer-weight: var(--ifx-font-weight-regular);
+  --ifx-text-ranking-num-size: var(--ifx-font-size-12);
+  --ifx-text-ranking-num-weight: var(--ifx-font-weight-bold);
+
+  /* Legacy Domain Matrix v1 aliases → --ifx-text-* (migrate dần, không hardcode mới) */
+  --ifx-label-l: var(--ifx-text-label-lg-size);
+  --ifx-label-l-weight: var(--ifx-text-label-lg-weight);
+  --ifx-label-l-leading: var(--ifx-text-label-lg-line);
+  --ifx-label-m: var(--ifx-text-label-md-size);
+  --ifx-label-m-weight: var(--ifx-text-label-md-weight);
+  --ifx-label-m-leading: var(--ifx-text-label-md-line);
+  --ifx-label-s: var(--ifx-text-label-md-size);
+  --ifx-label-s-weight: var(--ifx-text-label-md-weight);
+  --ifx-label-s-leading: var(--ifx-text-label-md-line);
+  --ifx-label-xs: var(--ifx-text-label-sm-size);
+  --ifx-label-xs-weight: var(--ifx-text-label-sm-weight);
+  --ifx-label-xs-leading: var(--ifx-text-label-sm-line);
+  --ifx-body-m: var(--ifx-text-body-md-size);
+  --ifx-body-m-weight: var(--ifx-text-body-md-weight);
+  --ifx-body-m-leading: var(--ifx-text-body-md-line);
+  --ifx-body-s: var(--ifx-text-body-sm-size);
+  --ifx-body-s-weight: var(--ifx-text-body-sm-weight);
+  --ifx-body-s-leading: var(--ifx-text-body-sm-line);
+  --ifx-caption-m: var(--ifx-text-caption-size);
+  --ifx-caption-m-weight: var(--ifx-text-caption-weight);
+  --ifx-caption-m-leading: var(--ifx-text-caption-line);
+  --ifx-overline-xs: var(--ifx-text-overline-size);
+  --ifx-overline-xs-weight: var(--ifx-text-overline-weight);
+  --ifx-overline-xs-tracking: var(--ifx-text-overline-tracking);
+  --ifx-heading-l: var(--ifx-text-h2-size);
+  --ifx-heading-l-weight: var(--ifx-text-h2-weight);
+  --ifx-heading-l-leading: var(--ifx-text-h2-line);
+  --ifx-heading-m: var(--ifx-text-h3-size);
+  --ifx-heading-m-weight: var(--ifx-text-h3-weight);
+  --ifx-heading-m-leading: var(--ifx-text-h3-line);
+  --ifx-title-m: var(--ifx-text-title-md-size);
+  --ifx-title-m-weight: var(--ifx-text-title-md-weight);
+  --ifx-title-m-leading: var(--ifx-text-title-md-line);
+  --ix-font-size-base: var(--ifx-text-body-md-size);
+  --ix-font-size-card-title: var(--ifx-text-title-sm-size);
+}
+
+.ix-btn { font-family: var(--ifx-font-primary); font-size: var(--ifx-text-btn-md-size); font-weight: var(--ifx-text-btn-md-weight); line-height: var(--ifx-text-btn-md-line); }
+
+html {
+  font-family: var(--ifx-font-primary);
+  font-size: 100%;
+  line-height: var(--ifx-line-height-normal);
+  letter-spacing: var(--ifx-letter-spacing-normal);
+}
+
+body {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-body-md-size);
+  font-weight: var(--ifx-text-body-md-weight);
+  line-height: var(--ifx-line-height-normal);
+  letter-spacing: var(--ifx-letter-spacing-normal);
+}
+
+:root {
+  /* ── 1. Base Unit ─────────────────────────────────────────── */
+  --ifx-space-unit: 4px;
+
+  /* ── 2. Spacing Scale ─────────────────────────────────────── */
+  --ifx-space-0: 0;
+  --ifx-space-2: 0.125rem;   /* 2px */
+  --ifx-space-4: 0.25rem;    /* 4px */
+  --ifx-space-8: 0.5rem;     /* 8px */
+  --ifx-space-12: 0.75rem;   /* 12px */
+  --ifx-space-16: 1rem;      /* 16px */
+  --ifx-space-20: 1.25rem;   /* 20px */
+  --ifx-space-24: 1.5rem;    /* 24px */
+  --ifx-space-32: 2rem;      /* 32px */
+  --ifx-space-40: 2.5rem;    /* 40px */
+  --ifx-space-48: 3rem;      /* 48px */
+  --ifx-space-56: 3.5rem;    /* 56px */
+  --ifx-space-64: 4rem;      /* 64px */
+  --ifx-space-80: 5rem;      /* 80px */
+  --ifx-space-96: 6rem;      /* 96px */
+  --ifx-space-128: 8rem;     /* 128px */
+  --ifx-space-160: 10rem;    /* 160px */
+  --ifx-space-192: 12rem;    /* 192px */
+  --ifx-space-256: 16rem;    /* 256px */
+
+  /* ── 3–5. Padding / Margin / Gap (semantic sizes) ───────── */
+  --ifx-padding-xs: var(--ifx-space-8);
+  --ifx-padding-sm: var(--ifx-space-12);
+  --ifx-padding-md: var(--ifx-space-16);
+  --ifx-padding-lg: var(--ifx-space-24);
+  --ifx-padding-xl: var(--ifx-space-32);
+
+  --ifx-margin-xs: var(--ifx-space-8);
+  --ifx-margin-sm: var(--ifx-space-12);
+  --ifx-margin-md: var(--ifx-space-16);
+  --ifx-margin-lg: var(--ifx-space-24);
+  --ifx-margin-xl: var(--ifx-space-32);
+
+  --ifx-gap-xs: var(--ifx-space-8);
+  --ifx-gap-sm: var(--ifx-space-12);
+  --ifx-gap-md: var(--ifx-space-16);
+  --ifx-gap-lg: var(--ifx-space-24);
+  --ifx-gap-xl: var(--ifx-space-32);
+
+  /* ── 6. Inset ─────────────────────────────────────────────── */
+  --ifx-inset-card: var(--ifx-space-16) var(--ifx-space-20);
+  --ifx-inset-card-header: var(--ifx-space-16) var(--ifx-space-20) 0;
+  --ifx-inset-card-body: var(--ifx-space-16) var(--ifx-space-20) var(--ifx-space-20);
+  --ifx-inset-card-footer: var(--ifx-space-12) var(--ifx-space-20);
+  --ifx-inset-widget: var(--ifx-space-12) var(--ifx-space-16);
+  --ifx-inset-panel: var(--ifx-space-20) var(--ifx-space-24);
+  --ifx-inset-dialog: var(--ifx-space-24);
+  --ifx-inset-sheet: var(--ifx-space-16) var(--ifx-space-20);
+
+  /* ── 7. Layout Spacing ────────────────────────────────────── */
+  --ifx-space-container: var(--ifx-space-24);
+  --ifx-space-section: var(--ifx-space-64);
+  --ifx-space-page: var(--ifx-space-80);
+  --ifx-space-sidebar-gap: var(--ifx-space-16);
+  --ifx-space-content-gap: var(--ifx-space-24);
+
+  /* ── 8. Component Spacing ─────────────────────────────────── */
+  --ifx-space-button-y: var(--ifx-space-8);
+  --ifx-space-button-x: var(--ifx-space-16);
+  --ifx-space-button-sm-y: var(--ifx-space-4);
+  --ifx-space-button-sm-x: var(--ifx-space-12);
+  --ifx-space-button-lg-y: var(--ifx-space-12);
+  --ifx-space-button-lg-x: var(--ifx-space-24);
+  --ifx-space-button-icon-gap: var(--ifx-space-8);
+
+  --ifx-space-input-y: var(--ifx-space-8);
+  --ifx-space-input-x: var(--ifx-space-12);
+  --ifx-space-input-lg-y: var(--ifx-space-12);
+
+  --ifx-space-chip-y: var(--ifx-space-4);
+  --ifx-space-chip-x: var(--ifx-space-12);
+  --ifx-space-badge-y: var(--ifx-space-4);
+  --ifx-space-badge-x: var(--ifx-space-8);
+  --ifx-space-toast: var(--ifx-space-12) var(--ifx-space-16);
+  --ifx-space-table-cell-y: var(--ifx-space-12);
+  --ifx-space-table-cell-x: var(--ifx-space-16);
+
+  /* ── 9. Stack Spacing ─────────────────────────────────────── */
+  --ifx-stack-xs: var(--ifx-space-8);
+  --ifx-stack-sm: var(--ifx-space-12);
+  --ifx-stack-md: var(--ifx-space-16);
+  --ifx-stack-lg: var(--ifx-space-24);
+  --ifx-stack-xl: var(--ifx-space-32);
+
+  /* ── 10. Inline Spacing ─────────────────────────────────────── */
+  --ifx-inline-xs: var(--ifx-space-4);
+  --ifx-inline-sm: var(--ifx-space-8);
+  --ifx-inline-md: var(--ifx-space-12);
+  --ifx-inline-lg: var(--ifx-space-16);
+  --ifx-inline-xl: var(--ifx-space-24);
+
+  /* ── 11. Grid & Layout ────────────────────────────────────── */
+  --ifx-grid-gutter: var(--ifx-space-24);
+  --ifx-grid-col-gap: var(--ifx-space-16);
+  --ifx-grid-row-gap: var(--ifx-space-24);
+  --ifx-container-margin: var(--ifx-space-24);
+  --ifx-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ── 13. Semantic aliases (component-facing) ──────────────── */
+  --ifx-space-card: var(--ifx-inset-card);
+  --ifx-space-widget: var(--ifx-inset-widget);
+  --ifx-space-inline-xs: var(--ifx-inline-xs);
+  --ifx-space-inline-sm: var(--ifx-inline-sm);
+  --ifx-space-inline-md: var(--ifx-inline-md);
+  --ifx-space-stack-xs: var(--ifx-stack-xs);
+  --ifx-space-stack-sm: var(--ifx-stack-sm);
+  --ifx-space-stack-md: var(--ifx-stack-md);
+  --ifx-space-stack-lg: var(--ifx-stack-lg);
+  --ifx-space-stack-xl: var(--ifx-stack-xl);
+}
+
+@media (max-width: 768px) {
+:root {
+    --ifx-space-container: var(--ifx-space-16);
+    --ifx-space-section: var(--ifx-space-48);
+    --ifx-space-page: var(--ifx-space-64);
+    --ifx-grid-gutter: var(--ifx-space-16);
+    --ifx-container-margin: var(--ifx-space-16);
+    --ifx-inset-panel: var(--ifx-space-16);
+    --ifx-inset-dialog: var(--ifx-space-16);
+  }
+
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+:root {
+    --ifx-space-container: var(--ifx-space-20);
+    --ifx-space-section: var(--ifx-space-56);
+    --ifx-space-page: var(--ifx-space-64);
+  }
+
+}
+
+@media (min-width: 1440px) {
+:root {
+    --ifx-space-container: var(--ifx-space-32);
+    --ifx-space-section: var(--ifx-space-80);
+    --ifx-space-page: var(--ifx-space-96);
+  }
+
+}
+
+.ix-btn {
+  gap: var(--ifx-space-button-icon-gap);
+  padding: var(--ifx-space-button-y) var(--ifx-space-button-x);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html,
+body {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-body-md-size);
+  color: var(--ix-text-primary);
+  background: var(--ix-bg-body);
+  line-height: var(--ifx-line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.ix-content {
+  padding: var(--ifx-space-container);
+}
+
+.ix-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--ix-accent-soft);
+  border: 2px solid var(--ix-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: var(--ifx-font-weight-semibold); font-size: var(--ifx-font-size-14);
+  color: var(--ix-accent);
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.ix-avatar img {
+  width: 100%; height: 100%;
+  border-radius: 50%; object-fit: cover;
+}
+
+.ix-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-button-icon-gap);
+  padding: var(--ifx-space-button-y) var(--ifx-space-button-x);
+  border-radius: var(--ix-radius);
+  font-size: var(--ifx-text-btn-md-size);
+  font-weight: var(--ifx-text-btn-md-weight);
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: var(--ifx-font-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ix-btn-primary {
+  background: var(--ix-accent);
+  color: var(--color-text-on-primary);
+}
+
+.ix-btn-primary:hover { background: var(--ix-accent-hover); }
+
+.ix-btn-primary:active { transform: scale(0.98); }
+
+.ix-btn-icon {
+  width: 32px; height: 32px;
+  padding: 0;
+  justify-content: center;
+  background: transparent;
+  color: var(--ix-text-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--ix-radius);
+}
+
+.ix-btn-icon:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+
+.ix-avatar-sm {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ifx-font-size-10);
+  font-weight: var(--ifx-font-weight-semibold);
+  flex-shrink: 0;
+}
+
+.ix-avatar-accent { background: var(--ix-accent-soft);  color: var(--ix-accent); }
+
+.ix-avatar-success { background: var(--ix-success-soft); color: var(--ix-success); }
+
+.ix-avatar-warning { background: var(--ix-warning-soft); color: var(--ix-warning); }
+
+.ix-avatar-danger { background: var(--ix-danger-soft);  color: var(--ix-danger); }
+
+.ix-avatar-info { background: var(--ix-info-soft);    color: var(--ix-info); }
+
+.ix-chat-layout {
+  display: flex;
+  height: calc(100vh - 140px);
+  min-height: 600px;
+  overflow: hidden;
+  border-radius: var(--ix-radius-lg);
+  border: 1px solid var(--ix-border);
+  background: var(--ix-bg-card);
+}
+
+.ix-chat-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--ix-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ix-chat-sidebar-header {
+  padding: var(--ifx-inset-widget);
+  border-bottom: 1px solid var(--ix-border);
+  flex-shrink: 0;
+}
+
+.ix-chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ifx-space-8) 0;
+}
+
+.ix-chat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-inline-md);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.ix-chat-item:hover { background: var(--ix-bg-hover); }
+
+.ix-chat-item.active { background: var(--ix-bg-active); }
+
+.ix-chat-item-name { font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-medium); color: var(--ix-text-primary); line-height: 1.2; }
+
+.ix-chat-item-preview { font-size: var(--ifx-font-size-12); color: var(--ix-text-muted); }
+
+.ix-chat-item-time { font-size: var(--ifx-font-size-10); color: var(--ix-text-muted); white-space: nowrap; }
+
+.ix-chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.ix-chat-header {
+  padding: var(--ifx-space-12) 20px;
+  border-bottom: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.ix-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+}
+
+.ix-chat-msg {
+  display: flex;
+  gap: var(--ifx-inline-md);
+  align-items: flex-end;
+}
+
+.ix-chat-msg.sent { flex-direction: row-reverse; }
+
+.ix-chat-bubble {
+  max-width: 60%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: var(--ifx-font-size-14);
+  line-height: 1.5;
+  color: var(--ix-text-primary);
+  background: var(--ix-bg-hover);
+}
+
+.ix-chat-msg.sent .ix-chat-bubble {
+  background: var(--ix-accent);
+  color: #fff;
+}
+
+.ix-chat-time { font-size: var(--ifx-font-size-10); color: var(--ix-text-muted); margin-top: var(--ifx-space-4); }
+
+.ix-chat-footer {
+  padding: var(--ifx-inset-widget);
+  border-top: 1px solid var(--ix-border);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  flex-shrink: 0;
+}
+
+.ix-chat-input {
+  flex: 1;
+  background: var(--ix-bg-input);
+  border: 1px solid var(--ix-border);
+  border-radius: var(--ix-radius);
+  padding: var(--ifx-space-8) 14px;
+  font-size: var(--ifx-font-size-14);
+  font-family: var(--ix-font);
+  color: var(--ix-text-primary);
+  outline: none;
+}
+
+.ix-chat-input:focus { border-color: var(--ix-accent); }
+
+.ix-chat-profile {
+  width: 240px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--ix-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px 16px;
+  gap: var(--ifx-space-20);
+}

@@ -8,29 +8,14 @@
   flex-direction: column;
   gap: var(--ifx-space-2);
 }
-.ifx-nav-group-label {
-  padding: var(--ifx-space-8) var(--ifx-space-12);
-  font-size: var(--ifx-font-size-2xs);
-  font-weight: var(--ifx-font-weight-semibold);
-  letter-spacing: var(--ifx-letter-spacing-caps);
-  text-transform: uppercase;
-  color: var(--ifx-text-muted);
-}
-
 .ifx-nav-item {
   display: flex;
   align-items: center;
   gap: var(--ifx-space-8);
   padding: var(--ifx-space-8) var(--ifx-space-12);
-  border-radius: var(--ifx-radius-button);
-  font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-medium);
   color: var(--ifx-text-secondary);
-  background: transparent;
-  border: 0;
   cursor: pointer;
-  text-align: left;
   text-decoration: none;
   transition: var(--ifx-transition-color);
 }

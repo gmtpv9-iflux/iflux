@@ -63,7 +63,7 @@ Removal: sandbox horizontal primary nav is no longer the shell
 Sibling of `sandbox/` and `references/`. One shell. Not Foundation, not Primitive, not Component, not Admin.
 
 Classes: `.ifx-appshell*` (Canonical `ifx-` prefix + AppShell role).  
-Nav units reuse `.ifx-nav-item` / `.ifx-nav-icon` / `.ifx-nav-label` / `.ifx-nav-group-label`.
+Nav units reuse `.ifx-nav-item` / `.ifx-nav-icon` / `.ifx-nav-label` / `.ifx-group-label`.
 
 ---
 
