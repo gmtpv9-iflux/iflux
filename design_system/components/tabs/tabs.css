@@ -39,5 +39,5 @@
   align-items: center;
   gap: var(--ifx-gap-xs);
 }
-.ifx-tab-panel { display: none; }
-.ifx-tab-panel.is-active { display: block; }
+/* Hide only. Active display stays with Stack (flex+gap) or UA block. */
+.ifx-tab-panel:not(.is-active) { display: none; }

@@ -178,6 +178,21 @@
 .ifx-dropzone-title { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-primary); }
 .ifx-dropzone-sub { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-muted); }
 
+.ifx-field-value {
+  display: block;
+  margin: 0;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-medium);
+  color: var(--ifx-text-primary);
+  line-height: var(--ifx-line-height-normal);
+}
+.ifx-field-hint {
+  display: block;
+  margin: var(--ifx-space-4) 0 0;
+  font-size: var(--ifx-text-caption-size);
+  color: var(--ifx-text-muted);
+}
+
 .ifx-form-row {
   display: grid;
   grid-template-columns: 1fr;

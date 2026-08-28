@@ -65,8 +65,21 @@
   flex-direction: column;
   gap: var(--ifx-space-24);
 }
-.ifx-wizard-panel { display: none; }
-.ifx-wizard-panel.is-active { display: block; }
+/* Hide only. Active display stays with Stack (flex+gap) or UA block. */
+.ifx-wizard-panel:not(.is-active) { display: none; }
+.ifx-wizard-panel-title {
+  margin: 0;
+  font-size: var(--ifx-font-size-lg);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+  line-height: var(--ifx-line-height-tight);
+}
+.ifx-wizard-panel-subtitle {
+  display: block;
+  margin: 0;
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-muted);
+}
 .ifx-wizard-nav {
   display: flex;
   justify-content: space-between;
