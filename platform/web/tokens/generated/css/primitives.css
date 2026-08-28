@@ -14,4 +14,7 @@
 
   /* ── chrome · shadow ── */
   --ifx-shadow-topnav: 0 4px 24px rgba(0, 0, 0, 0.18);
+
+  /* ── chrome · gradient ── */
+  --ifx-gradient-brand-cta: linear-gradient(135deg, var(--ifx-color-orange-500) 0%, var(--ifx-color-red-500) 100%);
 }

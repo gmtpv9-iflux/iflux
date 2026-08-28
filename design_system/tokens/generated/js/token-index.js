@@ -104,9 +104,6 @@
       "--ifx-alpha-muted-12",
       "--ifx-alpha-shell-55"
     ],
-    "gradient": [
-      "--ifx-gradient-brand-cta"
-    ],
     "font": [
       "--ifx-font-primary",
       "--ifx-font-mono",
@@ -1117,13 +1114,6 @@
     },
     {
       "name": "--ifx-alpha-shell-55",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/color.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-gradient-brand-cta",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/color.json",
@@ -2755,6 +2745,13 @@
     },
     {
       "name": "--ifx-shadow-topnav",
+      "owner": "web",
+      "layer": "platform",
+      "source": "platform/web/tokens/source/chrome.json",
+      "generated": "platform/web/tokens/generated/css/primitives.css"
+    },
+    {
+      "name": "--ifx-gradient-brand-cta",
       "owner": "web",
       "layer": "platform",
       "source": "platform/web/tokens/source/chrome.json",

@@ -125,9 +125,6 @@
       "amber-550-12": "rgba(255, 171, 0, 0.12)",
       "muted-12": "rgba(133, 146, 163, 0.12)",
       "shell-55": "rgba(15, 17, 28, 0.55)"
-    },
-    "gradient": {
-      "brand-cta": "linear-gradient(135deg, {color.orange.500} 0%, {color.red.500} 100%)"
     }
   },
   "theme": {

@@ -16,6 +16,9 @@
     },
     "shadow": {
       "topnav": "0 4px 24px rgba(0, 0, 0, 0.18)"
+    },
+    "gradient": {
+      "brand-cta": "linear-gradient(135deg, {color.orange.500} 0%, {color.red.500} 100%)"
     }
   },
   "theme": {

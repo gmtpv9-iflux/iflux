@@ -101,9 +101,6 @@
   --ifx-alpha-muted-12: rgba(133, 146, 163, 0.12);
   --ifx-alpha-shell-55: rgba(15, 17, 28, 0.55);
 
-  /* ── color · gradient ── */
-  --ifx-gradient-brand-cta: linear-gradient(135deg, var(--ifx-color-orange-500) 0%, var(--ifx-color-red-500) 100%);
-
   /* ── typography · font ── */
   --ifx-font-primary: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ifx-font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
