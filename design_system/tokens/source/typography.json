@@ -76,10 +76,6 @@
       "wide": "0.04em",
       "wider": "0.06em",
       "caps": "0.08em"
-    },
-    "paragraph": {
-      "spacing": "1em",
-      "indent": "1.5em"
     }
   }
 }

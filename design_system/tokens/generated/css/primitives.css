@@ -186,10 +186,6 @@
   --ifx-letter-spacing-wider: 0.06em;
   --ifx-letter-spacing-caps: 0.08em;
 
-  /* ── typography · paragraph ── */
-  --ifx-paragraph-spacing: 1em;
-  --ifx-paragraph-indent: 1.5em;
-
   /* ── spacing · space ── */
   --ifx-space-0: 0;
   --ifx-space-2: 0.125rem;

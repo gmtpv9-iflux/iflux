@@ -189,10 +189,6 @@
       "--ifx-letter-spacing-wider",
       "--ifx-letter-spacing-caps"
     ],
-    "paragraph": [
-      "--ifx-paragraph-spacing",
-      "--ifx-paragraph-indent"
-    ],
     "space": [
       "--ifx-space-0",
       "--ifx-space-2",
@@ -304,8 +300,7 @@
       "--ifx-inset-card-footer",
       "--ifx-inset-widget",
       "--ifx-inset-panel",
-      "--ifx-inset-dialog",
-      "--ifx-inset-sheet"
+      "--ifx-inset-dialog"
     ],
     "stack": [
       "--ifx-stack-xs",
@@ -322,16 +317,12 @@
       "--ifx-inline-xl"
     ],
     "grid": [
-      "--ifx-grid-gutter",
-      "--ifx-grid-col-gap",
-      "--ifx-grid-row-gap"
+      "--ifx-grid-gutter"
     ],
     "space": [
       "--ifx-space-container",
       "--ifx-space-section",
       "--ifx-space-page",
-      "--ifx-space-sidebar-gap",
-      "--ifx-space-content-gap",
       "--ifx-space-button-y",
       "--ifx-space-button-x",
       "--ifx-space-button-sm-y",
@@ -347,22 +338,7 @@
       "--ifx-space-badge-y",
       "--ifx-space-badge-x",
       "--ifx-space-table-cell-y",
-      "--ifx-space-table-cell-x",
-      "--ifx-space-widget",
-      "--ifx-space-inline-xs",
-      "--ifx-space-inline-sm",
-      "--ifx-space-inline-md",
-      "--ifx-space-stack-xs",
-      "--ifx-space-stack-sm",
-      "--ifx-space-stack-md",
-      "--ifx-space-stack-lg",
-      "--ifx-space-stack-xl"
-    ],
-    "container-margin": [
-      "--ifx-container-margin"
-    ],
-    "safe-area-bottom": [
-      "--ifx-safe-area-bottom"
+      "--ifx-space-table-cell-x"
     ],
     "radius": [
       "--ifx-radius-button",
@@ -394,13 +370,11 @@
       "--ifx-bg-input",
       "--ifx-bg-hover",
       "--ifx-bg-active",
-      "--ifx-bg-sidebar",
       "--ifx-bg-navbar",
       "--ifx-text-primary",
       "--ifx-text-secondary",
       "--ifx-text-muted",
       "--ifx-text-disabled",
-      "--ifx-text-inverse",
       "--ifx-text-link",
       "--ifx-border-default",
       "--ifx-border-strong",
@@ -411,7 +385,6 @@
       "--ifx-action-primary-soft",
       "--ifx-action-secondary",
       "--ifx-action-secondary-hover",
-      "--ifx-action-secondary-soft",
       "--ifx-success",
       "--ifx-success-soft",
       "--ifx-warning",
@@ -436,9 +409,6 @@
       "--ifx-market-floor-soft",
       "--ifx-flow-in",
       "--ifx-flow-out",
-      "--ifx-tier-free",
-      "--ifx-tier-premium",
-      "--ifx-tier-elite",
       "--ifx-text-on-primary",
       "--ifx-text-on-success",
       "--ifx-text-on-warning",
@@ -453,13 +423,11 @@
       "--ifx-bg-input",
       "--ifx-bg-hover",
       "--ifx-bg-active",
-      "--ifx-bg-sidebar",
       "--ifx-bg-navbar",
       "--ifx-text-primary",
       "--ifx-text-secondary",
       "--ifx-text-muted",
       "--ifx-text-disabled",
-      "--ifx-text-inverse",
       "--ifx-text-link",
       "--ifx-border-default",
       "--ifx-border-strong",
@@ -470,7 +438,6 @@
       "--ifx-action-primary-soft",
       "--ifx-action-secondary",
       "--ifx-action-secondary-hover",
-      "--ifx-action-secondary-soft",
       "--ifx-success",
       "--ifx-success-soft",
       "--ifx-warning",
@@ -495,9 +462,6 @@
       "--ifx-market-floor-soft",
       "--ifx-flow-in",
       "--ifx-flow-out",
-      "--ifx-tier-free",
-      "--ifx-tier-premium",
-      "--ifx-tier-elite",
       "--ifx-text-on-primary",
       "--ifx-text-on-success",
       "--ifx-text-on-warning",

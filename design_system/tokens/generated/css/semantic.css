@@ -33,7 +33,6 @@
   --ifx-inset-widget: var(--ifx-space-12) var(--ifx-space-16);
   --ifx-inset-panel: var(--ifx-space-20) var(--ifx-space-24);
   --ifx-inset-dialog: var(--ifx-space-24);
-  --ifx-inset-sheet: var(--ifx-space-16) var(--ifx-space-20);
 
   /* ── spacing · stack ── */
   --ifx-stack-xs: var(--ifx-space-8);
@@ -51,15 +50,11 @@
 
   /* ── spacing · grid ── */
   --ifx-grid-gutter: var(--ifx-space-24);
-  --ifx-grid-col-gap: var(--ifx-space-16);
-  --ifx-grid-row-gap: var(--ifx-space-24);
 
   /* ── spacing · space ── */
   --ifx-space-container: var(--ifx-space-24);
   --ifx-space-section: var(--ifx-space-64);
   --ifx-space-page: var(--ifx-space-80);
-  --ifx-space-sidebar-gap: var(--ifx-space-16);
-  --ifx-space-content-gap: var(--ifx-space-24);
   --ifx-space-button-y: var(--ifx-space-8);
   --ifx-space-button-x: var(--ifx-space-16);
   --ifx-space-button-sm-y: var(--ifx-space-4);
@@ -76,21 +71,6 @@
   --ifx-space-badge-x: var(--ifx-space-8);
   --ifx-space-table-cell-y: var(--ifx-space-12);
   --ifx-space-table-cell-x: var(--ifx-space-16);
-  --ifx-space-widget: var(--ifx-inset-widget);
-  --ifx-space-inline-xs: var(--ifx-inline-xs);
-  --ifx-space-inline-sm: var(--ifx-inline-sm);
-  --ifx-space-inline-md: var(--ifx-inline-md);
-  --ifx-space-stack-xs: var(--ifx-stack-xs);
-  --ifx-space-stack-sm: var(--ifx-stack-sm);
-  --ifx-space-stack-md: var(--ifx-stack-md);
-  --ifx-space-stack-lg: var(--ifx-stack-lg);
-  --ifx-space-stack-xl: var(--ifx-stack-xl);
-
-  /* ── spacing · container-margin ── */
-  --ifx-container-margin: var(--ifx-space-24);
-
-  /* ── spacing · safe-area-bottom ── */
-  --ifx-safe-area-bottom: env(safe-area-inset-bottom, 0px);
 
   /* ── radius · radius ── */
   --ifx-radius-button: var(--ifx-radius-md);

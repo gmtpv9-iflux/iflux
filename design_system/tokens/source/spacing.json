@@ -57,8 +57,7 @@
       "card-footer": "{space.12} {space.20}",
       "widget": "{space.12} {space.16}",
       "panel": "{space.20} {space.24}",
-      "dialog": "{space.24}",
-      "sheet": "{space.16} {space.20}"
+      "dialog": "{space.24}"
     },
     "stack": {
       "xs": "{space.8}",
@@ -75,16 +74,12 @@
       "xl": "{space.24}"
     },
     "grid": {
-      "gutter": "{space.24}",
-      "col-gap": "{space.16}",
-      "row-gap": "{space.24}"
+      "gutter": "{space.24}"
     },
     "space": {
       "container": "{space.24}",
       "section": "{space.64}",
       "page": "{space.80}",
-      "sidebar-gap": "{space.16}",
-      "content-gap": "{space.24}",
       "button-y": "{space.8}",
       "button-x": "{space.16}",
       "button-sm-y": "{space.4}",
@@ -100,18 +95,7 @@
       "badge-y": "{space.4}",
       "badge-x": "{space.8}",
       "table-cell-y": "{space.12}",
-      "table-cell-x": "{space.16}",
-      "widget": "{inset.widget}",
-      "inline-xs": "{inline.xs}",
-      "inline-sm": "{inline.sm}",
-      "inline-md": "{inline.md}",
-      "stack-xs": "{stack.xs}",
-      "stack-sm": "{stack.sm}",
-      "stack-md": "{stack.md}",
-      "stack-lg": "{stack.lg}",
-      "stack-xl": "{stack.xl}"
-    },
-    "container-margin": "{space.24}",
-    "safe-area-bottom": "env(safe-area-inset-bottom, 0px)"
+      "table-cell-x": "{space.16}"
+    }
   }
 }
