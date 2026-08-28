@@ -179,12 +179,12 @@
   --ifx-line-height-loose: 1.75;
 
   /* ── typography · letter-spacing ── */
-  --ifx-letter-spacing-tighter: -0.02em;
-  --ifx-letter-spacing-tight: -0.01em;
+  --ifx-letter-spacing-tighter: -0.04em;
+  --ifx-letter-spacing-tight: -0.02em;
   --ifx-letter-spacing-normal: 0;
-  --ifx-letter-spacing-wide: 0.01em;
-  --ifx-letter-spacing-wider: 0.02em;
-  --ifx-letter-spacing-caps: 0.06em;
+  --ifx-letter-spacing-wide: 0.04em;
+  --ifx-letter-spacing-wider: 0.06em;
+  --ifx-letter-spacing-caps: 0.08em;
 
   /* ── typography · paragraph ── */
   --ifx-paragraph-spacing: 1em;
