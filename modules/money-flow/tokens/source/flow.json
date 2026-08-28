@@ -1,0 +1,25 @@
+{
+  "$meta": {
+    "owner": "module-money-flow",
+    "layer": "module",
+    "sot": "Money-flow domain tokens — zone / MCMP / in-out",
+    "origin": "Moved from design_system/tokens/source/color.json — Token 03C. Values unchanged."
+  },
+  "primitive": {
+    "gradient": {
+      "zone-track": "linear-gradient(90deg, {alpha.green-500-25} 0%, {alpha.violet-500-12} 50%, {alpha.red-500-25} 100%)",
+      "zone-fill": "linear-gradient(90deg, {alpha.green-500-45}, {alpha.violet-500-12})",
+      "mcmp-energy": "linear-gradient(180deg, {color.amber.550}, {color.red.500})"
+    }
+  },
+  "theme": {
+    "dark": {
+      "flow-in": "{color.lime.500}",
+      "flow-out": "{color.red.450}"
+    },
+    "light": {
+      "flow-in": "{color.green.500}",
+      "flow-out": "{color.red.500}"
+    }
+  }
+}

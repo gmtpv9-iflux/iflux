@@ -1,0 +1,50 @@
+{
+  "$meta": {
+    "owner": "module-market",
+    "layer": "module",
+    "sot": "Market domain tokens — series palette + HOSE tape roles",
+    "origin": "Moved from design_system/tokens/source/color.json — Token 03C. Values unchanged."
+  },
+  "primitive": {
+    "color": {
+      "chart": {
+        "1": "{color.violet.500}",
+        "2": "{color.lime.500}",
+        "3": "{color.amber.550}",
+        "4": "{color.red.450}",
+        "5": "{color.cyan.500}",
+        "6": "{color.orange.500}",
+        "7": "{color.violet.400}",
+        "8": "{color.green.500}",
+        "9": "#e91e8c",
+        "10": "#b4b7bd"
+      }
+    }
+  },
+  "theme": {
+    "dark": {
+      "market-up": "{color.lime.500}",
+      "market-up-soft": "{alpha.lime-16}",
+      "market-down": "{color.red.450}",
+      "market-down-soft": "{alpha.red-16}",
+      "market-ref": "{color.amber.550}",
+      "market-ref-soft": "{alpha.amber-16}",
+      "market-ceiling": "{color.purple.500}",
+      "market-ceiling-soft": "{alpha.purple-10}",
+      "market-floor": "{color.cyan.500}",
+      "market-floor-soft": "{alpha.cyan-16}"
+    },
+    "light": {
+      "market-up": "{color.green.500}",
+      "market-up-soft": "rgba(0, 166, 126, 0.12)",
+      "market-down": "{color.red.500}",
+      "market-down-soft": "rgba(232, 48, 74, 0.1)",
+      "market-ref": "{color.amber.600}",
+      "market-ref-soft": "rgba(251, 191, 36, 0.14)",
+      "market-ceiling": "{color.purple.500}",
+      "market-ceiling-soft": "{alpha.purple-10}",
+      "market-floor": "{color.cyan.500}",
+      "market-floor-soft": "{alpha.cyan-16}"
+    }
+  }
+}

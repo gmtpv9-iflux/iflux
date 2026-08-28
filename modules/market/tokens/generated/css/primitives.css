@@ -1,0 +1,19 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: modules/market/tokens/source/{market.json}
+ * owner : module-market
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root {
+  /* ── market · color ── */
+  --ifx-color-chart-1: var(--ifx-color-violet-500);
+  --ifx-color-chart-2: var(--ifx-color-lime-500);
+  --ifx-color-chart-3: var(--ifx-color-amber-550);
+  --ifx-color-chart-4: var(--ifx-color-red-450);
+  --ifx-color-chart-5: var(--ifx-color-cyan-500);
+  --ifx-color-chart-6: var(--ifx-color-orange-500);
+  --ifx-color-chart-7: var(--ifx-color-violet-400);
+  --ifx-color-chart-8: var(--ifx-color-green-500);
+  --ifx-color-chart-9: #e91e8c;
+  --ifx-color-chart-10: #b4b7bd;
+}

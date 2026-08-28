@@ -82,19 +82,7 @@
         "950": "#16161f"
       },
       "white": "#ffffff",
-      "border-frost": "rgba(207, 211, 236, 0.12)",
-      "chart": {
-        "1": "{color.violet.500}",
-        "2": "{color.lime.500}",
-        "3": "{color.amber.550}",
-        "4": "{color.red.450}",
-        "5": "{color.cyan.500}",
-        "6": "{color.orange.500}",
-        "7": "{color.violet.400}",
-        "8": "{color.green.500}",
-        "9": "#e91e8c",
-        "10": "#b4b7bd"
-      }
+      "border-frost": "rgba(207, 211, 236, 0.12)"
     },
     "alpha": {
       "white-4": "rgba(255, 255, 255, 0.04)",
@@ -139,9 +127,6 @@
       "shell-55": "rgba(15, 17, 28, 0.55)"
     },
     "gradient": {
-      "zone-track": "linear-gradient(90deg, {alpha.green-500-25} 0%, {alpha.violet-500-12} 50%, {alpha.red-500-25} 100%)",
-      "zone-fill": "linear-gradient(90deg, {alpha.green-500-45}, {alpha.violet-500-12})",
-      "mcmp-energy": "linear-gradient(180deg, {color.amber.550}, {color.red.500})",
       "brand-cta": "linear-gradient(135deg, {color.orange.500} 0%, {color.red.500} 100%)"
     }
   },
@@ -179,18 +164,6 @@
       "info-soft": "{alpha.cyan-16}",
       "overlay-scrim": "rgba(0, 0, 0, 0.45)",
       "surface-elevated": "{alpha.white-4}",
-      "market-up": "{color.lime.500}",
-      "market-up-soft": "{alpha.lime-16}",
-      "market-down": "{color.red.450}",
-      "market-down-soft": "{alpha.red-16}",
-      "market-ref": "{color.amber.550}",
-      "market-ref-soft": "{alpha.amber-16}",
-      "market-ceiling": "{color.purple.500}",
-      "market-ceiling-soft": "{alpha.purple-10}",
-      "market-floor": "{color.cyan.500}",
-      "market-floor-soft": "{alpha.cyan-16}",
-      "flow-in": "{color.lime.500}",
-      "flow-out": "{color.red.450}",
       "text-on-primary": "#ffffff",
       "text-on-success": "#151d15",
       "text-on-warning": "#1a1100",
@@ -230,18 +203,6 @@
       "info-soft": "rgba(3, 195, 236, 0.12)",
       "overlay-scrim": "rgba(58, 59, 85, 0.45)",
       "surface-elevated": "rgba(67, 89, 113, 0.04)",
-      "market-up": "{color.green.500}",
-      "market-up-soft": "rgba(0, 166, 126, 0.12)",
-      "market-down": "{color.red.500}",
-      "market-down-soft": "rgba(232, 48, 74, 0.1)",
-      "market-ref": "{color.amber.600}",
-      "market-ref-soft": "rgba(251, 191, 36, 0.14)",
-      "market-ceiling": "{color.purple.500}",
-      "market-ceiling-soft": "{alpha.purple-10}",
-      "market-floor": "{color.cyan.500}",
-      "market-floor-soft": "{alpha.cyan-16}",
-      "flow-in": "{color.green.500}",
-      "flow-out": "{color.red.500}",
       "text-on-primary": "#ffffff",
       "text-on-success": "#151d15",
       "text-on-warning": "#1a1100",

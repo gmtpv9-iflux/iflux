@@ -1,0 +1,12 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: modules/money-flow/tokens/source/{flow.json}
+ * owner : module-money-flow
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root {
+  /* ── flow · gradient ── */
+  --ifx-gradient-zone-track: linear-gradient(90deg, var(--ifx-alpha-green-500-25) 0%, var(--ifx-alpha-violet-500-12) 50%, var(--ifx-alpha-red-500-25) 100%);
+  --ifx-gradient-zone-fill: linear-gradient(90deg, var(--ifx-alpha-green-500-45), var(--ifx-alpha-violet-500-12));
+  --ifx-gradient-mcmp-energy: linear-gradient(180deg, var(--ifx-color-amber-550), var(--ifx-color-red-500));
+}

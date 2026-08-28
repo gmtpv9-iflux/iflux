@@ -34,19 +34,17 @@
       "id": "module-market",
       "owner": "market",
       "layer": "module",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "modules/market/tokens/source",
-      "generatedRoot": "modules/market/tokens/generated",
-      "activatedWhen": "Token 03C — market / chart-series move"
+      "generatedRoot": "modules/market/tokens/generated"
     },
     {
       "id": "module-money-flow",
       "owner": "money-flow",
       "layer": "module",
-      "status": "reserved",
+      "status": "active",
       "sourceRoot": "modules/money-flow/tokens/source",
-      "generatedRoot": "modules/money-flow/tokens/generated",
-      "activatedWhen": "Token 03C — flow / zone / mcmp move"
+      "generatedRoot": "modules/money-flow/tokens/generated"
     }
   ]
 }

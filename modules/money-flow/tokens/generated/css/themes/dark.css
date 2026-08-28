@@ -1,0 +1,12 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: modules/money-flow/tokens/source/{flow.json}
+ * owner : module-money-flow
+ * Build : node design_system/scripts/build-tokens.mjs
+ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ifx-flow-in: var(--ifx-color-lime-500);
+  --ifx-flow-out: var(--ifx-color-red-450);
+}
