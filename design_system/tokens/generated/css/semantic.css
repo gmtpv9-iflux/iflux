@@ -30,7 +30,7 @@
   --ifx-inset-card-header: var(--ifx-space-16) var(--ifx-space-20) 0;
   --ifx-inset-card-body: var(--ifx-space-16) var(--ifx-space-20) var(--ifx-space-20);
   --ifx-inset-card-footer: var(--ifx-space-12) var(--ifx-space-20);
-  --ifx-inset-widget: var(--ifx-space-12) var(--ifx-space-16);
+  --ifx-inset-compact: var(--ifx-space-12) var(--ifx-space-16);
   --ifx-inset-panel: var(--ifx-space-20) var(--ifx-space-24);
   --ifx-inset-dialog: var(--ifx-space-24);
 

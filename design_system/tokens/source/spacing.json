@@ -55,7 +55,7 @@
       "card-header": "{space.16} {space.20} 0",
       "card-body": "{space.16} {space.20} {space.20}",
       "card-footer": "{space.12} {space.20}",
-      "widget": "{space.12} {space.16}",
+      "compact": "{space.12} {space.16}",
       "panel": "{space.20} {space.24}",
       "dialog": "{space.24}"
     },

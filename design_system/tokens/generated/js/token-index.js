@@ -266,7 +266,7 @@
       "--ifx-inset-card-header",
       "--ifx-inset-card-body",
       "--ifx-inset-card-footer",
-      "--ifx-inset-widget",
+      "--ifx-inset-compact",
       "--ifx-inset-panel",
       "--ifx-inset-dialog"
     ],
@@ -2061,7 +2061,7 @@
       "generated": "design_system/tokens/generated/css/semantic.css"
     },
     {
-      "name": "--ifx-inset-widget",
+      "name": "--ifx-inset-compact",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/spacing.json",

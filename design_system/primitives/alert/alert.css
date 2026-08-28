@@ -3,7 +3,7 @@
  * REWRITE naming từ .ix-alert (components.css).
  */
 .ifx-alert {
-  padding: var(--ifx-inset-widget);
+  padding: var(--ifx-inset-compact);
   border-radius: var(--ifx-radius-card);
   border-left: 4px solid;
   display: flex;
