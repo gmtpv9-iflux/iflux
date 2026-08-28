@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" data-auth-state="login">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Đăng nhập Admin · iFlux</title>
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../design_system/foundation/fonts.css">
+  <link rel="stylesheet" href="../../design_system/foundation/reset.css">
+  <link rel="stylesheet" href="../../design_system/foundation/typography.css">
+  <link rel="stylesheet" href="../../design_system/foundation/layout.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../design_system/primitives/button/button.css">
+  <link rel="stylesheet" href="../../design_system/primitives/alert/alert.css">
+  <link rel="stylesheet" href="../../design_system/components/card/card.css">
+  <link rel="stylesheet" href="../../design_system/components/form/form.css">
+  <link rel="stylesheet" href="../../design_system/components/tabs/tabs.css">
+  <link rel="stylesheet" href="../../design_system/components/toast/toast.css">
+  <link rel="stylesheet" href="../../design_system/sandbox/assets/reference-layers.css">
+</head>
+<body>
+  <div class="ref-platform-auth">
+    <div class="ifx-card ref-page-auth-card" data-ifx-tabs-root>
+      <div class="ref-page-auth-brand">iFlux Admin</div>
+      <div class="ref-page-auth-heading">
+        <h2>Đăng nhập quản trị</h2>
+        <p>Chỉ tài khoản được cấp quyền mới truy cập được khu vực Admin.</p>
+      </div>
+
+      <div class="ifx-alert ifx-alert-danger" id="auth-login-error" role="alert" hidden></div>
+
+      <div class="ifx-tabs ifx-tabs-dense ref-page-auth-methods" data-ifx-tabs>
+        <button type="button" class="ifx-tab" data-ifx-tab="gmail">Bằng Gmail</button>
+        <button type="button" class="ifx-tab is-active" data-ifx-tab="password">Bằng mật khẩu</button>
+      </div>
+
+      <div class="ifx-tab-panel" data-ifx-panel="gmail">
+        <button type="button" class="ifx-btn ifx-btn-outline ref-page-auth-submit" data-ifx-toast="info" data-ifx-toast-msg="Đăng nhập bằng Gmail — demo">
+          <i class="ti ti-brand-google-filled"></i>
+          Đăng nhập bằng Gmail
+        </button>
+        <div class="ifx-alert ifx-alert-warning" role="alert" hidden>
+          Trình duyệt/địa chỉ này không mở được đăng nhập Google. Hãy chuyển sang tab “Bằng mật khẩu”.
+        </div>
+      </div>
+
+      <div class="ifx-tab-panel is-active" data-ifx-panel="password">
+        <form autocomplete="on">
+          <div class="ifx-form-group">
+            <label class="ifx-label" for="auth-email">Email</label>
+            <input class="ifx-input" id="auth-email" type="email" name="email" autocomplete="username" placeholder="admin@iflux.vn">
+          </div>
+          <div class="ifx-form-group">
+            <label class="ifx-label" for="auth-password">Mật khẩu</label>
+            <input class="ifx-input" id="auth-password" type="password" name="password" autocomplete="current-password" placeholder="••••••••">
+          </div>
+          <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit ref-page-auth-submit-login">
+            <i class="ti ti-login"></i>
+            Đăng nhập
+          </button>
+        </form>
+      </div>
+
+      <div class="ref-page-auth-session">
+        <label class="ifx-choice ifx-choice-dense">
+          <input type="checkbox" class="ifx-checkbox" checked>
+          <span class="ifx-choice-title">Ghi nhớ đăng nhập trên máy này</span>
+        </label>
+      </div>
+      <p class="ref-page-auth-session-note">Phiên ghi nhớ giữ đăng nhập để lần sau không cần xác thực lại trên trình duyệt này.</p>
+    </div>
+  </div>
+  <script src="../../design_system/adapters/web/theme.js"></script>
+  <script src="../../design_system/components/tabs/tabs.js"></script>
+  <script src="../../design_system/components/form/form.js"></script>
+  <script src="../../design_system/components/toast/toast.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>

@@ -8,9 +8,10 @@
   <script>
     (function () {
       var p = new URLSearchParams(window.location.search);
-      if (!p.get('module')) {
-        if (p.get('pattern')) p.set('module', 'patterns');
-        else p.set('module', 'sandbox');
+      if (!p.get('area')) {
+        if (p.get('module') === 'patterns' || p.get('pattern')) p.set('area', 'patterns');
+        else p.set('area', 'design-system');
+        p.delete('module');
       }
       var q = p.toString();
       window.location.replace('../workbench/' + (q ? '?' + q : '') + window.location.hash);

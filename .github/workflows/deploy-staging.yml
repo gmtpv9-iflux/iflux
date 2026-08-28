@@ -37,6 +37,10 @@ jobs:
           cp -a "$GITHUB_WORKSPACE/Admin_Design_system" "$RELEASE_DIR/Admin_Design_system"
           # Canonical Design System (Sub-01) — serve tại /design_system/ (nginx try_files chung)
           cp -a "$GITHUB_WORKSPACE/design_system" "$RELEASE_DIR/design_system"
+          # Peer Pattern library — serve tại /patterns/
+          if [ -d "$GITHUB_WORKSPACE/patterns" ]; then
+            cp -a "$GITHUB_WORKSPACE/patterns" "$RELEASE_DIR/patterns"
+          fi
 
       - name: Build backend release (atomic)
         run: |

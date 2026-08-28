@@ -1,11 +1,11 @@
 /**
- * Design System Workbench — persistent AppShell router.
- * Sidebar stays mounted. Main host swaps Sandbox vs Patterns modules.
+ * Shared Workbench — viewer for two peer areas: Design System and Patterns.
  */
 (function () {
   'use strict';
 
-  var SANDBOX_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'patterns', 'references', 'visual', 'contract'];
+  var SANDBOX_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets', 'visual', 'contract'];
+  var RETIRED_SECTIONS = ['patterns', 'references'];
   var PATTERNS = {
     auth: 'Auth',
     charts: 'Charts',
@@ -35,8 +35,7 @@
     foundation: 'Foundation',
     primitives: 'Primitives',
     components: 'Components',
-    patterns: 'Compose',
-    references: 'Wave notes',
+    widgets: 'Widgets',
     visual: 'Visual Test',
     contract: 'Contract'
   };
@@ -59,19 +58,27 @@
     return new URLSearchParams(window.location.search);
   }
 
+  function normalizeArea(q) {
+    var area = q.get('area');
+    if (!area) {
+      var module = q.get('module');
+      if (module === 'patterns' || q.get('pattern')) area = 'patterns';
+      else area = 'design-system';
+    }
+    if (area === 'sandbox' || area === 'ds') area = 'design-system';
+    if (area !== 'design-system' && area !== 'patterns') area = 'design-system';
+    return area;
+  }
+
   function readRoute() {
     var q = params();
-    var module = q.get('module');
+    var area = normalizeArea(q);
     var section = q.get('section');
     var pattern = q.get('pattern') || '';
-    if (!module) {
-      if (pattern) module = 'patterns';
-      else module = 'sandbox';
-    }
-    if (module !== 'sandbox' && module !== 'patterns') module = 'sandbox';
+    if (RETIRED_SECTIONS.indexOf(section) !== -1) section = 'components';
     if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
-    if (module === 'patterns' && !pattern) pattern = 'auth';
+    if (area === 'patterns' && !pattern) pattern = 'auth';
     var state = q.get('state') || '';
     if (pattern === 'auth') {
       if (!AUTH_STATES[state]) state = 'login';
@@ -79,7 +86,8 @@
       state = '';
     }
     return {
-      module: module,
+      area: area,
+      module: area === 'patterns' ? 'patterns' : 'sandbox',
       section: section,
       panel: q.get('panel') || '',
       pattern: pattern,
@@ -89,8 +97,8 @@
 
   function routeUrl(route) {
     var p = new URLSearchParams();
-    p.set('module', route.module);
-    if (route.module === 'sandbox') {
+    p.set('area', route.area);
+    if (route.area === 'design-system') {
       p.set('section', route.section);
       if (route.panel) p.set('panel', route.panel);
     } else if (route.pattern) {
@@ -131,7 +139,7 @@
   }
 
   function titleFor(route) {
-    if (route.module === 'patterns') {
+    if (route.area === 'patterns') {
       var name = PATTERNS[route.pattern] || PATTERNS.auth;
       if (route.pattern === 'auth' && route.state) {
         return 'Patterns · ' + name + ' · ' + (AUTH_STATE_LABEL[route.state] || route.state);
@@ -139,22 +147,22 @@
       return 'Patterns · ' + name;
     }
     var label = SECTION_LABEL[route.section] || route.section;
-    return route.panel ? ('Sandbox · ' + label + ' · ' + route.panel) : ('Sandbox · ' + label);
+    return route.panel ? ('Design System · ' + label + ' · ' + route.panel) : ('Design System · ' + label);
   }
 
   function syncNav(route) {
-    nav.querySelectorAll('[data-wb-module]').forEach(function (a) {
-      var sameModule = a.getAttribute('data-wb-module') === route.module;
+    nav.querySelectorAll('[data-wb-area]').forEach(function (a) {
+      var sameArea = a.getAttribute('data-wb-area') === route.area;
       var active;
-      if (route.module === 'sandbox') {
-        active = sameModule && a.getAttribute('data-wb-section') === route.section;
+      if (route.area === 'design-system') {
+        active = sameArea && a.getAttribute('data-wb-section') === route.section;
       } else {
-        active = sameModule && (a.getAttribute('data-wb-pattern') || '') === route.pattern;
+        active = sameArea && (a.getAttribute('data-wb-pattern') || '') === route.pattern;
       }
       a.classList.toggle('is-active', active);
     });
     titleEl.textContent = titleFor(route);
-    var showAuth = route.module === 'patterns' && route.pattern === 'auth';
+    var showAuth = route.area === 'patterns' && route.pattern === 'auth';
     if (authStatesEl) {
       authStatesEl.hidden = !showAuth;
       authStatesEl.classList.toggle('is-visible', showAuth);
@@ -192,7 +200,7 @@
     patternFrame = doc.createElement('iframe');
     patternFrame.className = 'ifx-appshell-frame';
     patternFrame.title = PATTERNS[id] || id;
-    patternFrame.src = '../references/patterns/' + id + '/' + file;
+    patternFrame.src = '/patterns/' + id + '/' + file;
     patternFrame.addEventListener('load', postThemeToFrame);
     host.appendChild(patternFrame);
     return Promise.resolve();
@@ -205,7 +213,7 @@
     syncNav(route);
     if (!isDesktop()) closeMobile();
 
-    if (route.module === 'patterns') {
+    if (route.area === 'patterns') {
       return mountPattern(route.pattern, route.state);
     }
     patternFrame = null;
@@ -217,13 +225,13 @@
   function routeFromHref(href) {
     var url = new URL(href, location.href);
     var q = url.searchParams;
-    var module = q.get('module') || (q.get('pattern') ? 'patterns' : 'sandbox');
+    var area = normalizeArea(q);
     var section = q.get('section');
     var pattern = q.get('pattern') || '';
-    if (module !== 'sandbox' && module !== 'patterns') module = 'sandbox';
+    if (RETIRED_SECTIONS.indexOf(section) !== -1) section = 'components';
     if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
-    if (module === 'patterns' && !pattern) pattern = 'auth';
+    if (area === 'patterns' && !pattern) pattern = 'auth';
     var state = q.get('state') || '';
     if (pattern === 'auth') {
       if (!AUTH_STATES[state]) state = 'login';
@@ -231,7 +239,8 @@
       state = '';
     }
     return {
-      module: module,
+      area: area,
+      module: area === 'patterns' ? 'patterns' : 'sandbox',
       section: section,
       panel: q.get('panel') || '',
       pattern: pattern,
@@ -249,13 +258,15 @@
 
   function navigate(partial, push) {
     var cur = readRoute();
+    var area = partial.area || (partial.module === 'patterns' ? 'patterns' : (partial.module === 'sandbox' ? 'design-system' : cur.area));
     var next = {
-      module: partial.module || cur.module,
+      area: area,
+      module: area === 'patterns' ? 'patterns' : 'sandbox',
       section: cur.section,
       panel: '',
       pattern: ''
     };
-    if (next.module === 'sandbox') {
+    if (next.area === 'design-system') {
       next.section = partial.section || cur.section;
       next.panel = partial.panel != null ? partial.panel : '';
     } else {
@@ -278,10 +289,11 @@
   window.addEventListener('message', function (e) {
     if (!e.data || e.data.type !== 'ifx-auth-state') return;
     var cur = readRoute();
-    if (cur.module !== 'patterns' || cur.pattern !== 'auth') return;
+    if (cur.area !== 'patterns' || cur.pattern !== 'auth') return;
     if (cur.state === e.data.state) return;
     if (!AUTH_STATES[e.data.state]) return;
     var next = {
+      area: cur.area,
       module: cur.module,
       section: cur.section,
       panel: cur.panel,
@@ -316,6 +328,7 @@
 
   window.addEventListener('ifx-sandbox-panel', function (e) {
     var next = {
+      area: 'design-system',
       module: 'sandbox',
       section: readRoute().section,
       panel: e.detail.panel || '',

@@ -1,21 +1,13 @@
 /**
- * P6a — Reference CSS Ownership Simulation
+ * LEGACY COMPATIBILITY DEBT
+ * NO NEW RULE
  *
- * NOT GLOBAL DESIGN SYSTEM.
+ * Frozen after Pattern root migration (Design System ↔ Pattern).
+ * This file may only shrink. Do not add selectors, blocks, or declarations.
  *
- * This file temporarily hosts lower-layer CSS needed by
- * Canonical Reference Patterns before production migration.
- *
- * Layers:
- * 2. PLATFORM
- * 3. MODULE / FEATURE
- * 4. PAGE
- * 5. WIDGET
- *
- * Every rule must identify:
- * - layer;
- * - source Reference Pattern;
- * - future production owner.
+ * Not a Design System layer. Not a long-term PLATFORM/MODULE/PAGE/WIDGET receiver.
+ * Existing blocks migrate later to Pattern-local CSS or a proven generic DS contract.
+ * Delete when live consumer = 0.
  *
  * No canonical `.ifx-*` definitions.
  * No !important.

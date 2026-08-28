@@ -1,5 +1,7 @@
 # SoT — Canonical CSS Ownership & Scope Rules
 
+> **moved 2026-08-28:** Pattern không còn là layer trong Design System. §17 “Pattern owner trong `design_system/`” bị supersede bởi [`docs/SoT — Canonical UI Architecture (Design System ↔ Pattern).md`](../../../../../docs/SoT%20—%20Canonical%20UI%20Architecture%20(Design%20System%20↔%20Pattern).md). Token / Foundation / Primitive / Component generic vẫn áp dụng.
+
 ## 1. Trạng thái
 
 Tài liệu này là CSS Ownership SoT áp dụng cho Canonical iFlux Architecture.

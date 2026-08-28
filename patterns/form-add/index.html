@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>P6-W02 — Form thêm/sửa · Canonical reference</title>
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../design_system/foundation/fonts.css">
+  <link rel="stylesheet" href="../../design_system/foundation/reset.css">
+  <link rel="stylesheet" href="../../design_system/foundation/typography.css">
+  <link rel="stylesheet" href="../../design_system/foundation/layout.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../design_system/primitives/button/button.css">
+  <link rel="stylesheet" href="../../design_system/primitives/chip/chip.css">
+  <link rel="stylesheet" href="../../design_system/primitives/alert/alert.css">
+  <link rel="stylesheet" href="../../design_system/components/card/card.css">
+  <link rel="stylesheet" href="../../design_system/components/breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../design_system/components/form/form.css">
+  <link rel="stylesheet" href="../../design_system/components/tabs/tabs.css">
+  <link rel="stylesheet" href="../../design_system/components/action-bar/action-bar.css">
+  <link rel="stylesheet" href="../../design_system/components/toast/toast.css">
+  <link rel="stylesheet" href="../../design_system/primitives/title/title.css">
+  <link rel="stylesheet" href="../../design_system/components/page-header/page-header.css">
+  <link rel="stylesheet" href="../../design_system/sandbox/assets/reference-layers.css">
+</head>
+<body>
+  <main class="ifx-container ifx-container-max ifx-stack-xl">
+    <header class="ifx-page-header">
+      <div class="ifx-page-header-main">
+        <div class="ifx-page-title">
+          <h1>Thêm bản ghi</h1>
+        </div>
+      </div>
+      <nav aria-label="Breadcrumb">
+        <ol class="ifx-breadcrumb">
+          <li><span>References</span></li>
+          <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+          <li class="ifx-breadcrumb-current" aria-current="page">Form thêm/sửa</li>
+        </ol>
+      </nav>
+      <div class="ifx-page-title">
+          <p>Trang form lớn — generic, không eCommerce, không AppShell. Không thống kê (AR-001 §25).</p>
+        </div>
+    </header>
+
+    <div class="ifx-grid ref-page-form-add-layout">
+      <div class="ifx-col-12 ifx-col-lg-8">
+        <div class="ifx-stack-lg ref-page-form-add-column">
+          <section class="ifx-card ifx-stack-md">
+            <div class="ifx-card-header">
+              <div class="ifx-section-title">
+                <h2>Thông tin</h2>
+              </div>
+            </div>
+            <div class="ifx-card-body ifx-stack-md">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-name">Tên</label>
+                <input class="ifx-input" id="ref-name" placeholder="Tên bản ghi">
+              </div>
+              <div class="ifx-form-row">
+                <div class="ifx-form-group">
+                  <label class="ifx-label" for="ref-code">Mã</label>
+                  <input class="ifx-input" id="ref-code" type="text" placeholder="REC-0001">
+                </div>
+                <div class="ifx-form-group">
+                  <label class="ifx-label" for="ref-aux">Phụ</label>
+                  <input class="ifx-input" id="ref-aux" placeholder="Mã phụ">
+                </div>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-desc">Mô tả (tuỳ chọn)</label>
+                <textarea class="ifx-textarea" id="ref-desc" placeholder="Mô tả generic"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="ifx-card ifx-stack-md">
+            <div class="ifx-card-header">
+              <div class="ifx-section-title">
+                <h2>Tệp đính kèm</h2>
+              </div>
+              <button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm">Thêm từ URL</button>
+            </div>
+            <div class="ifx-card-body">
+              <div class="ifx-dropzone">
+                <div class="ifx-dropzone-icon"><i class="ti ti-photo-up ifx-icon ifx-icon-lg"></i></div>
+                <div class="ifx-dropzone-title">Kéo tệp vào đây</div>
+                <div class="ifx-dropzone-sub">hoặc</div>
+                <button type="button" class="ifx-btn ifx-btn-outline ifx-btn-sm"><i class="ti ti-folder-open ifx-icon ifx-icon-sm"></i> Chọn tệp</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="ifx-card ifx-stack-md" data-ifx-tabs-root>
+            <div class="ifx-card-header">
+              <div class="ifx-section-title">
+                <h2>Phân loại</h2>
+              </div>
+            </div>
+            <div class="ifx-card-body">
+              <div class="ifx-grid">
+                <div class="ifx-col-12 ifx-col-md-4">
+                  <div class="ifx-tabs ifx-tabs-col" data-ifx-tabs>
+                    <button type="button" class="ifx-tab is-active" data-ifx-tab="qty"><i class="ti ti-box ifx-icon ifx-icon-sm"></i> Số lượng</button>
+                    <button type="button" class="ifx-tab" data-ifx-tab="ship"><i class="ti ti-car ifx-icon ifx-icon-sm"></i> Vận chuyển</button>
+                    <button type="button" class="ifx-tab" data-ifx-tab="scope"><i class="ti ti-world ifx-icon ifx-icon-sm"></i> Phạm vi</button>
+                    <button type="button" class="ifx-tab" data-ifx-tab="attr"><i class="ti ti-link ifx-icon ifx-icon-sm"></i> Thuộc tính</button>
+                    <button type="button" class="ifx-tab" data-ifx-tab="adv"><i class="ti ti-lock ifx-icon ifx-icon-sm"></i> Nâng cao</button>
+                  </div>
+                </div>
+                <div class="ifx-col-12 ifx-col-md-8">
+                  <div class="ifx-tab-panel is-active ifx-stack-md" data-ifx-panel="qty">
+                    <p class="ref-page-form-add-group-label">Tuỳ chọn</p>
+                    <div class="ifx-form-group">
+                      <label class="ifx-label" for="ref-qty">Thêm vào tồn</label>
+                      <div class="ifx-flex ifx-items-center ref-page-form-add-options">
+                        <div class="ifx-flex-1">
+                          <input class="ifx-input" id="ref-qty" type="number" placeholder="Số lượng">
+                        </div>
+                        <button type="button" class="ifx-btn ifx-btn-primary">Xác nhận</button>
+                      </div>
+                    </div>
+                    <small>Tồn hiện tại: <strong>54</strong></small>
+                    <small>Đang chuyển: <strong>390</strong></small>
+                    <small>Cập nhật gần nhất: <strong>24/06/2024</strong></small>
+                  </div>
+                  <div class="ifx-tab-panel ifx-stack-md" data-ifx-panel="ship">
+                    <p class="ref-page-form-add-group-label">Cách xử lý</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
+                      <label class="ifx-choice">
+                        <input type="radio" class="ifx-radio" name="ref-ship">
+                        <span>
+                          <span class="ifx-choice-title">Tự xử lý</span>
+                          <span class="ifx-choice-desc">Bên tạo bản ghi chịu trách nhiệm.</span>
+                        </span>
+                      </label>
+                      <label class="ifx-choice">
+                        <input type="radio" class="ifx-radio" name="ref-ship" checked>
+                        <span>
+                          <span class="ifx-choice-title">Uỷ thác <span class="ifx-chip ifx-chip-warning">gợi ý</span></span>
+                          <span class="ifx-choice-desc">Hệ thống xử lý giúp.</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="ifx-tab-panel ifx-stack-md" data-ifx-panel="scope">
+                    <p class="ref-page-form-add-group-label">Phạm vi</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
+                      <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope"><span class="ifx-choice-title">Toàn cục</span></label>
+                      <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope" checked><span class="ifx-choice-title">Một số nhóm</span></label>
+                      <label class="ifx-choice"><input type="radio" class="ifx-radio" name="ref-scope"><span class="ifx-choice-title">Nội bộ</span></label>
+                    </div>
+                  </div>
+                  <div class="ifx-tab-panel ifx-stack-md" data-ifx-panel="attr">
+                    <p class="ref-page-form-add-group-label">Thuộc tính</p>
+                    <div class="ifx-flex-col ref-page-form-add-choice-list">
+                      <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox"><span class="ifx-choice-title">Dễ vỡ</span></label>
+                      <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox"><span class="ifx-choice-title">Phân huỷ được</span></label>
+                      <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox" checked><span class="ifx-choice-title">Cần bảo quản lạnh</span></label>
+                      <label class="ifx-choice"><input type="checkbox" class="ifx-checkbox" checked><span class="ifx-choice-title">Có hạn dùng</span></label>
+                    </div>
+                  </div>
+                  <div class="ifx-tab-panel ifx-stack-md" data-ifx-panel="adv">
+                    <p class="ref-page-form-add-group-label">Nâng cao</p>
+                    <div class="ifx-form-row">
+                      <div class="ifx-form-group">
+                        <label class="ifx-label" for="ref-id-type">Loại mã</label>
+                        <select class="ifx-select" id="ref-id-type"><option>ISBN</option><option>UPC</option><option>EAN</option></select>
+                      </div>
+                      <div class="ifx-form-group">
+                        <label class="ifx-label" for="ref-id-val">Giá trị mã</label>
+                        <input class="ifx-input" id="ref-id-val" placeholder="Mã">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="ifx-col-12 ifx-col-lg-4">
+        <div class="ifx-stack-lg ref-page-form-add-column">
+          <section class="ifx-card ifx-stack-md">
+            <div class="ifx-card-header">
+              <div class="ifx-section-title">
+                <h2>Giá trị</h2>
+              </div>
+            </div>
+            <div class="ifx-card-body ifx-stack-md">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-base">Giá trị gốc</label>
+                <input class="ifx-input" id="ref-base" type="number" placeholder="0">
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-disc">Giá trị điều chỉnh</label>
+                <input class="ifx-input" id="ref-disc" type="number" placeholder="0">
+              </div>
+              <label class="ifx-choice ref-page-form-add-choice">
+                <input type="checkbox" class="ifx-checkbox" checked>
+                <span class="ifx-choice-title">Áp dụng phụ phí</span>
+              </label>
+              <hr>
+              <div class="ifx-flex ifx-items-center ifx-justify-between ref-page-form-add-switch-row">
+                <span class="ref-page-form-add-switch-text">Đang mở</span>
+                <label class="ifx-switch">
+                  <input type="checkbox" checked>
+                  <span class="ifx-switch-track"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="ifx-card ifx-stack-md">
+            <div class="ifx-card-header">
+              <div class="ifx-section-title">
+                <h2>Tổ chức</h2>
+              </div>
+            </div>
+            <div class="ifx-card-body ifx-stack-md">
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-owner">Nguồn</label>
+                <select class="ifx-select" id="ref-owner"><option value="">Chọn nguồn</option><option>Nhóm A</option><option>Nhóm B</option><option>Nhóm C</option></select>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-cat">Nhóm</label>
+                <select class="ifx-select" id="ref-cat"><option value="">Chọn nhóm</option><option>Loại 1</option><option>Loại 2</option><option>Loại 3</option></select>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-col">Bộ sưu tập</label>
+                <select class="ifx-select" id="ref-col"><option value="">Chọn bộ</option><option>Bộ A</option><option>Bộ B</option></select>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-status">Trạng thái</label>
+                <select class="ifx-select" id="ref-status"><option>Công bố</option><option>Hẹn giờ</option><option>Nháp</option></select>
+              </div>
+              <div class="ifx-form-group">
+                <label class="ifx-label" for="ref-tags">Nhãn</label>
+                <input class="ifx-input" id="ref-tags" value="Normal, Standard, Premium">
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="ifx-action-bar">
+    <span class="ifx-action-bar-start">Thao tác trang</span>
+    <button type="button" class="ifx-btn ifx-btn-outline">Huỷ</button>
+    <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-toast="info" data-ifx-toast-msg="Đã lưu nháp">Lưu nháp</button>
+    <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success" data-ifx-toast-msg="Đã công bố bản ghi"><i class="ti ti-send ifx-icon ifx-icon-sm"></i> Công bố</button>
+  </div>
+
+  <script src="../../design_system/adapters/web/theme.js"></script>
+  <script src="../../design_system/components/tabs/tabs.js"></script>
+  <script src="../../design_system/components/toast/toast.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" data-auth-state="verify-2fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ADM-AUTH — Xác thực 2FA · iFlux Admin</title>
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/primitives.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/semantic.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/dark.css">
+  <link rel="stylesheet" href="../../design_system/tokens/generated/css/themes/light.css">
+  <link rel="stylesheet" href="../../design_system/foundation/fonts.css">
+  <link rel="stylesheet" href="../../design_system/foundation/reset.css">
+  <link rel="stylesheet" href="../../design_system/foundation/typography.css">
+  <link rel="stylesheet" href="../../design_system/foundation/layout.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../design_system/foundation/icons/icons.css">
+  <link rel="stylesheet" href="../../design_system/primitives/button/button.css">
+  <link rel="stylesheet" href="../../design_system/primitives/alert/alert.css">
+  <link rel="stylesheet" href="../../design_system/components/card/card.css">
+  <link rel="stylesheet" href="../../design_system/components/form/form.css">
+  <link rel="stylesheet" href="../../design_system/components/tabs/tabs.css">
+  <link rel="stylesheet" href="../../design_system/components/toast/toast.css">
+  <link rel="stylesheet" href="../../design_system/sandbox/assets/reference-layers.css">
+</head>
+<body>
+  <div class="ref-platform-auth">
+    <div class="ifx-card ref-page-auth-card">
+      <div class="ref-page-auth-brand">iFlux</div>
+      <div class="ref-page-auth-heading">
+        <h2>Xác thực 2FA</h2>
+        <p>Nhập mã 6 số từ ứng dụng Authenticator (TOTP) — BR-ADM-02</p>
+      </div>
+
+      <div class="ifx-form-group">
+        <label class="ifx-label" for="otp-code">Mã xác thực</label>
+        <input class="ifx-input ifx-input-otp" id="otp-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code" autofocus>
+        <span class="ifx-field-hint ifx-field-hint-tight">Mã làm mới mỗi 30 giây. Không chia sẻ mã với bất kỳ ai.</span>
+      </div>
+      <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit ref-page-auth-submit-otp" id="otp-submit">Xác nhận</button>
+
+      <div class="ref-page-auth-footer">
+        <a href="login.html">Quay lại đăng nhập</a>
+      </div>
+
+      <a href="#" class="ref-page-auth-back ref-page-auth-back-hub" id="auth-hub-demo">
+        <i class="ti ti-chevron-left"></i>
+        Về Hub checklist
+      </a>
+    </div>
+  </div>
+  <script src="../../design_system/adapters/web/theme.js"></script>
+  <script src="../../design_system/components/tabs/tabs.js"></script>
+  <script src="../../design_system/components/form/form.js"></script>
+  <script src="../../design_system/components/toast/toast.js"></script>
+  <script src="page.js"></script>
+</body>
+</html>

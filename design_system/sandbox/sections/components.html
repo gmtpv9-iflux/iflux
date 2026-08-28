@@ -1,4 +1,4 @@
-<nav class="ifx-tabs ifx-tabs-nav" aria-label="Components"><a class="ifx-tab" href="?section=components&amp;panel=card" data-sb-goto="card">Card</a><a class="ifx-tab" href="?section=components&amp;panel=stat" data-sb-goto="stat">Stat</a><a class="ifx-tab" href="?section=components&amp;panel=stat-strip" data-sb-goto="stat-strip">Stat Strip</a><a class="ifx-tab" href="?section=components&amp;panel=breadcrumb" data-sb-goto="breadcrumb">Breadcrumb</a><a class="ifx-tab" href="?section=components&amp;panel=form" data-sb-goto="form">Form</a><a class="ifx-tab" href="?section=components&amp;panel=table" data-sb-goto="table">Table</a><a class="ifx-tab" href="?section=components&amp;panel=pagination" data-sb-goto="pagination">Pagination</a><a class="ifx-tab" href="?section=components&amp;panel=drawer" data-sb-goto="drawer">Drawer</a><a class="ifx-tab" href="?section=components&amp;panel=action-bar" data-sb-goto="action-bar">Action Bar</a><a class="ifx-tab" href="?section=components&amp;panel=modal" data-sb-goto="modal">Modal</a><a class="ifx-tab" href="?section=components&amp;panel=toast" data-sb-goto="toast">Toast</a><a class="ifx-tab" href="?section=components&amp;panel=dropdown" data-sb-goto="dropdown">Dropdown</a><a class="ifx-tab" href="?section=components&amp;panel=tabs" data-sb-goto="tabs">Tabs</a><a class="ifx-tab" href="?section=components&amp;panel=search" data-sb-goto="search">Search</a><a class="ifx-tab" href="?section=components&amp;panel=timeline" data-sb-goto="timeline">Timeline</a><a class="ifx-tab" href="?section=components&amp;panel=wizard" data-sb-goto="wizard">Wizard</a><a class="ifx-tab" href="?section=components&amp;panel=chat" data-sb-goto="chat">Chat</a><a class="ifx-tab" href="?section=components&amp;panel=chart" data-sb-goto="chart">Chart</a></nav>
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Components"><a class="ifx-tab" href="?section=components&amp;panel=card" data-sb-goto="card">Card</a><a class="ifx-tab" href="?section=components&amp;panel=stat" data-sb-goto="stat">Stat</a><a class="ifx-tab" href="?section=components&amp;panel=stat-strip" data-sb-goto="stat-strip">Stat Strip</a><a class="ifx-tab" href="?section=components&amp;panel=breadcrumb" data-sb-goto="breadcrumb">Breadcrumb</a><a class="ifx-tab" href="?section=components&amp;panel=form" data-sb-goto="form">Form</a><a class="ifx-tab" href="?section=components&amp;panel=table" data-sb-goto="table">Table</a><a class="ifx-tab" href="?section=components&amp;panel=pagination" data-sb-goto="pagination">Pagination</a><a class="ifx-tab" href="?section=components&amp;panel=drawer" data-sb-goto="drawer">Drawer</a><a class="ifx-tab" href="?section=components&amp;panel=action-bar" data-sb-goto="action-bar">Action Bar</a><a class="ifx-tab" href="?section=components&amp;panel=modal" data-sb-goto="modal">Modal</a><a class="ifx-tab" href="?section=components&amp;panel=toast" data-sb-goto="toast">Toast</a><a class="ifx-tab" href="?section=components&amp;panel=dropdown" data-sb-goto="dropdown">Dropdown</a><a class="ifx-tab" href="?section=components&amp;panel=tabs" data-sb-goto="tabs">Tabs</a><a class="ifx-tab" href="?section=components&amp;panel=search" data-sb-goto="search">Search</a><a class="ifx-tab" href="?section=components&amp;panel=timeline" data-sb-goto="timeline">Timeline</a><a class="ifx-tab" href="?section=components&amp;panel=wizard" data-sb-goto="wizard">Wizard</a><a class="ifx-tab" href="?section=components&amp;panel=chat" data-sb-goto="chat">Chat</a><a class="ifx-tab" href="?section=components&amp;panel=chart" data-sb-goto="chart">Chart</a><a class="ifx-tab" href="?section=components&amp;panel=page-header" data-sb-goto="page-header">Page Header</a><a class="ifx-tab" href="?section=components&amp;panel=data-list" data-sb-goto="data-list">Data List</a></nav>
 
 <div class="sb-panel" data-sb-panel="card" hidden>
 <section class="sb-section ifx-stack-md" id="comp-card">
@@ -620,5 +620,164 @@
     <div class="ifx-chart-plot"></div>
     <template data-ifx-chart-data>{"labels":["1","2","3","4","5","6","7","8"],"series":[{"name":"Vol","values":[12,18,9,22,15,28,11,19]}]}</template>
   </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="page-header" hidden>
+<section class="sb-section ifx-stack-md" id="comp-page-header">
+<div class="ifx-section-title">
+      <h2>Page Header</h2>
+      <p>Tiêu đề, breadcrumb, mô tả và action.</p>
+    </div>
+  <header class="ifx-page-header">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Danh sách bản ghi</h1>
+        </div>
+      <div class="ifx-page-header-actions">
+        <button type="button" class="ifx-btn ifx-btn-outline">Xuất</button>
+        <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
+      </div>
+    </div>
+      <nav aria-label="Breadcrumb">
+      <ol class="ifx-breadcrumb">
+        <li><span>Components</span></li>
+        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
+      </ol>
+    </nav>
+      <div class="ifx-page-title">
+          <p>Trang liệt kê — dữ liệu generic, không business.</p>
+        </div>
+      <div class="ifx-grid">
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon"><i class="ti ti-list ifx-icon"></i></div>
+          <div class="ifx-stat-content">
+            <div class="ifx-stat-label">Tổng</div>
+            <div class="ifx-stat-value">128</div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-warning"><i class="ti ti-clock ifx-icon"></i></div>
+          <div class="ifx-stat-content">
+            <div class="ifx-stat-label">Chờ</div>
+            <div class="ifx-stat-value">14</div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-success"><i class="ti ti-circle-check ifx-icon"></i></div>
+          <div class="ifx-stat-content">
+            <div class="ifx-stat-label">Xong</div>
+            <div class="ifx-stat-value">96</div>
+          </div>
+        </div>
+      </div>
+      <div class="ifx-col-12 ifx-col-md-6 ifx-col-lg-3">
+        <div class="ifx-stat">
+          <div class="ifx-stat-icon ifx-stat-icon-danger"><i class="ti ti-ban ifx-icon"></i></div>
+          <div class="ifx-stat-content">
+            <div class="ifx-stat-label">Chặn</div>
+            <div class="ifx-stat-value">18</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </header>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="data-list" hidden>
+<section class="sb-section ifx-stack-md" id="comp-data-list">
+<div class="ifx-section-title">
+      <h2>Data List</h2>
+      <p>P5 · Search + Table + Pagination wired bởi <code>IfxDataList</code>. Drawer sửa nhỏ — AR-001 §26.1.</p>
+    </div>
+  <header class="ifx-page-header">
+      <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+          <h1>Bản ghi</h1>
+        </div>
+      <div class="ifx-page-header-actions">
+        <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
+      </div>
+    </div>
+      <nav aria-label="Breadcrumb">
+      <ol class="ifx-breadcrumb">
+        <li><span>Components</span></li>
+        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+        <li class="ifx-breadcrumb-current" aria-current="page">Danh sách</li>
+      </ol>
+    </nav>
+      <div class="ifx-page-title">
+          <p>Bảng + phân trang. Sửa nhanh mở drawer.</p>
+        </div>
+    </header>
+  <div class="ifx-card" data-ifx-data-list data-ifx-page-size="2">
+    <div class="ifx-stack-sm">
+    <div class="ifx-table-toolbar">
+      <label class="ifx-search">
+        <i class="ti ti-search ifx-icon ifx-icon-sm"></i>
+        <input type="search" placeholder="Tìm bản ghi…" data-ifx-search>
+      </label>
+    </div>
+    <div class="ifx-table-wrap">
+      <table class="ifx-table" data-ifx-table>
+        <thead><tr><th></th><th data-ifx-sort="1">Mã</th><th data-ifx-sort="2">Tên</th><th data-ifx-sort="3">Trạng thái</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox" class="ifx-checkbox"></td>
+            <td>A-01</td>
+            <td>Bản ghi một</td>
+            <td><span class="ifx-chip ifx-chip-success">active</span></td>
+            <td><button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" data-ifx-drawer="listDrawer">Sửa</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="ifx-checkbox"></td>
+            <td>A-02</td>
+            <td>Bản ghi hai</td>
+            <td><span class="ifx-chip ifx-chip-warning">pending</span></td>
+            <td><button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" data-ifx-drawer="listDrawer">Sửa</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="ifx-checkbox"></td>
+            <td>A-03</td>
+            <td>Bản ghi ba</td>
+            <td><span class="ifx-chip ifx-chip-danger">blocked</span></td>
+            <td><button type="button" class="ifx-btn ifx-btn-ghost ifx-btn-sm" data-ifx-drawer="listDrawer">Sửa</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+    <div class="ifx-card-footer">
+      <div class="ifx-pagination" data-ifx-pagination>
+        <button type="button" class="ifx-page-btn" data-ifx-page-nav disabled>‹</button>
+        <button type="button" class="ifx-page-btn is-active">1</button>
+        <button type="button" class="ifx-page-btn">2</button>
+        <button type="button" class="ifx-page-btn" data-ifx-page-nav>›</button>
+        <span class="ifx-page-info">Trang 1</span>
+      </div>
+    </div>
+  </div>
+  <div class="ifx-drawer-overlay" id="listDrawerOv"></div>
+  <aside class="ifx-drawer" id="listDrawer" data-ifx-overlay="listDrawerOv" aria-label="Sửa bản ghi">
+    <div class="ifx-drawer-header">
+      <h3>Sửa bản ghi</h3>
+      <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="drawer" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
+    </div>
+    <div class="ifx-drawer-body">
+      <div class="ifx-form-group">
+        <label class="ifx-label" for="dl-name">Tên</label>
+        <input class="ifx-input" id="dl-name" value="Bản ghi một">
+      </div>
+    </div>
+    <div class="ifx-drawer-footer">
+      <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-dismiss="drawer">Hủy</button>
+      <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-dismiss="drawer">Lưu</button>
+    </div>
+  </aside>
 </section>
 </div>

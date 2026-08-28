@@ -1,5 +1,8 @@
 # P6a — Auth size parity (W10) — Đề xuất (rev. 2)
 
+> **moved 2026-08-28:** Auth path `patterns/auth/` → `patterns/auth/`. Visual/proposal không đổi.
+
+
 **Mode:** ĐỀ XUẤT — chưa thi công. STOP chờ Owner duyệt §10.  
 **Date:** 2026-08-28 · **Rev:** 2 (Owner review: classification PASS, implementation NEEDS REVISION)  
 **Surface:** [Workbench Auth](http://127.0.0.1:8901/design_system/workbench/?module=patterns&pattern=auth)  
@@ -69,7 +72,7 @@ Auth Pattern canvas (MỘT state / một document)
 
 Default `state=login`. Iframe:
 
-`design_system/references/patterns/auth/{login|register|forgot|verify-2fa}.html`
+`patterns/auth/{login|register|forgot|verify-2fa}.html`
 
 `index.html` = Login (entrypoint).
 
@@ -418,7 +421,7 @@ Cùng use case, lặp 2+ state → **không** page-patch từng auth. Owner ch�
 ### 8.1 Canvas files
 
 ```text
-design_system/references/patterns/auth/
+patterns/auth/
   index.html          → Login (hoặc redirect login.html)
   login.html
   register.html

@@ -1,6 +1,7 @@
 # P6a — Design System Workbench — Shared AppShell
 
 **Date:** 2026-08-28  
+> **moved 2026-08-28:** Workbench query canonical `?area=design-system|patterns`. Alias `?module=sandbox|patterns`. Iframe `/patterns/…`.  
 **Mode:** AUDIT + IMPLEMENT  
 **Visual reference:** Admin `patterns/table-list.html` (sidebar | main)
 

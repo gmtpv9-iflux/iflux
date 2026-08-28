@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'patterns', 'references', 'visual', 'contract'];
+  var SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets', 'visual', 'contract'];
   var VP_LABEL = {
     auto: 'AUTO (browser)',
     360: '360 — Mobile Base',
@@ -34,7 +34,8 @@
     '../components/timeline/timeline.css',
     '../components/wizard/wizard.css',
     '../components/chat/chat.css',
-    '../components/chart/chart.css'
+    '../components/chart/chart.css',
+    '../components/page-header/page-header.css'
   ];
   var COMPONENT_JS = [
     '../components/table/table.js',
@@ -47,7 +48,8 @@
     '../components/form/form.js',
     '../components/wizard/wizard.js',
     '../components/chat/chat.js',
-    '../components/chart/chart-adapter.js?v=5'
+    '../components/chart/chart-adapter.js?v=5',
+    '../components/data-list/data-list.js'
   ];
 
   function ensureHref(href, kind) {
@@ -78,30 +80,6 @@
     COMPONENT_CSS.forEach(function (h) { ensureHref(h, 'css'); });
     var chain = Promise.resolve();
     COMPONENT_JS.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
-    return chain;
-  }
-
-  var PATTERN_CSS = [
-    '../patterns/page-header/page-header.css'
-  ];
-  var PATTERN_JS = [
-    '../patterns/data-list/data-list.js'
-  ];
-
-  function ensurePatternCss() {
-    PATTERN_CSS.forEach(function (href) {
-      if (doc.querySelector('link[data-ifx-pat="' + href + '"]')) return;
-      var link = doc.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = href;
-      link.setAttribute('data-ifx-pat', href);
-      doc.head.appendChild(link);
-    });
-  }
-
-  function ensurePatternJs() {
-    var chain = Promise.resolve();
-    PATTERN_JS.forEach(function (h) { chain = chain.then(function () { return ensureHref(h, 'js'); }); });
     return chain;
   }
 
@@ -496,16 +474,9 @@
       ensurePrimitiveCss();
       bindPrimitives();
     }
-    if (id === 'references') {
+    if (id === 'components') {
       ensurePrimitiveCss();
-      ensureHref('../components/table/table.css', 'css');
-    }
-    if (id === 'components' || id === 'patterns') {
-      ensurePrimitiveCss();
-      if (id === 'patterns') ensurePatternCss();
       return ensureComponentAssets().then(function () {
-        if (id === 'patterns') return ensurePatternJs();
-      }).then(function () {
         bindComponents();
       });
     }

@@ -2,7 +2,7 @@
  * IfxTable — table-specific state only.
  * Sở hữu: sort cột, row selection, visibility slice (class is-hidden / is-selected).
  * Không sở hữu: Search input, Pagination UI, filter form, page-size policy.
- * Composer: patterns/data-list (IfxDataList).
+ * Composer: components/data-list (IfxDataList).
  */
 (function (global) {
   'use strict';
