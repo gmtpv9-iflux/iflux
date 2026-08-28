@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets', 'visual', 'contract'];
+  var SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets'];
   var VP_LABEL = {
     auto: 'AUTO (browser)',
     360: '360 — Mobile Base',

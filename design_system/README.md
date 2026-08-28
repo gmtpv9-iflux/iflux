@@ -54,7 +54,7 @@ Chỉ dành cho **generic Widget UI contract**. Không chứa specific widget im
 Adapter UI generic khi thật sự cần. Không chứa business logic.
 
 ### `sandbox/`
-Catalog / acceptance surface của Design System. Primary scope: Tokens, Foundation, Primitives, Components, Widgets, Visual Test, Contract.
+Catalog / acceptance surface của Design System. Primary scope: Tokens, Foundation, Primitives, Components, Widgets. Viewport playground ở Foundation. Theme toggle ở Workbench toolbar.
 
 Sandbox không phải Pattern library và không phải nơi chứa CSS giả lập Page/Module/Widget cụ thể.
 

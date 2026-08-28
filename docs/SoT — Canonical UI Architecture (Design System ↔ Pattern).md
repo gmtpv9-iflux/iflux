@@ -212,8 +212,8 @@ Sandbox là acceptance surface **chỉ của Design System**.
 - Primitives
 - Components
 - Widgets
-- Visual
-- Contract
+
+Viewport playground thuộc Foundation. Theme toggle thuộc Workbench toolbar. Không còn section độc lập Visual / Contract.
 
 **Bỏ khỏi primary nav / catalog:**
 
@@ -259,7 +259,6 @@ Hai **area** ngang hàng:
 ```
 DESIGN SYSTEM
   Tokens · Foundation · Primitives · Components · Widgets
-  (+ Visual · Contract — acceptance)
 
 PATTERNS
   Auth · Charts · Chat · Form Add · Order Detail · Order List
@@ -380,7 +379,7 @@ Pattern-local CSS được phép; không còn bắt map mọi residual vào 5 l�
 
 Hai set. Không verify Staging trước commit. Chi tiết phase: plan `31_ds_pattern_separation_plan.md`.
 
-**PRE-SHIP** (local → được commit / push): separation, README ×2, global pattern classified, workbench local, sandbox scope, `REFERENCE_LAYERS_FROZEN`, UP local, orphan = 0, cleanup chỉ xóa khi `LIVE_CONSUMER = 0`.
+**PRE-SHIP** (local → được commit / push): separation, README ×2, global pattern classified, workbench local, sandbox scope (Tokens / Foundation / Primitives / Components / Widgets — không Visual / Contract), `REFERENCE_LAYERS_FROZEN`, UP local, orphan = 0, cleanup chỉ xóa khi `LIVE_CONSUMER = 0`.
 
 **POST-DEPLOY** (sau CI Staging): `/patterns/` resolve, 301 path cũ, `cp patterns/` có trên release, workbench + UP + pattern routes trên Staging.
 

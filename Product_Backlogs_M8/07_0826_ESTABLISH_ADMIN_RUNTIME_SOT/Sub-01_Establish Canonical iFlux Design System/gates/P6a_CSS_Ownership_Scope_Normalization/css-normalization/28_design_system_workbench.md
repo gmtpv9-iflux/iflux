@@ -85,7 +85,7 @@ Nav units reuse `.ifx-nav-item` / `.ifx-nav-icon` / `.ifx-nav-label` / `.ifx-nav
 - `design_system/sandbox/sections/foundation.html` — playground src works from workbench
 - `design_system/sandbox/sections/primitives.html` — outline-danger + progress sm/default/lg + gap
 - `design_system/sandbox/sections/components.html` — toast row gap
-- `design_system/sandbox/sections/contract.html` — workbench ownership note
+- `design_system/sandbox/sections/contract.html` — **deleted 2026-08-28** (Contract section removed)
 - `design_system/foundation/layout.css` — `.ifx-gap-xs|sm|md` (missing generic gap)
 - 9 Canonical pattern `page.js` — `postMessage` theme apply (mount only)
 - this report + evidence

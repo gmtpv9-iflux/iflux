@@ -4,8 +4,8 @@
 (function () {
   'use strict';
 
-  var SANDBOX_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets', 'visual', 'contract'];
-  var RETIRED_SECTIONS = ['patterns', 'references'];
+  var SANDBOX_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets'];
+  var RETIRED_SECTIONS = ['patterns', 'references', 'visual', 'contract'];
   var PATTERNS = {
     auth: 'Auth',
     charts: 'Charts',
@@ -35,9 +35,7 @@
     foundation: 'Foundation',
     primitives: 'Primitives',
     components: 'Components',
-    widgets: 'Widgets',
-    visual: 'Visual Test',
-    contract: 'Contract'
+    widgets: 'Widgets'
   };
   var MQ_DESKTOP = window.matchMedia('(min-width: 1024px)');
   var STORAGE_COLLAPSED = 'ifx-wb-sidebar-collapsed';
