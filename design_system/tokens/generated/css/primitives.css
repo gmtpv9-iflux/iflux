@@ -192,7 +192,6 @@
   --ifx-space-unit: 4px;
 
   /* ── radius · radius ── */
-  --ifx-radius-none: 0;
   --ifx-radius-xs: 2px;
   --ifx-radius-sm: 4px;
   --ifx-radius-md: 6px;
@@ -209,17 +208,13 @@
   --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
 
   /* ── motion · duration ── */
-  --ifx-duration-instant: 0ms;
   --ifx-duration-fast: 100ms;
   --ifx-duration-normal: 200ms;
   --ifx-duration-slow: 300ms;
-  --ifx-duration-slower: 400ms;
 
   /* ── motion · ease ── */
   --ifx-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --ifx-ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ifx-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ifx-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── size · size ── */
   --ifx-size-touch-target: 44px;
@@ -233,8 +228,6 @@
   --ifx-size-container-max: 1280px;
 
   /* ── zindex · z ── */
-  --ifx-z-base: 0;
-  --ifx-z-raised: 1;
   --ifx-z-dropdown: 100;
   --ifx-z-sticky: 200;
   --ifx-z-topnav: 220;
@@ -242,5 +235,4 @@
   --ifx-z-overlay: 240;
   --ifx-z-modal: 300;
   --ifx-z-toast: 400;
-  --ifx-z-onboarding: 500;
 }

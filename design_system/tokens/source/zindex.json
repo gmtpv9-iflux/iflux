@@ -5,16 +5,13 @@
   },
   "primitive": {
     "z": {
-      "base": "0",
-      "raised": "1",
       "dropdown": "100",
       "sticky": "200",
       "topnav": "220",
       "drawer": "230",
       "overlay": "240",
       "modal": "300",
-      "toast": "400",
-      "onboarding": "500"
+      "toast": "400"
     }
   }
 }

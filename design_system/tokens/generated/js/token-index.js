@@ -195,7 +195,6 @@
       "--ifx-space-unit"
     ],
     "radius": [
-      "--ifx-radius-none",
       "--ifx-radius-xs",
       "--ifx-radius-sm",
       "--ifx-radius-md",
@@ -212,17 +211,13 @@
       "--ifx-shadow-xl"
     ],
     "duration": [
-      "--ifx-duration-instant",
       "--ifx-duration-fast",
       "--ifx-duration-normal",
-      "--ifx-duration-slow",
-      "--ifx-duration-slower"
+      "--ifx-duration-slow"
     ],
     "ease": [
       "--ifx-ease-default",
-      "--ifx-ease-in",
-      "--ifx-ease-out",
-      "--ifx-ease-in-out"
+      "--ifx-ease-out"
     ],
     "size": [
       "--ifx-size-touch-target",
@@ -236,16 +231,13 @@
       "--ifx-size-container-max"
     ],
     "z": [
-      "--ifx-z-base",
-      "--ifx-z-raised",
       "--ifx-z-dropdown",
       "--ifx-z-sticky",
       "--ifx-z-topnav",
       "--ifx-z-drawer",
       "--ifx-z-overlay",
       "--ifx-z-modal",
-      "--ifx-z-toast",
-      "--ifx-z-onboarding"
+      "--ifx-z-toast"
     ]
   },
   "semantic": {
@@ -2317,13 +2309,6 @@
       "generated": "design_system/tokens/generated/css/semantic.css"
     },
     {
-      "name": "--ifx-radius-none",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/radius.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-radius-xs",
       "owner": "global",
       "layer": "global",
@@ -2478,13 +2463,6 @@
       "generated": "design_system/tokens/generated/css/semantic.css"
     },
     {
-      "name": "--ifx-duration-instant",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/motion.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-duration-fast",
       "owner": "global",
       "layer": "global",
@@ -2506,13 +2484,6 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-duration-slower",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/motion.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-ease-default",
       "owner": "global",
       "layer": "global",
@@ -2520,21 +2491,7 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-ease-in",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/motion.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-ease-out",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/motion.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-ease-in-out",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/motion.json",
@@ -2632,20 +2589,6 @@
       "generated": "design_system/tokens/generated/css/primitives.css"
     },
     {
-      "name": "--ifx-z-base",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/zindex.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-z-raised",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/zindex.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
       "name": "--ifx-z-dropdown",
       "owner": "global",
       "layer": "global",
@@ -2689,13 +2632,6 @@
     },
     {
       "name": "--ifx-z-toast",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/tokens/source/zindex.json",
-      "generated": "design_system/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-z-onboarding",
       "owner": "global",
       "layer": "global",
       "source": "design_system/tokens/source/zindex.json",
