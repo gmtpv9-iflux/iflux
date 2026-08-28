@@ -58,6 +58,19 @@
   color: var(--ifx-text-primary);
 }
 
+/* Dùng cho:
+ * - destructive action cần mức nhấn thấp hơn danger filled
+ */
+.ifx-btn-outline-danger {
+  background: transparent;
+  color: var(--ifx-danger);
+  border-color: var(--ifx-danger);
+}
+.ifx-btn-outline-danger:hover {
+  background: var(--ifx-danger-soft);
+  color: var(--ifx-danger);
+}
+
 .ifx-btn-ghost {
   background: transparent;
   color: var(--ifx-text-secondary);

@@ -3754,3 +3754,13 @@ Note: 0 selector Community refined; vẫn không cắt @import bundle
 .ix-content .ifx-input {
   font-size: var(--ifx-font-size-14);
 }
+
+/* Billing progress: Canonical Progress owns structure + sm size.
+   Accepted track wash is not --ifx-bg-input.
+   Accepted height is 6px (this page rem = 15px, so 4+2 rem computes 5.625). */
+.ix-content .ix-plan-card .ifx-progress {
+  background: rgba(105,108,255,.2);
+}
+.ix-content .ix-plan-card .ifx-progress-sm {
+  height: 6px;
+}

@@ -8,6 +8,13 @@
   border-radius: var(--ifx-radius-full);
   overflow: hidden;
 }
+/* Dùng cho:
+ * - progress bar compact trong card/table/dense UI
+ * 6px = existing --ifx-space-4 + --ifx-space-2 (no --ifx-space-6 on the 4pt scale).
+ */
+.ifx-progress-sm {
+  height: calc(var(--ifx-space-4) + var(--ifx-space-2));
+}
 .ifx-progress-lg { height: var(--ifx-space-12); }
 .ifx-progress-bar {
   display: block;

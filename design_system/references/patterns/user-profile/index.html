@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="../../../tokens/generated/css/themes/light.css" />
   <link rel="stylesheet" href="../../../primitives/button/button.css" />
   <link rel="stylesheet" href="../../../primitives/chip/chip.css" />
+  <link rel="stylesheet" href="../../../primitives/progress/progress.css" />
   <link rel="stylesheet" href="../../../primitives/alert/alert.css" />
   <link rel="stylesheet" href="../../../components/form/form.css" />
   <link rel="stylesheet" href="../../../components/card/card.css" />
@@ -74,7 +75,7 @@
                   <button type="button" class="ifx-btn ifx-btn-primary" style="flex:1;justify-content:flex-start">
                     <i class="ti ti-edit" style="font-size:13px"></i> Edit Profile
                   </button>
-                  <button class="ifx-btn ifx-btn-outline" style="color:var(--ix-danger);border-color:var(--ix-danger);flex:1;justify-content:flex-start" onclick="IfxToast.show('Account suspended','warning')">
+                  <button class="ifx-btn ifx-btn-outline-danger" style="flex:1;justify-content:flex-start" onclick="IfxToast.show('Account suspended','warning')">
                     Suspend
                   </button>
                 </div>
@@ -100,8 +101,8 @@
                   <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ix-text-muted);margin-bottom:6px">
                     <span>Billing cycle</span><span style="color:var(--ix-text-primary);font-weight:600">26 / 30 days</span>
                   </div>
-                  <div style="height:6px;background:rgba(105,108,255,.2);border-radius:3px;overflow:hidden">
-                    <div style="width:87%;height:100%;background:var(--ix-accent);border-radius:3px"></div>
+                  <div class="ifx-progress ifx-progress-sm" style="--ifx-progress-value: 87%">
+                    <span class="ifx-progress-bar"></span>
                   </div>
                   <div style="font-size:11px;color:var(--ix-text-muted);margin-top:4px">4 days remaining</div>
                 </div>
