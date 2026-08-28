@@ -1,6 +1,7 @@
 /* P6a User Profile — template isolation.
  * AppShell sidebar / navbar / notifications / theme-toggle JS removed.
- * Profile tabs, modal, copy-ref, toast, table search/paginate retained.
+ * Legacy Edit Profile modal removed.
+ * Profile tabs, copy-ref, toast, table search/paginate retained.
  */
 
 /* ===== SOURCE: Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js (AppShell trimmed) ===== */
@@ -396,16 +397,6 @@ document.querySelectorAll('.ix-perm-select-all').forEach(function (cb) {
 (function (global) {
   'use strict';
 
-  function openProfileModal(id) {
-    var el = document.getElementById(id);
-    if (el) el.classList.add('open');
-  }
-
-  function closeProfileModal(id) {
-    var el = document.getElementById(id);
-    if (el) el.classList.remove('open');
-  }
-
   function legacyCopyText(text, inputEl) {
     text = String(text || '');
     try {
@@ -478,25 +469,6 @@ document.querySelectorAll('.ix-perm-select-all').forEach(function (cb) {
       });
     });
 
-    scope.querySelectorAll('[data-ix-profile-modal-open]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        openProfileModal(btn.getAttribute('data-ix-profile-modal-open'));
-      });
-    });
-
-    scope.querySelectorAll('[data-ix-profile-modal-close]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-ix-profile-modal-close');
-        closeProfileModal(id || (btn.closest('[data-profile-modal]') && btn.closest('[data-profile-modal]').id));
-      });
-    });
-
-    scope.querySelectorAll('[data-profile-modal]').forEach(function (overlay) {
-      overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) closeProfileModal(overlay.id);
-      });
-    });
-
     scope.querySelectorAll('[data-ix-copy-ref]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         copyRef(btn.getAttribute('data-ix-copy-ref'));
@@ -515,8 +487,6 @@ document.querySelectorAll('.ix-perm-select-all').forEach(function (cb) {
 
   global.PatternUserProfile = {
     init: initProfile,
-    openModal: openProfileModal,
-    closeModal: closeProfileModal,
     copyRef: copyRef,
     copyText: copyText
   };
