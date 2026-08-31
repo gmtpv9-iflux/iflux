@@ -15,8 +15,9 @@ P1 và P2 bị gộp một commit — không `git revert 9ef3dff` được (sẽ
 | `1c0e3fa5abc6df6fd4ac844350ccb2f983230e60` | **Baseline trước mọi runtime Sub-02.** Message: Revert Form field anatomy / Drawer form surface. |
 | `9ef3dff05a0b8f4a3dac2a755ac53f6a3eb8d258` | First Sub-02 deploy — **P1 infra + P2 layout lẫn**. Không revert nguyên commit. |
 | `8ce57272511a6bf23e2475306fa4c9362cf47594` | P2 “theme fix” — overlay thêm (`entry.css`, `@import` ui.css, cache-bust). **Loại hết.** |
+| `a01ad9a26dcf33587f19a2b5a5abd926fb3bc288` | **Commit restore** — P2 delta = 0, P0/P1 giữ. |
 
-Trạng thái sạch = working tree runtime **= `1c0e3fa` + chỉ phần P0/P1** từ `9ef3dff`.
+Trạng thái sạch = runtime **= `1c0e3fa` + chỉ phần P0/P1** từ `9ef3dff`.
 
 ## 2. Cách restore (không code mới mô phỏng cũ)
 
