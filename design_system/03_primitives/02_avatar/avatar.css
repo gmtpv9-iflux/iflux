@@ -10,11 +10,10 @@
   overflow: hidden;
   border-radius: var(--ifx-radius-full);
   font-weight: var(--ifx-font-weight-semibold);
+}
+.ifx-avatar-md {
   width: var(--ifx-size-avatar-md);
   height: var(--ifx-size-avatar-md);
-  font-size: var(--ifx-font-size-sm);
-  background: var(--ifx-action-primary-soft);
-  color: var(--ifx-action-primary);
 }
 .ifx-avatar img {
   width: 100%;

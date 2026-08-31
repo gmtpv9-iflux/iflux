@@ -182,7 +182,6 @@ html.ifx-chat-host body {
 }
 .ifx-chat-message.is-sent .ifx-chat-meta { text-align: right; }
 .ifx-chat-receipt { color: var(--ifx-success); font-size: 12px; }
-.ifx-chat-message .ifx-avatar-sm { font-size: 11px; }
 
 .ifx-chat-input-bar {
   flex-shrink: 0;
