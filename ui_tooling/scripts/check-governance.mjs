@@ -136,9 +136,9 @@ if (missingCols.length) {
   process.exit(1);
 }
 
-const sandboxRoot = path.join(REPO, 'ui_tooling', 'sandbox');
-if (fs.existsSync(sandboxRoot)) {
-  for (const file of walk(sandboxRoot)) {
+const catalogRoot = path.join(REPO, 'ui_tooling', 'workbench');
+if (fs.existsSync(catalogRoot)) {
+  for (const file of walk(catalogRoot)) {
     const ext = path.extname(file);
     const raw = fs.readFileSync(file, 'utf8');
     if (ext === '.html') {
@@ -147,7 +147,7 @@ if (fs.existsSync(sandboxRoot)) {
       if (cls) violate(file, 'sandbox-dead-title', cls.join(' | '));
     }
     if (ext !== '.css') continue;
-    if (path.basename(file) === 'reference-layers.css') continue;
+    if (['reference-layers.css', 'workbench.css'].includes(path.basename(file))) continue;
     const css = stripComments(raw, '.css');
     if (/\.sb-(section-title|sub-title|section-desc|subtitle|title)(?![\w-])/.test(css)) {
       violate(file, 'sandbox-dead-title', 'selector .sb-*-title / .sb-section-desc');
@@ -160,11 +160,11 @@ if (fs.existsSync(sandboxRoot)) {
   }
 }
 if (violations.length > 0) {
-  console.error(`[check-governance] FAIL — ${violations.length} vi phạm sandbox:`);
+  console.error(`[check-governance] FAIL — ${violations.length} vi phạm catalog:`);
   for (const v of violations) console.error('  ✗ ' + v);
   process.exit(1);
 }
 
 execFileSync('node', [path.join(REPO, 'ui_tooling', 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
 
-console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid locked used spans · icons missing=0 · sandbox .ifx-* definition = 0 · sandbox dead title class = 0.');
+console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid locked used spans · icons missing=0 · catalog .ifx-* definition = 0 · catalog dead title class = 0.');

@@ -278,7 +278,7 @@ Không:
 * thêm token trùng responsibility đã có;
 * tạo folder/API chỉ để đủ kiến trúc;
 * chuyển business runtime vào Design System;
-* dùng Sandbox/Workbench làm production UI owner.
+* dùng Workbench làm production UI owner.
 
 ---
 

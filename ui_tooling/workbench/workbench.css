@@ -2,10 +2,9 @@
  * Design System Workbench — AppShell
  *
  * Existing owner: none in design_system (nav.css LOCK: no side-nav / top-bar).
- * Why cannot modify Foundation/nav/sandbox: those owners are layout atoms,
- * nav units, and module content. AppShell is the workbench platform layer.
+ * Why cannot modify Foundation/nav: those owners are layout atoms
+ * and nav units. AppShell is the workbench platform layer.
  * New responsibility: persistent shell + sidebar chrome + main/pattern host.
- * Removal: sandbox primary horizontal nav is no longer the shell.
  *
  * Does not own: Token contracts · Admin runtime · Pattern visual CSS.
  *

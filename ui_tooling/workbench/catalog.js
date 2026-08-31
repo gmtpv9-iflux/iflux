@@ -1,5 +1,5 @@
 /**
- * Sandbox shell — routing, theme, token render, playground iframe, icon list.
+ * Workbench catalog — token render, playground iframe, icon list.
  * Không điều khiển layout responsive bằng JS.
  */
 (function () {
@@ -53,7 +53,7 @@
   ];
 
   function ensureHref(href, kind) {
-    var url = new URL(href, SANDBOX_DIR).href;
+    var url = new URL(href, CATALOG_DIR).href;
     var sel = (kind === 'script' ? 'script' : 'link') + '[data-ifx-comp="' + href + '"]';
     if (doc.querySelector(sel)) return Promise.resolve();
     return new Promise(function (resolve) {
@@ -152,10 +152,10 @@
   }
 
   var doc = document;
-  var sandboxScript = doc.querySelector('script[src*="sandbox/assets/sandbox.js"]');
-  var SANDBOX_DIR = sandboxScript
-    ? new URL('../', sandboxScript.src)
-    : new URL('../sandbox/', doc.baseURI);
+  var catalogScript = doc.querySelector('script[src*="workbench/catalog.js"]');
+  var CATALOG_DIR = catalogScript
+    ? new URL('./', catalogScript.src)
+    : new URL('/ui_tooling/workbench/', doc.baseURI);
   var stage = doc.getElementById('sbStage');
   var selectedVp = 'auto';
   var selectedSpan = 6;
@@ -163,7 +163,7 @@
   var hosted = !!doc.getElementById('ifxAppshell');
 
   function sectionHref(id) {
-    return new URL('sections/' + id + '.html', SANDBOX_DIR).href;
+    return new URL('sections/' + id + '.html', CATALOG_DIR).href;
   }
 
   function params() {
@@ -491,10 +491,10 @@
       if (push === false) window.history.replaceState({ section: id, panel: panel }, '', url);
       else window.history.pushState({ section: id, panel: panel }, '', url);
     }
-    if (!stage) return Promise.reject(new Error('sandbox stage missing'));
+    if (!stage) return Promise.reject(new Error('catalog stage missing'));
     return fetch(sectionHref(id))
       .then(function (r) {
-        if (!r.ok) throw new Error('sandbox section ' + id + ' HTTP ' + r.status);
+        if (!r.ok) throw new Error('catalog section ' + id + ' HTTP ' + r.status);
         return r.text();
       })
       .then(function (html) {
@@ -525,7 +525,7 @@
     e.preventDefault();
     var panel = a.getAttribute('data-sb-goto');
     if (hosted) {
-      window.dispatchEvent(new CustomEvent('ifx-sandbox-panel', { detail: { panel: panel } }));
+      window.dispatchEvent(new CustomEvent('ifx-catalog-panel', { detail: { panel: panel } }));
       showPanel(panel);
       return;
     }
@@ -538,30 +538,10 @@
     if (selectedVp === 'auto') applyFrameSize();
   });
 
-  window.IfxSandbox = {
+  window.IfxCatalog = {
     bindStage: bindStage,
     render: function (id, panel) { return loadSection(id, false, panel || ''); },
     onTheme: onTheme,
     showPanel: showPanel
   };
-
-  if (!hosted) {
-    var navEl = doc.getElementById('sbNav');
-    if (navEl) {
-      navEl.addEventListener('click', function (e) {
-        var a = e.target.closest('[data-section]');
-        if (!a) return;
-        e.preventDefault();
-        loadSection(a.getAttribute('data-section'), true, '');
-      });
-    }
-    window.addEventListener('popstate', function () { loadSection(currentSection(), false, currentPanel()); });
-    var toggle = doc.getElementById('sbThemeToggle');
-    if (toggle) {
-      toggle.addEventListener('click', function () { window.IfxTheme.toggle(); });
-      window.addEventListener('ifx-theme-change', function (e) { onTheme(e.detail.theme); });
-      onTheme(window.IfxTheme.get());
-    }
-    loadSection(currentSection(), false);
-  }
 })();

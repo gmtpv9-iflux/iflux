@@ -41,7 +41,7 @@ jobs:
           if [ -d "$GITHUB_WORKSPACE/patterns" ]; then
             cp -a "$GITHUB_WORKSPACE/patterns" "$RELEASE_DIR/patterns"
           fi
-          # Theme boot + Workbench/Sandbox/scripts + Tabler (ngoài DS)
+          # Theme boot + Workbench/scripts + Tabler (ngoài DS)
           if [ -d "$GITHUB_WORKSPACE/adapters" ]; then
             cp -a "$GITHUB_WORKSPACE/adapters" "$RELEASE_DIR/adapters"
           fi

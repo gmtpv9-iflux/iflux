@@ -62,8 +62,7 @@ design_system/
 adapters/web/         ← theme boot, không định nghĩa màu
 vendor/tabler/        ← Tabler source (consume từ Foundation, không nằm trong DS)
 ui_tooling/
-├── sandbox/          ← acceptance surface của Design System
-├── workbench/        ← shared viewer (2 area ngang hàng)
+├── workbench/        ← viewer duy nhất (Design System catalog + Pattern iframe)
 └── scripts/          ← compiler / verify / governance
 
 patterns/
@@ -110,7 +109,7 @@ Design System **chỉ** chứa năm layer authority:
 - `04_components`
 - `05_widgets` **generic chrome**
 
-Ngoài `design_system/`: adapters (theme boot), `vendor/tabler/` (third-party), `ui_tooling/` (sandbox / workbench / scripts). Workbench **không** phải owner của Pattern.
+Ngoài `design_system/`: adapters (theme boot), `vendor/tabler/` (third-party), `ui_tooling/` (workbench / scripts). Workbench **không** phải owner của Pattern hay contract DS.
 
 Design System **không** chứa implementation cụ thể của:
 
@@ -207,9 +206,9 @@ Sau migrate: `design_system/patterns/` phải **trống và bị xóa**. Không 
 
 ---
 
-## 7. Sandbox
+## 7. Design System catalog (Workbench)
 
-Sandbox là acceptance surface **chỉ của Design System**.
+Catalog Design System sống trong Workbench (`ui_tooling/workbench/sections/`). Không còn Sandbox như app, route, hay tooling owner.
 
 **Giữ (primary):**
 
@@ -219,24 +218,24 @@ Sandbox là acceptance surface **chỉ của Design System**.
 - Components
 - Widgets
 
-Viewport playground thuộc Foundation. Theme toggle thuộc Workbench toolbar. Không còn section độc lập Visual / Contract.
+Viewport playground thuộc Foundation section. Theme toggle thuộc Workbench toolbar. Không còn section độc lập Visual / Contract.
 
-**Bỏ khỏi primary nav / catalog:**
+**Bỏ khỏi catalog:**
 
 - Patterns (compose demos của page/template)
 - References (wave notes)
 
-Page Header / Data List sau khi thành Component → demo trong Sandbox **Components**.
+Page Header / Data List sau khi thành Component → demo trong catalog **Components**.
 
 Auth / Chat / User Profile / Table List / … → **chỉ** Workbench area Patterns.
 
-Sandbox **không** mô phỏng Platform / Module / Page / specific Widget như trách nhiệm chính.
+Catalog **không** mô phỏng Platform / Module / Page / specific Widget như trách nhiệm chính.
 
 ---
 
 ## 8. `reference-layers.css` — Legacy Compatibility Debt
 
-File: `ui_tooling/sandbox/assets/reference-layers.css`
+File: `ui_tooling/workbench/reference-layers.css`
 
 Phân loại: **LEGACY COMPATIBILITY DEBT**.
 
@@ -290,7 +289,7 @@ Alias (normalize, không gãy bookmark):
 
 | Cũ | Canonical |
 |---|---|
-| `?module=sandbox&section=…` | `?area=design-system&section=…` |
+| `?module=sandbox&section=…` | `?area=design-system&section=…` (alias cũ, không còn app Sandbox) |
 | `?module=patterns&pattern=…` | `?area=patterns&pattern=…` |
 
 Semantic trên nav / title phải là **Design System** và **Patterns**, không còn “Sandbox là parent của Patterns”.
@@ -386,7 +385,7 @@ Pattern-local CSS được phép; không còn bắt map mọi residual vào 5 l�
 
 Hai set. Không verify Staging trước commit. Chi tiết phase: plan `31_ds_pattern_separation_plan.md`.
 
-**PRE-SHIP** (local → được commit / push): separation, README ×2, global pattern classified, workbench local, sandbox scope (Tokens / Foundation / Primitives / Components / Widgets — không Visual / Contract), `REFERENCE_LAYERS_FROZEN`, UP local, orphan = 0, cleanup chỉ xóa khi `LIVE_CONSUMER = 0`.
+**PRE-SHIP** (local → được commit / push): separation, README ×2, global pattern classified, workbench local, catalog scope (Tokens / Foundation / Primitives / Components / Widgets — không Visual / Contract), `REFERENCE_LAYERS_FROZEN`, UP local, orphan = 0, cleanup chỉ xóa khi `LIVE_CONSUMER = 0`.
 
 **POST-DEPLOY** (sau CI Staging): `/patterns/` resolve, 301 path cũ, `cp patterns/` có trên release, workbench + UP + pattern routes trên Staging.
 

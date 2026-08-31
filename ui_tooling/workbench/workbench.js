@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  var SANDBOX_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets'];
+  var CATALOG_SECTIONS = ['tokens', 'foundation', 'primitives', 'components', 'widgets'];
   var RETIRED_SECTIONS = ['patterns', 'references', 'visual', 'contract'];
   var PATTERNS = {
     auth: 'Auth',
@@ -63,7 +63,7 @@
       if (module === 'patterns' || q.get('pattern')) area = 'patterns';
       else area = 'design-system';
     }
-    if (area === 'sandbox' || area === 'ds') area = 'design-system';
+    if (area === 'ds') area = 'design-system';
     if (area !== 'design-system' && area !== 'patterns') area = 'design-system';
     return area;
   }
@@ -74,7 +74,7 @@
     var section = q.get('section');
     var pattern = q.get('pattern') || '';
     if (RETIRED_SECTIONS.indexOf(section) !== -1) section = 'components';
-    if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
+    if (CATALOG_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
     if (area === 'patterns' && !pattern) pattern = 'auth';
     var state = q.get('state') || '';
@@ -85,7 +85,7 @@
     }
     return {
       area: area,
-      module: area === 'patterns' ? 'patterns' : 'sandbox',
+      module: area === 'patterns' ? 'patterns' : 'catalog',
       section: section,
       panel: q.get('panel') || '',
       pattern: pattern,
@@ -170,7 +170,7 @@
     }
   }
 
-  function ensureSandboxStage() {
+  function ensureCatalogStage() {
     host.classList.remove('is-pattern');
     var stage = host.querySelector('#sbStage');
     if (!stage) {
@@ -180,7 +180,7 @@
       stage.className = 'sb-stage ifx-stack-lg';
       host.appendChild(stage);
     }
-    if (window.IfxSandbox) window.IfxSandbox.bindStage(stage);
+    if (window.IfxCatalog) window.IfxCatalog.bindStage(stage);
     return stage;
   }
 
@@ -215,9 +215,9 @@
       return mountPattern(route.pattern, route.state);
     }
     patternFrame = null;
-    ensureSandboxStage();
-    if (!window.IfxSandbox) return Promise.reject(new Error('IfxSandbox missing'));
-    return window.IfxSandbox.render(route.section, route.panel);
+    ensureCatalogStage();
+    if (!window.IfxCatalog) return Promise.reject(new Error('IfxCatalog missing'));
+    return window.IfxCatalog.render(route.section, route.panel);
   }
 
   function routeFromHref(href) {
@@ -227,7 +227,7 @@
     var section = q.get('section');
     var pattern = q.get('pattern') || '';
     if (RETIRED_SECTIONS.indexOf(section) !== -1) section = 'components';
-    if (SANDBOX_SECTIONS.indexOf(section) === -1) section = 'foundation';
+    if (CATALOG_SECTIONS.indexOf(section) === -1) section = 'foundation';
     if (pattern && !PATTERNS[pattern]) pattern = '';
     if (area === 'patterns' && !pattern) pattern = 'auth';
     var state = q.get('state') || '';
@@ -238,7 +238,7 @@
     }
     return {
       area: area,
-      module: area === 'patterns' ? 'patterns' : 'sandbox',
+      module: area === 'patterns' ? 'patterns' : 'catalog',
       section: section,
       panel: q.get('panel') || '',
       pattern: pattern,
@@ -256,10 +256,10 @@
 
   function navigate(partial, push) {
     var cur = readRoute();
-    var area = partial.area || (partial.module === 'patterns' ? 'patterns' : (partial.module === 'sandbox' ? 'design-system' : cur.area));
+    var area = partial.area || (partial.module === 'patterns' ? 'patterns' : cur.area);
     var next = {
       area: area,
-      module: area === 'patterns' ? 'patterns' : 'sandbox',
+      module: area === 'patterns' ? 'patterns' : 'catalog',
       section: cur.section,
       panel: '',
       pattern: ''
@@ -324,10 +324,10 @@
     applyRoute(readRoute(), false);
   });
 
-  window.addEventListener('ifx-sandbox-panel', function (e) {
+  window.addEventListener('ifx-catalog-panel', function (e) {
     var next = {
       area: 'design-system',
-      module: 'sandbox',
+      module: 'catalog',
       section: readRoute().section,
       panel: e.detail.panel || '',
       pattern: ''
@@ -351,7 +351,7 @@
   function syncTheme(theme) {
     themeBtn.textContent = 'Theme: ' + (theme === 'light' ? 'Light' : 'Dark');
     postThemeToFrame();
-    if (window.IfxSandbox) window.IfxSandbox.onTheme(theme);
+    if (window.IfxCatalog) window.IfxCatalog.onTheme(theme);
   }
   themeBtn.addEventListener('click', function () { window.IfxTheme.toggle(); });
   window.addEventListener('ifx-theme-change', function (e) { syncTheme(e.detail.theme); });
