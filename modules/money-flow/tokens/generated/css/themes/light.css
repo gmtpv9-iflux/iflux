@@ -2,7 +2,7 @@
  * Canonical iFlux Design System — readonly artifact.
  * Source: modules/money-flow/tokens/source/{flow.json}
  * owner : module-money-flow
- * Build : node design_system/scripts/build-tokens.mjs
+ * Build : node ui_tooling/scripts/build-tokens.mjs
  */
 [data-theme="light"] {
   color-scheme: light;

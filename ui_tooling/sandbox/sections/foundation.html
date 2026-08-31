@@ -1,0 +1,211 @@
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Foundation groups">
+  <a class="ifx-tab" href="?section=foundation&amp;panel=responsive" data-sb-goto="responsive">Responsive</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=grid" data-sb-goto="grid">Grid</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=container" data-sb-goto="container">Container</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=spacing" data-sb-goto="spacing">Spacing / Layout</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=typography" data-sb-goto="typography">Typography</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=icons" data-sb-goto="icons">Icons</a>
+  <a class="ifx-tab" href="?section=foundation&amp;panel=theme" data-sb-goto="theme">Theme</a>
+</nav>
+
+<div class="sb-panel" data-sb-panel="responsive">
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Responsive Playground</h2>
+      <p>Hai input độc lập trên một preview iframe. JS chỉ đổi class/viewport và đọc computed — không set width giả CSS.</p>
+    </div>
+    <p class="sb-kicker">A. Viewport</p>
+    <div class="sb-vp-bar" id="pgVpBar" role="toolbar" aria-label="Viewport">
+      <button type="button" class="sb-vp-btn is-active" data-vp="auto">AUTO</button>
+      <button type="button" class="sb-vp-btn" data-vp="360">360</button>
+      <button type="button" class="sb-vp-btn" data-vp="480">480</button>
+      <button type="button" class="sb-vp-btn" data-vp="768">768</button>
+      <button type="button" class="sb-vp-btn" data-vp="1024">1024</button>
+      <button type="button" class="sb-vp-btn" data-vp="1280">1280</button>
+      <button type="button" class="sb-vp-btn" data-vp="1440">1440</button>
+    </div>
+    <div class="sb-pg-status">
+      <div class="sb-pg-status-item"><span class="sb-kicker">Logical viewport</span><span id="pgSelected">AUTO</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Actual preview width</span><span id="pgActual">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Active breakpoint</span><span id="pgActiveBp">—</span></div>
+    </div>
+    <div class="sb-pg-markers" id="pgMarkers">
+      <div class="sb-pg-marker" data-bp="base"><strong>BASE</strong><span>&lt; 480</span></div>
+      <div class="sb-pg-marker" data-bp="sm"><strong>sm</strong><span>≥ 480</span></div>
+      <div class="sb-pg-marker" data-bp="md"><strong>md</strong><span>≥ 768</span></div>
+      <div class="sb-pg-marker" data-bp="lg"><strong>lg</strong><span>≥ 1024</span></div>
+      <div class="sb-pg-marker" data-bp="xl"><strong>xl</strong><span>≥ 1280</span></div>
+      <div class="sb-pg-marker" data-bp="2xl"><strong>2xl</strong><span>≥ 1440</span></div>
+    </div>
+    <p class="sb-kicker">B. Grid span</p>
+    <div class="sb-vp-bar" id="pgSpanBar" role="toolbar" aria-label="Column span">
+      <button type="button" class="sb-vp-btn" data-span="1">1/12</button>
+      <button type="button" class="sb-vp-btn" data-span="2">2/12</button>
+      <button type="button" class="sb-vp-btn" data-span="3">3/12</button>
+      <button type="button" class="sb-vp-btn" data-span="4">4/12</button>
+      <button type="button" class="sb-vp-btn is-active" data-span="6">6/12</button>
+      <button type="button" class="sb-vp-btn" data-span="12">12/12</button>
+    </div>
+    <div class="sb-pg-status">
+      <div class="sb-pg-status-item"><span class="sb-kicker">Viewport</span><span id="pgBoxVp">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Gutter L / R</span><span id="pgBoxGutter">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Usable / content</span><span id="pgBoxContent">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Content / viewport</span><span id="pgBoxRatio">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Expected span</span><span id="pgBoxSpan">6/12 = 50%</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Actual span width</span><span id="pgBoxSpanPx">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">container-max outer</span><span id="pgBoxMaxOuter">—</span></div>
+      <div class="sb-pg-status-item"><span class="sb-kicker">Outer margin</span><span id="pgBoxMaxMargin">—</span></div>
+    </div>
+    <div class="sb-frame-host" id="pgHost">
+      <div class="sb-frame-scale" id="pgScale">
+        <iframe id="pgFrame" title="Responsive playground preview" src="/ui_tooling/sandbox/playground/preview.html" scrolling="no"></iframe>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="grid" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Grid 12 cột</h2>
+      <p>BASE mỗi cell span 12. Mở rộng bằng <code>.ifx-col-{n}</code> và <code>.ifx-col-md-*</code>.</p>
+    </div>
+    <div class="ifx-grid">
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
+      <div class="ifx-col-12 ifx-col-md-4 sb-pg-cell">4</div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="container" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Container</h2>
+      <p><code>.ifx-container</code> full + gutter token. <code>.ifx-container-max</code> opt-in 1280.</p>
+    </div>
+    <div class="ifx-container sb-pg-gutter-viz">
+      <div class="sb-pg-content-fill">.ifx-container</div>
+    </div>
+    <div class="ifx-container ifx-container-max sb-pg-gutter-viz">
+      <div class="sb-pg-content-fill">.ifx-container.ifx-container-max</div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="spacing" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Stack / Inline</h2>
+      <p>Global layout primitives. Stack = sibling rhythm. Inline = inline-flex + center + semantic gap.</p>
+    </div>
+    <div class="ifx-stack-sm">
+      <div>stack-sm A</div>
+      <div>stack-sm B</div>
+    </div>
+    <div class="ifx-stack-md">
+      <div>stack-md A</div>
+      <div>stack-md B</div>
+    </div>
+    <div class="ifx-stack-lg">
+      <div>stack-lg A</div>
+      <div>stack-lg B</div>
+    </div>
+    <div class="ifx-stack-xl">
+      <div>stack-xl A</div>
+      <div>stack-xl B</div>
+    </div>
+    <div class="ifx-widget-title">
+      <h3>Inline</h3>
+    </div>
+    <div class="ifx-stack-sm">
+      <div class="ifx-inline-xs"><span>inline-xs</span><span>A</span><span>B</span></div>
+      <div class="ifx-inline-sm"><span>inline-sm</span><span>A</span><span>B</span></div>
+      <div class="ifx-inline-md"><span>inline-md</span><span>A</span><span>B</span></div>
+    </div>
+    <div class="ifx-widget-title">
+      <h3>Gap</h3>
+    </div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-xs"><span>gap-xs</span><span>A</span><span>B</span></div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-sm"><span>gap-sm</span><span>A</span><span>B</span></div>
+    <div class="ifx-flex ifx-flex-wrap ifx-gap-md"><span>gap-md</span><span>A</span><span>B</span></div>
+    <div class="ifx-widget-title">
+      <h3>Stack → row (layout.css)</h3>
+    </div>
+    <div class="ifx-flex-col ifx-flex-row-md sb-pg-abc">
+      <div class="sb-pg-cell ifx-flex-1">A</div>
+      <div class="sb-pg-cell ifx-flex-1">B</div>
+      <div class="sb-pg-cell ifx-flex-1">C</div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="typography" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Typography</h2>
+      <p>Foundation = document + semantic HTML + heading/body/caption tokens. Button tokens tạm nằm đây vì Button đang consume.</p>
+    </div>
+
+    <div class="ifx-widget-title">
+      <h3>Semantic HTML</h3>
+    </div>
+    <div class="sb-typo-sample">
+      <h1>h1 — Tiêu đề trang</h1>
+      <h2>h2 — Nhóm nội dung</h2>
+      <h3>h3 — Mục</h3>
+      <h4>h4 — Mục con</h4>
+      <h5>h5 — Nhãn phụ</h5>
+      <h6>h6 — Nhỏ nhất</h6>
+      <p>Đoạn <strong>strong</strong>, <em>em</em>, <a href="?section=foundation&amp;panel=typography">a — link</a> (reset.css), <small>small</small>.</p>
+      <blockquote>Blockquote — trích dẫn generic.</blockquote>
+      <ul><li>Danh sách không thứ tự</li><li>Mục hai</li></ul>
+      <ol><li>Danh sách có thứ tự</li><li>Mục hai</li></ol>
+      <p>Inline <code>code</code></p>
+      <pre>pre — khối mã generic</pre>
+      <figure>
+        <figcaption>figcaption — chú thích hình</figcaption>
+      </figure>
+      <table>
+        <caption>caption — chú thích bảng</caption>
+        <tbody><tr><td>ô demo</td></tr></tbody>
+      </table>
+    </div>
+
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="icons" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Icon Catalog</h2>
+      <p>Source: <strong id="iconSourceCount">—</strong> · Canonical: <strong id="iconCanonCount">—</strong> · Missing: <strong id="iconMissing">—</strong></p>
+    </div>
+    <p class="sb-kicker">Size</p>
+    <div class="ifx-flex ifx-items-center ifx-gap-md">
+      <i class="ti ti-star ifx-icon ifx-icon-sm" aria-hidden="true"></i>
+      <i class="ti ti-star ifx-icon" aria-hidden="true"></i>
+      <i class="ti ti-star ifx-icon ifx-icon-lg" aria-hidden="true"></i>
+    </div>
+    <div class="sb-icon-toolbar">
+      <input type="search" id="iconSearch" class="sb-icon-search" placeholder="Tìm icon" autocomplete="off">
+      <span id="iconPageInfo">—</span>
+    </div>
+    <div class="sb-icon-grid" id="iconGrid"></div>
+    <div class="sb-icon-pager">
+      <button type="button" class="sb-vp-btn" id="iconPrev">Trước</button>
+      <button type="button" class="sb-vp-btn" id="iconNext">Sau</button>
+    </div>
+    <p id="iconDetail">Bấm một icon để xem class.</p>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="theme" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Theme</h2>
+      <p>Nút Theme trên header gọi <code>IfxTheme.toggle()</code>. Key <code>ifx-theme</code>. Foundation không biết DOM.</p>
+    </div>
+    <p>Theme hiện tại đổi toàn catalog. Không logic theme local.</p>
+  </section>
+</div>

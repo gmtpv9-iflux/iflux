@@ -2,7 +2,7 @@
  * Canonical iFlux Design System — readonly artifact.
  * Source: modules/market/tokens/source/{market.json}
  * owner : module-market
- * Build : node design_system/scripts/build-tokens.mjs
+ * Build : node ui_tooling/scripts/build-tokens.mjs
  */
 :root {
   /* ── market · color ── */

@@ -129,7 +129,7 @@ Không dùng `!important`, specificity escalation hoặc redefine `.ifx-*` nếu
 Pattern cũ có thể còn phụ thuộc:
 
 ```text
-design_system/sandbox/assets/reference-layers.css
+ui_tooling/sandbox/assets/reference-layers.css
 ```
 
 Đây là debt tạm thời.

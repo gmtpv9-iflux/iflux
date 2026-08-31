@@ -1,0 +1,237 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: design_system/01_tokens/01_source/{color.json, typography.json, spacing.json, radius.json, shadow.json, motion.json, size.json, zindex.json}
+ * Build : node ui_tooling/scripts/build-tokens.mjs
+ */
+:root {
+  /* ── color · color ── */
+  --ifx-color-navy-50: #eef1fa;
+  --ifx-color-navy-100: #d5dcf2;
+  --ifx-color-navy-200: #aab8e5;
+  --ifx-color-navy-300: #7f94d8;
+  --ifx-color-navy-400: #5470cb;
+  --ifx-color-navy-500: #3a56b5;
+  --ifx-color-navy-600: #1b3587;
+  --ifx-color-navy-700: #152a6b;
+  --ifx-color-navy-800: #0f1f50;
+  --ifx-color-navy-900: #0a1438;
+  --ifx-color-orange-50: #fff4ed;
+  --ifx-color-orange-100: #ffe4d1;
+  --ifx-color-orange-200: #ffc9a3;
+  --ifx-color-orange-300: #ffa96f;
+  --ifx-color-orange-400: #ff8840;
+  --ifx-color-orange-500: #f26522;
+  --ifx-color-orange-600: #d95518;
+  --ifx-color-orange-700: #b34412;
+  --ifx-color-orange-800: #8c350e;
+  --ifx-color-orange-900: #662709;
+  --ifx-color-green-400: #33b894;
+  --ifx-color-green-500: #00a67e;
+  --ifx-color-green-600: #008566;
+  --ifx-color-red-400: #ef5a6f;
+  --ifx-color-red-450: #ff3e1d;
+  --ifx-color-red-500: #e8304a;
+  --ifx-color-red-600: #c4243b;
+  --ifx-color-amber-400: #fcd34d;
+  --ifx-color-amber-500: #fbbf24;
+  --ifx-color-amber-550: #ffab00;
+  --ifx-color-amber-600: #d97706;
+  --ifx-color-cyan-400: #38d9f5;
+  --ifx-color-cyan-500: #03c3ec;
+  --ifx-color-cyan-600: #0299b8;
+  --ifx-color-purple-500: #a855f7;
+  --ifx-color-violet-400: #8592ff;
+  --ifx-color-violet-500: #696cff;
+  --ifx-color-violet-600: #5f61e6;
+  --ifx-color-lime-500: #71dd37;
+  --ifx-color-slate-50: #f5f5f9;
+  --ifx-color-slate-100: #ececf1;
+  --ifx-color-slate-200: #cfd3ec;
+  --ifx-color-slate-300: #a1acb8;
+  --ifx-color-slate-400: #8592a3;
+  --ifx-color-slate-500: #697a8d;
+  --ifx-color-slate-600: #5f6582;
+  --ifx-color-slate-700: #3a3b55;
+  --ifx-color-slate-800: #2b2c40;
+  --ifx-color-slate-850: #232333;
+  --ifx-color-slate-900: #1e1e2d;
+  --ifx-color-slate-950: #16161f;
+  --ifx-color-white: #ffffff;
+
+  /* ── color · alpha ── */
+  --ifx-alpha-white-4: rgba(255, 255, 255, 0.04);
+  --ifx-alpha-white-8: rgba(255, 255, 255, 0.08);
+  --ifx-alpha-white-12: rgba(255, 255, 255, 0.12);
+  --ifx-alpha-white-16: rgba(255, 255, 255, 0.16);
+  --ifx-alpha-white-20: rgba(207, 211, 236, 0.2);
+  --ifx-alpha-black-4: rgba(0, 0, 0, 0.04);
+  --ifx-alpha-black-8: rgba(0, 0, 0, 0.08);
+  --ifx-alpha-black-12: rgba(0, 0, 0, 0.12);
+  --ifx-alpha-black-16: rgba(0, 0, 0, 0.16);
+  --ifx-alpha-black-45: rgba(0, 0, 0, 0.45);
+  --ifx-alpha-black-60: rgba(0, 0, 0, 0.60);
+  --ifx-alpha-violet-16: rgba(105, 108, 255, 0.16);
+  --ifx-alpha-lime-16: rgba(113, 221, 55, 0.16);
+  --ifx-alpha-amber-16: rgba(255, 171, 0, 0.16);
+  --ifx-alpha-red-16: rgba(255, 62, 29, 0.16);
+  --ifx-alpha-cyan-16: rgba(3, 195, 236, 0.16);
+  --ifx-alpha-purple-10: rgba(168, 85, 247, 0.10);
+  --ifx-alpha-orange-35: rgba(242, 101, 34, 0.35);
+  --ifx-alpha-orange-14: rgba(242, 101, 34, 0.14);
+  --ifx-alpha-orange-8: rgba(242, 101, 34, 0.08);
+  --ifx-alpha-orange-45: rgba(242, 101, 34, 0.45);
+  --ifx-alpha-red-35: rgba(255, 76, 81, 0.35);
+  --ifx-alpha-red-12: rgba(255, 76, 81, 0.12);
+  --ifx-alpha-green-500-50: rgba(0, 166, 126, 0.50);
+  --ifx-alpha-green-500-45: rgba(0, 166, 126, 0.45);
+  --ifx-alpha-green-500-25: rgba(0, 166, 126, 0.25);
+  --ifx-alpha-green-500-22: rgba(0, 166, 126, 0.22);
+  --ifx-alpha-green-500-12: rgba(0, 166, 126, 0.12);
+  --ifx-alpha-red-500-45: rgba(232, 48, 74, 0.45);
+  --ifx-alpha-red-500-25: rgba(232, 48, 74, 0.25);
+  --ifx-alpha-red-500-22: rgba(232, 48, 74, 0.22);
+  --ifx-alpha-red-500-12: rgba(232, 48, 74, 0.12);
+  --ifx-alpha-red-500-10: rgba(232, 48, 74, 0.10);
+  --ifx-alpha-violet-500-4: rgba(105, 108, 255, 0.04);
+  --ifx-alpha-violet-500-6: rgba(105, 108, 255, 0.06);
+  --ifx-alpha-violet-500-3: rgba(105, 108, 255, 0.03);
+  --ifx-alpha-violet-500-12: rgba(105, 108, 255, 0.12);
+  --ifx-alpha-amber-550-12: rgba(255, 171, 0, 0.12);
+  --ifx-alpha-muted-12: rgba(133, 146, 163, 0.12);
+  --ifx-alpha-shell-55: rgba(15, 17, 28, 0.55);
+
+  /* ── typography · font ── */
+  --ifx-font-primary: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifx-font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace;
+  --ifx-font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+  --ifx-font-system: system-ui, sans-serif;
+  --ifx-font-numeric: var(--ifx-font-primary);
+  --ifx-font-weight-extralight: 200;
+  --ifx-font-weight-regular: 400;
+  --ifx-font-weight-semibold: 600;
+  --ifx-font-weight-extrabold: 800;
+  --ifx-font-weight-thin: 200;
+  --ifx-font-weight-light: 400;
+  --ifx-font-weight-medium: 600;
+  --ifx-font-weight-bold: 800;
+  --ifx-font-weight-black: 800;
+  --ifx-font-size-10: var(--ifx-font-size-2xs);
+  --ifx-font-size-12: var(--ifx-font-size-xs);
+  --ifx-font-size-14: 0.875rem;
+  --ifx-font-size-16: var(--ifx-font-size-lg);
+  --ifx-font-size-18: var(--ifx-font-size-xl);
+  --ifx-font-size-20: 1.25rem;
+  --ifx-font-size-24: var(--ifx-font-size-2xl);
+  --ifx-font-size-28: 1.75rem;
+  --ifx-font-size-32: var(--ifx-font-size-3xl);
+  --ifx-font-size-40: 2.5rem;
+  --ifx-font-size-48: var(--ifx-font-size-4xl);
+  --ifx-font-size-56: 3.5rem;
+  --ifx-font-size-64: var(--ifx-font-size-5xl);
+  --ifx-font-size-72: 4.5rem;
+  --ifx-font-size-2xs: 0.625rem;
+  --ifx-font-size-xs: 0.75rem;
+  --ifx-font-size-sm: 0.8125rem;
+  --ifx-font-size-md: 0.9375rem;
+  --ifx-font-size-lg: 1rem;
+  --ifx-font-size-xl: 1.125rem;
+  --ifx-font-size-2xl: 1.25rem;
+  --ifx-font-size-3xl: 1.5rem;
+  --ifx-font-size-4xl: 1.875rem;
+  --ifx-font-size-5xl: 2.25rem;
+
+  /* ── typography · line-height ── */
+  --ifx-line-height-10: 0.875rem;
+  --ifx-line-height-12: 1rem;
+  --ifx-line-height-14: 1.25rem;
+  --ifx-line-height-16: 1.5rem;
+  --ifx-line-height-18: 1.75rem;
+  --ifx-line-height-20: 1.875rem;
+  --ifx-line-height-24: 2.25rem;
+  --ifx-line-height-28: 2.625rem;
+  --ifx-line-height-32: 2.75rem;
+  --ifx-line-height-40: 3.25rem;
+  --ifx-line-height-48: 3.5rem;
+  --ifx-line-height-56: 4rem;
+  --ifx-line-height-64: 4.5rem;
+  --ifx-line-height-72: 5rem;
+  --ifx-line-height-tight: 1.25;
+  --ifx-line-height-normal: 1.5;
+  --ifx-line-height-relaxed: 1.625;
+  --ifx-line-height-loose: 1.75;
+
+  /* ── typography · letter-spacing ── */
+  --ifx-letter-spacing-tighter: -0.04em;
+  --ifx-letter-spacing-tight: -0.02em;
+  --ifx-letter-spacing-normal: 0;
+  --ifx-letter-spacing-wide: 0.04em;
+  --ifx-letter-spacing-wider: 0.06em;
+  --ifx-letter-spacing-caps: 0.08em;
+
+  /* ── spacing · space ── */
+  --ifx-space-0: 0;
+  --ifx-space-2: 0.125rem;
+  --ifx-space-4: 0.25rem;
+  --ifx-space-8: 0.5rem;
+  --ifx-space-12: 0.75rem;
+  --ifx-space-16: 1rem;
+  --ifx-space-20: 1.25rem;
+  --ifx-space-24: 1.5rem;
+  --ifx-space-32: 2rem;
+  --ifx-space-40: 2.5rem;
+  --ifx-space-48: 3rem;
+  --ifx-space-56: 3.5rem;
+  --ifx-space-64: 4rem;
+  --ifx-space-80: 5rem;
+  --ifx-space-96: 6rem;
+  --ifx-space-128: 8rem;
+  --ifx-space-160: 10rem;
+  --ifx-space-192: 12rem;
+  --ifx-space-256: 16rem;
+  --ifx-space-unit: 4px;
+
+  /* ── radius · radius ── */
+  --ifx-radius-xs: 2px;
+  --ifx-radius-sm: 4px;
+  --ifx-radius-md: 6px;
+  --ifx-radius-lg: 8px;
+  --ifx-radius-xl: 12px;
+  --ifx-radius-2xl: 16px;
+  --ifx-radius-full: 9999px;
+
+  /* ── shadow · shadow ── */
+  --ifx-shadow-xs: 0 1px 2px var(--ifx-alpha-black-8);
+  --ifx-shadow-sm: 0 2px 6px var(--ifx-alpha-black-8);
+  --ifx-shadow-md: 0 4px 16px var(--ifx-alpha-black-12);
+  --ifx-shadow-lg: 0 8px 24px var(--ifx-alpha-black-16);
+  --ifx-shadow-xl: 0 12px 32px var(--ifx-alpha-black-16);
+
+  /* ── motion · duration ── */
+  --ifx-duration-fast: 100ms;
+  --ifx-duration-normal: 200ms;
+  --ifx-duration-slow: 300ms;
+
+  /* ── motion · ease ── */
+  --ifx-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ifx-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ── size · size ── */
+  --ifx-size-touch-target: 44px;
+  --ifx-size-icon-sm: 16px;
+  --ifx-size-icon-md: 20px;
+  --ifx-size-icon-lg: 24px;
+  --ifx-size-avatar-sm: 28px;
+  --ifx-size-avatar-md: 36px;
+  --ifx-size-avatar-lg: 48px;
+  --ifx-size-nav-drawer-w: 300px;
+  --ifx-size-container-max: 1280px;
+
+  /* ── zindex · z ── */
+  --ifx-z-dropdown: 100;
+  --ifx-z-sticky: 200;
+  --ifx-z-topnav: 220;
+  --ifx-z-drawer: 230;
+  --ifx-z-overlay: 240;
+  --ifx-z-modal: 300;
+  --ifx-z-toast: 400;
+}

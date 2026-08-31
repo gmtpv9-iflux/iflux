@@ -20,7 +20,7 @@ Tách rõ **hai hệ độc lập, ngang hàng**:
 
 Hai hệ **không** có quan hệ cha–con.
 
-Workbench là **một viewer dùng chung**. Việc Workbench đang nằm trong `design_system/workbench/` **không** suy ra Pattern thuộc Design System.
+Workbench là **một viewer dùng chung** tại `ui_tooling/workbench/`. Việc Workbench nằm ngoài `design_system/` **không** đổi quan hệ hai hệ ngang hàng.
 
 ---
 
@@ -48,18 +48,23 @@ Specific widget (WGT-MKT-001, Market Overview, News Card, Money Flow, …) **kh�
 
 ## 2. Cấu trúc đích
 
+`design_system/` chỉ chứa UI authority do **iFlux sở hữu**. Numbering full subfolder. Third-party source **không** là Design Authority.
+
 ```
 design_system/
 ├── README.md
-├── tokens/
-├── foundation/
-├── primitives/
-├── components/
-├── widgets/          ← generic chrome only; chưa có contract thì README scope
-├── adapters/
+├── 01_tokens/
+├── 02_foundation/
+├── 03_primitives/
+├── 04_components/
+└── 05_widgets/       ← generic chrome only; chưa có contract thì README scope
+
+adapters/web/         ← theme boot, không định nghĩa màu
+vendor/tabler/        ← Tabler source (consume từ Foundation, không nằm trong DS)
+ui_tooling/
 ├── sandbox/          ← acceptance surface của Design System
 ├── workbench/        ← shared viewer (2 area ngang hàng)
-└── scripts/
+└── scripts/          ← compiler / verify / governance
 
 patterns/
 ├── README.md
@@ -80,37 +85,38 @@ patterns/
 
 - `design_system/patterns/` với nghĩa Global Pattern layer
 - `design_system/references/patterns/` làm destination Pattern
+- `design_system/index.html` — xóa. Redirect `/design_system/` = nginx/router ngoài DS → `/ui_tooling/workbench/`
+- Third-party bên trong `design_system/` (kể cả `02_foundation/02_icons/01_vendor/`)
 
-**Không tạo ở task migration này:**
+**Không tạo:**
 
 | Path | Trạng thái |
 |---|---|
 | `design_system/manifests/` | **OPTIONAL / NOT ESTABLISHED** — chỉ tạo khi có requirement machine-readable registry thật. Cấm folder rỗng. |
 | `patterns/widgets/` | **RESERVED** — chỉ tạo khi có specific widget template đầu tiên. |
+| `design_system/02_foundation/02_icons/01_vendor/` | **CẤM** — Tabler = `/vendor/tabler/` |
 
-`design_system/index.html` (redirect vào Workbench) được giữ. Không đổi nghĩa kiến trúc.
+`02_foundation/02_icons/icons.css` = contract iFlux (`.ifx-icon*`). Foundation consume Tabler từ `/vendor/tabler/`.
 
 ---
 
 ## 3. Design System — phạm vi
 
-Design System **chỉ** chứa:
+Design System **chỉ** chứa năm layer authority:
 
-- Tokens
-- Foundation
-- Primitives
-- Components
-- Widgets **generic chrome**
-- Adapters
-- Sandbox (acceptance của DS)
-- Workbench (viewer; không phải owner của Pattern)
-- Scripts
+- `01_tokens`
+- `02_foundation`
+- `03_primitives`
+- `04_components`
+- `05_widgets` **generic chrome**
+
+Ngoài `design_system/`: adapters (theme boot), `vendor/tabler/` (third-party), `ui_tooling/` (sandbox / workbench / scripts). Workbench **không** phải owner của Pattern.
 
 Design System **không** chứa implementation cụ thể của:
 
 - Auth
 - User Profile
-- Chat (page / 3-pane template)
+- Chat **page / template** (capability Chat reusable thuộc `04_components/05_chat`)
 - Order List / Table List
 - specific market widget
 - specific page / template
@@ -230,7 +236,7 @@ Sandbox **không** mô phỏng Platform / Module / Page / specific Widget như t
 
 ## 8. `reference-layers.css` — Legacy Compatibility Debt
 
-File: `design_system/sandbox/assets/reference-layers.css`
+File: `ui_tooling/sandbox/assets/reference-layers.css`
 
 Phân loại: **LEGACY COMPATIBILITY DEBT**.
 
@@ -354,8 +360,9 @@ Process rebuild (không thuộc SoT execution này):
 
 `patterns/` là root ngang hàng trên **repo và web root**.
 
-Staging (và mọi môi trường serve Workbench) phải copy `patterns/` ra release.  
-Nginx `location /` + `try_files` đã đủ để `/patterns/` resolve **nếu** file có trên web root.
+Staging (và mọi môi trường serve Workbench) phải copy `patterns/`, `design_system/`, `adapters/`, `ui_tooling/`, `vendor/` ra release.  
+Nginx `location /` + `try_files` đã đủ để các path đó resolve **nếu** file có trên web root.  
+`/design_system/` và `/design_system` (không file) → `/ui_tooling/workbench/`.
 
 URL cũ `/design_system/references/patterns/…` phải redirect hoặc hết consumer. Không để orphan.
 

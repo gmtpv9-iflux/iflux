@@ -41,6 +41,16 @@ jobs:
           if [ -d "$GITHUB_WORKSPACE/patterns" ]; then
             cp -a "$GITHUB_WORKSPACE/patterns" "$RELEASE_DIR/patterns"
           fi
+          # Theme boot + Workbench/Sandbox/scripts + Tabler (ngoài DS)
+          if [ -d "$GITHUB_WORKSPACE/adapters" ]; then
+            cp -a "$GITHUB_WORKSPACE/adapters" "$RELEASE_DIR/adapters"
+          fi
+          if [ -d "$GITHUB_WORKSPACE/ui_tooling" ]; then
+            cp -a "$GITHUB_WORKSPACE/ui_tooling" "$RELEASE_DIR/ui_tooling"
+          fi
+          if [ -d "$GITHUB_WORKSPACE/vendor" ]; then
+            cp -a "$GITHUB_WORKSPACE/vendor" "$RELEASE_DIR/vendor"
+          fi
 
       - name: Build backend release (atomic)
         run: |

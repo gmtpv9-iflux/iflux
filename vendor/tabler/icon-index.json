@@ -1,0 +1,1335 @@
+{
+  "$meta": {
+    "sot": "Owner-designated Tabler vendor source — SVG mask, self-contained",
+    "source": "vendor/tabler/tabler-icons.min.css",
+    "format": "CSS mask + data:image/svg+xml (không webfont, không file font)",
+    "note": "Giữ nguyên tên class Tabler (.ti .ti-*). Custom iFlux icon tách riêng icons/custom/."
+  },
+  "count": 331,
+  "icons": [
+    {
+      "name": "accessible",
+      "className": "ti ti-accessible"
+    },
+    {
+      "name": "activity",
+      "className": "ti ti-activity"
+    },
+    {
+      "name": "adjustments",
+      "className": "ti ti-adjustments"
+    },
+    {
+      "name": "affiliate",
+      "className": "ti ti-affiliate"
+    },
+    {
+      "name": "alert-circle",
+      "className": "ti ti-alert-circle"
+    },
+    {
+      "name": "alert-octagon",
+      "className": "ti ti-alert-octagon"
+    },
+    {
+      "name": "alert-triangle",
+      "className": "ti ti-alert-triangle"
+    },
+    {
+      "name": "app-window",
+      "className": "ti ti-app-window"
+    },
+    {
+      "name": "apps",
+      "className": "ti ti-apps"
+    },
+    {
+      "name": "archive",
+      "className": "ti ti-archive"
+    },
+    {
+      "name": "arrow-bar-to-down",
+      "className": "ti ti-arrow-bar-to-down"
+    },
+    {
+      "name": "arrow-bar-to-up",
+      "className": "ti ti-arrow-bar-to-up"
+    },
+    {
+      "name": "arrow-down",
+      "className": "ti ti-arrow-down"
+    },
+    {
+      "name": "arrow-down-left",
+      "className": "ti ti-arrow-down-left"
+    },
+    {
+      "name": "arrow-left",
+      "className": "ti ti-arrow-left"
+    },
+    {
+      "name": "arrow-right",
+      "className": "ti ti-arrow-right"
+    },
+    {
+      "name": "arrow-up-circle",
+      "className": "ti ti-arrow-up-circle"
+    },
+    {
+      "name": "arrow-up-right",
+      "className": "ti ti-arrow-up-right"
+    },
+    {
+      "name": "arrows-down",
+      "className": "ti ti-arrows-down"
+    },
+    {
+      "name": "arrows-exchange",
+      "className": "ti ti-arrows-exchange"
+    },
+    {
+      "name": "arrows-horizontal",
+      "className": "ti ti-arrows-horizontal"
+    },
+    {
+      "name": "arrows-left-right",
+      "className": "ti ti-arrows-left-right"
+    },
+    {
+      "name": "arrows-maximize",
+      "className": "ti ti-arrows-maximize"
+    },
+    {
+      "name": "arrows-vertical",
+      "className": "ti ti-arrows-vertical"
+    },
+    {
+      "name": "article",
+      "className": "ti ti-article"
+    },
+    {
+      "name": "award",
+      "className": "ti ti-award"
+    },
+    {
+      "name": "background",
+      "className": "ti ti-background"
+    },
+    {
+      "name": "ban",
+      "className": "ti ti-ban"
+    },
+    {
+      "name": "bell",
+      "className": "ti ti-bell"
+    },
+    {
+      "name": "bell-ringing",
+      "className": "ti ti-bell-ringing"
+    },
+    {
+      "name": "bolt",
+      "className": "ti ti-bolt"
+    },
+    {
+      "name": "book",
+      "className": "ti ti-book"
+    },
+    {
+      "name": "book-2",
+      "className": "ti ti-book-2"
+    },
+    {
+      "name": "bookmark",
+      "className": "ti ti-bookmark"
+    },
+    {
+      "name": "bookmarks",
+      "className": "ti ti-bookmarks"
+    },
+    {
+      "name": "books",
+      "className": "ti ti-books"
+    },
+    {
+      "name": "border-all",
+      "className": "ti ti-border-all"
+    },
+    {
+      "name": "border-outer",
+      "className": "ti ti-border-outer"
+    },
+    {
+      "name": "border-radius",
+      "className": "ti ti-border-radius"
+    },
+    {
+      "name": "box",
+      "className": "ti ti-box"
+    },
+    {
+      "name": "box-margin",
+      "className": "ti ti-box-margin"
+    },
+    {
+      "name": "box-padding",
+      "className": "ti ti-box-padding"
+    },
+    {
+      "name": "brain",
+      "className": "ti ti-brain"
+    },
+    {
+      "name": "brand-apple",
+      "className": "ti ti-brand-apple"
+    },
+    {
+      "name": "brand-apple-filled",
+      "className": "ti ti-brand-apple-filled"
+    },
+    {
+      "name": "brand-facebook",
+      "className": "ti ti-brand-facebook"
+    },
+    {
+      "name": "brand-facebook-filled",
+      "className": "ti ti-brand-facebook-filled"
+    },
+    {
+      "name": "brand-github-filled",
+      "className": "ti ti-brand-github-filled"
+    },
+    {
+      "name": "brand-google-filled",
+      "className": "ti ti-brand-google-filled"
+    },
+    {
+      "name": "brand-telegram",
+      "className": "ti ti-brand-telegram"
+    },
+    {
+      "name": "brand-twitter",
+      "className": "ti ti-brand-twitter"
+    },
+    {
+      "name": "brand-twitter-filled",
+      "className": "ti ti-brand-twitter-filled"
+    },
+    {
+      "name": "brand-zalo",
+      "className": "ti ti-brand-zalo"
+    },
+    {
+      "name": "briefcase",
+      "className": "ti ti-briefcase"
+    },
+    {
+      "name": "bug",
+      "className": "ti ti-bug"
+    },
+    {
+      "name": "building",
+      "className": "ti ti-building"
+    },
+    {
+      "name": "building-bank",
+      "className": "ti ti-building-bank"
+    },
+    {
+      "name": "building-factory",
+      "className": "ti ti-building-factory"
+    },
+    {
+      "name": "building-factory-2",
+      "className": "ti ti-building-factory-2"
+    },
+    {
+      "name": "bulb",
+      "className": "ti ti-bulb"
+    },
+    {
+      "name": "calendar",
+      "className": "ti ti-calendar"
+    },
+    {
+      "name": "calendar-event",
+      "className": "ti ti-calendar-event"
+    },
+    {
+      "name": "calendar-month",
+      "className": "ti ti-calendar-month"
+    },
+    {
+      "name": "calendar-stats",
+      "className": "ti ti-calendar-stats"
+    },
+    {
+      "name": "calendar-time",
+      "className": "ti ti-calendar-time"
+    },
+    {
+      "name": "calendar-week",
+      "className": "ti ti-calendar-week"
+    },
+    {
+      "name": "camera",
+      "className": "ti ti-camera"
+    },
+    {
+      "name": "car",
+      "className": "ti ti-car"
+    },
+    {
+      "name": "cards",
+      "className": "ti ti-cards"
+    },
+    {
+      "name": "cash",
+      "className": "ti ti-cash"
+    },
+    {
+      "name": "category",
+      "className": "ti ti-category"
+    },
+    {
+      "name": "certificate",
+      "className": "ti ti-certificate"
+    },
+    {
+      "name": "chart-arcs",
+      "className": "ti ti-chart-arcs"
+    },
+    {
+      "name": "chart-area",
+      "className": "ti ti-chart-area"
+    },
+    {
+      "name": "chart-area-line",
+      "className": "ti ti-chart-area-line"
+    },
+    {
+      "name": "chart-arrows-vertical",
+      "className": "ti ti-chart-arrows-vertical"
+    },
+    {
+      "name": "chart-bar",
+      "className": "ti ti-chart-bar"
+    },
+    {
+      "name": "chart-candle",
+      "className": "ti ti-chart-candle"
+    },
+    {
+      "name": "chart-dots",
+      "className": "ti ti-chart-dots"
+    },
+    {
+      "name": "chart-dots-3",
+      "className": "ti ti-chart-dots-3"
+    },
+    {
+      "name": "chart-line",
+      "className": "ti ti-chart-line"
+    },
+    {
+      "name": "chart-pie",
+      "className": "ti ti-chart-pie"
+    },
+    {
+      "name": "check",
+      "className": "ti ti-check"
+    },
+    {
+      "name": "check-circle",
+      "className": "ti ti-check-circle"
+    },
+    {
+      "name": "checklist",
+      "className": "ti ti-checklist"
+    },
+    {
+      "name": "checks",
+      "className": "ti ti-checks"
+    },
+    {
+      "name": "chevron-down",
+      "className": "ti ti-chevron-down"
+    },
+    {
+      "name": "chevron-left",
+      "className": "ti ti-chevron-left"
+    },
+    {
+      "name": "chevron-right",
+      "className": "ti ti-chevron-right"
+    },
+    {
+      "name": "chevron-up",
+      "className": "ti ti-chevron-up"
+    },
+    {
+      "name": "circle-check",
+      "className": "ti ti-circle-check"
+    },
+    {
+      "name": "circle-dotted",
+      "className": "ti ti-circle-dotted"
+    },
+    {
+      "name": "circle-filled",
+      "className": "ti ti-circle-filled"
+    },
+    {
+      "name": "circle-x",
+      "className": "ti ti-circle-x"
+    },
+    {
+      "name": "click",
+      "className": "ti ti-click"
+    },
+    {
+      "name": "clipboard-list",
+      "className": "ti ti-clipboard-list"
+    },
+    {
+      "name": "clock",
+      "className": "ti ti-clock"
+    },
+    {
+      "name": "clock-exclamation",
+      "className": "ti ti-clock-exclamation"
+    },
+    {
+      "name": "clock-hour-4",
+      "className": "ti ti-clock-hour-4"
+    },
+    {
+      "name": "clock-off",
+      "className": "ti ti-clock-off"
+    },
+    {
+      "name": "clock-play",
+      "className": "ti ti-clock-play"
+    },
+    {
+      "name": "code",
+      "className": "ti ti-code"
+    },
+    {
+      "name": "coin",
+      "className": "ti ti-coin"
+    },
+    {
+      "name": "coins",
+      "className": "ti ti-coins"
+    },
+    {
+      "name": "color-swatch",
+      "className": "ti ti-color-swatch"
+    },
+    {
+      "name": "columns",
+      "className": "ti ti-columns"
+    },
+    {
+      "name": "components",
+      "className": "ti ti-components"
+    },
+    {
+      "name": "construction",
+      "className": "ti ti-construction"
+    },
+    {
+      "name": "container",
+      "className": "ti ti-container"
+    },
+    {
+      "name": "contrast",
+      "className": "ti ti-contrast"
+    },
+    {
+      "name": "copy",
+      "className": "ti ti-copy"
+    },
+    {
+      "name": "corner-down-right",
+      "className": "ti ti-corner-down-right"
+    },
+    {
+      "name": "cpu",
+      "className": "ti ti-cpu"
+    },
+    {
+      "name": "credit-card",
+      "className": "ti ti-credit-card"
+    },
+    {
+      "name": "credit-card-off",
+      "className": "ti ti-credit-card-off"
+    },
+    {
+      "name": "crop",
+      "className": "ti ti-crop"
+    },
+    {
+      "name": "crown",
+      "className": "ti ti-crown"
+    },
+    {
+      "name": "cube",
+      "className": "ti ti-cube"
+    },
+    {
+      "name": "currency-dollar",
+      "className": "ti ti-currency-dollar"
+    },
+    {
+      "name": "currency-dong",
+      "className": "ti ti-currency-dong"
+    },
+    {
+      "name": "database",
+      "className": "ti ti-database"
+    },
+    {
+      "name": "database-cog",
+      "className": "ti ti-database-cog"
+    },
+    {
+      "name": "device-desktop",
+      "className": "ti ti-device-desktop"
+    },
+    {
+      "name": "device-floppy",
+      "className": "ti ti-device-floppy"
+    },
+    {
+      "name": "device-laptop",
+      "className": "ti ti-device-laptop"
+    },
+    {
+      "name": "device-mobile",
+      "className": "ti ti-device-mobile"
+    },
+    {
+      "name": "device-tablet",
+      "className": "ti ti-device-tablet"
+    },
+    {
+      "name": "diamond",
+      "className": "ti ti-diamond"
+    },
+    {
+      "name": "door-enter",
+      "className": "ti ti-door-enter"
+    },
+    {
+      "name": "dots-vertical",
+      "className": "ti ti-dots-vertical"
+    },
+    {
+      "name": "download",
+      "className": "ti ti-download"
+    },
+    {
+      "name": "ear",
+      "className": "ti ti-ear"
+    },
+    {
+      "name": "edit",
+      "className": "ti ti-edit"
+    },
+    {
+      "name": "external-link",
+      "className": "ti ti-external-link"
+    },
+    {
+      "name": "eye",
+      "className": "ti ti-eye"
+    },
+    {
+      "name": "eye-off",
+      "className": "ti ti-eye-off"
+    },
+    {
+      "name": "file",
+      "className": "ti ti-file"
+    },
+    {
+      "name": "file-analytics",
+      "className": "ti ti-file-analytics"
+    },
+    {
+      "name": "file-code",
+      "className": "ti ti-file-code"
+    },
+    {
+      "name": "file-description",
+      "className": "ti ti-file-description"
+    },
+    {
+      "name": "file-dollar",
+      "className": "ti ti-file-dollar"
+    },
+    {
+      "name": "file-text",
+      "className": "ti ti-file-text"
+    },
+    {
+      "name": "filter",
+      "className": "ti ti-filter"
+    },
+    {
+      "name": "flag",
+      "className": "ti ti-flag"
+    },
+    {
+      "name": "flame",
+      "className": "ti ti-flame"
+    },
+    {
+      "name": "focus",
+      "className": "ti ti-focus"
+    },
+    {
+      "name": "focus-2",
+      "className": "ti ti-focus-2"
+    },
+    {
+      "name": "folder",
+      "className": "ti ti-folder"
+    },
+    {
+      "name": "folder-off",
+      "className": "ti ti-folder-off"
+    },
+    {
+      "name": "folder-open",
+      "className": "ti ti-folder-open"
+    },
+    {
+      "name": "forms",
+      "className": "ti ti-forms"
+    },
+    {
+      "name": "gauge",
+      "className": "ti ti-gauge"
+    },
+    {
+      "name": "gavel",
+      "className": "ti ti-gavel"
+    },
+    {
+      "name": "gift",
+      "className": "ti ti-gift"
+    },
+    {
+      "name": "git-branch",
+      "className": "ti ti-git-branch"
+    },
+    {
+      "name": "git-merge",
+      "className": "ti ti-git-merge"
+    },
+    {
+      "name": "gradienter",
+      "className": "ti ti-gradienter"
+    },
+    {
+      "name": "grid-dots",
+      "className": "ti ti-grid-dots"
+    },
+    {
+      "name": "grid-pattern",
+      "className": "ti ti-grid-pattern"
+    },
+    {
+      "name": "grip-vertical",
+      "className": "ti ti-grip-vertical"
+    },
+    {
+      "name": "hand-click",
+      "className": "ti ti-hand-click"
+    },
+    {
+      "name": "hand-finger",
+      "className": "ti ti-hand-finger"
+    },
+    {
+      "name": "hand-grab",
+      "className": "ti ti-hand-grab"
+    },
+    {
+      "name": "hand-stop",
+      "className": "ti ti-hand-stop"
+    },
+    {
+      "name": "handshake",
+      "className": "ti ti-handshake"
+    },
+    {
+      "name": "headphones",
+      "className": "ti ti-headphones"
+    },
+    {
+      "name": "headset",
+      "className": "ti ti-headset"
+    },
+    {
+      "name": "heart",
+      "className": "ti ti-heart"
+    },
+    {
+      "name": "heartbeat",
+      "className": "ti ti-heartbeat"
+    },
+    {
+      "name": "help",
+      "className": "ti ti-help"
+    },
+    {
+      "name": "help-circle",
+      "className": "ti ti-help-circle"
+    },
+    {
+      "name": "hierarchy-2",
+      "className": "ti ti-hierarchy-2"
+    },
+    {
+      "name": "hierarchy-3",
+      "className": "ti ti-hierarchy-3"
+    },
+    {
+      "name": "history",
+      "className": "ti ti-history"
+    },
+    {
+      "name": "history-off",
+      "className": "ti ti-history-off"
+    },
+    {
+      "name": "home",
+      "className": "ti ti-home"
+    },
+    {
+      "name": "icons",
+      "className": "ti ti-icons"
+    },
+    {
+      "name": "id",
+      "className": "ti ti-id"
+    },
+    {
+      "name": "inbox",
+      "className": "ti ti-inbox"
+    },
+    {
+      "name": "infinity",
+      "className": "ti ti-infinity"
+    },
+    {
+      "name": "info-circle",
+      "className": "ti ti-info-circle"
+    },
+    {
+      "name": "key",
+      "className": "ti ti-key"
+    },
+    {
+      "name": "keyboard",
+      "className": "ti ti-keyboard"
+    },
+    {
+      "name": "language",
+      "className": "ti ti-language"
+    },
+    {
+      "name": "layers-intersect",
+      "className": "ti ti-layers-intersect"
+    },
+    {
+      "name": "layers-linked",
+      "className": "ti ti-layers-linked"
+    },
+    {
+      "name": "layers-subtract",
+      "className": "ti ti-layers-subtract"
+    },
+    {
+      "name": "layout",
+      "className": "ti ti-layout"
+    },
+    {
+      "name": "layout-board",
+      "className": "ti ti-layout-board"
+    },
+    {
+      "name": "layout-bottombar",
+      "className": "ti ti-layout-bottombar"
+    },
+    {
+      "name": "layout-dashboard",
+      "className": "ti ti-layout-dashboard"
+    },
+    {
+      "name": "layout-distribute-horizontal",
+      "className": "ti ti-layout-distribute-horizontal"
+    },
+    {
+      "name": "layout-grid",
+      "className": "ti ti-layout-grid"
+    },
+    {
+      "name": "layout-grid-add",
+      "className": "ti ti-layout-grid-add"
+    },
+    {
+      "name": "layout-navbar",
+      "className": "ti ti-layout-navbar"
+    },
+    {
+      "name": "layout-sidebar",
+      "className": "ti ti-layout-sidebar"
+    },
+    {
+      "name": "letter-case",
+      "className": "ti ti-letter-case"
+    },
+    {
+      "name": "line",
+      "className": "ti ti-line"
+    },
+    {
+      "name": "link",
+      "className": "ti ti-link"
+    },
+    {
+      "name": "list",
+      "className": "ti ti-list"
+    },
+    {
+      "name": "list-check",
+      "className": "ti ti-list-check"
+    },
+    {
+      "name": "list-details",
+      "className": "ti ti-list-details"
+    },
+    {
+      "name": "list-search",
+      "className": "ti ti-list-search"
+    },
+    {
+      "name": "loader",
+      "className": "ti ti-loader"
+    },
+    {
+      "name": "loader-2",
+      "className": "ti ti-loader-2"
+    },
+    {
+      "name": "lock",
+      "className": "ti ti-lock"
+    },
+    {
+      "name": "lock-access",
+      "className": "ti ti-lock-access"
+    },
+    {
+      "name": "lock-open",
+      "className": "ti ti-lock-open"
+    },
+    {
+      "name": "login",
+      "className": "ti ti-login"
+    },
+    {
+      "name": "logout",
+      "className": "ti ti-logout"
+    },
+    {
+      "name": "mail",
+      "className": "ti ti-mail"
+    },
+    {
+      "name": "map-pin",
+      "className": "ti ti-map-pin"
+    },
+    {
+      "name": "math-function",
+      "className": "ti ti-math-function"
+    },
+    {
+      "name": "medal",
+      "className": "ti ti-medal"
+    },
+    {
+      "name": "medal-off",
+      "className": "ti ti-medal-off"
+    },
+    {
+      "name": "menu-2",
+      "className": "ti ti-menu-2"
+    },
+    {
+      "name": "message",
+      "className": "ti ti-message"
+    },
+    {
+      "name": "message-circle",
+      "className": "ti ti-message-circle"
+    },
+    {
+      "name": "message-off",
+      "className": "ti ti-message-off"
+    },
+    {
+      "name": "message-plus",
+      "className": "ti ti-message-plus"
+    },
+    {
+      "name": "message-question",
+      "className": "ti ti-message-question"
+    },
+    {
+      "name": "messages",
+      "className": "ti ti-messages"
+    },
+    {
+      "name": "microphone",
+      "className": "ti ti-microphone"
+    },
+    {
+      "name": "microscope",
+      "className": "ti ti-microscope"
+    },
+    {
+      "name": "mood-empty",
+      "className": "ti ti-mood-empty"
+    },
+    {
+      "name": "mood-sad",
+      "className": "ti ti-mood-sad"
+    },
+    {
+      "name": "mood-smile",
+      "className": "ti ti-mood-smile"
+    },
+    {
+      "name": "moon",
+      "className": "ti ti-moon"
+    },
+    {
+      "name": "moon-stars",
+      "className": "ti ti-moon-stars"
+    },
+    {
+      "name": "news",
+      "className": "ti ti-news"
+    },
+    {
+      "name": "numbers",
+      "className": "ti ti-numbers"
+    },
+    {
+      "name": "package",
+      "className": "ti ti-package"
+    },
+    {
+      "name": "palette",
+      "className": "ti ti-palette"
+    },
+    {
+      "name": "paperclip",
+      "className": "ti ti-paperclip"
+    },
+    {
+      "name": "pencil",
+      "className": "ti ti-pencil"
+    },
+    {
+      "name": "percentage",
+      "className": "ti ti-percentage"
+    },
+    {
+      "name": "phone",
+      "className": "ti ti-phone"
+    },
+    {
+      "name": "phone-call",
+      "className": "ti ti-phone-call"
+    },
+    {
+      "name": "photo",
+      "className": "ti ti-photo"
+    },
+    {
+      "name": "photo-scan",
+      "className": "ti ti-photo-scan"
+    },
+    {
+      "name": "photo-share",
+      "className": "ti ti-photo-share"
+    },
+    {
+      "name": "photo-up",
+      "className": "ti ti-photo-up"
+    },
+    {
+      "name": "pin",
+      "className": "ti ti-pin"
+    },
+    {
+      "name": "player-pause",
+      "className": "ti ti-player-pause"
+    },
+    {
+      "name": "player-play",
+      "className": "ti ti-player-play"
+    },
+    {
+      "name": "plug-connected",
+      "className": "ti ti-plug-connected"
+    },
+    {
+      "name": "plus",
+      "className": "ti ti-plus"
+    },
+    {
+      "name": "progress",
+      "className": "ti ti-progress"
+    },
+    {
+      "name": "qrcode",
+      "className": "ti ti-qrcode"
+    },
+    {
+      "name": "quote",
+      "className": "ti ti-quote"
+    },
+    {
+      "name": "receipt",
+      "className": "ti ti-receipt"
+    },
+    {
+      "name": "receipt-2",
+      "className": "ti ti-receipt-2"
+    },
+    {
+      "name": "receipt-refund",
+      "className": "ti ti-receipt-refund"
+    },
+    {
+      "name": "refresh",
+      "className": "ti ti-refresh"
+    },
+    {
+      "name": "resize",
+      "className": "ti ti-resize"
+    },
+    {
+      "name": "restore",
+      "className": "ti ti-restore"
+    },
+    {
+      "name": "robot",
+      "className": "ti ti-robot"
+    },
+    {
+      "name": "rocket",
+      "className": "ti ti-rocket"
+    },
+    {
+      "name": "route",
+      "className": "ti ti-route"
+    },
+    {
+      "name": "ruler-measure",
+      "className": "ti ti-ruler-measure"
+    },
+    {
+      "name": "schema",
+      "className": "ti ti-schema"
+    },
+    {
+      "name": "search",
+      "className": "ti ti-search"
+    },
+    {
+      "name": "search-off",
+      "className": "ti ti-search-off"
+    },
+    {
+      "name": "send",
+      "className": "ti ti-send"
+    },
+    {
+      "name": "seo",
+      "className": "ti ti-seo"
+    },
+    {
+      "name": "separator",
+      "className": "ti ti-separator"
+    },
+    {
+      "name": "server",
+      "className": "ti ti-server"
+    },
+    {
+      "name": "settings",
+      "className": "ti ti-settings"
+    },
+    {
+      "name": "shadow",
+      "className": "ti ti-shadow"
+    },
+    {
+      "name": "share",
+      "className": "ti ti-share"
+    },
+    {
+      "name": "share-3",
+      "className": "ti ti-share-3"
+    },
+    {
+      "name": "shield",
+      "className": "ti ti-shield"
+    },
+    {
+      "name": "shield-check",
+      "className": "ti ti-shield-check"
+    },
+    {
+      "name": "shield-lock",
+      "className": "ti ti-shield-lock"
+    },
+    {
+      "name": "shirt",
+      "className": "ti ti-shirt"
+    },
+    {
+      "name": "shopping-cart",
+      "className": "ti ti-shopping-cart"
+    },
+    {
+      "name": "sitemap",
+      "className": "ti ti-sitemap"
+    },
+    {
+      "name": "smart-home",
+      "className": "ti ti-smart-home"
+    },
+    {
+      "name": "spacing-vertical",
+      "className": "ti ti-spacing-vertical"
+    },
+    {
+      "name": "sparkles",
+      "className": "ti ti-sparkles"
+    },
+    {
+      "name": "square",
+      "className": "ti ti-square"
+    },
+    {
+      "name": "square-filled",
+      "className": "ti ti-square-filled"
+    },
+    {
+      "name": "stack",
+      "className": "ti ti-stack"
+    },
+    {
+      "name": "stack-2",
+      "className": "ti ti-stack-2"
+    },
+    {
+      "name": "stairs-up",
+      "className": "ti ti-stairs-up"
+    },
+    {
+      "name": "star",
+      "className": "ti ti-star"
+    },
+    {
+      "name": "star-filled",
+      "className": "ti ti-star-filled"
+    },
+    {
+      "name": "star-half-filled",
+      "className": "ti ti-star-half-filled"
+    },
+    {
+      "name": "sun",
+      "className": "ti ti-sun"
+    },
+    {
+      "name": "table",
+      "className": "ti ti-table"
+    },
+    {
+      "name": "tag",
+      "className": "ti ti-tag"
+    },
+    {
+      "name": "tags",
+      "className": "ti ti-tags"
+    },
+    {
+      "name": "template",
+      "className": "ti ti-template"
+    },
+    {
+      "name": "thumb-up",
+      "className": "ti ti-thumb-up"
+    },
+    {
+      "name": "thumb-up-filled",
+      "className": "ti ti-thumb-up-filled"
+    },
+    {
+      "name": "ticket",
+      "className": "ti ti-ticket"
+    },
+    {
+      "name": "ticket-off",
+      "className": "ti ti-ticket-off"
+    },
+    {
+      "name": "timeline",
+      "className": "ti ti-timeline"
+    },
+    {
+      "name": "toggle-left",
+      "className": "ti ti-toggle-left"
+    },
+    {
+      "name": "toggle-right",
+      "className": "ti ti-toggle-right"
+    },
+    {
+      "name": "tool",
+      "className": "ti ti-tool"
+    },
+    {
+      "name": "tournament",
+      "className": "ti ti-tournament"
+    },
+    {
+      "name": "transfer",
+      "className": "ti ti-transfer"
+    },
+    {
+      "name": "transition-right",
+      "className": "ti ti-transition-right"
+    },
+    {
+      "name": "trash",
+      "className": "ti ti-trash"
+    },
+    {
+      "name": "trending-down",
+      "className": "ti ti-trending-down"
+    },
+    {
+      "name": "trending-up",
+      "className": "ti ti-trending-up"
+    },
+    {
+      "name": "trophy",
+      "className": "ti ti-trophy"
+    },
+    {
+      "name": "typography",
+      "className": "ti ti-typography"
+    },
+    {
+      "name": "upload",
+      "className": "ti ti-upload"
+    },
+    {
+      "name": "user",
+      "className": "ti ti-user"
+    },
+    {
+      "name": "user-check",
+      "className": "ti ti-user-check"
+    },
+    {
+      "name": "user-circle",
+      "className": "ti ti-user-circle"
+    },
+    {
+      "name": "user-cog",
+      "className": "ti ti-user-cog"
+    },
+    {
+      "name": "user-edit",
+      "className": "ti ti-user-edit"
+    },
+    {
+      "name": "user-off",
+      "className": "ti ti-user-off"
+    },
+    {
+      "name": "user-plus",
+      "className": "ti ti-user-plus"
+    },
+    {
+      "name": "user-shield",
+      "className": "ti ti-user-shield"
+    },
+    {
+      "name": "user-star",
+      "className": "ti ti-user-star"
+    },
+    {
+      "name": "users",
+      "className": "ti ti-users"
+    },
+    {
+      "name": "users-group",
+      "className": "ti ti-users-group"
+    },
+    {
+      "name": "users-minus",
+      "className": "ti ti-users-minus"
+    },
+    {
+      "name": "video",
+      "className": "ti ti-video"
+    },
+    {
+      "name": "wallet",
+      "className": "ti ti-wallet"
+    },
+    {
+      "name": "wand",
+      "className": "ti ti-wand"
+    },
+    {
+      "name": "watch",
+      "className": "ti ti-watch"
+    },
+    {
+      "name": "weight",
+      "className": "ti ti-weight"
+    },
+    {
+      "name": "world",
+      "className": "ti ti-world"
+    },
+    {
+      "name": "world-search",
+      "className": "ti ti-world-search"
+    },
+    {
+      "name": "x",
+      "className": "ti ti-x"
+    },
+    {
+      "name": "zoom-in",
+      "className": "ti ti-zoom-in"
+    }
+  ]
+}

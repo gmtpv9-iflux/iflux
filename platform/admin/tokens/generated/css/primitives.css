@@ -2,7 +2,7 @@
  * Canonical iFlux Design System — readonly artifact.
  * Source: platform/admin/tokens/source/{size.json}
  * owner : platform-admin
- * Build : node design_system/scripts/build-tokens.mjs
+ * Build : node ui_tooling/scripts/build-tokens.mjs
  */
 :root {
   /* ── size · size ── */

@@ -1,0 +1,45 @@
+/* DO NOT EDIT — GENERATED FROM TOKEN SOURCE
+ * Canonical iFlux Design System — readonly artifact.
+ * Source: design_system/01_tokens/01_source/{color.json}
+ * Build : node ui_tooling/scripts/build-tokens.mjs
+ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ifx-bg-canvas: var(--ifx-color-slate-850);
+  --ifx-bg-surface: var(--ifx-color-slate-800);
+  --ifx-bg-elevated: var(--ifx-color-slate-700);
+  --ifx-bg-subtle: var(--ifx-color-slate-900);
+  --ifx-bg-input: var(--ifx-color-slate-900);
+  --ifx-bg-hover: var(--ifx-color-slate-700);
+  --ifx-bg-active: var(--ifx-alpha-violet-16);
+  --ifx-text-primary: var(--ifx-color-slate-200);
+  --ifx-text-secondary: var(--ifx-color-slate-400);
+  --ifx-text-muted: var(--ifx-color-slate-600);
+  --ifx-text-disabled: var(--ifx-color-slate-500);
+  --ifx-text-link: var(--ifx-color-violet-500);
+  --ifx-border-default: rgba(207, 211, 236, 0.12);
+  --ifx-border-strong: rgba(207, 211, 236, 0.2);
+  --ifx-border-subtle: rgba(207, 211, 236, 0.08);
+  --ifx-border-focus: var(--ifx-color-violet-500);
+  --ifx-action-primary: var(--ifx-color-violet-500);
+  --ifx-action-primary-hover: var(--ifx-color-violet-600);
+  --ifx-action-primary-soft: var(--ifx-alpha-violet-16);
+  --ifx-action-secondary: var(--ifx-color-orange-500);
+  --ifx-action-secondary-hover: var(--ifx-color-orange-600);
+  --ifx-success: var(--ifx-color-lime-500);
+  --ifx-success-soft: var(--ifx-alpha-lime-16);
+  --ifx-warning: var(--ifx-color-amber-550);
+  --ifx-warning-soft: var(--ifx-alpha-amber-16);
+  --ifx-danger: var(--ifx-color-red-450);
+  --ifx-danger-soft: var(--ifx-alpha-red-16);
+  --ifx-info: var(--ifx-color-cyan-500);
+  --ifx-info-soft: var(--ifx-alpha-cyan-16);
+  --ifx-overlay-scrim: rgba(0, 0, 0, 0.45);
+  --ifx-surface-elevated: var(--ifx-alpha-white-4);
+  --ifx-text-on-primary: #ffffff;
+  --ifx-text-on-success: #151d15;
+  --ifx-text-on-warning: #1a1100;
+  --ifx-text-on-danger: #ffffff;
+  --ifx-text-on-info: #00151a;
+}
