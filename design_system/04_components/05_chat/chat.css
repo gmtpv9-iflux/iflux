@@ -161,7 +161,6 @@ html.ifx-chat-host body {
 .ifx-chat-message { display: flex; gap: var(--ifx-inline-md); align-items: flex-end; }
 .ifx-chat-message.is-sent { flex-direction: row-reverse; }
 .ifx-chat-message.is-sent .ifx-avatar { margin-left: 4px; }
-.ifx-chat-stack { min-width: 0; }
 .ifx-chat-bubble {
   max-width: 60%;
   padding: 10px 14px;
@@ -195,8 +194,6 @@ html.ifx-chat-host body {
 }
 .ifx-chat-input {
   flex: 1;
-  min-width: 0;
-  width: auto;
   background: var(--ifx-bg-input);
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-button);
@@ -209,14 +206,15 @@ html.ifx-chat-host body {
 }
 .ifx-chat-input:focus { border-color: var(--ifx-action-primary); }
 .ifx-chat-input::placeholder { color: var(--ifx-text-muted); }
-.ifx-chat-input-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.ifx-chat-input-actions { display: contents; }
 .ifx-chat .ifx-btn { border: none; }
 .ifx-chat .ifx-btn-icon {
   width: 32px;
   height: 32px;
-  border: none;
+  border: 1px solid transparent;
   padding: 0;
 }
+.ifx-chat .ifx-btn-icon .ti { font-size: 16px; }
 .ifx-chat-input-bar .ifx-btn-primary .ti { font-size: 14px; }
 
 .ifx-chat-details {
