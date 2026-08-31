@@ -24,6 +24,11 @@
   background: var(--ifx-action-primary-soft);
   color: var(--ifx-action-primary);
 }
+.ifx-stat-icon-sm {
+  width: var(--ifx-size-avatar-32);
+  height: var(--ifx-size-avatar-32);
+  font-size: var(--ifx-font-size-14);
+}
 .ifx-stat-icon-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
 .ifx-stat-icon-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
 .ifx-stat-icon-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }

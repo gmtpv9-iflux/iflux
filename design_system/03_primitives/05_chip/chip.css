@@ -23,3 +23,4 @@
   border-color: var(--ifx-border-default);
   color: var(--ifx-text-secondary);
 }
+.ifx-chip-sm { font-size: 11px; }

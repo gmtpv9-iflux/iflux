@@ -228,6 +228,7 @@
       "--ifx-size-avatar-md",
       "--ifx-size-avatar-lg",
       "--ifx-size-avatar-xl",
+      "--ifx-size-avatar-2xl",
       "--ifx-size-nav-drawer-w",
       "--ifx-size-container-max"
     ],
@@ -2550,6 +2551,13 @@
     },
     {
       "name": "--ifx-size-avatar-xl",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-avatar-2xl",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/size.json",

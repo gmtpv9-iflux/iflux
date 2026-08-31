@@ -8,6 +8,7 @@
   border: 1px solid var(--ifx-border-default);
   box-shadow: var(--ifx-shadow-card);
 }
+.ifx-card-plain { box-shadow: none; }
 .ifx-card-header {
   padding: var(--ifx-inset-card-header);
   display: flex;

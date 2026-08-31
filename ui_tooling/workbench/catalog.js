@@ -36,7 +36,8 @@
     '/design_system/04_components/05_chat/chat.css',
     '/design_system/04_components/04_chart/chart.css',
     '/design_system/04_components/10_page-header/page-header.css',
-    '/design_system/04_components/20_icon-list/icon-list.css'
+    '/design_system/04_components/20_icon-list/icon-list.css',
+    '/design_system/04_components/21_profile/profile.css'
   ];
   var COMPONENT_JS = [
     '/design_system/04_components/14_table/table.js',
@@ -50,7 +51,8 @@
     '/design_system/04_components/18_wizard/wizard.js',
     '/design_system/04_components/05_chat/chat.js',
     '/design_system/04_components/04_chart/chart-adapter.js?v=5',
-    '/design_system/04_components/19_data-list/data-list.js'
+    '/design_system/04_components/19_data-list/data-list.js',
+    '/design_system/04_components/21_profile/profile.js'
   ];
 
   function ensureHref(href, kind) {
@@ -96,6 +98,7 @@
     if (window.IfxForm) window.IfxForm.initAll();
     if (window.IfxWizard) window.IfxWizard.init();
     if (window.IfxChat) window.IfxChat.init();
+    if (window.IfxProfile) window.IfxProfile.init();
     if (window.IfxChart) {
       window.IfxChart.init();
       var chartPanel = stage && stage.querySelector('[data-sb-panel="chart"]:not([hidden])');

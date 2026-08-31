@@ -36,6 +36,21 @@
   gap: var(--ifx-gap-sm);
   flex-wrap: wrap;
 }
+/* Dùng cho:
+ * - bảng dữ liệu mật độ isolate Admin (cell 14 / secondary)
+ */
+.ifx-table-md {
+  font-size: var(--ifx-font-size-14);
+}
+.ifx-table-md td {
+  color: var(--ifx-text-secondary);
+  padding: var(--ifx-space-12);
+}
+.ifx-table-md th {
+  letter-spacing: 0.6px;
+  padding: 10px 12px;
+}
+
 .ifx-table th[data-ifx-sort] { cursor: pointer; }
 .ifx-table tbody tr.is-hidden { display: none; }
 .ifx-table tbody tr.is-selected td { background: var(--ifx-action-primary-soft); }

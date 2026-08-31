@@ -40,6 +40,17 @@
   height: var(--ifx-size-avatar-xl);
   font-size: var(--ifx-font-size-20);
 }
+.ifx-avatar-2xl {
+  width: var(--ifx-size-avatar-2xl);
+  height: var(--ifx-size-avatar-2xl);
+  font-size: var(--ifx-font-size-32);
+  font-weight: var(--ifx-font-weight-bold);
+}
+.ifx-avatar-solid {
+  background: var(--ifx-action-primary);
+  color: #fff;
+  border: 3px solid var(--ifx-action-primary);
+}
 .ifx-avatar-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
 .ifx-avatar-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
 .ifx-avatar-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
