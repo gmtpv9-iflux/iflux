@@ -3,6 +3,7 @@
  */
 (function () {
   'use strict';
+  if (window.IfxTheme && !localStorage.getItem('ifx-theme')) window.IfxTheme.apply('dark');
   window.addEventListener('message', function (e) {
     if (e.data && e.data.type === 'ifx-theme' && window.IfxTheme) window.IfxTheme.apply(e.data.theme);
   });

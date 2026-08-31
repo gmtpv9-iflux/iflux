@@ -65,7 +65,7 @@
       var row = document.createElement('div');
       row.className = 'ifx-chat-message is-sent';
       var av = document.createElement('div');
-      av.className = 'ifx-avatar ifx-avatar-sm';
+      av.className = 'ifx-avatar ifx-avatar-sm ifx-avatar-ring';
       av.textContent = self;
       var stack = document.createElement('div');
       stack.className = 'ifx-chat-stack';

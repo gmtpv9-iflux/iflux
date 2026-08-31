@@ -30,14 +30,41 @@
 }
 .ifx-search input::placeholder { color: var(--ifx-text-muted); }
 
-/* Slot trong thread Chat: full width, cao 32, không ring form. */
+/* Slot thread Chat — pad/icon khớp isolate Legacy (7 10 7 32 / 13). */
 .ifx-search-embedded {
+  position: relative;
+  display: block;
   max-width: none;
   width: 100%;
-  height: var(--ifx-size-avatar-32);
-  padding-inline: var(--ifx-space-8);
+  height: auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
 }
 .ifx-search-embedded:focus-within {
   box-shadow: none;
-  border-color: var(--ifx-border-default);
+  border-color: transparent;
+}
+.ifx-search-embedded .ti {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--ifx-text-muted);
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}
+.ifx-search-embedded input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  background: var(--ifx-bg-input);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-button);
+  font-size: 13px;
+  line-height: normal;
+  color: var(--ifx-text-primary);
+  font-family: var(--ifx-font-primary);
+  outline: none;
 }
