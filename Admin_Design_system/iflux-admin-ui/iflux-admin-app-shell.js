@@ -233,6 +233,42 @@
     return '';
   }
 
+  /* P1: rỗng. Chỉ thêm routeKey sau convert + verify marker (P3+). */
+  var CANONICAL_ROUTE_ALLOWLIST = [];
+
+  function canonicalAllowlist() {
+    return CANONICAL_ROUTE_ALLOWLIST.slice();
+  }
+
+  function isCanonicalRoute(routeKey) {
+    return !!routeKey && CANONICAL_ROUTE_ALLOWLIST.indexOf(routeKey) >= 0;
+  }
+
+  function routeKeyFromHref(href) {
+    var u = parseUrl(href);
+    var R = routes();
+    if (!u || !R || !R.matchPath) return null;
+    return R.matchPath(u.pathname, u.hash) || null;
+  }
+
+  function fragmentHref(href) {
+    var file = fileForHref(href);
+    if (!file) return '';
+    return '/Admin_Design_system/app/' + file;
+  }
+
+  function isShellDocument(rootDoc) {
+    if (!rootDoc) return false;
+    var root = rootDoc.documentElement;
+    if (root && root.hasAttribute && root.hasAttribute('data-admin-shell-document')) return true;
+    return !!(rootDoc.querySelector && rootDoc.querySelector('[data-admin-shell-document]'));
+  }
+
+  function collectCanonicalPage(rootDoc) {
+    if (!rootDoc || !rootDoc.querySelector) return null;
+    return rootDoc.querySelector('[data-admin-page]') || null;
+  }
+
   function isAppShellHeader(el) {
     if (!el || !el.getAttribute) return false;
     if (el.getAttribute('data-ix-admin-shell') === 'header') return true;
@@ -268,6 +304,59 @@
       }
     }
     return nodes;
+  }
+
+  function ensureCanonicalAssets() {
+    var root = document.documentElement;
+    if (root && !root.getAttribute('data-theme')) root.setAttribute('data-theme', 'light');
+    var hrefs = [
+      '/platform/admin/tokens/generated/css/primitives.css',
+      '/design_system/01_tokens/02_generated/01_css/primitives.css',
+      '/design_system/01_tokens/02_generated/01_css/semantic.css',
+      '/design_system/01_tokens/02_generated/01_css/01_themes/light.css',
+      '/design_system/03_primitives/06_navigation/nav.css',
+      '/design_system/03_primitives/02_avatar/avatar.css',
+      '/design_system/03_primitives/05_chip/chip.css',
+      '/design_system/03_primitives/04_button/button.css',
+      '/design_system/04_components/10_page-header/page-header.css',
+      '/design_system/04_components/02_breadcrumb/breadcrumb.css',
+      '/platform/admin/shell/layout.css?v=sub02p2-20260831'
+    ];
+    hrefs.forEach(function (href) {
+      if (document.querySelector('link[rel="stylesheet"][href="' + href + '"]')) return;
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    });
+  }
+
+  function ensureLayoutFrame() {
+    var main = document.querySelector('main.ix-main');
+    if (!main) return;
+    main.setAttribute('data-admin-main-area', '');
+    var layout = document.querySelector('.ix-layout');
+    if (layout) layout.setAttribute('data-admin-chrome', 'ds');
+    var header = main.querySelector('[data-ix-admin-shell="header"], header.ix-navbar');
+    var host = main.querySelector('[data-ix-admin-page-host]');
+    var region = main.querySelector('[data-admin-header-region]');
+    if (!region) {
+      region = document.createElement('div');
+      region.setAttribute('data-admin-header-region', '');
+      if (header && header.parentNode === main) main.insertBefore(region, header);
+      else main.insertBefore(region, main.firstChild);
+    }
+    if (header && header.parentNode !== region) region.insertBefore(header, region.firstChild);
+    var pageHeader = region.querySelector('[data-admin-page-header]');
+    if (!pageHeader) {
+      pageHeader = document.createElement('div');
+      pageHeader.setAttribute('data-admin-page-header', '');
+      region.appendChild(pageHeader);
+    }
+    if (host && host.parentNode === main && region.nextElementSibling !== host) {
+      if (region.nextSibling) main.insertBefore(host, region.nextSibling);
+      else main.appendChild(host);
+    }
   }
 
   function ensurePageHost() {
@@ -481,10 +570,23 @@
       return Promise.resolve();
     }
 
+    var destKey = routeKeyFromHref(destU.href);
+    var useCanonical = isCanonicalRoute(destKey);
     var file = fileForHref(destU.href);
-    var fetchUrl = file
-      ? ('/Admin_Design_system/app/' + file + destU.search)
-      : (destU.pathname + destU.search);
+    var fetchUrl;
+    if (useCanonical) {
+      var fragPath = fragmentHref(destU.href);
+      if (!fragPath) {
+        navigating = false;
+        showHostError('Không có FRAGMENT_SOURCE.');
+        return Promise.resolve();
+      }
+      fetchUrl = fragPath + destU.search;
+    } else {
+      fetchUrl = file
+        ? ('/Admin_Design_system/app/' + file + destU.search)
+        : (destU.pathname + destU.search);
+    }
     return fetch(fetchUrl, { credentials: 'same-origin', redirect: 'follow' })
       .then(function (res) {
         var fetched = parseUrl(res.url);
@@ -507,18 +609,35 @@
           leaveAppShell(pack.finalU.href);
           return;
         }
-        if (!parsed.querySelector('main.ix-main')) {
-          showHostError('Page không có AppShell slot.');
-          return;
+        if (useCanonical) {
+          if (isShellDocument(parsed)) {
+            showHostError('Fetch trả shell document — không mount.');
+            return;
+          }
+          var pageEl = collectCanonicalPage(parsed);
+          if (!pageEl) {
+            showHostError('Thiếu [data-admin-page].');
+            return;
+          }
+          syncBodyData(parsed.body);
+          if (parsed.title) document.title = parsed.title;
+          syncPageStyles(parsed);
+          host.textContent = '';
+          host.appendChild(document.importNode(pageEl, true));
+        } else {
+          if (!parsed.querySelector('main.ix-main')) {
+            showHostError('Page không có AppShell slot.');
+            return;
+          }
+          syncBodyData(parsed.body);
+          if (parsed.title) document.title = parsed.title;
+          syncPageStyles(parsed);
+          host.textContent = '';
+          collectPageOwned(parsed).forEach(function (el) {
+            if (el.tagName === 'SCRIPT') return;
+            host.appendChild(document.importNode(el, true));
+          });
         }
-        syncBodyData(parsed.body);
-        if (parsed.title) document.title = parsed.title;
-        syncPageStyles(parsed);
-        host.textContent = '';
-        collectPageOwned(parsed).forEach(function (el) {
-          if (el.tagName === 'SCRIPT') return;
-          host.appendChild(document.importNode(el, true));
-        });
         if (opts.history !== 'none') {
           var push = pack.finalU.pathname + pack.finalU.search + pack.finalU.hash;
           global.history.pushState({ ixAdmin: BOOT_ID }, '', push);
@@ -556,7 +675,9 @@
 
   function bootHost() {
     markBoot();
+    ensureCanonicalAssets();
     ensurePageHost();
+    ensureLayoutFrame();
     if (!document.documentElement.hasAttribute('data-ix-admin-nav-bound')) {
       document.documentElement.setAttribute('data-ix-admin-nav-bound', '');
       document.addEventListener('click', onDocClick);
@@ -576,6 +697,10 @@
     getHeaderState: getHeaderState,
     fillBreadcrumb: fillBreadcrumb,
     navigate: navigate,
+    canonicalAllowlist: canonicalAllowlist,
+    isCanonicalRoute: isCanonicalRoute,
+    fragmentHref: fragmentHref,
+    routeKeyFromHref: routeKeyFromHref,
     bootId: function () { return BOOT_ID; },
     refresh: function (opts) {
       opts = opts || {};

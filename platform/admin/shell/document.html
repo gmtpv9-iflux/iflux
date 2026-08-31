@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" data-admin-shell-document data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/platform/admin/tokens/generated/css/primitives.css" />
+  <link rel="stylesheet" href="/design_system/01_tokens/02_generated/01_css/primitives.css" />
+  <link rel="stylesheet" href="/design_system/01_tokens/02_generated/01_css/semantic.css" />
+  <link rel="stylesheet" href="/design_system/01_tokens/02_generated/01_css/01_themes/light.css" />
+  <link rel="stylesheet" href="/design_system/03_primitives/06_navigation/nav.css" />
+  <link rel="stylesheet" href="/design_system/03_primitives/02_avatar/avatar.css" />
+  <link rel="stylesheet" href="/design_system/03_primitives/05_chip/chip.css" />
+  <link rel="stylesheet" href="/design_system/03_primitives/04_button/button.css" />
+  <link rel="stylesheet" href="/design_system/04_components/10_page-header/page-header.css" />
+  <link rel="stylesheet" href="/design_system/04_components/02_breadcrumb/breadcrumb.css" />
+  <link rel="stylesheet" href="/platform/admin/shell/layout.css?v=sub02p2-20260831" />
+</head>
+<body>
+<div class="ix-root">
+  <div class="ix-layout" data-admin-chrome="ds">
+    <aside class="ix-sidebar" data-ix-admin-shell="sidebar">
+      <div class="ix-brand">
+        <img class="ix-brand-logo" alt="iFlux" hidden />
+        <span class="ix-brand-name">iFlux Admin</span>
+      </div>
+      <nav class="ix-menu" data-ix-admin-nav></nav>
+    </aside>
+    <main class="ix-main" data-admin-main-area>
+      <div data-admin-header-region>
+        <header class="ix-navbar" data-ix-admin-shell="header">
+          <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Mở menu">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        <div class="ix-nav-actions" data-admin-header-actions>
+          <div class="ifx-avatar ifx-avatar-md" data-ix-admin-avatar></div>
+        </div>
+        </header>
+        <div data-admin-page-header></div>
+      </div>
+      <div data-ix-admin-page-host></div>
+    </main>
+  </div>
+</div>
+<div id="ix-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99"></div>
+<div id="ix-toast-container"></div>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js?v=20260712c"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=seoLogoOnly20260810"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=sub02p2-20260831"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=sub02p2-20260831"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=sub02p2-20260831"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js"></script>
+</body>
+</html>

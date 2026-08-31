@@ -42,6 +42,17 @@ function loadAdminUiPack(webRoot) {
   return ctx;
 }
 
+function loadCanonicalAllowlist(webRoot) {
+  const p = path.join(webRoot, 'platform/admin/shell/canonical-route-allowlist.json');
+  if (!fs.existsSync(p)) return [];
+  try {
+    const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return Array.isArray(raw) ? raw : [];
+  } catch (e) {
+    return [];
+  }
+}
+
 function mountAdminUi(app, config) {
   const webRoot = adminWebRoot(config);
   if (!webRoot) return;
@@ -53,6 +64,7 @@ function mountAdminUi(app, config) {
   app.get(/^\/admin(?:\/.*)?$/, (req, res, next) => {
     const pathname = String(req.path || '').replace(/\/+$/, '') || '/';
     if (pathname === '/admin') return res.redirect(302, '/admin/overview');
+    if (pathname === '/admin/login' || pathname === '/admin/dang-nhap') return next();
     let ctx;
     try {
       ctx = ui();
@@ -69,6 +81,13 @@ function mountAdminUi(app, config) {
     if (canPath && canPath !== '#' && pathname !== canPath) {
       const q = req.url.indexOf('?') >= 0 ? req.url.slice(req.url.indexOf('?')) : '';
       return res.redirect(301, canPath + q);
+    }
+    const allow = loadCanonicalAllowlist(webRoot);
+    if (allow.indexOf(key) >= 0) {
+      const shell = path.join(webRoot, 'platform/admin/shell/document.html');
+      if (!fs.existsSync(shell)) return next();
+      res.set('Cache-Control', 'no-store');
+      return res.sendFile(shell);
     }
     let file = null;
     Object.keys(R.PAGES || {}).some((k) => {

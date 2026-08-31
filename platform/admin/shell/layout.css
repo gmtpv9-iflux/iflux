@@ -1,0 +1,110 @@
+/* platform/admin — composition + scroll/sticky. Visual chrome = Canonical DS. */
+
+[data-admin-main-area],
+main.ix-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+[data-ix-admin-shell="sidebar"] {
+  width: var(--ifx-size-sidebar-w);
+  background: var(--ifx-bg-surface);
+  border-right: 1px solid var(--ifx-border-subtle);
+  color: var(--ifx-text-primary);
+}
+
+[data-admin-header-region] {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--ifx-z-sticky, 40);
+  background: var(--ifx-bg-surface);
+}
+
+[data-ix-admin-shell="header"] {
+  height: var(--ifx-size-navbar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-gap-sm);
+  padding: 0 var(--ifx-space-container, 24px);
+  background: var(--ifx-bg-surface);
+  border-bottom: 1px solid var(--ifx-border-subtle);
+  color: var(--ifx-text-primary);
+  position: relative;
+  top: auto;
+}
+
+[data-admin-header-actions] {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4, 4px);
+}
+
+[data-admin-page-header]:empty {
+  display: none;
+}
+
+[data-ix-admin-page-host] {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+[data-ix-admin-page-host] > .ix-content {
+  overflow: visible;
+  flex: none;
+  min-height: 0;
+}
+
+/* ix-* giữ hook/runtime — không còn paint Header / Sidebar / Page Header. */
+[data-ix-admin-shell="header"].ix-navbar {
+  background: var(--ifx-bg-surface);
+  border-bottom-color: var(--ifx-border-subtle);
+  height: var(--ifx-size-navbar-h);
+  position: relative;
+  top: auto;
+}
+
+[data-ix-admin-nav] .ix-menu-item {
+  background: transparent;
+  color: inherit;
+  padding: unset;
+  gap: unset;
+  font-size: unset;
+}
+
+[data-ix-admin-nav] .ix-menu-item:hover,
+[data-ix-admin-nav] .ix-menu-item.active {
+  background: unset;
+  color: unset;
+}
+
+[data-ix-admin-nav] .ix-menu-item.active::before {
+  content: none;
+  display: none;
+}
+
+[data-ix-admin-nav] .ix-menu-header {
+  color: var(--ifx-text-muted);
+  font-size: var(--ifx-font-size-xs, 11px);
+}
+
+[data-ix-admin-nav] .ix-menu-label {
+  font-size: unset;
+  color: inherit;
+}
+
+[data-admin-page-header] .ix-page-title,
+[data-admin-page-header] .ix-breadcrumb {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+  [data-admin-header-region] {
+    width: 100%;
+  }
+}

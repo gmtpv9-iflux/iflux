@@ -17,23 +17,23 @@
   }
 
   function itemHtml(it, nested) {
-    var cls = 'ix-menu-item' + (it.active ? ' active' : '');
+    var cls = 'ix-menu-item ifx-nav-item' + (it.active ? ' active is-active' : '');
     var icon = String(it.icon || 'ti-circle').replace(/\s*ix-menu-icon\s*/g, ' ').trim().split(/\s+/)[0];
     var badge = it.badge
       ? '<span class="ix-menu-badge">' + esc(it.badge) + '</span>'
       : '';
     var iconHtml = nested
       ? '<span class="ix-menu-bullet" aria-hidden="true"></span>'
-      : '<i class="ti ' + esc(icon) + ' ix-menu-icon"></i>';
+      : '<i class="ti ' + esc(icon) + ' ix-menu-icon ifx-nav-icon"></i>';
     return '<a href="' + esc(it.href) + '" class="' + cls + '"' +
       (it.routeKey ? ' data-ix-route="' + esc(it.routeKey) + '"' : '') + '>' +
       iconHtml +
-      '<span class="ix-menu-label">' + esc(it.label) + '</span>' +
+      '<span class="ix-menu-label ifx-nav-label">' + esc(it.label) + '</span>' +
       badge + '</a>';
   }
 
   function parentHtml(p) {
-    var cls = 'ix-menu-item' + (p.open ? ' open' : '') + (p.active ? ' active' : '');
+    var cls = 'ix-menu-item ifx-nav-item' + (p.open ? ' open' : '') + (p.active ? ' active is-active' : '');
     var icon = String(p.icon || 'ti-circle').replace(/\s*ix-menu-icon\s*/g, ' ').trim().split(/\s+/)[0];
     var badge = p.badge
       ? '<span class="ix-menu-badge">' + esc(p.badge) + '</span>'
@@ -44,8 +44,8 @@
     /* Parent có submenu: không điều hướng — chỉ toggle khi bấm tên/icon */
     return '<div class="' + cls + '" data-ix-submenu role="button" tabindex="0"' +
       (p.routeKey ? ' data-ix-route="' + esc(p.routeKey) + '"' : '') + '>' +
-      '<i class="ti ' + esc(icon) + ' ix-menu-icon"></i>' +
-      '<span class="ix-menu-label">' + esc(p.label) + '</span>' +
+      '<i class="ti ' + esc(icon) + ' ix-menu-icon ifx-nav-icon"></i>' +
+      '<span class="ix-menu-label ifx-nav-label">' + esc(p.label) + '</span>' +
       badge +
       '<i class="ti ti-chevron-right ix-menu-arrow" aria-hidden="true"></i>' +
       '</div>' +
@@ -154,7 +154,9 @@
     if (!host || !shell || !shell.activeKey) return;
     var active = shell.activeKey();
     host.querySelectorAll('a.ix-menu-item[data-ix-route]').forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('data-ix-route') === active);
+      var on = a.getAttribute('data-ix-route') === active;
+      a.classList.toggle('active', on);
+      a.classList.toggle('is-active', on);
     });
     host.querySelectorAll('.ix-menu-item[data-ix-submenu]').forEach(function (p) {
       var rk = p.getAttribute('data-ix-route');
@@ -165,7 +167,9 @@
           if (a.getAttribute('data-ix-route') === active) childActive = true;
         });
       }
-      p.classList.toggle('active', rk === active && !childActive);
+      var on = rk === active && !childActive;
+      p.classList.toggle('active', on);
+      p.classList.toggle('is-active', on);
     });
   }
 
@@ -184,6 +188,7 @@
     }).join('');
     host.innerHTML = html;
     host.setAttribute('data-ix-admin-nav', '');
+    host.classList.add('ifx-nav-group');
     if (opts.preserveOpen) restoreOpen(host, openKeys);
     bindSubmenu(host);
   }
