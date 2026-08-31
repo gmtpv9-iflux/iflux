@@ -29,3 +29,15 @@
   font-family: inherit;
 }
 .ifx-search input::placeholder { color: var(--ifx-text-muted); }
+
+/* Slot trong thread Chat: full width, cao 32, không ring form. */
+.ifx-search-embedded {
+  max-width: none;
+  width: 100%;
+  height: var(--ifx-size-avatar-32);
+  padding-inline: var(--ifx-space-8);
+}
+.ifx-search-embedded:focus-within {
+  box-shadow: none;
+  border-color: var(--ifx-border-default);
+}

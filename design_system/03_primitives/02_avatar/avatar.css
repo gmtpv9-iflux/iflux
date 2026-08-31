@@ -26,17 +26,29 @@
   height: var(--ifx-size-avatar-sm);
   font-size: var(--ifx-font-size-2xs);
 }
+.ifx-avatar-32 {
+  width: var(--ifx-size-avatar-32);
+  height: var(--ifx-size-avatar-32);
+  font-size: var(--ifx-font-size-12);
+}
 .ifx-avatar-lg {
   width: var(--ifx-size-avatar-lg);
   height: var(--ifx-size-avatar-lg);
   font-size: var(--ifx-font-size-md);
 }
+.ifx-avatar-xl {
+  width: var(--ifx-size-avatar-xl);
+  height: var(--ifx-size-avatar-xl);
+  font-size: var(--ifx-font-size-20);
+}
 .ifx-avatar-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
 .ifx-avatar-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
 .ifx-avatar-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
 .ifx-avatar-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
+.ifx-avatar-accent  { background: var(--ifx-action-primary-soft); color: var(--ifx-action-primary); }
+.ifx-avatar-ring { border: 2px solid var(--ifx-action-primary); }
 
-.ifx-avatar-online { position: relative; }
+.ifx-avatar-online { position: relative; overflow: visible; }
 .ifx-avatar-online::after {
   content: "";
   position: absolute;
