@@ -17,15 +17,6 @@ html.ifx-profile-host body {
   background: var(--ifx-bg-canvas);
 }
 
-.ifx-profile-page {
-  padding: var(--ifx-space-container);
-}
-.ifx-profile-page > h1 {
-  font-size: 2em;
-  font-weight: 700;
-  line-height: var(--ifx-line-height-normal);
-  margin: 0;
-}
 .ifx-profile-block { margin-bottom: var(--ifx-space-24); }
 
 .ifx-profile-grid {
@@ -129,7 +120,6 @@ html.ifx-profile-host body {
 .ifx-profile-actions .ifx-btn { flex: 1; justify-content: flex-start; }
 .ifx-plan-card .ifx-btn { width: 100%; justify-content: flex-start; margin-top: var(--ifx-space-8); border-width: 0; }
 .ifx-form-narrow > .ifx-form-group { margin-bottom: 0; }
-.ifx-profile-page .ifx-breadcrumb .ti { font-size: var(--ifx-font-size-12); }
 .ifx-profile-tab .ti { font-size: var(--ifx-font-size-14); }
 .ifx-profile-page .ifx-btn:not(.ifx-btn-sm) .ti { font-size: 13px; }
 .ifx-profile-page .ifx-btn-sm .ti { font-size: var(--ifx-font-size-12); }

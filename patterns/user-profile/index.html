@@ -19,7 +19,9 @@
   <link rel="stylesheet" href="../../design_system/03_primitives/04_button/button.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/05_chip/chip.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/07_progress/progress.css">
+  <link rel="stylesheet" href="../../design_system/03_primitives/08_title/title.css">
   <link rel="stylesheet" href="../../design_system/04_components/02_breadcrumb/breadcrumb.css">
+  <link rel="stylesheet" href="../../design_system/04_components/10_page-header/page-header.css">
   <link rel="stylesheet" href="../../design_system/04_components/03_card/card.css">
   <link rel="stylesheet" href="../../design_system/04_components/08_form/form.css">
   <link rel="stylesheet" href="../../design_system/04_components/09_modal/modal.css">
@@ -31,13 +33,21 @@
   <link rel="stylesheet" href="../../design_system/04_components/21_profile/profile.css">
 </head>
 <body>
-<div class="ifx-profile-page" data-ifx-profile>
-  <h1>Chi tiết người dùng</h1>
-  <nav class="ifx-breadcrumb ifx-profile-block" aria-label="breadcrumb">
-    <a href="/ui_tooling/workbench/">Hub</a>
-    <i class="ti ti-chevron-right"></i>
-    <span class="ifx-breadcrumb-current">ADM-USR-002 · User Detail</span>
-  </nav>
+<div class="ifx-container ifx-profile-page" data-ifx-profile>
+  <header class="ifx-page-header ifx-profile-block">
+    <div class="ifx-page-header-main">
+      <div class="ifx-page-title">
+        <h1>Chi tiết người dùng</h1>
+      </div>
+    </div>
+    <nav aria-label="Breadcrumb">
+      <ol class="ifx-breadcrumb">
+        <li><a href="/ui_tooling/workbench/">Hub</a></li>
+        <li class="ifx-breadcrumb-sep" aria-hidden="true">/</li>
+        <li class="ifx-breadcrumb-current" aria-current="page">ADM-USR-002 · User Detail</li>
+      </ol>
+    </nav>
+  </header>
 
   <div class="ifx-profile-grid">
     <div class="ifx-profile-rail">

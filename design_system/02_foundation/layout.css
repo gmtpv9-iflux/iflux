@@ -8,7 +8,7 @@
  * Does not own: Page/Section/Widget spacing APIs (consumers compose Stack).
  */
 
-/* ── Responsive container gutter (horizontal only) ── */
+/* ── Responsive container gutter ── */
 :root {
   --ifx-space-container: var(--ifx-space-16);
   --ifx-grid-gutter: var(--ifx-space-16);
@@ -16,7 +16,7 @@
 
 @media (min-width: 768px) {
   :root {
-    --ifx-space-container: var(--ifx-space-20);
+    --ifx-space-container: var(--ifx-space-24);
     --ifx-grid-gutter: var(--ifx-space-24);
   }
 }
@@ -34,12 +34,12 @@
 }
 
 /* ── Container ──
- * Width + horizontal gutter. Max-width is opt-in.
+ * Width + gutter. Max-width is opt-in.
  * Does not own display/flex/gap or page/section rhythm. */
 .ifx-container {
   width: 100%;
-  margin-inline: auto;
-  padding-inline: var(--ifx-space-container);
+  margin: 0 auto;
+  padding: var(--ifx-space-container);
 }
 .ifx-container-max { max-width: var(--ifx-size-container-max); }
 
