@@ -27,12 +27,12 @@
   }
 
   function ensureEnvChip(nav) {
-    var actions = nav.querySelector('[data-admin-header-actions], .ix-nav-actions');
+    var actions = nav.querySelector('.ix-nav-actions');
     if (!actions) return;
-    actions.setAttribute('data-admin-header-actions', '');
     var shell = global.IfluxAdminAppShell;
     var state = shell && shell.getHeaderState ? shell.getHeaderState() : { env: 'production' };
     var label = state.env === 'staging' ? 'Staging' : 'Production';
+    /* Gỡ chip môi trường cứng trong HTML cũ */
     actions.querySelectorAll('.ix-chip').forEach(function (el) {
       var t = (el.textContent || '').toLowerCase();
       if (t.indexOf('môi trường') >= 0 || t.indexOf('local') >= 0 || t.indexOf('staging') >= 0 || t.indexOf('production') >= 0) {
@@ -42,12 +42,14 @@
     var chip = actions.querySelector('[data-ix-admin-env]');
     if (!chip) {
       chip = document.createElement('span');
+      chip.className = 'ix-chip' + (state.env === 'staging' ? ' ix-chip-warning' : ' ix-chip-success');
       chip.setAttribute('data-ix-admin-env', '');
-      var avatar = actions.querySelector('[data-ix-admin-avatar], .ifx-avatar, .ix-avatar');
+      var avatar = actions.querySelector('.ix-avatar');
       if (avatar) actions.insertBefore(chip, avatar);
       else actions.appendChild(chip);
+    } else {
+      chip.className = 'ix-chip' + (state.env === 'staging' ? ' ix-chip-warning' : ' ix-chip-success');
     }
-    chip.className = 'ifx-chip' + (state.env === 'staging' ? ' ifx-chip-warning' : ' ifx-chip-success');
     chip.textContent = label;
   }
 
@@ -55,10 +57,8 @@
     var shell = global.IfluxAdminAppShell;
     var state = shell && shell.getHeaderState ? shell.getHeaderState() : {};
     var admin = state.admin;
-    var avatar = nav.querySelector('[data-ix-admin-avatar], .ifx-avatar, .ix-avatar');
+    var avatar = nav.querySelector('.ix-avatar');
     if (!avatar) return;
-    avatar.classList.add('ifx-avatar', 'ifx-avatar-md');
-    avatar.setAttribute('data-ix-admin-avatar', '');
     if (!admin) {
       avatar.textContent = 'AD';
       avatar.removeAttribute('title');
@@ -73,13 +73,12 @@
   }
 
   function ensureLogout(nav) {
-    var actions = nav.querySelector('[data-admin-header-actions], .ix-nav-actions');
+    var actions = nav.querySelector('.ix-nav-actions');
     if (!actions) return;
-    actions.setAttribute('data-admin-header-actions', '');
     if (actions.querySelector('[data-ix-admin-logout]')) return;
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'ifx-btn ifx-btn-ghost ifx-btn-icon';
+    btn.className = 'ix-btn ix-btn-ghost ix-btn-sm';
     btn.setAttribute('data-ix-admin-logout', '');
     btn.innerHTML = '<i class="ti ti-logout"></i>';
     btn.title = 'Đăng xuất';
@@ -96,9 +95,6 @@
     var nav = findNavbar();
     if (!nav) return;
     nav.setAttribute('data-ix-admin-shell', 'header');
-    nav.querySelectorAll('[data-ix-toggle="sidebar"]').forEach(function (btn) {
-      btn.classList.add('ifx-btn', 'ifx-btn-ghost', 'ifx-btn-icon');
-    });
     ensureEnvChip(nav);
     ensureLogout(nav);
     renderAvatar(nav);
