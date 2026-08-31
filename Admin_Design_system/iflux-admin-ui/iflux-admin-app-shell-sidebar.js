@@ -17,23 +17,23 @@
   }
 
   function itemHtml(it, nested) {
-    var cls = 'ix-menu-item' + (it.active ? ' active' : '');
+    var cls = 'ifx-nav-item' + (it.active ? ' is-active' : '');
     var icon = String(it.icon || 'ti-circle').replace(/\s*ix-menu-icon\s*/g, ' ').trim().split(/\s+/)[0];
     var badge = it.badge
       ? '<span class="ix-menu-badge">' + esc(it.badge) + '</span>'
       : '';
     var iconHtml = nested
       ? '<span class="ix-menu-bullet" aria-hidden="true"></span>'
-      : '<i class="ti ' + esc(icon) + ' ix-menu-icon"></i>';
+      : '<i class="ti ' + esc(icon) + ' ifx-nav-icon"></i>';
     return '<a href="' + esc(it.href) + '" class="' + cls + '"' +
       (it.routeKey ? ' data-ix-route="' + esc(it.routeKey) + '"' : '') + '>' +
       iconHtml +
-      '<span class="ix-menu-label">' + esc(it.label) + '</span>' +
+      '<span class="ifx-nav-label">' + esc(it.label) + '</span>' +
       badge + '</a>';
   }
 
   function parentHtml(p) {
-    var cls = 'ix-menu-item' + (p.open ? ' open' : '') + (p.active ? ' active' : '');
+    var cls = 'ifx-nav-item' + (p.open ? ' open' : '') + (p.active ? ' is-active' : '');
     var icon = String(p.icon || 'ti-circle').replace(/\s*ix-menu-icon\s*/g, ' ').trim().split(/\s+/)[0];
     var badge = p.badge
       ? '<span class="ix-menu-badge">' + esc(p.badge) + '</span>'
@@ -44,8 +44,8 @@
     /* Parent có submenu: không điều hướng — chỉ toggle khi bấm tên/icon */
     return '<div class="' + cls + '" data-ix-submenu role="button" tabindex="0"' +
       (p.routeKey ? ' data-ix-route="' + esc(p.routeKey) + '"' : '') + '>' +
-      '<i class="ti ' + esc(icon) + ' ix-menu-icon"></i>' +
-      '<span class="ix-menu-label">' + esc(p.label) + '</span>' +
+      '<i class="ti ' + esc(icon) + ' ifx-nav-icon"></i>' +
+      '<span class="ifx-nav-label">' + esc(p.label) + '</span>' +
       badge +
       '<i class="ti ti-chevron-right ix-menu-arrow" aria-hidden="true"></i>' +
       '</div>' +
@@ -77,7 +77,7 @@
       }
     }
     return kids.slice(start, end).filter(function (el) {
-      return el.classList && el.classList.contains('ix-menu-item') && el.hasAttribute('data-ix-submenu');
+      return el.classList && el.classList.contains('ifx-nav-item') && el.hasAttribute('data-ix-submenu');
     });
   }
 
@@ -96,7 +96,7 @@
     host.addEventListener('click', function (e) {
       /* SoT nav: luôn đi theo routeKey → slug /admin/... (không phụ thuộc <base> / href="#"). */
       var link = e.target && e.target.closest
-        ? e.target.closest('a.ix-menu-item[data-ix-route]')
+        ? e.target.closest('a.ifx-nav-item[data-ix-route]')
         : null;
       if (link && host.contains(link) && !link.hasAttribute('data-ix-submenu')) {
         var routeKey = link.getAttribute('data-ix-route');
@@ -109,7 +109,7 @@
         }
       }
       var item = e.target && e.target.closest
-        ? e.target.closest('.ix-menu-item[data-ix-submenu]')
+        ? e.target.closest('.ifx-nav-item[data-ix-submenu]')
         : null;
       if (!item || !host.contains(item)) return;
       /* Không chặn click vào item con trong submenu */
@@ -121,7 +121,7 @@
     host.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var item = e.target && e.target.closest
-        ? e.target.closest('.ix-menu-item[data-ix-submenu]')
+        ? e.target.closest('.ifx-nav-item[data-ix-submenu]')
         : null;
       if (!item || item !== e.target) return;
       e.preventDefault();
@@ -132,7 +132,7 @@
   function snapshotOpen(host) {
     var keys = [];
     if (!host) return keys;
-    host.querySelectorAll('.ix-menu-item[data-ix-submenu].open').forEach(function (el) {
+    host.querySelectorAll('.ifx-nav-item[data-ix-submenu].open').forEach(function (el) {
       var k = el.getAttribute('data-ix-route');
       if (k) keys.push(k);
     });
@@ -143,7 +143,7 @@
     if (!host || !keys || !keys.length) return;
     var set = {};
     keys.forEach(function (k) { set[k] = true; });
-    host.querySelectorAll('.ix-menu-item[data-ix-submenu]').forEach(function (el) {
+    host.querySelectorAll('.ifx-nav-item[data-ix-submenu]').forEach(function (el) {
       el.classList.toggle('open', !!set[el.getAttribute('data-ix-route')]);
     });
   }
@@ -153,10 +153,10 @@
     var shell = global.IfluxAdminAppShell;
     if (!host || !shell || !shell.activeKey) return;
     var active = shell.activeKey();
-    host.querySelectorAll('a.ix-menu-item[data-ix-route]').forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('data-ix-route') === active);
+    host.querySelectorAll('a.ifx-nav-item[data-ix-route]').forEach(function (a) {
+      a.classList.toggle('is-active', a.getAttribute('data-ix-route') === active);
     });
-    host.querySelectorAll('.ix-menu-item[data-ix-submenu]').forEach(function (p) {
+    host.querySelectorAll('.ifx-nav-item[data-ix-submenu]').forEach(function (p) {
       var rk = p.getAttribute('data-ix-route');
       var childActive = false;
       var sub = p.nextElementSibling;
@@ -165,7 +165,7 @@
           if (a.getAttribute('data-ix-route') === active) childActive = true;
         });
       }
-      p.classList.toggle('active', rk === active && !childActive);
+      p.classList.toggle('is-active', rk === active && !childActive);
     });
   }
 

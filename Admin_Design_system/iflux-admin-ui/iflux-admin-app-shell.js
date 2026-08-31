@@ -288,6 +288,7 @@
     if (main) {
       Array.prototype.forEach.call(main.children, function (el) {
         if (isAppShellHeader(el)) return;
+        if (el.getAttribute && el.getAttribute('data-admin-page-header') !== null) return;
         if (el.getAttribute && el.getAttribute('data-ix-admin-page-host') !== null) {
           Array.prototype.forEach.call(el.children, function (ch) { nodes.push(ch); });
           return;

@@ -72,6 +72,37 @@
   --ifx-flow-in: var(--color-flow-in);
   --ifx-flow-out: var(--color-flow-out);
 
+  /* DS primitive classes (nav/chip/avatar/button) → cùng semantic Admin */
+  --ifx-text-primary: var(--color-text-primary);
+  --ifx-text-secondary: var(--color-text-secondary);
+  --ifx-text-disabled: var(--color-text-disabled);
+  --ifx-text-on-primary: var(--color-text-on-primary);
+  --ifx-text-on-success: var(--color-text-on-primary);
+  --ifx-text-on-danger: var(--color-text-on-primary);
+  --ifx-text-on-warning: var(--color-text-on-primary);
+  --ifx-bg-hover: var(--color-bg-hover);
+  --ifx-bg-active: var(--color-bg-active);
+  --ifx-bg-subtle: var(--color-bg-subtle);
+  --ifx-action-primary: var(--color-action-primary);
+  --ifx-action-primary-hover: var(--color-action-primary-hover);
+  --ifx-action-primary-soft: var(--color-action-primary-soft);
+  --ifx-action-secondary: var(--color-action-secondary);
+  --ifx-action-secondary-hover: var(--color-action-secondary-hover);
+  --ifx-success: var(--color-success);
+  --ifx-success-soft: var(--color-success-soft);
+  --ifx-warning: var(--color-warning);
+  --ifx-warning-soft: var(--color-warning-soft);
+  --ifx-danger: var(--color-danger);
+  --ifx-danger-soft: var(--color-danger-soft);
+  --ifx-info: var(--color-info);
+  --ifx-info-soft: var(--color-info-soft);
+  --ifx-border-default: var(--color-border-default);
+  --ifx-border-subtle: var(--color-border-subtle);
+  --ifx-transition-color: var(--transition-color);
+  --ifx-transition-transform: var(--transition-transform);
+  --ifx-radius-chip: var(--radius-chip);
+  --ifx-radius-button: var(--radius-button);
+
   /* Chart runtime (ApexCharts / SVG) */
   --ifx-chart-grid: var(--ifx-color-border-frost);
   --ifx-chart-label: var(--ix-text-secondary);

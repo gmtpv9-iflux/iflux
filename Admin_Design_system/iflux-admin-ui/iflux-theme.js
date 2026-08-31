@@ -95,7 +95,7 @@
     document.querySelectorAll('.ix-nav-actions').forEach(function (actions) {
       if (actions.querySelector('[data-ifx-theme-toggle]')) return;
       var btn = createToggleButton('ix-nav-btn');
-      var chip = actions.querySelector('.ix-chip');
+      var chip = actions.querySelector('[data-ix-admin-env], .ifx-chip, .ix-chip');
       if (chip) actions.insertBefore(btn, chip);
       else actions.insertBefore(btn, actions.firstChild);
     });

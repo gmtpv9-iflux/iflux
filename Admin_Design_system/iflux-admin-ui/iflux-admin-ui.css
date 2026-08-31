@@ -16,6 +16,12 @@
 @import url('./typography.css?v=feedCard20260723');
 @import url('./spacing.css');
 @import url('./foundation/heart-action.css');
-@import url('./components.css?v=hostFlex20260818');
+@import url('./components.css?v=hostScroll20260831');
 @import url('./atoms-extensions.css?v=tdCaptionFix20260808');
 @import url('./utilities.css');
+@import url('/design_system/03_primitives/06_navigation/nav.css');
+@import url('/design_system/03_primitives/05_chip/chip.css');
+@import url('/design_system/03_primitives/02_avatar/avatar.css');
+@import url('/design_system/03_primitives/04_button/button.css');
+@import url('/design_system/04_components/10_page-header/page-header.css');
+@import url('/design_system/04_components/02_breadcrumb/breadcrumb.css');

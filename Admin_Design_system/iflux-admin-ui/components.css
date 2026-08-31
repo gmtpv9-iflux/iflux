@@ -116,6 +116,7 @@ body {
 }
 .ix-layout.ix-sidebar-collapsed .ix-brand-name,
 .ix-layout.ix-sidebar-collapsed .ix-menu-label,
+.ix-layout.ix-sidebar-collapsed .ifx-nav-label,
 .ix-layout.ix-sidebar-collapsed .ix-menu-header,
 .ix-layout.ix-sidebar-collapsed .ix-menu-arrow,
 .ix-layout.ix-sidebar-collapsed .ix-menu-badge {
@@ -126,7 +127,8 @@ body {
   padding: 0;
   gap: 0;
 }
-.ix-layout.ix-sidebar-collapsed .ix-menu-item {
+.ix-layout.ix-sidebar-collapsed .ix-menu-item,
+.ix-layout.ix-sidebar-collapsed .ifx-nav-item {
   justify-content: center;
   align-items: center;
   padding: 10px 0;
@@ -140,7 +142,8 @@ body {
   display: none;
 }
 .ix-layout.ix-sidebar-collapsed .ix-menu-sub,
-.ix-layout.ix-sidebar-collapsed .ix-menu-item.open + .ix-menu-sub {
+.ix-layout.ix-sidebar-collapsed .ix-menu-item.open + .ix-menu-sub,
+.ix-layout.ix-sidebar-collapsed .ifx-nav-item.open + .ix-menu-sub {
   display: none !important;
 }
 
@@ -166,6 +169,7 @@ body {
   .ix-layout.ix-sidebar-collapsed .ix-main { margin-left: 0; }
   .ix-layout.ix-sidebar-collapsed .ix-brand-name,
   .ix-layout.ix-sidebar-collapsed .ix-menu-label,
+  .ix-layout.ix-sidebar-collapsed .ifx-nav-label,
   .ix-layout.ix-sidebar-collapsed .ix-menu-header,
   .ix-layout.ix-sidebar-collapsed .ix-menu-arrow,
   .ix-layout.ix-sidebar-collapsed .ix-menu-badge {
@@ -176,7 +180,8 @@ body {
     padding: 0 var(--ifx-space-20);
     gap: var(--ifx-inline-md);
   }
-  .ix-layout.ix-sidebar-collapsed .ix-menu-item {
+  .ix-layout.ix-sidebar-collapsed .ix-menu-item,
+  .ix-layout.ix-sidebar-collapsed .ifx-nav-item {
     justify-content: flex-start;
     padding: 9px 20px;
     gap: var(--ifx-inline-md);
@@ -200,22 +205,30 @@ body {
   z-index: var(--ifx-z-sticky);
 }
 
-/* Page Host — cùng flex slot mà .ix-content từng giữ khi là con trực tiếp của main */
+/* Page Host — scroll owner (Main Content). Header region không nằm trong hộp này. */
 [data-ix-admin-page-host] {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-/* Content area — scroll nội bộ, không scroll body */
+[data-admin-page-header]:empty { display: none; }
+[data-admin-page-header] {
+  flex-shrink: 0;
+  position: sticky;
+  top: var(--ix-navbar-h);
+  z-index: var(--ifx-z-sticky);
+}
+
+/* Content area — padding; cuộn do Host */
 .ix-content {
   flex: 1;
   min-height: 0;
   padding: var(--ifx-space-container);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
 }
 .ix-content::-webkit-scrollbar { width: 6px; }
 .ix-content::-webkit-scrollbar-thumb {
@@ -281,7 +294,8 @@ body {
   color: var(--ix-text-muted);
   transition: transform 0.2s;
 }
-.ix-menu-item.open .ix-menu-arrow { transform: rotate(90deg); }
+.ix-menu-item.open .ix-menu-arrow,
+.ifx-nav-item.open .ix-menu-arrow { transform: rotate(90deg); }
 
 /* Submenu */
 .ix-menu-sub {
@@ -289,7 +303,8 @@ body {
   display: none;
   padding: 4px 0;
 }
-.ix-menu-item.open + .ix-menu-sub { display: block; }
+.ix-menu-item.open + .ix-menu-sub,
+.ifx-nav-item.open + .ix-menu-sub { display: block; }
 .ix-menu-sub .ix-menu-item {
   padding-left: var(--ifx-space-32);
   font-size: var(--ifx-font-size-14);
