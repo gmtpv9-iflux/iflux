@@ -2,26 +2,13 @@
  * Component — Form
  * REWRITE .ix-form-group / label / input / select / textarea / checkbox / dropzone.
  */
-.ifx-group {
-  display: flex;
-  flex-direction: column;
-}
-.ifx-group + .ifx-group { margin-top: var(--ifx-stack-lg); }
-
-.ifx-field,
 .ifx-form-group { margin-bottom: var(--ifx-stack-md); }
-.ifx-form-row > .ifx-field,
 .ifx-form-row > .ifx-form-group { margin-bottom: 0; }
-.ifx-stack-sm > .ifx-field,
 .ifx-stack-sm > .ifx-form-group,
-.ifx-stack-md > .ifx-field,
 .ifx-stack-md > .ifx-form-group,
-.ifx-stack-lg > .ifx-field,
 .ifx-stack-lg > .ifx-form-group,
-.ifx-stack-xl > .ifx-field,
 .ifx-stack-xl > .ifx-form-group { margin-bottom: 0; }
 
-.ifx-field-label,
 .ifx-label {
   display: block;
   font-size: var(--ifx-font-size-14);
@@ -217,8 +204,8 @@
 }
 .ifx-field-hint {
   display: block;
-  margin: var(--ifx-space-8) 0 0;
-  font-size: var(--ifx-font-size-12);
+  margin: var(--ifx-space-4) 0 0;
+  font-size: var(--ifx-text-caption-size);
   color: var(--ifx-text-muted);
 }
 .ifx-field-hint-tight {

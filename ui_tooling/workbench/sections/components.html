@@ -138,28 +138,15 @@
 <section class="sb-section ifx-stack-md" id="comp-form">
 <div class="ifx-section-title">
       <h2>Form</h2>
-      <p>Group → Group Label → Field → Field Label / Input / Hint. Surface mở form là Drawer.</p>
     </div>
-  <div class="ifx-group">
-    <div class="ifx-group-label">Thông tin liên hệ</div>
-    <div class="ifx-field">
-      <label class="ifx-field-label" for="f-name">Tên</label>
+  <div class="ifx-form-row">
+    <div class="ifx-form-group">
+      <label class="ifx-label" for="f-name">Tên</label>
       <input class="ifx-input" id="f-name" placeholder="Nhập tên">
     </div>
-    <div class="ifx-field">
-      <label class="ifx-field-label" for="f-mail">Email</label>
-      <input class="ifx-input" id="f-mail" type="email" placeholder="name@example.com">
-      <span class="ifx-field-hint">Dùng email đang hoạt động.</span>
-    </div>
-  </div>
-  <div class="ifx-form-row">
-    <div class="ifx-field">
-      <label class="ifx-field-label" for="f-sel">Nhóm</label>
-      <select class="ifx-select" id="f-sel"><option>A</option><option>B</option></select>
-    </div>
     <div class="ifx-form-group">
-      <label class="ifx-label" for="f-alias">Alias form-group</label>
-      <input class="ifx-input" id="f-alias" placeholder="ifx-form-group = ifx-field">
+      <label class="ifx-label" for="f-sel">Nhóm</label>
+      <select class="ifx-select" id="f-sel"><option>A</option><option>B</option></select>
     </div>
   </div>
   <div class="ifx-form-group">
@@ -277,26 +264,13 @@
   <div class="ifx-drawer-overlay" id="demoDrawerOv"></div>
   <aside class="ifx-drawer" id="demoDrawer" data-ifx-overlay="demoDrawerOv" aria-label="Drawer demo">
     <div class="ifx-drawer-header">
-      <span class="ifx-drawer-title">Chi tiết</span>
+      <h3>Chi tiết</h3>
       <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="drawer" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
     </div>
-    <div class="ifx-drawer-body">
-      <div class="ifx-group">
-        <div class="ifx-group-label">Thông tin</div>
-        <div class="ifx-field">
-          <label class="ifx-field-label" for="d-name">Họ và tên</label>
-          <input class="ifx-input" id="d-name" placeholder="Nguyễn Văn An">
-        </div>
-        <div class="ifx-field">
-          <label class="ifx-field-label" for="d-phone">Điện thoại</label>
-          <input class="ifx-input" id="d-phone" type="tel" placeholder="0909 123 456">
-          <span class="ifx-field-hint">Định dạng 10 số.</span>
-        </div>
-      </div>
-    </div>
+    <div class="ifx-drawer-body">Nội dung generic. Overlay + panel dùng token scrim / surface.</div>
     <div class="ifx-drawer-footer">
-      <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-dismiss="drawer">Huỷ</button>
-      <button type="button" class="ifx-btn ifx-btn-primary">Thêm</button>
+      <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-dismiss="drawer">Đóng</button>
+      <button type="button" class="ifx-btn ifx-btn-primary">Lưu</button>
     </div>
   </aside>
 </section>
@@ -791,12 +765,12 @@
   <div class="ifx-drawer-overlay" id="listDrawerOv"></div>
   <aside class="ifx-drawer" id="listDrawer" data-ifx-overlay="listDrawerOv" aria-label="Sửa bản ghi">
     <div class="ifx-drawer-header">
-      <span class="ifx-drawer-title">Sửa bản ghi</span>
+      <h3>Sửa bản ghi</h3>
       <button type="button" class="ifx-btn ifx-btn-icon" data-ifx-dismiss="drawer" aria-label="Đóng"><i class="ti ti-x ifx-icon"></i></button>
     </div>
     <div class="ifx-drawer-body">
-      <div class="ifx-field">
-        <label class="ifx-field-label" for="dl-name">Tên</label>
+      <div class="ifx-form-group">
+        <label class="ifx-label" for="dl-name">Tên</label>
         <input class="ifx-input" id="dl-name" value="Bản ghi một">
       </div>
     </div>
