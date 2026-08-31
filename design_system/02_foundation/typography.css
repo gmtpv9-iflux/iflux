@@ -210,10 +210,10 @@ caption {
   color: var(--ifx-text-muted);
 }
 .ifx-group-label {
-  font-size: 11px;
+  font-size: var(--ifx-font-size-12);
   font-weight: var(--ifx-font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: var(--ifx-letter-spacing-caps);
   color: var(--ifx-text-muted);
   margin-bottom: 10px;
 }
