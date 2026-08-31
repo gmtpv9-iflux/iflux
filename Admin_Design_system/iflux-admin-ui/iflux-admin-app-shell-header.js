@@ -96,6 +96,9 @@
     var nav = findNavbar();
     if (!nav) return;
     nav.setAttribute('data-ix-admin-shell', 'header');
+    nav.querySelectorAll('[data-ix-toggle="sidebar"]').forEach(function (btn) {
+      btn.classList.add('ifx-btn', 'ifx-btn-ghost', 'ifx-btn-icon');
+    });
     ensureEnvChip(nav);
     ensureLogout(nav);
     renderAvatar(nav);

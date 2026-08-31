@@ -307,12 +307,11 @@
   }
 
   function ensureCanonicalAssets() {
-    var root = document.documentElement;
-    if (root && !root.getAttribute('data-theme')) root.setAttribute('data-theme', 'light');
     var hrefs = [
       '/platform/admin/tokens/generated/css/primitives.css',
       '/design_system/01_tokens/02_generated/01_css/primitives.css',
       '/design_system/01_tokens/02_generated/01_css/semantic.css',
+      '/design_system/01_tokens/02_generated/01_css/01_themes/dark.css',
       '/design_system/01_tokens/02_generated/01_css/01_themes/light.css',
       '/design_system/03_primitives/06_navigation/nav.css',
       '/design_system/03_primitives/02_avatar/avatar.css',
@@ -320,7 +319,7 @@
       '/design_system/03_primitives/04_button/button.css',
       '/design_system/04_components/10_page-header/page-header.css',
       '/design_system/04_components/02_breadcrumb/breadcrumb.css',
-      '/platform/admin/shell/layout.css?v=sub02p2-20260831'
+      '/platform/admin/shell/layout.css?v=sub02p2c-20260831'
     ];
     hrefs.forEach(function (href) {
       if (document.querySelector('link[rel="stylesheet"][href="' + href + '"]')) return;
