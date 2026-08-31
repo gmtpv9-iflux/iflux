@@ -35,7 +35,8 @@
     '/design_system/04_components/18_wizard/wizard.css',
     '/design_system/04_components/05_chat/chat.css',
     '/design_system/04_components/04_chart/chart.css',
-    '/design_system/04_components/10_page-header/page-header.css'
+    '/design_system/04_components/10_page-header/page-header.css',
+    '/design_system/04_components/20_icon-list/icon-list.css'
   ];
   var COMPONENT_JS = [
     '/design_system/04_components/14_table/table.js',

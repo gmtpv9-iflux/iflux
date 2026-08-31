@@ -1,0 +1,22 @@
+/**
+ * Icon List — hàng dọc icon + chữ. Metric = baseline Chat details.
+ */
+.ifx-icon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ifx-text-secondary);
+}
+.ifx-icon-list-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ifx-icon-list-item .ti {
+  color: var(--ifx-action-primary);
+  font-size: 12px;
+}
+.ifx-icon-list-item.is-action { cursor: pointer; }
+.ifx-icon-list-item.is-action .ti { color: inherit; }
+.ifx-icon-list-item.is-danger { color: var(--ifx-danger); }

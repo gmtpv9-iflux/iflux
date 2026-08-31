@@ -245,31 +245,3 @@ html.ifx-chat-host body {
   font-size: 12px;
   color: var(--ifx-text-muted);
 }
-.ifx-chat-details-label {
-  font-size: 11px;
-  font-weight: var(--ifx-font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--ifx-text-muted);
-  margin-bottom: 10px;
-}
-.ifx-chat-details-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--ifx-text-secondary);
-}
-.ifx-chat-details-row,
-.ifx-chat-details-action {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ifx-chat-details-row .ti {
-  color: var(--ifx-action-primary);
-  font-size: 12px;
-}
-.ifx-chat-details-action { cursor: pointer; }
-.ifx-chat-details-action .ti { font-size: 12px; }
-.ifx-chat-details-action.is-danger { color: var(--ifx-danger); }
