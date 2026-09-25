@@ -66,9 +66,11 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   z-index: var(--ifx-z-dropdown);
+  transform: translateX(-100%);
   transition: width var(--ifx-duration-slow) var(--ifx-ease-out),
     transform var(--ifx-duration-slow) var(--ifx-ease-out);
 }
+.ix-sidebar.ix-sidebar-open { transform: translateX(0); }
 
 .ix-sidebar::-webkit-scrollbar { width: 4px; }
 .ix-sidebar::-webkit-scrollbar-thumb { background: var(--ix-border); border-radius: 4px; }
@@ -102,49 +104,9 @@ body {
   min-width: 0;
   min-height: 0;
   height: 100vh;
-  margin-left: var(--ix-sidebar-w);
+  margin-left: 0;
   overflow: hidden;
   transition: margin-left 0.25s ease;
-}
-
-/* Desktop: thu gọn sidebar — chỉ còn icon */
-.ix-layout.ix-sidebar-collapsed .ix-sidebar {
-  width: var(--ix-sidebar-w-collapsed);
-}
-.ix-layout.ix-sidebar-collapsed .ix-main {
-  margin-left: var(--ix-sidebar-w-collapsed);
-}
-.ix-layout.ix-sidebar-collapsed .ix-brand-name,
-.ix-layout.ix-sidebar-collapsed .ix-menu-label,
-.ix-layout.ix-sidebar-collapsed .ifx-nav-label,
-.ix-layout.ix-sidebar-collapsed .ix-menu-header,
-.ix-layout.ix-sidebar-collapsed .ix-menu-arrow,
-.ix-layout.ix-sidebar-collapsed .ix-menu-badge {
-  display: none;
-}
-.ix-layout.ix-sidebar-collapsed .ix-brand {
-  justify-content: center;
-  padding: 0;
-  gap: 0;
-}
-.ix-layout.ix-sidebar-collapsed .ix-menu-item,
-.ix-layout.ix-sidebar-collapsed .ifx-nav-item {
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-  gap: 0;
-}
-.ix-layout.ix-sidebar-collapsed .ix-menu-icon {
-  width: auto;
-  margin: 0;
-}
-.ix-layout.ix-sidebar-collapsed .ix-menu-item.active::before {
-  display: none;
-}
-.ix-layout.ix-sidebar-collapsed .ix-menu-sub,
-.ix-layout.ix-sidebar-collapsed .ix-menu-item.open + .ix-menu-sub,
-.ix-layout.ix-sidebar-collapsed .ifx-nav-item.open + .ix-menu-sub {
-  display: none !important;
 }
 
 /* Mobile drawer + overlay */
@@ -158,36 +120,50 @@ body {
 .ix-overlay.ix-overlay-visible { display: block; }
 .ix-body-noscroll { overflow: hidden; }
 
-@media (max-width: 1199.98px) {
-  .ix-sidebar {
-    transform: translateX(-100%);
-    width: var(--ix-sidebar-w);
+/* Desktop (≥ xl): sidebar cố định bên trái; có thể thu gọn chỉ còn icon.
+   Dưới xl: sidebar là drawer (base ở trên), mở bằng .ix-sidebar-open. */
+@media (min-width: 1280px) { /* bp:xl */
+  .ix-sidebar { transform: none; }
+  .ix-main { margin-left: var(--ix-sidebar-w); }
+
+  .ix-layout.ix-sidebar-collapsed .ix-sidebar {
+    width: var(--ix-sidebar-w-collapsed);
   }
-  .ix-sidebar.ix-sidebar-open { transform: translateX(0); }
-  .ix-main { margin-left: 0; }
-  .ix-layout.ix-sidebar-collapsed .ix-sidebar { width: var(--ix-sidebar-w); }
-  .ix-layout.ix-sidebar-collapsed .ix-main { margin-left: 0; }
+  .ix-layout.ix-sidebar-collapsed .ix-main {
+    margin-left: var(--ix-sidebar-w-collapsed);
+  }
   .ix-layout.ix-sidebar-collapsed .ix-brand-name,
   .ix-layout.ix-sidebar-collapsed .ix-menu-label,
   .ix-layout.ix-sidebar-collapsed .ifx-nav-label,
   .ix-layout.ix-sidebar-collapsed .ix-menu-header,
+  .ix-layout.ix-sidebar-collapsed .ifx-group-title,
   .ix-layout.ix-sidebar-collapsed .ix-menu-arrow,
   .ix-layout.ix-sidebar-collapsed .ix-menu-badge {
-    display: revert;
+    display: none;
   }
   .ix-layout.ix-sidebar-collapsed .ix-brand {
-    justify-content: flex-start;
-    padding: 0 var(--ifx-space-20);
-    gap: var(--ifx-inline-md);
+    justify-content: center;
+    padding: 0;
+    gap: 0;
   }
   .ix-layout.ix-sidebar-collapsed .ix-menu-item,
   .ix-layout.ix-sidebar-collapsed .ifx-nav-item {
-    justify-content: flex-start;
-    padding: 9px 20px;
-    gap: var(--ifx-inline-md);
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    gap: 0;
+  }
+  .ix-layout.ix-sidebar-collapsed .ix-menu-icon {
+    width: auto;
+    margin: 0;
   }
   .ix-layout.ix-sidebar-collapsed .ix-menu-item.active::before {
-    display: block;
+    display: none;
+  }
+  .ix-layout.ix-sidebar-collapsed .ix-menu-sub,
+  .ix-layout.ix-sidebar-collapsed .ix-menu-item.open + .ix-menu-sub,
+  .ix-layout.ix-sidebar-collapsed .ifx-nav-item.open + .ix-menu-sub {
+    display: none !important;
   }
 }
 
@@ -242,6 +218,10 @@ body {
 .ix-menu {
   flex: 1;
   padding: var(--ifx-space-12) 0;
+}
+/* Tiêu đề nhóm menu (DS .ifx-group-title) — căn lề ngang cùng .ifx-nav-item */
+.ix-menu > .ifx-group-title {
+  padding-inline: var(--ifx-space-12);
 }
 .ix-menu-header {
   padding: var(--ifx-inset-card) 4px;

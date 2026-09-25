@@ -18,7 +18,7 @@
   const layout = document.querySelector('.ix-layout');
   const sidebar = document.querySelector('.ix-sidebar');
   const overlay = document.getElementById('ix-overlay');
-  const mqDesktop = window.matchMedia('(min-width: 1200px)');
+  const mqDesktop = window.matchMedia('(min-width: 1280px)'); /* bp:xl */
   const STORAGE_COLLAPSED = 'ix-sidebar-collapsed';
 
   function isDesktop() {
@@ -110,7 +110,7 @@
       scrollSaveTimer = setTimeout(saveSidebarScroll, 80);
     }, { passive: true });
 
-    sidebar.querySelectorAll('.ix-menu-item[href]').forEach(function (link) {
+    sidebar.querySelectorAll('.ifx-nav-item[href]').forEach(function (link) {
       link.addEventListener('click', saveSidebarScroll);
     });
 

@@ -75,6 +75,7 @@
   /* DS primitive classes (nav/chip/avatar/button) → cùng semantic Admin */
   --ifx-text-primary: var(--color-text-primary);
   --ifx-text-secondary: var(--color-text-secondary);
+  --ifx-text-muted: var(--color-text-muted);
   --ifx-text-disabled: var(--color-text-disabled);
   --ifx-text-on-primary: var(--color-text-on-primary);
   --ifx-text-on-success: var(--color-text-on-primary);

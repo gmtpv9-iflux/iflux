@@ -10,3 +10,25 @@
   font-size: var(--ifx-text-body-sm-size);
   color: var(--ifx-text-muted);
 }
+
+/**
+ * Group title — tiêu đề cho một nhóm nhiều mục cùng đặc tính
+ * (nhóm menu, nhóm cài đặt thông báo, nhóm thông tin cá nhân…).
+ * Không phải heading của trang/section: chỉ gom các mục đi liền sau nó.
+ *   <div class="ifx-group-title">Quản lý Người dùng</div>
+ * Căn lề ngang theo container chứa nhóm (nav, list, form) — primitive không đặt padding-inline.
+ */
+.ifx-group-title {
+  display: block;
+  margin: 0;
+  padding: var(--ifx-space-16) 0 var(--ifx-space-4);
+  font-size: var(--ifx-text-overline-size);
+  font-weight: var(--ifx-text-overline-weight);
+  line-height: var(--ifx-text-overline-line);
+  letter-spacing: var(--ifx-text-overline-tracking);
+  text-transform: uppercase;
+  color: var(--ifx-text-muted);
+}
+.ifx-group-title:first-child {
+  padding-top: 0;
+}

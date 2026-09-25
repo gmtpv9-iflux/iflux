@@ -83,6 +83,12 @@
   --ifx-text-caption-line: var(--ifx-line-height-normal);
   --ifx-text-caption-tracking: var(--ifx-letter-spacing-normal);
 
+  /* ── Overline — nhãn nhỏ in hoa đứng trên một nhóm nội dung (vd. .ifx-group-title) ── */
+  --ifx-text-overline-size: var(--ifx-font-size-2xs);
+  --ifx-text-overline-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-overline-line: var(--ifx-line-height-tight);
+  --ifx-text-overline-tracking: var(--ifx-letter-spacing-caps);
+
   /* ── Button text tokens — Primitive Button consumes; classes not in this file ──
    * FUTURE: when button.css is audited, decide if these stay here or move to Button. */
   --ifx-text-btn-lg-size: var(--ifx-font-size-md);

@@ -264,11 +264,11 @@
   }
 
   function hideEmptyMenuGroups() {
-    document.querySelectorAll('.ix-menu .ix-menu-header').forEach(function (h) {
+    document.querySelectorAll('.ix-menu .ifx-group-title').forEach(function (h) {
       var el = h.nextElementSibling;
       var any = false;
-      while (el && !el.classList.contains('ix-menu-header')) {
-        if (el.classList.contains('ix-menu-item') && el.style.display !== 'none' && el.offsetParent !== null) {
+      while (el && !el.classList.contains('ifx-group-title')) {
+        if (el.classList.contains('ifx-nav-item') && el.style.display !== 'none' && el.offsetParent !== null) {
           any = true;
           break;
         }
@@ -287,7 +287,7 @@
         return;
       } catch (e) { /* fall through */ }
     }
-    document.querySelectorAll('.ix-menu a.ix-menu-item[href]').forEach(function (a) {
+    document.querySelectorAll('.ix-menu a.ifx-nav-item[href]').forEach(function (a) {
       var need = a.getAttribute('data-ix-perm') || permForHref(a.getAttribute('href'));
       if (need && !hasPermission(need)) a.style.display = 'none';
     });

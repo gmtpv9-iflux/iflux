@@ -258,7 +258,7 @@
   function loadRbacClient() {
     if (document.querySelector('script[data-ix-rbac]')) return;
     var s = document.createElement('script');
-    s.src = '/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=menuFix20260725';
+    s.src = '/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=groupTitle20260925';
     s.setAttribute('data-ix-rbac', '');
     s.async = true;
     document.head.appendChild(s);

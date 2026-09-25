@@ -53,10 +53,10 @@
   }
 
   function groupHtml(g) {
-    return '<div class="ix-menu-header">' + esc(g.label) + '</div>';
+    return '<div class="ifx-group-title">' + esc(g.label) + '</div>';
   }
 
-  /* Parent cùng MODULE = giữa 2 .ix-menu-header (hoặc đầu/cuối menu) */
+  /* Parent cùng MODULE = giữa 2 .ifx-group-title (hoặc đầu/cuối menu) */
   function moduleParentItems(host, item) {
     var kids = Array.prototype.slice.call(host.children || []);
     var idx = kids.indexOf(item);
@@ -64,14 +64,14 @@
     var start = 0;
     var i;
     for (i = idx; i >= 0; i--) {
-      if (kids[i].classList && kids[i].classList.contains('ix-menu-header')) {
+      if (kids[i].classList && kids[i].classList.contains('ifx-group-title')) {
         start = i + 1;
         break;
       }
     }
     var end = kids.length;
     for (i = idx + 1; i < kids.length; i++) {
-      if (kids[i].classList && kids[i].classList.contains('ix-menu-header')) {
+      if (kids[i].classList && kids[i].classList.contains('ifx-group-title')) {
         end = i;
         break;
       }
