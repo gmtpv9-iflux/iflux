@@ -2,7 +2,9 @@
 
 /**
  * Market Data Sync Cycle → Price Ingest → stock_prices (Current Market Price State).
- * Polling = Sync Clock; UPSERT (ticker, trading_date, source) — không tạo history theo cycle.
+ * Chu kỳ chạy theo "Thời gian mỗi nhịp update" (Admin → Cấu hình thời gian), chỉ cập nhật giá các mã đang có:
+ * UPSERT (ticker, source) — mỗi mã 1 dòng, không tạo dòng mới theo ngày / theo cycle.
+ * Danh mục mã không đồng bộ tự động — chỉ thủ công qua market-mdm runSyncAll.
  */
 
 const { query } = require('../../core/database/connection');
@@ -12,7 +14,6 @@ const timeCfg = require('./market-time-config.service');
 
 const ALLOWED_INTERVALS = [10, 30, 60, 300, 900];
 const SOURCE_VNDIRECT = 'vndirect_finfo';
-const SOURCE_DNSE = 'dnse';
 
 let cycleRunning = false;
 let clockTimer = null;
@@ -100,20 +101,6 @@ async function listActiveTickers() {
   return (res.rows || []).map(function (r) {
     return String(r.ticker).toUpperCase();
   });
-}
-
-async function resolveInstrumentSourceCode() {
-  const res = await query(
-    `SELECT s.code
-     FROM market_source_field_authority a
-     JOIN data_sources s ON s.id = a.source_id
-     WHERE a.entity = 'stock'
-       AND a.field_key = 'ticker'
-       AND a.trust_level IN ('trusted', 'review_required')
-       AND s.channel_class = 'external_provider'
-     LIMIT 1`
-  );
-  return (res.rows[0] && res.rows[0].code) || SOURCE_DNSE;
 }
 
 function normalizeExchange(exchangeHint) {
@@ -358,32 +345,6 @@ async function syncInstrumentUniverseFromVndirectList() {
   };
 }
 
-async function syncInstrumentUniverse() {
-  const mdm = require('./market-mdm.service');
-  const code = await resolveInstrumentSourceCode();
-  let primary = null;
-  let primaryError = null;
-  try {
-    primary = await mdm.runImportFromSource(code, { skipMissing: true, deferApply: false }, null);
-  } catch (err) {
-    primaryError = err && err.message ? err.message : String(err);
-  }
-
-  /*
-   * BR-MS-02/04/06: luôn chạy LISTED fill + reconcile (idempotent).
-   * MDM có thể để stub/conflict tên — LISTED authority fill-only bổ sung.
-   */
-  const listedFill = await syncInstrumentUniverseFromVndirectList();
-
-  const out = {
-    primary: primary,
-    listed_fill: listedFill,
-    source_code: code
-  };
-  if (primaryError) out.primary_error = primaryError;
-  return out;
-}
-
 async function upsertPriceRow(row) {
   await query(
     `INSERT INTO stock_prices (
@@ -392,7 +353,8 @@ async function upsertPriceRow(row) {
      ) VALUES (
        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW()
      )
-     ON CONFLICT (ticker, trading_date, source) DO UPDATE SET
+     ON CONFLICT (ticker, source) DO UPDATE SET
+       trading_date = EXCLUDED.trading_date,
        open = EXCLUDED.open,
        high = EXCLUDED.high,
        low = EXCLUDED.low,
@@ -514,7 +476,6 @@ async function runSyncCycle(opts) {
   let records = 0;
   let status = 'success';
   let errorText = null;
-  let instrumentImport = null;
   let sourceCode = SOURCE_VNDIRECT;
 
   try {
@@ -525,11 +486,8 @@ async function runSyncCycle(opts) {
     );
     runId = ins.rows[0].id;
 
-    /* Full-Universe: ingest instrument Source trước (NEW auto / CONFLICT review-only) */
-    if (!opts.skip_instrument_sync) {
-      instrumentImport = await syncInstrumentUniverse();
-    }
-
+    /* Chu kỳ tự động chỉ cập nhật giá thị trường của các mã đang có.
+       Danh mục mã chỉ đồng bộ thủ công (Admin → Nguồn dữ liệu → Sync — market-mdm runSyncAll). */
     sourceCode = await resolveIngestSourceCode();
     const tickers = opts.tickers || (await listActiveTickers());
     if (!tickers.length) {
@@ -552,8 +510,7 @@ async function runSyncCycle(opts) {
       run_id: runId,
       status: status,
       records_processed: records,
-      source_code: sourceCode,
-      instrument_import: instrumentImport
+      source_code: sourceCode
     };
   } catch (err) {
     status = 'error';
@@ -571,8 +528,7 @@ async function runSyncCycle(opts) {
       run_id: runId,
       status: status,
       records_processed: records,
-      error: errorText,
-      instrument_import: instrumentImport
+      error: errorText
     };
   } finally {
     cycleRunning = false;
@@ -686,9 +642,28 @@ async function maybeRunDueCycle() {
   return runSyncCycle();
 }
 
+let lastPruneDay = null;
+
+/* Nhật ký đồng bộ danh mục mã: giữ tối đa 90 ngày — dọn mỗi ngày một lần (không phụ thuộc giờ giao dịch). */
+function maybePruneImportLogs(logger) {
+  const day = new Date().toISOString().slice(0, 10);
+  if (lastPruneDay === day) return;
+  lastPruneDay = day;
+  require('./market-mdm.service')
+    .pruneImportLogs()
+    .then(function (n) {
+      if (n && logger) logger.info({ deleted_imports: n }, 'market-import-log-retention');
+    })
+    .catch(function (err) {
+      lastPruneDay = null;
+      if (logger) logger.error({ err: err.message }, 'market-import-log-retention failed');
+    });
+}
+
 function startSyncClock(logger) {
   if (clockTimer) return;
   clockTimer = setInterval(function () {
+    maybePruneImportLogs(logger);
     maybeRunDueCycle()
       .then(function (out) {
         if (out && logger && out.status) {
@@ -730,5 +705,6 @@ module.exports = {
   startSyncClock,
   stopSyncClock,
   upsertPriceRow,
-  tradingDateFromSource
+  tradingDateFromSource,
+  syncInstrumentUniverseFromVndirectList
 };
