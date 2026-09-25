@@ -28,10 +28,7 @@
     { id: 'RAW-DNSE-MQTT-STOCKINFO', provider: 'DNSE', channel: 'Thông tin mã realtime (trần/sàn/tham chiếu)', protocol: 'MQTT', transport: 'MQTT/WSS', endpoint: '.../mdds/stockinfo/v1/roundlot/symbol/{symbol}', fields: ['symbol', 'referencePrice', 'highLimitPrice', 'lowLimitPrice', 'securityGroupId', 'tradingTime'], coreRelevant: false, status: 'pending' },
     { id: 'RAW-DNSE-MQTT-OHLC', provider: 'DNSE', channel: 'OHLC realtime (nhiều khung)', protocol: 'MQTT', transport: 'MQTT/WSS', endpoint: '.../mdds/v2/ohlc/stock/{resolution}/{symbol}', fields: ['symbol', 'open', 'high', 'low', 'close', 'volume', 'time', 'resolution'], coreRelevant: false, status: 'pending' },
     { id: 'RAW-DNSE-MQTT-MARKET-INDEX', provider: 'DNSE', channel: 'Chỉ số thị trường realtime', protocol: 'MQTT', transport: 'MQTT/WSS', endpoint: '.../mdds/index/v1/{indexName}', fields: ['indexName', 'indexValue', 'changePercent', 'totalTradedValue', 'totalVolumeTraded'], coreRelevant: false, status: 'pending' },
-    { id: 'RAW-DNSE-MQTT-BOARDEVENT', provider: 'DNSE', channel: 'Sự kiện phiên / trạng thái bảng', protocol: 'MQTT', transport: 'MQTT/WSS', endpoint: '.../mdds/boardevent/v1/...', fields: ['tradingSessionId', 'eventId', 'marketId', 'boardId', 'sendingTime'], coreRelevant: false, status: 'pending' },
-    /* Content Engine — song song DNSE (không phải market tick) */
-    { id: 'RAW-CONTENT-VNSTOCK', provider: 'Vnstock News', channel: 'Crawl tin VN (RSS/Sitemap)', protocol: 'Connector', transport: 'Worker', endpoint: 'Crawler / BatchCrawler → POST /api/content/ingest', fields: ['url', 'title', 'short_description', 'content', 'publish_time', 'author', 'category', 'tags', 'image_url', 'source'], coreRelevant: true, status: 'active' },
-    { id: 'RAW-CONTENT-INTERNAL', provider: 'iFlux', channel: 'Seed / CMS / AI ingest', protocol: 'REST', transport: 'HTTPS', endpoint: 'POST /api/content/ingest', fields: ['url', 'title', 'excerpt', 'topics[]', 'entities[]'], coreRelevant: true, status: 'active' }
+    { id: 'RAW-DNSE-MQTT-BOARDEVENT', provider: 'DNSE', channel: 'Sự kiện phiên / trạng thái bảng', protocol: 'MQTT', transport: 'MQTT/WSS', endpoint: '.../mdds/boardevent/v1/...', fields: ['tradingSessionId', 'eventId', 'marketId', 'boardId', 'sendingTime'], coreRelevant: false, status: 'pending' }
   ];
 
   var NORMALIZED = [
@@ -44,10 +41,9 @@
     { id: 'NORM-LIQUIDITY', label: 'Thanh khoản lũy kế', group: 'Thị trường', inputs: ['NORM-TICK'], fields: ['exchange', 'metric', 'slots[]', 'cumulative[]'], adminKeys: ['liq_slot_minutes'] },
     { id: 'NORM-FLOW-NET', label: 'Dòng tiền ròng theo chủ thể', group: 'Dòng tiền', inputs: ['NORM-TICK'], fields: ['subject', 'scope', 'buyers[]', 'sellers[]'], adminKeys: ['flow_lot_big', 'smart_money_threshold'] },
     { id: 'NORM-FLOW-SUMMARY', label: 'Tóm tắt phiên dòng tiền', group: 'Dòng tiền', inputs: ['NORM-FLOW-NET'], fields: ['foreign', 'institutional', 'proprietary', 'retail'], adminKeys: [] },
-    { id: 'NORM-CONTENT-ARTICLE', label: 'Bài tin chuẩn hóa (Content Engine)', group: 'Nội dung', inputs: ['RAW-CONTENT-VNSTOCK', 'RAW-CONTENT-INTERNAL'], fields: ['article_id', 'title', 'excerpt', 'url', 'published_at', 'source', 'topics[]', 'symbols[]'], adminKeys: [] },
-    { id: 'NORM-CONTENT-TOPIC', label: 'Topic tiền-Story', group: 'Nội dung', inputs: ['NORM-CONTENT-ARTICLE'], fields: ['topic_id', 'slug', 'label', 'status', 'interest_score', 'article_count'], adminKeys: ['topic_promote_min_articles'] },
-    { id: 'NORM-CONTENT-STORY', label: 'Story entity + mapping mã', group: 'Nội dung', inputs: ['NORM-CONTENT-TOPIC', 'NORM-CONTENT-ARTICLE'], fields: ['story_id', 'slug', 'lifecycle', 'mappings[]', 'flow_net_value', 'top_relevance'], adminKeys: ['topic_auto_promote', 'topic_auto_promote_min_interest', 'topic_auto_promote_min_stocks'] },
-    { id: 'NORM-NEWS', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', inputs: ['NORM-STOCK-SNAP', 'NORM-CONTENT-ARTICLE'], fields: ['posts[]', 'trending_tickers[]', 'experts[]'], adminKeys: ['community_rank_window'] },
+    { id: 'NORM-CONTENT-TOPIC', label: 'Topic tiền-Story', group: 'Nội dung', inputs: ['NORM-NEWS'], fields: ['topic_id', 'slug', 'label', 'status', 'interest_score'], adminKeys: [] },
+    { id: 'NORM-CONTENT-STORY', label: 'Story entity + mapping mã', group: 'Nội dung', inputs: ['NORM-CONTENT-TOPIC'], fields: ['story_id', 'slug', 'lifecycle', 'mappings[]', 'flow_net_value', 'top_relevance'], adminKeys: ['topic_auto_promote', 'topic_auto_promote_min_interest'] },
+    { id: 'NORM-NEWS', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', inputs: ['NORM-STOCK-SNAP'], fields: ['posts[]', 'trending_tickers[]', 'experts[]'], adminKeys: ['community_rank_window'] },
     { id: 'NORM-WATCHLIST', label: 'Watchlist user', group: 'Cá nhân', inputs: ['NORM-STOCK-SNAP'], fields: ['folders[]', 'memberships{}'], adminKeys: ['watchlist_max_items'] }
   ];
 
@@ -60,7 +56,6 @@
     heatmap_min_members: 2,
     index_weight_method: 'float_cap',
     community_rank_window: 7,
-    topic_promote_min_articles: 3,
     /* Interest Score v1 — trọng số tăng dần (View rẻ … Comment đắt) */
     interest_w_view: 1,
     interest_w_search: 3,
@@ -69,12 +64,10 @@
     interest_w_share: 8,
     interest_w_comment: 10,
     /* P2 Relevance + auto-promote */
-    relevance_w_mention: 10,
     relevance_w_follow: 12,
     relevance_keep_min: 1,
     topic_auto_promote: false,
-    topic_auto_promote_min_interest: 50,
-    topic_auto_promote_min_stocks: 2
+    topic_auto_promote_min_interest: 50
   };
 
   /** Resolver key — map block → cách lấy giá trị demo */
@@ -157,9 +150,9 @@
     { id: 'ALG-FLW-STATS', label: 'TOP 10 dòng tiền vào/ra', group: 'Dòng tiền', outputs: ['WGT-FLW-STAT_STOCK_IN', 'WGT-FLW-STAT_STOCK_OUT', 'WGT-FLW-STAT_SECTOR_IN', 'WGT-FLW-STAT_SECTOR_OUT', 'WGT-FLW-STAT_HST_IN', 'WGT-FLW-STAT_HST_OUT', 'WGT-FLW-STAT_STORY_IN', 'WGT-FLW-STAT_STORY_OUT'], normalized: ['NORM-FLOW-NET'], adminKeys: ['smart_money_threshold'] },
     { id: 'ALG-FLW-ZONE', label: 'Ngữ cảnh vùng Hỗ trợ/Kháng cự', group: 'Dòng tiền', outputs: ['WGT-FLW-CTX', 'BLK-FLW-MKT-SIDE'], normalized: ['NORM-MARKET-AGG'], adminKeys: [] },
     { id: 'ALG-FLW-SCORE', label: 'Score dòng tiền CP', group: 'Dòng tiền', outputs: ['BLK-FLW-SCORE-BASIC', 'BLK-FLW-SCORE-ADV', 'BLK-FLW-SCORE-EX'], normalized: ['NORM-FLOW-NET', 'NORM-STOCK-SNAP'], adminKeys: ['smart_money_threshold'] },
-    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001', 'BLK-NEWS-TRENDING', 'BLK-NEWS-PAGE'], normalized: ['NORM-NEWS', 'NORM-CONTENT-ARTICLE'], adminKeys: ['community_rank_window'] },
-    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP', 'BLK-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS', 'NORM-CONTENT-ARTICLE'], adminKeys: ['topic_promote_min_articles', 'interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
-    { id: 'ALG-STORY-RELEVANCE', label: 'Relevance Score Story ↔ Stock (cumulative)', group: 'Nội dung', outputs: ['WGT-FLW-SUBJ-STORY', 'WGT-MKT-006', 'WGT-TOP-003'], normalized: ['NORM-CONTENT-STORY', 'NORM-CONTENT-ARTICLE', 'NORM-FLOW-NET'], adminKeys: ['relevance_w_mention', 'relevance_w_follow', 'relevance_keep_min', 'topic_auto_promote', 'topic_auto_promote_min_interest', 'topic_auto_promote_min_stocks'] },
+    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001', 'BLK-NEWS-TRENDING', 'BLK-NEWS-PAGE'], normalized: ['NORM-NEWS'], adminKeys: ['community_rank_window'] },
+    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP', 'BLK-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS'], adminKeys: ['interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
+    { id: 'ALG-STORY-RELEVANCE', label: 'Relevance Score Story ↔ Stock (cumulative)', group: 'Nội dung', outputs: ['WGT-FLW-SUBJ-STORY', 'WGT-MKT-006', 'WGT-TOP-003'], normalized: ['NORM-CONTENT-STORY', 'NORM-FLOW-NET'], adminKeys: ['relevance_w_follow', 'relevance_keep_min', 'topic_auto_promote', 'topic_auto_promote_min_interest'] },
     { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-NEWS-002', 'WGT-NEWS-003', 'BLK-NEWS-EXPERTS', 'BLK-NEWS-ACTIVE'], normalized: ['NORM-NEWS'], adminKeys: [] },
     { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'BLK-NEWS-TOPWL', 'WGT-NEWS-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
   ];
@@ -341,16 +334,6 @@
       inp: [],
       out: [f('tradingSessionId', 'Mã phiên', 'text'), f('eventId', 'Sự kiện', 'text'), f('marketId', 'Sàn', 'text'), f('boardId', 'Bảng', 'text'), f('sendingTime', 'Thời điểm gửi', 'datetime')],
       spec: 'MQTT/WSS .../boardevent/... Sự kiện phiên / trạng thái bảng realtime.'
-    },
-    'RAW-CONTENT-VNSTOCK': {
-      inp: [f('source', 'Nguồn báo (cafef|vietstock|…)', 'text'), f('limit', 'Số bài / lần kéo', 'số')],
-      out: [f('url', 'Link bài', 'text'), f('title', 'Tiêu đề', 'text'), f('content', 'Nội dung', 'text'), f('publish_time', 'Thời gian', 'text'), f('category', 'Chuyên mục', 'text'), f('tags', 'Tags', 'text'), f('image_url', 'Ảnh', 'text'), f('source', 'Nguồn', 'text')],
-      spec: 'Connector/worker gọi Vnstock News (không từ FE). Schema gốc Vnstock; map → NORM-CONTENT-ARTICLE.'
-    },
-    'RAW-CONTENT-INTERNAL': {
-      inp: [f('seed_pack', 'Gói seed / Ops', 'text')],
-      out: [f('url', 'Link / id nội bộ', 'text'), f('title', 'Tiêu đề', 'text'), f('content', 'Nội dung', 'text'), f('publish_time', 'Thời gian', 'text')],
-      spec: 'Tin nội bộ / seed demo Content Engine — cùng schema bài chuẩn hóa.'
     }
   };
 
@@ -402,27 +385,22 @@
       spec: 'Tổng hợp net = mua − bán theo 4 chủ thể (Khối ngoại / Tổ chức / Tự doanh / Cá nhân) trong phiên gần nhất.'
     },
     'NORM-NEWS': {
-      inp: [fi('ticker', 'Mã CK được nhắc', 'text', 'L2', 'NORM-STOCK-SNAP'), fi('post_id', 'Bài viết cộng đồng', 'text', 'EXT', 'Community DB'), fi('reaction', 'Lượt tương tác', 'số', 'EXT', 'Community DB'), fi('id', 'Bài Content Engine', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE')],
+      inp: [fi('ticker', 'Mã CK được nhắc', 'text', 'L2', 'NORM-STOCK-SNAP'), fi('post_id', 'Bài viết cộng đồng', 'text', 'EXT', 'Community DB'), fi('reaction', 'Lượt tương tác', 'số', 'EXT', 'Community DB')],
       out: [f('posts[]', 'Bài viết', 'mảng'), f('trending_tickers[]', 'Mã trending', 'mảng'), f('experts[]', 'Chuyên gia', 'mảng')],
-      spec: 'Tổng hợp UGC + bài Content Engine (news-card); xếp trending trong cửa sổ community_rank_window ngày.'
+      spec: 'Tổng hợp UGC + tin RSS (news_posts); xếp trending trong cửa sổ community_rank_window ngày.'
     },
     'NORM-WATCHLIST': {
       inp: [fi('ticker', 'Mã user thêm', 'text', 'EXT', 'User DB'), fi('change_pct', '% thay đổi', '%', 'L2', 'NORM-STOCK-SNAP')],
       out: [f('folders[]', 'Thư mục watchlist', 'mảng'), f('memberships{}', 'Ánh xạ mã → thư mục', 'object')],
       spec: 'Gom danh mục user tự thêm; giới hạn watchlist_max_items mã/thư mục.'
     },
-    'NORM-CONTENT-ARTICLE': {
-      inp: [fi('url', 'URL bài thô', 'text', 'L1', 'RAW-CONTENT-VNSTOCK'), fi('title', 'Tiêu đề', 'text', 'L1', 'RAW-CONTENT-VNSTOCK'), fi('content', 'Nội dung', 'text', 'L1', 'RAW-CONTENT-VNSTOCK')],
-      out: [f('id', 'ID bài', 'uuid'), f('title', 'Tiêu đề', 'text'), f('summary', 'Tóm tắt', 'text'), f('body', 'Nội dung', 'text'), f('tickers[]', 'Mã CK trích', 'mảng'), f('published_at', 'Thời gian', 'datetime'), f('topic_ids[]', 'Topic gắn', 'mảng')],
-      spec: 'Bài chuẩn hóa Content Engine; trích entity (ticker) + gắn Topic.'
-    },
     'NORM-CONTENT-TOPIC': {
-      inp: [fi('id', 'Bài đã chuẩn hóa', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE')],
-      out: [f('slug', 'Slug Topic', 'text'), f('title', 'Tiêu đề Topic', 'text'), f('status', 'building|candidate|…', 'enum'), f('article_count', 'Số bài', 'số'), f('entity_codes[]', 'Mã gắn', 'mảng')],
-      spec: 'Topic = pre-Story; gom bài theo topic_key. Promote Story khi đủ tiêu chí (P1).'
+      inp: [fi('event_type', 'Tương tác (view/search/like/…)', 'enum', 'EXT', 'content_interest_events')],
+      out: [f('slug', 'Slug Topic', 'text'), f('title', 'Tiêu đề Topic', 'text'), f('status', 'building|candidate|…', 'enum'), f('interest_score', 'Điểm Interest', 'số')],
+      spec: 'Topic = pre-Story; building → candidate khi interest_score > 0. Promote Story khi Admin duyệt hoặc auto-promote đủ Interest.'
     },
     'NORM-CONTENT-STORY': {
-      inp: [fi('slug', 'Topic được promote', 'text', 'L2', 'NORM-CONTENT-TOPIC'), fi('tickers[]', 'Mã từ bài', 'mảng', 'L2', 'NORM-CONTENT-ARTICLE')],
+      inp: [fi('slug', 'Topic được promote', 'text', 'L2', 'NORM-CONTENT-TOPIC')],
       out: [f('story_id', 'ID Story', 'uuid'), f('lifecycle', 'Vòng đời', 'enum'), f('mappings[]', 'Relevance theo mã', 'mảng'), f('flow_net_value', 'DT ròng snapshot', 'tiền'), f('top_relevance', 'Relevance cao nhất', 'số')],
       spec: 'Story entity sau promote; mappings = Relevance Score cumulative Story↔Stock; flow_* = snapshot (stub đến khi Money Flow Engine gắn membership).'
     }
@@ -486,9 +464,9 @@
       spec: 'score = tổng hợp cường độ dòng tiền chủ động + tương quan giá; phân tầng theo quyền hiển thị.'
     },
     'ALG-NEWS-FEED': {
-      inp: [fi('trending_tickers[]', 'Mã trending', 'mảng', 'L2', 'NORM-NEWS'), fi('id', 'Bài Content', 'uuid', 'L2', 'NORM-CONTENT-ARTICLE'), fi('change_pct', '% thay đổi mã', '%', 'L2', 'NORM-STOCK-SNAP')],
-      out: [f('ticker', 'Mã CK', 'text'), f('mention_count', 'Lượt quan tâm', 'số'), f('stock_perf', 'Hiệu suất mã', '%'), f('news_cards[]', 'Thẻ tin Content', 'mảng')],
-      spec: 'size = mention_count trong cửa sổ community_rank_window; color = stock_perf; news = Content Engine feed.'
+      inp: [fi('trending_tickers[]', 'Mã trending', 'mảng', 'L2', 'NORM-NEWS'), fi('change_pct', '% thay đổi mã', '%', 'L2', 'NORM-STOCK-SNAP')],
+      out: [f('ticker', 'Mã CK', 'text'), f('mention_count', 'Lượt quan tâm', 'số'), f('stock_perf', 'Hiệu suất mã', '%'), f('news_cards[]', 'Thẻ tin', 'mảng')],
+      spec: 'size = mention_count trong cửa sổ community_rank_window; color = stock_perf; news = bài RSS + cộng đồng.'
     },
     'ALG-TOPIC-TREND': {
       inp: [
@@ -525,8 +503,7 @@
     'ALG-STORY-RELEVANCE': {
       inp: [
         fi('story_id', 'Story', 'uuid', 'L2', 'NORM-CONTENT-STORY'),
-        fi('ticker', 'Mã CK', 'text', 'L2', 'NORM-CONTENT-ARTICLE'),
-        fi('mention_count', 'Số bài nhắc mã', 'số', 'L2', 'NORM-CONTENT-ARTICLE'),
+        fi('ticker', 'Mã CK', 'text', 'EXT', 'content_relevance_events'),
         fi('views', 'View cặp Story↔mã', 'số', 'EXT', 'content_relevance_events'),
         fi('likes', 'Like', 'số', 'EXT', 'content_relevance_events'),
         fi('favorites', 'Yêu thích', 'số', 'EXT', 'content_relevance_events'),
@@ -542,8 +519,8 @@
         f('lifecycle', 'Vòng đời Story', 'enum'),
         f('flow_net_value', 'DT ròng snapshot', 'tiền')
       ],
-      spec: 'relevance = mentions×relevance_w_mention×confidence + views×1 + likes×5 + favorites×8 + shares×8 + comments×10 + follow×12 (lũy kế).\n' +
-        'mappings[] ghi content_story_mappings; Admin có thể duyệt/loại. Auto-promote khi topic_auto_promote + đủ Interest + ≥N mã.'
+      spec: 'relevance = views×1 + likes×5 + favorites×8 + shares×8 + comments×10 + follow×12 (lũy kế).\n' +
+        'mappings[] ghi content_chu_de_mappings; Admin có thể duyệt/loại. Auto-promote khi topic_auto_promote + đủ Interest.'
     },
     'ALG-NEWS-MEMBERS': {
       inp: [fi('experts[]', 'Chuyên gia', 'mảng', 'L2', 'NORM-NEWS'), fi('posts[]', 'Bài viết & tương tác', 'mảng', 'L2', 'NORM-NEWS')],
