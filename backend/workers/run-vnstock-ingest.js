@@ -3,15 +3,25 @@
 /**
  * Node wrapper: chạy Python worker RAW-CONTENT-VNSTOCK.
  * Env: ADMIN_API_KEY, IFLUX_API_BASE (default http://127.0.0.1:PORT/api)
+ * Python: workers/.venv của chính release (CI tạo từ requirements-vnstock.txt) → VNSTOCK_PYTHON → python3.
  */
+const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+
+const RELEASE_VENV_PYTHON = path.join(__dirname, '.venv', 'bin', 'python');
+
+function resolvePython(opts) {
+  if (opts.python) return opts.python;
+  if (fs.existsSync(RELEASE_VENV_PYTHON)) return RELEASE_VENV_PYTHON;
+  return process.env.VNSTOCK_PYTHON || 'python3';
+}
 
 function runVnstockNewsIngest(opts) {
   opts = opts || {};
   const config = opts.config || {};
   const script = path.join(__dirname, 'vnstock_news_ingest.py');
-  const python = opts.python || process.env.VNSTOCK_PYTHON || 'python3';
+  const python = resolvePython(opts);
   const prefix = config.LEGACY_API_PREFIX || config.API_PREFIX || '/api';
   const apiBase =
     opts.apiBase ||

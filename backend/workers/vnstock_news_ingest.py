@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 RAW-CONTENT-VNSTOCK connector — SoT platform-layers.
-Kéo tin qua vnstock_news (Crawler RSS) → POST /api/content/ingest/batch.
+Kéo tin qua vnewsapi (Crawler RSS của Vnstock) → POST /api/content/ingest/batch.
 Không gọi từ FE. Chạy bằng cron/PM2/scheduler Node.
 """
 from __future__ import annotations
@@ -60,22 +60,10 @@ def row_to_article(row: Dict[str, Any], site: str) -> Optional[Dict[str, Any]]:
 
 
 def fetch_vnstock(site: str, limit: int) -> List[Dict[str, Any]]:
-    Crawler = None
-    err_import = None
     try:
-        from vnstock_news import Crawler as _C  # type: ignore
-
-        Crawler = _C
-    except Exception as exc1:
-        err_import = exc1
-        try:
-            from vnewsapi import Crawler as _C  # type: ignore
-
-            Crawler = _C
-        except Exception as exc2:
-            raise RuntimeError(
-                "Không import được vnstock_news/vnewsapi: %s | %s" % (err_import, exc2)
-            ) from exc2
+        from vnewsapi import Crawler  # type: ignore
+    except Exception as exc:
+        raise RuntimeError("Không import được vnewsapi: %s" % exc) from exc
 
     # Hỗ trợ cả Crawler(site_name=...) và Crawler(site)
     try:
@@ -218,7 +206,7 @@ def fetch_rss_fallback(site: str, limit: int) -> List[Dict[str, Any]]:
 
 def crawl_site(site: str, limit: int) -> List[Dict[str, Any]]:
     """Ưu tiên fallback sitemap/RSS (nhanh, ổn định); bổ sung lib nếu có trong timeout ngắn."""
-    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+    import threading
 
     fallback = []
     try:
@@ -234,18 +222,24 @@ def crawl_site(site: str, limit: int) -> List[Dict[str, Any]]:
         # Đủ bài từ sitemap/RSS — không chờ crawler nặng
         return fallback[:limit]
 
-    try:
-        with ThreadPoolExecutor(max_workers=1) as pool:
-            fut = pool.submit(fetch_vnstock, site, limit)
-            try:
-                lib_rows = fut.result(timeout=25)
-                if lib_rows:
-                    return lib_rows[:limit]
-            except FuturesTimeout:
-                print(json.dumps({"warn": "vnstock_timeout", "site": site}), file=sys.stderr)
-                fut.cancel()
-    except Exception as exc:
-        print(json.dumps({"warn": "vnstock_fail", "site": site, "error": str(exc)}), file=sys.stderr)
+    # Thread daemon: quá timeout thì bỏ lại (crawler lib có thể quét cả sitemap rất lâu), không chặn job/thoát tiến trình.
+    box: Dict[str, Any] = {}
+
+    def run_lib() -> None:
+        try:
+            box["rows"] = fetch_vnstock(site, limit)
+        except Exception as exc:  # noqa: BLE001
+            box["error"] = exc
+
+    worker = threading.Thread(target=run_lib, daemon=True)
+    worker.start()
+    worker.join(timeout=25)
+    if worker.is_alive():
+        print(json.dumps({"warn": "vnstock_timeout", "site": site}), file=sys.stderr)
+    elif "error" in box:
+        print(json.dumps({"warn": "vnstock_fail", "site": site, "error": str(box["error"])}), file=sys.stderr)
+    elif box.get("rows"):
+        return box["rows"][:limit]
 
     return (fallback or [])[:limit]
 
