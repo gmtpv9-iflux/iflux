@@ -1166,14 +1166,9 @@ async function runSyncAll(adminId, actor) {
     ok_sources: 0
   };
 
-  if (!sourceCodes.length) {
-    return {
-      sources_used: [],
-      imports: [],
-      summary: Object.assign({ message: 'Chưa có Field Authority Active — cấu hình Current Source trước khi Sync' }, totals),
-      actor: actor || null
-    };
-  }
+  const noSourceMessage = sourceCodes.length
+    ? null
+    : 'Chưa có Field Authority Active — cấu hình Current Source trước khi Sync';
 
   for (let i = 0; i < sourceCodes.length; i++) {
     const code = sourceCodes[i];
@@ -1210,17 +1205,39 @@ async function runSyncAll(adminId, actor) {
     }
   }
 
+  /* Bổ sung mã niêm yết (LISTED) từ VNDirect + reconcile 3 sàn — chỉ chạy khi Admin đồng bộ thủ công. */
+  let listedFill = null;
+  try {
+    listedFill = await require('./market-price-sync.service').syncInstrumentUniverseFromVndirectList();
+  } catch (err) {
+    listedFill = { failed: true, error: String(err.message || err) };
+  }
+
+  await pruneImportLogs().catch(function () {});
+
   /* BR-11 Import≠Apply: không ghi Audit hoàn tất tại Import — Audit sau Apply */
   const importIds = imports.map(function (x) { return x && x.import_id; }).filter(Boolean);
   return {
     sources_used: sourcesUsed,
     imports: imports,
     import_ids: importIds,
-    summary: totals,
+    listed_fill: listedFill,
+    summary: noSourceMessage ? Object.assign({ message: noSourceMessage }, totals) : totals,
     actor: actor || null,
     defer_apply: true,
     message: 'Import xong — mở Conflict Review; Apply mới ghi Market Master'
   };
+}
+
+/* Nhật ký đồng bộ danh mục mã giữ tối đa 90 ngày. Xóa import cũ → cascade chi tiết + conflict gắn import đó;
+   market_sot_audit giữ nguyên (import_id SET NULL). */
+const IMPORT_LOG_RETENTION_DAYS = 90;
+async function pruneImportLogs() {
+  const res = await query(
+    `DELETE FROM market_data_imports WHERE started_at < NOW() - make_interval(days => $1)`,
+    [IMPORT_LOG_RETENTION_DAYS]
+  );
+  return res.rowCount || 0;
 }
 
 async function listConflicts(filters) {
@@ -1541,6 +1558,7 @@ module.exports = {
   runImport,
   runImportFromSource,
   runSyncAll,
+  pruneImportLogs,
   getSourceStaging,
   setSourceStaging,
   listConflicts,
