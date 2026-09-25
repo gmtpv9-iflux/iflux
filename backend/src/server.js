@@ -29,7 +29,7 @@ async function bootstrap() {
 
   /* RSS Cộng đồng — mỗi 10 phút → news_posts (đủ field → published_rss; thiếu → pending)
      Tắt: RSS_COMMUNITY_INGEST_CRON=off */
-  const rssCron = process.env.RSS_COMMUNITY_INGEST_CRON || process.env.VNSTOCK_INGEST_CRON || '*/10 * * * *';
+  const rssCron = process.env.RSS_COMMUNITY_INGEST_CRON || '*/10 * * * *';
   if (rssCron !== 'off' && rssCron !== '0') {
     registerJob('rss-news-ingest', rssCron, async () => {
       try {
@@ -45,27 +45,6 @@ async function bootstrap() {
         );
       } catch (err) {
         logger.error({ err: err.message }, 'rss-news-ingest failed');
-      }
-    });
-  }
-
-  /* RAW-CONTENT-VNSTOCK (Content Engine) — mặc định tắt khi đã có RSS Cộng đồng; bật bằng VNSTOCK_INGEST_CRON */
-  const vnCron = process.env.VNSTOCK_INGEST_CRON || 'off';
-  if (vnCron !== 'off' && vnCron !== '0') {
-    registerJob('vnstock-content-ingest', vnCron, async () => {
-      try {
-        const { runVnstockNewsIngest } = require('../workers/run-vnstock-ingest');
-        const out = await runVnstockNewsIngest({ config });
-        logger.info(
-          {
-            ok_count: out && out.result && out.result.ok_count,
-            fail_count: out && out.result && out.result.fail_count,
-            crawled: out && out.result && out.result.crawled
-          },
-          'vnstock-content-ingest done'
-        );
-      } catch (err) {
-        logger.error({ err: err.message }, 'vnstock-content-ingest failed');
       }
     });
   }

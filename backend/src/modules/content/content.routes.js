@@ -15,85 +15,6 @@ function createContentRouter(deps) {
     return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
   };
 
-  router.get('/articles', async (req, res, next) => {
-    try {
-      const needsRaw = req.query.needs_review != null ? req.query.needs_review : req.query.incomplete;
-      let needsReview;
-      if (needsRaw === '1' || needsRaw === 'true') needsReview = true;
-      else if (needsRaw === '0' || needsRaw === 'false') needsReview = false;
-      const articles = await content.listArticles({
-        status: req.query.status,
-        topic: req.query.topic,
-        symbol: req.query.symbol,
-        feedOnly: req.query.feed === '1' || req.query.feed === 'true',
-        needsReview: needsReview,
-        q: req.query.q,
-        source: req.query.source,
-        limit: req.query.limit ? Number(req.query.limit) : 50
-      });
-      const needs_review_count = await content.countNeedsReview();
-      return success(res, { articles, total: articles.length, needs_review_count });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  router.get('/articles/:id', async (req, res, next) => {
-    try {
-      const article = await content.getArticle(req.params.id);
-      if (!article) {
-        return res.status(404).json({ error: 'Không tìm thấy bài viết' });
-      }
-      return success(res, { article });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  const patchArticleSchema = z.object({
-    body: z.object({
-      title: z.string().min(1).optional(),
-      excerpt: z.string().optional(),
-      body_text: z.string().optional(),
-      category: z.string().optional(),
-      category_raw: z.string().optional(),
-      tags_raw: z.string().optional(),
-      image_url: z.string().optional(),
-      author_name: z.string().optional(),
-      primary_chu_de_id: z.string().optional(),
-      chu_de_id: z.string().optional(),
-      chu_de_slug: z.string().optional(),
-      chu_de_name: z.string().optional(),
-      topics: z.array(z.string()).optional(),
-      entities: z
-        .array(
-          z.object({
-            type: z.string(),
-            id: z.string(),
-            label: z.string().optional(),
-            confidence: z.number().optional()
-          })
-        )
-        .optional(),
-      publish_to_feed: z.boolean().optional(),
-      published_to_feed: z.boolean().optional()
-    })
-  });
-
-  router.patch(
-    '/articles/:id',
-    perm('news.articles.edit'),
-    validate(patchArticleSchema),
-    async (req, res, next) => {
-      try {
-        const article = await content.updateContentArticle(req.params.id, req.validated.body);
-        return success(res, { article });
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
-
   router.get('/topics', async (req, res, next) => {
     try {
       const topics = await content.listTopics({
@@ -170,15 +91,6 @@ function createContentRouter(deps) {
     }
   });
 
-  router.get('/feed', async (req, res, next) => {
-    try {
-      const posts = await content.getFeed(req.query.limit ? Number(req.query.limit) : 30);
-      return success(res, { posts, total: posts.length });
-    } catch (err) {
-      next(err);
-    }
-  });
-
   const interestSchema = z.object({
     body: z.object({
       event_type: z.enum(['view', 'search', 'like', 'favorite', 'share', 'comment']),
@@ -186,7 +98,6 @@ function createContentRouter(deps) {
       topic: z.string().optional(),
       slug: z.string().optional(),
       label: z.string().optional(),
-      article_id: z.string().optional(),
       user_id: z.string().optional(),
       meta: z.record(z.any()).optional()
     })
@@ -215,7 +126,7 @@ function createContentRouter(deps) {
 
   router.post('/topics/mark-candidates', perm('stories.registry.edit'), async (req, res, next) => {
     try {
-      const rows = await content.markCandidates({ config: req.body && req.body.config });
+      const rows = await content.markCandidates();
       return success(res, { candidates: rows, total: rows.length });
     } catch (err) {
       next(err);
@@ -251,7 +162,6 @@ function createContentRouter(deps) {
       topic_id: z.string().optional(),
       topic: z.string().optional(),
       slug: z.string().optional(),
-      article_id: z.string().optional(),
       user_id: z.string().optional(),
       weight: z.number().optional(),
       meta: z.record(z.any()).optional()
@@ -294,128 +204,6 @@ function createContentRouter(deps) {
       next(err);
     }
   });
-
-  const ingestSchema = z.object({
-    body: z.object({
-      url: z.string().url(),
-      title: z.string().min(3),
-      short_description: z.string().optional(),
-      excerpt: z.string().optional(),
-      content: z.string().optional(),
-      publish_time: z.string().optional(),
-      author: z.string().optional(),
-      category: z.string().optional(),
-      tags: z.string().optional(),
-      image_url: z.string().optional(),
-      source: z.string().optional(),
-      view_counts: z.number().optional(),
-      topics: z.array(z.string()).optional(),
-      entities: z
-        .array(
-          z.object({
-            type: z.string(),
-            id: z.string(),
-            label: z.string().optional(),
-            confidence: z.number().optional()
-          })
-        )
-        .optional(),
-      publishToFeed: z.boolean().optional(),
-      sourceCode: z.string().optional()
-    })
-  });
-
-  router.post(
-    '/ingest',
-    perm('news.articles.create'),
-    validate(ingestSchema),
-    async (req, res, next) => {
-      try {
-        const b = req.validated.body;
-        const article = await content.ingestArticle(b, {
-          topics: b.topics,
-          entities: b.entities,
-          publishToFeed: b.publishToFeed === true,
-          sourceCode: b.sourceCode
-        });
-        const full = await content.getArticle(article.id);
-        return success(res, { article: full }, 201);
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
-
-  const batchSchema = z.object({
-    body: z.object({
-      articles: z.array(z.any()).min(1).max(100),
-      sourceCode: z.string().optional(),
-      publishToFeed: z.boolean().optional()
-    })
-  });
-
-  router.post(
-    '/ingest/batch',
-    perm('news.articles.create'),
-    validate(batchSchema),
-    async (req, res, next) => {
-      try {
-        const b = req.validated.body;
-        const results = [];
-        for (let i = 0; i < b.articles.length; i++) {
-          const raw = b.articles[i];
-          try {
-            const article = await content.ingestArticle(raw, {
-              topics: raw.topics,
-              entities: raw.entities,
-              publishToFeed: b.publishToFeed === true,
-              sourceCode: b.sourceCode || (raw.source ? 'vnstock:' + raw.source : undefined)
-            });
-            results.push({
-              ok: true,
-              id: article.id,
-              url: article.external_url,
-              needs_review: !!article.needs_review,
-              missing_fields: article.missing_fields || []
-            });
-          } catch (e) {
-            results.push({ ok: false, url: raw && raw.url, error: e.message });
-          }
-        }
-        return success(res, {
-          ok_count: results.filter(function (r) { return r.ok; }).length,
-          fail_count: results.filter(function (r) { return !r.ok; }).length,
-          results
-        }, 201);
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
-
-  router.post('/ingest/run', perm('news.articles.create'), async (req, res, next) => {
-    try {
-      const { runVnstockNewsIngest } = require('../../../workers/run-vnstock-ingest');
-      const body = req.body || {};
-      const apiBase =
-        'http://127.0.0.1:' +
-        (config.PORT || 3001) +
-        (config.LEGACY_API_PREFIX || '/api');
-      const out = await runVnstockNewsIngest({
-        config: config,
-        apiBase: apiBase,
-        adminKey: config.ADMIN_API_KEY,
-        sites: body.sites || undefined,
-        limit: body.limit != null ? Number(body.limit) : undefined,
-        dryRun: !!body.dry_run
-      });
-      const needs_review_count = await content.countNeedsReview();
-      return success(res, Object.assign({}, out, { needs_review_count }));
-    } catch (err) {
-      next(err);
-    }
-  });
-
 
   /* ── Chủ đề (chu-de) — primary API; /stories & /topics giữ alias ── */
   router.get('/chu-de', async (req, res, next) => {

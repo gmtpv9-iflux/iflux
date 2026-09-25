@@ -244,16 +244,6 @@ async function resolveRelatedSeed(relatedTo) {
     : null;
 }
 
-async function mergeContentEngineCards(limit) {
-  try {
-    const content = require('../content/content.service');
-    const feed = await content.getFeed(limit);
-    return (feed || []).map(toFeedCard).filter(Boolean);
-  } catch (e) {
-    return [];
-  }
-}
-
 /**
  * GET /community/feed — FeedCard[]
  * Query: limit, offset, ticker, category_id, chu_de_id, related_to, type (content_type)
@@ -340,31 +330,8 @@ async function listFeed(filters) {
     content_type: filters.content_type || filters.type || null
   });
 
-  let has_more = communityCards.length > limit;
-  let cards = communityCards.slice(0, limit);
-
-  /* Trộn Content Engine chỉ khi feed tổng (không ticker/entity filter) · page 0 */
-  if (!filters.ticker && !filters.category_id && !filters.chu_de_id && offset === 0) {
-    if (!filters.content_type || filters.content_type === 'news' || filters.type === 'news') {
-      const external = await mergeContentEngineCards(limit + 1);
-      const pool = communityCards.slice();
-      const seen = {};
-      pool.forEach(function (c) { if (c && c.id) seen[c.id] = true; });
-      external.forEach(function (c) {
-        if (c && c.id && !seen[c.id]) {
-          seen[c.id] = true;
-          pool.push(c);
-        }
-      });
-      pool.sort(function (a, b) {
-        const ta = new Date(a.published_at || a.created_at || 0).getTime();
-        const tb = new Date(b.published_at || b.created_at || 0).getTime();
-        return tb - ta;
-      });
-      has_more = pool.length > limit || has_more;
-      cards = pool.slice(0, limit);
-    }
-  }
+  const has_more = communityCards.length > limit;
+  const cards = communityCards.slice(0, limit);
 
   return { cards: cards, total: cards.length, limit: limit, offset: offset, has_more: !!has_more };
 }

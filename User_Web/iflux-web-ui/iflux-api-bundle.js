@@ -348,14 +348,6 @@
     return request('/news/posts' + suffix);
   }
 
-  function listContentFeed(params) {
-    params = params || {};
-    var qs = [];
-    if (params.limit) qs.push('limit=' + encodeURIComponent(params.limit));
-    var suffix = qs.length ? '?' + qs.join('&') : '';
-    return request('/content/feed' + suffix);
-  }
-
   function listContentTopics(params) {
     params = params || {};
     var qs = [];
@@ -562,7 +554,6 @@
     rejectSubscriptionOrderAdmin: rejectSubscriptionOrderAdmin,
     getMarketSnapshot: getMarketSnapshot,
     listCommunityPosts: listCommunityPosts,
-    listContentFeed: listContentFeed,
     listContentTopics: listContentTopics,
     recordContentInterest: recordContentInterest,
     promoteContentTopic: promoteContentTopic,

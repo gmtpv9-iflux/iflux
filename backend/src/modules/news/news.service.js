@@ -89,25 +89,6 @@ async function listPosts(filters = {}) {
   const res = await query(sql, params);
   const posts = res.rows.map(rowToPost);
 
-  /* P0: trộn bài Content Engine (tin ngoài) vào feed news */
-  if (!filters.content_type || filters.content_type === 'news') {
-    try {
-      const content = require('../content/content.service');
-      const feed = await content.getFeed(filters.limit ? Number(filters.limit) : 30);
-      const seen = {};
-      posts.forEach(function (p) { if (p && p.id) seen[p.id] = true; });
-      feed.forEach(function (p) {
-        if (p && p.id && !seen[p.id]) posts.push(p);
-      });
-      posts.sort(function (a, b) {
-        const ta = new Date(a.published_at || a.created_at || 0).getTime();
-        const tb = new Date(b.published_at || b.created_at || 0).getTime();
-        return tb - ta;
-      });
-    } catch (e) {
-      /* content module / migration chưa sẵn — bỏ qua */
-    }
-  }
   if (filters.limit) return posts.slice(0, Number(filters.limit));
   return posts;
 }
