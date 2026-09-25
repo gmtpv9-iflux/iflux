@@ -236,27 +236,29 @@ async function writeSotAudit(clientOrNull, row) {
   else await query(sql, params);
 }
 
+/* Nhật ký đồng bộ: mỗi import = 1 dòng market_data_imports; chỉ gom thay đổi thật vào cột changes (JSONB).
+   noop / reject / missing không ghi — chỉ được đếm ở các cột *_count của dòng import. */
+const CHANGE_RESULTS = new Set(['apply', 'pending', 'review']);
+const importChanges = new Map();
+
 async function insertChangeSet(client, item) {
-  await client.query(
-    `INSERT INTO market_data_change_set_items
-      (import_id, entity, entity_key, field_key, current_value, incoming_value,
-       source_code, trust_level, class, result, note, conflict_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
-    [
-      item.import_id,
-      item.entity || 'stock',
-      item.entity_key,
-      item.field_key || '*',
-      item.current_value != null ? String(item.current_value) : null,
-      item.incoming_value != null ? String(item.incoming_value) : null,
-      item.source_code || '',
-      item.trust_level || '',
-      item.class,
-      item.result || 'noop',
-      item.note || '',
-      item.conflict_id || null
-    ]
-  );
+  if (!CHANGE_RESULTS.has(item.result || 'noop')) return;
+  const buf = importChanges.get(item.import_id);
+  if (!buf) return;
+  buf.push({
+    entity: item.entity || 'stock',
+    entity_key: item.entity_key,
+    field_key: item.field_key || '*',
+    current_value: item.current_value != null ? String(item.current_value) : null,
+    incoming_value: item.incoming_value != null ? String(item.incoming_value) : null,
+    source_code: item.source_code || '',
+    trust_level: item.trust_level || '',
+    class: item.class,
+    result: item.result,
+    note: item.note || '',
+    conflict_id: item.conflict_id || null,
+    created_at: new Date().toISOString()
+  });
 }
 
 async function listSourcesWithAuthority() {
@@ -992,6 +994,7 @@ async function runImport(sourceCode, candidates, adminId, options) {
       [src.id, sourceCode, adminId || null, summary.received]
     );
     importId = ins.rows[0].id;
+    importChanges.set(importId, []);
 
     const seen = new Set();
     for (const raw of candidates || []) {
@@ -1074,7 +1077,8 @@ async function runImport(sourceCode, candidates, adminId, options) {
          auto_applied_count = $9,
          updated_count = $10,
          rejected_count = $11,
-         failed_count = $12
+         failed_count = $12,
+         changes = $14::jsonb
        WHERE id = $1`,
       [
         importId,
@@ -1089,7 +1093,8 @@ async function runImport(sourceCode, candidates, adminId, options) {
         summary.updated_count,
         summary.rejected_count,
         summary.failed_count,
-        finalStatus
+        finalStatus,
+        JSON.stringify(importChanges.get(importId) || [])
       ]
     );
     await client.query('COMMIT');
@@ -1097,6 +1102,7 @@ async function runImport(sourceCode, candidates, adminId, options) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
+    if (importId) importChanges.delete(importId);
     client.release();
   }
 
@@ -1117,8 +1123,8 @@ async function runImportFromSource(sourceCode, options, adminId) {
     const src = await query('SELECT id FROM data_sources WHERE code = $1', [sourceCode]);
     const ins = await query(
       `INSERT INTO market_data_imports
-         (source_id, source_code, status, admin_id, received_count, finished_at, error_summary, failed_count)
-       VALUES ($1, $2, 'failed', $3, 0, NOW(), $4, 1)
+         (source_id, source_code, status, admin_id, received_count, finished_at, error_summary, failed_count, changes)
+       VALUES ($1, $2, 'failed', $3, 0, NOW(), $4, 1, '[]'::jsonb)
        RETURNING id`,
       [src.rows[0] && src.rows[0].id, sourceCode, adminId || null, String(err.message || err)]
     );
@@ -1342,8 +1348,11 @@ async function resolveConflict(id, decision, adminId, note, actor) {
 async function listImports(limit, opts) {
   opts = opts || {};
   const params = [limit || 50];
+  /* changes NULL = import cũ trước migration 067 → đếm từ bảng chi tiết cũ. */
   let sql = `SELECT i.*,
-       (SELECT COUNT(*)::int FROM market_data_change_set_items c WHERE c.import_id = i.id) AS change_set_count
+       CASE WHEN i.changes IS NOT NULL THEN jsonb_array_length(i.changes)
+            ELSE (SELECT COUNT(*)::int FROM market_data_change_set_items c WHERE c.import_id = i.id)
+       END AS change_set_count
      FROM market_data_imports i`;
   if (opts.completedOnly) {
     sql += ` WHERE i.status = 'success'`;
@@ -1354,6 +1363,10 @@ async function listImports(limit, opts) {
 }
 
 async function listChangeSet(importId) {
+  const imp = await query('SELECT changes FROM market_data_imports WHERE id = $1', [importId]);
+  const changes = imp.rows[0] && imp.rows[0].changes;
+  if (Array.isArray(changes)) return changes.map((c) => Object.assign({ import_id: importId }, c));
+  /* Import cũ trước migration 067 — chi tiết nằm ở market_data_change_set_items. */
   const res = await query(
     `SELECT * FROM market_data_change_set_items WHERE import_id = $1 ORDER BY created_at ASC`,
     [importId]
