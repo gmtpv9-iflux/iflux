@@ -51,13 +51,14 @@ Layer trên được consume layer dưới. Không dependency ngược.
 
 Giá trị chuẩn dùng chung: color, typography value, spacing, size, radius, shadow, motion, breakpoint, semantic/theme.
 
-Được phép bổ sung token khi cần, nhưng phải:
+Chỉ bổ sung token khi có nhu cầu dùng thật (xem §3), và phải:
 
 * reuse token hiện có trước;
 * thêm đúng family;
 * đúng file owner;
 * đúng naming convention;
-* không tạo namespace song song.
+* không tạo namespace song song;
+* token màu/theme có đủ giá trị light và dark.
 
 ### `02_foundation/`
 
@@ -79,7 +80,54 @@ Chỉ dành cho **generic reusable Widget UI contract**. Không chứa specific 
 
 ---
 
-## 3. Luật ownership và reuse
+## 3. Chiến lược xây khung — nghiệp vụ dẫn dắt
+
+Bài học từ hai lần làm trước:
+
+* **Để từng app tự thêm giá trị** → code chồng chéo, không theo quy tắc. Ví dụ Admin có H1 30px, User Web có H1 29px và H2 26px → lập tức có 3 phiên bản, trong khi chỉ cần 2 (30px và 29px quá gần nhau).
+* **Dựng sẵn khung đầy đủ** → khung quá rộng so với nhu cầu (cả trăm màu, hàng chục cỡ chữ) mà phần lớn không ai dùng.
+
+Vì vậy Design System được xây theo nguyên tắc sau.
+
+### 3.1 Khung = vai trò nghiệp vụ, không phải bảng giá trị
+
+Khung là danh mục **vai trò (role)** mà UI iFlux thực sự cần, ví dụ: tiêu đề trang, tiêu đề section, tiêu đề nhóm, nội dung, chú thích; chữ chính / phụ / nhạt; tăng / giảm / tham chiếu của thị trường.
+
+Mỗi role có **đúng một** token hoặc class. Admin và User Web không tự đặt giá trị riêng cho một role đã có.
+
+### 3.2 Chỉ tạo khi cần
+
+Token / class chỉ được tạo khi có consumer thật: foundation, component, widget, hoặc màn hình Admin / User Web cần đến.
+
+Không tạo trước "cho đủ bộ". Token / class không còn consumer phải được gỡ.
+
+### 3.3 Gộp giá trị gần nhau vào thang
+
+Mỗi loại giá trị (cỡ chữ, khoảng cách, bo góc, đổ bóng, …) có **một thang cố định, ít mốc**. Khi gặp giá trị mới:
+
+1. Dùng mốc gần nhất đang có trong thang.
+2. Không tạo mốc mới chỉ vì lệch nhỏ (ví dụ 29px và 30px → một mốc).
+3. Chỉ thêm mốc khi khác biệt thị giác rõ ràng và có nhiều nơi dùng — phải được Owner duyệt.
+
+Mỗi giá trị chỉ có một tên. Không tạo nhiều tên alias cho cùng một giá trị.
+
+### 3.4 Light và dark
+
+Hệ thống có hai chế độ light và dark.
+
+* Mọi token màu ở tầng semantic / theme phải có **đủ giá trị cho cả light và dark**.
+* Component, widget và app chỉ dùng token semantic — không dùng màu primitive hoặc hex trực tiếp — để đổi theme không phải sửa component.
+* Bảng màu primitive chỉ chứa những màu mà token semantic đang tham chiếu.
+
+### 3.5 Nguồn bổ sung
+
+`patterns/` là chuẩn UI ưu tiên nhưng không đầy đủ. Phần `patterns/` chưa có (widget, card tin tức, grid, breakpoint, …) được lấy từ User Web và Admin, chuẩn hóa theo §3.1–§3.4 rồi mới đưa vào Design System.
+
+Sau đó Admin và User Web consume Design System, không định nghĩa lại.
+
+---
+
+## 4. Luật ownership và reuse
 
 Trước khi thêm code phải xác định:
 
@@ -132,9 +180,9 @@ Không phải:
 
 ---
 
-## 4. Mapping từ Pattern / Legacy
+## 5. Mapping từ Pattern / Legacy
 
-Legacy Pattern là baseline visual/behavior dùng để hoàn thiện Design System.
+Legacy Pattern là baseline visual/behavior ưu tiên để hoàn thiện Design System. Phần Pattern chưa có lấy từ User Web / Admin theo §3.5.
 
 Mapping bắt buộc:
 
@@ -165,7 +213,7 @@ PATTERN_VISUAL_AUTHORITY = 0
 
 ---
 
-## 5. CSS ownership
+## 6. CSS ownership
 
 Class canonical của Design System dùng prefix `.ifx-*`.
 
@@ -181,7 +229,7 @@ Nếu contract thiếu → sửa đúng owner trong Design System.
 
 ---
 
-## 6. JS ownership
+## 7. JS ownership
 
 Design System JS chỉ chứa generic UI behavior thuộc đúng Primitive/Component/Widget, ví dụ Tabs, Drawer, Modal, Pagination, Toast hoặc generic Chat interaction.
 
@@ -191,7 +239,7 @@ Pattern không được giữ generic Component JS chỉ vì Design System hiệ
 
 ---
 
-## 7. Design System và Pattern
+## 8. Design System và Pattern
 
 ```text
 DESIGN SYSTEM
@@ -217,7 +265,7 @@ Không có Global Pattern layer trong Design System.
 
 ---
 
-## 8. `reference-layers.css`
+## 9. `reference-layers.css`
 
 `reference-layers.css` là:
 
@@ -234,7 +282,7 @@ Khi consumer cuối cùng = 0 → xóa file.
 
 ---
 
-## 9. Khi nào contract / migration hoàn tất
+## 10. Khi nào contract / migration hoàn tất
 
 Một contract chỉ hoàn tất khi:
 
@@ -267,7 +315,7 @@ Nếu chưa đạt → **MIGRATION = NOT COMPLETE**.
 
 ---
 
-## 10. Điều cấm
+## 11. Điều cấm
 
 Không:
 
@@ -276,13 +324,16 @@ Không:
 * đặt Pattern/Page/Widget cụ thể trong Design System;
 * dùng Pattern làm nơi chứa phần DS chưa hoàn thiện;
 * thêm token trùng responsibility đã có;
+* tạo sẵn token / class chưa có consumer;
+* tạo mốc giá trị mới sát mốc đã có trong thang;
+* tạo token màu chỉ có light hoặc chỉ có dark;
 * tạo folder/API chỉ để đủ kiến trúc;
 * chuyển business runtime vào Design System;
 * dùng Workbench làm production UI owner.
 
 ---
 
-## 11. Manifests
+## 12. Manifests
 
 ```text
 MANIFESTS = OPTIONAL / NOT ESTABLISHED
