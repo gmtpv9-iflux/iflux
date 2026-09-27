@@ -863,7 +863,10 @@
     try {
       if (dsTemplate) {
         /* Template thuộc Design System (05_templates): cùng hàm vẽ với Widget trên User Web. */
-        IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: split.data });
+        var hdr = (overrides && overrides.headers) ||
+          (global.TemplatesStore && TemplatesStore.getHeaders ? TemplatesStore.getHeaders(template) : null) ||
+          template.headers || {};
+        IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: split.data, headers: hdr });
       } else {
         DRIVERS[driverKey](host, split.data, template, split.head);
       }
