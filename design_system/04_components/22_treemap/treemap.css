@@ -1,0 +1,52 @@
+/**
+ * Component — Treemap: ô chữ nhật diện tích theo trọng số, màu theo trạng thái thị trường.
+ *   <div class="ifx-treemap-new">  (IfxTreemap.mount đặt các .ifx-treemap-tile-new tuyệt đối)
+ *     <div class="ifx-treemap-tile-new [is-tiny]"><a class="ifx-treemap-cell is-up|is-down|is-ref">
+ *       <span class="ifx-treemap-name"/> <span class="ifx-treemap-value"/>
+ */
+.ifx-treemap-new {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.ifx-treemap-tile-new {
+  position: absolute;
+  box-sizing: border-box;
+}
+.ifx-treemap-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--ifx-space-4);
+  border-radius: var(--ifx-radius-md);
+  text-align: center;
+  text-decoration: none;
+  transition: filter var(--ifx-duration-fast), transform var(--ifx-duration-fast);
+}
+.ifx-treemap-cell:hover { filter: brightness(1.08); transform: scale(1.01); text-decoration: none; }
+.ifx-treemap-cell.is-up { background: var(--ifx-market-up); color: var(--ifx-text-on-success); }
+.ifx-treemap-cell.is-down { background: var(--ifx-market-down); color: var(--ifx-text-on-danger); }
+.ifx-treemap-cell.is-ref { background: var(--ifx-market-ref); color: var(--ifx-text-on-warning); }
+.ifx-treemap-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: var(--ifx-line-height-tight);
+}
+.ifx-treemap-value {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-extrabold);
+}
+.ifx-treemap-tile-new.is-tiny .ifx-treemap-name {
+  -webkit-line-clamp: 1;
+  font-size: var(--ifx-font-size-2xs);
+}

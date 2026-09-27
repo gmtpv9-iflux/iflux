@@ -1,0 +1,18 @@
+/**
+ * TMP-COM-STOCK-HEAT — Cổ phiếu được quan tâm: treemap (component), mã + % chữ lớn trên nền khung.
+ */
+.ifx-stock-heat-canvas {
+  height: var(--ifx-size-chart-plot-md);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-hover);
+}
+.ifx-stock-heat-canvas .ifx-treemap-name {
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-extrabold);
+  line-height: 1.1;
+}
+.ifx-stock-heat-canvas .ifx-treemap-value {
+  font-family: inherit;
+  font-size: var(--ifx-font-size-md);
+  opacity: 0.95;
+}

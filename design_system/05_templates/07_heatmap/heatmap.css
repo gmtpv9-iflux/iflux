@@ -1,0 +1,4 @@
+/**
+ * TMP-HEATMAP — Heatmap nhóm: treemap (component) tối đa 10 ô, tên + % thay đổi.
+ */
+.ifx-heatmap-canvas { height: var(--ifx-size-chart-plot-lg); }
