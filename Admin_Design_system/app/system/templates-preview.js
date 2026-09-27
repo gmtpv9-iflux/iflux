@@ -846,7 +846,8 @@
   function render(mount, template, demo, overrides) {
     if (!mount) return;
     var driverKey = template.render;
-    var hasDriver = !!DRIVERS[driverKey];
+    var dsTemplate = !!(global.IfxTemplates && IfxTemplates.has(template.id));
+    var hasDriver = dsTemplate || !!DRIVERS[driverKey];
     mount.innerHTML =
       '<div class="tpl-pv-head"><code>' + esc(template.id) + '</code>' +
         '<span>Giao diện thật · dữ liệu demo điều khiển</span></div>' +
@@ -860,7 +861,12 @@
     }
     currentOverrides = overrides || null;
     try {
-      DRIVERS[driverKey](host, split.data, template, split.head);
+      if (dsTemplate) {
+        /* Template thuộc Design System (05_templates): cùng hàm vẽ với Widget trên User Web. */
+        IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: split.data });
+      } else {
+        DRIVERS[driverKey](host, split.data, template, split.head);
+      }
     } catch (err) {
       host.innerHTML = '<div class="ifx-wl-empty">Không dựng được preview: ' + esc(err && err.message) + '</div>';
     }

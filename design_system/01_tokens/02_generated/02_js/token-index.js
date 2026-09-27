@@ -36,7 +36,17 @@
       "--ifx-color-slate-800",
       "--ifx-color-slate-850",
       "--ifx-color-slate-900",
-      "--ifx-color-white"
+      "--ifx-color-white",
+      "--ifx-color-chart-1",
+      "--ifx-color-chart-2",
+      "--ifx-color-chart-3",
+      "--ifx-color-chart-4",
+      "--ifx-color-chart-5",
+      "--ifx-color-chart-6",
+      "--ifx-color-chart-7",
+      "--ifx-color-chart-8",
+      "--ifx-color-chart-9",
+      "--ifx-color-chart-10"
     ],
     "alpha": [
       "--ifx-alpha-white-4",
@@ -296,7 +306,19 @@
       "--ifx-text-on-success",
       "--ifx-text-on-warning",
       "--ifx-text-on-danger",
-      "--ifx-text-on-info"
+      "--ifx-text-on-info",
+      "--ifx-market-up",
+      "--ifx-market-up-soft",
+      "--ifx-market-down",
+      "--ifx-market-down-soft",
+      "--ifx-market-ref",
+      "--ifx-market-ref-soft",
+      "--ifx-market-ceiling",
+      "--ifx-market-ceiling-soft",
+      "--ifx-market-floor",
+      "--ifx-market-floor-soft",
+      "--ifx-flow-in",
+      "--ifx-flow-out"
     ],
     "light": [
       "--ifx-bg-canvas",
@@ -334,7 +356,19 @@
       "--ifx-text-on-success",
       "--ifx-text-on-warning",
       "--ifx-text-on-danger",
-      "--ifx-text-on-info"
+      "--ifx-text-on-info",
+      "--ifx-market-up",
+      "--ifx-market-up-soft",
+      "--ifx-market-down",
+      "--ifx-market-down-soft",
+      "--ifx-market-ref",
+      "--ifx-market-ref-soft",
+      "--ifx-market-ceiling",
+      "--ifx-market-ceiling-soft",
+      "--ifx-market-floor",
+      "--ifx-market-floor-soft",
+      "--ifx-flow-in",
+      "--ifx-flow-out"
     ]
   },
   "breakpoint": {
@@ -368,22 +402,6 @@
       "status": "active",
       "sourceRoot": "platform/web/tokens/source",
       "generatedRoot": "platform/web/tokens/generated"
-    },
-    {
-      "id": "module-market",
-      "owner": "market",
-      "layer": "module",
-      "status": "active",
-      "sourceRoot": "modules/market/tokens/source",
-      "generatedRoot": "modules/market/tokens/generated"
-    },
-    {
-      "id": "module-money-flow",
-      "owner": "money-flow",
-      "layer": "module",
-      "status": "active",
-      "sourceRoot": "modules/money-flow/tokens/source",
-      "generatedRoot": "modules/money-flow/tokens/generated"
     }
   ],
   "inventory": [
@@ -585,6 +603,76 @@
     },
     {
       "name": "--ifx-color-white",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-1",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-2",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-3",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-4",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-5",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-6",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-7",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-8",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-9",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-color-chart-10",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -1033,6 +1121,90 @@
     },
     {
       "name": "--ifx-text-on-info",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-up",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-up-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-down",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-down-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ref",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ref-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ceiling",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-ceiling-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-floor",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-market-floor-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-flow-in",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-flow-out",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -2143,181 +2315,6 @@
       "layer": "platform",
       "source": "platform/web/tokens/source/chrome.json",
       "generated": "platform/web/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-color-chart-1",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-2",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-3",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-4",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-5",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-6",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-7",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-8",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-9",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-chart-10",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-market-up",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-up-soft",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-down",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-down-soft",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-ref",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-ref-soft",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-ceiling",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-ceiling-soft",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-floor",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-market-floor-soft",
-      "owner": "market",
-      "layer": "module",
-      "source": "modules/market/tokens/source/market.json",
-      "generated": "modules/market/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-gradient-zone-track",
-      "owner": "money-flow",
-      "layer": "module",
-      "source": "modules/money-flow/tokens/source/flow.json",
-      "generated": "modules/money-flow/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-gradient-zone-fill",
-      "owner": "money-flow",
-      "layer": "module",
-      "source": "modules/money-flow/tokens/source/flow.json",
-      "generated": "modules/money-flow/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-gradient-mcmp-energy",
-      "owner": "money-flow",
-      "layer": "module",
-      "source": "modules/money-flow/tokens/source/flow.json",
-      "generated": "modules/money-flow/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-flow-in",
-      "owner": "money-flow",
-      "layer": "module",
-      "source": "modules/money-flow/tokens/source/flow.json",
-      "generated": "modules/money-flow/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-flow-out",
-      "owner": "money-flow",
-      "layer": "module",
-      "source": "modules/money-flow/tokens/source/flow.json",
-      "generated": "modules/money-flow/tokens/generated/css/themes/{dark,light}.css"
     }
   ]
 };

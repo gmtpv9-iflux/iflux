@@ -29,22 +29,6 @@
       "status": "active",
       "sourceRoot": "platform/web/tokens/source",
       "generatedRoot": "platform/web/tokens/generated"
-    },
-    {
-      "id": "module-market",
-      "owner": "market",
-      "layer": "module",
-      "status": "active",
-      "sourceRoot": "modules/market/tokens/source",
-      "generatedRoot": "modules/market/tokens/generated"
-    },
-    {
-      "id": "module-money-flow",
-      "owner": "money-flow",
-      "layer": "module",
-      "status": "active",
-      "sourceRoot": "modules/money-flow/tokens/source",
-      "generatedRoot": "modules/money-flow/tokens/generated"
     }
   ]
 }
