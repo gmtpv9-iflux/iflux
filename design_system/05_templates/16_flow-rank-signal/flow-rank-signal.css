@@ -4,6 +4,7 @@
 .ifx-card-accent.ifx-flow-signal-frame { --ifx-card-accent: var(--ifx-flow-in); }
 .ifx-flow-signal {
   --ifx-score-rank-cols: var(--ifx-space-24) minmax(0, 1fr) minmax(0, 0.9fr) var(--ifx-space-36) max-content max-content;
+  --ifx-score-rank-cols-narrow: var(--ifx-space-24) minmax(0, 1fr) var(--ifx-space-36) max-content max-content;
 }
 .ifx-flow-signal .ifx-score-rank-head > :nth-child(n + 5) { text-align: center; }
 .ifx-flow-signal-risk {

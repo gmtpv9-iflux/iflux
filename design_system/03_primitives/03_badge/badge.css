@@ -9,6 +9,7 @@
   font-size: var(--ifx-font-size-2xs);
   font-weight: var(--ifx-font-weight-semibold);
   line-height: 1;
+  white-space: nowrap;
   padding: var(--ifx-space-badge-y) var(--ifx-space-badge-x);
   border-radius: var(--ifx-radius-badge);
 }

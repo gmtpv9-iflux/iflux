@@ -26,12 +26,23 @@
 .ifx-score-rank-in  { --ifx-score-rank-tone: var(--ifx-flow-in);  --ifx-score-rank-soft: var(--ifx-success-soft); }
 .ifx-score-rank-out { --ifx-score-rank-tone: var(--ifx-flow-out); --ifx-score-rank-soft: var(--ifx-danger-soft); }
 
+/* Mobile-first: khung hẹp (widget span 3–4) bỏ thanh điểm, giữ hạng · tên · điểm (+ cột thêm). */
 .ifx-score-rank-head,
 .ifx-score-rank-row {
   display: grid;
-  grid-template-columns: var(--ifx-score-rank-cols, var(--ifx-space-24) minmax(0, 1.2fr) minmax(0, 1fr) var(--ifx-space-36));
+  grid-template-columns: var(--ifx-score-rank-cols-narrow, var(--ifx-space-24) minmax(0, 1fr) var(--ifx-space-36));
   gap: var(--ifx-space-8);
   align-items: center;
+}
+.ifx-score-rank-head > :nth-child(3),
+.ifx-score-rank-row > .ifx-progress { display: none; }
+@container (min-width: 480px) { /* bp:sm */
+  .ifx-score-rank-head,
+  .ifx-score-rank-row {
+    grid-template-columns: var(--ifx-score-rank-cols, var(--ifx-space-24) minmax(0, 1.2fr) minmax(0, 1fr) var(--ifx-space-36));
+  }
+  .ifx-score-rank-head > :nth-child(3),
+  .ifx-score-rank-row > .ifx-progress { display: block; }
 }
 .ifx-score-rank-head {
   padding: 0 var(--ifx-space-8) var(--ifx-space-8);

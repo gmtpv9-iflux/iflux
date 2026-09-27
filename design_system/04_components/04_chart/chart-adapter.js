@@ -344,7 +344,9 @@
     var max = data.max || 100;
     var ticks = data.ticks || 4;
     var cx = W / 2, cy = H / 2;
-    var R = Math.min(W, H) / 2 - 28;
+    /* Chừa lề đủ cho nhãn dài nhất hai bên (≈ 5.5px / ký tự ở cỡ 10). */
+    var longest = labels.reduce(function (m, l) { return Math.max(m, String(l).length); }, 0);
+    var R = Math.max(40, Math.min(W / 2 - (18 + longest * 5.5), H / 2 - 24));
     el.classList.add('is-plot');
     var svg = mountSvg(plot, W, H);
     function pt(i, r) {
