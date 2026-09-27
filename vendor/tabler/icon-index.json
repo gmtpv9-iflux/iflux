@@ -5,7 +5,7 @@
     "format": "CSS mask + data:image/svg+xml (không webfont, không file font)",
     "note": "Giữ nguyên tên class Tabler (.ti .ti-*). Custom iFlux icon tách riêng icons/custom/."
   },
-  "count": 331,
+  "count": 333,
   "icons": [
     {
       "name": "accessible",
@@ -928,6 +928,10 @@
       "className": "ti ti-news"
     },
     {
+      "name": "note",
+      "className": "ti ti-note"
+    },
+    {
       "name": "numbers",
       "className": "ti ti-numbers"
     },
@@ -1022,6 +1026,10 @@
     {
       "name": "refresh",
       "className": "ti ti-refresh"
+    },
+    {
+      "name": "repeat",
+      "className": "ti ti-repeat"
     },
     {
       "name": "resize",
