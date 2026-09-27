@@ -62,7 +62,3 @@
   --ifx-space-80: var(--ifx-space-60);
   --ifx-space-96: var(--ifx-space-60);
 }
-
-/* Gốc 15px như foundation DS. components.css cũ gán html = body-md; nay body-md là token DS (theo rem)
-   nên phải đặt lại gốc cố định. Gỡ khi Admin nạp foundation/typography.css của DS (W3.2). */
-html { font-size: 93.75%; }
