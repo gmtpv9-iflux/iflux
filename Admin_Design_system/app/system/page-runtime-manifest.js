@@ -1,84 +1,10 @@
 /**
  * ADM-SYS-011 — Page Runtime Manifest (Product Composition → User Web)
  * Chuyển Page Settings (layoutSlots) thành manifest Lazy Runtime.
- * Metadata-only: lazyModule/css lấy từ RUNTIME_WIDGET_MODULES, không import widget.
+ * Metadata-only: widget chỉ mang templateRef — UI do Template (design_system) quyết định.
  */
 (function (global) {
   'use strict';
-
-  var RUNTIME_WIDGET_MODULES = {
-    'WGT-MKT-001': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-overview/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/market.css'
-      ]
-    },
-    'WGT-MKT-002': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-breadth/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/market.css'
-      ]
-    },
-    'WGT-MKT-004': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-heatmap/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/market.css',
-        '/User_Web/iflux-web-ui/market-components.css'
-      ]
-    },
-    'WGT-MKT-005': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-heatmap/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/market.css',
-        '/User_Web/iflux-web-ui/market-components.css'
-      ]
-    },
-    'WGT-MKT-006': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-heatmap/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/market.css',
-        '/User_Web/iflux-web-ui/market-components.css'
-      ]
-    },
-    'WGT-NEWS-001': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/news-stock-heat/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/news.css',
-        '/User_Web/iflux-web-ui/block-templates.css',
-        '/User_Web/iflux-web-ui/watchlist.css'
-      ]
-    },
-    'WGT-NEWS-TOPIC-TOP': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/news-story-top/index.js',
-      css: [
-        '/User_Web/iflux-web-ui/news.css',
-        '/User_Web/iflux-web-ui/block-templates.css'
-      ]
-    },
-    'WGT-NEWS-002': {
-      lazyModule: '/User_Web/iflux-web-ui/widgets/news-active/index.js',
-      css: ['/User_Web/iflux-web-ui/news.css']
-    }
-  };
-
-  function resolveRuntime(widgetId) {
-    var reg = global.IfluxWidgetRegistry;
-    if (reg && reg.byType) {
-      var w = reg.byType(widgetId);
-      if (w && w.lazyModule) {
-        return {
-          lazyModule: w.lazyModule,
-          css: (w.assets && w.assets.css) || []
-        };
-      }
-    }
-    return RUNTIME_WIDGET_MODULES[widgetId] || null;
-  }
 
   function resolveWidgetCopy(widgetId) {
     var cat = global.WidgetLibraryCatalog;
@@ -119,7 +45,6 @@
       .filter(function (s) { return !!s.hasPlacement || s.enabled !== false; })
       .sort(function (a, b) { return a.position - b.position; })
       .map(function (slot) {
-        var rt = resolveRuntime(slot.widgetId);
         var copy = resolveWidgetCopy(slot.widgetId);
         var templateRef = resolveTemplateRef(slot.widgetId);
         var config = slot.config ? Object.assign({}, slot.config) : {};
@@ -138,9 +63,7 @@
           config: config,
           /* Preserve SoT #4 binding — Publish resolve SoT #3 từ id này */
           template: templateRef,
-          templateRef: templateRef,
-          lazyModule: rt ? rt.lazyModule : null,
-          css: rt ? rt.css : []
+          templateRef: templateRef
         };
       });
 
@@ -167,8 +90,6 @@
   }
 
   global.PageRuntimeManifest = {
-    RUNTIME_WIDGET_MODULES: RUNTIME_WIDGET_MODULES,
-    resolveRuntime: resolveRuntime,
     resolveTemplateRef: resolveTemplateRef,
     toRuntimeManifest: toRuntimeManifest
   };

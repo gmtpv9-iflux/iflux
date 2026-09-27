@@ -20,7 +20,7 @@
       return '<div class="ifx-stock-rows">' + c[0].map(function (tk, i) {
         var chg = U.num(c[3][i]);
         return '<a class="ifx-stock-row-new ' + U.dir(chg) + '" href="#">' +
-          '<span class="ifx-stock-row-ticker">' + U.esc(tk || '—') + '</span>' +
+          '<span class="ifx-stock-row-ticker" data-ifx-role="entity-name">' + U.esc(tk || '—') + '</span>' +
           '<span class="ifx-stock-row-name">' + U.esc(c[1][i]) + '</span>' +
           '<span class="ifx-stock-row-price">' + U.esc(c[2][i] !== '' ? c[2][i] : '—') + '</span>' +
           '<span class="ifx-stock-row-change">' + U.fmtPct(chg) + '</span>' +

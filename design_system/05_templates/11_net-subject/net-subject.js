@@ -16,7 +16,7 @@
   }
   function ticker(kind, label) {
     return label
-      ? '<a class="ifx-flow-split-ticker is-' + kind + '" href="#" title="' + U.esc(label) + '">' + U.esc(label) + '</a>'
+      ? '<a class="ifx-flow-split-ticker is-' + kind + '" href="#" title="' + U.esc(label) + '" data-ifx-role="entity-name">' + U.esc(label) + '</a>'
       : '<span class="ifx-flow-split-ticker is-' + kind + ' is-empty">—</span>';
   }
 

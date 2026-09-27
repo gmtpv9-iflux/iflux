@@ -30,7 +30,7 @@
       M.mount(root.querySelector('[data-ifx-heatmap]'), items(input), {
         tile: function (it, tier) {
           return '<a class="ifx-treemap-cell is-' + it.direction + '" href="#" title="' + U.esc(it.name) + '">' +
-            '<span class="ifx-treemap-name">' + U.esc(tier === 'tiny' ? String(it.name).split(' ')[0] : it.name) + '</span>' +
+            '<span class="ifx-treemap-name" data-ifx-role="entity-name">' + U.esc(tier === 'tiny' ? String(it.name).split(' ')[0] : it.name) + '</span>' +
             (tier === 'tiny' ? '' : '<span class="ifx-treemap-value">' + U.fmtPct(it.perf) + '</span>') +
           '</a>';
         }

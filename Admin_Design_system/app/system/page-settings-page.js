@@ -437,9 +437,7 @@
     persistLayoutSlotsFromDom('ps-widgets');
     var run = global.IfluxPagePublishBridge && IfluxPagePublishBridge.publishPagePublished
       ? IfluxPagePublishBridge.publishPagePublished(page.key)
-      : (global.PageCompositionClient && PageCompositionClient.publishPagePublished
-        ? PageCompositionClient.publishPagePublished(page.key)
-        : Promise.resolve({ ok: false, error: 'Thiếu bridge Publish' }));
+      : Promise.resolve({ ok: false, error: 'Thiếu bridge Publish' });
     toast('Đang publish PagePublished · ' + page.key + '…', 'primary');
     run.then(function (res) {
       if (res && res.ok) {

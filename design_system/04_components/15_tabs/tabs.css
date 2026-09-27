@@ -57,8 +57,15 @@ a.ifx-tab { text-decoration: none; }
   padding: var(--ifx-space-4);
   border-radius: var(--ifx-radius-md);
   background: var(--ifx-bg-subtle);
+  /* Widget hẹp (span 3–4): cuộn ngang thay vì tràn khung. */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.ifx-tabs-segmented::-webkit-scrollbar { display: none; }
 .ifx-tabs-segmented .ifx-tab {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: var(--ifx-space-8) var(--ifx-space-12);
   border-radius: var(--ifx-radius-sm);
   font-size: var(--ifx-font-size-xs);

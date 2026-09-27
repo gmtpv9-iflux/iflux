@@ -3,7 +3,7 @@
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
 import { ensureSections } from '../../runtime/app-shell.js?v=scrollWave4early_20260811';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';

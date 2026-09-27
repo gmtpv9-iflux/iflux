@@ -23,7 +23,7 @@
           var cls = v > 0.08 ? 'is-up' : v < -0.08 ? 'is-down' : '';
           return '<div class="ifx-rank-perf-row">' +
             '<span class="ifx-rank-perf-idx">' + (i + 1) + '</span>' +
-            '<span class="ifx-rank-perf-name">' + U.esc(name || '—') + '</span>' +
+            '<span class="ifx-rank-perf-name" data-ifx-role="entity-name">' + U.esc(name || '—') + '</span>' +
             '<div class="ifx-rank-perf-track"><div class="ifx-rank-perf-fill ' + cls + '" style="width:' + Math.min(100, Math.round(Math.abs(v) / max * 100)) + '%"></div></div>' +
             '<span class="ifx-rank-perf-val ' + cls + '">' + U.fmtPct(v) + '</span>' +
           '</div>';

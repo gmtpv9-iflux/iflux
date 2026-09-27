@@ -5,7 +5,7 @@
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=calFeedFix20260808';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=calFeedFix20260808';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
 import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
 import featureManifest from '../../features/news.manifest.js?v=calFeedFix20260808';
 

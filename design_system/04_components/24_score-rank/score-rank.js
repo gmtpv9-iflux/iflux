@@ -32,7 +32,7 @@
     var s = clamp(item.score);
     return '<div class="ifx-score-rank-row' + (cls ? ' ' + cls : '') + '">' +
       '<span class="ifx-score-rank-pos">' + (i + 1) + '</span>' +
-      '<span class="ifx-score-rank-name" title="' + esc(item.label) + '">' + esc(item.label) + '</span>' +
+      '<span class="ifx-score-rank-name" title="' + esc(item.label) + '" data-ifx-role="entity-name">' + esc(item.label) + '</span>' +
       '<span class="ifx-progress"><span class="ifx-progress-bar" style="--ifx-progress-value:' + s + '%"></span></span>' +
       '<span class="ifx-score-rank-val">' + esc(item.score) + '</span>' +
       (extra || '') +

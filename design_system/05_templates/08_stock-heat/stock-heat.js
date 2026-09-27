@@ -27,7 +27,7 @@
       M.mount(root.querySelector('[data-ifx-stock-heat]'), items, {
         tile: function (it) {
           return '<a class="ifx-treemap-cell is-' + it.direction + '" href="#">' +
-            '<span class="ifx-treemap-name">' + U.esc(it.ticker) + '</span>' +
+            '<span class="ifx-treemap-name" data-ifx-role="entity-name">' + U.esc(it.ticker) + '</span>' +
             '<span class="ifx-treemap-value">' + U.fmtPct(it.perf) + '</span>' +
           '</a>';
         }

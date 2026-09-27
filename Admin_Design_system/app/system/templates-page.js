@@ -168,10 +168,9 @@
       resourceList(arr);
   }
 
-  function webImpl() { return global.TemplateWebImplementations; }
-
+  /* Ready = Template đã có hàm vẽ trong design_system/05_templates (mọi nền tảng dùng chung). */
   function webStatus(templateId) {
-    return webImpl() && webImpl().status ? webImpl().status(templateId) : 'draft';
+    return global.IfxTemplates && IfxTemplates.has(templateId) ? 'ready' : 'draft';
   }
 
   function runtimeTabOf(id) {
@@ -190,13 +189,12 @@
     return '<span class="ix-chip ix-chip-warning">Web · Draft</span>';
   }
 
-  /* Runtime Implement — Admin chỉ xem Ready/Draft + module (Developer đăng ký). */
+  /* Runtime Implement — chỉ xem: User Web hiển thị Template bằng hàm vẽ DS theo templateId. */
   function runtimeImplementPanel(t) {
     var tab = runtimeTabOf(t.id);
     if (tab !== 'web') {
       return '<p class="tpl-pv-hint">Runtime này chưa mở Implementation trong giai đoạn Web-first.<br/>Chỉ xem trạng thái — không nhập path module.</p>';
     }
-    var row = webImpl() && webImpl().impl ? webImpl().impl(t.id) : null;
     var st = webStatus(t.id);
     return '<div class="tpl-pv-live">' +
       '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Trạng thái</span>' +
@@ -205,9 +203,9 @@
           : '<span class="ix-chip ix-chip-warning">Draft</span>') +
       '</div>' +
       '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Runtime</span><code>web</code></div>' +
-      '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Entry (Build)</span><code>' +
-        esc(row && row.module ? row.module : '— chưa đăng ký') + '</code></div>' +
-      '<p class="tpl-col__hint" style="margin-top:10px">Admin chỉ xem. Developer/Build đăng ký Implementation — không nhập path trên UI này.</p>' +
+      '<div class="tpl-line"><span class="tpl-input-line__label" style="flex:0 0 140px">Hàm vẽ</span><code>' +
+        esc('design_system/05_templates · IfxTemplates.mount(\'' + t.id + '\')') + '</code></div>' +
+      '<p class="tpl-col__hint" style="margin-top:10px">Preview này và User Web cùng gọi một hàm vẽ; file cần nạp khai báo trong 05_templates/templates.json.</p>' +
     '</div>';
   }
 

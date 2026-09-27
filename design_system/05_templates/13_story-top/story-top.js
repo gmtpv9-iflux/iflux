@@ -42,7 +42,7 @@
           return '<div class="ifx-story-top-row">' +
             '<span class="ifx-avatar ifx-avatar-32 ifx-avatar-accent ifx-story-top-num" aria-label="Top ' + (i + 1) + '">' + (i + 1) + '</span>' +
             '<div class="ifx-story-top-body">' +
-              '<div class="ifx-story-top-title"><span>' + U.esc(name || '—') + '</span><span>' + U.esc(c[1][i] || '—') + '</span></div>' +
+              '<div class="ifx-story-top-title"><span data-ifx-role="entity-name">' + U.esc(name || '—') + '</span><span>' + U.esc(c[1][i] || '—') + '</span></div>' +
               (metrics ? '<div class="ifx-icon-list ifx-icon-list-inline">' + metrics + '</div>' : '') +
             '</div>' +
           '</div>';

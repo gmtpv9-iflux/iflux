@@ -1,0 +1,172 @@
+{
+  "_doc": "Danh mục Template → file DS cần nạp (đường dẫn tính từ /design_system/). Nền tảng nạp qua 00_widget/loader.js; chỉ nạp Template trang dùng.",
+  "version": "20260928c",
+  "base": {
+    "css": [
+      "03_primitives/08_title/title.css",
+      "04_components/03_card/card.css"
+    ],
+    "js": [
+      "05_templates/00_widget/widget.js"
+    ]
+  },
+  "templates": {
+    "TMP-BREADTH": {
+      "css": [
+        "04_components/15_tabs/tabs.css",
+        "05_templates/01_breadth/breadth.css"
+      ],
+      "js": [
+        "05_templates/01_breadth/breadth.js"
+      ]
+    },
+    "TMP-SUMMARY": {
+      "css": [
+        "05_templates/02_summary/summary.css"
+      ],
+      "js": [
+        "05_templates/02_summary/summary.js"
+      ]
+    },
+    "TMP-DIVERGING-BARS": {
+      "css": [
+        "04_components/15_tabs/tabs.css",
+        "05_templates/03_diverging-bars/diverging-bars.css"
+      ],
+      "js": [
+        "05_templates/03_diverging-bars/diverging-bars.js"
+      ]
+    },
+    "TMP-ZONE-POSITION": {
+      "css": [
+        "05_templates/04_zone-position/zone-position.css"
+      ],
+      "js": [
+        "05_templates/04_zone-position/zone-position.js"
+      ]
+    },
+    "TMP-SR-HISTORY": {
+      "css": [
+        "04_components/15_tabs/tabs.css",
+        "05_templates/05_sr-history/sr-history.css"
+      ],
+      "js": [
+        "05_templates/05_sr-history/sr-history.js"
+      ]
+    },
+    "TMP-RANK-PERF": {
+      "css": [
+        "05_templates/06_rank-perf/rank-perf.css"
+      ],
+      "js": [
+        "05_templates/06_rank-perf/rank-perf.js"
+      ]
+    },
+    "TMP-HEATMAP": {
+      "css": [
+        "04_components/22_treemap/treemap.css",
+        "05_templates/07_heatmap/heatmap.css"
+      ],
+      "js": [
+        "04_components/22_treemap/treemap.js",
+        "05_templates/07_heatmap/heatmap.js"
+      ]
+    },
+    "TMP-COM-STOCK-HEAT": {
+      "css": [
+        "04_components/22_treemap/treemap.css",
+        "05_templates/08_stock-heat/stock-heat.css"
+      ],
+      "js": [
+        "04_components/22_treemap/treemap.js",
+        "05_templates/08_stock-heat/stock-heat.js"
+      ]
+    },
+    "TMP-COLLECTION": {
+      "css": [
+        "04_components/23_stock-row/stock-row.css"
+      ],
+      "js": [
+        "05_templates/09_collection/collection.js"
+      ]
+    },
+    "TMP-FLOW-SUMMARY": {
+      "css": [
+        "05_templates/10_flow-summary/flow-summary.css"
+      ],
+      "js": [
+        "05_templates/10_flow-summary/flow-summary.js"
+      ]
+    },
+    "TMP-NET-SUBJECT": {
+      "css": [
+        "04_components/15_tabs/tabs.css",
+        "05_templates/11_net-subject/net-subject.css"
+      ],
+      "js": [
+        "05_templates/11_net-subject/net-subject.js"
+      ]
+    },
+    "TMP-COMMUNITY-LIST": {
+      "css": [
+        "03_primitives/02_avatar/avatar.css",
+        "04_components/20_icon-list/icon-list.css",
+        "05_templates/12_community-list/community-list.css"
+      ],
+      "js": [
+        "05_templates/12_community-list/community-list.js"
+      ]
+    },
+    "TMP-COMMUNITY-STORY-TOP": {
+      "css": [
+        "03_primitives/02_avatar/avatar.css",
+        "04_components/15_tabs/tabs.css",
+        "04_components/20_icon-list/icon-list.css",
+        "05_templates/13_story-top/story-top.css"
+      ],
+      "js": [
+        "05_templates/13_story-top/story-top.js"
+      ]
+    },
+    "TMP-TREND-LINE": {
+      "css": [
+        "04_components/04_chart/chart.css",
+        "04_components/08_form/form.css",
+        "04_components/15_tabs/tabs.css",
+        "05_templates/14_trend-line/trend-line.css"
+      ],
+      "js": [
+        "04_components/04_chart/chart-adapter.js",
+        "05_templates/14_trend-line/trend-line.js"
+      ]
+    },
+    "TMP-FLOW-RANK-DUO": {
+      "css": [
+        "03_primitives/03_badge/badge.css",
+        "03_primitives/07_progress/progress.css",
+        "04_components/04_chart/chart.css",
+        "04_components/24_score-rank/score-rank.css",
+        "05_templates/15_flow-rank-duo/flow-rank-duo.css"
+      ],
+      "js": [
+        "04_components/04_chart/chart-adapter.js",
+        "04_components/24_score-rank/score-rank.js",
+        "05_templates/15_flow-rank-duo/flow-rank-duo.js"
+      ]
+    },
+    "TMP-FLOW-RANK-SIGNAL": {
+      "css": [
+        "03_primitives/03_badge/badge.css",
+        "03_primitives/07_progress/progress.css",
+        "04_components/04_chart/chart.css",
+        "04_components/24_score-rank/score-rank.css",
+        "05_templates/16_flow-rank-signal/flow-rank-signal.css"
+      ],
+      "js": [
+        "04_components/04_chart/chart-adapter.js",
+        "04_components/24_score-rank/score-rank.js",
+        "05_templates/16_flow-rank-signal/flow-rank-signal.js"
+      ]
+    }
+  }
+}

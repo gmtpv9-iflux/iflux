@@ -1,69 +1,27 @@
 'use strict';
 
-const { legacyRuntimeFor, legacyDepsFor, legacyCssFor } = require('../seed/legacy-runtime-map');
-const {
-  resolveRuntimeImplementation,
-  RUNTIME_WEB
-} = require('../seed/runtime-implementations');
+const TEMPLATE_ID_RE = /^TMP-[A-Z0-9][A-Z0-9-]{1,48}$/;
 
 /**
- * Wave 3 — nguồn chuẩn: resolveRuntimeImplementation(template, runtime).
- * Legacy WGT-id + debt module vẫn giữ (Wave 4 soft — chưa cắt cứng).
+ * Widget chỉ chọn Template — artifact chỉ lưu templateId.
+ * UI của Template nằm ở design_system/05_templates; mỗi nền tảng tự hiển thị theo templateId.
+ * Không bảng ánh xạ module, không gán mặc định: thiếu / sai templateId → báo lỗi.
  */
-function resolveTemplate(draft, opts) {
-  opts = opts || {};
-  const runtime = String(opts.runtime || draft.runtime || RUNTIME_WEB).toLowerCase();
+function resolveTemplate(draft) {
   const templateId = draft.template || draft.templateId || null;
-
-  /* 1) Runtime Implementation Ready (chuẩn) */
-  let rt = resolveRuntimeImplementation(templateId, runtime);
-
-  /* 2) Legacy widgetId map (Wave 4 soft — giữ) */
-  if (!rt) {
-    const legacy = legacyRuntimeFor(draft.id);
-    if (legacy) rt = { renderer: legacy.renderer, module: legacy.module, _legacy: true };
-  }
-
-  /*
-   * 3) Technical Debt: draft.module / lazyModule (Wave 4 soft — giữ).
-   */
-  const debtModule =
-    (draft.display && draft.display.module) ||
-    draft.module ||
-    draft.lazyModule ||
-    null;
-  const debtRenderer =
-    (draft.display && draft.display.renderer) ||
-    draft.renderer ||
-    'generic';
-
-  if (!rt && debtModule) {
-    rt = { renderer: debtRenderer, module: debtModule, _debtModuleString: true };
-  }
-
-  if (!rt || !rt.module) {
+  if (!templateId || !TEMPLATE_ID_RE.test(templateId)) {
     const e = new Error(
-      'Runtime ' +
-        runtime.toUpperCase() +
-        ' chưa sẵn sàng cho Template ' +
-        (templateId || '(không có)') +
-        ' (id=' +
-        (draft.id || '') +
-        '). Cần Implementation Ready từ Developer/Build.'
+      'Widget ' + (draft.id || '') + ' chưa chọn Template hợp lệ (' + (templateId || 'trống') +
+      '). Chọn Template trong Kiến trúc 4 tầng rồi publish lại.'
     );
     e.statusCode = 400;
     throw e;
   }
-
   return {
-    templateId: templateId || 'TMP-LEGACY',
-    runtime: runtime,
+    templateId: templateId,
     display: {
-      renderer: rt.renderer || 'generic',
-      module: rt.module,
       renderSpec: {
-        templateId: templateId || 'TMP-LEGACY',
-        runtime: runtime,
+        templateId: templateId,
         variant: draft.renderVariant || 'default'
       }
     }
@@ -109,26 +67,14 @@ function resolveCapability(draft) {
   };
 }
 
-function resolveDependency(resolvedDisplay, draft) {
-  const renderer = resolvedDisplay && resolvedDisplay.renderer;
-  const deps = legacyDepsFor(renderer);
-  const cssList = [];
-  if (draft && Array.isArray(draft.css)) cssList.push.apply(cssList, draft.css);
-  if (draft && Array.isArray(draft.stylesheets)) cssList.push.apply(cssList, draft.stylesheets);
-  if (!cssList.length && renderer) {
-    cssList.push.apply(cssList, legacyCssFor(renderer));
-  }
-  cssList.forEach(function (href) {
-    if (!href) return;
-    if (deps.some(function (d) { return d.kind === 'stylesheet' && d.href === href; })) return;
-    deps.push({ kind: 'stylesheet', href: href });
-  });
-  return { dependencies: deps };
+/** File giao diện do nền tảng nạp theo templateId — artifact không mang CSS/JS. */
+function resolveDependency() {
+  return { dependencies: [] };
 }
 
 module.exports = {
+  TEMPLATE_ID_RE,
   resolveTemplate,
-  resolveRuntimeImplementation,
   resolveLayout,
   resolvePermission,
   resolveCapability,

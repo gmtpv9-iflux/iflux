@@ -68,13 +68,6 @@
       defaultConfig: { width: 'half' },
       footerHref: '/thi-truong',
       footerLabel: 'Mở Thị trường',
-      lazyModule: '/User_Web/iflux-web-ui/widgets/market-overview/index.js',
-      assets: {
-        css: [
-          '/User_Web/iflux-web-ui/block-templates.css',
-          '/User_Web/iflux-web-ui/market.css'
-        ]
-      }
     },
     {
       type: 'WGT-MKT-002',

@@ -26,7 +26,7 @@ import {
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
 import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
+import { mountPublishedWidgets } from './mount-published-widgets.js?v=tplMount20260928';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageLayout20260928';
 
