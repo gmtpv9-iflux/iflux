@@ -41,12 +41,12 @@
 }
 a.ifx-tab { text-decoration: none; }
 .ifx-tabs-dense {
-  padding: 3px;
+  padding: var(--ifx-space-4);
 }
 .ifx-tabs-dense .ifx-tab {
-  padding: 6px 14px;
+  padding: var(--ifx-space-4) var(--ifx-space-16);
   font-size: var(--ifx-font-size-md);
-  border-radius: calc(var(--ifx-radius-button) - 2px);
+  border-radius: calc(var(--ifx-radius-button) - var(--ifx-radius-sm));
 }
 /* Hide only. Active display stays with Stack (flex+gap) or UA block. */
 .ifx-tab-panel:not(.is-active) { display: none; }

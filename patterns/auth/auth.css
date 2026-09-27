@@ -1,0 +1,77 @@
+/**
+ * Pattern-local — Auth (đăng nhập / đăng ký / quên mật khẩu / OTP).
+ * Chỉ bố cục riêng của màn hình auth; phần dùng chung lấy từ design_system.
+ */
+.auth-splash {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-16);
+  background: var(--ifx-bg-canvas);
+}
+
+.auth-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 420px;
+  padding: var(--ifx-space-36) var(--ifx-space-42);
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-inline-md);
+  margin-bottom: var(--ifx-space-24);
+  font-size: var(--ifx-font-size-2xl);
+  font-weight: var(--ifx-font-weight-extrabold);
+  color: var(--ifx-text-primary);
+}
+
+.auth-heading h2 { margin: 0 0 var(--ifx-space-4); }
+.auth-heading p {
+  margin: 0 0 var(--ifx-space-24);
+  font-size: var(--ifx-font-size-md);
+  color: var(--ifx-text-muted);
+}
+
+.auth-methods { margin: var(--ifx-space-12) auto var(--ifx-space-20); }
+
+.auth-submit { width: 100%; }
+.auth-submit-login { margin-top: var(--ifx-space-8); }
+.auth-submit-register { margin-bottom: var(--ifx-space-16); }
+.auth-submit-forgot { margin-bottom: var(--ifx-space-8); }
+.auth-submit-otp { margin-bottom: var(--ifx-space-16); }
+
+.auth-session { margin-top: var(--ifx-space-20); }
+.auth-session-note {
+  display: block;
+  margin-top: var(--ifx-space-16);
+  text-align: center;
+  font-size: var(--ifx-font-size-md);
+  color: var(--ifx-text-muted);
+}
+
+.auth-terms { margin: var(--ifx-space-16) 0; }
+
+.auth-footer {
+  margin-top: var(--ifx-space-16);
+  text-align: center;
+  font-size: var(--ifx-font-size-md);
+  color: var(--ifx-text-muted);
+}
+
+.auth-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4);
+  margin-top: var(--ifx-space-16);
+  font-size: var(--ifx-font-size-md);
+  color: var(--ifx-action-primary);
+  text-decoration: none;
+}
+.auth-back i { font-size: var(--ifx-font-size-sm); }
+.auth-back-hub { margin-top: var(--ifx-space-20); }

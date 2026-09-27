@@ -147,7 +147,7 @@ if (fs.existsSync(catalogRoot)) {
       if (cls) violate(file, 'sandbox-dead-title', cls.join(' | '));
     }
     if (ext !== '.css') continue;
-    if (['reference-layers.css', 'workbench.css'].includes(path.basename(file))) continue;
+    if (path.basename(file) === 'workbench.css') continue;
     const css = stripComments(raw, '.css');
     if (/\.sb-(section-title|sub-title|section-desc|subtitle|title)(?![\w-])/.test(css)) {
       violate(file, 'sandbox-dead-title', 'selector .sb-*-title / .sb-section-desc');

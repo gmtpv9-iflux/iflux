@@ -1,0 +1,24 @@
+/**
+ * Primitive — Value
+ * Giá trị chính cần nổi bật trong ô bảng, danh sách, tóm tắt: tên người, mã đơn,
+ * số tiền, khối lượng… inline-block: cùng dòng với mã phụ, giữ line-height gọn khi xuống dòng.
+ * Muốn dòng phụ (SKU / ID) nằm dưới: bọc bằng khung xếp dọc (vd. .ifx-flex-col).
+ *   <span class="ifx-value">Violet Mendoza</span>
+ *   <span class="ifx-value is-num">₫1.250.000</span>
+ *   <span class="ifx-value ifx-value-lg is-num">₫3.480.000</span>   (tổng)
+ */
+.ifx-value {
+  display: inline-block;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  line-height: var(--ifx-line-height-tight);
+  color: var(--ifx-text-primary);
+}
+.ifx-value.is-num {
+  font-family: var(--ifx-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+.ifx-value-lg {
+  font-size: var(--ifx-font-size-lg);
+  font-weight: var(--ifx-font-weight-extrabold);
+}

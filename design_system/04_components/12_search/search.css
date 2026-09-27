@@ -47,10 +47,10 @@
 }
 .ifx-search-embedded .ti {
   position: absolute;
-  left: 10px;
+  left: var(--ifx-space-12);
   top: 50%;
   transform: translateY(-50%);
-  font-size: 13px;
+  font-size: var(--ifx-font-size-sm);
   color: var(--ifx-text-muted);
   width: auto;
   height: auto;
@@ -58,11 +58,11 @@
 }
 .ifx-search-embedded input {
   width: 100%;
-  padding: 7px 10px 7px 32px;
+  padding: var(--ifx-space-8) var(--ifx-space-12) var(--ifx-space-8) var(--ifx-space-30);
   background: var(--ifx-bg-input);
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-button);
-  font-size: 13px;
+  font-size: var(--ifx-font-size-sm);
   line-height: normal;
   color: var(--ifx-text-primary);
   font-family: var(--ifx-font-primary);

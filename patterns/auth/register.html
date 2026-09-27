@@ -21,13 +21,12 @@
   <link rel="stylesheet" href="../../design_system/04_components/08_form/form.css">
   <link rel="stylesheet" href="../../design_system/04_components/15_tabs/tabs.css">
   <link rel="stylesheet" href="../../design_system/04_components/17_toast/toast.css">
-  <link rel="stylesheet" href="../../ui_tooling/workbench/reference-layers.css">
 </head>
 <body>
-  <div class="ref-platform-auth">
-    <div class="ifx-card ref-page-auth-card">
-      <div class="ref-page-auth-brand">iFlux</div>
-      <div class="ref-page-auth-heading">
+  <div class="auth-splash">
+    <div class="ifx-card ifx-card-plain auth-card">
+      <div class="auth-brand">iFlux</div>
+      <div class="auth-heading">
         <h2>Tạo tài khoản quản trị 🚀</h2>
         <p>Dành cho nhân viên được mời — cần phê duyệt từ Admin</p>
       </div>
@@ -49,15 +48,15 @@
           </button>
         </div>
       </div>
-      <div class="ref-page-auth-terms">
+      <div class="auth-terms">
         <label class="ifx-choice ifx-choice-dense">
           <input type="checkbox" class="ifx-checkbox">
           <span class="ifx-choice-title">Tôi đồng ý với <a href="#">điều khoản &amp; chính sách</a></span>
         </label>
       </div>
-      <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit ref-page-auth-submit-register" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi yêu cầu đăng ký">Đăng ký</button>
+      <button type="button" class="ifx-btn ifx-btn-primary auth-submit auth-submit-register" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi yêu cầu đăng ký">Đăng ký</button>
 
-      <div class="ref-page-auth-footer">
+      <div class="auth-footer">
         <span>Đã có tài khoản?</span> <a href="login.html">Đăng nhập</a>
       </div>
     </div>
@@ -66,6 +65,7 @@
   <script src="../../design_system/04_components/15_tabs/tabs.js"></script>
   <script src="../../design_system/04_components/08_form/form.js"></script>
   <script src="../../design_system/04_components/17_toast/toast.js"></script>
+  <link rel="stylesheet" href="auth.css">
   <script src="page.js"></script>
 </body>
 </html>

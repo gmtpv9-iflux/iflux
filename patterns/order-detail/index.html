@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="../../vendor/tabler/tabler-icons.min.css">
   <link rel="stylesheet" href="../../design_system/02_foundation/02_icons/icons.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/04_button/button.css">
+  <link rel="stylesheet" href="../../design_system/03_primitives/09_value/value.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/05_chip/chip.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/02_avatar/avatar.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/01_alert/alert.css">
@@ -27,7 +28,6 @@
   <link rel="stylesheet" href="../../design_system/04_components/17_toast/toast.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/08_title/title.css">
   <link rel="stylesheet" href="../../design_system/04_components/10_page-header/page-header.css">
-  <link rel="stylesheet" href="../../ui_tooling/workbench/reference-layers.css">
 </head>
 <body>
   <main class="ifx-container ifx-container-max ifx-stack-xl">
@@ -75,51 +75,51 @@
                     <td>
                       <div class="ifx-inline-md">
                         <span class="ifx-stat-icon" aria-hidden="true"><i class="ti ti-box ifx-icon"></i></span>
-                        <span>
-                          <span class="ref-module-order-item-name">Mục A</span>
-                          <small class="ref-module-order-item-sku">SKU-4567</small>
+                        <span class="ifx-flex-col">
+                          <span class="ifx-value">Mục A</span>
+                          <small>SKU-4567</small>
                         </span>
                       </div>
                     </td>
-                    <td><span class="ref-module-order-value">999</span></td>
+                    <td><span class="ifx-value is-num">999</span></td>
                     <td>2</td>
-                    <td><span class="ref-module-order-value">1,998</span></td>
+                    <td><span class="ifx-value is-num">1,998</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="ifx-inline-md">
                         <span class="ifx-stat-icon ifx-stat-icon-success" aria-hidden="true"><i class="ti ti-package ifx-icon"></i></span>
-                        <span>
-                          <span class="ref-module-order-item-name">Mục B</span>
-                          <small class="ref-module-order-item-sku">SKU-9485</small>
+                        <span class="ifx-flex-col">
+                          <span class="ifx-value">Mục B</span>
+                          <small>SKU-9485</small>
                         </span>
                       </div>
                     </td>
-                    <td><span class="ref-module-order-value">95</span></td>
+                    <td><span class="ifx-value is-num">95</span></td>
                     <td>1</td>
-                    <td><span class="ref-module-order-value">95</span></td>
+                    <td><span class="ifx-value is-num">95</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="ifx-card-footer">
-              <div class="ref-page-order-detail-summary">
+              <div class="order-detail-summary">
                 <div class="ifx-flex ifx-justify-between">
                   <small>Tạm tính</small>
-                  <span class="ref-page-order-detail-summary-value">2,093</span>
+                  <span class="ifx-value is-num">2,093</span>
                 </div>
                 <div class="ifx-flex ifx-justify-between">
                   <small>Giảm</small>
-                  <span class="ref-page-order-detail-summary-value">−8</span>
+                  <span class="ifx-value is-num">−8</span>
                 </div>
                 <div class="ifx-flex ifx-justify-between">
                   <small>Thuế</small>
-                  <span class="ref-page-order-detail-summary-value">28</span>
+                  <span class="ifx-value is-num">28</span>
                 </div>
                 <hr>
                 <div class="ifx-flex ifx-justify-between">
-                  <span class="ref-page-order-detail-total-label">Tổng</span>
-                  <span class="ref-page-order-detail-total">2,113</span>
+                  <span class="ifx-value">Tổng</span>
+                  <span class="ifx-value ifx-value-lg is-num">2,113</span>
                 </div>
               </div>
             </div>
@@ -190,12 +190,12 @@
             <div class="ifx-card-body ifx-stack-md">
               <div class="ifx-inline-md">
                 <span class="ifx-avatar" aria-hidden="true">A1</span>
-                <span>
-                  <span class="ref-module-order-person">Người A</span>
-                  <small class="ref-module-order-person-id">PER-58909</small>
+                <span class="ifx-flex-col">
+                  <span class="ifx-value">Người A</span>
+                  <small>PER-58909</small>
                 </span>
               </div>
-              <div class="ifx-inline-sm ref-page-order-detail-record-count">
+              <div class="ifx-inline-sm order-detail-record-count">
                 <i class="ti ti-list ifx-icon ifx-icon-sm" aria-hidden="true"></i>
                 <span>12 bản ghi</span>
               </div>
@@ -234,7 +234,7 @@
             <div class="ifx-card-body ifx-stack-sm">
               <p>45 Roker Terrace<br>Latheronwheel<br>KW5 8NW</p>
               <hr>
-              <p class="ref-module-order-group">Nhóm A</p>
+              <p class="ifx-value">Nhóm A</p>
               <small>Mã ****4291</small>
             </div>
           </section>
@@ -244,6 +244,7 @@
   </main>
   <script src="../../adapters/web/theme.js"></script>
   <script src="../../design_system/04_components/17_toast/toast.js"></script>
+  <link rel="stylesheet" href="order-detail.css">
   <script src="page.js"></script>
 </body>
 </html>

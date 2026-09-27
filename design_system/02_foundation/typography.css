@@ -232,5 +232,5 @@ caption {
   text-transform: uppercase;
   letter-spacing: var(--ifx-letter-spacing-caps);
   color: var(--ifx-text-muted);
-  margin-bottom: 10px;
+  margin-bottom: var(--ifx-space-12);
 }

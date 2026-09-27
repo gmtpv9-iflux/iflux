@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="../../vendor/tabler/tabler-icons.min.css">
   <link rel="stylesheet" href="../../design_system/02_foundation/02_icons/icons.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/04_button/button.css">
+  <link rel="stylesheet" href="../../design_system/03_primitives/09_value/value.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/05_chip/chip.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/02_avatar/avatar.css">
   <link rel="stylesheet" href="../../design_system/04_components/03_card/card.css">
@@ -29,7 +30,6 @@
   <link rel="stylesheet" href="../../design_system/04_components/17_toast/toast.css">
   <link rel="stylesheet" href="../../design_system/03_primitives/08_title/title.css">
   <link rel="stylesheet" href="../../design_system/04_components/10_page-header/page-header.css">
-  <link rel="stylesheet" href="../../ui_tooling/workbench/reference-layers.css">
 </head>
 <body>
   <main class="ifx-container ifx-container-max ifx-stack-xl">
@@ -96,40 +96,40 @@
           <div class="ifx-card-body ifx-stack-md">
             <div class="ifx-grid">
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ref-page-referrals-step">
+                <div class="ifx-flex-col referrals-step">
                   <span class="ifx-avatar ifx-avatar-success" aria-hidden="true"><i class="ti ti-bulb ifx-icon"></i></span>
-                  <span class="ref-module-referral-label">Tạo liên kết</span>
+                  <span class="ifx-value">Tạo liên kết</span>
                   <small>Bước 1 — mã A1.</small>
                 </div>
               </div>
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ref-page-referrals-step">
+                <div class="ifx-flex-col referrals-step">
                   <span class="ifx-avatar ifx-avatar-info" aria-hidden="true"><i class="ti ti-user-plus ifx-icon"></i></span>
-                  <span class="ref-module-referral-label">Mời người mới</span>
+                  <span class="ifx-value">Mời người mới</span>
                   <small>Bước 2 — gửi email.</small>
                 </div>
               </div>
               <div class="ifx-col-12 ifx-col-md-4">
-                <div class="ifx-flex-col ref-page-referrals-step">
+                <div class="ifx-flex-col referrals-step">
                   <span class="ifx-avatar ifx-avatar-warning" aria-hidden="true"><i class="ti ti-send ifx-icon"></i></span>
-                  <span class="ref-module-referral-label">Chia sẻ tiếp</span>
+                  <span class="ifx-value">Chia sẻ tiếp</span>
                   <small>Bước 3 — liên kết công khai.</small>
                 </div>
               </div>
             </div>
             <hr>
             <small>Mạng — số tầng generic, không F0–F2 / hoa hồng.</small>
-            <div class="ifx-flex ref-page-referrals-stat-row">
-              <div class="ifx-flex-1 ref-page-referrals-stat">
-                <div class="ref-page-referrals-stat-value">12</div>
+            <div class="ifx-flex referrals-stat-row">
+              <div class="ifx-flex-1 referrals-stat">
+                <div class="ifx-stat-value">12</div>
                 <small>Tầng A</small>
               </div>
-              <div class="ifx-flex-1 ref-page-referrals-stat">
-                <div class="ref-page-referrals-stat-value">48</div>
+              <div class="ifx-flex-1 referrals-stat">
+                <div class="ifx-stat-value">48</div>
                 <small>Tầng B</small>
               </div>
-              <div class="ifx-flex-1 ref-page-referrals-stat">
-                <div class="ref-page-referrals-stat-value">9</div>
+              <div class="ifx-flex-1 referrals-stat">
+                <div class="ifx-stat-value">9</div>
                 <small>Tầng C</small>
               </div>
             </div>
@@ -147,14 +147,14 @@
           <div class="ifx-card-body ifx-stack-md">
             <div class="ifx-form-group">
               <label class="ifx-label" for="ref-email">Email</label>
-              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ref-page-referrals-invite">
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md referrals-invite">
                 <input class="ifx-input ifx-flex-1" id="ref-email" type="email" placeholder="a2@example.com">
                 <button type="button" class="ifx-btn ifx-btn-primary" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi">Gửi</button>
               </div>
             </div>
             <div class="ifx-form-group">
               <label class="ifx-label" for="ref-link">Liên kết</label>
-              <div class="ifx-flex ifx-flex-col ifx-flex-row-md ref-page-referrals-invite">
+              <div class="ifx-flex ifx-flex-col ifx-flex-row-md referrals-invite">
                 <input class="ifx-input ifx-flex-1" id="ref-link" type="text" value="https://example.com/s/A1" readonly>
                 <button type="button" class="ifx-btn ifx-btn-outline" data-ifx-toast="success" data-ifx-toast-msg="Đã sao chép">
                   <i class="ti ti-copy ifx-icon ifx-icon-sm"></i> Sao chép
@@ -190,73 +190,73 @@
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true">A</span>
-                    <span class="ref-module-referral-label">Người A</span>
+                    <span class="ifx-value">Người A</span>
                   </div>
                 </td>
                 <td>LNK-47961</td>
                 <td><span class="ifx-chip ifx-chip-success">xong</span></td>
-                <td><span class="ref-module-referral-value">830</span></td>
-                <td><span class="ref-module-referral-value">83</span></td>
+                <td><span class="ifx-value is-num">830</span></td>
+                <td><span class="ifx-value is-num">83</span></td>
               </tr>
               <tr>
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success" aria-hidden="true">B</span>
-                    <span class="ref-module-referral-label">Người B</span>
+                    <span class="ifx-value">Người B</span>
                   </div>
                 </td>
                 <td>LNK-47962</td>
                 <td><span class="ifx-chip ifx-chip-warning">chờ</span></td>
-                <td><span class="ref-module-referral-value">210</span></td>
-                <td><span class="ref-module-referral-value">21</span></td>
+                <td><span class="ifx-value is-num">210</span></td>
+                <td><span class="ifx-value is-num">21</span></td>
               </tr>
               <tr>
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm ifx-avatar-danger" aria-hidden="true">C</span>
-                    <span class="ref-module-referral-label">Người C</span>
+                    <span class="ifx-value">Người C</span>
                   </div>
                 </td>
                 <td>LNK-47963</td>
                 <td><span class="ifx-chip ifx-chip-success">xong</span></td>
-                <td><span class="ref-module-referral-value">1,200</span></td>
-                <td><span class="ref-module-referral-value">120</span></td>
+                <td><span class="ifx-value is-num">1,200</span></td>
+                <td><span class="ifx-value is-num">120</span></td>
               </tr>
               <tr>
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm" aria-hidden="true">D</span>
-                    <span class="ref-module-referral-label">Người D</span>
+                    <span class="ifx-value">Người D</span>
                   </div>
                 </td>
                 <td>LNK-47964</td>
                 <td><span class="ifx-chip ifx-chip-danger">hủy</span></td>
-                <td><span class="ref-module-referral-value">0</span></td>
-                <td><span class="ref-module-referral-value">0</span></td>
+                <td><span class="ifx-value is-num">0</span></td>
+                <td><span class="ifx-value is-num">0</span></td>
               </tr>
               <tr>
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning" aria-hidden="true">E</span>
-                    <span class="ref-module-referral-label">Người E</span>
+                    <span class="ifx-value">Người E</span>
                   </div>
                 </td>
                 <td>LNK-47965</td>
                 <td><span class="ifx-chip ifx-chip-success">xong</span></td>
-                <td><span class="ref-module-referral-value">560</span></td>
-                <td><span class="ref-module-referral-value">56</span></td>
+                <td><span class="ifx-value is-num">560</span></td>
+                <td><span class="ifx-value is-num">56</span></td>
               </tr>
               <tr>
                 <td>
                   <div class="ifx-inline-md">
                     <span class="ifx-avatar ifx-avatar-sm ifx-avatar-info" aria-hidden="true">F</span>
-                    <span class="ref-module-referral-label">Người F</span>
+                    <span class="ifx-value">Người F</span>
                   </div>
                 </td>
                 <td>LNK-47966</td>
                 <td><span class="ifx-chip ifx-chip-warning">chờ</span></td>
-                <td><span class="ref-module-referral-value">90</span></td>
-                <td><span class="ref-module-referral-value">9</span></td>
+                <td><span class="ifx-value is-num">90</span></td>
+                <td><span class="ifx-value is-num">9</span></td>
               </tr>
             </tbody>
           </table>
@@ -273,6 +273,7 @@
   <script src="../../design_system/04_components/14_table/table.js"></script>
   <script src="../../design_system/04_components/11_pagination/pagination.js"></script>
   <script src="../../design_system/04_components/19_data-list/data-list.js"></script>
+  <link rel="stylesheet" href="referrals.css">
   <script src="page.js"></script>
 </body>
 </html>

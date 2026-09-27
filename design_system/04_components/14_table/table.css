@@ -47,8 +47,8 @@
   padding: var(--ifx-space-12);
 }
 .ifx-table-md th {
-  letter-spacing: 0.6px;
-  padding: 10px 12px;
+  letter-spacing: var(--ifx-letter-spacing-wide);
+  padding: var(--ifx-space-12) var(--ifx-space-12);
 }
 
 .ifx-table th[data-ifx-sort] { cursor: pointer; }

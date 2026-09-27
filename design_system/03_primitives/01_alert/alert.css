@@ -10,6 +10,7 @@
   align-items: flex-start;
   gap: var(--ifx-inline-md);
 }
+.ifx-alert[hidden] { display: none; }
 .ifx-alert-primary { background: var(--ifx-action-primary-soft); border-color: var(--ifx-action-primary); color: var(--ifx-action-primary); }
 .ifx-alert-success { background: var(--ifx-success-soft); border-color: var(--ifx-success); color: var(--ifx-success); }
 .ifx-alert-warning { background: var(--ifx-warning-soft); border-color: var(--ifx-warning); color: var(--ifx-warning); }

@@ -124,32 +124,11 @@ Pattern-local code không dùng prefix `.ifx-*`.
 
 Không dùng `!important`, specificity escalation hoặc redefine `.ifx-*` nếu vấn đề thực chất là thiếu Design System contract.
 
-## 10. `reference-layers.css`
+## 10. `reference-layers.css` (đã xóa)
 
-Pattern cũ có thể còn phụ thuộc:
+File nợ `ui_tooling/workbench/reference-layers.css` đã được xóa trong W2 (2026-09-27): phần dùng chung chuyển vào Design System (ví dụ primitive `ifx-value`), phần riêng chuyển về CSS cục bộ trong thư mục của từng Pattern (`auth/auth.css`, `referrals/referrals.css`, `order-detail/order-detail.css`, `charts/charts.css`).
 
-```text
-ui_tooling/workbench/reference-layers.css
-```
-
-Đây là debt tạm thời.
-
-Rule mới:
-
-```text
-NO NEW RULE
-```
-
-Khi từng Pattern được rebuild/normalize:
-- generic reusable capability → Design System
-- Pattern-specific presentation → Pattern-local CSS
-
-Mục tiêu cuối:
-
-```text
-reference-layers.css consumer = 0
-→ delete
-```
+Không tạo lại file nợ dùng chung. CSS riêng của Pattern đặt trong thư mục Pattern đó.
 
 ## 11. Runtime
 

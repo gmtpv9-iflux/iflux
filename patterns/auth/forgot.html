@@ -21,13 +21,12 @@
   <link rel="stylesheet" href="../../design_system/04_components/08_form/form.css">
   <link rel="stylesheet" href="../../design_system/04_components/15_tabs/tabs.css">
   <link rel="stylesheet" href="../../design_system/04_components/17_toast/toast.css">
-  <link rel="stylesheet" href="../../ui_tooling/workbench/reference-layers.css">
 </head>
 <body>
-  <div class="ref-platform-auth">
-    <div class="ifx-card ref-page-auth-card">
-      <div class="ref-page-auth-brand">iFlux</div>
-      <div class="ref-page-auth-heading">
+  <div class="auth-splash">
+    <div class="ifx-card ifx-card-plain auth-card">
+      <div class="auth-brand">iFlux</div>
+      <div class="auth-heading">
         <h2>Quên mật khẩu? 🔒</h2>
         <p>Nhập email để nhận hướng dẫn đặt lại mật khẩu</p>
       </div>
@@ -36,11 +35,11 @@
         <label class="ifx-label" for="auth-email-reset">Email</label>
         <input class="ifx-input" id="auth-email-reset" type="email" placeholder="admin@iflux.vn" autofocus>
       </div>
-      <button type="button" class="ifx-btn ifx-btn-primary ref-page-auth-submit ref-page-auth-submit-forgot" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi link đặt lại mật khẩu">
+      <button type="button" class="ifx-btn ifx-btn-primary auth-submit auth-submit-forgot" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi link đặt lại mật khẩu">
         <i class="ti ti-send"></i> Gửi link đặt lại
       </button>
 
-      <a href="login.html" class="ref-page-auth-back">
+      <a href="login.html" class="auth-back">
         <i class="ti ti-chevron-left"></i>
         Quay lại đăng nhập
       </a>
@@ -50,6 +49,7 @@
   <script src="../../design_system/04_components/15_tabs/tabs.js"></script>
   <script src="../../design_system/04_components/08_form/form.js"></script>
   <script src="../../design_system/04_components/17_toast/toast.js"></script>
+  <link rel="stylesheet" href="auth.css">
   <script src="page.js"></script>
 </body>
 </html>

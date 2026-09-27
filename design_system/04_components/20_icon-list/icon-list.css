@@ -4,18 +4,18 @@
 .ifx-icon-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
+  gap: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-secondary);
 }
 .ifx-icon-list-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ifx-space-4);
 }
 .ifx-icon-list-item .ti {
   color: var(--ifx-action-primary);
-  font-size: 12px;
+  font-size: var(--ifx-font-size-xs);
 }
 .ifx-icon-list-item.is-action { cursor: pointer; }
 .ifx-icon-list-item.is-action .ti { color: inherit; }

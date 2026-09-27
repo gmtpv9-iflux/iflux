@@ -18,4 +18,4 @@
 .ifx-chip-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
 .ifx-chip-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
 .ifx-chip-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
-.ifx-chip-sm { font-size: 11px; }
+.ifx-chip-sm { font-size: var(--ifx-font-size-xs); }

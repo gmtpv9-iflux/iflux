@@ -215,7 +215,7 @@
 .ifx-input-password .ifx-input { padding-right: var(--ifx-space-42); }
 .ifx-input-password-toggle {
   position: absolute;
-  right: 10px;
+  right: var(--ifx-space-12);
   top: 50%;
   transform: translateY(-50%);
   padding: 0;

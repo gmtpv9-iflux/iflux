@@ -13,7 +13,7 @@
 .ifx-timeline-item::before {
   content: "";
   position: absolute;
-  left: 7px;
+  left: var(--ifx-space-8);
   top: var(--ifx-space-20);
   bottom: 0;
   width: 2px;

@@ -283,20 +283,9 @@ Không có Global Pattern layer trong Design System.
 
 ---
 
-## 9. `reference-layers.css`
+## 9. `reference-layers.css` (đã xóa)
 
-`reference-layers.css` là:
-
-```text
-LEGACY COMPATIBILITY DEBT
-NO NEW RULE
-```
-
-Từ architecture lock trở đi file chỉ được giảm, không được tăng.
-
-Rule cũ phải migrate theo đúng owner `01→05`.
-
-Khi consumer cuối cùng = 0 → xóa file.
+Đã xóa trong W2 (2026-09-27). Phần generic chuyển vào đúng owner `01→05`; phần riêng chuyển về CSS cục bộ của từng Pattern. Không tạo lại file nợ dùng chung.
 
 ---
 
