@@ -30,15 +30,15 @@
         '</div>' +
         '<div class="ifx-breadth-grid">' +
           STATE.map(function (cls, i) {
-            return '<div class="ifx-breadth-cell ' + cls + '">' +
-              '<div class="ifx-breadth-num">' + U.esc(values[i] != null ? values[i] : '—') + '</div>' +
+            return '<div class="ifx-breadth-stat-new ' + cls + '">' +
+              '<div class="ifx-breadth-value">' + U.esc(values[i] != null ? values[i] : '—') + '</div>' +
               '<div class="ifx-breadth-label">' + U.esc(labels[i] || '') + '</div>' +
             '</div>';
           }).join('') +
         '</div>' +
-        '<div class="ifx-breadth-bar" title="Tỷ lệ tăng ' + upPct + '%">' +
-          '<div class="ifx-breadth-bar-up" style="width:' + upPct + '%"></div>' +
-          '<div class="ifx-breadth-bar-down" style="width:' + (100 - upPct) + '%"></div>' +
+        '<div class="ifx-breadth-ratio-new" title="Tỷ lệ tăng ' + upPct + '%">' +
+          '<div class="ifx-breadth-ratio-up" style="width:' + upPct + '%"></div>' +
+          '<div class="ifx-breadth-ratio-down" style="width:' + (100 - upPct) + '%"></div>' +
         '</div>'
       );
     },

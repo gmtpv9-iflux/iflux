@@ -29,6 +29,10 @@ Chỉ tạo khi có widget thật cần tới (README gốc §3.2):
 
 ## 4. Quy tắc
 
+- **Template quy định toàn bộ UI của Widget, nhưng ghép từ tầng thấp hơn.** Khung = Card (`04_components/03_card`), tiêu đề/mô tả = Title (`.ifx-widget-title`), nhóm chọn = Tabs (`ifx-tabs-segmented`)… Đổi kiểu khung hay tiêu đề chỉ sửa ở tầng thấp, mọi Template đổi theo. CSS của Template chỉ chứa phần thật sự riêng của nó.
+- **Một hàm vẽ duy nhất / Template**, đăng ký qua `IfxTemplates.define` (`00_widget/widget.js`), kèm Đầu vào và dữ liệu mẫu của chính Template. Preview (Admin) và Widget (User Web) cùng gọi `IfxTemplates.mount`. Ô dữ liệu trống → dùng dữ liệu mẫu, nên Widget đã đặt vào host không bao giờ trống.
+- **Đặt tên khi chuyển từ code cũ:** tên cũ hợp lý hơn cho khung thì tạo bản `-new` (vd `ifx-breadth-stat-new`), xóa code cũ xong đổi tên lại; tên cũ không hợp lý (BEM, tên lạ) thì dùng thẳng tên đúng quy ước DS.
+
 - Class dùng tiền tố `ifx-` như các layer khác của Design System.
 - Mỗi template là một file nhỏ riêng, để trang chỉ nạp template mình dùng.
 - Không tạo template "cho đủ bộ"; template không còn widget nào dùng thì gỡ.

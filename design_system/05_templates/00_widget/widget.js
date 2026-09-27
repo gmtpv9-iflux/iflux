@@ -3,6 +3,11 @@
  * Mỗi Template khai báo đúng một hàm vẽ và dữ liệu mẫu của chính nó; Preview (Admin)
  * và Widget (User Web) cùng gọi mount() → giao diện chỉ có một nguồn.
  *
+ * Khung KHÔNG có CSS riêng — ghép từ tầng thấp hơn của DS:
+ *   Card (04_components/03_card) · Title (03_primitives/08_title: .ifx-widget-title)
+ *   · Layout (02_foundation: .ifx-inline-sm) · <small> (foundation typography).
+ * Đổi kiểu khung / tiêu đề → sửa ở Card / Title, mọi Template đổi theo.
+ *
  *   IfxTemplates.define('TMP-X', {
  *     inputs: [{ label, demo: 'a | b | c' }, …],   // "Đầu vào" — chuỗi ngăn bởi "|"
  *     head: true,                                  // false khi template tự vẽ header riêng
@@ -52,10 +57,10 @@
 
   function headHtml(ctx) {
     if (!ctx.title && !ctx.description) return '';
-    return '<header class="ifx-tpl-head"><div class="ifx-tpl-heading">' +
-      (ctx.title ? '<h3 class="ifx-tpl-title">' + esc(ctx.title) + '</h3>' : '') +
-      (ctx.description ? '<p class="ifx-tpl-desc">' + esc(ctx.description) + '</p>' : '') +
-      '</div>' + (ctx.actions ? '<div class="ifx-tpl-actions">' + ctx.actions + '</div>' : '') +
+    return '<header class="ifx-card-header"><div class="ifx-widget-title">' +
+      (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') +
+      (ctx.description ? '<p>' + esc(ctx.description) + '</p>' : '') +
+      '</div>' + (ctx.actions ? '<div class="ifx-inline-sm">' + ctx.actions + '</div>' : '') +
       '</header>';
   }
 
@@ -64,14 +69,14 @@
     var def = REG[id];
     if (!host) return null;
     if (!def) {
-      host.innerHTML = '<div class="ifx-tpl"><div class="ifx-tpl-empty">Chưa có Template ' + esc(id) + '</div></div>';
+      host.innerHTML = '<div class="ifx-card"><div class="ifx-card-body"><small>Chưa có Template ' + esc(id) + '</small></div></div>';
       return null;
     }
     var input = resolveInput(id, ctx.input);
     var body = def.render(input, ctx);
-    host.innerHTML = '<article class="ifx-tpl" data-ifx-template="' + esc(id) + '">' +
+    host.innerHTML = '<article class="ifx-card" data-ifx-template="' + esc(id) + '">' +
       (def.head === false ? '' : headHtml(ctx)) +
-      (def.head === false ? body : '<div class="ifx-tpl-body">' + body + '</div>') +
+      (def.head === false ? body : '<div class="ifx-card-body">' + body + '</div>') +
       '</article>';
     var root = host.firstElementChild;
     if (def.bind) def.bind(root, input, ctx);
