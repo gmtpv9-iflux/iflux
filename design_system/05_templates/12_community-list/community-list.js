@@ -27,7 +27,7 @@
       var s = p.trim().split(':');
       if (!s[0]) return '';
       var type = s[0].trim(), label = (s[2] || '').trim();
-      return '<span class="ifx-rank-list-metric" title="' + U.esc(label || type) + '">' +
+      return '<span class="ifx-icon-list-item" title="' + U.esc(label || type) + '">' +
         '<i class="ti ti-' + (ICON[type] || ICON.score) + ' ifx-icon ifx-icon-sm" aria-hidden="true"></i>' +
         U.esc(compact((s[1] || '').trim())) + (label ? ' ' + U.esc(label) : '') + '</span>';
     }).join('');
@@ -54,7 +54,7 @@
             '<span class="ifx-rank-list-meta"><span class="ifx-rank-list-name">' + U.esc(name) + '</span>' +
               '<span class="ifx-rank-list-sub">' + U.esc(c[1][i]) + '</span></span>' +
           '</a>' +
-          (m ? '<span class="ifx-rank-list-metrics">' + m + '</span>' : '') +
+          (m ? '<span class="ifx-icon-list ifx-icon-list-inline">' + m + '</span>' : '') +
         '</div>';
       }).join('') + '</div>';
     }

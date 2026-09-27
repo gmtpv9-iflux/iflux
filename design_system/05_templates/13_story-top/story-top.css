@@ -1,0 +1,27 @@
+/**
+ * TMP-COMMUNITY-STORY-TOP — Top câu chuyện: tab khung thời gian + danh sách hạng · tên · điểm · chỉ số.
+ */
+.ifx-story-top-list { margin-top: var(--ifx-space-4); }
+.ifx-story-top-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-space-12) 0;
+  border-bottom: 1px solid var(--ifx-border-default);
+}
+.ifx-story-top-row:last-child { border-bottom: 0; }
+.ifx-story-top-num {
+  border: 1px solid var(--ifx-action-primary-strong);
+  font-size: var(--ifx-font-size-lg);
+  font-weight: var(--ifx-font-weight-extrabold);
+}
+.ifx-story-top-body { flex: 1; min-width: 0; }
+.ifx-story-top-title {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-2);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
