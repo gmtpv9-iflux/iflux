@@ -39,7 +39,7 @@ var manifest = {
     m('profile-users-store', 'store', ASSET + 'profile-users-store.js', 'IfluxProfileUsersStore'),
     m('profile-links', 'js', ASSET + 'profile-links.js', 'IfluxProfileLinks'),
     /* Task5: Heart = Foundation (click / widget mount). Không boot watchlist-ui trên feed. */
-    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=' + P4, 'IfluxPageLayoutEngine'),
+    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928', 'IfluxPageLayoutEngine'),
     m('community-store', 'store', ASSET + 'news-store.js?v=tickerNoDup20260810', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=calFeed20260808', 'IfluxNewsApiBridge'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=mockRmWp1_20260809', 'IfluxMarketQuotes'),

@@ -53,24 +53,30 @@ export function ensureSections(root, manifest) {
   return map;
 }
 
-/** Layout 2 cột cho trang có sidebar (vd Thị trường). */
-export function applyMarketLayout(root) {
+/**
+ * Bố cục trang chung (platform/web/web.css): Sidebar trái + Main.
+ * Mọi trang có section sidebar dùng chung — không còn layout riêng từng trang.
+ */
+export function applyPageLayout(root) {
   if (!root) return;
-  root.classList.add('ifx-mkt-layout');
-  var sidebar = root.querySelector('[data-section="sidebar"]');
-  if (sidebar) {
-    sidebar.classList.add('ifx-mkt-sidebar');
-  }
-  var main = root.querySelector('[data-section="main"]');
-  if (main) {
-    main.classList.add('ifx-mkt-main');
-  }
+  var sidebar = root.querySelector(':scope > [data-section="sidebar"]');
+  var main = root.querySelector(':scope > [data-section="main"]');
+  if (!sidebar || !main) return;
+  root.classList.add('uw-page-layout');
+  sidebar.classList.add('uw-page-sidebar');
+  main.classList.add('uw-page-main');
 }
 
-/** Layout hub 2 cột cho trang Nhà của tôi (sidebar hồ sơ + main dashboard). */
+/** Sidebar chỉ ẩn khi không có nội dung (không widget, không nội dung đặc thù). Gọi sau khi mount. */
+export function updateSidebarVisibility(root) {
+  if (!root || !root.classList.contains('uw-page-layout')) return;
+  var sidebar = root.querySelector(':scope > [data-section="sidebar"]');
+  root.classList.toggle('is-no-sidebar', !sidebar || !sidebar.children.length);
+}
+
+/** Class nội bộ trang Nhà của tôi (hồ sơ / bảng tổng quan) — bố cục do applyPageLayout. */
 export function applyHubLayout(root) {
   if (!root) return;
-  root.classList.add('ifx-hub-grid');
   var sidebar = root.querySelector('[data-section="sidebar"]');
   if (sidebar) sidebar.classList.add('ifx-hub-sidebar');
   var main = root.querySelector('[data-section="main"]');

@@ -128,7 +128,7 @@ const layoutCss = fs.readFileSync(path.join(DS, '02_foundation', 'layout.css'), 
 const lockedCols = [
   ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => `.ifx-col-${n}`),
   '.ifx-col-md-4', '.ifx-col-md-6', '.ifx-col-md-8',
-  '.ifx-col-lg-3', '.ifx-col-lg-4', '.ifx-col-lg-6', '.ifx-col-lg-8',
+  '.ifx-col-lg-3', '.ifx-col-lg-4', '.ifx-col-lg-6', '.ifx-col-lg-8', '.ifx-col-lg-9',
 ];
 const missingCols = lockedCols.filter((cls) => !new RegExp(cls.replace('.', '\\.') + '\\s*\\{').test(layoutCss));
 if (missingCols.length) {

@@ -43,11 +43,9 @@ function renderError(host, slot, err) {
 }
 
 function applySpan(host, slot) {
-  // Grid 12-col (SoT): span áp cho section main dạng grid; sidebar để full.
+  // Lưới 12 cột DS (.ifx-grid): < 1024px full hàng, ≥ 1024px đúng span (3·4·6·8·9·12).
   var span = slot && slot.span ? Number(slot.span) : 0;
-  if (span >= 1 && span <= 12) {
-    host.style.gridColumn = 'span ' + span;
-  }
+  if ([3, 4, 6, 8, 9].indexOf(span) >= 0) host.classList.add('ifx-col-lg-' + span);
 }
 
 /**

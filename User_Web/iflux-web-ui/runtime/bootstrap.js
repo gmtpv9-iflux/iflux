@@ -22,7 +22,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=stickyRefactor20260811';
+import { bootPage } from './page-runtime.js?v=pageLayout20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { bootShell } from './shell-boot.js?v=softNavP1_20260810';
 import { installSoftNavigation } from './soft-navigation.js?v=stickyRefactor20260811';

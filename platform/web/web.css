@@ -1,0 +1,30 @@
+/**
+ * iFlux User Web — file CSS nền tảng (trước W4, 2026-09-28).
+ *
+ * Nạp TRƯỚC gói cũ (iflux-admin-ui.css): tên trùng giữa DS và gói cũ giữ giá trị cũ tới W4;
+ * User Web chỉ nhận thêm phần gói cũ chưa có (lưới .ifx-grid / .ifx-col-*).
+ */
+@import url('/design_system/02_foundation/layout.css');
+
+/* ── Bố cục trang: Sidebar trái + Main (lưới widget 12 cột) ──
+ * Mọi trang dùng chung. Sidebar tự ẩn khi không có nội dung (.is-no-sidebar do runtime gắn). */
+.uw-page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ifx-space-20);
+  align-items: start;
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 768px) { /* bp:md */
+  .uw-page-layout { grid-template-columns: minmax(240px, 1fr) minmax(0, 3fr); }
+}
+.uw-page-layout.is-no-sidebar { grid-template-columns: minmax(0, 1fr); }
+.uw-page-layout.is-no-sidebar > .uw-page-sidebar { display: none; }
+.uw-page-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+  min-width: 0;
+}
+.uw-page-main { min-width: 0; }

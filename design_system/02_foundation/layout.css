@@ -77,7 +77,7 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--ifx-grid-gutter);
 }
-.ifx-grid > * { grid-column: span 12; }
+.ifx-grid > * { grid-column: span 12; min-width: 0; }
 
 .ifx-col-1  { grid-column: span 1; }
 .ifx-col-2  { grid-column: span 2; }
@@ -103,6 +103,7 @@
   .ifx-col-lg-4 { grid-column: span 4; }
   .ifx-col-lg-6 { grid-column: span 6; }
   .ifx-col-lg-8 { grid-column: span 8; }
+  .ifx-col-lg-9 { grid-column: span 9; }
 }
 
 /* ── Generic flex — only APIs with real consumers ── */

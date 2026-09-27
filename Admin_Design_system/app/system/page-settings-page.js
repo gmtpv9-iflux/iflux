@@ -284,7 +284,7 @@
         '<td style="text-align:center"><input type="number" min="0" max="99" class="ix-input ps-input-sm" data-ps-pos="' + esc(wid) + '" value="' + row.position + '" /></td>' +
         '<td style="text-align:center">' +
         '<select class="ix-input ps-input-sm" data-ps-span="' + esc(wid) + '">' +
-        [12, 8, 6, 4, 3].map(function (n) {
+        [12, 9, 8, 6, 4, 3].map(function (n) {
           return '<option value="' + n + '"' + (row.span === n ? ' selected' : '') + '>' + n + '/12</option>';
         }).join('') + '</select></td>' +
         '<td style="text-align:center"><input type="checkbox" class="ix-checkbox" data-ps-enabled="' + esc(wid) + '"' + (row.enabled ? ' checked' : '') + ' /></td>' +

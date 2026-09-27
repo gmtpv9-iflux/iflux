@@ -40,7 +40,7 @@ var manifest = {
     m('stock-mentions', 'js', ASSET + 'stock-mentions.js', 'IfluxStockMentions'),
     m('widget-registry', 'js', ASSET + 'widget-registry.js', 'IfluxWidgetRegistry'),
     m('flow-page', 'js', ASSET + 'flow-page.js?v=bpPhaseD20260716', 'IfluxFlowPage'),
-    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=' + P4, 'IfluxPageLayoutEngine'),
+    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928', 'IfluxPageLayoutEngine'),
     m('flow-css', 'css', ASSET + 'flow.css', null)
   ],
   lazyChildren: [],

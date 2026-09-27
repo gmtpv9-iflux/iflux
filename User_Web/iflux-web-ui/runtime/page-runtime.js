@@ -19,15 +19,16 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import {
   ensureSections,
-  applyMarketLayout,
-  applyHubLayout
-} from './app-shell.js?v=sidebarVR02_20260811';
+  applyPageLayout,
+  applyHubLayout,
+  updateSidebarVisibility
+} from './app-shell.js?v=pageLayout20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { loadWidget } from './widget-loader.js?v=cssPin20260808';
+import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
 import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=phase4Pub20260716b';
 
-var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=phase4Pub20260716b';
+var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageLayout20260928';
 
 async function ensureLayoutEngine() {
   if (window.IfluxPageLayoutEngine && IfluxPageLayoutEngine.buildHostTree) return;
@@ -46,16 +47,13 @@ export async function bootPage(m, mountEl) {
   /* Soft-nav: innerHTML không gỡ class layout trên mount root.
    * ifx-mkt-layout / ifx-hub-grid + CSS còn từ trang trước → 1 section community
    * bị nhét cột sidebar (~1fr) — chỉ còn sidebar. Flow/pricing không add class nên OK. */
-  mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid');
+  mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid', 'uw-page-layout', 'is-no-sidebar');
   mountEl.classList.add('ifx-rt-page');
 
   var sectionMap = ensureSections(mountEl, m);
 
-  if (m.pageKey === 'market') {
-    applyMarketLayout(mountEl);
-  } else if (m.pageKey === 'home') {
-    applyHubLayout(mountEl);
-  }
+  applyPageLayout(mountEl);
+  if (m.pageKey === 'home') applyHubLayout(mountEl);
 
   /* Definition (đã enrich) TRƯỚC mount — không applyCurrent lại cuối boot. */
   applyDefinitionToDocument(m);
@@ -102,5 +100,6 @@ export async function bootPage(m, mountEl) {
     loaded.push(entry);
   }
 
+  updateSidebarVisibility(mountEl);
   return { manifest: m, widgets: loaded };
 }

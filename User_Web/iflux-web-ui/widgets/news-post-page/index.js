@@ -13,7 +13,7 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
 
 /* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=scrollWave4early_20260811'],
+  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928'],
   [ASSET + 'stock-mentions.js'],
   [
     ASSET + 'news-store.js?v=tickerNoDup20260810',

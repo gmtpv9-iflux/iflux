@@ -57,10 +57,12 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     cache.pagePromises[key] = Promise.resolve(payload);
   }
 
+  /* Kích thước theo Widget Placement: lưới 12 cột DS (.ifx-grid) — < 1024px full hàng, ≥ 1024px đúng span. */
+  var SPANS = { 3: 1, 4: 1, 6: 1, 8: 1, 9: 1, 12: 1 };
   function applySpan(el, span) {
     var n = Number(span);
-    if (!(n >= 1 && n <= 12)) return;
-    el.style.gridColumn = 'span ' + n;
+    if (!SPANS[n]) return;
+    if (n < 12) el.classList.add('ifx-col-lg-' + n);
     el.setAttribute('data-span', String(n));
   }
 
@@ -92,7 +94,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     wrap.setAttribute('data-ifx-section', sectionKey);
     wrap.setAttribute('data-section', sectionKey);
     wrap.className = 'ifx-rt-section ifx-rt-section--' + sectionKey;
-    if (wantsGrid) wrap.className += ' ifx-dash-grid';
+    if (wantsGrid) wrap.className += ' ifx-grid';
     root.appendChild(wrap);
     return wrap;
   }
@@ -150,9 +152,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
           sectionEl.setAttribute('data-ifx-section', sectionKey);
         }
         if (sectionWantsGrid(sectionEl, sectionKey, page.sections)) {
-          if (sectionEl.className.indexOf('ifx-dash-grid') < 0) {
-            sectionEl.className = (sectionEl.className + ' ifx-dash-grid').trim();
-          }
+          sectionEl.classList.add('ifx-grid');
           if (!sectionEl.getAttribute('data-layout')) {
             sectionEl.setAttribute('data-layout', 'grid-12');
           }
