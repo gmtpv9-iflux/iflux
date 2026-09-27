@@ -1,0 +1,36 @@
+/**
+ * TMP-FLOW-RANK-SIGNAL — Top score + chỉ báo rủi ro (5 nấc) + tín hiệu Cơ hội / Rủi ro.
+ */
+.ifx-card-accent.ifx-flow-signal-frame { --ifx-card-accent: var(--ifx-flow-in); }
+.ifx-flow-signal {
+  --ifx-score-rank-cols: var(--ifx-space-24) minmax(0, 1fr) minmax(0, 0.9fr) var(--ifx-space-36) max-content max-content;
+}
+.ifx-flow-signal .ifx-score-rank-head > :nth-child(n + 5) { text-align: center; }
+.ifx-flow-signal-risk {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+}
+.ifx-flow-signal-energy {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ifx-space-2);
+  height: var(--ifx-space-24);
+}
+.ifx-flow-signal-seg {
+  width: var(--ifx-space-4);
+  border-radius: var(--ifx-radius-sm) var(--ifx-radius-sm) 0 0;
+  background: var(--ifx-border-default);
+}
+.ifx-flow-signal-seg.is-on { background: linear-gradient(180deg, var(--ifx-warning), var(--ifx-danger)); }
+.ifx-flow-signal-seg:nth-child(1) { height: 90%; }
+.ifx-flow-signal-seg:nth-child(2) { height: 76%; }
+.ifx-flow-signal-seg:nth-child(3) { height: 62%; }
+.ifx-flow-signal-seg:nth-child(4) { height: 48%; }
+.ifx-flow-signal-seg:nth-child(5) { height: 34%; }
+.ifx-flow-signal-risk-val {
+  min-width: var(--ifx-space-20);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-danger);
+}

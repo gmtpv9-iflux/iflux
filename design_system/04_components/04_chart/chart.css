@@ -1,6 +1,6 @@
 /**
  * Component — Chart (token-driven)
- * Types: area · line · donut · radial · scatter · candle · volume (vẽ qua chart-adapter)
+ * Types: area · line · donut · radial · radar · scatter · candle · volume (vẽ qua chart-adapter)
  * Adapter đọc semantic token. Height = --ifx-chart-plot-h / data-ifx-plot.
  */
 .ifx-chart {

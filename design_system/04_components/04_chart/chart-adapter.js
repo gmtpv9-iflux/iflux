@@ -238,8 +238,7 @@
     series.forEach(function (s, si) {
       var vals = s.values || [];
       /* s.tone = màu ngữ nghĩa (primary · info …) hoặc bảng chart (chart-1 … chart-10). */
-      var color = (s.tone && (c[s.tone] || getComputedStyle(el).getPropertyValue('--ifx-color-' + s.tone).trim())) ||
-        fills[si % fills.length];
+      var color = toneColor(el, c, s.tone) || fills[si % fills.length];
       fills[si] = color;
       var d = linePath(vals, left, w, top, h, ext, straight);
       if (filled && vals.length) {
@@ -318,6 +317,77 @@
 
   function polar(cx, cy, r, a) {
     return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  }
+
+  /** Màu theo tên: ngữ nghĩa (primary…) → token --ifx-<tone> → bảng --ifx-color-<tone>. */
+  function toneColor(el, c, tone) {
+    if (!tone) return '';
+    if (c[tone]) return c[tone];
+    var cs = getComputedStyle(el);
+    return cs.getPropertyValue('--ifx-' + tone).trim() || cs.getPropertyValue('--ifx-color-' + tone).trim();
+  }
+
+  /**
+   * Radar — data: { labels, labelTones?, max? (100), ticks? (4), series: [{ name, tone, values }] }.
+   * Trục bắt đầu 12h, theo chiều kim đồng hồ; điểm 0 không vẽ marker.
+   */
+  function drawRadar(el, data) {
+    var plot = ensurePlot(el);
+    var box = plot.getBoundingClientRect();
+    var W = Math.max(200, box.width || 280);
+    var H = Math.max(200, box.height || 280);
+    var c = colors();
+    var fills = fillsFrom(el);
+    var labels = data.labels || [];
+    var n = labels.length;
+    if (n < 3) return;
+    var max = data.max || 100;
+    var ticks = data.ticks || 4;
+    var cx = W / 2, cy = H / 2;
+    var R = Math.min(W, H) / 2 - 28;
+    el.classList.add('is-plot');
+    var svg = mountSvg(plot, W, H);
+    function pt(i, r) {
+      var a = -Math.PI / 2 + (2 * Math.PI * i) / n;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    }
+    var i, k;
+    for (k = 1; k <= ticks; k++) {
+      var rr = (R * k) / ticks;
+      var ring = [];
+      for (i = 0; i < n; i++) ring.push(pt(i, rr).join(','));
+      svg.appendChild(svgEl('polygon', { points: ring.join(' '), fill: 'none', stroke: c.grid, 'stroke-width': '1' }));
+      var tl = svgEl('text', { x: cx, y: cy - rr, fill: c.muted, 'font-size': '10', 'text-anchor': 'middle', 'dominant-baseline': 'middle' });
+      tl.textContent = Math.round((max * k) / ticks);
+      svg.appendChild(tl);
+    }
+    for (i = 0; i < n; i++) {
+      var e = pt(i, R);
+      svg.appendChild(svgEl('line', { x1: cx, y1: cy, x2: e[0], y2: e[1], stroke: c.grid, 'stroke-width': '1' }));
+      var lp = pt(i, R + 14);
+      var dx = lp[0] - cx;
+      var lab = svgEl('text', {
+        x: lp[0], y: lp[1], 'font-size': '10', 'dominant-baseline': 'middle',
+        fill: toneColor(el, c, (data.labelTones || [])[i]) || c.muted,
+        'text-anchor': Math.abs(dx) < 4 ? 'middle' : (dx > 0 ? 'start' : 'end')
+      });
+      lab.textContent = labels[i];
+      svg.appendChild(lab);
+    }
+    var surface = getComputedStyle(el).getPropertyValue('--ifx-bg-surface').trim() || c.on;
+    (data.series || []).forEach(function (s, si) {
+      var color = toneColor(el, c, s.tone) || fills[si % fills.length];
+      var vals = s.values || [];
+      var pts = vals.map(function (v, j) { return pt(j, (R * Math.max(0, Math.min(max, v))) / max); });
+      svg.appendChild(svgEl('polygon', {
+        points: pts.map(function (p) { return p.join(','); }).join(' '),
+        fill: color, 'fill-opacity': '0.2', stroke: color, 'stroke-width': '2', 'stroke-linejoin': 'round'
+      }));
+      pts.forEach(function (p, j) {
+        if (!vals[j]) return;
+        svg.appendChild(svgEl('circle', { cx: p[0], cy: p[1], r: '4', fill: color, stroke: surface, 'stroke-width': '2' }));
+      });
+    });
   }
 
   function drawDonut(el, data) {
@@ -515,6 +585,7 @@
     else if (type === 'line') drawLine(el, data, false);
     else if (type === 'group') drawGroup(el, data);
     else if (type === 'donut') drawDonut(el, data);
+    else if (type === 'radar') drawRadar(el, data);
     else if (type === 'radial') drawRadial(el, data);
     else if (type === 'scatter') drawScatter(el, data);
     else if (type === 'heatmap') drawHeatmap(el, data);

@@ -9,6 +9,16 @@
   box-shadow: var(--ifx-shadow-card);
 }
 .ifx-card-plain { box-shadow: none; }
+/* Viền nhấn trên — màu/gradient đặt qua --ifx-card-accent (mặc định màu chính). */
+.ifx-card-accent { position: relative; overflow: hidden; }
+.ifx-card-accent::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--ifx-space-4);
+  background: var(--ifx-card-accent, var(--ifx-action-primary));
+  pointer-events: none;
+}
 .ifx-card-header {
   padding: var(--ifx-inset-card-header);
   display: flex;

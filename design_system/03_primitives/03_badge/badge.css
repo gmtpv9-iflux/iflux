@@ -18,6 +18,14 @@
 .ifx-badge-danger  { background: var(--ifx-danger);  color: var(--ifx-text-on-danger); }
 .ifx-badge-info    { background: var(--ifx-info);    color: var(--ifx-text-on-info); }
 
+/* Soft — nền nhạt + chữ theo tone (tín hiệu, cực tính…). Đứng một mình = trung tính. */
+.ifx-badge-soft { background: var(--ifx-bg-hover); color: var(--ifx-text-muted); font-weight: var(--ifx-font-weight-bold); gap: var(--ifx-space-4); }
+.ifx-badge-soft.ifx-badge-primary { background: var(--ifx-action-primary-soft); color: var(--ifx-action-primary); }
+.ifx-badge-soft.ifx-badge-success { background: var(--ifx-success-soft); color: var(--ifx-success); }
+.ifx-badge-soft.ifx-badge-warning { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
+.ifx-badge-soft.ifx-badge-danger  { background: var(--ifx-danger-soft);  color: var(--ifx-danger); }
+.ifx-badge-soft.ifx-badge-info    { background: var(--ifx-info-soft);    color: var(--ifx-info); }
+
 .ifx-badge-count { min-width: var(--ifx-space-16); }
 .ifx-badge-status {
   text-transform: uppercase;

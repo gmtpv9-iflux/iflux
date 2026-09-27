@@ -4,12 +4,18 @@
 
 Widget là giá trị cốt lõi số 1 của iFlux. `05_templates/` sở hữu **toàn bộ phần nhìn (UI) của Widget**, để mọi widget trên mọi nền tảng dùng chung một ngôn ngữ giao diện.
 
+Widget không sở hữu gì — nó chỉ chọn cấu hình, mỗi phần do một màn Admin quản lý:
+
 ```text
-design_system/05_templates/        → UI: khung, bố cục, trạng thái (không dữ liệu, không nghiệp vụ)
-modules/<module>/widgets/<widget>/ → Widget: dữ liệu + nghiệp vụ, gắn vào một template
+Template   → Mẫu giao diện (design_system/05_templates — UI, dựng một lần)
+Dữ liệu    → Kiến trúc 4 tầng (nguồn, thuật toán, chọn Template)
+Vị trí     → Cài đặt trang → Widget Placement (host, thứ tự, span)
+Quyền xem  → Phân quyền sử dụng
 ```
 
-Template consume `01_tokens` → `04_components`. Widget consume template. Không phụ thuộc ngược.
+User Web hiển thị, tại host/vị trí/span đã cấu hình, Template mà widget đã chọn cùng dữ liệu đã cấu hình — không dựng lại UI theo từng widget.
+
+Template consume `01_tokens` → `04_components`. Không phụ thuộc ngược.
 
 ## 2. Thuộc layer này
 
@@ -30,6 +36,7 @@ Chỉ tạo khi có widget thật cần tới (README gốc §3.2):
 ## 4. Quy tắc
 
 - **Template quy định toàn bộ UI của Widget, nhưng ghép từ tầng thấp hơn.** Khung = Card (`04_components/03_card`), tiêu đề/mô tả = Title (`.ifx-widget-title`), nhóm chọn = Tabs (`ifx-tabs-segmented`)… Đổi kiểu khung hay tiêu đề chỉ sửa ở tầng thấp, mọi Template đổi theo. CSS của Template chỉ chứa phần thật sự riêng của nó.
+- **Khung do Template khai báo, không tự vẽ:** `frame` trả class bổ sung cho Card (vd `ifx-card-accent`), `aside` trả phần phải của header (vd badge cực tính). Phần thân dùng component (Chart, Score rank, Stock row, Treemap…).
 - **Một hàm vẽ duy nhất / Template**, đăng ký qua `IfxTemplates.define` (`00_widget/widget.js`), kèm Đầu vào và dữ liệu mẫu của chính Template. Preview (Admin) và Widget (User Web) cùng gọi `IfxTemplates.mount`. Ô dữ liệu trống → dùng dữ liệu mẫu, nên Widget đã đặt vào host không bao giờ trống.
 - **Đặt tên khi chuyển từ code cũ:** tên cũ hợp lý hơn cho khung thì tạo bản `-new` (vd `ifx-breadth-stat-new`), xóa code cũ xong đổi tên lại; tên cũ không hợp lý (BEM, tên lạ) thì dùng thẳng tên đúng quy ước DS.
 

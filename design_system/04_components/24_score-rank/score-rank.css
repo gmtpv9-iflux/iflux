@@ -1,0 +1,76 @@
+/**
+ * Component — Score rank
+ * Radar (Chart) + danh sách xếp hạng điểm 0–100: hạng · tên · thanh điểm · điểm.
+ * Bố cục theo bề rộng khung (container) — hẹp: radar trên, danh sách dưới; rộng: 1 : 2.
+ * Tone: .ifx-score-rank-in (dòng tiền vào) · .ifx-score-rank-out (dòng tiền ra).
+ */
+.ifx-score-rank { container-type: inline-size; }
+.ifx-score-rank-layout {
+  display: grid;
+  gap: var(--ifx-space-16);
+}
+.ifx-score-rank-chart .ifx-chart-plot {
+  height: var(--ifx-size-chart-plot-lg);
+  max-width: var(--ifx-size-chart-plot-xl);
+  margin: 0 auto;
+}
+.ifx-score-rank-list { min-width: 0; overflow-x: auto; }
+@container (min-width: 768px) { /* bp:md */
+  .ifx-score-rank-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .ifx-score-rank-chart {
+    padding-right: var(--ifx-space-16);
+    border-right: 1px solid var(--ifx-border-default);
+  }
+}
+
+.ifx-score-rank-in  { --ifx-score-rank-tone: var(--ifx-flow-in);  --ifx-score-rank-soft: var(--ifx-success-soft); }
+.ifx-score-rank-out { --ifx-score-rank-tone: var(--ifx-flow-out); --ifx-score-rank-soft: var(--ifx-danger-soft); }
+
+.ifx-score-rank-head,
+.ifx-score-rank-row {
+  display: grid;
+  grid-template-columns: var(--ifx-score-rank-cols, var(--ifx-space-24) minmax(0, 1.2fr) minmax(0, 1fr) var(--ifx-space-36));
+  gap: var(--ifx-space-8);
+  align-items: center;
+}
+.ifx-score-rank-head {
+  padding: 0 var(--ifx-space-8) var(--ifx-space-8);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--ifx-letter-spacing-wide);
+  color: var(--ifx-text-muted);
+}
+.ifx-score-rank-row {
+  padding: var(--ifx-space-8);
+  border-radius: var(--ifx-radius-md);
+  color: inherit;
+  text-decoration: none;
+  transition: var(--ifx-transition-color);
+}
+.ifx-score-rank-row:hover { background: var(--ifx-action-primary-subtle); }
+.ifx-score-rank-pos {
+  text-align: center;
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-extrabold);
+  color: var(--ifx-text-muted);
+}
+.ifx-score-rank-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-score-rank-row .ifx-progress-bar {
+  background: linear-gradient(90deg, var(--ifx-score-rank-soft), var(--ifx-score-rank-tone));
+}
+.ifx-score-rank-val {
+  text-align: right;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  color: var(--ifx-score-rank-tone);
+}

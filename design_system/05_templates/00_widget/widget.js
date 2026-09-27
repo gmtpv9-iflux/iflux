@@ -77,12 +77,13 @@
     });
   }
 
-  function headHtml(ctx) {
-    if (!ctx.title && !ctx.description) return '';
+  function headHtml(ctx, aside) {
+    var actions = (aside || '') + (ctx.actions || '');
+    if (!ctx.title && !ctx.description && !actions) return '';
     return '<header class="ifx-card-header"><div class="ifx-widget-title">' +
       (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') +
       (ctx.description ? '<p>' + esc(ctx.description) + '</p>' : '') +
-      '</div>' + (ctx.actions ? '<div class="ifx-inline-sm">' + ctx.actions + '</div>' : '') +
+      '</div>' + (actions ? '<div class="ifx-inline-sm">' + actions + '</div>' : '') +
       '</header>';
   }
 
@@ -96,8 +97,11 @@
     }
     var input = resolveInput(id, ctx.input);
     var body = def.render(input, ctx);
-    host.innerHTML = '<article class="ifx-card" data-ifx-template="' + esc(id) + '">' +
-      (def.head === false ? '' : headHtml(ctx)) +
+    /* def.frame → class bổ sung cho khung Card (vd. ifx-card-accent); def.aside → phần phải của header. */
+    var frame = def.frame ? ' ' + def.frame(input, ctx) : '';
+    var aside = def.aside ? def.aside(input, ctx) : '';
+    host.innerHTML = '<article class="ifx-card' + frame + '" data-ifx-template="' + esc(id) + '">' +
+      (def.head === false ? '' : headHtml(ctx, aside)) +
       (def.head === false ? body : '<div class="ifx-card-body">' + body + '</div>') +
       '</article>';
     var root = host.firstElementChild;
