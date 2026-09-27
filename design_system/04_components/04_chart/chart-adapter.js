@@ -6,6 +6,7 @@
   'use strict';
 
   var NS = 'http://www.w3.org/2000/svg';
+  var gradSeq = 0;
 
   function colors() {
     var cs = getComputedStyle(document.documentElement);
@@ -93,6 +94,7 @@
 
   function writeLegend(el, items, fills) {
     var legend = ensureLegend(el);
+    if (el.getAttribute('data-ifx-legend') === 'center') legend.classList.add('ifx-chart-legend-center');
     items.forEach(function (item, i) {
       var row = document.createElement('span');
       row.className = 'ifx-chart-legend-item';
@@ -124,14 +126,25 @@
     return { min: min - pad, max: max + pad };
   }
 
+  /** Trục từ 0, bước tròn (1·2·2.5·5 × 10^n), tối đa 4 khoảng — data.baseline === 0. */
+  function niceFromZero(values) {
+    var max = Math.max.apply(null, values.concat([0]));
+    if (max <= 0) return { min: 0, max: 1, ticks: 4 };
+    var mag = Math.pow(10, Math.floor(Math.log10(max / 4)));
+    var step = [1, 2, 2.5, 5, 10].map(function (k) { return k * mag; })
+      .filter(function (s) { return Math.ceil(max / s) <= 4; })[0];
+    var ticks = Math.ceil(max / step);
+    return { min: 0, max: step * ticks, ticks: ticks };
+  }
+
   function yAt(v, ext, top, h) {
     return top + (1 - (v - ext.min) / (ext.max - ext.min)) * h;
   }
 
   function grid(svg, ext, left, top, w, h, c) {
-    var i;
-    for (i = 0; i <= 4; i++) {
-      var y = top + (h * i) / 4;
+    var i, n = ext.ticks || 4;
+    for (i = 0; i <= n; i++) {
+      var y = top + (h * i) / n;
       svg.appendChild(svgEl('line', {
         x1: left, x2: left + w, y1: y, y2: y,
         stroke: c.grid, 'stroke-dasharray': '4 4', 'stroke-width': '1'
@@ -140,27 +153,27 @@
   }
 
   function yLabels(svg, ext, left, top, h, c) {
-    var i;
-    for (i = 0; i <= 4; i++) {
-      var v = ext.max - ((ext.max - ext.min) * i) / 4;
-      var y = top + (h * i) / 4;
+    var i, n = ext.ticks || 4;
+    for (i = 0; i <= n; i++) {
+      var v = ext.max - ((ext.max - ext.min) * i) / n;
+      var y = top + (h * i) / n;
       var t = svgEl('text', {
         x: left - 6, y: y, fill: c.muted, 'font-size': '10',
         'text-anchor': 'end', 'dominant-baseline': 'middle'
       });
-      t.textContent = Math.abs(v) >= 100 ? String(Math.round(v)) : (Math.round(v * 10) / 10);
+      t.textContent = Math.abs(v) >= 100 ? String(Math.round(v)) : (Math.round(v * 10) / 10).toFixed(1);
       svg.appendChild(t);
     }
   }
 
-  function linePath(vals, left, w, top, h, ext) {
+  function linePath(vals, left, w, top, h, ext, straight) {
     var pts = vals.map(function (v, i) {
       return [
         left + (vals.length === 1 ? w / 2 : (w * i) / (vals.length - 1)),
         yAt(v, ext, top, h)
       ];
     });
-    if (pts.length < 3) {
+    if (straight || pts.length < 3) {
       return pts.map(function (p, i) {
         return (i ? 'L ' : 'M ') + p[0] + ' ' + p[1];
       }).join(' ');
@@ -182,13 +195,14 @@
 
   function xLabels(svg, labels, left, top, w, h, c) {
     if (!labels || !labels.length) return;
-    var step = Math.max(1, Math.ceil(labels.length / 6));
+    var step = Math.max(1, Math.ceil(labels.length / Math.max(1, Math.floor(w / 44))));
     labels.forEach(function (lab, i) {
       if (i % step && i !== labels.length - 1) return;
       var x = left + (labels.length === 1 ? w / 2 : (w * i) / (labels.length - 1));
       var t = svgEl('text', {
         x: x, y: top + h + 14, fill: c.muted, 'font-size': '10',
-        'text-anchor': 'middle'
+        /* Nhãn đầu/cuối neo vào mép để không bị cắt. */
+        'text-anchor': labels.length > 1 && i === labels.length - 1 ? 'end' : 'middle'
       });
       t.textContent = lab;
       svg.appendChild(t);
@@ -215,20 +229,35 @@
     var all = [];
     series.forEach(function (s) { (s.values || []).forEach(function (v) { all.push(v); }); });
     if (!all.length) return;
-    var ext = extent(all);
+    var ext = data.baseline === 0 ? niceFromZero(all) : extent(all);
+    var straight = data.curve === 'straight';
     el.classList.add('is-plot');
     var svg = mountSvg(plot, W, H);
     grid(svg, ext, left, top, w, h, c);
     yLabels(svg, ext, left, top, h, c);
     series.forEach(function (s, si) {
       var vals = s.values || [];
-      var color = fills[si % fills.length];
-      var d = linePath(vals, left, w, top, h, ext);
+      /* s.tone = màu ngữ nghĩa (primary · info …) hoặc bảng chart (chart-1 … chart-10). */
+      var color = (s.tone && (c[s.tone] || getComputedStyle(el).getPropertyValue('--ifx-color-' + s.tone).trim())) ||
+        fills[si % fills.length];
+      fills[si] = color;
+      var d = linePath(vals, left, w, top, h, ext, straight);
       if (filled && vals.length) {
         var x0 = left;
         var x1 = left + w;
         var area = d + ' L ' + x1 + ' ' + (top + h) + ' L ' + x0 + ' ' + (top + h) + ' Z';
-        svg.appendChild(svgEl('path', { d: area, fill: color, 'fill-opacity': '0.22', stroke: 'none' }));
+        var paint = { fill: color, 'fill-opacity': '0.22' };
+        if (data.fill === 'gradient') {
+          var id = 'ifx-chart-grad-' + (++gradSeq);
+          var lg = svgEl('linearGradient', { id: id, x1: '0', y1: '0', x2: '0', y2: '1' });
+          lg.appendChild(svgEl('stop', { offset: '0', 'stop-color': color, 'stop-opacity': '0.35' }));
+          lg.appendChild(svgEl('stop', { offset: '0.9', 'stop-color': color, 'stop-opacity': '0.05' }));
+          svg.appendChild(lg);
+          paint = { fill: 'url(#' + id + ')' };
+        }
+        paint.d = area;
+        paint.stroke = 'none';
+        svg.appendChild(svgEl('path', paint));
       }
       svg.appendChild(svgEl('path', {
         d: d, fill: 'none', stroke: color, 'stroke-width': '2',
@@ -240,6 +269,7 @@
       var last = (s.values || [])[(s.values || []).length - 1];
       var first = (s.values || [])[0];
       var dir = last > first ? 'up' : (last < first ? 'down' : '');
+      if (data.legendValues === false) return { name: s.name || '', value: null };
       return { name: s.name || '', value: last != null ? last : null, dir: dir };
     }), fills);
   }

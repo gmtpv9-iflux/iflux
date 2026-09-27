@@ -45,7 +45,20 @@
 .ifx-input::placeholder,
 .ifx-textarea::placeholder { color: var(--ifx-text-muted); }
 .ifx-textarea { resize: vertical; min-height: var(--ifx-size-textarea-min-h); }
-.ifx-select { appearance: none; cursor: pointer; }
+.ifx-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: var(--ifx-space-36);
+  /* Mũi tên xuống vẽ bằng 2 tam giác gradient — theo màu token, không cần ảnh. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ifx-text-muted) 50%),
+    linear-gradient(135deg, var(--ifx-text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - var(--ifx-space-16)) 50%,
+    calc(100% - var(--ifx-space-12)) 50%;
+  background-size: var(--ifx-space-4) var(--ifx-space-4);
+  background-repeat: no-repeat;
+}
 .ifx-input:disabled,
 .ifx-input[readonly] {
   color: var(--ifx-text-disabled);

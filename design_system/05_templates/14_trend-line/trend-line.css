@@ -1,0 +1,17 @@
+/**
+ * TMP-TREND-LINE — Xu hướng 2 chuỗi: tab khoảng so sánh + bộ lọc + biểu đồ vùng (component Chart).
+ */
+.ifx-trend-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-trend-filter {
+  width: auto;
+  margin-left: auto;
+  padding: var(--ifx-space-4) var(--ifx-space-24) var(--ifx-space-4) var(--ifx-space-12);
+}
+@media (min-width: 768px) { /* bp:md */
+  .ifx-trend-filter { font-size: var(--ifx-font-size-xs); }
+}
