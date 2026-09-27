@@ -1,0 +1,86 @@
+/**
+ * TMP-DIVERGING-BARS — Cột phân kỳ quanh trục 0: nhóm (tabs) + chú thích + trục tung + cột + trục hoành.
+ */
+.ifx-divbars-hint {
+  margin: var(--ifx-space-4) 0 var(--ifx-space-12);
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+.ifx-divbars-plot {
+  display: grid;
+  grid-template-columns: var(--ifx-space-36) minmax(0, 1fr);
+  gap: var(--ifx-inline-sm);
+  align-items: start;
+}
+.ifx-divbars-yaxis {
+  position: relative;
+  height: var(--ifx-size-chart-plot-md);
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+.ifx-divbars-ytick {
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0.25;
+  font-variant-numeric: tabular-nums;
+}
+.ifx-divbars-area { position: relative; min-width: 0; }
+.ifx-divbars-canvas { position: relative; height: var(--ifx-size-chart-plot-md); }
+.ifx-divbars-zero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ifx-text-muted);
+  opacity: 0.25;
+  pointer-events: none;
+}
+.ifx-divbars-bars {
+  display: flex;
+  gap: var(--ifx-space-4);
+  height: 100%;
+}
+.ifx-divbars-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ifx-divbars-half {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+}
+.ifx-divbars-half.is-top { align-items: flex-end; }
+.ifx-divbars-half.is-bottom { align-items: flex-start; }
+.ifx-divbars-bar {
+  width: 72%;
+  max-width: var(--ifx-space-30);
+  min-height: var(--ifx-space-2);
+}
+.ifx-divbars-bar.is-pos {
+  background: var(--ifx-market-up);
+  border-radius: var(--ifx-radius-sm) var(--ifx-radius-sm) 0 0;
+}
+.ifx-divbars-bar.is-neg {
+  background: var(--ifx-market-down);
+  border-radius: 0 0 var(--ifx-radius-sm) var(--ifx-radius-sm);
+}
+.ifx-divbars-xlabels {
+  display: flex;
+  gap: var(--ifx-space-4);
+  margin-top: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+.ifx-divbars-xlabels span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

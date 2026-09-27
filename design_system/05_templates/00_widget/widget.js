@@ -36,6 +36,28 @@
     return isNaN(n) ? 0 : n;
   }
 
+  /** "+0.68%" — 2 chữ số thập phân, luôn có dấu khi dương. */
+  function fmtPct(n) {
+    if (n == null || isNaN(n)) return '—';
+    return (n >= 0 ? '+' : '') + Number(n).toFixed(2) + '%';
+  }
+  /** Số kiểu vi-VN, tối đa 2 chữ số thập phân. */
+  function fmtNum(n) {
+    if (n == null || n === '' || isNaN(n)) return '—';
+    return Number(n).toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+  }
+  /** Chiều biến động → class trạng thái dùng chung (is-up / is-down / ''). */
+  function dir(n) {
+    if (n == null || !n) return '';
+    return n > 0 ? 'is-up' : 'is-down';
+  }
+  /** "a | b" từng cột cùng độ dài lớn nhất (thiếu → ''). */
+  function columns(inputs) {
+    var cols = inputs.map(list);
+    var max = cols.reduce(function (m, c) { return Math.max(m, c.length); }, 0);
+    return cols.map(function (c) { var out = c.slice(); while (out.length < max) out.push(''); return out; });
+  }
+
   function define(id, def) { REG[id] = def; return def; }
   function has(id) { return !!REG[id]; }
   function get(id) { return REG[id] || null; }
@@ -85,6 +107,6 @@
 
   global.IfxTemplates = {
     define: define, has: has, get: get, demo: demo, mount: mount,
-    util: { esc: esc, list: list, num: num }
+    util: { esc: esc, list: list, num: num, fmtPct: fmtPct, fmtNum: fmtNum, dir: dir, columns: columns }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
