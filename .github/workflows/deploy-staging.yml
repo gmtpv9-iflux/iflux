@@ -51,6 +51,12 @@ jobs:
           if [ -d "$GITHUB_WORKSPACE/vendor" ]; then
             cp -a "$GITHUB_WORKSPACE/vendor" "$RELEASE_DIR/vendor"
           fi
+          # CSS/JS riêng của nền tảng (platform/admin, platform/web) và module — ngoài Design System
+          for d in platform modules; do
+            if [ -d "$GITHUB_WORKSPACE/$d" ]; then
+              cp -a "$GITHUB_WORKSPACE/$d" "$RELEASE_DIR/$d"
+            fi
+          done
 
       - name: Build backend release (atomic)
         run: |

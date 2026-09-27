@@ -1,0 +1,68 @@
+/**
+ * Admin — cầu nối token cũ → Design System (W3.1, 2026-09-27).
+ * Chỉ platform/admin/admin.css nạp file này; User Web không bị ảnh hưởng.
+ * Gỡ từng dòng khi CSS Admin dùng tới tên đó đã chuyển sang class/token DS (W3.3).
+ */
+:root {
+  /* Màu theme cũ (--color-*) → token theme DS (tự đổi theo light/dark) */
+  --color-bg-canvas: var(--ifx-bg-canvas);
+  --color-bg-surface: var(--ifx-bg-surface);
+  --color-bg-elevated: var(--ifx-bg-elevated);
+  --color-bg-subtle: var(--ifx-bg-subtle);
+  --color-bg-input: var(--ifx-bg-input);
+  --color-bg-hover: var(--ifx-bg-hover);
+  --color-bg-active: var(--ifx-bg-active);
+  --color-text-primary: var(--ifx-text-primary);
+  --color-text-secondary: var(--ifx-text-secondary);
+  --color-text-muted: var(--ifx-text-muted);
+  --color-text-disabled: var(--ifx-text-disabled);
+  --color-text-link: var(--ifx-text-link);
+  --color-border-default: var(--ifx-border-default);
+  --color-border-subtle: var(--ifx-border-subtle);
+  --color-border-focus: var(--ifx-border-focus);
+  --color-action-primary: var(--ifx-action-primary);
+  --color-action-primary-hover: var(--ifx-action-primary-hover);
+  --color-action-primary-soft: var(--ifx-action-primary-soft);
+  --color-action-secondary: var(--ifx-action-secondary);
+  --color-action-secondary-hover: var(--ifx-action-secondary-hover);
+  --color-success: var(--ifx-success);
+  --color-success-soft: var(--ifx-success-soft);
+  --color-warning: var(--ifx-warning);
+  --color-warning-soft: var(--ifx-warning-soft);
+  --color-danger: var(--ifx-danger);
+  --color-danger-soft: var(--ifx-danger-soft);
+  --color-info: var(--ifx-info);
+  --color-info-soft: var(--ifx-info-soft);
+  --color-scrim: var(--ifx-overlay-scrim);
+  --color-text-on-primary: var(--ifx-text-on-primary);
+  --color-text-on-success: var(--ifx-text-on-success);
+  --color-text-on-warning: var(--ifx-text-on-warning);
+  --color-text-on-danger: var(--ifx-text-on-danger);
+  --color-text-on-info: var(--ifx-text-on-info);
+
+  /* Tên số đã gỡ khỏi DS (W1) → mốc DS theo cỡ hiển thị hiện tại của Admin (gốc 15px) */
+  --ifx-font-size-10: var(--ifx-font-size-2xs);
+  --ifx-font-size-12: var(--ifx-font-size-xs);
+  --ifx-font-size-14: var(--ifx-font-size-sm);
+  --ifx-font-size-16: var(--ifx-font-size-lg);
+  --ifx-font-size-18: var(--ifx-font-size-lg);
+  --ifx-font-size-20: var(--ifx-font-size-xl);
+  --ifx-font-size-24: var(--ifx-font-size-xl);
+  --ifx-font-size-28: var(--ifx-font-size-3xl);
+  --ifx-font-size-32: var(--ifx-font-size-3xl);
+  --ifx-font-size-48: var(--ifx-font-size-4xl);
+  --ifx-font-weight-thin: var(--ifx-font-weight-extralight);
+  --ifx-font-weight-light: var(--ifx-font-weight-regular);
+  --ifx-font-weight-medium: var(--ifx-font-weight-semibold);
+  --ifx-font-weight-bold: var(--ifx-font-weight-extrabold);
+  --ifx-font-weight-black: var(--ifx-font-weight-extrabold);
+  --ifx-space-32: var(--ifx-space-30);
+  --ifx-space-56: var(--ifx-space-54);
+  --ifx-space-64: var(--ifx-space-60);
+  --ifx-space-80: var(--ifx-space-60);
+  --ifx-space-96: var(--ifx-space-60);
+}
+
+/* Gốc 15px như foundation DS. components.css cũ gán html = body-md; nay body-md là token DS (theo rem)
+   nên phải đặt lại gốc cố định. Gỡ khi Admin nạp foundation/typography.css của DS (W3.2). */
+html { font-size: 93.75%; }
