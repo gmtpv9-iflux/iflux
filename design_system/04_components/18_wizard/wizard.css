@@ -29,8 +29,8 @@
   color: inherit;
 }
 .ifx-wizard-circle {
-  width: var(--ifx-space-32);
-  height: var(--ifx-space-32);
+  width: var(--ifx-space-30);
+  height: var(--ifx-space-30);
   border-radius: var(--ifx-radius-full);
   border: 2px solid var(--ifx-border-default);
   display: flex;
@@ -88,7 +88,7 @@
 @media (min-width: 768px) {
   .ifx-wizard { flex-direction: row; }
   .ifx-wizard-steps {
-    width: var(--ifx-space-256);
+    width: var(--ifx-size-panel-sm);
     border-bottom: 0;
     border-right: 1px solid var(--ifx-border-default);
   }

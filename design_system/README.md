@@ -28,13 +28,13 @@ design_system/
 ├── 02_foundation/
 ├── 03_primitives/
 ├── 04_components/
-└── 05_widgets/
+└── 05_templates/
 ```
 
 Dependency chuẩn:
 
 ```text
-05_widgets
+05_templates   (UI của Widget)
     ↓
 04_components
     ↓
@@ -74,9 +74,27 @@ UI nguyên tử như Button, Chip, Badge, Avatar, Progress, Alert.
 
 Khối UI có cấu trúc hoặc behavior tái sử dụng như Card, Tabs, Table, Form, Search, Pagination, Drawer, Modal, Toast, Chat, Page Header, Data List.
 
-### `05_widgets/`
+### `05_templates/`
 
-Chỉ dành cho **generic reusable Widget UI contract**. Không chứa specific Widget/Page implementation.
+Khung hiển thị dùng chung của Widget: vỏ, header, body, footer, bố cục KPI / danh sách / bảng / biểu đồ, trạng thái đang tải / trống / lỗi. Template chịu trách nhiệm toàn bộ phần nhìn của Widget; Widget cụ thể (dữ liệu + nghiệp vụ) nằm ở `modules/<module>/widgets/` và gắn vào template. Xem `05_templates/README.md`.
+
+### Ngoài Design System: nền tảng và module
+
+Design System chứa CSS/JS dùng chung toàn hệ thống, mục tiêu giải quyết khoảng 90% UI. Phần còn lại là cục bộ và **không đặt trong `design_system/`**:
+
+```text
+platform/web/     → class riêng User Web, tiền tố uw-
+platform/admin/   → class riêng Admin, tiền tố adm-
+modules/<module>/ → CSS/JS và widget của một module; chỉ module đó nạp
+```
+
+Tiền tố `ifx-` chỉ dành cho Design System.
+
+### Tiêu chí thành công
+
+1. **Nạp gì dùng nấy.** File một trang nạp phải được dùng gần hết. Mỗi họ UI là một file nhỏ riêng; nền tảng chỉ gom những họ nó thật sự dùng. Không nạp một file lớn mà trang gần như không dùng.
+2. **Phân tầng rõ ràng:** tokens → foundation → primitives → components → templates → widget (ngoài DS).
+3. **Mở rộng đa nền tảng.** Token nguồn là JSON, sinh ra CSS/JS cho web; nền tảng mới (app iOS/Android…) thêm đầu ra từ cùng nguồn. Các tầng đặt theo vai trò, không gắn với HTML.
 
 ---
 
@@ -146,8 +164,8 @@ UI object nhỏ độc lập
 Reusable UI capability
 → 04_components
 
-Reusable functional block
-→ 05_widgets
+UI dùng chung của Widget
+→ 05_templates
 ```
 
 Sau đó xử lý theo thứ tự:

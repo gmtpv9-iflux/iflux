@@ -3,11 +3,6 @@
  * SPLIT từ .ix-nav-pill (components.css). KHÔNG side-nav / top-bar / drawer-nav.
  * Structure thuộc platform (Owner LOCK 2026-08-26).
  */
-.ifx-nav-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ifx-space-2);
-}
 .ifx-nav-item {
   display: flex;
   align-items: center;
@@ -46,9 +41,3 @@
   font-size: var(--ifx-size-icon-md);
 }
 .ifx-nav-label { min-width: 0; }
-
-.ifx-nav-divider {
-  border: 0;
-  border-top: 1px solid var(--ifx-border-subtle);
-  margin: var(--ifx-space-8) 0;
-}

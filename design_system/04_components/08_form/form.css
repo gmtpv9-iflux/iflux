@@ -11,8 +11,8 @@
 
 .ifx-label {
   display: block;
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-medium);
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-secondary);
   margin-bottom: var(--ifx-inline-sm);
 }
@@ -25,10 +25,16 @@
   border-radius: var(--ifx-radius-input);
   padding: var(--ifx-space-input-y) var(--ifx-space-input-x);
   color: var(--ifx-text-primary);
-  font-size: var(--ifx-font-size-14);
+  /* Mobile ≥ 16px: iOS Safari tự phóng to trang khi focus ô nhập có chữ < 16px. */
+  font-size: var(--ifx-font-size-lg);
   font-family: var(--ifx-font-primary);
   outline: none;
   transition: var(--ifx-transition-color);
+}
+@media (min-width: 768px) { /* bp:md */
+  .ifx-input,
+  .ifx-select,
+  .ifx-textarea { font-size: var(--ifx-font-size-md); }
 }
 .ifx-input:focus,
 .ifx-select:focus,
@@ -38,7 +44,7 @@
 }
 .ifx-input::placeholder,
 .ifx-textarea::placeholder { color: var(--ifx-text-muted); }
-.ifx-textarea { resize: vertical; min-height: var(--ifx-space-80); }
+.ifx-textarea { resize: vertical; min-height: var(--ifx-size-textarea-min-h); }
 .ifx-select { appearance: none; cursor: pointer; }
 .ifx-input:disabled,
 .ifx-input[readonly] {
@@ -49,7 +55,7 @@
 .ifx-checkbox {
   width: var(--ifx-space-16);
   height: var(--ifx-space-16);
-  border-radius: var(--ifx-radius-xs);
+  border-radius: var(--ifx-radius-sm);
   border: 2px solid var(--ifx-border-default);
   background: var(--ifx-bg-input);
   cursor: pointer;
@@ -112,7 +118,7 @@
   display: block;
   color: var(--ifx-text-primary);
   font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
 }
 .ifx-choice-desc {
   display: block;
@@ -124,7 +130,7 @@
   gap: var(--ifx-space-8);
 }
 .ifx-choice-dense .ifx-choice-title {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   font-weight: var(--ifx-font-weight-regular);
   color: var(--ifx-text-secondary);
 }
@@ -132,7 +138,7 @@
 .ifx-switch {
   position: relative;
   display: inline-flex;
-  width: var(--ifx-space-40);
+  width: var(--ifx-size-switch-w);
   height: var(--ifx-space-24);
   flex-shrink: 0;
 }
@@ -176,7 +182,7 @@
 .ifx-dropzone {
   border: 2px dashed var(--ifx-border-default);
   border-radius: var(--ifx-radius-card);
-  padding: var(--ifx-space-40) var(--ifx-space-20);
+  padding: var(--ifx-space-42) var(--ifx-space-20);
   text-align: center;
   cursor: pointer;
   transition: var(--ifx-transition-color);
@@ -191,17 +197,9 @@
   margin-bottom: var(--ifx-stack-sm);
   color: var(--ifx-text-muted);
 }
-.ifx-dropzone-title { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-primary); }
+.ifx-dropzone-title { font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-text-primary); }
 .ifx-dropzone-sub { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-muted); }
 
-.ifx-field-value {
-  display: block;
-  margin: 0;
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-medium);
-  color: var(--ifx-text-primary);
-  line-height: var(--ifx-line-height-normal);
-}
 .ifx-field-hint {
   display: block;
   margin: var(--ifx-space-4) 0 0;
@@ -210,11 +208,11 @@
 }
 .ifx-field-hint-tight {
   margin-top: var(--ifx-space-8);
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
 }
 
 .ifx-input-password { position: relative; }
-.ifx-input-password .ifx-input { padding-right: var(--ifx-space-40); }
+.ifx-input-password .ifx-input { padding-right: var(--ifx-space-42); }
 .ifx-input-password-toggle {
   position: absolute;
   right: 10px;
@@ -224,7 +222,7 @@
   border: 0;
   background: none;
   color: var(--ifx-text-muted);
-  font-size: var(--ifx-font-size-16);
+  font-size: var(--ifx-font-size-lg);
   line-height: 1;
   cursor: pointer;
 }
@@ -232,7 +230,7 @@
 .ifx-input-otp {
   text-align: center;
   font-family: var(--ifx-font-mono);
-  font-size: var(--ifx-font-size-20);
+  font-size: var(--ifx-font-size-2xl);
   letter-spacing: 0.25em;
 }
 

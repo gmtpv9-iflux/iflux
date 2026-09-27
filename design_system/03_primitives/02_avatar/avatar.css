@@ -28,7 +28,7 @@
 .ifx-avatar-32 {
   width: var(--ifx-size-avatar-32);
   height: var(--ifx-size-avatar-32);
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
 }
 .ifx-avatar-lg {
   width: var(--ifx-size-avatar-lg);
@@ -38,13 +38,13 @@
 .ifx-avatar-xl {
   width: var(--ifx-size-avatar-xl);
   height: var(--ifx-size-avatar-xl);
-  font-size: var(--ifx-font-size-20);
+  font-size: var(--ifx-font-size-2xl);
 }
 .ifx-avatar-2xl {
   width: var(--ifx-size-avatar-2xl);
   height: var(--ifx-size-avatar-2xl);
-  font-size: var(--ifx-font-size-32);
-  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-3xl);
+  font-weight: var(--ifx-font-weight-extrabold);
 }
 .ifx-avatar-solid {
   background: var(--ifx-action-primary);

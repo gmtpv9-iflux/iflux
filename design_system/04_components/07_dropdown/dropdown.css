@@ -9,7 +9,7 @@
   background: var(--ifx-bg-surface);
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-dropdown);
-  min-width: var(--ifx-space-160);
+  min-width: var(--ifx-size-panel-xs);
   padding: var(--ifx-space-4) 0;
   z-index: var(--ifx-z-dropdown);
   box-shadow: var(--ifx-shadow-dropdown);

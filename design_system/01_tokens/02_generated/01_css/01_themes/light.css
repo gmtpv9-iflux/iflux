@@ -18,12 +18,13 @@
   --ifx-text-disabled: var(--ifx-color-slate-300);
   --ifx-text-link: var(--ifx-color-navy-600);
   --ifx-border-default: rgba(67, 89, 113, 0.14);
-  --ifx-border-strong: rgba(67, 89, 113, 0.22);
   --ifx-border-subtle: rgba(67, 89, 113, 0.08);
   --ifx-border-focus: var(--ifx-color-navy-500);
   --ifx-action-primary: var(--ifx-color-navy-600);
   --ifx-action-primary-hover: var(--ifx-color-navy-700);
+  --ifx-action-primary-subtle: rgba(27, 53, 135, 0.06);
   --ifx-action-primary-soft: rgba(27, 53, 135, 0.1);
+  --ifx-action-primary-strong: rgba(27, 53, 135, 0.2);
   --ifx-action-secondary: var(--ifx-color-orange-500);
   --ifx-action-secondary-hover: var(--ifx-color-orange-600);
   --ifx-success: var(--ifx-color-green-500);
@@ -35,7 +36,6 @@
   --ifx-info: var(--ifx-color-cyan-500);
   --ifx-info-soft: rgba(3, 195, 236, 0.12);
   --ifx-overlay-scrim: rgba(58, 59, 85, 0.45);
-  --ifx-surface-elevated: rgba(67, 89, 113, 0.04);
   --ifx-text-on-primary: #ffffff;
   --ifx-text-on-success: #151d15;
   --ifx-text-on-warning: #1a1100;

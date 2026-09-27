@@ -29,7 +29,7 @@
 
 @media (min-width: 1280px) {
   :root {
-    --ifx-space-container: var(--ifx-space-32);
+    --ifx-space-container: var(--ifx-space-30);
   }
 }
 

@@ -34,7 +34,7 @@
     align-items: stretch;
   }
   .ifx-stat-strip > .ifx-stat {
-    flex: 1 1 var(--ifx-space-160);
+    flex: 1 1 var(--ifx-size-panel-xs);
   }
   .ifx-stat-strip > .ifx-stat + .ifx-stat {
     border-top: none;

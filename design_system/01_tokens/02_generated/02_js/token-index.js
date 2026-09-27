@@ -8,40 +8,18 @@
   g.IFX_TOKEN_INDEX = {
   "primitive": {
     "color": [
-      "--ifx-color-navy-50",
-      "--ifx-color-navy-100",
-      "--ifx-color-navy-200",
-      "--ifx-color-navy-300",
-      "--ifx-color-navy-400",
       "--ifx-color-navy-500",
       "--ifx-color-navy-600",
       "--ifx-color-navy-700",
-      "--ifx-color-navy-800",
-      "--ifx-color-navy-900",
-      "--ifx-color-orange-50",
-      "--ifx-color-orange-100",
-      "--ifx-color-orange-200",
-      "--ifx-color-orange-300",
-      "--ifx-color-orange-400",
       "--ifx-color-orange-500",
       "--ifx-color-orange-600",
-      "--ifx-color-orange-700",
-      "--ifx-color-orange-800",
-      "--ifx-color-orange-900",
-      "--ifx-color-green-400",
       "--ifx-color-green-500",
-      "--ifx-color-green-600",
-      "--ifx-color-red-400",
       "--ifx-color-red-450",
       "--ifx-color-red-500",
-      "--ifx-color-red-600",
-      "--ifx-color-amber-400",
       "--ifx-color-amber-500",
       "--ifx-color-amber-550",
       "--ifx-color-amber-600",
-      "--ifx-color-cyan-400",
       "--ifx-color-cyan-500",
-      "--ifx-color-cyan-600",
       "--ifx-color-purple-500",
       "--ifx-color-violet-400",
       "--ifx-color-violet-500",
@@ -58,21 +36,14 @@
       "--ifx-color-slate-800",
       "--ifx-color-slate-850",
       "--ifx-color-slate-900",
-      "--ifx-color-slate-950",
       "--ifx-color-white"
     ],
     "alpha": [
       "--ifx-alpha-white-4",
-      "--ifx-alpha-white-8",
-      "--ifx-alpha-white-12",
-      "--ifx-alpha-white-16",
-      "--ifx-alpha-white-20",
       "--ifx-alpha-black-4",
       "--ifx-alpha-black-8",
       "--ifx-alpha-black-12",
       "--ifx-alpha-black-16",
-      "--ifx-alpha-black-45",
-      "--ifx-alpha-black-60",
       "--ifx-alpha-violet-16",
       "--ifx-alpha-lime-16",
       "--ifx-alpha-amber-16",
@@ -80,20 +51,14 @@
       "--ifx-alpha-cyan-16",
       "--ifx-alpha-purple-10",
       "--ifx-alpha-orange-35",
-      "--ifx-alpha-orange-14",
       "--ifx-alpha-orange-8",
       "--ifx-alpha-orange-45",
-      "--ifx-alpha-red-35",
-      "--ifx-alpha-red-12",
       "--ifx-alpha-green-500-50",
       "--ifx-alpha-green-500-45",
       "--ifx-alpha-green-500-25",
-      "--ifx-alpha-green-500-22",
       "--ifx-alpha-green-500-12",
       "--ifx-alpha-red-500-45",
       "--ifx-alpha-red-500-25",
-      "--ifx-alpha-red-500-22",
-      "--ifx-alpha-red-500-12",
       "--ifx-alpha-red-500-10",
       "--ifx-alpha-violet-500-4",
       "--ifx-alpha-violet-500-6",
@@ -106,32 +71,11 @@
     "font": [
       "--ifx-font-primary",
       "--ifx-font-mono",
-      "--ifx-font-emoji",
-      "--ifx-font-system",
       "--ifx-font-numeric",
       "--ifx-font-weight-extralight",
       "--ifx-font-weight-regular",
       "--ifx-font-weight-semibold",
       "--ifx-font-weight-extrabold",
-      "--ifx-font-weight-thin",
-      "--ifx-font-weight-light",
-      "--ifx-font-weight-medium",
-      "--ifx-font-weight-bold",
-      "--ifx-font-weight-black",
-      "--ifx-font-size-10",
-      "--ifx-font-size-12",
-      "--ifx-font-size-14",
-      "--ifx-font-size-16",
-      "--ifx-font-size-18",
-      "--ifx-font-size-20",
-      "--ifx-font-size-24",
-      "--ifx-font-size-28",
-      "--ifx-font-size-32",
-      "--ifx-font-size-40",
-      "--ifx-font-size-48",
-      "--ifx-font-size-56",
-      "--ifx-font-size-64",
-      "--ifx-font-size-72",
       "--ifx-font-size-2xs",
       "--ifx-font-size-xs",
       "--ifx-font-size-sm",
@@ -144,20 +88,6 @@
       "--ifx-font-size-5xl"
     ],
     "line-height": [
-      "--ifx-line-height-10",
-      "--ifx-line-height-12",
-      "--ifx-line-height-14",
-      "--ifx-line-height-16",
-      "--ifx-line-height-18",
-      "--ifx-line-height-20",
-      "--ifx-line-height-24",
-      "--ifx-line-height-28",
-      "--ifx-line-height-32",
-      "--ifx-line-height-40",
-      "--ifx-line-height-48",
-      "--ifx-line-height-56",
-      "--ifx-line-height-64",
-      "--ifx-line-height-72",
       "--ifx-line-height-tight",
       "--ifx-line-height-normal",
       "--ifx-line-height-relaxed",
@@ -180,21 +110,14 @@
       "--ifx-space-16",
       "--ifx-space-20",
       "--ifx-space-24",
-      "--ifx-space-32",
-      "--ifx-space-40",
+      "--ifx-space-30",
+      "--ifx-space-36",
+      "--ifx-space-42",
       "--ifx-space-48",
-      "--ifx-space-56",
-      "--ifx-space-64",
-      "--ifx-space-80",
-      "--ifx-space-96",
-      "--ifx-space-128",
-      "--ifx-space-160",
-      "--ifx-space-192",
-      "--ifx-space-256",
-      "--ifx-space-unit"
+      "--ifx-space-54",
+      "--ifx-space-60"
     ],
     "radius": [
-      "--ifx-radius-xs",
       "--ifx-radius-sm",
       "--ifx-radius-md",
       "--ifx-radius-lg",
@@ -203,7 +126,6 @@
       "--ifx-radius-full"
     ],
     "shadow": [
-      "--ifx-shadow-xs",
       "--ifx-shadow-sm",
       "--ifx-shadow-md",
       "--ifx-shadow-lg",
@@ -230,7 +152,16 @@
       "--ifx-size-avatar-xl",
       "--ifx-size-avatar-2xl",
       "--ifx-size-nav-drawer-w",
-      "--ifx-size-container-max"
+      "--ifx-size-container-max",
+      "--ifx-size-switch-w",
+      "--ifx-size-textarea-min-h",
+      "--ifx-size-panel-xs",
+      "--ifx-size-panel-sm",
+      "--ifx-size-panel-md",
+      "--ifx-size-chart-plot-sm",
+      "--ifx-size-chart-plot-md",
+      "--ifx-size-chart-plot-lg",
+      "--ifx-size-chart-plot-xl"
     ],
     "z": [
       "--ifx-z-dropdown",
@@ -343,12 +274,13 @@
       "--ifx-text-disabled",
       "--ifx-text-link",
       "--ifx-border-default",
-      "--ifx-border-strong",
       "--ifx-border-subtle",
       "--ifx-border-focus",
       "--ifx-action-primary",
       "--ifx-action-primary-hover",
+      "--ifx-action-primary-subtle",
       "--ifx-action-primary-soft",
+      "--ifx-action-primary-strong",
       "--ifx-action-secondary",
       "--ifx-action-secondary-hover",
       "--ifx-success",
@@ -360,7 +292,6 @@
       "--ifx-info",
       "--ifx-info-soft",
       "--ifx-overlay-scrim",
-      "--ifx-surface-elevated",
       "--ifx-text-on-primary",
       "--ifx-text-on-success",
       "--ifx-text-on-warning",
@@ -381,12 +312,13 @@
       "--ifx-text-disabled",
       "--ifx-text-link",
       "--ifx-border-default",
-      "--ifx-border-strong",
       "--ifx-border-subtle",
       "--ifx-border-focus",
       "--ifx-action-primary",
       "--ifx-action-primary-hover",
+      "--ifx-action-primary-subtle",
       "--ifx-action-primary-soft",
+      "--ifx-action-primary-strong",
       "--ifx-action-secondary",
       "--ifx-action-secondary-hover",
       "--ifx-success",
@@ -398,7 +330,6 @@
       "--ifx-info",
       "--ifx-info-soft",
       "--ifx-overlay-scrim",
-      "--ifx-surface-elevated",
       "--ifx-text-on-primary",
       "--ifx-text-on-success",
       "--ifx-text-on-warning",
@@ -457,41 +388,6 @@
   ],
   "inventory": [
     {
-      "name": "--ifx-color-navy-50",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-navy-100",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-navy-200",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-navy-300",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-navy-400",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-color-navy-500",
       "owner": "global",
       "layer": "global",
@@ -513,55 +409,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-color-navy-800",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-navy-900",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-50",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-100",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-200",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-300",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-400",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-color-orange-500",
       "owner": "global",
       "layer": "global",
@@ -576,49 +423,7 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-color-orange-700",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-800",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-orange-900",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-green-400",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-color-green-500",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-green-600",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-red-400",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -633,20 +438,6 @@
     },
     {
       "name": "--ifx-color-red-500",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-red-600",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-amber-400",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -674,21 +465,7 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-color-cyan-400",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-color-cyan-500",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-cyan-600",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -807,13 +584,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-color-slate-950",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-color-white",
       "owner": "global",
       "layer": "global",
@@ -822,34 +592,6 @@
     },
     {
       "name": "--ifx-alpha-white-4",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-white-8",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-white-12",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-white-16",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-white-20",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -878,20 +620,6 @@
     },
     {
       "name": "--ifx-alpha-black-16",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-black-45",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-black-60",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -947,13 +675,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-alpha-orange-14",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-alpha-orange-8",
       "owner": "global",
       "layer": "global",
@@ -962,20 +683,6 @@
     },
     {
       "name": "--ifx-alpha-orange-45",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-red-35",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-red-12",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -1003,13 +710,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-alpha-green-500-22",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-alpha-green-500-12",
       "owner": "global",
       "layer": "global",
@@ -1025,20 +725,6 @@
     },
     {
       "name": "--ifx-alpha-red-500-25",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-red-500-22",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-alpha-red-500-12",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -1192,13 +878,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
     },
     {
-      "name": "--ifx-border-strong",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
-    },
-    {
       "name": "--ifx-border-subtle",
       "owner": "global",
       "layer": "global",
@@ -1227,7 +906,21 @@
       "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
     },
     {
+      "name": "--ifx-action-primary-subtle",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
       "name": "--ifx-action-primary-soft",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-action-primary-strong",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -1311,13 +1004,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
     },
     {
-      "name": "--ifx-surface-elevated",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/color.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
-    },
-    {
       "name": "--ifx-text-on-primary",
       "owner": "global",
       "layer": "global",
@@ -1367,20 +1053,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-font-emoji",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-system",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-font-numeric",
       "owner": "global",
       "layer": "global",
@@ -1410,139 +1082,6 @@
     },
     {
       "name": "--ifx-font-weight-extrabold",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-weight-thin",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-weight-light",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-weight-medium",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-weight-bold",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-weight-black",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-10",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-12",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-14",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-16",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-18",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-20",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-24",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-28",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-32",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-40",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-48",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-56",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-64",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-font-size-72",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/typography.json",
@@ -1613,104 +1152,6 @@
     },
     {
       "name": "--ifx-font-size-5xl",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-10",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-12",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-14",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-16",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-18",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-20",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-24",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-28",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-32",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-40",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-48",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-56",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-64",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/typography.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-line-height-72",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/typography.json",
@@ -1843,14 +1284,21 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-space-32",
+      "name": "--ifx-space-30",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/spacing.json",
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-space-40",
+      "name": "--ifx-space-36",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/spacing.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-space-42",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/spacing.json",
@@ -1864,63 +1312,14 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-space-56",
+      "name": "--ifx-space-54",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/spacing.json",
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
-      "name": "--ifx-space-64",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-80",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-96",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-128",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-160",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-192",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-256",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/spacing.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
-      "name": "--ifx-space-unit",
+      "name": "--ifx-space-60",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/spacing.json",
@@ -2277,13 +1676,6 @@
       "generated": "design_system/01_tokens/02_generated/01_css/semantic.css"
     },
     {
-      "name": "--ifx-radius-xs",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/radius.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
-    },
-    {
       "name": "--ifx-radius-sm",
       "owner": "global",
       "layer": "global",
@@ -2373,13 +1765,6 @@
       "layer": "global",
       "source": "design_system/01_tokens/01_source/radius.json",
       "generated": "design_system/01_tokens/02_generated/01_css/semantic.css"
-    },
-    {
-      "name": "--ifx-shadow-xs",
-      "owner": "global",
-      "layer": "global",
-      "source": "design_system/01_tokens/01_source/shadow.json",
-      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
       "name": "--ifx-shadow-sm",
@@ -2572,6 +1957,69 @@
     },
     {
       "name": "--ifx-size-container-max",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-switch-w",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-textarea-min-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-panel-xs",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-panel-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-panel-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-chart-plot-sm",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-chart-plot-md",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-chart-plot-lg",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-chart-plot-xl",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/size.json",

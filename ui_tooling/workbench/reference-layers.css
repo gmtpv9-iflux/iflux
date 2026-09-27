@@ -181,7 +181,7 @@
 .ref-page-order-detail-summary-value {
   font-family: var(--ifx-font-numeric);
   font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -194,7 +194,7 @@
 .ref-page-order-detail-total {
   font-family: var(--ifx-font-numeric);
   font-size: var(--ifx-font-size-lg);
-  font-weight: var(--ifx-font-weight-bold);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -216,7 +216,7 @@
 
 .ref-page-user-profile-name {
   font-size: var(--ifx-font-size-xl);
-  font-weight: var(--ifx-font-weight-bold);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   line-height: var(--ifx-line-height-tight);
 }
@@ -239,7 +239,7 @@
 .ref-page-user-profile-stat-value {
   font-family: var(--ifx-font-numeric);
   font-size: var(--ifx-font-size-xl);
-  font-weight: var(--ifx-font-weight-bold);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -275,7 +275,7 @@
 }
 
 .ref-page-chat-meta > :last-child {
-  font-weight: var(--ifx-font-weight-medium);
+  font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
 }
 
@@ -301,7 +301,7 @@
 .ref-page-referrals-stat-value {
   font-family: var(--ifx-font-numeric);
   font-size: var(--ifx-font-size-xl);
-  font-weight: var(--ifx-font-weight-bold);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -333,15 +333,15 @@
   justify-content: center;
   gap: var(--ifx-inline-md);
   margin-bottom: var(--ifx-space-24);
-  font-size: var(--ifx-font-size-20);
-  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-2xl);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
 }
 
 .ref-page-auth-heading h2 { margin: 0 0 var(--ifx-space-4); }
 .ref-page-auth-heading p {
   margin: 0 0 var(--ifx-space-24);
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-text-muted);
 }
 
@@ -358,7 +358,7 @@
   display: block;
   margin-top: var(--ifx-space-16);
   text-align: center;
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-text-muted);
 }
 
@@ -367,7 +367,7 @@
 .ref-page-auth-footer {
   margin-top: var(--ifx-space-16);
   text-align: center;
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-text-muted);
 }
 
@@ -377,7 +377,7 @@
   justify-content: center;
   gap: var(--ifx-space-4);
   margin-top: var(--ifx-space-16);
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-action-primary);
   text-decoration: none;
 }

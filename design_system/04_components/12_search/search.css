@@ -12,7 +12,7 @@
   padding: 0 var(--ifx-space-12);
   height: var(--ifx-size-avatar-md);
   color: var(--ifx-text-muted);
-  max-width: var(--ifx-space-256);
+  max-width: var(--ifx-size-panel-sm);
   width: 100%;
 }
 .ifx-search:focus-within {

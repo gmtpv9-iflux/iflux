@@ -2,9 +2,6 @@
  * Profile workspace — rail 300, hero, stats, meta list, plan, referral, tabs, activity, affiliate.
  * Metric = Legacy isolate ADM-USR-002. Không AppShell.
  */
-html.ifx-profile-host {
-  font-size: var(--ifx-font-size-md);
-}
 html.ifx-profile-host,
 html.ifx-profile-host body {
   font-family: var(--ifx-font-primary);
@@ -54,8 +51,8 @@ html.ifx-profile-host body {
 }
 .ifx-profile-actions .ifx-btn-primary { border-width: 0; }
 .ifx-profile-name {
-  font-size: var(--ifx-font-size-18);
-  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   margin-bottom: 6px;
 }
@@ -75,13 +72,13 @@ html.ifx-profile-host body {
 }
 .ifx-profile-stat:last-child { border-right: none; }
 .ifx-profile-stat-value {
-  font-size: var(--ifx-font-size-18);
-  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-xl);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   line-height: 1.1;
 }
 .ifx-profile-stat-label {
-  font-size: var(--ifx-font-size-10);
+  font-size: var(--ifx-font-size-2xs);
   color: var(--ifx-text-muted);
   margin-top: 2px;
 }
@@ -101,7 +98,7 @@ html.ifx-profile-host body {
   gap: var(--ifx-space-8);
   padding: 7px 0;
   border-bottom: 1px solid var(--ifx-border-default);
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
 }
 .ifx-meta-list li:last-child { border-bottom: none; }
 .ifx-meta-list-key {
@@ -120,9 +117,9 @@ html.ifx-profile-host body {
 .ifx-profile-actions .ifx-btn { flex: 1; justify-content: flex-start; }
 .ifx-plan-card .ifx-btn { width: 100%; justify-content: flex-start; margin-top: var(--ifx-space-8); border-width: 0; }
 .ifx-form-narrow > .ifx-form-group { margin-bottom: 0; }
-.ifx-profile-tab .ti { font-size: var(--ifx-font-size-14); }
+.ifx-profile-tab .ti { font-size: var(--ifx-font-size-md); }
 .ifx-profile-page .ifx-btn:not(.ifx-btn-sm) .ti { font-size: 13px; }
-.ifx-profile-page .ifx-btn-sm .ti { font-size: var(--ifx-font-size-12); }
+.ifx-profile-page .ifx-btn-sm .ti { font-size: var(--ifx-font-size-xs); }
 .ifx-profile-datalist .ifx-table-toolbar {
   padding: var(--ifx-space-12) 20px;
 }
@@ -149,19 +146,19 @@ html.ifx-profile-host body {
   color: var(--ifx-action-primary);
 }
 .ifx-plan-price-cur {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   font-weight: var(--ifx-font-weight-semibold);
   margin-top: var(--ifx-space-4);
 }
 .ifx-plan-price-num { font-size: 36px; font-weight: 800; line-height: 1; }
 .ifx-plan-price-per {
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-muted);
   margin-top: auto;
   margin-bottom: var(--ifx-space-4);
 }
 .ifx-plan-feat {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-text-secondary);
   display: flex;
   align-items: center;
@@ -217,7 +214,7 @@ html.ifx-profile-host body {
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-input);
   padding: var(--ifx-space-input-y) var(--ifx-space-input-x);
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   font-family: monospace;
   line-height: 1;
   color: var(--ifx-text-primary);
@@ -252,7 +249,7 @@ html.ifx-profile-host body {
 .ifx-layer-f2 {
   padding: 2px 8px;
   border-radius: 20px;
-  font-size: var(--ifx-font-size-10);
+  font-size: var(--ifx-font-size-2xs);
   font-weight: var(--ifx-font-weight-semibold);
 }
 .ifx-layer-f0 { background: rgba(105, 108, 255, 0.15); color: var(--ifx-action-primary); }
@@ -271,8 +268,8 @@ html.ifx-profile-host body {
   gap: var(--ifx-inline-sm);
   padding: var(--ifx-space-8) 16px;
   border-radius: var(--ifx-radius-button);
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-medium);
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-semibold);
   line-height: 1.15;
   color: var(--ifx-text-secondary);
   cursor: pointer;
@@ -289,7 +286,7 @@ html.ifx-profile-host body {
 .ifx-profile-panel.is-active { display: block; }
 
 .ifx-profile-title {
-  font-size: var(--ifx-font-size-16);
+  font-size: var(--ifx-font-size-lg);
   font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
 }
@@ -329,17 +326,17 @@ html.ifx-profile-host body {
 }
 .ifx-activity-body { flex: 1; }
 .ifx-activity-title {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
   margin-bottom: 2px;
 }
 .ifx-activity-desc {
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-muted);
 }
 .ifx-activity-time {
-  font-size: var(--ifx-font-size-10);
+  font-size: var(--ifx-font-size-2xs);
   color: var(--ifx-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
@@ -361,13 +358,13 @@ html.ifx-profile-host body {
 }
 .ifx-aff-sum-item:last-child { border-right: none; }
 .ifx-aff-sum-val {
-  font-size: var(--ifx-font-size-20);
-  font-weight: var(--ifx-font-weight-bold);
+  font-size: var(--ifx-font-size-2xl);
+  font-weight: var(--ifx-font-weight-extrabold);
   color: var(--ifx-text-primary);
   line-height: 1.1;
 }
 .ifx-aff-sum-label {
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-muted);
   margin-top: 2px;
 }
@@ -392,7 +389,7 @@ html.ifx-profile-host body {
   display: flex;
   align-items: center;
   gap: var(--ifx-inline-sm);
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-secondary);
   background: var(--ifx-bg-hover);
   padding: 4px 10px;
@@ -411,7 +408,7 @@ html.ifx-profile-host body {
   font-size: 13px;
   color: var(--ifx-text-secondary);
 }
-.ifx-aff-payout .ifx-table-cell-earn { font-size: var(--ifx-font-size-16); }
+.ifx-aff-payout .ifx-table-cell-earn { font-size: var(--ifx-font-size-lg); }
 .ifx-layer-pill .ti { color: var(--ifx-action-primary); font-size: 13px; }
 
 .ifx-network {
@@ -463,7 +460,7 @@ html.ifx-profile-host body {
   align-items: center;
   gap: var(--ifx-space-8);
 }
-.ifx-user-name { font-weight: var(--ifx-font-weight-medium); color: var(--ifx-text-primary); }
+.ifx-user-name { font-weight: var(--ifx-font-weight-semibold); color: var(--ifx-text-primary); }
 .ifx-user-sub { font-size: 11px; color: var(--ifx-text-muted); }
 
 .ifx-setting-row {
@@ -508,15 +505,15 @@ html.ifx-profile-host body {
   border: none;
   cursor: pointer;
   color: var(--ifx-text-muted);
-  font-size: var(--ifx-font-size-20);
+  font-size: var(--ifx-font-size-2xl);
 }
 .ifx-profile-modal-title {
-  font-size: var(--ifx-font-size-16);
+  font-size: var(--ifx-font-size-lg);
   font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
 }
 .ifx-profile-modal-sub {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   color: var(--ifx-text-muted);
   margin-bottom: var(--ifx-space-24);
 }

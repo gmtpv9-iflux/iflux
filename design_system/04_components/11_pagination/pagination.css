@@ -8,8 +8,8 @@
   gap: var(--ifx-space-4);
 }
 .ifx-page-btn {
-  min-width: var(--ifx-space-32);
-  height: var(--ifx-space-32);
+  min-width: var(--ifx-space-30);
+  height: var(--ifx-space-30);
   display: inline-flex;
   align-items: center;
   justify-content: center;

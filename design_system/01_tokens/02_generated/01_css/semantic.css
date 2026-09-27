@@ -9,21 +9,21 @@
   --ifx-padding-sm: var(--ifx-space-12);
   --ifx-padding-md: var(--ifx-space-16);
   --ifx-padding-lg: var(--ifx-space-24);
-  --ifx-padding-xl: var(--ifx-space-32);
+  --ifx-padding-xl: var(--ifx-space-30);
 
   /* ── spacing · margin ── */
   --ifx-margin-xs: var(--ifx-space-8);
   --ifx-margin-sm: var(--ifx-space-12);
   --ifx-margin-md: var(--ifx-space-16);
   --ifx-margin-lg: var(--ifx-space-24);
-  --ifx-margin-xl: var(--ifx-space-32);
+  --ifx-margin-xl: var(--ifx-space-30);
 
   /* ── spacing · gap ── */
   --ifx-gap-xs: var(--ifx-space-8);
   --ifx-gap-sm: var(--ifx-space-12);
   --ifx-gap-md: var(--ifx-space-16);
   --ifx-gap-lg: var(--ifx-space-24);
-  --ifx-gap-xl: var(--ifx-space-32);
+  --ifx-gap-xl: var(--ifx-space-30);
 
   /* ── spacing · inset ── */
   --ifx-inset-card: var(--ifx-space-16) var(--ifx-space-20);
@@ -39,7 +39,7 @@
   --ifx-stack-sm: var(--ifx-space-12);
   --ifx-stack-md: var(--ifx-space-16);
   --ifx-stack-lg: var(--ifx-space-24);
-  --ifx-stack-xl: var(--ifx-space-32);
+  --ifx-stack-xl: var(--ifx-space-30);
 
   /* ── spacing · inline ── */
   --ifx-inline-xs: var(--ifx-space-4);
@@ -49,8 +49,8 @@
   --ifx-inline-xl: var(--ifx-space-24);
 
   /* ── spacing · space ── */
-  --ifx-space-section: var(--ifx-space-64);
-  --ifx-space-page: var(--ifx-space-80);
+  --ifx-space-section: var(--ifx-space-48);
+  --ifx-space-page: var(--ifx-space-60);
   --ifx-space-button-y: var(--ifx-space-8);
   --ifx-space-button-x: var(--ifx-space-16);
   --ifx-space-button-sm-y: var(--ifx-space-4);

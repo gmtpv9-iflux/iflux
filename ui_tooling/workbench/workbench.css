@@ -44,11 +44,11 @@ html.ifx-appshell-root body {
 .ifx-appshell-sidebar::-webkit-scrollbar { width: 4px; }
 .ifx-appshell-sidebar::-webkit-scrollbar-thumb {
   background: var(--ifx-border-default);
-  border-radius: var(--ifx-radius-xs);
+  border-radius: var(--ifx-radius-sm);
 }
 
 .ifx-appshell-brand {
-  height: var(--ifx-space-64);
+  height: var(--ifx-space-60);
   display: flex;
   align-items: center;
   gap: var(--ifx-inline-md);
@@ -57,7 +57,7 @@ html.ifx-appshell-root body {
   flex-shrink: 0;
 }
 .ifx-appshell-brand-name {
-  font-weight: var(--ifx-font-weight-bold);
+  font-weight: var(--ifx-font-weight-extrabold);
   font-size: var(--ifx-font-size-lg);
   color: var(--ifx-text-primary);
   letter-spacing: var(--ifx-letter-spacing-tight);
@@ -86,7 +86,7 @@ html.ifx-appshell-root body {
   bottom: var(--ifx-space-4);
   width: 3px;
   background: var(--ifx-action-primary);
-  border-radius: 0 var(--ifx-radius-xs) var(--ifx-radius-xs) 0;
+  border-radius: 0 var(--ifx-radius-sm) var(--ifx-radius-sm) 0;
 }
 
 .ifx-appshell-main {
@@ -99,7 +99,7 @@ html.ifx-appshell-root body {
 }
 
 .ifx-appshell-bar {
-  height: var(--ifx-space-64);
+  height: var(--ifx-space-60);
   flex-shrink: 0;
   display: flex;
   align-items: center;

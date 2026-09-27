@@ -16,6 +16,7 @@
   --ifx-space-16: 1rem;      /* 16px */
   --ifx-space-20: 1.25rem;   /* 20px */
   --ifx-space-24: 1.5rem;    /* 24px */
+  --ifx-space-30: 2rem;      /* 30px ở gốc 15px — mốc DS W1, dùng bởi design_system button.css */
   --ifx-space-32: 2rem;      /* 32px */
   --ifx-space-40: 2.5rem;    /* 40px */
   --ifx-space-48: 3rem;      /* 48px */

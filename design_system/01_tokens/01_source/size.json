@@ -16,7 +16,16 @@
       "avatar-xl": "56px",
       "avatar-2xl": "90px",
       "nav-drawer-w": "300px",
-      "container-max": "1280px"
+      "container-max": "1280px",
+      "switch-w": "40px",
+      "textarea-min-h": "80px",
+      "panel-xs": "160px",
+      "panel-sm": "256px",
+      "panel-md": "512px",
+      "chart-plot-sm": "128px",
+      "chart-plot-md": "208px",
+      "chart-plot-lg": "256px",
+      "chart-plot-xl": "336px"
     }
   }
 }

@@ -2,9 +2,6 @@
  * Chat workspace. 3-pane = 280 | main | 240 mọi viewport (Legacy isolate).
  * 2-pane thread 256. Height calc(100vh - 140px) = baseline isolate.
  */
-html.ifx-chat-host {
-  font-size: var(--ifx-font-size-md);
-}
 html.ifx-chat-host,
 html.ifx-chat-host body {
   min-height: 100%;
@@ -12,7 +9,7 @@ html.ifx-chat-host body {
 }
 
 .ifx-chat {
-  --ifx-chat-thread-width: var(--ifx-space-256);
+  --ifx-chat-thread-width: var(--ifx-size-panel-sm);
   --ifx-chat-details-width: 240px;
   display: flex;
   flex-direction: row;
@@ -77,18 +74,18 @@ html.ifx-chat-host body {
 }
 .ifx-chat-item-name {
   display: block;
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-medium);
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-semibold);
   line-height: 1.2;
   color: var(--ifx-text-primary);
 }
 .ifx-chat-item-preview {
   display: block;
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   color: var(--ifx-text-muted);
 }
 .ifx-chat-item-time {
-  font-size: var(--ifx-font-size-10);
+  font-size: var(--ifx-font-size-2xs);
   color: var(--ifx-text-muted);
   white-space: nowrap;
 }
@@ -151,7 +148,7 @@ html.ifx-chat-host body {
   max-width: 60%;
   padding: 10px 14px;
   border-radius: 12px;
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   line-height: 1.5;
   color: var(--ifx-text-primary);
   background: var(--ifx-bg-hover);
@@ -162,7 +159,7 @@ html.ifx-chat-host body {
   color: #fff;
 }
 .ifx-chat-meta {
-  font-size: var(--ifx-font-size-10);
+  font-size: var(--ifx-font-size-2xs);
   color: var(--ifx-text-muted);
   margin-top: var(--ifx-space-4);
 }
@@ -183,7 +180,7 @@ html.ifx-chat-host body {
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-button);
   padding: var(--ifx-space-8) 14px;
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
   font-family: var(--ifx-font-primary);
   line-height: normal;
   color: var(--ifx-text-primary);

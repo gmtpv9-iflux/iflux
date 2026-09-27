@@ -40,7 +40,7 @@
  * - bảng dữ liệu mật độ isolate Admin (cell 14 / secondary)
  */
 .ifx-table-md {
-  font-size: var(--ifx-font-size-14);
+  font-size: var(--ifx-font-size-md);
 }
 .ifx-table-md td {
   color: var(--ifx-text-secondary);

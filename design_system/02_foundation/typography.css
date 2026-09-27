@@ -30,14 +30,16 @@
  * P6a 2026-08-27 — Owner allocation. See gates/.../css-normalization/01c_typography_execution.md
  */
 :root {
-  /* ── Heading ── */
+  /* ── Heading ──
+   * Base (< md) = mobile: mỗi tiêu đề lùi một mốc trên cùng thang.
+   * ≥ md 768px: H1 30 · H2 24 · H3 20 · H4 18 (xem @media dưới). Nội dung không đổi theo màn hình. */
   --ifx-text-h1-size: var(--ifx-font-size-3xl);
-  --ifx-text-h1-weight: var(--ifx-font-weight-bold);
+  --ifx-text-h1-weight: var(--ifx-font-weight-extrabold);
   --ifx-text-h1-line: var(--ifx-line-height-tight);
   --ifx-text-h1-tracking: var(--ifx-letter-spacing-tight);
 
   --ifx-text-h2-size: var(--ifx-font-size-2xl);
-  --ifx-text-h2-weight: var(--ifx-font-weight-bold);
+  --ifx-text-h2-weight: var(--ifx-font-weight-extrabold);
   --ifx-text-h2-line: var(--ifx-line-height-tight);
   --ifx-text-h2-tracking: var(--ifx-letter-spacing-normal);
 
@@ -51,12 +53,12 @@
   --ifx-text-h4-line: var(--ifx-line-height-normal);
   --ifx-text-h4-tracking: var(--ifx-letter-spacing-normal);
 
-  --ifx-text-h5-size: var(--ifx-font-size-md);
+  --ifx-text-h5-size: var(--ifx-font-size-lg);
   --ifx-text-h5-weight: var(--ifx-font-weight-semibold);
   --ifx-text-h5-line: var(--ifx-line-height-normal);
   --ifx-text-h5-tracking: var(--ifx-letter-spacing-normal);
 
-  --ifx-text-h6-size: var(--ifx-font-size-sm);
+  --ifx-text-h6-size: var(--ifx-font-size-md);
   --ifx-text-h6-weight: var(--ifx-font-weight-semibold);
   --ifx-text-h6-line: var(--ifx-line-height-normal);
   --ifx-text-h6-tracking: var(--ifx-letter-spacing-normal);
@@ -78,7 +80,7 @@
   --ifx-text-body-sm-tracking: var(--ifx-letter-spacing-normal);
 
   /* ── Caption ── */
-  --ifx-text-caption-size: var(--ifx-font-size-sm);
+  --ifx-text-caption-size: var(--ifx-font-size-xs);
   --ifx-text-caption-weight: var(--ifx-font-weight-regular);
   --ifx-text-caption-line: var(--ifx-line-height-normal);
   --ifx-text-caption-tracking: var(--ifx-letter-spacing-normal);
@@ -104,12 +106,21 @@
   --ifx-text-btn-sm-line: var(--ifx-line-height-tight);
 }
 
+@media (min-width: 768px) { /* bp:md */
+  :root {
+    --ifx-text-h1-size: var(--ifx-font-size-4xl);
+    --ifx-text-h2-size: var(--ifx-font-size-3xl);
+    --ifx-text-h3-size: var(--ifx-font-size-2xl);
+    --ifx-text-h4-size: var(--ifx-font-size-xl);
+  }
+}
+
 /* ── Base document ─────────────────────────────────────────────
- * html rem root = 16px (100%) — token rem resolve đúng.
- * KHÔNG gán body-md lên html: sẽ thu nhỏ cả scale rem. */
+ * html rem root = 15px (93.75% của mặc định trình duyệt 16px) — token rem = px/15.
+ * Dùng % để vẫn tôn trọng cỡ chữ người dùng tự đặt trong trình duyệt. */
 html {
   font-family: var(--ifx-font-primary);
-  font-size: 100%;
+  font-size: 93.75%;
   line-height: var(--ifx-line-height-normal);
   letter-spacing: var(--ifx-letter-spacing-normal);
 }
@@ -216,7 +227,7 @@ caption {
   color: var(--ifx-text-muted);
 }
 .ifx-group-label {
-  font-size: var(--ifx-font-size-12);
+  font-size: var(--ifx-font-size-xs);
   font-weight: var(--ifx-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: var(--ifx-letter-spacing-caps);

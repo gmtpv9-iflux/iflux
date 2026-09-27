@@ -6,7 +6,7 @@
 .ifx-timeline > li + li { margin-top: 0; }
 .ifx-timeline-item {
   position: relative;
-  padding-left: var(--ifx-space-32);
+  padding-left: var(--ifx-space-30);
   padding-bottom: var(--ifx-space-20);
 }
 .ifx-timeline-item:last-child { padding-bottom: 0; }

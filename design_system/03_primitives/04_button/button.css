@@ -79,8 +79,8 @@
 .ifx-btn-ghost:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
 
 .ifx-btn-icon {
-  width: var(--ifx-space-32);
-  height: var(--ifx-space-32);
+  width: var(--ifx-space-30);
+  height: var(--ifx-space-30);
   padding: 0;
   background: transparent;
   color: var(--ifx-text-secondary);
