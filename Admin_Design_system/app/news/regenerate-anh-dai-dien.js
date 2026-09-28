@@ -28,8 +28,15 @@
     return h;
   }
 
-  function request(path) {
-    return fetch(apiBase() + path, { headers: authHeaders() }).then(function (res) {
+  function request(path, opts) {
+    opts = opts || {};
+    var headers = authHeaders();
+    var init = { method: opts.method || 'GET', headers: headers };
+    if (opts.body != null) {
+      headers['Content-Type'] = 'application/json';
+      init.body = JSON.stringify(opts.body);
+    }
+    return fetch(apiBase() + path, init).then(function (res) {
       return res.text().then(function (text) {
         var data = {};
         if (text) {
@@ -71,9 +78,82 @@
       });
   }
 
+  /* Quét & tạo bù — gọi lặp POST /admin/media/cover-profiles/backfill tới khi processed=0
+     hoặc bị bấm Dừng. Mỗi lần gọi xử lý tối đa 20 bài (giới hạn phía server để 1 request
+     không chạy quá lâu); vòng lặp ở đây tự gọi lại cho tới khi hết việc. */
+  var runState = { stopping: false, running: false, totalUpdated: 0, totalSkipped: 0, totalFailed: 0, totalProcessed: 0 };
+
+  function renderRunStatus(text, tone) {
+    var el = document.getElementById('rgp-run-status');
+    var color = tone === 'danger' ? 'var(--ix-chip-danger,#e5484d)' : (tone === 'success' ? 'var(--ix-success,#2dd4bf)' : 'var(--ix-text-muted)');
+    el.innerHTML = '<div style="font-size:13px;color:' + color + '">' + text + '</div>';
+  }
+
+  function runStep() {
+    if (runState.stopping) {
+      renderRunStatus(
+        'Đã dừng — đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' tạo bù thành công, ' +
+          runState.totalSkipped + ' bỏ qua, ' + runState.totalFailed + ' lỗi).'
+      );
+      return finishRun();
+    }
+    renderRunStatus(
+      'Đang chạy… đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' thành công, ' +
+        runState.totalSkipped + ' bỏ qua, ' + runState.totalFailed + ' lỗi).'
+    );
+    request('/admin/media/cover-profiles/backfill', { method: 'POST', body: { limit: 20 } })
+      .then(function (r) {
+        runState.totalProcessed += r.processed || 0;
+        runState.totalUpdated += r.updated || 0;
+        runState.totalSkipped += r.skippedNoAsset || 0;
+        runState.totalFailed += r.failed || 0;
+        if (!r.processed || !r.hasMore) {
+          renderRunStatus(
+            'Xong — đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' tạo bù thành công, ' +
+              runState.totalSkipped + ' bỏ qua vì không tìm thấy ảnh gốc, ' + runState.totalFailed + ' lỗi).' +
+              (runState.totalProcessed === 0 ? ' Mọi bài viết đều đã đủ 5 bản.' : ''),
+            runState.totalFailed ? 'danger' : 'success'
+          );
+          return finishRun();
+        }
+        runStep();
+      })
+      .catch(function (err) {
+        renderRunStatus('Lỗi: ' + esc(err.message) + ' (đã xử lý ' + runState.totalProcessed + ' bài trước khi lỗi).', 'danger');
+        finishRun();
+      });
+  }
+
+  /* .ix-btn đặt display: inline-flex không kèm guard [hidden] — thuộc tính hidden bị
+     class ghi đè (element vẫn hiện). Ẩn/hiện bằng style.display trực tiếp cho chắc. */
+  function setStopVisible(visible) {
+    document.getElementById('rgp-stop').style.display = visible ? '' : 'none';
+  }
+
+  function finishRun() {
+    runState.running = false;
+    document.getElementById('rgp-run').disabled = false;
+    setStopVisible(false);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     load();
     var reload = document.getElementById('rgp-reload');
     if (reload) reload.addEventListener('click', load);
+
+    var run = document.getElementById('rgp-run');
+    var stop = document.getElementById('rgp-stop');
+    if (run) {
+      run.addEventListener('click', function () {
+        if (runState.running) return;
+        runState = { stopping: false, running: true, totalUpdated: 0, totalSkipped: 0, totalFailed: 0, totalProcessed: 0 };
+        run.disabled = true;
+        setStopVisible(true);
+        runStep();
+      });
+    }
+    if (stop) {
+      stop.addEventListener('click', function () { runState.stopping = true; });
+    }
   });
 })();

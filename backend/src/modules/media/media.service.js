@@ -300,6 +300,95 @@ function pathJoin() {
   return Array.prototype.slice.call(arguments).join('/').replace(/\/+/g, '/');
 }
 
+/**
+ * Tạo lại (hoặc lần đầu tạo) 5 bản kích thước cover cho MỘT ảnh đã lưu sẵn — đọc lại bản
+ * 'delivery' từ đĩa, không tải lại từ nguồn ngoài. Idempotent: bản role đã có thì ghi đè
+ * (cùng đường dẫn file, UPDATE row); role chưa có thì tạo mới (INSERT row).
+ * Dùng cho backfill (ảnh cover cũ, nhập trước khi có tính năng 5 bản) và cho phép chạy lại an toàn.
+ */
+async function regenerateCoverVariants(config, assetId) {
+  const asset = await getAsset(assetId);
+  if (!asset) throw AppError.notFound('Không tìm thấy ảnh');
+  const delivery = (asset.variants || []).find(function (v) { return v.role === 'delivery'; });
+  if (!delivery) throw AppError.badRequest('MEDIA_VERIFY', 'Ảnh không có bản delivery để tạo bản cover');
+
+  const buf = await fs.promises.readFile(storage.absolutePath(config, delivery.storage_key));
+  const coverVariants = await processImg.generateCoverVariants(buf);
+  const dir = storage.assetDir(config, assetId, asset.created_at);
+  const byRole = {};
+  (asset.variants || []).forEach(function (v) { if (v.role !== 'delivery') byRole[v.role] = v; });
+
+  const out = {};
+  for (let i = 0; i < coverVariants.length; i++) {
+    const cv = coverVariants[i];
+    const key = pathJoin(dir, asset.filename + '-' + cv.role + '.' + cv.ext);
+    const w = await storage.writeVariantFile(config, key, cv.buffer);
+    const prev = byRole[cv.role];
+    if (prev) {
+      await query(
+        `UPDATE media_variants SET format=$2, width=$3, height=$4, byte_size=$5, storage_key=$6, public_url=$7 WHERE id=$1`,
+        [prev.id, cv.ext, cv.width, cv.height, cv.buffer.length, w.storageKey, w.publicUrl]
+      );
+    } else {
+      await query(
+        `INSERT INTO media_variants (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [newId('mvar'), assetId, cv.role, cv.ext, cv.width, cv.height, cv.buffer.length, w.storageKey, w.publicUrl]
+      );
+    }
+    out[cv.role] = w.publicUrl;
+  }
+  return out;
+}
+
+var COVER_VARIANT_ROLES = ['cover_thumb', 'cover_card', 'cover_hero', 'cover_detail', 'cover_social'];
+
+/**
+ * Quét bài viết có ảnh cover NỘI BỘ (đã nhập trước đây) nhưng chưa đủ 5 bản kích thước,
+ * tạo bù rồi ghi lại vào payload.cover.variants — chỉ vá đúng field đó (jsonb_set), không
+ * chạy lại toàn bộ pipeline lưu bài (validate danh mục, slug…) như updateArticle.
+ * Trả { processed, updated, skippedNoAsset, failed, hasMore } — gọi lặp tới khi processed=0.
+ */
+async function backfillCoverVariants(config, limit) {
+  const n = Math.max(1, Math.min(Number(limit) || 20, 100));
+  const res = await query(
+    `SELECT id, payload->'cover'->>'url' AS cover_url
+     FROM news_posts
+     WHERE COALESCE(payload->'cover'->>'url', '') <> ''
+       AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)
+     ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC
+     LIMIT $2`,
+    [COVER_VARIANT_ROLES, n]
+  );
+
+  let updated = 0;
+  let skippedNoAsset = 0;
+  let failed = 0;
+  for (let i = 0; i < res.rows.length; i++) {
+    const row = res.rows[i];
+    try {
+      const found = await query(`SELECT id FROM media_assets WHERE public_url = $1 LIMIT 1`, [row.cover_url]);
+      const assetId = found.rows[0] && found.rows[0].id;
+      if (!assetId) { skippedNoAsset += 1; continue; }
+      const variants = await regenerateCoverVariants(config, assetId);
+      await query(
+        `UPDATE news_posts SET payload = jsonb_set(payload, '{cover,variants}', $2::jsonb, true) WHERE id = $1`,
+        [row.id, JSON.stringify(variants)]
+      );
+      updated += 1;
+    } catch (e) {
+      failed += 1;
+    }
+  }
+  return {
+    processed: res.rows.length,
+    updated: updated,
+    skippedNoAsset: skippedNoAsset,
+    failed: failed,
+    hasMore: res.rows.length === n
+  };
+}
+
 async function createJob(kind, articleId, actorId) {
   const id = newId('mjob');
   await query(
@@ -411,6 +500,8 @@ module.exports = {
   updateAlt,
   createAssetFromBuffer,
   findByFingerprint,
+  regenerateCoverVariants,
+  backfillCoverVariants,
   resolveSocialCompatibleImage,
   createJob,
   finishJob,

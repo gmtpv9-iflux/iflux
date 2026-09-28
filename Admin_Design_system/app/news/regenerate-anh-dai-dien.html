@@ -58,6 +58,25 @@
             </table>
           </div>
         </div>
+
+        <div class="ix-card" style="margin-top:24px">
+          <div class="ix-table-toolbar">
+            <div>
+              <div style="font-weight:600">Tạo bù cho bài viết cũ</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-top:2px">
+                Bài viết nhập trước khi có tính năng này chỉ có ảnh gốc. Bấm để quét và tạo bù 5 bản —
+                đọc lại ảnh đã lưu, không tải lại từ nguồn ngoài. Có thể bấm lại; bài đã đủ 5 bản sẽ tự bỏ qua.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-left:auto;flex-shrink:0">
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="rgp-run"><i class="ti ti-player-play"></i> Chạy Regenerate</button>
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="rgp-stop" style="display:none">Dừng</button>
+            </div>
+          </div>
+          <div style="padding:16px 20px" id="rgp-run-status">
+            <div style="font-size:13px;color:var(--ix-text-muted)">Chưa chạy lần nào.</div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -72,6 +91,6 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=r20260929a" data-ix-rbac=""></script>
-<script src="/Admin_Design_system/app/news/regenerate-anh-dai-dien.js?v=coverRegen20260928"></script>
+<script src="/Admin_Design_system/app/news/regenerate-anh-dai-dien.js?v=r20260929b"></script>
 </body>
 </html>
