@@ -49,8 +49,10 @@ function createWidgetPublishRouter({ config, auth }) {
       }
       const embed = req.query.embed !== 'false';
       const payload = await service.getPagePublishedForRuntime(pageKey, { embed: embed });
+      /* Trang chưa đặt widget nào (chưa xuất bản bố cục) là trạng thái bình thường, không phải lỗi:
+         trả bố cục rỗng để User Web không ghi lỗi 404 vào console. */
       if (!payload) {
-        return res.status(404).json({ ok: false, error: 'Chưa có PagePublished cho trang này' });
+        return res.json({ ok: true, data: { pageKey: pageKey, published: false, placements: [], sections: [] } });
       }
       return sendWithEtag(req, res, payload);
     } catch (err) {
