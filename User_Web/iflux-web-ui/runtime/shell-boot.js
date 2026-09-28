@@ -228,7 +228,7 @@ export async function bootShell(pageKey, opts) {
     { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=abhE620260727' },
     { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=abhE620260727' },
     { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=feedCard20260723c' },
-    { global: 'IfluxWidgetShell', src: ASSET + 'iflux-widget-shell.js?v=entShell20260720' },
+    { global: 'IfluxWidgetShell', src: ASSET + 'iflux-widget-shell.js?v=oneOverlay20260928' },
     { global: 'IfluxBlockPaywall', src: ASSET + 'iflux-block-paywall.js?v=entShell20260720' },
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=abhE620260727' },
     { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=softNavP1_20260810' }

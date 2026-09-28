@@ -369,12 +369,6 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   [data-ifx-account-profile][data-ifx-account-view="profile"] .ix-profile-sidebar {
     display: block;
   }
-  [data-ifx-account-profile] .ix-profile-grid {
-    min-width: 0;
-  }
-  [data-ifx-account-profile] .ix-profile-grid > div {
-    min-width: 0;
-  }
   [data-ifx-account-profile] .ix-tab-content.active {
     min-width: 0;
   }
@@ -798,3 +792,6 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
     grid-template-columns: 1fr;
   }
 }
+
+/* Thẻ hồ sơ nằm trong Sidebar của khung chung — theo bề rộng Sidebar (3/12). */
+.uw-page-sidebar-content > .ix-profile-sidebar { width: auto; }

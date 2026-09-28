@@ -93,6 +93,17 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     ov.hidden = false;
   }
 
+  /* Chỉ một lớp phủ: vùng khoá nằm trong vùng khoá khác (vd widget trong tab đã khoá) → chỉ vùng ngoài cùng hiện. */
+  function syncOverlays() {
+    document.querySelectorAll('.ifx-widget-locked, [data-ifx-widget-overlay]:not([hidden])').forEach(function (el) {
+      var host = el.hasAttribute('data-ifx-widget-overlay') ? el.parentElement : el;
+      if (!host) return;
+      var locked = host.classList.contains('ifx-widget-locked');
+      var outer = host.parentElement && host.parentElement.closest('.ifx-widget-locked');
+      renderOverlay(host, locked && !outer);
+    });
+  }
+
   function setLocked(host, locked) {
     if (!host) return;
     if (getComputedStyle(host).position === 'static') {
@@ -102,7 +113,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     }
     host.classList.toggle('ifx-widget-locked', !!locked);
     host.setAttribute('data-ifx-ent-access', locked ? 'teaser' : 'full');
-    renderOverlay(host, !!locked);
+    syncOverlays();
     var tpl = global.IfluxBlockTemplates;
     if (tpl) {
       if (locked && tpl.maskEntityNames) tpl.maskEntityNames(host);

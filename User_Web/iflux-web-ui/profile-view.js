@@ -26,7 +26,7 @@
   }
 
   function showNotFound() {
-    var grid = document.querySelector('.ix-profile-grid');
+    var grid = document.querySelector('.uw-page-layout');
     if (grid) grid.hidden = true;
     var main = document.querySelector('.ifx-main');
     if (!main) return;

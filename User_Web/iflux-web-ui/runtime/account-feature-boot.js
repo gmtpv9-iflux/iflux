@@ -3,10 +3,11 @@
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
 import { loadScriptsSequential } from './legacy-bridge.js?v=stickyFix20260811';
+import { mountPageWidgets } from './page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var VER = 'accountEarlyTab20260728';
+var VER = 'pageFrame20260928';
 
 /** Own account — tab Affiliate · Thanh toán · Quyền riêng tư · Mật khẩu · sidebar */
 var CORE_SCRIPTS = [
@@ -341,6 +342,9 @@ async function main() {
   }
   await loadScriptsSequential(scripts);
   bootAccountPage();
+  /* Widget Placement trang Tài khoản → host Sidebar / Main của khung chung. */
+  var layout = document.querySelector('.uw-page-layout');
+  if (layout) await mountPageWidgets(layout.parentElement, 'account');
 }
 
 main().catch(function (err) {
