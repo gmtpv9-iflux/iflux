@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Chi tiết ngành (/nganh/:id)
  */
-var VER = '?v=r20260928p';
+var VER = '?v=r20260928q';
 
 export default {
   pageKey: 'sector',

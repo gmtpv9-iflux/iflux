@@ -144,7 +144,7 @@
     }
     setEditMode(false);
     init();
-    if (global.ixToast) ixToast('Đã lưu hồ sơ', 'success');
+    if (global.IfxToast) IfxToast.show('Đã lưu hồ sơ', 'success');
   }
 
   function bindEditChrome() {

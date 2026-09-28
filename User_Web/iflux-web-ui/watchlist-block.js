@@ -200,7 +200,7 @@
         st.deleteFolder(id);
         setActiveFolderId(block, st.DEFAULT_FOLDER_ID);
         refreshAll();
-        if (global.ixToast) ixToast('Đã xóa thư mục', 'success');
+        if (global.IfxToast) IfxToast.show('Đã xóa thư mục', 'success');
         return;
       }
 
@@ -437,9 +437,9 @@
       var folder = store().createSmartFolder(source, sourceId);
       if (block) setActiveFolderId(block, folder.id);
       refreshAll();
-      if (global.ixToast) ixToast('Đã tạo «' + folder.name + '»', 'success');
+      if (global.IfxToast) IfxToast.show('Đã tạo «' + folder.name + '»', 'success');
     } catch (e) {
-      if (global.ixToast) ixToast(e.message, 'warning');
+      if (global.IfxToast) IfxToast.show(e.message, 'warning');
     }
   }
 
@@ -447,7 +447,7 @@
     if (newFolderCtx.step !== 'custom') return;
     var name = document.querySelector('[data-ifx-wl-new-name]').value;
     if (!name || !name.trim()) {
-      if (global.ixToast) ixToast('Nhập tên thư mục', 'warning');
+      if (global.IfxToast) IfxToast.show('Nhập tên thư mục', 'warning');
       return;
     }
     try {
@@ -455,9 +455,9 @@
       if (newFolderCtx.block) setActiveFolderId(newFolderCtx.block, folder.id);
       closeNewFolderModal();
       refreshAll();
-      if (global.ixToast) ixToast('Đã tạo «' + folder.name + '»', 'success');
+      if (global.IfxToast) IfxToast.show('Đã tạo «' + folder.name + '»', 'success');
     } catch (e) {
-      if (global.ixToast) ixToast(e.message, 'warning');
+      if (global.IfxToast) IfxToast.show(e.message, 'warning');
     }
   }
 

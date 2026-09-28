@@ -191,7 +191,6 @@
       var o = ovs[tierKey];
       if (!o || typeof o !== 'object') return false;
       if (o.blocks && Object.keys(o.blocks).some(function (id) { return !!o.blocks[id]; })) return true;
-      if (o.pages && Object.keys(o.pages).some(function (id) { return !!o.pages[id]; })) return true;
       return false;
     });
   }
@@ -247,7 +246,7 @@
     localTier = localTier || {};
     remoteTier = remoteTier || {};
     var merged = Object.assign({}, localTier, remoteTier);
-    ['pages', 'blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
+    ['blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
       merged[k] = Object.assign({}, localTier[k] || {}, remoteTier[k] || {});
     });
     return merged;
@@ -367,7 +366,7 @@
     if (!override) return JSON.parse(JSON.stringify(base));
     var p = JSON.parse(JSON.stringify(base));
     Object.keys(override).forEach(function (k) {
-      if (k === 'blocks' || k === 'pages' || k === 'limits' || k === 'ent' || k === 'actions') {
+      if (k === 'blocks' || k === 'limits' || k === 'ent' || k === 'actions') {
         p[k] = Object.assign({}, p[k] || {}, override[k] || {});
       } else {
         p[k] = override[k];
@@ -493,12 +492,11 @@
         var data = tierOverrides[tier] || {};
         var prev = store.overrides[tier] || {};
         var merged = Object.assign({}, prev, data);
-        ['pages', 'blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
+        ['blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
           if (data[k]) merged[k] = Object.assign({}, prev[k] || {}, data[k]);
         });
         merged.tier = tier;
         merged.id = tier;
-        if (tier === 'guest' && merged.pages) merged.pages.dashboard = false;
         store.overrides[tier] = merged;
       });
       store.updatedAt = Date.now();
@@ -543,7 +541,7 @@
         if (data.ent && !Object.keys(data.ent).length) delete data.ent;
         var prev = store.overrides[planKey] || {};
         var merged = Object.assign({}, prev, data);
-        ['pages', 'blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
+        ['blocks', 'actions', 'limits', 'ent'].forEach(function (k) {
           if (data[k]) merged[k] = Object.assign({}, prev[k] || {}, data[k]);
         });
         merged.tier = planKey;
@@ -593,7 +591,7 @@
         status: document.getElementById('field-status').value,
         badge: document.getElementById('field-badge').value,
         tags: document.getElementById('field-tags').value.trim(),
-        ent: {}, blocks: {}, limits: {}, pages: {}, actions: {}
+        ent: {}, blocks: {}, limits: {}, actions: {}
       };
       return data;
     },

@@ -95,7 +95,7 @@
         }
       })
       .catch(function () {
-        if (global.ixToast) ixToast('Không đăng nhập được bằng Google. Vui lòng thử lại.', 'danger');
+        if (global.IfxToast) IfxToast.show('Không đăng nhập được bằng Google. Vui lòng thử lại.', 'danger');
       });
   }
 

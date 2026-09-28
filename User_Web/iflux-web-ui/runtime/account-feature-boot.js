@@ -2,8 +2,8 @@
  * Phase A — Feature Tài khoản (sau App Shell Entry).
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928n';
-import { mountPageWidgets } from './page-widgets.js?v=r20260928n';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
+import { mountPageWidgets } from './page-widgets.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -22,17 +22,17 @@ var CORE_SCRIPTS = [
   ASSET + 'profile-bind.js?v=' + VER,
   ASSET + 'loyalty-affiliate-store.js?v=' + VER,
   ASSET + 'affiliate-payout-store.js?v=affP3_20260728',
-  ASSET + 'affiliate-payout-ui.js?v=affP3_20260728',
+  ASSET + 'affiliate-payout-ui.js?v=r20260928q',
   ASSET + 'profile-affiliate.js?v=' + VER,
   ASSET + 'subscription-orders-store.js?v=r20260928n',
   ASSET + 'profile-payment-store.js',
-  ASSET + 'profile-payment-page.js?v=ownP05_20260728',
+  ASSET + 'profile-payment-page.js?v=r20260928q',
   ASSET + 'profile-privacy-store.js?v=chatGate20260708',
   ASSET + 'notification-preference-store.js?v=notifD1rev_20260728',
-  ASSET + 'profile-privacy-page.js?v=notifPrefUi_20260728',
+  ASSET + 'profile-privacy-page.js?v=r20260928q',
   ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728',
   ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728',
-  ASSET + 'profile-security-page.js?v=secRestore_20260728'
+  ASSET + 'profile-security-page.js?v=r20260928q'
 ];
 
 /** Public profile (?user=) — follow · block · chat gate · timeline */

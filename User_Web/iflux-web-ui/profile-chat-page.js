@@ -478,13 +478,13 @@
     if (!uid || !peer) return;
 
     if (global.IfluxProfileBlockStore && IfluxProfileBlockStore.isBlocked(uid, peerId)) {
-      if (global.ixToast) ixToast('Bạn đã chặn người dùng này', 'warning');
+      if (global.IfxToast) IfxToast.show('Bạn đã chặn người dùng này', 'warning');
       return;
     }
 
     var gate = canMessage(uid, peerId);
     if (!gate.ok) {
-      if (global.ixToast) ixToast(gate.message, 'warning');
+      if (global.IfxToast) IfxToast.show(gate.message, 'warning');
       return;
     }
 
@@ -547,7 +547,7 @@
     if (!uid || !msg || !global.IfluxProfileChatStore) return;
     var offline = (typeof navigator !== 'undefined' && navigator.onLine === false);
     if (offline) {
-      if (global.ixToast) ixToast('Vẫn đang ngoại tuyến — chưa gửi được', 'warning');
+      if (global.IfxToast) IfxToast.show('Vẫn đang ngoại tuyến — chưa gửi được', 'warning');
       return;
     }
     IfluxProfileChatStore.updateMessageStatus(uid, peerId, msg.id, 'sending');
@@ -567,7 +567,7 @@
 
     var gate = canMessage(uid, peer.id);
     if (!gate.ok) {
-      if (global.ixToast) ixToast(gate.message, 'warning');
+      if (global.IfxToast) IfxToast.show(gate.message, 'warning');
       return;
     }
 

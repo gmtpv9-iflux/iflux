@@ -91,19 +91,19 @@
       var file = input.files && input.files[0];
       if (!file) return;
       if (!file.type || file.type.indexOf('image/') !== 0) {
-        if (global.ixToast) ixToast('Vui lòng chọn file ảnh', 'warning');
+        if (global.IfxToast) IfxToast.show('Vui lòng chọn file ảnh', 'warning');
         input.value = '';
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        if (global.ixToast) ixToast('Ảnh tối đa 2MB', 'warning');
+        if (global.IfxToast) IfxToast.show('Ảnh tối đa 2MB', 'warning');
         input.value = '';
         return;
       }
       var reader = new FileReader();
       reader.onload = function () {
         saveAvatarDataUrl(reader.result);
-        if (global.ixToast) ixToast('Đã cập nhật ảnh đại diện', 'success');
+        if (global.IfxToast) IfxToast.show('Đã cập nhật ảnh đại diện', 'success');
         input.value = '';
       };
       reader.readAsDataURL(file);

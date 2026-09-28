@@ -399,9 +399,9 @@
       renderSrPanel();
       renderExistingList();
       refreshAll();
-      if (global.ixToast) ixToast('Đã thêm cảnh báo Hỗ trợ/Kháng cự', 'success');
+      if (global.IfxToast) IfxToast.show('Đã thêm cảnh báo Hỗ trợ/Kháng cự', 'success');
     } catch (err) {
-      if (global.ixToast) ixToast(err.message, 'warning');
+      if (global.IfxToast) IfxToast.show(err.message, 'warning');
     }
   }
 
@@ -418,9 +418,9 @@
       renderRankPanel();
       renderExistingList();
       refreshAll();
-      if (global.ixToast) ixToast('Đã thêm cảnh báo thứ hạng', 'success');
+      if (global.IfxToast) IfxToast.show('Đã thêm cảnh báo thứ hạng', 'success');
     } catch (err) {
-      if (global.ixToast) ixToast(err.message, 'warning');
+      if (global.IfxToast) IfxToast.show(err.message, 'warning');
     }
   }
 
@@ -445,10 +445,10 @@
         renderRankPanel();
         renderSrPanel();
         refreshAll();
-        if (global.ixToast) ixToast('Đã xóa cảnh báo', 'info');
+        if (global.IfxToast) IfxToast.show('Đã xóa cảnh báo', 'info');
       }
     } catch (err) {
-      if (global.ixToast) ixToast(err.message, 'warning');
+      if (global.IfxToast) IfxToast.show(err.message, 'warning');
     }
   }
 

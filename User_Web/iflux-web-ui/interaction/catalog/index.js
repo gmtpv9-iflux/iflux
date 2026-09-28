@@ -126,12 +126,12 @@
   function copyShareUrl(url) {
     url = String(url || '').trim();
     if (!url) {
-      if (global.ixToast) ixToast('Không có link chia sẻ', 'warning');
+      if (global.IfxToast) IfxToast.show('Không có link chia sẻ', 'warning');
       return false;
     }
     function toast(ok) {
-      if (global.ixToast) {
-        ixToast(ok ? 'Đã sao chép link chia sẻ' : 'Không sao chép được — thử chọn và copy thủ công', ok ? 'success' : 'warning');
+      if (global.IfxToast) {
+        IfxToast.show(ok ? 'Đã sao chép link chia sẻ' : 'Không sao chép được — thử chọn và copy thủ công', ok ? 'success' : 'warning');
       }
       return ok;
     }
@@ -186,7 +186,7 @@
     var r = perm() ? perm().resolve({ action: 'share_url', target: target }) : 'Allow';
     if (r === 'LoginRequired') {
       if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
-      else if (global.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
+      else if (global.IfxToast) IfxToast.show('Đăng nhập để chia sẻ link của bạn.', 'warning');
       return;
     }
     if (r !== 'Allow') return;
@@ -194,7 +194,7 @@
     var Share = global.IfluxShareAction || global.IfluxInsightShare;
     var canonical = resolveCommunityCanonical(target);
     if (!canonical) {
-      if (global.ixToast) ixToast('Không xác định được link bài viết', 'warning');
+      if (global.IfxToast) IfxToast.show('Không xác định được link bài viết', 'warning');
       return;
     }
 
@@ -291,7 +291,7 @@
         if (act === 'like') {
           var pr = perm() ? perm().resolve({ action: 'like', target: target }) : 'LoginRequired';
           if (pr !== 'Allow') {
-            if (global.ixToast) ixToast('Đăng nhập để thích', 'warning');
+            if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
             return;
           }
           /* RC-IA-01: Summary like không init Interactive Store — runMutation đủ */
@@ -305,7 +305,7 @@
                 }));
               } catch (e) { /* ignore */ }
             }).catch(function (err) {
-              if (global.ixToast) ixToast((err && err.message) || 'Không thích được', 'warning');
+              if (global.IfxToast) IfxToast.show((err && err.message) || 'Không thích được', 'warning');
             });
           }
         }
@@ -357,7 +357,7 @@
       var body = (root.querySelector('[data-ifx-ix-body]') || {}).value || '';
       var pr = perm() ? perm().resolve({ action: 'comment', target: ctx.target }) : 'LoginRequired';
       if (pr !== 'Allow') {
-        if (global.ixToast) ixToast('Đăng nhập để bình luận', 'warning');
+        if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
         return;
       }
       if (!store() || !store().addComment) return;
@@ -368,7 +368,7 @@
         if (thread) renderThread(root, thread, ctx);
         if (store().getProjection) updateSummaryCounts(root, store().getProjection(ctx.target));
       }).catch(function (err) {
-        if (global.ixToast) ixToast((err && err.message) || 'Không gửi được', 'warning');
+        if (global.IfxToast) IfxToast.show((err && err.message) || 'Không gửi được', 'warning');
       });
     });
   }

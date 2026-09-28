@@ -219,23 +219,23 @@ function showRegFieldError(fieldId, message) {
 document.getElementById('btn-register').addEventListener('click', function () {
   clearRegFieldErrors();
   if (!document.getElementById('reg-terms').checked) {
-    ixToast('Vui lòng đồng ý điều khoản', 'warning');
+    IfxToast.show('Vui lòng đồng ý điều khoản', 'warning');
     return;
   }
   var name = document.getElementById('reg-name').value.trim();
-  if (!name) { ixToast('Nhập họ tên', 'warning'); return; }
+  if (!name) { IfxToast.show('Nhập họ tên', 'warning'); return; }
 
   var draftPreview = collectRegistrationDraft();
   if (draftPreview.registration_mode === 'phone' && !draftPreview.phone) {
-    ixToast('Nhập số điện thoại', 'warning');
+    IfxToast.show('Nhập số điện thoại', 'warning');
     return;
   }
   if (draftPreview.registration_mode === 'email' && !draftPreview.email) {
-    ixToast('Nhập email', 'warning');
+    IfxToast.show('Nhập email', 'warning');
     return;
   }
   if (!draftPreview.password) {
-    ixToast('Nhập mật khẩu', 'warning');
+    IfxToast.show('Nhập mật khẩu', 'warning');
     return;
   }
 
@@ -249,7 +249,7 @@ document.getElementById('btn-register').addEventListener('click', function () {
     };
     validateFn(refCode).then(function (check) {
       if (!check.valid) {
-        ixToast('Mã giới thiệu không hợp lệ', 'warning');
+        IfxToast.show('Mã giới thiệu không hợp lệ', 'warning');
         return;
       }
       submitRegistration(refCode, refLocked);
@@ -273,7 +273,7 @@ function submitRegistration(refCode, refLocked) {
       registration_mode: draft.registration_mode
     }).then(function () {
       IfluxAuth.clearPendingVerification();
-      ixToast('Đăng ký thành công!', 'success');
+      IfxToast.show('Đăng ký thành công!', 'success');
       setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
     }).catch(function (e) {
       if (e.code === 'VERIFY_EMAIL') {
@@ -297,7 +297,7 @@ function submitRegistration(refCode, refLocked) {
         if (/email/i.test(e.message)) showRegFieldError(draft.registration_mode === 'phone' ? 'reg-email-optional' : 'reg-email', e.message);
         else if (/điện thoại|phone/i.test(e.message)) showRegFieldError(draft.registration_mode === 'phone' ? 'reg-phone-primary' : 'reg-phone', e.message);
       }
-      ixToast(e.message, 'danger');
+      IfxToast.show(e.message, 'danger');
     });
   } catch (e) {
     if (e.code === 'VERIFY_EMAIL') {
@@ -319,7 +319,7 @@ function submitRegistration(refCode, refLocked) {
       };
       showRegFieldError(fieldMap2[e.field] || 'reg-email', e.message);
     } else {
-      ixToast(e.message, 'danger');
+      IfxToast.show(e.message, 'danger');
     }
   }
 }
@@ -339,11 +339,11 @@ function enableAuthSocialButtons() {
 
 var socialInit = IfluxAuthSocial.initPage({
   onSuccess: function (provider) {
-    ixToast('Đăng ký ' + providerLabel(provider) + ' thành công!', 'success');
+    IfxToast.show('Đăng ký ' + providerLabel(provider) + ' thành công!', 'success');
     /* Redirect: IfluxAuthRedirectPolicy via SocialLoginUseCase (WP4) */
   },
   onError: function (provider, err) {
-    ixToast(err.message || 'Đăng nhập thất bại.', 'danger');
+    IfxToast.show(err.message || 'Đăng nhập thất bại.', 'danger');
   }
 });
 if (socialInit && typeof socialInit.then === 'function') {

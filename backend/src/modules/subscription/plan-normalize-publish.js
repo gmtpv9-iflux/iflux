@@ -8,16 +8,6 @@
 
 const TIER_ORDER = { guest: 0, free: 1, premium: 2, elite: 3 };
 
-const PAGES = [
-  { key: 'market', guestDefault: true, guestNever: false },
-  { key: 'flow', guestDefault: true, guestNever: false },
-  { key: 'news', guestDefault: true, guestNever: false },
-  { key: 'pricing', guestDefault: true, guestNever: false },
-  { key: 'faq', guestDefault: true, guestNever: false },
-  { key: 'loyalty', guestDefault: true, guestNever: false },
-  { key: 'dashboard', guestDefault: false, guestNever: true }
-];
-
 const STATIC_PAGE_BLOCKS = [
   { id: 'BLK-COM-NEWS', minTier: 'guest', page: 'news' },
   { id: 'BLK-LOY-INTRO', minTier: 'free', page: 'loyalty' },
@@ -134,17 +124,6 @@ function syncPageBlocksFromWidgets(plan, wl) {
   return plan;
 }
 
-function defaultPagesForTier(tier) {
-  tier = String(tier || 'guest').toLowerCase();
-  const out = {};
-  PAGES.forEach((p) => {
-    if (tier === 'guest') out[p.key] = p.guestNever ? false : !!p.guestDefault;
-    else if (tier === 'free') out[p.key] = p.key !== 'loyalty';
-    else out[p.key] = true;
-  });
-  return out;
-}
-
 function defaultBlocksForTier(tier, wl) {
   tier = String(tier || 'guest').toLowerCase();
   const blocks = buildBlocksCatalog(wl);
@@ -231,24 +210,6 @@ function syncLegacyEntFromActions(plan) {
   plan.ent.flowExclusive = op('flowExclusive', 'view');
 }
 
-function applyPageBlockDefaults(plan, wl) {
-  if (!plan || !plan.pages || !plan.blocks) return plan;
-  const tier = String(plan.tier || plan.id || 'guest').toLowerCase();
-  const blocks = buildBlocksCatalog(wl);
-  PAGES.forEach((page) => {
-    if (!plan.pages[page.key]) return;
-    const pageWidgets = wl.widgetsForPage(page.key);
-    if (!pageWidgets.length) return;
-    if (pageWidgets.some((wid) => !!plan.blocks[wid])) return;
-    pageWidgets.forEach((wid) => {
-      const b = blocks.find((x) => x.id === wid);
-      if (b && tierRank(tier) >= tierRank(b.minTier)) plan.blocks[wid] = true;
-    });
-  });
-  syncPageBlocksFromWidgets(plan, wl);
-  return plan;
-}
-
 function migratePlanWidgetAliases(plan, wl) {
   if (!plan || !plan.blocks) return plan;
   Object.keys(plan.blocks).forEach((id) => {
@@ -266,8 +227,8 @@ function normalizePlan(plan, wl) {
   plan = JSON.parse(JSON.stringify(plan));
   const tier = plan.tier || plan.id || 'free';
 
-  plan.pages = Object.assign(defaultPagesForTier(tier), plan.pages || {});
-  if (tier === 'guest') plan.pages.dashboard = false;
+  /* Không còn quyền theo trang: khách xem mọi trang; quyền chỉ ở widget (Phân quyền sử dụng) + hành động. */
+  delete plan.pages;
 
   plan.ent = Object.assign(defaultCapabilitiesForTier(tier), plan.ent || {});
   const leg = legacyEntToFeatures(plan.ent);
@@ -281,7 +242,6 @@ function normalizePlan(plan, wl) {
   plan.actions = Object.assign(defaultActionsForTier(tier), plan.actions || {});
   plan.limits = Object.assign(defaultLimitsForTier(tier), plan.limits || {});
 
-  applyPageBlockDefaults(plan, wl);
   syncPageBlocksFromWidgets(plan, wl);
   syncLegacyEntFromActions(plan);
 
@@ -298,7 +258,7 @@ function mergePlan(base, override) {
   if (!override) return JSON.parse(JSON.stringify(base));
   const p = JSON.parse(JSON.stringify(base));
   Object.keys(override).forEach((k) => {
-    if (k === 'blocks' || k === 'pages' || k === 'limits' || k === 'ent' || k === 'actions') {
+    if (k === 'blocks' || k === 'limits' || k === 'ent' || k === 'actions') {
       p[k] = Object.assign({}, p[k] || {}, override[k] || {});
     } else {
       p[k] = override[k];

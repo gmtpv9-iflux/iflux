@@ -367,7 +367,7 @@
         resetComposerTags(form, feedKey);
         refreshFeed(root, feedKey, true);
       } catch (err) {
-        if (global.ixToast) ixToast(err.message || 'Không gửi được', 'warning');
+        if (global.IfxToast) IfxToast.show(err.message || 'Không gửi được', 'warning');
       }
     });
   }

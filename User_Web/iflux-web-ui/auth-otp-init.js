@@ -82,19 +82,19 @@ startResendCooldown(60);
 document.getElementById('btn-resend').addEventListener('click', function () {
   IfluxAuth.resendVerificationEmail(pendingEmail)
     .then(function (res) {
-      ixToast(res.message || 'Đã gửi lại mã xác thực', 'success');
+      IfxToast.show(res.message || 'Đã gửi lại mã xác thực', 'success');
       startResendCooldown(60);
       otpWidget.focus();
     })
     .catch(function (e) {
-      ixToast(e.message, 'danger');
+      IfxToast.show(e.message, 'danger');
     });
 });
 
 function submitVerify() {
   var code = otpWidget.getCode().trim();
   if (code.length !== 6) {
-    ixToast('Nhập mã OTP 6 số.', 'warning');
+    IfxToast.show('Nhập mã OTP 6 số.', 'warning');
     otpWidget.focus();
     return;
   }
@@ -106,7 +106,7 @@ function submitVerify() {
     phone: profileSource.phone || ''
   })
     .then(function () {
-      ixToast('Xác thực thành công!', 'success');
+      IfxToast.show('Xác thực thành công!', 'success');
       location.replace(
         (IfluxAuth.appHomePath && IfluxAuth.appHomePath()) ||
         (window.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true }) : '/tin-tuc')
@@ -114,7 +114,7 @@ function submitVerify() {
     })
     .catch(function (e) {
       if (btn) btn.disabled = false;
-      ixToast((e && e.message) || 'Không xác thực được. Thử lại.', 'danger');
+      IfxToast.show((e && e.message) || 'Không xác thực được. Thử lại.', 'danger');
       otpWidget.focus();
     });
 }

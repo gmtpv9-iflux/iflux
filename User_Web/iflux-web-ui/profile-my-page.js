@@ -147,7 +147,7 @@
           desc: 'Đã lưu phương thức thanh toán & thông tin nhận hoa hồng.'
         });
       }
-      if (global.ixToast) ixToast('Đã lưu tài khoản thanh toán', 'success');
+      if (global.IfxToast) IfxToast.show('Đã lưu tài khoản thanh toán', 'success');
     });
   }
 

@@ -182,7 +182,7 @@
         atMax = !IfluxPlansCatalog.hasUpgradePath(tier);
       }
       if (atMax) {
-        if (window.ixToast) ixToast('Bạn đang dùng gói cao nhất.', 'info');
+        if (window.IfxToast) IfxToast.show('Bạn đang dùng gói cao nhất.', 'info');
         return;
       }
     }
@@ -1623,7 +1623,7 @@
         e.preventDefault();
         e.stopPropagation();
         if (IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
-        else if (window.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
+        else if (window.IfxToast) IfxToast.show('Đăng nhập để chia sẻ link của bạn.', 'warning');
         return;
       }
       if (window.IfluxShareAction || window.IfluxInsightShare) return;

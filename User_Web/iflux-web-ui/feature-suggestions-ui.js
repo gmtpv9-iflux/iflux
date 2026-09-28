@@ -15,7 +15,7 @@
   }
 
   function toast(msg, type) {
-    if (typeof global.ixToast === 'function') global.ixToast(msg, type || 'primary');
+    if (typeof global.IfxToast === 'function') global.IfxToast.show(msg, type || 'primary');
   }
 
   function headers() {

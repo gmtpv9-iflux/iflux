@@ -35,7 +35,6 @@ var manifest = {
   requiresDefinition: true,
   requiresAPI: true,
   modules: [
-    m('iflux-admin-ui', 'js', ADMIN + 'iflux-admin-ui.js', null),
     m('user-data-sync', 'js', ASSET + 'iflux-user-data-sync.js?v=r20260928n', 'IfluxUserDataSync'),
     m('profile-users-store', 'store', ASSET + 'profile-users-store.js', 'IfluxProfileUsersStore'),
     m('apexcharts', 'js', 'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js', 'ApexCharts'),
@@ -46,7 +45,7 @@ var manifest = {
     m('stock-store', 'store', ASSET + 'stock-store.js?v=r20260928n', 'IfluxStockStore'),
     m('community-store', 'store', ASSET + 'news-store.js?v=r20260928n', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=r20260928n', 'IfluxNewsApiBridge'),
-    m('watchlist-ui', 'js', ASSET + 'watchlist-ui.js?v=r20260928n', 'IfluxWatchlistUI'),
+    m('watchlist-ui', 'js', ASSET + 'watchlist-ui.js?v=r20260928q', 'IfluxWatchlistUI'),
     m('community-ui', 'js', ASSET + 'news-ui.js?v=r20260928n', 'IfluxNewsUI'),
     m('comments-cta', 'js', ASSET + 'comments-cta.js?v=ix45Purge20260724', 'IfluxCommentsCta'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=r20260928n', 'IfluxDailyFeed'),

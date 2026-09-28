@@ -1,6 +1,6 @@
 /**
  * IfxToast.show(message, type) — type: primary|success|warning|danger|info
- * Markup dùng .ifx-alert (primitive). Cần nạp alert.css.
+ * Markup dùng .ifx-alert (primitive). Tự nạp alert.css + toast.css ở lần hiện đầu tiên. 'error' = 'danger'.
  */
 (function (global) {
   'use strict';
@@ -20,8 +20,20 @@
     document.body.appendChild(el);
     return el;
   }
+  /* CSS của Toast (+ primitive Alert) chỉ nạp ở lần hiện đầu tiên — dùng chung cho Admin và User Web. */
+  var CSS = ['/design_system/03_primitives/01_alert/alert.css?v=toast20260928', '/design_system/04_components/17_toast/toast.css?v=toast20260928'];
+  function ensureCss() {
+    CSS.forEach(function (href) {
+      if (document.querySelector('link[href^="' + href.split('?')[0] + '"]')) return;
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = href;
+      document.head.appendChild(l);
+    });
+  }
   function show(message, type, duration) {
-    type = type || 'primary';
+    ensureCss();
+    type = type === 'error' ? 'danger' : (type || 'primary');
     duration = duration || 3500;
     var toast = document.createElement('div');
     toast.className = 'ifx-alert ifx-alert-' + type + ' ifx-toast';

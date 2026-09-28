@@ -66,31 +66,31 @@
       var btn = form.querySelector('[data-ifx-save-password]');
 
       if (next.length < 8) {
-        if (global.ixToast) ixToast('Mật khẩu mới phải có ít nhất 8 ký tự', 'warning');
+        if (global.IfxToast) IfxToast.show('Mật khẩu mới phải có ít nhất 8 ký tự', 'warning');
         return;
       }
       if (next !== confirm) {
-        if (global.ixToast) ixToast('Xác nhận mật khẩu không khớp', 'warning');
+        if (global.IfxToast) IfxToast.show('Xác nhận mật khẩu không khớp', 'warning');
         return;
       }
 
       var t = token();
       if (!t || t.indexOf('mock_jwt_') === 0) {
-        if (global.ixToast) ixToast('Chế độ demo — không đổi mật khẩu qua API', 'warning');
+        if (global.IfxToast) IfxToast.show('Chế độ demo — không đổi mật khẩu qua API', 'warning');
         return;
       }
       if (!global.IfluxApiClient || !IfluxApiClient.changePassword) {
-        if (global.ixToast) ixToast('Chưa kết nối API đổi mật khẩu', 'warning');
+        if (global.IfxToast) IfxToast.show('Chưa kết nối API đổi mật khẩu', 'warning');
         return;
       }
 
       if (btn) btn.disabled = true;
       IfluxApiClient.changePassword(t, current, next).then(function () {
         form.reset();
-        if (global.ixToast) ixToast('Đã cập nhật mật khẩu', 'success');
+        if (global.IfxToast) IfxToast.show('Đã cập nhật mật khẩu', 'success');
       }).catch(function (err) {
         var msg = (err && err.message) || 'Không đổi được mật khẩu';
-        if (global.ixToast) ixToast(msg, 'warning');
+        if (global.IfxToast) IfxToast.show(msg, 'warning');
       }).finally(function () {
         if (btn) btn.disabled = false;
       });

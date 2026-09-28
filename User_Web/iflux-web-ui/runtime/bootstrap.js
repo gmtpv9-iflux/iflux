@@ -22,16 +22,17 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=r20260928n';
+import { bootPage } from './page-runtime.js?v=r20260928q';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=r20260928p';
+import { bootShell } from './shell-boot.js?v=r20260928q';
 import { pageKeyFromPath } from './page-keys.js?v=r20260928p';
-import { installSoftNavigation } from './soft-navigation.js?v=r20260928p';
+import { installSoftNavigation } from './soft-navigation.js?v=r20260928q';
+import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
-var VER = '?v=r20260928p';
+var VER = '?v=r20260928q';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20260928p';
+var PF = '?v=r20260928q';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
@@ -114,6 +115,25 @@ function apiBase() {
   var origin = window.location ? window.location.origin : '';
   if (!origin || origin.indexOf('http') !== 0) return null;
   return origin + '/api';
+}
+
+/* Trang cần gì đã biết từ manifest tĩnh — không đợi App Shell xong mới tải:
+ * CSS trang nạp ngay, module trang được báo trước cho trình duyệt (modulepreload: tải + phân tích, chưa chạy). */
+function preloadModule(href) {
+  if (document.querySelector('link[rel="modulepreload"][href="' + href + '"]')) return;
+  var l = document.createElement('link');
+  l.rel = 'modulepreload';
+  l.href = href;
+  document.head.appendChild(l);
+}
+
+function warmPage(m) {
+  if (!m) return;
+  if (m.css && m.css.length) loadStyles(m.css);
+  (m.widgets || []).forEach(function (w) {
+    if (w && w.lazyModule) preloadModule(w.lazyModule);
+    if (w && w.css && w.css.length) loadStyles(w.css);
+  });
 }
 
 async function loadStaticManifest(pageKey) {
@@ -336,6 +356,9 @@ export async function start(opts) {
   if (window.IfluxEntityDefinition && IfluxEntityDefinition.applyEarlyDocumentTitle) {
     IfluxEntityDefinition.applyEarlyDocumentTitle();
   }
+
+  /* Manifest trang tải song song với App Shell (resolveManifest dùng lại module đã tải). */
+  loadStaticManifest(pageKey).then(warmPage).catch(function () { /* resolveManifest báo lỗi sau */ });
 
   var shell = await bootShell(pageKey, { soft: soft });
   if (shell === null) return null;

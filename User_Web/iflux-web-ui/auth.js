@@ -1478,6 +1478,33 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     });
   }
 
+  /* MỘT quy tắc cho mọi trường hợp: khách chỉ bị hỏi đăng nhập khi hệ thống thật sự cần danh tính để
+   * đồng bộ dữ liệu (lưu / kiểm tra / xem / sửa) — tức server trả 401 cho API của iFlux (like, share,
+   * bình luận, bình chọn, dữ liệu cá nhân…). Không cần gắn điều kiện riêng ở từng nút / trang.
+   * (Widget theo Phân quyền sử dụng → lớp khoá; trang cá nhân → shell-boot.) */
+  var authAskAt = 0;
+  function isAuthEndpoint(url) {
+    return /\/api\/(auth|v1\/auth)\//.test(url);
+  }
+  function installAuthRequiredRule() {
+    var orig = global.fetch;
+    if (!orig || orig.__ifxAuthRule) return;
+    var wrapped = function (input) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      return orig.apply(this, arguments).then(function (res) {
+        if (res && res.status === 401 && !isLoggedIn() && url.indexOf('/api/') >= 0 &&
+            !isAuthEndpoint(url) && Date.now() - authAskAt > 1500) {
+          authAskAt = Date.now();
+          promptLogin();
+        }
+        return res;
+      });
+    };
+    wrapped.__ifxAuthRule = true;
+    global.fetch = wrapped;
+  }
+  installAuthRequiredRule();
+
   function newsHref() {
     return global.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true }) : '/tin-tuc';
   }

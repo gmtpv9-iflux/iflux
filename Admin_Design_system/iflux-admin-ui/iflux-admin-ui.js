@@ -204,61 +204,20 @@
 
   /* ------------------------------------------------------------------
      5. TOAST NOTIFICATION
-     Usage: ixToast('Message', 'success') — types: success|danger|warning|info|primary
+     Usage: ixToast('Message', 'success') — types: success|danger|warning|info|primary (→ DS IfxToast)
      ------------------------------------------------------------------ */
+  /* Một nguồn: DS Toast (design_system/04_components/17_toast) — cùng giao diện với User Web. */
+  var toastQueue = null;
   function ixToast(message, type, duration) {
-    type     = type     || 'primary';
-    duration = duration || 3500;
-
-    let container = document.getElementById('ix-toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'ix-toast-container';
-      Object.assign(container.style, {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-        zIndex: '9999',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-      });
-      document.body.appendChild(container);
-    }
-
-    const icons = {
-      success: 'ti-circle-check',
-      danger:  'ti-alert-circle',
-      warning: 'ti-alert-triangle',
-      info:    'ti-info-circle',
-      primary: 'ti-bell',
+    if (window.IfxToast) return window.IfxToast.show(message, type, duration);
+    if (toastQueue) { toastQueue.push([message, type, duration]); return; }
+    toastQueue = [[message, type, duration]];
+    var s = document.createElement('script');
+    s.src = '/design_system/04_components/17_toast/toast.js?v=toast20260928';
+    s.onload = function () {
+      toastQueue.splice(0).forEach(function (a) { window.IfxToast.show(a[0], a[1], a[2]); });
     };
-
-    const toast = document.createElement('div');
-    toast.className = 'ix-alert ix-alert-' + type;
-    Object.assign(toast.style, {
-      minWidth: '260px',
-      maxWidth: '360px',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-      transition: 'opacity 0.3s, transform 0.3s',
-      opacity: '0',
-      transform: 'translateX(20px)',
-    });
-    toast.innerHTML =
-      '<i class="ti ' + (icons[type] || icons.primary) + '" style="font-size:18px;flex-shrink:0"></i>' +
-      '<span style="font-size:13px">' + message + '</span>';
-
-    container.appendChild(toast);
-    requestAnimationFrame(function () {
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateX(0)';
-    });
-
-    setTimeout(function () {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(20px)';
-      setTimeout(function () { toast.remove(); }, 300);
-    }, duration);
+    document.head.appendChild(s);
   }
   window.ixToast = ixToast;
 

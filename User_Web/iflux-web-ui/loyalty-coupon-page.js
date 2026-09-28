@@ -24,7 +24,7 @@
   function copyCode(code) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(code).then(function () {
-        if (global.ixToast) ixToast('Đã sao chép mã ' + code, 'success');
+        if (global.IfxToast) IfxToast.show('Đã sao chép mã ' + code, 'success');
       });
     }
   }
@@ -86,7 +86,7 @@
       if (res.ok) {
         if (msg) { msg.style.color = 'var(--ix-success)'; msg.textContent = '✓ Đã thêm mã ' + res.coupon.code + ' vào ví của bạn'; }
         if (input) input.value = '';
-        if (global.ixToast) ixToast('Nhận mã thành công!', 'success');
+        if (global.IfxToast) IfxToast.show('Nhận mã thành công!', 'success');
         renderList();
       } else {
         if (msg) { msg.style.color = 'var(--ix-danger)'; msg.textContent = '✗ ' + (res.error || 'Không thể nhận mã'); }

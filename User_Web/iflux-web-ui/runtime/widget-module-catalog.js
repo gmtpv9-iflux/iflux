@@ -9,10 +9,10 @@ function dashDep(g, s) { return { global: g, src: DASH_ASSET + s }; }
 export const WIDGET_DASHBOARD_DEPS = {
   'WGT-WAT-001': [
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=r20260928n'),
-    dashDep('IfluxWatchlistTaxonomy', 'watchlist-taxonomy.js?v=r20260928n'),
+    dashDep('IfluxWatchlistTaxonomy', 'watchlist-taxonomy.js?v=r20260928q'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
-    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928n'),
-    dashDep('IfluxWatchlistBlock', 'watchlist-block.js?v=r20260928n')
+    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928q'),
+    dashDep('IfluxWatchlistBlock', 'watchlist-block.js?v=r20260928q')
   ],
   'WGT-MKT-001': [dashDep('IfluxCommunityMarketOverview', 'news-market-overview.js')],
   'WGT-MKT-002': [dashDep('IfluxBreadthBlock', 'breadth-block.js?v=r20260928n')],
@@ -46,8 +46,8 @@ export const WIDGET_DASHBOARD_DEPS = {
   'WGT-COM-TOPWL': [
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=r20260928n'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
-    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928n'),
-    dashDep('IfluxCommunityTopWatchlist', 'news-top-watchlist.js?v=followFound20260724')
+    dashDep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928q'),
+    dashDep('IfluxCommunityTopWatchlist', 'news-top-watchlist.js?v=r20260928q')
   ]
 };
 

@@ -2,10 +2,10 @@
  * WGT-STOCK-PAGE — Composite chi tiết cổ phiếu
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928n';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928q';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import featureManifest from '../../features/stock.manifest.js?v=r20260928n';
+import featureManifest from '../../features/stock.manifest.js?v=r20260928q';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;

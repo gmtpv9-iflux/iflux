@@ -630,8 +630,8 @@
       IfluxWebUI.openPricing(opts || {});
     } else if (global.IfluxPricingModal) {
       IfluxPricingModal.open(opts || {});
-    } else if (global.ixToast) {
-      ixToast('Nâng cấp Premium để tiếp tục', 'warning');
+    } else if (global.IfxToast) {
+      IfxToast.show('Nâng cấp Premium để tiếp tục', 'warning');
     }
   }
 
@@ -896,7 +896,7 @@
         layout.widgets = layout.widgets.filter(function (w) { return w.instance_id !== id; });
         if (typeof afterChange === 'function') afterChange();
         else renderCanvas(canvas, layout, editMode);
-        if (global.ixToast) ixToast('Đã gỡ tiện ích', 'info');
+        if (global.IfxToast) IfxToast.show('Đã gỡ tiện ích', 'info');
       });
     });
     canvas.querySelectorAll('[data-ifx-set-width]').forEach(function (btn) {
@@ -1059,7 +1059,7 @@
       moveWidget(layout, dragId, targetCol, targetIndex, dragScope);
       if (typeof afterChange === 'function') afterChange();
       else renderCanvas(canvas, layout, true);
-      if (global.ixToast) ixToast('Đã sắp xếp tiện ích', 'info');
+      if (global.IfxToast) IfxToast.show('Đã sắp xếp tiện ích', 'info');
 
       clearMarks();
       dragId = null;
@@ -1183,15 +1183,15 @@
           return;
         }
         if (btn.getAttribute('data-add-max') === '1') {
-          if (global.ixToast) {
-            ixToast('Gói Miễn phí tối đa ' + maxWidgets() + ' tiện ích. Gỡ một tiện ích hoặc nâng cấp Premium.', 'warning');
+          if (global.IfxToast) {
+            IfxToast.show('Gói Miễn phí tối đa ' + maxWidgets() + ' tiện ích. Gỡ một tiện ích hoặc nâng cấp Premium.', 'warning');
           } else {
             openPaywall({ reason: 'widget_limit', message: 'Gói Miễn phí tối đa ' + maxWidgets() + ' tiện ích.' });
           }
           return;
         }
         if (layout.widgets.some(function (w) { return w.widget_type === type; })) {
-          if (global.ixToast) ixToast('«' + widgetDisplayCopy(type).title + '» đã có trên bảng điều khiển', 'info');
+          if (global.IfxToast) IfxToast.show('«' + widgetDisplayCopy(type).title + '» đã có trên bảng điều khiển', 'info');
           return;
         }
         var index = typeof targetIndex === 'number'
@@ -1203,7 +1203,7 @@
         if (typeof afterChange === 'function') afterChange();
         else renderCanvas(canvas, layout, editMode);
         overlay.classList.remove('open');
-        if (global.ixToast) ixToast('Đã thêm ' + widgetDisplayCopy(type).title, 'info');
+        if (global.IfxToast) IfxToast.show('Đã thêm ' + widgetDisplayCopy(type).title, 'info');
       });
     });
 
@@ -1353,20 +1353,20 @@
       openPopularModal(function () {
         var preview = draftPopularLayout();
         if (!preview.widgets || !preview.widgets.length) {
-          if (global.ixToast) ixToast('Không thể tải bố cục phổ biến', 'danger');
+          if (global.IfxToast) IfxToast.show('Không thể tải bố cục phổ biến', 'danger');
           return;
         }
         layout = preview;
         activeAction = 'popular';
         render();
-        if (global.ixToast) ixToast('Đã xem trước · Bấm Xong để áp dụng hoặc Hủy để quay lại', 'info');
+        if (global.IfxToast) IfxToast.show('Đã xem trước · Bấm Xong để áp dụng hoặc Hủy để quay lại', 'info');
       });
     }
 
     function handleAddSlotClick(col, index, scope) {
       if (!editMode) return;
       if (dashboardWidgetCount(layout) >= maxWidgets() && !isPremium()) {
-        if (global.ixToast) ixToast('Gói Miễn phí tối đa ' + maxWidgets() + ' tiện ích', 'warning');
+        if (global.IfxToast) IfxToast.show('Gói Miễn phí tối đa ' + maxWidgets() + ' tiện ích', 'warning');
         return;
       }
       openRegistryModal(layout, canvas, true, render, col, index, scope);
@@ -1410,7 +1410,7 @@
     if (btnDone) {
       btnDone.addEventListener('click', function () {
         commitEditMode();
-        if (global.ixToast) ixToast('Đã áp dụng thay đổi', 'success');
+        if (global.IfxToast) IfxToast.show('Đã áp dụng thay đổi', 'success');
       });
     }
 
@@ -1418,7 +1418,7 @@
     if (btnCancel) {
       btnCancel.addEventListener('click', function () {
         cancelEditMode();
-        if (global.ixToast) ixToast('Đã hủy thay đổi', 'info');
+        if (global.IfxToast) IfxToast.show('Đã hủy thay đổi', 'info');
       });
     }
 

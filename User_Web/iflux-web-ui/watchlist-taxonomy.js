@@ -12,28 +12,9 @@ P1 Gate: N/A
 Refs: docs/runtime-opt/task5/PhaseA-P1-Gate.json handoffP2
 Note: requiresShell IfluxWatchlistTaxonomy
 ===== IFX-AUDIT-END ===== */
-/* Phân loại CP — Ngành / Họ CP / Chủ đề (sandbox) */
+/* Phân loại CP — Ngành / Họ CP / Chủ đề (Market Master + API chủ đề) */
 (function (global) {
   'use strict';
-
-  /* Fallback khi chưa có Admin registry (offline / chưa seed) */
-  var SECTOR_FALLBACK = [
-    { id: '1', slug: 'ngan-hang', name: 'Ngân hàng', tickers: ['VCB', 'STB', 'TCB', 'MBB', 'ACB'] },
-    { id: '2', slug: 'bat-dong-san', name: 'Bất động sản', tickers: ['VHM', 'VIC', 'NVL', 'PDR', 'KDH'] },
-    { id: '3', slug: 'cong-nghe', name: 'Công nghệ', tickers: ['FPT', 'CMG', 'ELC'] },
-    { id: '4', slug: 'thep', name: 'Thép', tickers: ['HPG', 'HSG', 'NKG'] },
-    { id: '5', slug: 'chung-khoan', name: 'Chứng khoán', tickers: ['SSI', 'VND', 'HCM', 'SHS', 'VCI'] },
-    { id: '6', slug: 'ban-le', name: 'Bán lẻ', tickers: ['MWG', 'FRT', 'DGW'] }
-  ];
-
-  function familyGroups() {
-    var seeds = global.IfluxMarketEcosystemSeeds;
-    if (seeds && typeof seeds.list === 'function') return seeds.list();
-    return [
-      { id: 'vingroup', name: 'Họ Vingroup', tickers: ['VIC', 'VHM', 'VRE', 'VPL', 'VEF'] },
-      { id: 'fpt', name: 'Họ FPT', tickers: ['FPT', 'FOX', 'FRT'] }
-    ];
-  }
 
   /* ── Ngành từ Market Master API (PG SoT) — IfluxMarketMaster (WP-0) ── */
   function masterApi() {
@@ -65,36 +46,8 @@ Note: requiresShell IfluxWatchlistTaxonomy
     } catch (e) { return null; }
   }
 
-  function isProdHost() {
-    try {
-      var host = String((global.location && location.hostname) || '').toLowerCase();
-      return host === 'iflux.vn' || host === 'www.iflux.vn';
-    } catch (e) {
-      return false;
-    }
-  }
-
   function registrySectors() {
-    var fromMaster = masterSectors();
-    if (fromMaster && fromMaster.length) return fromMaster;
-    if (isProdHost()) return fromMaster || [];
-    var reg = global.IfluxMarketRegistryStore;
-    if (!reg || typeof reg.listSectors !== 'function' || typeof reg.listStocks !== 'function') return null;
-    try {
-      var sectors = reg.listSectors().filter(function (s) { return s.status !== 'inactive'; });
-      if (!sectors.length) return null;
-      var stocks = reg.listStocks({ status: 'active' }) || [];
-      var bySector = {};
-      stocks.forEach(function (s) {
-        var sid = String(s.sectorId == null ? (s.sector_id == null ? '' : s.sector_id) : s.sectorId);
-        if (!sid) return;
-        (bySector[sid] = bySector[sid] || []).push(String(s.ticker || '').toUpperCase());
-      });
-      return sectors.map(function (s) {
-        var id = String(s.id);
-        return { id: id, slug: slugifyLocal(s.name), name: s.name, tickers: bySector[id] || [] };
-      }).filter(function (g) { return g.tickers.length > 0; });
-    } catch (e) { return null; }
+    return masterSectors();
   }
 
   /* ── Hệ sinh thái từ Market Master API — IfluxMarketMaster (WP-0) ── */
@@ -116,38 +69,14 @@ Note: requiresShell IfluxWatchlistTaxonomy
   }
 
   function registryFamilies() {
-    var fromMaster = masterFamilies();
-    if (fromMaster && fromMaster.length) return fromMaster;
-    if (isProdHost()) return fromMaster || [];
-    var reg = global.IfluxMarketRegistryStore;
-    if (!reg || typeof reg.listEcosystems !== 'function') return null;
-    try {
-      var list = reg.listEcosystems().filter(function (e) { return e.status !== 'inactive'; });
-      if (!list.length) return null;
-      return list.map(function (e) {
-        return {
-          id: e.id,
-          slug: slugifyLocal(e.name),
-          name: e.name,
-          tickers: (e.tickers || []).map(function (t) { return String(t).toUpperCase(); })
-        };
-      }).filter(function (g) { return g.tickers.length > 0; });
-    } catch (e) { return null; }
+    return masterFamilies();
   }
 
-  var CHU_DE_FALLBACK = [
-    { id: 'chien-tranh-my-iran', name: 'Chiến tranh Mỹ - Iran', tickers: ['PVD', 'PVS', 'PLX', 'GAS', 'PVT'] },
-    { id: 'dau-tu-cong', name: 'Đầu tư công', tickers: ['HPG', 'VCG', 'HHV', 'CII', 'PC1', 'NKG'] },
-    { id: 'thoai-von-nn', name: 'Thoái vốn nhà nước', tickers: ['VNM', 'SAB', 'BVH', 'MSN', 'HPG'] },
-    { id: 'my-ap-thue-quan', name: 'Mỹ áp thuế quan', tickers: ['VHC', 'ASM', 'GIL', 'KBC', 'SIP', 'IDC'] },
-    { id: 'nang-hang-ftse', name: 'Nâng hạng thị trường FTSE', tickers: ['VCB', 'VHM', 'FPT', 'HPG', 'MWG', 'VIC'] },
-    { id: 'giai-ngan-dau-tu-cong', name: 'Giải ngân đầu tư công', tickers: ['VCG', 'HHV', 'IDC', 'CII', 'HPG', 'NKG'] }
-  ];
-
   var GROUPS = {
-    sector: SECTOR_FALLBACK.slice(),
-    family: familyGroups(),
-    'chu-de': CHU_DE_FALLBACK.slice()
+    /* Không dữ liệu giả: Ngành / HST từ Market Master (ensureMasterGroups), Chủ đề từ API (hydrateChuDeFromApi). */
+    sector: [],
+    family: [],
+    'chu-de': []
   };
   GROUPS.story = GROUPS['chu-de'];
 

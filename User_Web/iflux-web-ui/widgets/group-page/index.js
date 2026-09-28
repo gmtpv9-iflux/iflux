@@ -2,8 +2,8 @@
  * WGT-GROUP-PAGE — Composite chi tiết nhóm (ngành / họ CP / chủ đề)
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928n';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -29,7 +29,6 @@ var PUBLISH_BY_KIND = {
 /* W4: taxonomy/seeds/mock/registry/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
   [
-    ADMIN + 'iflux-admin-ui.js',
     ASSET + 'iflux-user-data-sync.js?v=r20260928n',
     'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
   ],
@@ -41,7 +40,7 @@ var CORE_TIERS = [
     ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
-    ASSET + 'watchlist-ui.js?v=r20260928n',
+    ASSET + 'watchlist-ui.js?v=r20260928q',
     ASSET + 'news-ui.js?v=r20260928n',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
     ASSET + 'news-daily-feed.js?v=r20260928n',

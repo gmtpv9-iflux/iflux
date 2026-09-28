@@ -21,32 +21,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function consumerNavigate(canonical, opts) {
-    opts = opts || {};
-    if (opts.replace == null) opts.replace = true;
-    /* P6-API-01 — internal nav chỉ Writer.navigate */
-    var W = global.IfluxShellUrlWriter;
-    if (W && W.navigate) {
-      W.navigate(canonical, opts);
-      return;
-    }
-    global.location.replace(canonical);
-  }
-
-  function routeTo(key) {
-    if (global.IfluxRoutes) return IfluxRoutes.to(key);
-    var legacy = {
-      home: '../home/index.html',
-      market: '../market/index.html',
-      flow: '../flow/index.html',
-      news: '../news/index.html',
-      pricing: '../pricing/index.html',
-      faq: '../faq/index.html',
-      loyalty: '../loyalty/index.html'
-    };
-    return legacy[key] || '/';
-  }
-
   function isLoggedIn() {
     return global.IfluxAuth && IfluxAuth.isLoggedIn();
   }
@@ -91,13 +65,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     }
   }
 
-  function firstGuestPageUrl() {
-    if (!global.IfluxEntitlements) return routeTo('market');
-    var menus = IfluxEntitlements.visibleMenus();
-    if (!menus.length) return routeTo('market');
-    return menus[0].path || routeTo('market');
-  }
-
   function syncBrandHref() {
     var brand = document.querySelector('a.ifx-app-header-brand');
     if (!brand) return;
@@ -127,36 +94,26 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     }
 
     function run() {
-      var proceed = true;
       var pk = currentPageKey;
       if (isLoggedIn()) {
-        if (!IfluxAuth.requireAuth()) {
-          /* Đang chuyển tới login — vẫn resolve callback để shell-boot không treo. */
-          proceed = false;
-        } else {
-          renderGuestNav(pk);
-          /* Đã login: bỏ hardcode «Đăng nhập» còn sót trong HTML (vd Outline cũ). */
-          document.querySelectorAll('[data-ifx-guest-actions] > a.ix-btn[href*="dang-nhap"], [data-ifx-guest-actions] > a.ifx-guest-auth-btn').forEach(function (el) {
-            if (el && el.parentNode) el.parentNode.removeChild(el);
-          });
-          document.querySelectorAll('[data-ifx-app-only]').forEach(function (el) {
-            el.hidden = false;
-            el.style.display = '';
-          });
-        }
+        renderGuestNav(pk);
+        /* Đã login: bỏ hardcode «Đăng nhập» còn sót trong HTML (vd Outline cũ). */
+        document.querySelectorAll('[data-ifx-guest-actions] > a.ix-btn[href*="dang-nhap"], [data-ifx-guest-actions] > a.ifx-guest-auth-btn').forEach(function (el) {
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+        });
+        document.querySelectorAll('[data-ifx-app-only]').forEach(function (el) {
+          el.hidden = false;
+          el.style.display = '';
+        });
       } else {
-        if (!IfluxEntitlements.canAccessPage(pk)) {
-          consumerNavigate(firstGuestPageUrl());
-          proceed = false;
-        } else {
-          renderGuestNav(pk);
-          renderGuestActions();
-        }
+        /* Khách xem được mọi trang; chỉ nội dung cần danh tính mới hỏi đăng nhập (IfluxAuth.promptLogin). */
+        renderGuestNav(pk);
+        renderGuestActions();
       }
 
       syncBrandHref();
 
-      if (proceed) applyEntitlements();
+      applyEntitlements();
       /* Luôn gọi initFn — shell-boot await Promise dựa vào đây; thiếu = treo trang. */
       if (typeof currentInitFn === 'function') currentInitFn();
 
@@ -164,10 +121,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         plansListenerBound = true;
         document.addEventListener('iflux-plans-updated', function () {
           if (!isLoggedIn()) {
-            if (!IfluxEntitlements.canAccessPage(currentPageKey)) {
-              consumerNavigate(firstGuestPageUrl());
-              return;
-            }
             renderGuestNav(currentPageKey);
             renderGuestActions();
           }
@@ -185,42 +138,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     }
   }
 
-  /** Điểm vào gốc: đã login → Cộng đồng; chưa → trang public đầu tiên. */
-  function initGuestLanding() {
-    function goPublic() {
-      consumerNavigate(firstGuestPageUrl());
-    }
-
-    function goAppHomeIfSession() {
-      var dest = (global.IfluxAuth && IfluxAuth.appHomePath)
-        ? IfluxAuth.appHomePath()
-        : routeTo('news');
-      if (!isLoggedIn()) {
-        goPublic();
-        return;
-      }
-      if (global.IfluxAuth && IfluxAuth.refreshSessionFromApi && global.IfluxRuntime && IfluxRuntime.isApiMode && IfluxRuntime.isApiMode()) {
-        IfluxAuth.refreshSessionFromApi().then(function (user) {
-          if (user) consumerNavigate(dest);
-          else goPublic();
-        }).catch(goPublic);
-        return;
-      }
-      consumerNavigate(dest);
-    }
-
-    if (global.PlansRuntimeReader && PlansRuntimeReader.load) {
-      PlansRuntimeReader.load().then(goAppHomeIfSession).catch(goAppHomeIfSession);
-    } else {
-      goAppHomeIfSession();
-    }
-  }
-
   global.IfluxGuestShell = {
     bootstrapPage: bootstrapPage,
-    initGuestLanding: initGuestLanding,
     renderGuestNav: renderGuestNav,
-    renderGuestActions: renderGuestActions,
-    firstGuestPageUrl: firstGuestPageUrl
+    renderGuestActions: renderGuestActions
   };
 })(window);

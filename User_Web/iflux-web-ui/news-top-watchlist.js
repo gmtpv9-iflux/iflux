@@ -140,19 +140,19 @@
 
   function copyPortfolio(userId) {
     if (!isElite()) {
-      if (global.ixToast) ixToast('Tính năng Elite — vui lòng nâng cấp gói', 'warning');
+      if (global.IfxToast) IfxToast.show('Tính năng Elite — vui lòng nâng cấp gói', 'warning');
       return;
     }
     var entry = store().getEntry(userId);
     if (!entry || !wl()) return;
     try {
       var res = wl().copyPublicPortfolio(entry.displayName, store().getTickers(entry));
-      if (global.ixToast) {
-        ixToast('Đã chép ' + res.count + ' mã vào «' + res.folderName + '»', 'success');
+      if (global.IfxToast) {
+        IfxToast.show('Đã chép ' + res.count + ' mã vào «' + res.folderName + '»', 'success');
       }
       document.dispatchEvent(new CustomEvent('iflux-watchlist-change'));
     } catch (e) {
-      if (global.ixToast) ixToast(e.message || 'Không thể chép danh mục', 'danger');
+      if (global.IfxToast) IfxToast.show(e.message || 'Không thể chép danh mục', 'danger');
     }
   }
 

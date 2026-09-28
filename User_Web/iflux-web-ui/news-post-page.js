@@ -322,7 +322,7 @@
       consumerNavigate(href);
       return;
     }
-    if (global.ixToast) ixToast('Mở trang bình luận', 'info');
+    if (global.IfxToast) IfxToast.show('Mở trang bình luận', 'info');
   }
 
   /**

@@ -154,7 +154,7 @@
             desc: 'Đã lưu thông tin tài khoản và hồ sơ.'
           });
         }
-        if (global.ixToast) ixToast('Đã lưu hồ sơ', 'success');
+        if (global.IfxToast) IfxToast.show('Đã lưu hồ sơ', 'success');
         if (global.IfluxDashboardEngine && IfluxDashboardEngine.refreshSidebar) {
           IfluxDashboardEngine.refreshSidebar();
         }

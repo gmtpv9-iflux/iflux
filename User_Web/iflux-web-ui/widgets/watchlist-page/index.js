@@ -1,7 +1,7 @@
 /**
  * WGT-WL-PAGE — Composite Danh sách theo dõi (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928n';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -10,15 +10,14 @@ export const meta = { id: 'WGT-WL-PAGE', title: 'Danh sách theo dõi' };
 
 /* W4: registry/seeds/mock/taxonomy = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js'],
   [ASSET + 'stock-mentions.js?v=r20260928n'],
   [
     ASSET + 'watchlist-store.js?v=r20260928n',
     ASSET + 'alert-store.js',
-    ASSET + 'alert-ui.js?v=r20260928n',
+    ASSET + 'alert-ui.js?v=r20260928q',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724',
-    ASSET + 'watchlist-ui.js?v=r20260928n',
-    ASSET + 'watchlist-block.js?v=r20260928n'
+    ASSET + 'watchlist-ui.js?v=r20260928q',
+    ASSET + 'watchlist-block.js?v=r20260928q'
   ],
   [ASSET + 'alert-page.js?v=r20260928n', ASSET + 'watchlist-page.js?v=followFound20260724']
 ];

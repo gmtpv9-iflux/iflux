@@ -448,7 +448,7 @@
         }
       });
       fillForm(root, draft);
-      if (global.ixToast) ixToast('Đã sinh GEO AI metadata', 'success');
+      if (global.IfxToast) IfxToast.show('Đã sinh GEO AI metadata', 'success');
     });
   }
 

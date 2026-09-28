@@ -98,7 +98,7 @@
         var file = fileInput.files && fileInput.files[0];
         if (!file) return;
         if (file.size > MAX_IMAGE_BYTES) {
-          if (global.ixToast) ixToast('Ảnh tối đa 1.5MB', 'warning');
+          if (global.IfxToast) IfxToast.show('Ảnh tối đa 1.5MB', 'warning');
           fileInput.value = '';
           return;
         }

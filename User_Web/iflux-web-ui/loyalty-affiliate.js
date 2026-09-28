@@ -37,8 +37,8 @@
       ok = document.execCommand('copy');
       document.body.removeChild(ta);
     } catch (e) { /* ignore */ }
-    if (global.ixToast) {
-      ixToast(ok ? 'Đã sao chép!' : 'Không sao chép được', ok ? 'success' : 'warning');
+    if (global.IfxToast) {
+      IfxToast.show(ok ? 'Đã sao chép!' : 'Không sao chép được', ok ? 'success' : 'warning');
     }
   }
 
@@ -162,10 +162,10 @@
     if (inviteBtn && inviteEmail) {
       inviteBtn.addEventListener('click', function () {
         if (!inviteEmail.value.trim()) {
-          if (global.ixToast) ixToast('Nhập email bạn bè', 'warning');
+          if (global.IfxToast) IfxToast.show('Nhập email bạn bè', 'warning');
           return;
         }
-        if (global.ixToast) ixToast('Đã gửi lời mời tới ' + inviteEmail.value.trim(), 'success');
+        if (global.IfxToast) IfxToast.show('Đã gửi lời mời tới ' + inviteEmail.value.trim(), 'success');
         inviteEmail.value = '';
       });
     }

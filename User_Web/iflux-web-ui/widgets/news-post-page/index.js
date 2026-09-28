@@ -1,9 +1,9 @@
 /**
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928n';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -13,7 +13,7 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
 
 /* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=r20260928n'],
+  [ASSET + 'runtime/page-layout-engine.js?v=r20260928n'],
   [ASSET + 'stock-mentions.js?v=r20260928n'],
   [
     ASSET + 'news-store.js?v=r20260928n',
@@ -28,7 +28,7 @@ var CORE_TIERS = [
     ASSET + 'news-ui.js?v=r20260928n',
     ASSET + 'news-daily-feed.js?v=r20260928n',
     ASSET + 'interaction/boot.js?v=r20260928n',
-    ASSET + 'news-post-page.js?v=r20260928p'
+    ASSET + 'news-post-page.js?v=r20260928q'
   ]
 ];
 

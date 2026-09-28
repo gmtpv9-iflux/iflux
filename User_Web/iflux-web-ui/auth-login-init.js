@@ -33,7 +33,7 @@
   function handleSessionBlocked(err, email) {
     if (err && err.code === 'SESSION_ALREADY_ACTIVE') {
       showEmergencyLock(email);
-      ixToast(err.message, 'warning');
+      IfxToast.show(err.message, 'warning');
       return true;
     }
     return false;
@@ -50,7 +50,7 @@
         email: document.getElementById('emergency-email').value.trim(),
         reason: document.getElementById('emergency-reason').value.trim()
       });
-      ixToast('Đã gửi yêu cầu khóa khẩn cấp. Đội hỗ trợ sẽ liên hệ qua email.', 'success');
+      IfxToast.show('Đã gửi yêu cầu khóa khẩn cấp. Đội hỗ trợ sẽ liên hệ qua email.', 'success');
       setTimeout(function () {
         if (window.IfluxShellUrlWriter && IfluxShellUrlWriter.navigate) {
           IfluxShellUrlWriter.navigate('/tin-tuc', { replace: true });
@@ -59,7 +59,7 @@
         }
       }, 800);
     } catch (err) {
-      ixToast(err.message, 'danger');
+      IfxToast.show(err.message, 'danger');
     }
   });
 
@@ -98,12 +98,12 @@
     var phone = document.getElementById('login-phone').value.trim();
     var password = document.getElementById('login-phone-password').value;
     IfluxAuth.loginWithPhone(phone, password).then(function () {
-      ixToast('Đăng nhập thành công', 'success');
+      IfxToast.show('Đăng nhập thành công', 'success');
       setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
     }).catch(function (err) {
       if (!handleSessionBlocked(err, phone)) {
         showLoginError(err.message || 'Đăng nhập thất bại.');
-        ixToast(err.message, 'danger');
+        IfxToast.show(err.message, 'danger');
       }
     });
   });
@@ -112,30 +112,30 @@
     e.preventDefault();
     showLoginError('');
     var email = document.getElementById('login-email').value.trim();
-    if (!email) { showLoginError('Nhập email'); ixToast('Nhập email', 'warning'); return; }
+    if (!email) { showLoginError('Nhập email'); IfxToast.show('Nhập email', 'warning'); return; }
     var remember = document.querySelector('#panel-email .ix-checkbox');
     IfluxAuth.loginWithEmail(email, document.getElementById('login-password').value, {
       remember_me: remember && remember.checked
     }).then(function () {
-      ixToast('Đăng nhập thành công', 'success');
+      IfxToast.show('Đăng nhập thành công', 'success');
       setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
     }).catch(function (err) {
       if (!handleSessionBlocked(err, email)) {
         showLoginError(err.message || 'Đăng nhập thất bại.');
-        ixToast(err.message, 'danger');
+        IfxToast.show(err.message, 'danger');
       }
     });
   });
 
   function socialAuthSuccess(provider, user) {
-    ixToast('Đăng nhập ' + providerLabel(provider) + ' thành công', 'success');
+    IfxToast.show('Đăng nhập ' + providerLabel(provider) + ' thành công', 'success');
     setTimeout(function () { IfluxAuth.redirectAfterAuth(); }, 400);
   }
 
   function socialAuthError(provider, err) {
     if (!handleSessionBlocked(err, '')) {
       showLoginError(err.message || 'Đăng nhập thất bại.');
-      ixToast(err.message || 'Đăng nhập thất bại.', 'danger');
+      IfxToast.show(err.message || 'Đăng nhập thất bại.', 'danger');
     }
   }
 

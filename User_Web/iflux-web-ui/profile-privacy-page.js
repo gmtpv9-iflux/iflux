@@ -144,7 +144,7 @@
     }
     IfluxProfilePrivacyStore.save(uid, collectSettings());
     saveNotif.finally(function () {
-      if (global.ixToast) ixToast('Đã lưu quyền riêng tư', 'success');
+      if (global.IfxToast) IfxToast.show('Đã lưu quyền riêng tư', 'success');
     });
   }
 

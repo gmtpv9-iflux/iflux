@@ -25,14 +25,6 @@
     { key: 'delete', label: 'Xóa', icon: 'ti-trash' }
   ];
 
-  /* Tab con trong trang (vd. Dòng tiền · Score) */
-  var PAGE_TABS = [
-    { page: 'flow', key: 'score-basic', label: 'Score cơ bản', blockId: 'BLK-FLW-SCORE-BASIC' },
-    { page: 'flow', key: 'score-adv', label: 'Score nâng cao', blockId: 'BLK-FLW-SCORE-ADV' },
-    { page: 'flow', key: 'score-ex', label: 'Score Độc quyền', blockId: 'BLK-FLW-SCORE-EX' },
-    { page: 'loyalty', key: 'intro', label: 'Giới thiệu', blockId: 'BLK-LOY-INTRO' },
-    { page: 'loyalty', key: 'affiliate', label: 'Affiliate', blockId: 'BLK-LOY-AFFILIATE' }
-  ];
 
   /* Quyền thao tác trên tính năng hệ thống */
   var ACTIONS = [
@@ -50,30 +42,6 @@
     { key: 'profile', label: 'Hồ sơ & cài đặt tài khoản', group: 'Cá nhân' }
   ];
 
-  /* Menu / trang có khung nội dung mặc định (không phải widget dashboard) */
-  var PAGES = [
-    { key: 'market', label: 'Thị trường', menu: true, icon: 'ti-chart-candle',
-      hint: 'Khung trang heatmap · thanh khoản · xếp hạng. Block bổ sung hiển thị trong trang.',
-      guestDefault: true, guestNever: false, path: '/market' },
-    { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash',
-      hint: 'Khung trang score dòng tiền · sidebar ngữ cảnh.',
-      guestDefault: true, guestNever: false, path: '/flow' },
-    { key: 'news', label: 'Tin tức', menu: true, icon: 'ti-users',
-      hint: 'Khung feed · trending · tin tức.',
-      guestDefault: true, guestNever: false, path: '/tin-tuc' },
-    { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown',
-      hint: 'Trang bảng giá công khai.',
-      guestDefault: true, guestNever: false, path: '/pricing' },
-    { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle',
-      hint: 'Câu hỏi thường gặp — tài khoản, gói cước, nền tảng.',
-      guestDefault: true, guestNever: false, path: '/faq' },
-    { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift',
-      hint: 'Giới thiệu chương trình · affiliate sau đăng nhập.',
-      guestDefault: true, guestNever: false, path: '/loyalty' },
-    { key: 'dashboard', label: 'Trang chủ', menu: true, icon: 'ti-home',
-      hint: 'Dashboard cá nhân — vãng lai không truy cập.',
-      guestDefault: false, guestNever: true, path: '/home' }
-  ];
 
   /* Tính năng hệ thống (không phải menu / widget) — lưu trong plan.ent */
   var CAPABILITIES = [
@@ -110,7 +78,7 @@
    * Nguồn Widget = Core 4 tầng · Tầng 4 (PlatformLayersWidgets) — SoT DUY NHẤT.
    * Nếu Tầng 4 chưa nạp (một số trang cũ), fallback Thư viện Widget để không vỡ.
    * Adapter mô phỏng đúng bề mặt hàm WidgetLibraryCatalog nên toàn bộ logic
-   * bên dưới (buildAccessTree, resolveBlockEnabled...) không cần đổi.
+   * bên dưới (resolveBlockEnabled...) không cần đổi.
    * --------------------------------------------------------------- */
   function l4() {
     var P = global.PlatformLayersWidgets;
@@ -356,21 +324,6 @@
       : -1;
   }
 
-  function defaultPagesForTier(tier) {
-    tier = String(tier || 'guest').toLowerCase();
-    var out = {};
-    PAGES.forEach(function (p) {
-      if (tier === 'guest') {
-        out[p.key] = p.guestNever ? false : !!p.guestDefault;
-      } else if (tier === 'free') {
-        out[p.key] = p.key !== 'loyalty';
-      } else {
-        out[p.key] = true;
-      }
-    });
-    return out;
-  }
-
   function defaultBlocksForTier(tier) {
     tier = String(tier || 'guest').toLowerCase();
     var out = {};
@@ -483,106 +436,8 @@
     return out;
   }
 
-  function buildAccessTree() {
-    var tree = [];
-    PAGES.forEach(function (page) {
-      var pageNode = {
-        id: 'page:' + page.key,
-        type: 'page',
-        pageKey: page.key,
-        label: page.label,
-        icon: page.icon || 'ti-file',
-        guestNever: !!page.guestNever,
-        depth: 0,
-        children: []
-      };
-
-      PAGE_TABS.filter(function (t) { return t.page === page.key; }).forEach(function (tab) {
-        pageNode.children.push({
-          id: 'tab:' + page.key + ':' + tab.key,
-          type: 'tab',
-          pageKey: page.key,
-          tabKey: tab.key,
-          blockId: tab.blockId,
-          label: tab.label,
-          icon: 'ti-layout-navbar',
-          depth: 1,
-          children: []
-        });
-      });
-
-      var tabBlockIds = PAGE_TABS.filter(function (t) { return t.page === page.key && t.blockId; })
-        .map(function (t) { return t.blockId; });
-
-      if (wl() && wl().groupsForPage) {
-        wl().groupsForPage(page.key).forEach(function (grp) {
-          var groupNode = {
-            id: 'grp:' + page.key + ':' + grp.id,
-            type: 'group',
-            pageKey: page.key,
-            groupId: grp.id,
-            label: grp.title,
-            icon: 'ti-layout-grid',
-            depth: 1,
-            children: []
-          };
-          grp.widgetIds.forEach(function (wid) {
-            var dep = wl().getPageDeploy(wid);
-            if ((dep.pages || []).indexOf(page.key) < 0) return;
-            groupNode.children.push({
-              id: 'widget:' + page.key + ':' + wid,
-              type: 'block',
-              pageKey: page.key,
-              blockId: wid,
-              widgetId: wid,
-              label: getWidgetTitle(wid),
-              kind: 'widget',
-              icon: 'ti-box',
-              deployNote: wl().deployLabel(wid),
-              depth: 2,
-              children: []
-            });
-          });
-          if (groupNode.children.length) pageNode.children.push(groupNode);
-        });
-      }
-
-      STATIC_PAGE_BLOCKS.filter(function (b) {
-        return b.page === page.key && tabBlockIds.indexOf(b.id) < 0;
-      }).forEach(function (block) {
-        pageNode.children.push({
-          id: 'block:' + block.id,
-          type: 'block',
-          pageKey: page.key,
-          blockId: block.id,
-          label: block.label,
-          kind: 'page',
-          icon: 'ti-box',
-          depth: 1,
-          children: []
-        });
-      });
-
-      tree.push(pageNode);
-    });
-    return tree;
-  }
-
-  function flattenAccessTree(tree) {
-    var rows = [];
-    function walk(nodes, depth) {
-      nodes.forEach(function (n) {
-        rows.push(Object.assign({}, n, { depth: depth }));
-        if (n.children && n.children.length) walk(n.children, depth + 1);
-      });
-    }
-    walk(tree || buildAccessTree(), 0);
-    return rows;
-  }
-
   function getAccessValue(plan, node) {
     plan = plan || {};
-    if (node.type === 'page') return !!(plan.pages && plan.pages[node.pageKey]);
     if (node.type === 'group') return false;
     if (node.blockId) return resolveBlockEnabled(plan, node.blockId);
     return false;
@@ -590,9 +445,7 @@
 
   function setAccessValue(plan, node, enabled) {
     if (!plan) plan = {};
-    if (!plan.pages) plan.pages = {};
     if (!plan.blocks) plan.blocks = {};
-    if (node.type === 'page') plan.pages[node.pageKey] = !!enabled;
     if (node.blockId && node.type !== 'group') {
       plan.blocks[node.blockId] = !!enabled;
       if (isWidgetEntitlementId(node.blockId)) syncPageBlocksFromWidgets(plan);
@@ -616,14 +469,6 @@
     plan.ent.flowExclusive = op('flowExclusive', 'view');
   }
 
-  function blocksOnPage(pageKey) {
-    return BLOCKS.filter(function (b) { return b.page === pageKey; });
-  }
-
-  function pageByKey(key) {
-    return PAGES.find(function (p) { return p.key === key; });
-  }
-
   function legacyEntToFeatures(ent) {
     ent = ent || {};
     return {
@@ -634,35 +479,13 @@
     };
   }
 
-  function blocksForPage(pageKey) {
-    return BLOCKS.filter(function (b) { return b.page === pageKey; });
-  }
-
-  /** Bật trang nhưng chưa tick block con → tự bật block đủ tier (vd. chỉ tick menu Thị trường). */
-  function applyPageBlockDefaults(plan) {
-    if (!plan || !plan.pages || !plan.blocks) return plan;
-    var tier = String(plan.tier || plan.id || 'guest').toLowerCase();
-    PAGES.forEach(function (page) {
-      if (!plan.pages[page.key]) return;
-      var pageWidgets = wl() && wl().widgetsForPage ? wl().widgetsForPage(page.key) : [];
-      if (!pageWidgets.length) return;
-      if (pageWidgets.some(function (wid) { return !!plan.blocks[wid]; })) return;
-      pageWidgets.forEach(function (wid) {
-        var b = getBlockById(wid);
-        if (b && tierRank(tier) >= tierRank(b.minTier)) plan.blocks[wid] = true;
-      });
-    });
-    syncPageBlocksFromWidgets(plan);
-    return plan;
-  }
-
   function normalizePlan(plan) {
     if (!plan) return plan;
     plan = JSON.parse(JSON.stringify(plan));
     var tier = plan.tier || plan.id || 'free';
 
-    plan.pages = Object.assign(defaultPagesForTier(tier), plan.pages || {});
-    if (tier === 'guest') plan.pages.dashboard = false;
+    /* Không còn quyền theo trang: khách xem mọi trang; quyền chỉ ở widget + hành động. */
+    delete plan.pages;
 
     plan.ent = Object.assign(defaultCapabilitiesForTier(tier), plan.ent || {});
     var leg = legacyEntToFeatures(plan.ent);
@@ -676,7 +499,6 @@
     plan.actions = Object.assign(defaultActionsForTier(tier), plan.actions || {});
     plan.limits = Object.assign(defaultLimitsForTier(tier), plan.limits || {});
 
-    applyPageBlockDefaults(plan);
     syncPageBlocksFromWidgets(plan);
     syncLegacyEntFromActions(plan);
 
@@ -692,30 +514,6 @@
     return plan;
   }
 
-  function countEnabled(map) {
-    var n = 0;
-    Object.keys(map || {}).forEach(function (k) { if (map[k]) n += 1; });
-    return n;
-  }
-
-  function coverageSummary(plan) {
-    plan = normalizePlan(plan);
-    var menuPages = PAGES.filter(function (p) { return p.menu; }).length;
-    var widgetTotal = BLOCKS.filter(function (b) { return b.kind === 'widget'; }).length;
-    var enabledWidgets = Object.keys(plan.blocks || {}).filter(function (k) {
-      return isWidgetEntitlementId(k) && plan.blocks[k];
-    }).length;
-    return {
-      pages: countEnabled(plan.pages) + ' / ' + menuPages + ' menu',
-      blocks: enabledWidgets + ' / ' + widgetTotal + ' widget (Tầng 4)',
-      limits: LIMITS.length + ' hạng mục'
-    };
-  }
-
-  function getPageByKey(pageKey) {
-    return PAGES.find(function (p) { return p.key === pageKey; });
-  }
-
   function getBlockById(id) {
     return BLOCKS.find(function (b) { return b.id === id; });
   }
@@ -728,48 +526,27 @@
     return id;
   }
 
-  function getPageLabel(pageKey) {
-    var p = getPageByKey(pageKey);
-    return p ? p.label : pageKey;
-  }
-
   /** Nhóm hiển thị giống ma trận Phân quyền sử dụng */
-  function getBlockAdminGroup(block) {
-    if (!block) return '';
-    var kindLabel = block.kind === 'widget' ? 'Widget' : 'Block';
-    return getPageLabel(block.page) + ' · ' + kindLabel;
-  }
-
   global.EntitlementCatalog = {
     TIERS: ['guest', 'free', 'premium', 'elite'],
     TIER_ORDER: TIER_ORDER,
     TIER_LABELS: TIER_LABELS,
     OPERATIONS: OPERATIONS,
     ACTIONS: ACTIONS,
-    PAGE_TABS: PAGE_TABS,
-    PAGES: PAGES,
     CAPABILITIES: CAPABILITIES,
     FEATURES: FEATURES,
     BLOCKS: BLOCKS,
     LIMITS: LIMITS,
     getBlockById: getBlockById,
     getBlockLabel: getBlockLabel,
-    getPageLabel: getPageLabel,
-    getBlockAdminGroup: getBlockAdminGroup,
     tierRank: tierRank,
-    defaultPagesForTier: defaultPagesForTier,
     defaultBlocksForTier: defaultBlocksForTier,
     defaultActionsForTier: defaultActionsForTier,
     defaultFeaturesForTier: defaultCapabilitiesForTier,
     defaultCapabilitiesForTier: defaultCapabilitiesForTier,
     defaultLimitsForTier: defaultLimitsForTier,
-    buildAccessTree: buildAccessTree,
-    flattenAccessTree: flattenAccessTree,
     getAccessValue: getAccessValue,
     setAccessValue: setAccessValue,
-    blocksOnPage: blocksOnPage,
-    blocksForPage: blocksForPage,
-    applyPageBlockDefaults: applyPageBlockDefaults,
     syncPageBlocksFromWidgets: syncPageBlocksFromWidgets,
     resolveBlockEnabled: resolveBlockEnabled,
     isPermissionScopedWidget: isPermissionScopedWidget,
@@ -783,8 +560,6 @@
       return BLOCKS;
     },
     migratePlanWidgetAliases: migratePlanWidgetAliases,
-    pageByKey: pageByKey,
-    normalizePlan: normalizePlan,
-    coverageSummary: coverageSummary
+    normalizePlan: normalizePlan
   };
 })(window);

@@ -2,14 +2,14 @@
  * Phase A — Auth Shell Entry tối thiểu (R3).
  * Chỉ platform + api + auth. Feature auth (form/OTP/social) nạp sau trong HTML.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928n';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
 var SHELL = [
   ASSET + 'iflux-platform-boot.js?v=appHeader20260928',
   ASSET + 'iflux-api-bundle.js',
-  ASSET + 'auth.js?v=r20260928n'
+  ASSET + 'auth.js?v=r20260928q'
 ];
 
 async function main() {

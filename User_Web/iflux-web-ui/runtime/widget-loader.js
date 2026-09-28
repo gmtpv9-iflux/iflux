@@ -23,7 +23,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *   export const meta = { id, title }     // tuỳ chọn
  */
 
-import { loadStyles } from './legacy-bridge.js?v=r20260928n';
+import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
 function esc(s) {
   return String(s == null ? '' : s)

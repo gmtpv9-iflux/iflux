@@ -147,12 +147,12 @@
         ? IfluxInteractionPermission.resolve({ action: 'comment', target: target })
         : 'LoginRequired';
       if (pr !== 'Allow') {
-        if (global.ixToast) ixToast('Đăng nhập để bình luận', 'warning');
+        if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
         return;
       }
       var payload = composer().readPayload(form);
       if (!payload.body && !payload.image) {
-        if (global.ixToast) ixToast('Nhập nội dung hoặc đính kèm ảnh', 'warning');
+        if (global.IfxToast) IfxToast.show('Nhập nội dung hoặc đính kèm ảnh', 'warning');
         return;
       }
       if (!store() || !store().addComment) return;
@@ -173,7 +173,7 @@
           });
         }
       }).catch(function (err) {
-        if (global.ixToast) ixToast((err && err.message) || 'Không gửi được', 'warning');
+        if (global.IfxToast) IfxToast.show((err && err.message) || 'Không gửi được', 'warning');
       });
     });
   }
@@ -219,14 +219,14 @@
             ? IfluxInteractionPermission.resolve({ action: 'like', target: target })
             : 'LoginRequired';
           if (pr !== 'Allow') {
-            if (global.ixToast) ixToast('Đăng nhập để thích', 'warning');
+            if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
             return;
           }
           if (!store() || !store().runMutation) return;
           store().runMutation(target, 'like').then(function (out) {
             syncPostLikes(out && out.projection);
           }).catch(function (err) {
-            if (global.ixToast) ixToast((err && err.message) || 'Không thích được', 'warning');
+            if (global.IfxToast) IfxToast.show((err && err.message) || 'Không thích được', 'warning');
           });
         };
       }
