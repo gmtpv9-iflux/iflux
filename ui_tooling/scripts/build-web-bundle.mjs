@@ -24,8 +24,15 @@ const ENTRIES = [
   '/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css',
   '/User_Web/iflux-web-ui/app-shell.css'
 ];
-/* Không đưa vào gói User Web: bộ icon cũ (DS đã có đủ icon User Web dùng — vendor/tabler). */
-const EXCLUDE = new Set(['/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css']);
+/* Không đưa vào gói User Web (User Web không dùng lớp nào của các file này — Admin vẫn nạp qua iflux-admin-ui.css):
+ * bộ icon cũ (DS đã có đủ icon — vendor/tabler), tiện ích trang Admin, chip / page-header / breadcrumb DS. */
+const EXCLUDE = new Set([
+  '/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css',
+  '/Admin_Design_system/iflux-admin-ui/utilities.css',
+  '/design_system/03_primitives/05_chip/chip.css',
+  '/design_system/04_components/10_page-header/page-header.css',
+  '/design_system/04_components/02_breadcrumb/breadcrumb.css'
+]);
 /* <link> cũ trong trang được thay bằng gói. */
 const REPLACED_LINKS = /(Admin_Design_system\/iflux-admin-ui\/fonts\.css|platform\/web\/web\.css|Admin_Design_system\/iflux-admin-ui\/iflux-admin-ui\.css|iflux-web-ui\/app-shell\.css|platform\/web\/(?:dist|generated)\/web\.css)/;
 

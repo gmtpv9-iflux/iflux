@@ -32,8 +32,7 @@ export default {
     { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }
   ],
   widgets: [
-    /* WGT-PRF-001 (Hồ sơ) — Owner: không đặc thù; không inject cứng vào Host sidebar.
-       Profile page giữ widget module riêng — không đụng widgets/profile-card. */
+    /* WGT-PRF-001 (Hồ sơ) — không đặc thù; không inject cứng vào Host sidebar. */
     {
       id: 'WGT-PRF-002',
       title: 'Gói cước',
