@@ -309,7 +309,7 @@
   font-weight: var(--ifx-font-weight-bold);
   margin: 28px 0 12px;
   color: var(--ix-text-primary);
-  scroll-margin-top: calc(var(--ifx-topnav-h, 56px) + 20px);
+  scroll-margin-top: calc(var(--ifx-size-app-header-h) + 20px);
 }
 .ifx-com-article__body h3 {
   font-size: var(--ifx-font-size-18);
@@ -388,7 +388,7 @@
   min-width: 0;
 }
 .ifx-com-side-card--toc {
-  max-height: min(320px, calc(100vh - var(--ifx-topnav-h, 56px) - 280px));
+  max-height: min(320px, calc(100vh - var(--ifx-size-app-header-h) - 280px));
   display: flex;
   flex-direction: column;
 }
@@ -2334,3 +2334,42 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
   color: var(--ix-text-muted);
   opacity: 0.35;
 }
+
+/* ── Bottom menu (DS .ifx-tabbar) · chế độ bài viết: nội dung đặc thù trang Tin tức ── */
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-com-article__entities {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: var(--ifx-space-4) var(--ifx-space-8);
+  border-radius: 0;
+  background: var(--ix-bg-body);
+}
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-com-article__entities[hidden] { display: none; }
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-com-article__entities .ifx-com-pills--scroll { margin: 0; padding-bottom: 0; }
+.ifx-tabbar-ix .ifx-ix-summary--bar,
+.ifx-tabbar-ix [data-ifx-ix-action-bar],
+.ifx-tabbar-ix .ifx-ix-action-bar {
+  display: flex;
+  flex: 1;
+  gap: var(--ifx-space-8);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.ifx-tabbar-ix .ifx-com-action {
+  flex: 1 1 0;
+  justify-content: center;
+  padding: var(--ifx-space-12) var(--ifx-space-8);
+  border-radius: var(--ix-radius-lg);
+  background: var(--ix-bg-hover);
+  color: var(--ix-text-primary);
+  font-size: var(--ifx-font-size-14);
+  white-space: nowrap;
+}
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-action { font-size: var(--ifx-font-size-16); }
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-action .ti { font-size: var(--ifx-font-size-18); }
+.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-side-count { font-size: var(--ifx-font-size-12); }

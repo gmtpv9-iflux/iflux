@@ -42,7 +42,7 @@
       return;
     }
 
-    document.querySelectorAll('.ifx-topnav-link[href]').forEach(function (a) {
+    document.querySelectorAll('.ifx-app-header-link[href]').forEach(function (a) {
       var href = a.getAttribute('href') || '';
       var key = href.split('?')[0];
       var navMod = navMap[key] || navMap[href];
@@ -69,7 +69,7 @@
       badge.className = 'ix-chip ix-chip-warning';
       badge.textContent = 'Staging';
       badge.style.marginLeft = '8px';
-      var actions = document.querySelector('.ifx-topnav-actions');
+      var actions = document.querySelector('.ifx-app-header-actions');
       if (actions) actions.insertBefore(badge, actions.firstChild);
     }
   }

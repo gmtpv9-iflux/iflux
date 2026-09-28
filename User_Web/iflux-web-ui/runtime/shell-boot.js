@@ -213,9 +213,11 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=navSlice4ux_20260727' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=appHeader20260928' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=p6Writer20260730' }
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=p6Writer20260730' },
+    /* Dropdown DS — menu người dùng / thông báo / tin nhắn trong header (App Shell) */
+    { global: 'IfxDropdown', src: '/design_system/04_components/07_dropdown/dropdown.js?v=appHeader20260928' }
   ]);
   if (window.IfluxAppShellHeader && IfluxAppShellHeader.render) {
     try { IfluxAppShellHeader.render(); } catch (eChrome) { /* ignore */ }
@@ -231,7 +233,7 @@ export async function bootShell(pageKey, opts) {
     { global: 'IfluxWidgetShell', src: ASSET + 'iflux-widget-shell.js?v=oneOverlay20260928' },
     { global: 'IfluxBlockPaywall', src: ASSET + 'iflux-block-paywall.js?v=entShell20260720' },
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=abhE620260727' },
-    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=softNavP1_20260810' }
+    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=appHeader20260928' }
   ]);
   /* Legacy ABH E4/E5 removed — không boot Admin Store / EntitlementCatalog trên User Web shell:
   { global: 'EntitlementCatalog', src: ADMIN + 'app/subscription/entitlement-catalog.js' },
@@ -243,12 +245,12 @@ export async function bootShell(pageKey, opts) {
 
   /* AS-SEARCH — Task5 Lazy L07 */
   if (document.querySelector('[data-ifx-header-search]')) {
-    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=mockRmWp5_20260809');
+    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=appHeader20260928');
   }
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=p7ShareSheet20260730' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=appHeader20260928' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

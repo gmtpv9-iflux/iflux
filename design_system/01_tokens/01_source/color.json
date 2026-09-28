@@ -152,7 +152,9 @@
       "market-floor": "{color.cyan.500}",
       "market-floor-soft": "{alpha.cyan-16}",
       "flow-in": "{color.lime.500}",
-      "flow-out": "{color.red.450}"
+      "flow-out": "{color.red.450}",
+      "bg-chrome": "rgba(43, 44, 64, 0.96)",
+      "shadow-chrome": "0 4px 24px rgba(0, 0, 0, 0.18)"
     },
     "light": {
       "bg-canvas": "{color.slate.50}",
@@ -202,7 +204,9 @@
       "market-floor": "{color.cyan.500}",
       "market-floor-soft": "{alpha.cyan-16}",
       "flow-in": "{color.green.500}",
-      "flow-out": "{color.red.500}"
+      "flow-out": "{color.red.500}",
+      "bg-chrome": "rgba(255, 255, 255, 0.96)",
+      "shadow-chrome": "0 4px 24px rgba(67, 89, 113, 0.08)"
     }
   }
 }

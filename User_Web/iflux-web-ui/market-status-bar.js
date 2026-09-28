@@ -16,7 +16,7 @@
   function ensureEl() {
     var existing = document.querySelector('[data-ifx-market-status]');
     if (existing) { el = existing; return el; }
-    var nav = document.querySelector('.ifx-topnav');
+    var nav = document.querySelector('.ifx-app-header');
     if (!nav || !nav.parentNode) return null;
     el = document.createElement('div');
     el.className = 'ifx-market-status';

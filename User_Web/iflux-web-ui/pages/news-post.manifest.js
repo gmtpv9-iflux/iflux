@@ -18,7 +18,7 @@ export default {
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/news-post-page/index.js?v=pageFrame20260928',
     css: [
-      '/User_Web/iflux-web-ui/news.css?v=appShell20260928',
+      '/User_Web/iflux-web-ui/news.css?v=appHeader20260928',
       '/User_Web/iflux-web-ui/block-templates.css'
     ]
   }]

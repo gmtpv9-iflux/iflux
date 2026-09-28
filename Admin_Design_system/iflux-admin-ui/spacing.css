@@ -279,11 +279,7 @@
   padding: var(--ifx-space-table-cell-y) var(--ifx-space-table-cell-x);
 }
 
-/* User Web layout hooks */
-.ifx-topnav {
-  gap: var(--ifx-gap-md);
-  padding: 0 var(--ifx-space-20);
-}
+/* User Web layout hooks — header thuộc component DS 04_components/26_app-header. */
 .ifx-main-content {
   padding: var(--ifx-space-container);
 }

@@ -1,0 +1,157 @@
+/**
+ * Component — Tab Bar (bottom menu, một phần App Shell; là menu → không có host widget)
+ *
+ *   nav.ifx-tabbar  [data-ifx-tabbar-mode = (chính) | context | account | article]
+ *   └─ a.ifx-tabbar-item (.is-active · biến thể .ifx-tabbar-item-exclusive / .ifx-tabbar-item-article)
+ *      └─ .ifx-tabbar-icon > .ifx-tabbar-fab > i   (+ .ifx-tabbar-chip · .ifx-tabbar-count)
+ *
+ * Mobile-first: hiện < lg (mobile / tablet — thay menu của header); ẩn ≥ lg (1024).
+ * Chiều cao --ifx-size-tabbar-h; trang chừa chỗ bằng token này.
+ */
+.ifx-tabbar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: var(--ifx-z-topnav);
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-2);
+  max-height: var(--ifx-size-tabbar-h);
+  padding: 0 var(--ifx-space-4) env(safe-area-inset-bottom, 0px);
+  background: var(--ifx-bg-chrome);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 24px var(--ifx-alpha-black-16);
+}
+.ifx-tabbar-item {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--ifx-space-8) var(--ifx-space-2) var(--ifx-space-12);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-secondary);
+  text-decoration: none;
+}
+.ifx-tabbar-item.is-active { color: var(--ifx-action-primary); }
+.ifx-tabbar-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ifx-space-24);
+}
+.ifx-tabbar-fab {
+  position: relative;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ifx-space-24);
+  height: var(--ifx-space-24);
+  color: inherit;
+  transition: top var(--ifx-duration-normal) ease, width var(--ifx-duration-normal) ease,
+    height var(--ifx-duration-normal) ease, margin var(--ifx-duration-normal) ease,
+    background var(--ifx-duration-normal) ease, box-shadow var(--ifx-duration-normal) ease;
+}
+.ifx-tabbar-fab i { font-size: var(--ifx-font-size-2xl); line-height: 1; }
+/* Mục đang chọn: nút tròn nổi lên khỏi thanh */
+.ifx-tabbar-item.is-active .ifx-tabbar-fab {
+  top: calc(-1 * var(--ifx-space-30));
+  width: var(--ifx-space-42);
+  height: var(--ifx-space-42);
+  margin-bottom: calc(-1 * var(--ifx-space-30));
+  border: 3px solid var(--ifx-bg-chrome);
+  border-radius: var(--ifx-radius-full);
+  color: var(--ifx-text-on-primary);
+  background: linear-gradient(135deg, var(--ifx-action-primary), color-mix(in srgb, var(--ifx-action-primary) 70%, white));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--ifx-action-primary) 45%, transparent);
+}
+.ifx-tabbar-item.is-active .ifx-tabbar-fab i { font-size: var(--ifx-font-size-lg); }
+
+/* Biến thể nổi bật (Dòng tiền — Độc quyền) */
+.ifx-tabbar-chip {
+  position: absolute;
+  top: calc(-1 * var(--ifx-space-8));
+  left: 50%;
+  z-index: 1;
+  padding: 1px var(--ifx-space-4);
+  border-radius: var(--ifx-radius-full);
+  font-size: calc(var(--ifx-font-size-2xs) * 0.6);
+  font-weight: var(--ifx-font-weight-extrabold);
+  letter-spacing: var(--ifx-letter-spacing-wide);
+  line-height: var(--ifx-line-height-tight);
+  white-space: nowrap;
+  color: var(--ifx-text-on-danger);
+  background: linear-gradient(135deg, var(--ifx-action-secondary), var(--ifx-danger));
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--ifx-action-secondary) 35%, transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.ifx-tabbar-item-exclusive.is-active { color: var(--ifx-action-secondary); }
+.ifx-tabbar-item-exclusive.is-active .ifx-tabbar-fab {
+  background: linear-gradient(135deg, var(--ifx-action-secondary), var(--ifx-danger));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--ifx-action-secondary) 45%, transparent);
+}
+.ifx-tabbar-item-exclusive.is-active .ifx-tabbar-chip { top: calc(-1 * (var(--ifx-space-36) + var(--ifx-space-2))); }
+
+/* Số đếm (bình luận / lượt thích) */
+.ifx-tabbar-count {
+  position: absolute;
+  top: calc(-1 * var(--ifx-space-2));
+  right: calc(-1 * var(--ifx-space-4));
+  min-width: var(--ifx-space-16);
+  padding: 1px var(--ifx-space-4);
+  border-radius: var(--ifx-radius-full);
+  font-size: calc(var(--ifx-font-size-2xs) * 0.9);
+  font-weight: var(--ifx-font-weight-extrabold);
+  line-height: var(--ifx-line-height-tight);
+  text-align: center;
+  color: var(--ifx-text-muted);
+  background: var(--ifx-bg-hover);
+  pointer-events: none;
+}
+.ifx-tabbar-count.is-active { color: var(--ifx-text-on-primary); background: var(--ifx-action-primary); }
+
+/* Chế độ bài viết: thanh xếp dọc (thực thể + hàng hành động). Nội dung bên trong thuộc trang Tin tức. */
+.ifx-tabbar[data-ifx-tabbar-mode="article"] {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ifx-space-4);
+  max-height: none;
+  padding: var(--ifx-space-4) var(--ifx-space-12) calc(var(--ifx-space-4) + env(safe-area-inset-bottom, 0px));
+}
+.ifx-tabbar-ix { display: flex; width: 100%; min-width: 0; }
+.ifx-tabbar-item-article {
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--ifx-inline-sm);
+  padding: var(--ifx-space-12);
+  border-radius: var(--ifx-radius-card);
+  background: var(--ifx-bg-hover);
+  font-size: var(--ifx-font-size-md);
+  color: var(--ifx-text-primary);
+}
+.ifx-tabbar-item-article.is-active { color: var(--ifx-action-primary); }
+.ifx-tabbar-item-article .ifx-tabbar-icon,
+.ifx-tabbar-item-article .ifx-tabbar-fab,
+.ifx-tabbar-item-article.is-active .ifx-tabbar-fab {
+  top: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin-bottom: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+}
+.ifx-tabbar-item-article .ifx-tabbar-fab i,
+.ifx-tabbar-item-article.is-active .ifx-tabbar-fab i { font-size: var(--ifx-font-size-xl); }
+.ifx-tabbar-item-article .ifx-tabbar-count { position: static; margin-left: var(--ifx-space-2); }
+
+@media (min-width: 1024px) { /* bp:lg */
+  .ifx-tabbar { display: none; }
+}

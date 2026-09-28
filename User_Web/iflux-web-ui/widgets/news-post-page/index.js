@@ -2,7 +2,7 @@
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -28,7 +28,7 @@ var CORE_TIERS = [
     ASSET + 'news-ui.js?v=comQuoteRuntime20260809',
     ASSET + 'news-daily-feed.js?v=comQuoteRuntime20260809',
     ASSET + 'interaction/boot.js?v=b5ixFlat20260727',
-    ASSET + 'news-post-page.js?v=pageFrame20260928'
+    ASSET + 'news-post-page.js?v=appHeader20260928'
   ]
 ];
 

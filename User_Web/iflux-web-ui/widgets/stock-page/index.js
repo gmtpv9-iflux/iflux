@@ -4,7 +4,7 @@
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 import featureManifest from '../../features/stock.manifest.js?v=mdmShell20260808';
 
 var PUBLISH_KEY = 'stock-detail';

@@ -82,7 +82,7 @@
   }
 
   function scrollOffsetTop() {
-    var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ifx-topnav-h'), 10);
+    var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ifx-size-app-header-h'), 10);
     return (isNaN(navH) ? 56 : navH) + 20;
   }
 

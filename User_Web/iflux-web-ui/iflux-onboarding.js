@@ -126,7 +126,7 @@ Note: Dep động onboarding
 
   function resolveFlowMenuLink() {
     return document.querySelector('[data-ifx-onboard="flow"]')
-      || document.querySelector('a.ifx-topnav-link--exclusive')
+      || document.querySelector('a.ifx-app-header-link-exclusive')
       || document.querySelector('a[href*="flow/"]');
   }
 
@@ -135,8 +135,8 @@ Note: Dep động onboarding
     var el = document.querySelector('[data-ifx-onboard="' + step.target_key + '"]');
     if (el) return el;
     var map = {
-      home: '.ifx-topnav-menu a:has(.ti-home)',
-      market: 'a[href*="market/"]:not(.ifx-topnav-link--exclusive)',
+      home: '.ifx-app-header-menu a:has(.ti-home)',
+      market: 'a[href*="market/"]:not(.ifx-app-header-link-exclusive)',
       flow_exclusive: resolveFlowMenuLink,
       flow: resolveFlowMenuLink,
       news: 'a[href*="tin-tuc"]',
@@ -163,7 +163,7 @@ Note: Dep động onboarding
 
   function viewportMainHole() {
     var pad = 12;
-    var topnav = document.querySelector('.ifx-topnav');
+    var topnav = document.querySelector('.ifx-app-header');
     var top = topnav ? topnav.getBoundingClientRect().bottom + pad : pad + 56;
     return {
       x: pad,
@@ -349,7 +349,7 @@ Note: Dep động onboarding
       btnPrev.disabled = index === 0;
       btnNext.textContent = index === steps.length - 1 ? 'Hoàn tất' : 'Tiếp';
 
-      if (target && target.closest && target.closest('.ifx-topnav-menu') &&
+      if (target && target.closest && target.closest('.ifx-app-header-menu') &&
           global.IfluxWebUI && IfluxWebUI.openMobileNav &&
           global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell &&
           global.IfluxBreakpoint.isMobileShell()) {

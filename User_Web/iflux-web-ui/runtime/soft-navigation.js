@@ -7,7 +7,7 @@ import { unloadWidget } from './widget-loader.js?v=cssPin20260808';
 
 var SOFT_VER = 'softNavP1_20260811';
 var HUB_CSS = '/User_Web/iflux-web-ui/hub.css?v=pageFrame20260928';
-var COMMUNITY_CSS = '/User_Web/iflux-web-ui/news.css?v=appShell20260928';
+var COMMUNITY_CSS = '/User_Web/iflux-web-ui/news.css?v=appHeader20260928';
 
 var ALLOW_KEYS = {
   home: 1,

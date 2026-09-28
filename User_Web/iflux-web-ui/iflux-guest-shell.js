@@ -99,7 +99,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   function syncBrandHref() {
-    var brand = document.querySelector('a.ifx-topnav-brand');
+    var brand = document.querySelector('a.ifx-app-header-brand');
     if (!brand) return;
     var href = global.IfluxRoutes
       ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true })

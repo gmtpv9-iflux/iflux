@@ -169,6 +169,9 @@
   --ifx-size-chart-plot-md: 208px;
   --ifx-size-chart-plot-lg: 256px;
   --ifx-size-chart-plot-xl: 336px;
+  --ifx-size-app-header-h: 56px;
+  --ifx-size-tabbar-h: 60px;
+  --ifx-size-header-menu-w: 300px;
 
   /* ── zindex · z ── */
   --ifx-z-dropdown: 100;

@@ -18,7 +18,7 @@ export default {
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/messages-page/index.js?v=pageFrame20260928',
     css: [
-      '/User_Web/iflux-web-ui/profile.css?v=appShell20260928',
+      '/User_Web/iflux-web-ui/profile.css?v=appHeader20260928',
       '/User_Web/iflux-web-ui/hub.css'
     ]
   }]

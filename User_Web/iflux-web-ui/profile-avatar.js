@@ -44,7 +44,6 @@
         var img = document.createElement('img');
         img.src = p.avatar_url;
         img.alt = '';
-        img.className = 'ifx-topnav-avatar-img';
         topIni.appendChild(img);
       } else {
         topIni.textContent = p.initials;

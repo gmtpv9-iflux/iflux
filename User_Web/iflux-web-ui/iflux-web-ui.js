@@ -95,7 +95,7 @@
       : (user.tier_label || (user.tier === 'free' ? 'Miễn phí' : user.tier) || 'Miễn phí');
     var chipClass = tierChipClass(user);
     /* Chỉ cập nhật chip trong menu avatar — không còn chip cấp trên header topnav. */
-    document.querySelectorAll('.ix-dropdown-menu [data-ifx-tier], .ifx-topnav-drawer-user [data-ifx-tier]').forEach(function (el) {
+    document.querySelectorAll('.ifx-dropdown-menu [data-ifx-tier], .ifx-app-header-drawer-user [data-ifx-tier]').forEach(function (el) {
       el.textContent = label;
       el.className = 'ix-chip ' + chipClass;
     });
@@ -211,7 +211,7 @@
     var link = menu.querySelector('a[href*="market/"]');
     if (link) return link;
 
-    var links = menu.querySelectorAll('a.ifx-topnav-link');
+    var links = menu.querySelectorAll('a.ifx-app-header-link');
     var i;
     for (i = 0; i < links.length; i++) {
       if (links[i].querySelector('.ti-chart-candle')) return links[i];
@@ -224,7 +224,7 @@
 
   function findFlowLink(menu) {
     if (!menu) return null;
-    var exclusive = menu.querySelector('a.ifx-topnav-link--exclusive');
+    var exclusive = menu.querySelector('a.ifx-app-header-link-exclusive');
     if (exclusive) return exclusive;
 
     var link = menu.querySelector('a[href*="flow/"]');
@@ -235,7 +235,7 @@
       if (link && /Dòng tiền/i.test(link.textContent || '')) return link;
     }
 
-    var links = menu.querySelectorAll('a.ifx-topnav-link');
+    var links = menu.querySelectorAll('a.ifx-app-header-link');
     var i;
     for (i = 0; i < links.length; i++) {
       if (links[i].querySelector('.ti-arrows-exchange')) return links[i];
@@ -247,20 +247,20 @@
   function flowNavInnerHtml() {
     return (
       '<i class="ti ti-arrows-exchange"></i>' +
-      '<span class="ifx-topnav-link__stack">' +
-        '<span class="ifx-topnav-chip">Độc quyền</span>' +
-        '<span class="ifx-topnav-link__label">Dòng tiền</span>' +
+      '<span class="ifx-app-header-link-stack">' +
+        '<span class="ifx-app-header-chip">Độc quyền</span>' +
+        '<span class="ifx-app-header-link-label">Dòng tiền</span>' +
       '</span>'
     );
   }
 
   function upgradeFlowNavLink(link, onFlow) {
     if (!link) return;
-    if (link.getAttribute('data-ifx-flow-nav') === '1' || link.classList.contains('ifx-topnav-link--exclusive')) {
-      link.classList.toggle('active', !!onFlow);
+    if (link.getAttribute('data-ifx-flow-nav') === '1' || link.classList.contains('ifx-app-header-link-exclusive')) {
+      link.classList.toggle('is-active', !!onFlow);
       return;
     }
-    link.className = 'ifx-topnav-link ifx-topnav-link--exclusive' + (onFlow ? ' active' : '');
+    link.className = 'ifx-app-header-link ifx-app-header-link-exclusive' + (onFlow ? ' is-active' : '');
     link.setAttribute('data-ifx-onboard', 'flow');
     link.setAttribute('data-ifx-flow-nav', '1');
     link.innerHTML = flowNavInnerHtml();
@@ -278,13 +278,13 @@
   }
 
   function patchTopnav() {
-    document.querySelectorAll('.ifx-topnav-menu a[href*="alerts/"]').forEach(function (a) {
+    document.querySelectorAll('.ifx-app-header-menu a[href*="alerts/"]').forEach(function (a) {
       a.style.display = 'none';
     });
 
     var onFlow = location.pathname.indexOf('/flow/') >= 0;
 
-    document.querySelectorAll('.ifx-topnav-menu').forEach(function (menu) {
+    document.querySelectorAll('.ifx-app-header-menu').forEach(function (menu) {
       var marketLink = findMarketLink(menu);
       var flowLink = findFlowLink(menu);
       var flowHref = flowLink && flowLink.getAttribute('href')
@@ -310,7 +310,7 @@
       upgradeFlowNavLink(flowLink, onFlow);
 
       if (onFlow && marketLink) {
-        marketLink.classList.remove('active');
+        marketLink.classList.remove('is-active');
       }
     });
   }
@@ -334,7 +334,7 @@
 
   function buildMenuItem(it) {
     var a = document.createElement('a');
-    a.className = 'ix-dropdown-item';
+    a.className = 'ifx-dropdown-item';
     if (it.greet) {
       a.href = appHref(it.href || '/tai-khoan');
       a.innerHTML = '<i class="ti ti-user-circle"></i> Chào ';
@@ -374,8 +374,8 @@
 
   /* Menu avatar chuẩn: hover mở menu (CSS), click avatar → /account. */
   function patchUserMenu() {
-    document.querySelectorAll('.ifx-user-menu').forEach(function (menu) {
-      var dropdown = menu.querySelector('.ix-dropdown-menu');
+    document.querySelectorAll('.ifx-app-header-user').forEach(function (menu) {
+      var dropdown = menu.querySelector('.ifx-dropdown-menu');
       if (!dropdown || dropdown.getAttribute('data-ifx-user-menu-built') === '1') return;
 
       var logoutItem = dropdown.querySelector('[data-ifx-logout]');
@@ -397,14 +397,14 @@
       });
 
       var divider = document.createElement('div');
-      divider.className = 'ix-dropdown-divider';
+      divider.className = 'ifx-dropdown-divider';
       frag.appendChild(divider);
 
       if (logoutItem) {
         frag.appendChild(logoutItem);
       } else {
         var lo = document.createElement('a');
-        lo.className = 'ix-dropdown-item';
+        lo.className = 'ifx-dropdown-item';
         lo.href = '#';
         lo.setAttribute('data-ifx-logout', '');
         lo.innerHTML = '<i class="ti ti-logout"></i> Đăng xuất';
@@ -420,14 +420,14 @@
       dropdown.appendChild(frag);
       dropdown.setAttribute('data-ifx-user-menu-built', '1');
 
-      var avatar = menu.querySelector('.ix-avatar');
+      var avatar = menu.querySelector('.ifx-avatar');
       if (avatar) {
         avatar.style.cursor = 'pointer';
         avatar.setAttribute('title', 'Trang cá nhân');
       }
     });
     /* Xóa chip cấp thành viên khỏi header (không ẩn — xóa DOM). Tier chỉ còn trong menu avatar nếu có. */
-    document.querySelectorAll('.ifx-topnav-actions > [data-ifx-tier], .ifx-topnav-actions > .ix-chip[data-ifx-tier]').forEach(function (el) {
+    document.querySelectorAll('.ifx-app-header-actions > [data-ifx-tier], .ifx-app-header-actions > .ix-chip[data-ifx-tier]').forEach(function (el) {
       if (el.parentNode) el.parentNode.removeChild(el);
     });
     bindAvatarNav();
@@ -549,7 +549,7 @@
 
   /* Bấm avatar → luôn vào /account. Delegation ở document (capture phase) để chạy
      TRƯỚC listener toggle dropdown của admin-ui trên chính avatar, và chặn hẳn nó.
-     Menu vẫn mở khi hover (CSS). Chỉ áp dụng cho avatar trong .ifx-user-menu
+     Menu vẫn mở khi hover (CSS). Chỉ áp dụng cho avatar trong .ifx-app-header-user
      (không đụng avatar đã chuyển vào drawer mobile). */
   function bindAvatarNav() {
     if (document._ifxAvatarNavBound) return;
@@ -557,13 +557,13 @@
     document.addEventListener('click', function (e) {
       var t = e.target;
       if (!t || !t.closest) return;
-      var avatar = t.closest('.ifx-user-menu .ix-avatar');
+      var avatar = t.closest('.ifx-app-header-user .ifx-avatar');
       if (!avatar) return;
       e.preventDefault();
       e.stopPropagation();
       /* Mobile: toggle User Hub full-page (tap lần nữa để đóng). Desktop: hover xem menu,
          click → trang cá nhân. */
-      var header = avatar.closest('.ifx-topnav');
+      var header = avatar.closest('.ifx-app-header');
       if (ifxIsMobileShell() && header && header._ifxOpenUserHub) {
         header._ifxOpenUserHub();
         return;
@@ -585,7 +585,7 @@
 
   function syncTopnavActiveHeight(header) {
     var h = header && header.offsetHeight ? header.offsetHeight : 56;
-    document.documentElement.style.setProperty('--ifx-topnav-active-h', h + 'px');
+    document.documentElement.style.setProperty('--ifx-app-header-offset', h + 'px');
   }
 
   function resolveHeaderDropdown(header, wrapSelector, attr) {
@@ -599,7 +599,7 @@
   }
 
   function getNotifDropdown(header) {
-    return resolveHeaderDropdown(header, '.ifx-topnav-notif', 'data-ifx-notif-dropdown');
+    return resolveHeaderDropdown(header, '.ifx-app-header-notif', 'data-ifx-notif-dropdown');
   }
 
   /** Icon Chat → trang Tin nhắn. Không dropdown, không load JS chat trên trang khác. */
@@ -620,16 +620,16 @@
     header.querySelectorAll('[data-ifx-messages-dropdown]').forEach(function (el) {
       if (el && el.parentNode) el.parentNode.removeChild(el);
     });
-    var wrap = header.querySelector('.ifx-topnav-messages');
+    var wrap = header.querySelector('.ifx-app-header-messages');
     if (wrap) {
-      wrap.classList.remove('ix-dropdown', 'open');
-      header.classList.remove('ifx-topnav--messages-open');
+      wrap.classList.remove('ifx-dropdown', 'is-open');
+      header.classList.remove('is-messages-open');
     }
     var btn = header.querySelector('[data-ifx-messages-btn]');
     if (!btn || btn._ifxMsgNavBound) return;
     btn._ifxMsgNavBound = true;
     btn.removeAttribute('aria-expanded');
-    btn.removeAttribute('data-ix-toggle');
+    btn.removeAttribute('data-ifx-toggle');
     /* Giữ nguyên button + icon ti-messages — chỉ đổi hành vi click. */
     btn.addEventListener('click', function (e) {
       e.preventDefault();
@@ -640,10 +640,10 @@
 
   function closeMobileSearch(header) {
     if (!header) {
-      document.querySelectorAll('.ifx-topnav--search-open').forEach(closeMobileSearch);
+      document.querySelectorAll('.ifx-app-header.is-search-open').forEach(closeMobileSearch);
       return;
     }
-    header.classList.remove('ifx-topnav--search-open');
+    header.classList.remove('is-search-open');
     var trigger = header.querySelector('[data-ifx-search-trigger]');
     if (trigger) {
       trigger.setAttribute('aria-expanded', 'false');
@@ -654,72 +654,72 @@
 
   function closeMobileNotif(header) {
     if (!header) {
-      document.querySelectorAll('.ifx-topnav--notif-open').forEach(closeMobileNotif);
-      document.querySelectorAll('.ifx-topnav-notif.open').forEach(function (n) {
-        n.classList.remove('open');
+      document.querySelectorAll('.ifx-app-header.is-notif-open').forEach(closeMobileNotif);
+      document.querySelectorAll('.ifx-app-header-notif.is-open').forEach(function (n) {
+        n.classList.remove('is-open');
       });
       return;
     }
-    header.classList.remove('ifx-topnav--notif-open');
+    header.classList.remove('is-notif-open');
     var bellBtn = header.querySelector('[data-ifx-notif-bell]');
     if (bellBtn) {
       bellBtn.setAttribute('aria-expanded', 'false');
       bellBtn.setAttribute('aria-label', 'Thông báo');
       bellBtn.innerHTML = '<i class="ti ti-bell"></i>';
     }
-    var notifWrap = header.querySelector('.ifx-topnav-notif');
-    if (notifWrap) notifWrap.classList.remove('open');
+    var notifWrap = header.querySelector('.ifx-app-header-notif');
+    if (notifWrap) notifWrap.classList.remove('is-open');
   }
 
   function closeMobileMessages(header) {
     if (!header) {
-      document.querySelectorAll('.ifx-topnav--messages-open').forEach(closeMobileMessages);
-      document.querySelectorAll('.ifx-topnav-messages.open').forEach(function (n) {
-        n.classList.remove('open');
+      document.querySelectorAll('.ifx-app-header.is-messages-open').forEach(closeMobileMessages);
+      document.querySelectorAll('.ifx-app-header-messages.is-open').forEach(function (n) {
+        n.classList.remove('is-open');
       });
       return;
     }
-    header.classList.remove('ifx-topnav--messages-open');
+    header.classList.remove('is-messages-open');
     var msgBtn = header.querySelector('[data-ifx-messages-btn]');
     if (msgBtn) {
       msgBtn.setAttribute('aria-expanded', 'false');
       msgBtn.setAttribute('aria-label', 'Tin nhắn');
       msgBtn.innerHTML = '<i class="ti ti-messages"></i>';
     }
-    var msgWrap = header.querySelector('.ifx-topnav-messages');
-    if (msgWrap) msgWrap.classList.remove('open');
+    var msgWrap = header.querySelector('.ifx-app-header-messages');
+    if (msgWrap) msgWrap.classList.remove('is-open');
   }
 
   /* ĐỢT 2 — Mobile User Hub (thay hamburger cũ).
    * Trên mobile Primary Nav đã ở bottom bar → header KHÔNG cần hamburger + drawer nav.
-   * Avatar (mobile) tap → mở panel User Hub full-page (tái dùng class .ifx-topnav-menu
+   * Avatar (mobile) tap → mở panel User Hub full-page (tái dùng class .ifx-app-header-menu
    * cho style drawer, đã chỉnh full-width), header hiện nút Back. Consumer thuần của
    * IfluxAppShell.getUserHub(). KHÔNG tạo class DS mới. */
   function initMobileUserHub() {
     function isMobile() { return ifxIsMobileShell(); }
 
-    document.querySelectorAll('.ifx-topnav').forEach(function (header, idx) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header, idx) {
       if (header.getAttribute('data-ifx-userhub') === '1') return;
       header.setAttribute('data-ifx-userhub', '1');
 
-      var brand = header.querySelector('.ifx-topnav-brand');
+      var brand = header.querySelector('.ifx-app-header-brand');
 
       var overlay = document.createElement('div');
-      overlay.className = 'ifx-topnav-overlay';
+      overlay.className = 'ifx-app-header-overlay';
       overlay.setAttribute('data-ifx-nav-overlay', '');
       document.body.appendChild(overlay);
 
-      /* Panel User Hub — tái dùng class drawer .ifx-topnav-menu (full-page trên mobile). */
+      /* Panel User Hub — tái dùng class drawer .ifx-app-header-menu (full-page trên mobile). */
       var panel = document.createElement('nav');
-      panel.className = 'ifx-topnav-menu';
+      panel.className = 'ifx-app-header-menu';
       panel.id = 'ifx-user-hub-' + idx;
       panel.setAttribute('aria-label', 'Menu cá nhân');
       document.body.appendChild(panel);
 
-      /* Nút Back — tái dùng .ifx-topnav-navbtn.ix-nav-btn, chỉ hiện khi hub mở. */
+      /* Nút Back — tái dùng .ifx-app-header-navbtn, chỉ hiện khi hub mở. */
       var backBtn = document.createElement('button');
       backBtn.type = 'button';
-      backBtn.className = 'ifx-topnav-navbtn ix-nav-btn';
+      backBtn.className = 'ifx-app-header-navbtn';
       backBtn.setAttribute('aria-label', 'Quay lại');
       backBtn.setAttribute('data-ifx-userhub-back', '');
       backBtn.innerHTML = '<i class="ti ti-arrow-left"></i>';
@@ -739,10 +739,10 @@
           group.items.forEach(function (it) { frag.appendChild(buildMenuItem(it)); });
         });
         var divider = document.createElement('div');
-        divider.className = 'ix-dropdown-divider';
+        divider.className = 'ifx-dropdown-divider';
         frag.appendChild(divider);
         var lo = document.createElement('a');
-        lo.className = 'ix-dropdown-item';
+        lo.className = 'ifx-dropdown-item';
         lo.href = '#';
         lo.setAttribute('data-ifx-logout', '');
         lo.innerHTML = '<i class="ti ti-logout"></i> Đăng xuất';
@@ -766,7 +766,7 @@
         }
         panel.classList.toggle('is-open', open);
         overlay.classList.toggle('is-visible', open);
-        header.classList.toggle('ifx-topnav--nav-open', open);
+        header.classList.toggle('is-nav-open', open);
         document.body.classList.toggle('ifx-nav-drawer-open', open);
         backBtn.style.display = open ? 'flex' : 'none';
         if (brand) brand.style.display = open ? 'none' : '';
@@ -812,17 +812,17 @@
       return ifxIsMobileShell();
     }
 
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       if (header.getAttribute('data-ifx-mobile-bar') === '1') return;
       header.setAttribute('data-ifx-mobile-bar', '1');
 
-      var actions = header.querySelector('.ifx-topnav-actions');
-      var searchWrap = actions && actions.querySelector('.ifx-topnav-search-wrap');
+      var actions = header.querySelector('.ifx-app-header-actions');
+      var searchWrap = actions && actions.querySelector('.ifx-app-header-search');
       var searchInput = searchWrap && searchWrap.querySelector('input');
 
       function insertBeforeAvatar(el) {
         if (!actions || !el) return;
-        var um = actions.querySelector('.ifx-user-menu');
+        var um = actions.querySelector('.ifx-app-header-user');
         if (um && um.parentNode === actions) um.insertAdjacentElement('beforebegin', el);
         else actions.appendChild(el);
       }
@@ -831,7 +831,7 @@
       if (!searchTrigger && actions) {
         searchTrigger = document.createElement('button');
         searchTrigger.type = 'button';
-        searchTrigger.className = 'ifx-topnav-search-trigger ix-nav-btn';
+        searchTrigger.className = 'ifx-app-header-search-trigger';
         searchTrigger.setAttribute('data-ifx-search-trigger', '');
         searchTrigger.setAttribute('aria-label', 'Tìm kiếm');
         searchTrigger.setAttribute('aria-expanded', 'false');
@@ -841,16 +841,16 @@
 
       if (!header.querySelector('[data-ifx-notif-bell]') && actions) {
         var notifWrap = document.createElement('div');
-        notifWrap.className = 'ix-dropdown ifx-topnav-notif';
+        notifWrap.className = 'ifx-dropdown ifx-app-header-notif';
         var bellBtn = document.createElement('button');
         bellBtn.type = 'button';
-        bellBtn.className = 'ifx-topnav-notif-btn ix-nav-btn';
+        bellBtn.className = 'ifx-app-header-notif-btn';
         bellBtn.setAttribute('data-ifx-notif-bell', '');
         bellBtn.setAttribute('aria-label', 'Thông báo');
         bellBtn.setAttribute('aria-expanded', 'false');
         bellBtn.innerHTML = '<i class="ti ti-bell"></i>';
         var notifMenu = document.createElement('div');
-        notifMenu.className = 'ix-dropdown-menu';
+        notifMenu.className = 'ifx-dropdown-menu';
         notifMenu.setAttribute('data-ifx-notif-dropdown', '');
         notifMenu.setAttribute('data-ifx-panel', 'notifications');
         notifWrap.appendChild(bellBtn);
@@ -863,10 +863,10 @@
 
       if (!header.querySelector('[data-ifx-messages-btn]') && actions) {
         var msgWrapEl = document.createElement('div');
-        msgWrapEl.className = 'ifx-topnav-messages';
+        msgWrapEl.className = 'ifx-app-header-messages';
         var msgBtnEl = document.createElement('button');
         msgBtnEl.type = 'button';
-        msgBtnEl.className = 'ifx-topnav-messages-btn ix-nav-btn';
+        msgBtnEl.className = 'ifx-app-header-messages-btn';
         msgBtnEl.setAttribute('data-ifx-messages-btn', '');
         msgBtnEl.setAttribute('aria-label', 'Tin nhắn');
         msgBtnEl.innerHTML = '<i class="ti ti-messages"></i>';
@@ -874,16 +874,16 @@
         insertBeforeAvatar(msgWrapEl);
       }
 
-      var notifWrap = header.querySelector('.ifx-topnav-notif');
+      var notifWrap = header.querySelector('.ifx-app-header-notif');
       var bellBtn = header.querySelector('[data-ifx-notif-bell]');
-      var msgWrap = header.querySelector('.ifx-topnav-messages');
+      var msgWrap = header.querySelector('.ifx-app-header-messages');
       var msgBtn = header.querySelector('[data-ifx-messages-btn]');
       wireMessagesShortcut(header);
 
-      /* Desktop + mobile: avatar luôn item cuối trong .ifx-topnav-actions (cùng vị trí desktop). */
+      /* Desktop + mobile: avatar luôn item cuối trong .ifx-app-header-actions (cùng vị trí desktop). */
       function orderHeaderActions() {
         if (!actions) return;
-        var userMenu = actions.querySelector('.ifx-user-menu');
+        var userMenu = actions.querySelector('.ifx-app-header-user');
         if (!userMenu) return;
         if (searchTrigger && searchTrigger.parentNode === actions) {
           userMenu.insertAdjacentElement('beforebegin', searchTrigger);
@@ -928,7 +928,7 @@
         if (window.IfluxUserNotificationsUI && IfluxUserNotificationsUI.renderBellPanel) {
           IfluxUserNotificationsUI.renderBellPanel(header);
         }
-        header.classList.add('ifx-topnav--notif-open');
+        header.classList.add('is-notif-open');
         if (bellBtn) {
           bellBtn.setAttribute('aria-expanded', 'true');
           bellBtn.setAttribute('aria-label', 'Đóng thông báo');
@@ -946,7 +946,7 @@
         closeMobileNotif(header);
         closeMobileMessages(header);
         mountSearchWrap();
-        header.classList.add('ifx-topnav--search-open');
+        header.classList.add('is-search-open');
         if (searchTrigger) {
           searchTrigger.setAttribute('aria-expanded', 'true');
           searchTrigger.setAttribute('aria-label', 'Đóng tìm kiếm');
@@ -966,7 +966,7 @@
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          if (header.classList.contains('ifx-topnav--notif-open')) {
+          if (header.classList.contains('is-notif-open')) {
             closeMobileNotif(header);
             return;
           }
@@ -991,7 +991,7 @@
         searchTrigger.addEventListener('click', function (e) {
           e.stopPropagation();
           if (!isMobileBar()) return;
-          if (header.classList.contains('ifx-topnav--search-open')) {
+          if (header.classList.contains('is-search-open')) {
             closeMobileSearch(header);
             if (searchInput) searchInput.blur();
           } else {
@@ -1002,12 +1002,12 @@
 
       document.addEventListener('click', function (e) {
         if (!isMobileBar()) return;
-        if (header.classList.contains('ifx-topnav--search-open')) {
-          if (!e.target.closest('.ifx-topnav-search-wrap') && !e.target.closest('[data-ifx-search-trigger]')) {
+        if (header.classList.contains('is-search-open')) {
+          if (!e.target.closest('.ifx-app-header-search') && !e.target.closest('[data-ifx-search-trigger]')) {
             closeMobileSearch(header);
           }
         }
-        if (header.classList.contains('ifx-topnav--notif-open')) {
+        if (header.classList.contains('is-notif-open')) {
           if (!e.target.closest('[data-ifx-notif-dropdown]') && !e.target.closest('[data-ifx-notif-bell]')) {
             closeMobileNotif(header);
           }
@@ -1043,11 +1043,11 @@
 
     function isMobileBar() { return ifxIsMobileShell(); }
 
-    var bar = document.getElementById('ifx-mobile-tabbar');
+    var bar = document.getElementById('ifx-tabbar');
     if (!bar) {
       bar = document.createElement('nav');
-    bar.id = 'ifx-mobile-tabbar';
-    bar.className = 'ifx-mobile-tabbar';
+    bar.id = 'ifx-tabbar';
+    bar.className = 'ifx-tabbar';
     bar.setAttribute('aria-label', 'Điều hướng chính');
       document.body.appendChild(bar);
     }
@@ -1056,11 +1056,11 @@
     var ORDER = ['dashboard', 'market', 'news', 'flow', 'pricing'];
 
     function tabbarItemHtml(it, label) {
-      var chip = it.exclusive ? '<span class="ifx-mobile-tabbar__chip">ĐỘC QUYỀN</span>' : '';
+      var chip = it.exclusive ? '<span class="ifx-tabbar-chip">ĐỘC QUYỀN</span>' : '';
       return (
-        '<span class="ifx-mobile-tabbar__icon-wrap">' +
+        '<span class="ifx-tabbar-icon">' +
           chip +
-          '<span class="ifx-mobile-tabbar__fab"><i class="ti ' + it.icon + '"></i></span>' +
+          '<span class="ifx-tabbar-fab"><i class="ti ' + it.icon + '"></i></span>' +
         '</span>' +
         '<span>' + label + '</span>'
       );
@@ -1104,11 +1104,11 @@
         var link = document.createElement('a');
         var label = (mode === 'primary') ? (SHORT[it.key] || it.label) : it.label;
         link.href = (mode === 'primary' && it.href) ? it.href : '#';
-        link.className = 'ifx-mobile-tabbar__item' + (it.active ? ' is-active' : '');
-        if (mode === 'primary' && it.exclusive) link.className += ' ifx-mobile-tabbar__item--flow';
+        link.className = 'ifx-tabbar-item' + (it.active ? ' is-active' : '');
+        if (mode === 'primary' && it.exclusive) link.className += ' ifx-tabbar-item-exclusive';
         var badge = '';
         if (mode === 'context' && it.key === 'comments' && commentN && commentN !== '0') {
-          badge = '<span class="ifx-mobile-tabbar__comment-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
+          badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
         if (mode === 'context') {
@@ -1177,7 +1177,7 @@
         bar.appendChild(entities);
         slot = document.createElement('div');
         slot.setAttribute('data-ifx-ix-article-bottom-root', '');
-        slot.className = 'ifx-mobile-tabbar__ix';
+        slot.className = 'ifx-tabbar-ix';
         bar.appendChild(slot);
       } else {
         if (entities.parentNode !== bar) {
@@ -1235,7 +1235,7 @@
         var primaryItems = (shell.getPrimaryNav) ? shell.getPrimaryNav() : [];
         if (primaryItems.length) renderPrimary(primaryItems);
       }
-      document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+      document.querySelectorAll('.ifx-app-header').forEach(function (header) {
         if (header._ifxSyncContextBack) header._ifxSyncContextBack();
       });
     }
@@ -1256,13 +1256,13 @@
       return /\/(tin-nhan|messages)(\/|$)/.test(path) || /\/User_Web\/messages\//.test(path);
     }
 
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       if (header.getAttribute('data-ifx-context-back-init') === '1') return;
       header.setAttribute('data-ifx-context-back-init', '1');
 
       var backBtn = document.createElement('button');
       backBtn.type = 'button';
-      backBtn.className = 'ifx-topnav-navbtn ix-nav-btn';
+      backBtn.className = 'ifx-app-header-navbtn';
       backBtn.setAttribute('aria-label', 'Quay lại');
       backBtn.setAttribute('data-ifx-context-back', '');
       backBtn.innerHTML = '<i class="ti ti-arrow-left"></i>';
@@ -1292,7 +1292,7 @@
         var shell = window.IfluxAppShell;
         var isCtx = isMobile() && shell && shell.getNavMode && shell.getNavMode() === 'CONTEXT';
         var isComments = header.getAttribute('data-ifx-header-mode') === 'comments';
-        var hubOpen = header.classList.contains('ifx-topnav--nav-open');
+        var hubOpen = header.classList.contains('is-nav-open');
         backBtn.style.display = ((isCtx || isComments) && !hubOpen && !isMessagesPage()) ? 'flex' : 'none';
         syncTopnavActiveHeight(header);
       }
@@ -1303,10 +1303,10 @@
     });
   }
 
-  /** Comments page: đổ title + likes vào .ifx-topnav sẵn có (reuse context-back). */
+  /** Comments page: đổ title + likes vào .ifx-app-header sẵn có (reuse context-back). */
   function setCommentsShellHeader(opts) {
     opts = opts || {};
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       header.setAttribute('data-ifx-header-mode', 'comments');
 
       var backBtn = header.querySelector('[data-ifx-context-back]');
@@ -1317,11 +1317,11 @@
         titleEl = document.createElement('span');
         titleEl.setAttribute('data-ifx-comments-title', '');
         if (backBtn) backBtn.insertAdjacentElement('afterend', titleEl);
-        else header.insertBefore(titleEl, header.querySelector('.ifx-topnav-actions'));
+        else header.insertBefore(titleEl, header.querySelector('.ifx-app-header-actions'));
       }
       titleEl.textContent = opts.title != null ? String(opts.title) : 'Bình luận';
 
-      var actions = header.querySelector('.ifx-topnav-actions') || header;
+      var actions = header.querySelector('.ifx-app-header-actions') || header;
       var likeBtn = header.querySelector('[data-ifx-ix-post-like]');
       var showLike = opts.likes != null || typeof opts.onLike === 'function';
       if (!showLike) {
@@ -1330,7 +1330,7 @@
         if (!likeBtn) {
           likeBtn = document.createElement('button');
           likeBtn.type = 'button';
-          likeBtn.className = 'ifx-topnav-navbtn ix-nav-btn';
+          likeBtn.className = 'ifx-app-header-navbtn';
           likeBtn.setAttribute('data-ifx-ix-post-like', '');
           likeBtn.setAttribute('aria-label', 'Thích');
           likeBtn.innerHTML =
@@ -1364,13 +1364,13 @@
       return /\/(tin-nhan|messages)(\/|$)/.test(path) || /\/User_Web\/messages\//.test(path);
     }
 
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       if (header.getAttribute('data-ifx-msg-shell') === '1') return;
       header.setAttribute('data-ifx-msg-shell', '1');
 
       var backBtn = document.createElement('button');
       backBtn.type = 'button';
-      backBtn.className = 'ifx-topnav-navbtn ix-nav-btn';
+      backBtn.className = 'ifx-app-header-navbtn';
       backBtn.setAttribute('aria-label', 'Quay lại');
       backBtn.setAttribute('data-ifx-messages-back', '');
       backBtn.innerHTML = '<i class="ti ti-arrow-left"></i>';
@@ -1382,7 +1382,7 @@
 
       function applyMode() {
         var show = isMobile() && isMessagesPage();
-        var hubOpen = header.classList.contains('ifx-topnav--nav-open');
+        var hubOpen = header.classList.contains('is-nav-open');
         var chatMode = header.getAttribute('data-ifx-chat-mode') || 'list';
         backBtn.style.display = (show && !hubOpen) ? 'flex' : 'none';
         if (show && chatMode === 'detail' && header._ifxSyncContextBack) {
@@ -1417,17 +1417,17 @@
   }
 
   window.IfluxWebUI.closeMobileSearch = function () {
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       closeMobileSearch(header);
     });
   };
   window.IfluxWebUI.closeMobileNotif = function () {
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       closeMobileNotif(header);
     });
   };
   window.IfluxWebUI.closeMobileMessages = function () {
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       closeMobileMessages(header);
     });
   };
@@ -1444,13 +1444,13 @@
   window.IfluxWebUI.toggleMobileNav = function () {
     mobileNavControllers.forEach(function (ctrl) {
       if (!ctrl.isDrawerMode()) return;
-      var open = ctrl.header && ctrl.header.classList.contains('ifx-topnav--nav-open');
+      var open = ctrl.header && ctrl.header.classList.contains('is-nav-open');
       ctrl.setOpen(!open);
     });
   };
 
   function syncMobileHeaderPanels() {
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       var notifDropdown = getNotifDropdown(header);
       if (ifxIsMobileShell()) {
         if (notifDropdown && notifDropdown.parentNode !== header) header.appendChild(notifDropdown);
@@ -1530,7 +1530,7 @@
   var notifLoadPromise = null;
 
   function ensureUserNotifications(openAfter) {
-    if (!document.querySelector('.ifx-user-menu') || !window.IfluxAuth || !IfluxAuth.isLoggedIn()) {
+    if (!document.querySelector('.ifx-app-header-user') || !window.IfluxAuth || !IfluxAuth.isLoggedIn()) {
       return Promise.resolve();
     }
     function finish() {
@@ -1539,7 +1539,7 @@
         if (window.IfluxWebUI && IfluxWebUI.syncMobileHeaderPanels) IfluxWebUI.syncMobileHeaderPanels();
       }
       if (!openAfter) return;
-      var wrap = document.querySelector('.ifx-topnav-notif');
+      var wrap = document.querySelector('.ifx-app-header-notif');
       var bell = wrap && wrap.querySelector('[data-ifx-notif-bell]');
       if (!bell || !wrap || wrap.classList.contains('open')) return;
       setTimeout(function () { bell.click(); }, 0);
@@ -1554,7 +1554,7 @@
         loadScriptChain(base, [
           { src: 'client-local-notification-types.js?v=notifPhaseD4_20260728', g: 'IfluxClientLocalNotificationTypes' },
           { src: 'inapp-notifications.js?v=notifPhaseD4_20260728', g: 'IfluxInAppNotifications' },
-          { src: 'iflux-user-notifications-ui.js?v=fn00120260724', g: 'IfluxUserNotificationsUI' }
+          { src: 'iflux-user-notifications-ui.js?v=appHeader20260928', g: 'IfluxUserNotificationsUI' }
         ], resolve);
       });
     }
@@ -1576,7 +1576,7 @@
 
   function installHeaderChromeLazy() {
     if (!window.IfluxAuth || !IfluxAuth.isLoggedIn()) return;
-    bindHeaderChromeLazy(document.querySelector('.ifx-topnav-notif'), ensureUserNotifications);
+    bindHeaderChromeLazy(document.querySelector('.ifx-app-header-notif'), ensureUserNotifications);
   }
 
   window.IfluxWebUI.installHeaderChromeLazy = installHeaderChromeLazy;

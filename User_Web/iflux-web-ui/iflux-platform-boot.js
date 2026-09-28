@@ -495,9 +495,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   function load() {
     if (global.IfluxMarketStatusBar) return;
-    if (!document.querySelector('.ifx-topnav')) return;
+    if (!document.querySelector('.ifx-app-header')) return;
     var s = document.createElement('script');
-    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=mockRmWp5_20260809';
+    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=appHeader20260928';
     s.async = true;
     document.head.appendChild(s);
   }
@@ -1017,7 +1017,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   function itemHtml(it) {
-    var cls = 'ifx-topnav-link' + (it.exclusive ? ' ifx-topnav-link--exclusive' : '') + (it.active ? ' active' : '');
+    var cls = 'ifx-app-header-link' + (it.exclusive ? ' ifx-app-header-link-exclusive' : '') + (it.active ? ' is-active' : '');
     var attrs = '';
     if (it.appOnly) attrs += ' data-ifx-app-only';
     if (it.onboard) attrs += ' data-ifx-onboard="' + esc(it.onboard) + '"';
@@ -1026,9 +1026,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (it.exclusive) {
       return '<a href="' + href + '" class="' + cls + '"' + attrs + '>' +
         '<i class="ti ' + esc(it.icon) + '"></i>' +
-        '<span class="ifx-topnav-link__stack">' +
-          '<span class="ifx-topnav-chip">' + esc(it.chip || 'Độc quyền') + '</span>' +
-          '<span class="ifx-topnav-link__label">' + esc(it.label) + '</span>' +
+        '<span class="ifx-app-header-link-stack">' +
+          '<span class="ifx-app-header-chip">' + esc(it.chip || 'Độc quyền') + '</span>' +
+          '<span class="ifx-app-header-link-label">' + esc(it.label) + '</span>' +
         '</span></a>';
     }
     return '<a href="' + href + '" class="' + cls + '"' + attrs + '>' +
@@ -1036,9 +1036,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   function findNav() {
-    var header = document.querySelector('header.ifx-topnav') || document.querySelector('.ifx-topnav');
+    var header = document.querySelector('header.ifx-app-header') || document.querySelector('.ifx-app-header');
     if (!header) return null;
-    return header.querySelector('.ifx-topnav-menu');
+    return header.querySelector('.ifx-app-header-menu');
   }
 
   /* Chỉ đọc IfluxAppShell.getPrimaryNav() — không chạm Route/Auth. */
@@ -1052,7 +1052,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (nav.innerHTML !== html) nav.innerHTML = html;
     nav.setAttribute('data-ifx-guest-nav', '');
 
-    var brand = document.querySelector('.ifx-topnav-brand');
+    var brand = document.querySelector('.ifx-app-header-brand');
     if (brand) brand.setAttribute('href', shell.hrefFor('news'));
 
     /* Cho header UI (mobile nav / onboard / active-height) gắn lại vào menu vừa dựng. */
@@ -1072,7 +1072,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     /* Chờ Auth: platform-boot thực thi trước auth.js trong ensureParallel →
        paint sớm sẽ thiếu mục appOnly («Nhà của tôi»). Auth emit iflux-auth-changed. */
     if (!global.IfluxAuth) return;
-    if (document.querySelector('.ifx-topnav')) render();
+    if (document.querySelector('.ifx-app-header')) render();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

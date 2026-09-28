@@ -54,4 +54,6 @@
   --ifx-market-floor-soft: var(--ifx-alpha-cyan-16);
   --ifx-flow-in: var(--ifx-color-lime-500);
   --ifx-flow-out: var(--ifx-color-red-450);
+  --ifx-bg-chrome: rgba(43, 44, 64, 0.96);
+  --ifx-shadow-chrome: 0 4px 24px rgba(0, 0, 0, 0.18);
 }

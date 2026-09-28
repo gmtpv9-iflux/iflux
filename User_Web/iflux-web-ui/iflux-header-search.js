@@ -105,7 +105,7 @@ Note: Chạy khi mở search — không P1 PASS
   function installAutofillDecoys(wrap) {
     if (!wrap || wrap.querySelector('[data-ifx-autofill-decoy]')) return;
     var decoy = document.createElement('div');
-    decoy.className = 'ifx-hdr-search-decoy';
+    decoy.className = 'ifx-app-header-search-decoy';
     decoy.setAttribute('data-ifx-autofill-decoy', '1');
     decoy.setAttribute('aria-hidden', 'true');
     decoy.innerHTML =
@@ -153,17 +153,17 @@ Note: Chạy khi mở search — không P1 PASS
   function renderRecentPanel() {
     var list = readQueryRecent().slice(0, MAX_QUERY);
     if (!list.length) {
-      return '<div class="ifx-hdr-search-empty">Chưa có tìm kiếm gần đây</div>';
+      return '<div class="ifx-app-header-search-empty">Chưa có tìm kiếm gần đây</div>';
     }
-    return '<div class="ifx-hdr-search-recent-head">' +
+    return '<div class="ifx-app-header-search-recent-head">' +
         '<span><i class="ti ti-history"></i> Tìm kiếm gần đây</span>' +
-        '<button type="button" class="ifx-hdr-search-recent-clear" data-ifx-clear-recent>Xóa</button>' +
+        '<button type="button" class="ifx-app-header-search-recent-clear" data-ifx-clear-recent>Xóa</button>' +
       '</div>' +
       list.map(function (stored, i) {
-        return '<button type="button" class="ifx-hdr-search-item ifx-hdr-search-item--recent ifx-hdr-search-item--query' + (i === 0 ? ' is-active' : '') + '" data-ifx-recent-query="' + esc(stored.q) + '">' +
+        return '<button type="button" class="ifx-app-header-search-item ifx-app-header-search-item--recent ifx-app-header-search-item--query' + (i === 0 ? ' is-active' : '') + '" data-ifx-recent-query="' + esc(stored.q) + '">' +
           '<span class="ix-chip ix-chip-sm ix-chip-secondary"><i class="ti ti-search"></i></span>' +
-          '<span class="ifx-hdr-search-item__label">' + esc(stored.q) + '</span>' +
-          '<span class="ifx-hdr-search-item__time">' + esc(fmtRecentTime(stored.at)) + '</span>' +
+          '<span class="ifx-app-header-search-item-label">' + esc(stored.q) + '</span>' +
+          '<span class="ifx-app-header-search-item-time">' + esc(fmtRecentTime(stored.at)) + '</span>' +
         '</button>';
       }).join('');
   }
@@ -273,16 +273,16 @@ Note: Chạy khi mở search — không P1 PASS
 
   function renderResults(items) {
     if (!items.length) {
-      return '<div class="ifx-hdr-search-empty">Không có kết quả</div>';
+      return '<div class="ifx-app-header-search-empty">Không có kết quả</div>';
     }
     return groupByType(items).map(function (grp) {
       var meta = TYPE_META[grp.type] || { label: grp.type, icon: 'ti-search' };
-      return '<div class="ifx-hdr-search-group">' +
-        '<div class="ifx-hdr-search-group-title">' + esc(meta.label) + '</div>' +
+      return '<div class="ifx-app-header-search-group">' +
+        '<div class="ifx-app-header-search-group">' + esc(meta.label) + '</div>' +
         grp.items.map(function (e, i) {
-          return '<a class="ifx-hdr-search-item' + (i === 0 && grp.type === groupByType(items)[0].type ? ' is-active' : '') + '" href="' + esc(entityUrl(e)) + '" data-ifx-search-item data-ifx-entity-type="' + esc(e.type) + '" data-ifx-entity-id="' + esc(e.id) + '" data-ifx-entity-label="' + esc(e.label || e.name) + '">' +
+          return '<a class="ifx-app-header-search-item' + (i === 0 && grp.type === groupByType(items)[0].type ? ' is-active' : '') + '" href="' + esc(entityUrl(e)) + '" data-ifx-search-item data-ifx-entity-type="' + esc(e.type) + '" data-ifx-entity-id="' + esc(e.id) + '" data-ifx-entity-label="' + esc(e.label || e.name) + '">' +
             '<span class="ix-chip ix-chip-sm ' + meta.chip + '"><i class="ti ' + meta.icon + '"></i></span>' +
-            '<span class="ifx-hdr-search-item__label">' + esc(e.label) + '</span>' +
+            '<span class="ifx-app-header-search-item-label">' + esc(e.label) + '</span>' +
           '</a>';
         }).join('') +
       '</div>';
@@ -358,8 +358,8 @@ Note: Chạy khi mở search — không P1 PASS
 
   function bindSearch(wrap) {
     var input = wrap.querySelector('input');
-    var dropdown = wrap.querySelector('.ifx-hdr-search-dropdown');
-    var box = wrap.querySelector('.ifx-hdr-search');
+    var dropdown = wrap.querySelector('.ifx-app-header-search-results');
+    var box = wrap.querySelector('.ifx-app-header-search-box');
     if (!input || !dropdown) return;
 
     hardenSearchInput(input, wrap);
@@ -460,7 +460,7 @@ Note: Chạy khi mở search — không P1 PASS
       if (e.key === 'Escape') {
         close();
         input.blur();
-        if (wrap.closest('.ifx-topnav--search-open') && global.IfluxWebUI && global.IfluxWebUI.closeMobileSearch) {
+        if (wrap.closest('.ifx-app-header.is-search-open') && global.IfluxWebUI && global.IfluxWebUI.closeMobileSearch) {
           global.IfluxWebUI.closeMobileSearch();
         }
         return;
@@ -468,7 +468,7 @@ Note: Chạy khi mở search — không P1 PASS
       if (e.key === 'Enter') {
         var q = String(input.value || '').trim();
         if (q) pushQuery(q);
-        var active = dropdown.querySelector('.ifx-hdr-search-item.is-active') || dropdown.querySelector('[data-ifx-recent-query]') || dropdown.querySelector('.ifx-hdr-search-item');
+        var active = dropdown.querySelector('.ifx-app-header-search-item.is-active') || dropdown.querySelector('[data-ifx-recent-query]') || dropdown.querySelector('.ifx-app-header-search-item');
         if (active) {
           if (active.hasAttribute('data-ifx-recent-query')) {
             e.preventDefault();
@@ -487,7 +487,7 @@ Note: Chạy khi mở search — không P1 PASS
         return;
       }
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        var items = Array.prototype.slice.call(dropdown.querySelectorAll('.ifx-hdr-search-item, [data-ifx-recent-query]'));
+        var items = Array.prototype.slice.call(dropdown.querySelectorAll('.ifx-app-header-search-item, [data-ifx-recent-query]'));
         if (!items.length) return;
         e.preventDefault();
         var idx = items.findIndex(function (el) { return el.classList.contains('is-active'); });
@@ -513,7 +513,7 @@ Note: Chạy khi mở search — không P1 PASS
   }
 
   function init() {
-    if (!document.querySelector('.ifx-topnav')) return;
+    if (!document.querySelector('.ifx-app-header')) return;
     var wraps = mountShells();
     if (!wraps.length) return;
     /* Bind listeners NGAY (không cần data) → search UI phản hồi tức thì.

@@ -46,7 +46,7 @@ var manifest = {
     m('community-ui', 'js', ASSET + 'news-ui.js?v=mockRmWp1_20260809', 'IfluxNewsUI'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=mockRmWp1_20260809', 'IfluxDailyFeed'),
     m('community-page', 'js', ASSET + 'news-page.js?v=pageFrame20260928', 'IfluxNewsPage'),
-    m('community-css', 'css', ASSET + 'news.css?v=stickyRefactor20260811', null)
+    m('community-css', 'css', ASSET + 'news.css?v=appHeader20260928', null)
   ],
   lazyChildren: [
     'WGT-NEWS-001',

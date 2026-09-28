@@ -21,14 +21,6 @@
       "status": "active",
       "sourceRoot": "platform/admin/tokens/source",
       "generatedRoot": "platform/admin/tokens/generated"
-    },
-    {
-      "id": "platform-web",
-      "owner": "web",
-      "layer": "platform",
-      "status": "active",
-      "sourceRoot": "platform/web/tokens/source",
-      "generatedRoot": "platform/web/tokens/generated"
     }
   ]
 }

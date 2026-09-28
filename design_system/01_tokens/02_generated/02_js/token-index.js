@@ -171,7 +171,10 @@
       "--ifx-size-chart-plot-sm",
       "--ifx-size-chart-plot-md",
       "--ifx-size-chart-plot-lg",
-      "--ifx-size-chart-plot-xl"
+      "--ifx-size-chart-plot-xl",
+      "--ifx-size-app-header-h",
+      "--ifx-size-tabbar-h",
+      "--ifx-size-header-menu-w"
     ],
     "z": [
       "--ifx-z-dropdown",
@@ -318,7 +321,9 @@
       "--ifx-market-floor",
       "--ifx-market-floor-soft",
       "--ifx-flow-in",
-      "--ifx-flow-out"
+      "--ifx-flow-out",
+      "--ifx-bg-chrome",
+      "--ifx-shadow-chrome"
     ],
     "light": [
       "--ifx-bg-canvas",
@@ -368,7 +373,9 @@
       "--ifx-market-floor",
       "--ifx-market-floor-soft",
       "--ifx-flow-in",
-      "--ifx-flow-out"
+      "--ifx-flow-out",
+      "--ifx-bg-chrome",
+      "--ifx-shadow-chrome"
     ]
   },
   "breakpoint": {
@@ -394,14 +401,6 @@
       "status": "active",
       "sourceRoot": "platform/admin/tokens/source",
       "generatedRoot": "platform/admin/tokens/generated"
-    },
-    {
-      "id": "platform-web",
-      "owner": "web",
-      "layer": "platform",
-      "status": "active",
-      "sourceRoot": "platform/web/tokens/source",
-      "generatedRoot": "platform/web/tokens/generated"
     }
   ],
   "inventory": [
@@ -1205,6 +1204,20 @@
     },
     {
       "name": "--ifx-flow-out",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-bg-chrome",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/color.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/01_themes/{dark,light}.css"
+    },
+    {
+      "name": "--ifx-shadow-chrome",
       "owner": "global",
       "layer": "global",
       "source": "design_system/01_tokens/01_source/color.json",
@@ -2198,6 +2211,27 @@
       "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
     },
     {
+      "name": "--ifx-size-app-header-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-tabbar-h",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
+      "name": "--ifx-size-header-menu-w",
+      "owner": "global",
+      "layer": "global",
+      "source": "design_system/01_tokens/01_source/size.json",
+      "generated": "design_system/01_tokens/02_generated/01_css/primitives.css"
+    },
+    {
       "name": "--ifx-z-dropdown",
       "owner": "global",
       "layer": "global",
@@ -2266,55 +2300,6 @@
       "layer": "platform",
       "source": "platform/admin/tokens/source/size.json",
       "generated": "platform/admin/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-topnav-h",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-size-tabbar-h",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-color-topnav-bg",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-shadow-topnav",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-gradient-brand-cta",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/primitives.css"
-    },
-    {
-      "name": "--ifx-topnav-bg",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/themes/{dark,light}.css"
-    },
-    {
-      "name": "--ifx-topnav-shadow",
-      "owner": "web",
-      "layer": "platform",
-      "source": "platform/web/tokens/source/chrome.json",
-      "generated": "platform/web/tokens/generated/css/themes/{dark,light}.css"
     }
   ]
 };

@@ -7,7 +7,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var SHELL = [
-  ASSET + 'iflux-platform-boot.js?v=homeCd20260724',
+  ASSET + 'iflux-platform-boot.js?v=appHeader20260928',
   ASSET + 'iflux-api-bundle.js',
   ASSET + 'auth.js?v=p6Writer20260730'
 ];
@@ -19,7 +19,7 @@ var FEATURE = [
   ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=btnRace20260728',
   ADMIN + 'iflux-admin-ui.js',
-  ASSET + 'iflux-web-ui.js?v=p6Writer20260730',
+  ASSET + 'iflux-web-ui.js?v=appHeader20260928',
   ASSET + 'auth-login-init.js?v=affOwnerRead20260808'
 ];
 

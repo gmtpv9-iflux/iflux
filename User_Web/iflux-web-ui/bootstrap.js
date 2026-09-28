@@ -24,7 +24,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=softNavLayoutFix20260810';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=softNavP1_20260810';
+import { bootShell } from './shell-boot.js?v=appHeader20260928';
 import { installSoftNavigation } from './soft-navigation.js?v=softNavP1_20260810';
 
 var VER = '?v=phaseCW5gate20260721';
@@ -340,8 +340,8 @@ async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
      * Soft-nav: không clear/rebind logo (persistent shell). */
     if (bindLogo) {
       var logoEl =
-        document.querySelector('.ifx-topnav-brand [data-ifx-seo-logo]') ||
-        document.querySelector('.ifx-topnav-brand img.ix-brand-logo');
+        document.querySelector('.ifx-app-header-brand [data-ifx-seo-logo]') ||
+        document.querySelector('.ifx-app-header-brand img.ix-brand-logo');
       if (logoEl) {
         if (logoUrl) {
           logoEl.setAttribute('src', logoUrl);

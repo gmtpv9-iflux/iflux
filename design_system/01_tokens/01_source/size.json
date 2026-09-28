@@ -25,7 +25,10 @@
       "chart-plot-sm": "128px",
       "chart-plot-md": "208px",
       "chart-plot-lg": "256px",
-      "chart-plot-xl": "336px"
+      "chart-plot-xl": "336px",
+      "app-header-h": "56px",
+      "tabbar-h": "60px",
+      "header-menu-w": "300px"
     }
   }
 }

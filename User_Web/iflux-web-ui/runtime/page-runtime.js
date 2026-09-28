@@ -17,7 +17,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * Published path (Phase 4): PagePublished → Layout Engine → mount(display.module).
  */
 
-import { buildPageFrame } from './app-shell.js?v=pageFrame20260928';
+import { buildPageFrame } from './app-shell.js?v=appHeader20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
 import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';

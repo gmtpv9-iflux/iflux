@@ -2,7 +2,7 @@
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
