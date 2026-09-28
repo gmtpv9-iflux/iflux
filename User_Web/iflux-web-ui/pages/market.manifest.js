@@ -5,6 +5,9 @@
 
 export default {
   pageKey: 'market',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--market',
+  css: [],
   path: '/thi-truong',
   title: 'Thị trường',
   intro: 'Tổng quan thị trường.',

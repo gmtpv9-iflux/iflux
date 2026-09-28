@@ -22,15 +22,16 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=pageFrame20260928';
+import { bootPage } from './page-runtime.js?v=softAll20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { bootShell } from './shell-boot.js?v=appHeader20260928';
-import { installSoftNavigation } from './soft-navigation.js?v=stickyRefactor20260811';
+import { pageKeyFromPath } from './page-keys.js?v=softAll20260928';
+import { installSoftNavigation } from './soft-navigation.js?v=softAll20260928';
 
-var VER = '?v=phaseCW5gate20260721';
+var VER = '?v=softAll20260928';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=appHeader20260928';
+var PF = '?v=softAll20260928';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
@@ -102,61 +103,7 @@ var PAGE_PUBLISHED = {
 };
 
 function detectPageKey() {
-  var raw = location.pathname || '/';
-  var path = raw;
-  if (window.IfluxNormalizePath) {
-    path = window.IfluxNormalizePath(raw);
-  }
-  path = String(path || '/').toLowerCase();
-
-  /* Path cụ thể TRƯỚC nhánh rộng — học Phase A (viet-bai) + Ownership Proof (comment/checkout). */
-  if (/\/binh-luan(\/|$)/.test(path) || /\/user_web\/comments(\/|$)/.test(path) || /\/comments\/index\.html/.test(path)) {
-    return 'comments';
-  }
-  if (/\/user_web\/stock\/comment/.test(path) || /\/stock\/comment\.html/.test(path)) {
-    return 'stockComment';
-  }
-  if (path.indexOf('/thanh-toan') >= 0 || /\/user_web\/account\/checkout/.test(path) || /\/account\/checkout/.test(path)) {
-    return 'checkout';
-  }
-  /* Viết bài — TRƯỚC nhánh rộng /cong-dong (tránh nhận nhầm pageKey=community → mất AuthGate). */
-  if (/\/(?:tin-tuc|cong-dong)\/(viet|write)/.test(path) || /\/user_web\/(?:news|community)\/write/.test(path) || /\/community\/write/.test(path)) {
-    return 'newsWrite';
-  }
-  if (/\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/(?:news|community)\/post/.test(path)) {
-    return 'article';
-  }
-  if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'news';
-
-  if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
-  if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
-  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
-  if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
-
-  if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'news';
-  if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
-  if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
-  if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
-  if (path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'market';
-  if (path.indexOf('/hoi-dap') >= 0 || path.indexOf('/faq') >= 0) return 'faq';
-  if (path.indexOf('/thanh-vien') >= 0 || path.indexOf('/loyalty') >= 0 || path.indexOf('/membership') >= 0) return 'loyalty';
-  if (path.indexOf('/theo-doi') >= 0 || path.indexOf('/watchlist') >= 0) return 'watchlist';
-  if (path.indexOf('/tim-kiem') >= 0 || path.indexOf('/search') >= 0) return 'search';
-  if (path.indexOf('/tin-nhan') >= 0 || path.indexOf('/messages') >= 0) return 'messages';
-  if (path.indexOf('/chia-se') >= 0 || path.indexOf('/share') >= 0 || /\/user_web\/share/.test(path)) {
-    return 'share';
-  }
-  if (path.indexOf('/tai-khoan') >= 0 || path.indexOf('/account') >= 0 || /\/user_web\/account\/profile/.test(path)) {
-    return 'account';
-  }
-
-  if (/\/(co-phieu|stocks)\/?$/.test(path) || /\/user_web\/stocks(\/|$)/.test(path)) return 'stocks';
-  if (/\/(nganh|sectors)\/?$/.test(path) || /\/user_web\/sectors(\/|$)/.test(path)) return 'sectors';
-  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
-  if (/\/(cau-chuyen|chu-de|stories)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/index/.test(path)) return 'cauChuyen';
-
-  if (path === '/' || path === '') return 'home';
-  return null;
+  return pageKeyFromPath(location.pathname);
 }
 
 function apiBase() {
@@ -222,6 +169,8 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
       intro: page.intro != null ? page.intro : (staticManifest && staticManifest.intro) || '',
       documentTitle: page.documentTitle || (staticManifest && staticManifest.documentTitle) || '',
       sections: sections,
+      mainClass: (staticManifest && staticManifest.mainClass) || '',
+      css: (staticManifest && staticManifest.css) || [],
       widgets: []
     };
 

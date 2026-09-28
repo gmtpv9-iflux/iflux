@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'watchlist',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--watchlist',
+  css: ['/User_Web/iflux-web-ui/watchlist.css?v=softAll20260928', '/User_Web/iflux-web-ui/block-templates.css?v=softAll20260928', '/User_Web/iflux-web-ui/widget-shell.css?v=softAll20260928'],
   path: '/theo-doi',
   title: 'Danh sách theo dõi',
   documentTitle: '',

@@ -7,6 +7,9 @@
 
 export default {
   pageKey: 'news',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--community',
+  css: [],
   path: '/tin-tuc',
   title: 'Tin tức',
   intro: 'Tin tức, bài viết chuyên gia và thảo luận từ cộng đồng nhà đầu tư — cập nhật theo mã, ngành và chủ đề bạn quan tâm.',

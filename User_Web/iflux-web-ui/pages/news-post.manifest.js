@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'article',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--community-post',
+  css: ['/User_Web/iflux-web-ui/news.css?v=softAll20260928', '/User_Web/iflux-web-ui/block-templates.css?v=softAll20260928'],
   path: '/tin-tuc/bai-viet',
   title: 'Bài viết cộng đồng',
   documentTitle: '',

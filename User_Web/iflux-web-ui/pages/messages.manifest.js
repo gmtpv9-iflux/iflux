@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'messages',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--messages',
+  css: ['/User_Web/iflux-web-ui/profile.css?v=softAll20260928', '/User_Web/iflux-web-ui/hub.css?v=softAll20260928'],
   path: '/tin-nhan',
   title: 'Tin nhắn',
   documentTitle: '',

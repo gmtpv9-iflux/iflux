@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'loyalty',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--membership',
+  css: ['/User_Web/iflux-web-ui/loyalty.css?v=softAll20260928'],
   path: '/thanh-vien',
   title: 'Chương trình thành viên',
   documentTitle: '',

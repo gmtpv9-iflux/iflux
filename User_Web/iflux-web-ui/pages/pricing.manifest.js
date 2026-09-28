@@ -1,5 +1,8 @@
 export default {
   pageKey: 'pricing',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--pricing',
+  css: [],
   path: '/goi-cuoc',
   title: '',
   documentTitle: '',

@@ -20,7 +20,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 import { buildPageFrame } from './app-shell.js?v=appHeader20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
-import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
+import { loadScript, loadStyles } from './legacy-bridge.js?v=stickyFix20260811';
 import { mountPageWidgets } from './page-widgets.js?v=pageFrame20260928';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageFrame20260928';
@@ -37,6 +37,17 @@ export async function bootPage(m, mountEl) {
   if (window.IfluxEntityDefinition && IfluxEntityDefinition.enrichDefinitionWithEntity) {
     m = IfluxEntityDefinition.enrichDefinitionWithEntity(m, m.pageKey);
   }
+
+  /* Class <main> + CSS riêng của trang — manifest trang khai báo (tải đầy đủ lẫn điều hướng mềm dùng chung).
+     Nạp CSS trước khi dựng nội dung → không nháy giao diện chưa có style. */
+  var mainEl = mountEl.closest('main');
+  if (mainEl) {
+    Array.prototype.slice.call(mainEl.classList).forEach(function (c) {
+      if (c.indexOf('ifx-main--') === 0) mainEl.classList.remove(c);
+    });
+    String(m.mainClass || '').split(/\s+/).filter(Boolean).forEach(function (c) { mainEl.classList.add(c); });
+  }
+  if (m.css && m.css.length) await loadStyles(m.css);
 
   mountEl.innerHTML = '';
   /* Soft-nav: innerHTML không gỡ class layout trên mount root.

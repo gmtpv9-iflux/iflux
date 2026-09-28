@@ -7,6 +7,9 @@
 
 export default {
   pageKey: 'flow',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--flow',
+  css: [],
   path: '/dong-tien',
   title: '',
   documentTitle: '',

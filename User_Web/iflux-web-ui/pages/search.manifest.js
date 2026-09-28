@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'search',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--search',
+  css: ['/User_Web/iflux-web-ui/hub.css?v=softAll20260928', '/User_Web/iflux-web-ui/watchlist.css?v=softAll20260928'],
   path: '/tim-kiem',
   title: 'Tìm kiếm',
   documentTitle: '',

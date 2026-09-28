@@ -1,47 +1,12 @@
 /**
- * Soft Navigation P1 — Persistent App Shell
- * Intercept allowlist primary links → teardown outlet → pushState → soft start.
- * Hard fallback: modifier-click, ngoài allowlist, lỗi soft.
+ * Điều hướng mềm — App Shell (header, bottom menu, CSS/JS global) giữ nguyên, chỉ thay nội dung trang.
+ * Mọi trang dựng bằng runtime (page-keys.js); trang HTML tĩnh / modifier-click / lỗi → tải đầy đủ.
+ * Class <main> và CSS riêng của trang do manifest trang khai báo (page-runtime áp dụng).
  */
-import { unloadWidget } from './widget-loader.js?v=cssPin20260808';
+import { unloadWidget } from './widget-loader.js?v=pageLayout20260928';
+import { pageKeyFromPath, isSoftPage } from './page-keys.js?v=softAll20260928';
 
-var SOFT_VER = 'softNavP1_20260811';
-var HUB_CSS = '/User_Web/iflux-web-ui/hub.css?v=pageFrame20260928';
-var COMMUNITY_CSS = '/User_Web/iflux-web-ui/news.css?v=appHeader20260928';
-
-var ALLOW_KEYS = {
-  home: 1,
-  market: 1,
-  flow: 1,
-  news: 1,
-  pricing: 1,
-  stock: 1,
-  sector: 1,
-  family: 1,
-  article: 1
-};
-
-var MAIN_CLASS = {
-  home: 'ifx-main--hub',
-  market: 'ifx-main--market',
-  flow: 'ifx-main--flow',
-  news: 'ifx-main--community',
-  pricing: 'ifx-main--pricing',
-  stock: 'ifx-main--stock',
-  sector: 'ifx-main--stock',
-  family: 'ifx-main--stock',
-  article: 'ifx-main--community-post'
-};
-
-var ALL_MAIN = [
-  'ifx-main--hub',
-  'ifx-main--market',
-  'ifx-main--flow',
-  'ifx-main--community',
-  'ifx-main--pricing',
-  'ifx-main--stock',
-  'ifx-main--community-post'
-];
+var SOFT_VER = 'softAll_20260928';
 
 var installed = false;
 var navigating = false;
@@ -57,27 +22,6 @@ function normalizePath(pathname) {
     path = path.slice(0, -1);
   }
   return (path || '/').toLowerCase();
-}
-
-/** Soft P1 allowlist — hub + entity detail / bài viết (cùng pipeline). */
-function pageKeyFromPath(pathname) {
-  var path = normalizePath(pathname);
-  if (/\/(cong-dong|community)\/(bai-viet|posts?|story)(\/|$)/.test(path)) return 'article';
-  if (/^\/co-phieu\/[^/]+$/.test(path) || /^\/stocks\/[^/]+$/.test(path)) return 'stock';
-  if (/^\/nganh\/[^/]+$/.test(path) || /^\/sectors\/[^/]+$/.test(path)) return 'sector';
-  if (
-    /^\/he-sinh-thai\/[^/]+$/.test(path) ||
-    /^\/ho-co-phieu\/[^/]+$/.test(path) ||
-    /^\/ecosystems\/[^/]+$/.test(path)
-  ) {
-    return 'family';
-  }
-  if (path === '/trang-chu' || path === '/nha-cua-toi' || path === '/home') return 'home';
-  if (path === '/thi-truong' || path === '/market') return 'market';
-  if (path === '/dong-tien' || path === '/flow') return 'flow';
-  if (path === '/tin-tuc' || path === '/cong-dong' || path === '/community') return 'news';
-  if (path === '/goi-cuoc' || path === '/pricing' || path === '/bang-gia') return 'pricing';
-  return null;
 }
 
 function toAbsoluteUrl(href) {
@@ -102,35 +46,11 @@ function hardAssign(url) {
   }
 }
 
-function ensureStylesheet(href) {
-  if (!href) return;
-  var links = document.querySelectorAll('link[rel="stylesheet"]');
-  for (var i = 0; i < links.length; i++) {
-    var h = links[i].getAttribute('href') || '';
-    if (h === href || h.indexOf(href.split('?')[0]) === 0) return;
-  }
-  var link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = href;
-  document.head.appendChild(link);
-}
-
-function syncMainClass(pageKey) {
-  var main = document.querySelector('main.ifx-main');
-  if (!main) return;
-  for (var i = 0; i < ALL_MAIN.length; i++) {
-    main.classList.remove(ALL_MAIN[i]);
-  }
-  var cls = MAIN_CLASS[pageKey];
-  if (cls) main.classList.add(cls);
-}
-
 function syncHomeGreet(pageKey) {
   var main = document.querySelector('main.ifx-main');
   var mount = document.querySelector('[data-ifx-page-runtime]');
   var greet = document.querySelector('.ifx-hub-greet-row');
   if (pageKey === 'home') {
-    ensureStylesheet(HUB_CSS);
     if (!greet && main && mount) {
       greet = document.createElement('div');
       greet.className = 'ifx-hub-greet-row';
@@ -143,9 +63,6 @@ function syncHomeGreet(pageKey) {
     }
   } else if (greet) {
     greet.hidden = true;
-  }
-  if (pageKey === 'article' || pageKey === 'news') {
-    ensureStylesheet(COMMUNITY_CSS);
   }
 }
 
@@ -181,7 +98,7 @@ export function canSoftNavigate(href) {
   if (!abs) return false;
   if (abs.origin !== location.origin) return false;
   var key = pageKeyFromPath(abs.pathname);
-  if (!key || !ALLOW_KEYS[key]) return false;
+  if (!isSoftPage(key)) return false;
   /* Cùng trang + cùng search → không soft (tránh remount vô ích). */
   if (
     normalizePath(abs.pathname) === normalizePath(location.pathname) &&
@@ -204,7 +121,7 @@ export async function softNavigate(href, opts) {
   var abs = toAbsoluteUrl(href);
   if (!abs) return false;
   var pageKey = opts.forceKey || pageKeyFromPath(abs.pathname);
-  if (!pageKey || !ALLOW_KEYS[pageKey]) return false;
+  if (!isSoftPage(pageKey)) return false;
 
   var pathPart = abs.pathname + (abs.search || '') + (abs.hash || '');
   var finalUrl = decorateUrl(pathPart);
@@ -215,7 +132,6 @@ export async function softNavigate(href, opts) {
   navigating = true;
   try {
     teardownOutlet();
-    syncMainClass(pageKey);
     syncHomeGreet(pageKey);
 
     if (opts.replace && history.replaceState) {
@@ -268,8 +184,8 @@ function onDocumentClick(e) {
 
 function onPopState() {
   var key = pageKeyFromPath(location.pathname);
-  if (!key || !ALLOW_KEYS[key]) {
-    /* Ngoài allowlist — hard reload để đúng HTML/CSS trang. */
+  if (!isSoftPage(key)) {
+    /* Trang HTML tĩnh — tải lại để đúng HTML của trang. */
     location.reload();
     return;
   }

@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'faq',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--faq',
+  css: ['/User_Web/iflux-web-ui/pricing.css?v=softAll20260928', '/User_Web/iflux-web-ui/faq.css?v=softAll20260928'],
   path: '/hoi-dap',
   title: 'Câu hỏi thường gặp',
   documentTitle: '',

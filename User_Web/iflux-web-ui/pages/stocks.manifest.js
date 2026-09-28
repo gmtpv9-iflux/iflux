@@ -6,6 +6,9 @@ var VER = '?v=appHeader20260928';
 
 export default {
   pageKey: 'stocks',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--market ifx-main--list',
+  css: [],
   path: '/co-phieu',
   title: '',
   documentTitle: '',

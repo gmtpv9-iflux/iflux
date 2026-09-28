@@ -166,5 +166,7 @@ if (violations.length > 0) {
 }
 
 execFileSync('node', [path.join(REPO, 'ui_tooling', 'scripts', 'audit-icons.mjs')], { stdio: 'inherit' });
+/* Gói CSS global User Web khớp nguồn + mọi trang trỏ đúng version. */
+execFileSync('node', [path.join(REPO, 'ui_tooling', 'scripts', 'build-web-bundle.mjs'), '--check'], { stdio: 'inherit' });
 
 console.log('[check-governance] PASS — 0 inline style · 0 legacy .ix-*/--ix-* · media literal 5 mốc LOCK · 0 admin dependency · generated khớp generator · grid locked used spans · icons missing=0 · catalog .ifx-* definition = 0 · catalog dead title class = 0.');

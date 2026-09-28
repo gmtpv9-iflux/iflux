@@ -6,6 +6,9 @@ var VER = '?v=appHeader20260928';
 
 export default {
   pageKey: 'cauChuyenDetail',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--stock',
+  css: [],
   path: '/cau-chuyen',
   title: '',
   documentTitle: '',

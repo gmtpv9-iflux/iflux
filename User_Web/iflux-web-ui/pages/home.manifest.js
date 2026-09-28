@@ -21,6 +21,9 @@ var CSS_DASH = [
 
 export default {
   pageKey: 'home',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--hub',
+  css: ['/User_Web/iflux-web-ui/hub.css?v=softAll20260928'],
   path: '/trang-chu',
   title: 'Trang chủ',
   documentTitle: 'Trang chủ',
