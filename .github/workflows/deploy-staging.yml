@@ -24,6 +24,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # File sinh tự động (gói CSS global User Web) phải có trong Git và khớp nguồn —
+      # thiếu / lệch thì dừng, không deploy trang mất CSS.
+      - name: Kiểm tra gói CSS global
+        run: node ui_tooling/scripts/build-web-bundle.mjs --check
+
       - name: Xác định release id
         id: rel
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
