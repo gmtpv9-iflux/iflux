@@ -57,7 +57,10 @@
       cache: 'no-store'
     }).then(function (r) {
       if (r.status === 404) return { ok: false, notFound: true };
-      return r.json();
+      return r.json().then(function (body) {
+        /* Trang chưa xuất bản bố cục: API trả bố cục rỗng (published:false) — không ghi đè bản nháp Admin. */
+        return body && body.data && body.data.published === false ? { ok: false, notFound: true } : body;
+      });
     }).catch(function (err) {
       return { ok: false, error: String(err && err.message ? err.message : err) };
     });
