@@ -4,11 +4,10 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
   <title></title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-  <link rel="stylesheet" href="../../Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css?v=tabActiveAccent20260809" />
-  <link rel="stylesheet" href="../iflux-web-ui/app-shell.css?v=stickyFix20260811" />
-  <link rel="stylesheet" href="../iflux-web-ui/news.css" />
-  <link rel="stylesheet" href="../iflux-web-ui/profile.css?v=accountEarlyTab20260728" />
+  <!-- CSS global User Web (App Shell + DS) — một file, sinh bởi ui_tooling/scripts/build-web-bundle.mjs -->
+  <link rel="stylesheet" href="/platform/web/generated/web.css?v=4129623ce4" />
+  <link rel="stylesheet" href="../iflux-web-ui/news.css?v=r20260928n" />
+  <link rel="stylesheet" href="../iflux-web-ui/profile.css?v=r20260928n" />
   <script>
   (function () {
     var TAB_MAP = {
@@ -52,35 +51,39 @@
   app.setAttribute('data-ifx-account-view', view || 'sub');
 })();
 </script>
-  <header class="ifx-topnav">
-    <a href="/trang-chu" class="ifx-topnav-brand">
-      <img class="ix-brand-logo" data-ifx-seo-logo alt="iFlux" width="120" height="32" hidden />
+  <header class="ifx-app-header">
+    <a href="/tin-tuc" class="ifx-app-header-brand">
+      <img class="ifx-app-header-logo" data-ifx-seo-logo alt="iFlux" width="120" height="32" hidden />
     </a>
-    <nav class="ifx-topnav-menu"></nav>
-    <div class="ifx-topnav-actions">
-      <div class="ifx-topnav-search-wrap" data-ifx-header-search>
-        <div class="ix-search ifx-hdr-search" role="combobox" aria-expanded="false">
+    <nav class="ifx-app-header-menu"></nav>
+    <div class="ifx-app-header-actions">
+      <div class="ifx-app-header-search" data-ifx-header-search>
+        <div class="ifx-search ifx-app-header-search-box" role="combobox" aria-expanded="false">
           <i class="ti ti-search"></i>
           <input type="search" autocomplete="off" spellcheck="false" placeholder="Tìm CP, ngành, họ, chủ đề… (⌘K)" aria-label="Tìm kiếm thị trường" />
-          <kbd class="ifx-hdr-search-kbd">⌘K</kbd>
+          <kbd class="ifx-app-header-search-kbd">⌘K</kbd>
         </div>
-        <div class="ifx-hdr-search-dropdown" hidden></div>
+        <div class="ifx-app-header-search-results" hidden></div>
       </div>
-<div class="ix-dropdown ifx-user-menu">
-        <button class="ix-avatar" data-ix-toggle="dropdown" data-ifx-user-initials>…</button>
-        <div class="ix-dropdown-menu"></div>
+<div class="ifx-dropdown ifx-app-header-user">
+        <button class="ifx-avatar ifx-avatar-md ifx-avatar-accent ifx-avatar-ring" data-ifx-toggle="dropdown" data-ifx-user-initials>…</button>
+        <div class="ifx-dropdown-menu"></div>
       </div>
     </div>
   </header>
-  <main class="ifx-main">
+  <main class="ifx-container ifx-container-max ifx-main">
     <h1 class="ix-page-title" id="ifx-profile-title">Tài khoản của tôi</h1>
     <div class="ix-breadcrumb ix-mb-24">
       <a href="/trang-chu">Trang chủ</a><i class="ti ti-chevron-right" style="font-size:12px"></i><span id="ifx-profile-crumb">Hồ sơ</span>
     </div>
 <!-- Layout: sidebar left + content right -->
-        <div class="ix-profile-grid">
+        <!-- Khung trang chung (platform/web/web.css): Sidebar trái + Main, mỗi vùng có host widget. -->
+        <div class="ifx-shell-layout">
 
           <!-- ─── LEFT SIDEBAR ─────────────────────────────── -->
+          <aside class="ifx-shell-sidebar" aria-label="Hồ sơ">
+          <div class="ifx-shell-host" data-section="sidebar" data-ifx-section="sidebar"></div>
+          <div class="ifx-shell-sidebar-content">
           <div class="ix-profile-sidebar" data-ifx-profile-sidebar>
 
             <!-- Profile card -->
@@ -183,10 +186,14 @@
             </div>
 
           </div>
+          </div>
+          </aside>
           <!-- ─── END LEFT SIDEBAR ──────────────────────────── -->
 
           <!-- ─── RIGHT CONTENT ────────────────────────────── -->
-          <div style="flex:1;min-width:0">
+          <div class="ifx-shell-main">
+          <div class="ifx-shell-host ifx-grid" data-section="main" data-ifx-section="main" data-layout="grid-12"></div>
+          <div class="ifx-shell-main-content">
 
             <!-- Tab navigation — hydrated from IfluxAppShell.resolveNavigationItems('accountProfile') -->
             <div class="ix-profile-tabs" data-ifx-account-profile-tabs></div>
@@ -485,11 +492,12 @@
             </div>
 
           </div>
+          </div>
           <!-- ─── END RIGHT CONTENT ────────────────────────── -->
         </div>
   </main>
 </div>
-<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=canonOgUrlL5_20260812"></script>
-<script type="module" src="/User_Web/iflux-web-ui/runtime/account-feature-boot.js?v=p6Writer20260730"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/bootstrap.js?v=r20260928r"></script>
+<script type="module" src="/User_Web/iflux-web-ui/runtime/account-feature-boot.js?v=r20260928r"></script>
 </body>
 </html>

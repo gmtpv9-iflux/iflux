@@ -1,0 +1,32 @@
+/**
+ * Icon List — hàng dọc icon + chữ. Metric = baseline Chat details.
+ */
+.ifx-icon-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-xs);
+  color: var(--ifx-text-secondary);
+}
+.ifx-icon-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+}
+.ifx-icon-list-item .ti {
+  color: var(--ifx-action-primary);
+  font-size: var(--ifx-font-size-xs);
+}
+.ifx-icon-list-item.is-action { cursor: pointer; }
+.ifx-icon-list-item.is-action .ti { color: inherit; }
+.ifx-icon-list-item.is-danger { color: var(--ifx-danger); }
+/* Inline — chỉ số nằm ngang (icon + số): lượt xem, bình luận, yêu thích… */
+.ifx-icon-list-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  color: var(--ifx-text-muted);
+}
+.ifx-icon-list-inline .ifx-icon-list-item { white-space: nowrap; }
+.ifx-icon-list-inline .ifx-icon-list-item .ti { color: inherit; }

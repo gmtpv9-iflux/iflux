@@ -1,10 +1,13 @@
 /**
  * Page Manifest — Chi tiết cổ phiếu (/co-phieu/:ticker)
  */
-var VER = '?v=sidebarVR04_20260811';
+var VER = '?v=r20260928r';
 
 export default {
   pageKey: 'stock',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--stock',
+  css: [],
   path: '/co-phieu',
   title: '',
   documentTitle: '',
@@ -23,10 +26,10 @@ export default {
     lazyModule: '/User_Web/iflux-web-ui/widgets/stock-page/index.js' + VER,
     css: [
       '/User_Web/iflux-web-ui/market-components.css',
-      '/User_Web/iflux-web-ui/watchlist.css',
-      '/User_Web/iflux-web-ui/news.css',
-      '/User_Web/iflux-web-ui/block-templates.css',
-      '/User_Web/iflux-web-ui/stock.css?v=sidebarVR04_20260811'
+      '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/news.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/stock.css?v=appHeader20260928'
     ]
   }]
 };

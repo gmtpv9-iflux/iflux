@@ -1,0 +1,19 @@
+/**
+ * iFlux User Web — file CSS nền tảng (trước W4, 2026-09-28).
+ *
+ * Nạp TRƯỚC gói cũ (iflux-admin-ui.css): tên trùng giữa DS và gói cũ giữ giá trị cũ tới W4;
+ * User Web chỉ nhận thêm phần gói cũ chưa có: token Template cần (bg-surface, radius-card, size-chart…),
+ * icon còn thiếu, lưới .ifx-grid / .ifx-col-*. Token trùng tên ra cùng giá trị px (gốc 16px ở đây, 15px ở DS).
+ */
+@import url('/design_system/01_tokens/02_generated/01_css/primitives.css?v=appHeader20260928b');
+@import url('/design_system/01_tokens/02_generated/01_css/semantic.css?v=appHeader20260928b');
+@import url('/design_system/01_tokens/02_generated/01_css/01_themes/dark.css?v=appHeader20260928b');
+@import url('/design_system/01_tokens/02_generated/01_css/01_themes/light.css?v=appHeader20260928b');
+@import url('/design_system/02_foundation/02_icons/icons.css?v=appHeader20260928b');
+@import url('/design_system/02_foundation/layout.css?v=appHeader20260928b');
+@import url('/design_system/03_primitives/02_avatar/avatar.css?v=appHeader20260928b');
+@import url('/design_system/04_components/07_dropdown/dropdown.css?v=appHeader20260928b');
+@import url('/design_system/04_components/12_search/search.css?v=appHeader20260928b');
+@import url('/design_system/04_components/25_app-shell/app-shell.css?v=appHeader20260928b');
+@import url('/design_system/04_components/26_app-header/app-header.css?v=appHeader20260928b');
+@import url('/design_system/04_components/27_tabbar/tabbar.css?v=appHeader20260928b');

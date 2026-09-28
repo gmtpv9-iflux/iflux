@@ -1,7 +1,9 @@
 /**
  * WGT-MSG-PAGE — Composite Tin nhắn (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -24,11 +26,11 @@ function applyConsumerLinks(root) {
 
 var CORE_TIERS = [
   /* RC-IR-05: Tin nhắn không phải Interactive comment surface — không kéo stock-comments-ui */
-  [ASSET + 'news-store.js', ASSET + 'news-ui.js', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
+  [ASSET + 'news-store.js?v=r20260928r', ASSET + 'news-ui.js?v=r20260928n', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
   [ASSET + 'profile-follow-store.js?v=fn00120260724', ASSET + 'profile-friend-store.js?v=chatGate20260708', ASSET + 'profile-block-store.js'],
-  [ASSET + 'profile-chat-access.js?v=chatGate20260708', ASSET + 'profile-chat-store.js?v=msg20260711', ASSET + 'profile-chat-page.js?v=msg20260711'],
+  [ASSET + 'profile-chat-access.js?v=chatGate20260708', ASSET + 'profile-chat-store.js?v=r20260928n', ASSET + 'profile-chat-page.js?v=r20260928q'],
   [ASSET + 'profile-avatar.js', ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728', ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728'],
-  [ASSET + 'profile-page.js', ASSET + 'profile-bind.js?v=planPromo20260708']
+  [ASSET + 'profile-page.js', ASSET + 'profile-bind.js?v=r20260928q']
 ];
 
 function renderLayout(manifest) {
@@ -99,7 +101,9 @@ function renderLayout(manifest) {
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
-  el.innerHTML = renderLayout(ctx.manifest);
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el).mainContent.innerHTML = renderLayout(ctx.manifest);
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
@@ -112,6 +116,7 @@ export async function mount(el, ctx) {
   }
   if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
   setTimeout(function () { if (window.IfluxProfilePage) IfluxProfilePage.renderFollowing(); }, 0);
+  await mountPageWidgets(el, 'messages');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

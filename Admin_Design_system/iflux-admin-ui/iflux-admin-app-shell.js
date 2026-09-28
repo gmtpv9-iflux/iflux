@@ -233,6 +233,42 @@
     return '';
   }
 
+  /* P1: rỗng. Chỉ thêm routeKey sau convert + verify marker (P3+). */
+  var CANONICAL_ROUTE_ALLOWLIST = [];
+
+  function canonicalAllowlist() {
+    return CANONICAL_ROUTE_ALLOWLIST.slice();
+  }
+
+  function isCanonicalRoute(routeKey) {
+    return !!routeKey && CANONICAL_ROUTE_ALLOWLIST.indexOf(routeKey) >= 0;
+  }
+
+  function routeKeyFromHref(href) {
+    var u = parseUrl(href);
+    var R = routes();
+    if (!u || !R || !R.matchPath) return null;
+    return R.matchPath(u.pathname, u.hash) || null;
+  }
+
+  function fragmentHref(href) {
+    var file = fileForHref(href);
+    if (!file) return '';
+    return '/Admin_Design_system/app/' + file;
+  }
+
+  function isShellDocument(rootDoc) {
+    if (!rootDoc) return false;
+    var root = rootDoc.documentElement;
+    if (root && root.hasAttribute && root.hasAttribute('data-admin-shell-document')) return true;
+    return !!(rootDoc.querySelector && rootDoc.querySelector('[data-admin-shell-document]'));
+  }
+
+  function collectCanonicalPage(rootDoc) {
+    if (!rootDoc || !rootDoc.querySelector) return null;
+    return rootDoc.querySelector('[data-admin-page]') || null;
+  }
+
   function isAppShellHeader(el) {
     if (!el || !el.getAttribute) return false;
     if (el.getAttribute('data-ix-admin-shell') === 'header') return true;
@@ -252,6 +288,7 @@
     if (main) {
       Array.prototype.forEach.call(main.children, function (el) {
         if (isAppShellHeader(el)) return;
+        if (el.getAttribute && el.getAttribute('data-admin-page-header') !== null) return;
         if (el.getAttribute && el.getAttribute('data-ix-admin-page-host') !== null) {
           Array.prototype.forEach.call(el.children, function (ch) { nodes.push(ch); });
           return;
@@ -481,10 +518,23 @@
       return Promise.resolve();
     }
 
+    var destKey = routeKeyFromHref(destU.href);
+    var useCanonical = isCanonicalRoute(destKey);
     var file = fileForHref(destU.href);
-    var fetchUrl = file
-      ? ('/Admin_Design_system/app/' + file + destU.search)
-      : (destU.pathname + destU.search);
+    var fetchUrl;
+    if (useCanonical) {
+      var fragPath = fragmentHref(destU.href);
+      if (!fragPath) {
+        navigating = false;
+        showHostError('Không có FRAGMENT_SOURCE.');
+        return Promise.resolve();
+      }
+      fetchUrl = fragPath + destU.search;
+    } else {
+      fetchUrl = file
+        ? ('/Admin_Design_system/app/' + file + destU.search)
+        : (destU.pathname + destU.search);
+    }
     return fetch(fetchUrl, { credentials: 'same-origin', redirect: 'follow' })
       .then(function (res) {
         var fetched = parseUrl(res.url);
@@ -507,18 +557,35 @@
           leaveAppShell(pack.finalU.href);
           return;
         }
-        if (!parsed.querySelector('main.ix-main')) {
-          showHostError('Page không có AppShell slot.');
-          return;
+        if (useCanonical) {
+          if (isShellDocument(parsed)) {
+            showHostError('Fetch trả shell document — không mount.');
+            return;
+          }
+          var pageEl = collectCanonicalPage(parsed);
+          if (!pageEl) {
+            showHostError('Thiếu [data-admin-page].');
+            return;
+          }
+          syncBodyData(parsed.body);
+          if (parsed.title) document.title = parsed.title;
+          syncPageStyles(parsed);
+          host.textContent = '';
+          host.appendChild(document.importNode(pageEl, true));
+        } else {
+          if (!parsed.querySelector('main.ix-main')) {
+            showHostError('Page không có AppShell slot.');
+            return;
+          }
+          syncBodyData(parsed.body);
+          if (parsed.title) document.title = parsed.title;
+          syncPageStyles(parsed);
+          host.textContent = '';
+          collectPageOwned(parsed).forEach(function (el) {
+            if (el.tagName === 'SCRIPT') return;
+            host.appendChild(document.importNode(el, true));
+          });
         }
-        syncBodyData(parsed.body);
-        if (parsed.title) document.title = parsed.title;
-        syncPageStyles(parsed);
-        host.textContent = '';
-        collectPageOwned(parsed).forEach(function (el) {
-          if (el.tagName === 'SCRIPT') return;
-          host.appendChild(document.importNode(el, true));
-        });
         if (opts.history !== 'none') {
           var push = pack.finalU.pathname + pack.finalU.search + pack.finalU.hash;
           global.history.pushState({ ixAdmin: BOOT_ID }, '', push);
@@ -576,6 +643,10 @@
     getHeaderState: getHeaderState,
     fillBreadcrumb: fillBreadcrumb,
     navigate: navigate,
+    canonicalAllowlist: canonicalAllowlist,
+    isCanonicalRoute: isCanonicalRoute,
+    fragmentHref: fragmentHref,
+    routeKeyFromHref: routeKeyFromHref,
     bootId: function () { return BOOT_ID; },
     refresh: function (opts) {
       opts = opts || {};

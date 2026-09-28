@@ -1,0 +1,34 @@
+/**
+ * Component — Card
+ * REWRITE .ix-card. Existing: iflux-admin-ui/components.css
+ */
+.ifx-card {
+  background: var(--ifx-bg-surface);
+  border-radius: var(--ifx-radius-card);
+  border: 1px solid var(--ifx-border-default);
+  box-shadow: var(--ifx-shadow-card);
+}
+.ifx-card-plain { box-shadow: none; }
+/* Viền nhấn trên — màu/gradient đặt qua --ifx-card-accent (mặc định màu chính). */
+.ifx-card-accent { position: relative; overflow: hidden; }
+.ifx-card-accent::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--ifx-space-4);
+  background: var(--ifx-card-accent, var(--ifx-action-primary));
+  pointer-events: none;
+}
+.ifx-card-header {
+  padding: var(--ifx-inset-card-header);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ifx-gap-sm);
+}
+.ifx-card-body { padding: var(--ifx-inset-card-body); }
+.ifx-card-body p { font-size: var(--ifx-text-body-sm-size); }
+.ifx-card-footer {
+  padding: var(--ifx-inset-card-footer);
+  border-top: 1px solid var(--ifx-border-subtle);
+}

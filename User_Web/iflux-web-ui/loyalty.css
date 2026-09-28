@@ -81,7 +81,6 @@
 }
 
 /* Membership landing (trong app shell) */
-.ifx-main--membership { max-width: 1080px; }
 .ifx-mship-intro { margin-bottom: 28px;
  border: 1px solid var(--ix-border);
  overflow: hidden; }

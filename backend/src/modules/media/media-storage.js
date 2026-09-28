@@ -6,7 +6,7 @@ const { mediaRoot, publicBase, newId } = require('./media-util');
 
 function ensureMediaRoot(config) {
   const root = mediaRoot(config);
-  fs.mkdirSync(path.join(root, 'community'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'news'), { recursive: true });
   return root;
 }
 
@@ -14,7 +14,7 @@ function assetDir(config, assetId, createdAt) {
   const d = createdAt ? new Date(createdAt) : new Date();
   const yyyy = String(d.getUTCFullYear());
   const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
-  return path.join('community', yyyy, mm, assetId);
+  return path.join('news', yyyy, mm, assetId);
 }
 
 function absolutePath(config, storageKey) {

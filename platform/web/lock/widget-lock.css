@@ -1,0 +1,40 @@
+/**
+ * User Web — lớp phủ khoá widget (Phân quyền sử dụng).
+ * Chỉ nạp khi trên trang có vùng bị khoá (iflux-block-gate.js). Người xem đủ quyền không tải file này.
+ * Thân widget bị làm mờ (header vẫn rõ để kích thích nâng cấp); tên đối tượng bị che ••••; nút CTA + chú thích ở giữa.
+ */
+.uw-lock-target { position: relative; }
+/* Phủ đúng thân widget: chỉ làm mờ, không nền. */
+.uw-lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4);
+  padding: var(--ifx-space-16);
+  text-align: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.uw-lock-overlay[hidden] { display: none; }
+.uw-lock-caption {
+  display: -webkit-box;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--ifx-font-size-xs);
+  line-height: var(--ifx-line-height-normal);
+  color: var(--ifx-text-secondary);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* Tên đối tượng bị che */
+.uw-locked [data-ifx-role="entity-name"][data-ifx-entity-masked] {
+  letter-spacing: 0.08em;
+  color: var(--ifx-text-muted);
+  user-select: none;
+  pointer-events: none;
+}

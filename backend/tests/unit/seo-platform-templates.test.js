@@ -17,7 +17,7 @@ describe('P3 entity templates / field ownership', () => {
       foundationEffective: { site_name: 'iFlux', description: 'Mô tả site' }
     });
     assert.equal(r.mode, 'automatic');
-    assert.equal(r.title, 'Giá thép tăng mạnh | Cộng đồng iFlux');
+    assert.equal(r.title, 'Giá thép tăng mạnh | Tin tức iFlux');
     assert.equal(r.fields.title.source, 'entity_template');
     assert.equal(r.description, 'Tóm tắt ngắn về thị trường thép.');
     assert.equal(r.fields.description.source, 'entity_excerpt');
@@ -33,7 +33,7 @@ describe('P3 entity templates / field ownership', () => {
       }
     });
     assert.equal(r.fields.title.source, 'entity_template');
-    assert.equal(r.title, 'Tin nóng | Cộng đồng iFlux');
+    assert.equal(r.title, 'Tin nóng | Tin tức iFlux');
     assert.equal(r.fields.description.source, 'entity_excerpt');
   });
 
@@ -86,17 +86,17 @@ describe('P3 entity templates / field ownership', () => {
       foundationEffective: { site_name: 'iFlux', description: 'Global desc' },
       pageKey: 'community',
       entityType: 'article',
-      path: '/cong-dong/bai-viet/gia-thep',
+      path: '/tin-tuc/bai-viet/gia-thep',
       httpStatus: 200,
       entity: { title: 'Giá thép', excerpt: '' },
       overrides: {
-        cleanPath: '/cong-dong/bai-viet/gia-thep',
-        canonical: 'https://iflux.vn/cong-dong/bai-viet/gia-thep',
+        cleanPath: '/tin-tuc/bai-viet/gia-thep',
+        canonical: 'https://iflux.vn/tin-tuc/bai-viet/gia-thep',
         ogType: 'article'
       }
     });
-    assert.equal(c.document.title, 'Giá thép | Cộng đồng iFlux');
-    assert.equal(c.document.documentTitle, 'Giá thép | Cộng đồng iFlux');
+    assert.equal(c.document.title, 'Giá thép | Tin tức iFlux');
+    assert.equal(c.document.documentTitle, 'Giá thép | Tin tức iFlux');
     assert.equal(c.document.description, 'Giá thép trên iFlux.');
     assert.equal(c.trace.mode, 'automatic');
     assert.ok(c.templates);

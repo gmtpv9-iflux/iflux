@@ -345,10 +345,10 @@
     },
     "community": {
       "pageKey": "community",
-      "path": "/community",
-      "title": "Cộng đồng",
+      "path": "/tin-tuc",
+      "title": "Tin tức",
       "intro": "Widget đặc thù cố định — Main: Heatmap CP + Câu chuyện tích cực (dưới là feed tin) · Sidebar phải: Heatmap Câu chuyện + Thành viên tích cực.",
-      "documentTitle": "Cộng đồng · iFlux",
+      "documentTitle": "Tin tức · iFlux",
       "sections": [
         {
           "key": "main",

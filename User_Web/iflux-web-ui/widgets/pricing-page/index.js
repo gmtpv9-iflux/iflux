@@ -2,7 +2,7 @@
  * WGT-PRICING-PAGE — Composite Gói cước
  * Page Feature HTML + deps theo tầng → IfluxPricingPage.init().
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -34,7 +34,7 @@ function applyConsumerLinks(root) {
 }
 
 var CORE_TIERS = [
-  [ASSET + 'iflux-plans-catalog.js'],
+  [ASSET + 'iflux-plans-catalog.js?v=r20260928n'],
   [ASSET + 'pricing-page.js']
 ];
 

@@ -52,9 +52,8 @@
         id: 'WGT-NEWS-001',
         title: 'Heatmap cổ phiếu cộng đồng',
         template: 'TMP-COM-STOCK-HEAT',
-        blocks: ['BLK-NEWS-TRENDING'],
         css: [
-          '/User_Web/iflux-web-ui/news.css',
+          '/User_Web/iflux-web-ui/news.css?v=appShell20260928',
           '/User_Web/iflux-web-ui/block-templates.css',
           '/User_Web/iflux-web-ui/watchlist.css'
         ]
@@ -63,17 +62,15 @@
         id: 'WGT-NEWS-TOPIC-TOP',
         title: 'Chủ đề tích cực hàng đầu',
         template: 'TMP-COM-STORY-TOP',
-        blocks: ['BLK-NEWS-TOPIC-TOP'],
-        css: ['/User_Web/iflux-web-ui/news.css', '/User_Web/iflux-web-ui/block-templates.css']
+        css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928', '/User_Web/iflux-web-ui/block-templates.css']
       },
       'WGT-MKT-006': {
         id: 'WGT-MKT-006',
         title: 'Biểu đồ Câu chuyện',
         template: 'TMP-MARKET-HEATMAP',
-        blocks: ['BLK-MKT-HEAT-CHUDE'],
         css: [
           '/User_Web/iflux-web-ui/block-templates.css',
-          '/User_Web/iflux-web-ui/market.css',
+          '/User_Web/iflux-web-ui/market.css?v=appShell20260928',
           '/User_Web/iflux-web-ui/market-components.css'
         ]
       },
@@ -81,8 +78,7 @@
         id: 'WGT-NEWS-002',
         title: 'Thành viên tích cực',
         template: 'TMP-COM-ACTIVE',
-        blocks: ['BLK-NEWS-ACTIVE'],
-        css: ['/User_Web/iflux-web-ui/news.css']
+        css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928']
       }
     };
   }
@@ -111,7 +107,6 @@
       title: title,
       description: desc,
       template: template,
-      blocks: [],
       minTier: 'free',
       css: ['/User_Web/iflux-web-ui/block-templates.css', '/User_Web/iflux-web-ui/widget-shell.css']
     };

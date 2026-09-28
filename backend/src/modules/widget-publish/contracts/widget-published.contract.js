@@ -26,8 +26,9 @@ function validateWidgetPublished(artifact) {
   if (!artifact.display || typeof artifact.display !== 'object') {
     errors.push('thiếu display');
   } else {
-    if (!artifact.display.renderer) errors.push('display.renderer bắt buộc');
-    if (!artifact.display.module) errors.push('display.module bắt buộc');
+    const spec = artifact.display.renderSpec;
+    if (!spec || !spec.templateId) errors.push('display.renderSpec.templateId bắt buộc');
+    if (artifact.display.module) errors.push('display không được chứa module — UI theo templateId');
     if (artifact.display.css) errors.push('display không được chứa css');
     if (artifact.display.dependencies) errors.push('dependencies phải nằm ngoài display');
   }

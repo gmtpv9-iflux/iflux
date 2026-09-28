@@ -7,6 +7,9 @@
 
 export default {
   pageKey: 'news',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--community',
+  css: [],
   path: '/tin-tuc',
   title: 'Tin tức',
   intro: 'Tin tức, bài viết chuyên gia và thảo luận từ cộng đồng nhà đầu tư — cập nhật theo mã, ngành và chủ đề bạn quan tâm.',
@@ -24,15 +27,10 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/news-page/index.js?v=stickyRefactor20260811',
-      /* Page Feature CSS (feed sở hữu). market-components.css đã chuyển về
-         Widget Manifest của WGT-MKT-006 — không nạp ở tầng Page nữa. */
-      css: [
-        '/User_Web/iflux-web-ui/widget-shell.css?v=ui00120260723',
-        '/User_Web/iflux-web-ui/block-templates.css?v=ui00120260723',
-        /* Heart CSS = Admin Foundation (iflux-admin-ui.css → foundation/heart-action.css) */
-        '/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811'
-      ]
+      lazyModule: '/User_Web/iflux-web-ui/widgets/news-page/index.js?v=r20260928r',
+      /* Chỉ CSS của feed tin (news.css tự đủ cho card tin). widget-shell / block-templates không có
+         quy tắc nào dùng trên trang này — không nạp. Heart CSS = Foundation trong gói global. */
+      css: ['/User_Web/iflux-web-ui/news.css?v=r20260928n']
     }
   ]
 };

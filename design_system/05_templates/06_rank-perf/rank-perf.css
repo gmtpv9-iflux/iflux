@@ -1,0 +1,57 @@
+/**
+ * TMP-RANK-PERF — Xếp hạng theo chỉ số: # · đối tượng · thanh tỷ lệ · giá trị %.
+ */
+.ifx-rank-perf-head,
+.ifx-rank-perf-row {
+  display: grid;
+  grid-template-columns: var(--ifx-space-30) minmax(100px, 140px) minmax(0, 1fr) minmax(72px, 88px);
+  gap: var(--ifx-inline-md);
+  align-items: center;
+}
+.ifx-rank-perf-head {
+  padding: 0 var(--ifx-space-4) var(--ifx-space-8);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ifx-letter-spacing-wide);
+  color: var(--ifx-text-muted);
+}
+.ifx-rank-perf-head span:last-child { grid-column: 3 / span 2; text-align: right; }
+.ifx-rank-perf-list { display: flex; flex-direction: column; gap: var(--ifx-inline-md); }
+.ifx-rank-perf-idx {
+  text-align: center;
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-extrabold);
+  color: var(--ifx-text-muted);
+}
+.ifx-rank-perf-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-rank-perf-track {
+  height: var(--ifx-space-12);
+  border-radius: var(--ifx-radius-full);
+  overflow: hidden;
+  background: var(--ifx-action-primary-soft);
+}
+.ifx-rank-perf-fill {
+  height: 100%;
+  min-width: var(--ifx-space-4);
+  border-radius: var(--ifx-radius-full);
+  background: var(--ifx-text-muted);
+}
+.ifx-rank-perf-fill.is-up { background: linear-gradient(90deg, var(--ifx-market-up-soft), var(--ifx-market-up)); }
+.ifx-rank-perf-fill.is-down { background: linear-gradient(90deg, var(--ifx-market-down-soft), var(--ifx-market-down)); }
+.ifx-rank-perf-val {
+  text-align: right;
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-extrabold);
+  color: var(--ifx-text-muted);
+}
+.ifx-rank-perf-val.is-up { color: var(--ifx-market-up); }
+.ifx-rank-perf-val.is-down { color: var(--ifx-market-down); }

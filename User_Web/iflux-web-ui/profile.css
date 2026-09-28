@@ -301,12 +301,6 @@ a.ifx-profile-link-avatar:hover { opacity: .88; transform: translateY(-1px); }
   display: block;
   border-radius: inherit;
 }
-.ifx-topnav-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-}
 .ifx-profile-chat-layout {
   min-height: 520px;
   height: min(72vh, 640px);
@@ -368,12 +362,6 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   }
   [data-ifx-account-profile][data-ifx-account-view="profile"] .ix-profile-sidebar {
     display: block;
-  }
-  [data-ifx-account-profile] .ix-profile-grid {
-    min-width: 0;
-  }
-  [data-ifx-account-profile] .ix-profile-grid > div {
-    min-width: 0;
   }
   [data-ifx-account-profile] .ix-tab-content.active {
     min-width: 0;
@@ -544,8 +532,8 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   .ifx-profile-chat-layout {
     position: relative;
     overflow: hidden;
-    min-height: calc(100dvh - var(--ifx-topnav-active-h, var(--ifx-topnav-h)) - var(--ifx-tabbar-h, 72px) - 16px);
-    height: calc(100dvh - var(--ifx-topnav-active-h, var(--ifx-topnav-h)) - var(--ifx-tabbar-h, 72px) - 16px);
+    min-height: calc(100dvh - var(--ifx-app-header-offset) - var(--ifx-size-tabbar-h) - 16px);
+    height: calc(100dvh - var(--ifx-app-header-offset) - var(--ifx-size-tabbar-h) - 16px);
     border: none;
   }
   .ifx-profile-chat-layout .ix-chat-sidebar,
@@ -798,3 +786,6 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
     grid-template-columns: 1fr;
   }
 }
+
+/* Thẻ hồ sơ nằm trong Sidebar của khung chung — theo bề rộng Sidebar (3/12). */
+.ifx-shell-sidebar-content > .ix-profile-sidebar { width: auto; }

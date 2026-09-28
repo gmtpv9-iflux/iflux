@@ -1,0 +1,122 @@
+/**
+ * Canonical iFlux Design System — Foundation / Layout
+ * Mobile-first. Breakpoint SoT: tokens/source/breakpoints.json
+ *   BASE < 480 · sm ≥ 480 · md ≥ 768 · lg ≥ 1024 · xl ≥ 1280 · 2xl ≥ 1440
+ * Media query phải là literal đúng 5 mốc trên — CẤM mốc tự phát, CẤM var() trong @media.
+ *
+ * Owns: Container · Stack · Inline · Grid · remaining generic flex.
+ * Does not own: Page/Section/Widget spacing APIs (consumers compose Stack).
+ */
+
+/* ── Responsive container gutter ── */
+:root {
+  --ifx-space-container: var(--ifx-space-16);
+  --ifx-grid-gutter: var(--ifx-space-16);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-24);
+    --ifx-grid-gutter: var(--ifx-space-24);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-24);
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --ifx-space-container: var(--ifx-space-30);
+  }
+}
+
+/* ── Container ──
+ * Width + gutter. Max-width is opt-in.
+ * Does not own display/flex/gap or page/section rhythm. */
+.ifx-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--ifx-space-container);
+}
+.ifx-container-max { max-width: var(--ifx-size-container-max); }
+
+/* ── Stack — parent-owned vertical sibling gap ── */
+.ifx-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-sm);
+}
+.ifx-stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-md);
+}
+.ifx-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-lg);
+}
+.ifx-stack-xl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-stack-xl);
+}
+
+/* ── Inline — horizontal composition ── */
+.ifx-inline-xs { display: inline-flex; align-items: center; gap: var(--ifx-inline-xs); }
+.ifx-inline-sm { display: inline-flex; align-items: center; gap: var(--ifx-inline-sm); }
+.ifx-inline-md { display: inline-flex; align-items: center; gap: var(--ifx-inline-md); }
+
+/* ── Grid 12 cột — mobile-first ──
+ * BASE: mọi cell span 12. Mở rộng bằng span/breakpoint còn consumer. */
+.ifx-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ifx-grid-gutter);
+}
+.ifx-grid > * { grid-column: span 12; min-width: 0; }
+
+.ifx-col-1  { grid-column: span 1; }
+.ifx-col-2  { grid-column: span 2; }
+.ifx-col-3  { grid-column: span 3; }
+.ifx-col-4  { grid-column: span 4; }
+.ifx-col-5  { grid-column: span 5; }
+.ifx-col-6  { grid-column: span 6; }
+.ifx-col-7  { grid-column: span 7; }
+.ifx-col-8  { grid-column: span 8; }
+.ifx-col-9  { grid-column: span 9; }
+.ifx-col-10 { grid-column: span 10; }
+.ifx-col-11 { grid-column: span 11; }
+.ifx-col-12 { grid-column: span 12; }
+
+@media (min-width: 768px) {
+  .ifx-col-md-4 { grid-column: span 4; }
+  .ifx-col-md-6 { grid-column: span 6; }
+  .ifx-col-md-8 { grid-column: span 8; }
+}
+
+@media (min-width: 1024px) {
+  .ifx-col-lg-3 { grid-column: span 3; }
+  .ifx-col-lg-4 { grid-column: span 4; }
+  .ifx-col-lg-6 { grid-column: span 6; }
+  .ifx-col-lg-8 { grid-column: span 8; }
+  .ifx-col-lg-9 { grid-column: span 9; }
+}
+
+/* ── Generic flex — only APIs with real consumers ── */
+.ifx-flex { display: flex; }
+.ifx-flex-col { display: flex; flex-direction: column; }
+.ifx-flex-wrap { flex-wrap: wrap; }
+.ifx-items-center { align-items: center; }
+.ifx-justify-between { justify-content: space-between; }
+.ifx-flex-1 { flex: 1 1 0%; }
+.ifx-gap-xs { gap: var(--ifx-gap-xs); }
+.ifx-gap-sm { gap: var(--ifx-gap-sm); }
+.ifx-gap-md { gap: var(--ifx-gap-md); }
+
+@media (min-width: 768px) {
+  .ifx-flex-row-md { flex-direction: row; }
+}

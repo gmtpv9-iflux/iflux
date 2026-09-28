@@ -1,0 +1,56 @@
+/**
+ * Canonical iFlux Design System — Foundation / Reset
+ * Base document + box model. Màu lấy từ semantic theme tokens (generated).
+ * Mobile-first · chỉ dùng token --ifx-* · 0 hardcode màu.
+ */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ifx-bg-canvas);
+  color: var(--ifx-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
+
+ul[class], ol[class] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+button { background: none; border: none; padding: 0; cursor: pointer; }
+
+a { color: var(--ifx-text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--ifx-border-default);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ifx-border-focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--ifx-action-primary-soft);
+  color: var(--ifx-text-primary);
+}

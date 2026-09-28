@@ -1,14 +1,6 @@
-/* Trang chi tiết cổ phiếu — 3 cột */
+/* Trang chi tiết cổ phiếu / nhóm — bố cục do khung trang chung (platform/web/web.css). */
 .ifx-main--stock {
-  max-width: 1440px;
   padding-bottom: 40px;
-}
-
-.ifx-stock-layout {
-  display: grid;
-  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
-  gap: var(--ifx-space-20);
-  align-items: start;
 }
 
 .ifx-stock-col--left,
@@ -18,7 +10,7 @@
 
 .ifx-stock-col--left {
   position: sticky;
-  top: calc(var(--ifx-topnav-h) + 12px);
+  top: calc(var(--ifx-size-app-header-h) + 12px);
 }
 
 .ifx-stock-panel {
@@ -232,7 +224,7 @@
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  height: calc(100vh - var(--ifx-topnav-h) - 36px);
+  height: calc(100vh - var(--ifx-size-app-header-h) - 36px);
   max-height: 720px;
 }
 
@@ -489,7 +481,7 @@ a.ifx-stock-cmt__name.ifx-profile-link:hover {
   align-items: center;
   gap: var(--ifx-space-4);
   width: 100%;
-  height: var(--ifx-topnav-h);
+  height: var(--ifx-size-app-header-h);
   padding: 0 var(--ifx-space-4);
   border: 1px solid var(--ix-border);
   border-radius: var(--ifx-radius-full);
@@ -503,8 +495,8 @@ a.ifx-stock-cmt__name.ifx-profile-link:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: calc(var(--ifx-topnav-h) - var(--ifx-space-12));
-  height: calc(var(--ifx-topnav-h) - var(--ifx-space-12));
+  width: calc(var(--ifx-size-app-header-h) - var(--ifx-space-12));
+  height: calc(var(--ifx-size-app-header-h) - var(--ifx-space-12));
   border: none;
   border-radius: var(--ifx-radius-full);
   background: transparent;
@@ -611,7 +603,7 @@ a.ifx-stock-cmt__name.ifx-profile-link:hover {
 .ifx-cmt-page {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - var(--ifx-topnav-h) - 80px);
+  min-height: calc(100vh - var(--ifx-size-app-header-h) - 80px);
   max-width: 720px;
   margin: 0 auto;
 }
@@ -631,7 +623,7 @@ a.ifx-stock-cmt__name.ifx-profile-link:hover {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding-bottom: calc(var(--ifx-topnav-h) + var(--ifx-space-32));
+  padding-bottom: calc(var(--ifx-size-app-header-h) + var(--ifx-space-32));
 }
 
 .ifx-cmt-page__composer {
@@ -759,16 +751,12 @@ a.ifx-mention:hover {
 }
 
 /* ── Trang chi tiết bình luận ─────────────────────── */
-.ifx-main--comment-detail {
-  max-width: 720px;
-}
-
 .ifx-stock-cmt-detail {
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  height: calc(100vh - var(--ifx-topnav-h) - 36px);
+  height: calc(100vh - var(--ifx-size-app-header-h) - 36px);
   max-height: 760px;
 }
 
@@ -833,20 +821,6 @@ a.ifx-mention:hover {
 }
 
 @media (max-width: 1024px) {
-  .ifx-stock-layout.ifx-stock-layout--mobile-screen {
-    grid-template-columns: 1fr;
-  }
-  .ifx-stock-layout.ifx-stock-layout--mobile-screen .ifx-stock-col--center {
-    grid-column: 1;
-    order: 0;
-  }
-  .ifx-stock-layout {
-    grid-template-columns: 1fr 1fr;
-  }
-  .ifx-stock-col--center {
-    grid-column: 1 / -1;
-    order: -1;
-  }
   .ifx-stock-col--left {
     position: static;
   }
@@ -860,10 +834,5 @@ a.ifx-mention:hover {
   }
 }
 
-@media (max-width: 768px) {
-  .ifx-stock-layout {
-    grid-template-columns: 1fr;
-  }
-  .ifx-stock-col--center { order: 0; }
-}
+
 

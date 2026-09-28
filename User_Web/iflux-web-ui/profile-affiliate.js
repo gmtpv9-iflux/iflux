@@ -248,11 +248,11 @@
     if (!el) return;
     var text = String(el.value || el.textContent || '').trim();
     if (!text) {
-      if (global.ixToast) ixToast('Không có nội dung để sao chép', 'warning');
+      if (global.IfxToast) IfxToast.show('Không có nội dung để sao chép', 'warning');
       return;
     }
     function notify(ok) {
-      if (global.ixToast) ixToast(ok ? 'Đã sao chép!' : 'Không sao chép được', ok ? 'success' : 'warning');
+      if (global.IfxToast) IfxToast.show(ok ? 'Đã sao chép!' : 'Không sao chép được', ok ? 'success' : 'warning');
     }
     if (global.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () { notify(true); }).catch(function () { notify(false); });

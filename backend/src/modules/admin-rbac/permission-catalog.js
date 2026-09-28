@@ -20,8 +20,10 @@ const ACTION_LABELS = {
   publish: 'Xuất bản',
   reject: 'Từ chối',
   execute: 'Thực thi',
-  configure: 'Cấu hình'
-};
+    configure: 'Cấu hình',
+    manage: 'Quản lý',
+    regenerate: 'Tạo lại'
+  };
 
 const CRUD = ['view', 'create', 'edit', 'delete'];
 const VIEW = ['view'];
@@ -285,7 +287,7 @@ function flattenPermissions() {
       });
       (page.business || []).forEach((biz) => {
         out.push({
-          key: mod.key + '.' + page.key + '.' + biz.action,
+          key: biz.flatKey || (mod.key + '.' + page.key + '.' + biz.action),
           module: mod.key,
           module_label: mod.key,
           page: page.key,

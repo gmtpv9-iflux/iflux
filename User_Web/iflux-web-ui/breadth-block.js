@@ -59,7 +59,7 @@
         desc: opts.description || 'Mã tăng / giảm / tham chiếu / trần / sàn theo từng sàn giao dịch.',
         body: '<div data-ifx-com-breadth-mount></div>',
         shellClass: 'ifx-com-breadth-sidebar',
-        attrs: opts.entBlock ? 'data-ifx-ent-block="' + opts.entBlock + '"' : (opts.attrs || '')
+        attrs: opts.attrs || ''
       });
       mountInner(el.querySelector('[data-ifx-com-breadth-mount]'));
       return;

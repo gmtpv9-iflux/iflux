@@ -624,9 +624,7 @@ body {
 }
 
 /* Shell menu links — one size token */
-.ifx-topnav-link,
-.ix-dropdown-item,
-.ifx-topnav-drawer-link {
+.ix-dropdown-item {
   font-family: var(--ifx-font-primary);
   font-size: var(--ifx-text-label-lg-size);
   font-weight: var(--ifx-text-label-lg-weight);

@@ -1,0 +1,25 @@
+/**
+ * Canonical iFlux Design System — Foundation / Icons
+ * Contract iFlux .ifx-icon*. Tabler source nằm ngoài DS tại /vendor/tabler/.
+ */
+@import url("/vendor/tabler/tabler-icons.min.css");
+.ifx-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ifx-size-icon-md);
+  height: var(--ifx-size-icon-md);
+  font-size: var(--ifx-size-icon-md);
+  line-height: 1;
+}
+.ifx-icon-sm {
+  width: var(--ifx-size-icon-sm);
+  height: var(--ifx-size-icon-sm);
+  font-size: var(--ifx-size-icon-sm);
+}
+.ifx-icon-lg {
+  width: var(--ifx-size-icon-lg);
+  height: var(--ifx-size-icon-lg);
+  font-size: var(--ifx-size-icon-lg);
+}

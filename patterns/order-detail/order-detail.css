@@ -1,0 +1,11 @@
+/**
+ * Pattern-local — Order detail: cột tổng tiền và số dòng.
+ */
+.order-detail-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-4);
+  min-width: var(--ifx-size-panel-xs);
+  margin-inline-start: auto;
+}
+.order-detail-record-count { color: var(--ifx-text-secondary); }

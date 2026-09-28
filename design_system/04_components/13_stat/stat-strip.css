@@ -1,0 +1,42 @@
+/**
+ * Component — Stat Strip (Stat Group)
+ * Shared surface + n Stat. Divider = adjacent Stat, not a layout node.
+ * Existing owner: stat/stat.css (một KPI card).
+ * Why cannot modify that file only: strip = group contract (surface · n items · wrap),
+ * không phải variant của một Stat.
+ */
+.ifx-stat-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-card);
+  box-shadow: var(--ifx-shadow-card);
+  overflow: hidden;
+}
+.ifx-stat-strip > .ifx-stat {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ifx-stat-strip > .ifx-stat + .ifx-stat {
+  border-top: 1px solid var(--ifx-border-default);
+}
+/* bp:md — hàng ngang, wrap. Không vẽ separator dọc: flex-wrap không đảm bảo adjacency theo hàng. */
+@media (min-width: 768px) {
+  .ifx-stat-strip {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .ifx-stat-strip > .ifx-stat {
+    flex: 1 1 var(--ifx-size-panel-xs);
+  }
+  .ifx-stat-strip > .ifx-stat + .ifx-stat {
+    border-top: none;
+  }
+}

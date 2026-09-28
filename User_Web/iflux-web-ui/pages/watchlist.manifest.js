@@ -3,6 +3,9 @@
  */
 export default {
   pageKey: 'watchlist',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--watchlist',
+  css: ['/User_Web/iflux-web-ui/watchlist.css?v=r20260928n', '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n', '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n'],
   path: '/theo-doi',
   title: 'Danh sách theo dõi',
   documentTitle: '',
@@ -16,11 +19,11 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/watchlist-page/index.js?v=phaseCW120260721c',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/watchlist-page/index.js?v=r20260928q',
     css: [
-      '/User_Web/iflux-web-ui/watchlist.css',
-      '/User_Web/iflux-web-ui/block-templates.css',
-      '/User_Web/iflux-web-ui/widget-shell.css'
+      '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n'
     ]
   }]
 };

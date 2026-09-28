@@ -1,0 +1,190 @@
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Primitives"><a class="ifx-tab" href="?section=primitives&amp;panel=title" data-sb-goto="title">Title</a><a class="ifx-tab" href="?section=primitives&amp;panel=button" data-sb-goto="button">Button</a><a class="ifx-tab" href="?section=primitives&amp;panel=chip" data-sb-goto="chip">Chip</a><a class="ifx-tab" href="?section=primitives&amp;panel=badge" data-sb-goto="badge">Badge</a><a class="ifx-tab" href="?section=primitives&amp;panel=avatar" data-sb-goto="avatar">Avatar</a><a class="ifx-tab" href="?section=primitives&amp;panel=alert" data-sb-goto="alert">Alert</a><a class="ifx-tab" href="?section=primitives&amp;panel=progress" data-sb-goto="progress">Progress</a><a class="ifx-tab" href="?section=primitives&amp;panel=nav" data-sb-goto="nav">Navigation primitives</a></nav>
+
+<div class="sb-panel" data-sb-panel="title" hidden>
+<section class="sb-section ifx-stack-md" id="prim-title">
+  <div class="ifx-section-title">
+      <h2>Title</h2>
+      <p>Context heading + optional <code>p</code>. <code>h1</code>/<code>h2</code>/<code>h3</code> lấy style từ Foundation. Title Primitive chỉ set 2 declaration trên <code>p</code>.</p>
+    </div>
+
+  <p class="sb-kicker">Page Title</p>
+  <div class="ifx-page-title">
+    <h1>Danh sách giao dịch</h1>
+    <p>Stat strip + Data List — generic, không subscription/eCommerce, không AppShell.</p>
+  </div>
+  <div class="ifx-page-title">
+    <h1>Danh sách giao dịch</h1>
+  </div>
+
+  <p class="sb-kicker">Section Title</p>
+  <div class="ifx-section-title">
+    <h2>Giao dịch gần đây</h2>
+    <p>Mô tả section nếu có.</p>
+  </div>
+  <div class="ifx-section-title">
+    <h2>Giao dịch gần đây</h2>
+  </div>
+
+  <p class="sb-kicker">Widget Title</p>
+  <div class="ifx-widget-title">
+    <h3>Dòng tiền</h3>
+    <p>Mô tả widget nếu có.</p>
+  </div>
+  <div class="ifx-widget-title">
+    <h3>Dòng tiền</h3>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="button" hidden>
+<section class="sb-section ifx-stack-md" id="prim-button">
+<div class="ifx-section-title">
+      <h2>Button</h2>
+      <p><code>.ifx-btn</code> · tone · size · icon · disabled. Hover/active = CSS.</p>
+    </div>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <button type="button" class="ifx-btn ifx-btn-primary">Primary</button>
+    <button type="button" class="ifx-btn ifx-btn-secondary">Secondary</button>
+    <button type="button" class="ifx-btn ifx-btn-success">Success</button>
+    <button type="button" class="ifx-btn ifx-btn-warning">Warning</button>
+    <button type="button" class="ifx-btn ifx-btn-danger">Danger</button>
+    <button type="button" class="ifx-btn ifx-btn-outline">Outline</button>
+    <button type="button" class="ifx-btn ifx-btn-outline-danger">Outline Danger</button>
+    <button type="button" class="ifx-btn ifx-btn-ghost">Ghost</button>
+    <button type="button" class="ifx-btn ifx-btn-icon" aria-label="Tìm"><i class="ti ti-search ifx-icon"></i></button>
+    <button type="button" class="ifx-btn ifx-btn-primary"><i class="ti ti-plus ifx-icon ifx-icon-sm"></i> Thêm</button>
+    <button type="button" class="ifx-btn ifx-btn-outline"><i class="ti ti-download ifx-icon ifx-icon-sm"></i> Xuất</button>
+  </div>
+  <div class="ifx-widget-title">
+      <h3>Size + disabled</h3>
+    </div>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm">Small</button>
+    <button type="button" class="ifx-btn ifx-btn-primary">Medium</button>
+    <button type="button" class="ifx-btn ifx-btn-primary ifx-btn-lg">Large</button>
+    <button type="button" class="ifx-btn ifx-btn-primary" disabled>Disabled</button>
+    <button type="button" class="ifx-btn ifx-btn-outline is-disabled">Disabled outline</button>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="chip" hidden>
+<section class="sb-section ifx-stack-md" id="prim-chip">
+<div class="ifx-section-title">
+      <h2>Chip</h2>
+    </div>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <span class="ifx-chip ifx-chip-primary">Primary</span>
+    <span class="ifx-chip ifx-chip-success">Success</span>
+    <span class="ifx-chip ifx-chip-warning">Warning</span>
+    <span class="ifx-chip ifx-chip-danger">Danger</span>
+    <span class="ifx-chip ifx-chip-info">Info</span>
+    <span class="ifx-chip ifx-chip-outline">Outline</span>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="badge" hidden>
+<section class="sb-section ifx-stack-md" id="prim-badge">
+<div class="ifx-section-title">
+      <h2>Badge</h2>
+    </div>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <span class="ifx-badge ifx-badge-primary">Primary</span>
+    <span class="ifx-badge ifx-badge-success">Success</span>
+    <span class="ifx-badge ifx-badge-warning">Warning</span>
+    <span class="ifx-badge ifx-badge-danger">Danger</span>
+    <span class="ifx-badge ifx-badge-info">Info</span>
+    <span class="ifx-badge ifx-badge-primary ifx-badge-count">12</span>
+    <span class="ifx-badge ifx-badge-success ifx-badge-status">live</span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-primary" aria-label="dot primary"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-success" aria-label="dot success"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-warning" aria-label="dot warning"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-danger" aria-label="dot danger"></span>
+    <span class="ifx-badge ifx-badge-dot ifx-badge-info" aria-label="dot info"></span>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="avatar" hidden>
+<section class="sb-section ifx-stack-md" id="prim-avatar">
+<div class="ifx-section-title">
+      <h2>Avatar</h2>
+      <p>Size token <code>--ifx-size-avatar-sm|md|lg</code> (28 / 36 / 48).</p>
+    </div>
+  <div class="ifx-flex ifx-flex-wrap ifx-gap-sm">
+    <span class="ifx-avatar ifx-avatar-sm">A</span>
+    <span class="ifx-avatar">B</span>
+    <span class="ifx-avatar ifx-avatar-lg">C</span>
+    <span class="ifx-avatar ifx-avatar-success">S</span>
+    <span class="ifx-avatar ifx-avatar-warning">W</span>
+    <span class="ifx-avatar ifx-avatar-danger">D</span>
+    <span class="ifx-avatar ifx-avatar-info ifx-avatar-online">On</span>
+    <span class="ifx-avatar-group">
+      <span class="ifx-avatar ifx-avatar-sm">1</span>
+      <span class="ifx-avatar ifx-avatar-sm ifx-avatar-success">2</span>
+      <span class="ifx-avatar ifx-avatar-sm ifx-avatar-warning">3</span>
+    </span>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="alert" hidden>
+<section class="sb-section ifx-stack-md" id="prim-alert">
+<div class="ifx-section-title">
+      <h2>Alert</h2>
+    </div>
+  <div class="ifx-stack-sm">
+    <div class="ifx-alert ifx-alert-primary"><div><div class="ifx-alert-title">Primary</div><div class="ifx-alert-text">Thông báo generic — không business copy.</div></div></div>
+    <div class="ifx-alert ifx-alert-success"><div><div class="ifx-alert-title">Success</div><div class="ifx-alert-text">Hành động hoàn tất.</div></div></div>
+    <div class="ifx-alert ifx-alert-warning"><div><div class="ifx-alert-title">Warning</div><div class="ifx-alert-text">Cần xem lại trước khi tiếp tục.</div></div></div>
+    <div class="ifx-alert ifx-alert-danger"><div><div class="ifx-alert-title">Danger</div><div class="ifx-alert-text">Không thể hoàn tất.</div></div></div>
+    <div class="ifx-alert ifx-alert-info"><div><div class="ifx-alert-title">Info</div><div class="ifx-alert-text">Ghi chú bổ sung.</div></div></div>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="progress" hidden>
+<section class="sb-section ifx-stack-md" id="prim-progress">
+<div class="ifx-section-title">
+      <h2>Progress</h2>
+      <p>Fill = <code>--ifx-progress-value</code> (catalog set qua class demo, không inline style).</p>
+    </div>
+  <div class="ifx-stack-md">
+    <p class="sb-kicker">Small</p>
+    <div class="ifx-progress ifx-progress-sm sb-pv-75"><span class="ifx-progress-bar"></span></div>
+    <p class="sb-kicker">Default</p>
+    <div class="ifx-progress sb-pv-25"><span class="ifx-progress-bar"></span></div>
+    <div class="ifx-progress ifx-progress-success sb-pv-50"><span class="ifx-progress-bar"></span></div>
+    <div class="ifx-progress ifx-progress-warning sb-pv-75"><span class="ifx-progress-bar"></span></div>
+    <div class="ifx-progress ifx-progress-info sb-pv-90"><span class="ifx-progress-bar"></span></div>
+    <p class="sb-kicker">Large</p>
+    <div class="ifx-progress ifx-progress-danger ifx-progress-lg sb-pv-40"><span class="ifx-progress-bar"></span></div>
+  </div>
+</section>
+</div>
+<div class="sb-panel" data-sb-panel="nav" hidden>
+<section class="sb-section ifx-stack-md" id="prim-nav">
+<div class="ifx-section-title">
+      <h2>Navigation primitives</h2>
+      <p>
+    Chỉ <code>nav-item / icon / label / group / divider</code> + state.
+    Không side-nav, top-bar, bottom-nav — structure thuộc platform.
+  </p>
+    </div>
+  <div class="ifx-nav-group" id="navDemo">
+    <div class="ifx-group-label">Nhóm A</div>
+    <button type="button" class="ifx-nav-item is-active">
+      <i class="ti ti-home ifx-nav-icon"></i><span class="ifx-nav-label">Trang chủ</span>
+    </button>
+    <button type="button" class="ifx-nav-item">
+      <i class="ti ti-chart-bar ifx-nav-icon"></i><span class="ifx-nav-label">Báo cáo</span>
+    </button>
+    <button type="button" class="ifx-nav-item is-selected">
+      <i class="ti ti-star ifx-nav-icon"></i><span class="ifx-nav-label">Selected</span>
+    </button>
+    <hr class="ifx-nav-divider">
+    <div class="ifx-group-label">Nhóm B</div>
+    <button type="button" class="ifx-nav-item">
+      <i class="ti ti-settings ifx-nav-icon"></i><span class="ifx-nav-label">Cài đặt</span>
+    </button>
+    <button type="button" class="ifx-nav-item is-disabled" disabled>
+      <i class="ti ti-lock ifx-nav-icon"></i><span class="ifx-nav-label">Disabled</span>
+    </button>
+  </div>
+</section>
+</div>

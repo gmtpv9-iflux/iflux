@@ -16,6 +16,7 @@
   --ifx-space-16: 1rem;      /* 16px */
   --ifx-space-20: 1.25rem;   /* 20px */
   --ifx-space-24: 1.5rem;    /* 24px */
+  --ifx-space-30: 2rem;      /* 30px ở gốc 15px — mốc DS W1, dùng bởi design_system button.css */
   --ifx-space-32: 2rem;      /* 32px */
   --ifx-space-40: 2.5rem;    /* 40px */
   --ifx-space-48: 3rem;      /* 48px */
@@ -58,7 +59,7 @@
   --ifx-inset-sheet: var(--ifx-space-16) var(--ifx-space-20);
 
   /* ── 7. Layout Spacing ────────────────────────────────────── */
-  --ifx-space-container: var(--ifx-space-24);
+  /* --ifx-space-container: do Foundation DS (02_foundation/layout.css) định nghĩa theo 5 mốc breakpoint. */
   --ifx-space-section: var(--ifx-space-64);
   --ifx-space-page: var(--ifx-space-80);
   --ifx-space-sidebar-gap: var(--ifx-space-16);
@@ -122,7 +123,6 @@
 /* ── 12. Responsive (layout only) ───────────────────────────── */
 @media (max-width: 768px) {
   :root {
-    --ifx-space-container: var(--ifx-space-16);
     --ifx-space-section: var(--ifx-space-48);
     --ifx-space-page: var(--ifx-space-64);
     --ifx-grid-gutter: var(--ifx-space-16);
@@ -134,7 +134,6 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   :root {
-    --ifx-space-container: var(--ifx-space-20);
     --ifx-space-section: var(--ifx-space-56);
     --ifx-space-page: var(--ifx-space-64);
   }
@@ -142,7 +141,6 @@
 
 @media (min-width: 1440px) {
   :root {
-    --ifx-space-container: var(--ifx-space-32);
     --ifx-space-section: var(--ifx-space-80);
     --ifx-space-page: var(--ifx-space-96);
   }
@@ -281,11 +279,7 @@
   padding: var(--ifx-space-table-cell-y) var(--ifx-space-table-cell-x);
 }
 
-/* User Web layout hooks */
-.ifx-topnav {
-  gap: var(--ifx-gap-md);
-  padding: 0 var(--ifx-space-20);
-}
+/* User Web layout hooks — header thuộc component DS 04_components/26_app-header. */
 .ifx-main-content {
   padding: var(--ifx-space-container);
 }

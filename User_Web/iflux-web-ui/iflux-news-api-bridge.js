@@ -10,8 +10,6 @@
 
   var FEED_PAGE_SIZE = 50;
   var DEFAULT_FEED_LIMIT = FEED_PAGE_SIZE;
-  var RELATED_LIMIT = 10;
-  var ENTITY_LIMIT = 20;
 
   function apiBase() {
     try {
@@ -107,7 +105,10 @@
       type: opts.type || undefined,
       ticker: opts.ticker || undefined,
       category_id: opts.category_id || undefined,
-      chu_de_id: opts.chu_de_id || undefined
+      chu_de_id: opts.chu_de_id || undefined,
+      related_to: opts.related_to || undefined,
+      sector: opts.sector || undefined,
+      ecosystem: opts.ecosystem || undefined
     })
       .then(function (out) {
         var st = store();
@@ -136,16 +137,6 @@
       });
   }
 
-  function loadEntityFeed(opts) {
-    opts = opts || {};
-    return loadFeed({
-      limit: opts.limit != null ? opts.limit : ENTITY_LIMIT,
-      ticker: opts.ticker || undefined,
-      chu_de_id: opts.chu_de_id || undefined,
-      replace: opts.replace !== false
-    });
-  }
-
   function loadPostPage(opts) {
     opts = opts || {};
     var idOrSlug = opts.idOrSlug || opts.slug || opts.id;
@@ -156,18 +147,8 @@
       .then(function (article) {
         var st = store();
         if (st && st.setArticle) st.setArticle(article);
-        var relatedKey = article.id || article.slug || idOrSlug;
-        return fetchFeed({
-          related_to: relatedKey,
-          limit: opts.relatedLimit != null ? opts.relatedLimit : RELATED_LIMIT
-        })
-          .then(function (rel) {
-            if (st && st.setFeed) st.setFeed(rel.cards, { replace: false, merge: true });
-            return { ok: true, article: article, related: rel.cards || [] };
-          })
-          .catch(function () {
-            return { ok: true, article: article, related: [] };
-          });
+        /* Bài liên quan do feed dưới bài (IfluxDailyFeed, related_to) tải theo từng section khi cuộn. */
+        return { ok: true, article: article };
       })
       .catch(function (err) {
         return { ok: false, reason: (err && err.message) || 'article_fail' };
@@ -180,13 +161,10 @@
 
   global.IfluxNewsApiBridge = {
     loadFeed: loadFeed,
-    loadEntityFeed: loadEntityFeed,
     loadPostPage: loadPostPage,
     hydrate: hydrate,
     FEED_PAGE_SIZE: FEED_PAGE_SIZE,
     DEFAULT_FEED_LIMIT: DEFAULT_FEED_LIMIT,
-    RELATED_LIMIT: RELATED_LIMIT,
-    ENTITY_LIMIT: ENTITY_LIMIT
   };
   global.IfluxCommunityProvider = global.IfluxNewsApiBridge;
 })(window);

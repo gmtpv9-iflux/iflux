@@ -3,19 +3,8 @@
 (function (global) {
   'use strict';
 
-  var PAGES = [
-    { key: 'market', label: 'Thị trường', menu: true, icon: 'ti-chart-candle', guestNever: false },
-    { key: 'flow', label: 'Độc quyền · Dòng tiền', menu: true, icon: 'ti-cash', guestNever: false },
-    { key: 'news', label: 'Tin tức', menu: true, icon: 'ti-users', guestNever: false },
-    { key: 'pricing', label: 'Gói cước', menu: true, icon: 'ti-crown', guestNever: false },
-    { key: 'faq', label: 'FAQ', menu: true, icon: 'ti-help-circle', guestNever: false },
-    { key: 'loyalty', label: 'Membership', menu: true, icon: 'ti-gift', guestNever: false },
-    { key: 'dashboard', label: 'Trang chủ', menu: true, icon: 'ti-home', guestNever: true }
-  ];
-
   var FALLBACK_GUEST = {
     tier: 'guest',
-    pages: { market: true, flow: true, news: true, pricing: true, faq: true, loyalty: true, dashboard: false },
     ent: { search: true },
     blocks: {},
     limits: { alerts: 0, maxWidgets: 0, watchlistTabs: 0, watchlistItems: 0, apiRate: 30, wssChannels: 0, searchResults: 5 }
@@ -43,52 +32,12 @@
     return getPlan(resolveTier());
   }
 
-  function hasPage(pageKey) {
-    var plan = currentPlan();
-    if (!plan || !plan.pages) return false;
-    return !!plan.pages[pageKey];
-  }
-
-  function hasAnyBlockOnPage(pageKey) {
-    var L4 = global.L4RuntimeReader;
-    if (L4 && L4.widgetIdsForEntitlementDomain) {
-      return L4.widgetIdsForEntitlementDomain(pageKey).length > 0;
-    }
-    return false;
-  }
-
-  function canAccessPage(pageKey) {
-    pageKey = String(pageKey || '').toLowerCase();
-    if (pageKey === 'article' || pageKey === 'newswrite') pageKey = 'news';
-    if (pageKey === 'comments') pageKey = 'news';
-    if (pageKey === 'dashboard' && isGuest()) return false;
-    if (hasPage(pageKey)) return true;
-    return hasAnyBlockOnPage(pageKey);
-  }
-
-  function visibleMenus() {
-    return PAGES.filter(function (p) {
-      if (!p.menu) return false;
-      if (p.guestNever && isGuest()) return false;
-      return canAccessPage(p.key);
-    });
-  }
-
   function hasFeature(key) {
     var plan = currentPlan();
     return !!(plan && plan.ent && plan.ent[key]);
   }
 
   var BLOCK_ID_ALIAS = {
-    'BLK-COM-NEWS': 'BLK-NEWS-PAGE',
-    'BLK-COM-TRENDING': 'BLK-NEWS-TRENDING',
-    'BLK-COM-CHUDE-TOP': 'BLK-NEWS-TOPIC-TOP',
-    'BLK-COM-EXPERTS': 'BLK-NEWS-EXPERTS',
-    'BLK-COM-ACTIVE': 'BLK-NEWS-ACTIVE',
-    'BLK-COM-OVERVIEW': 'BLK-NEWS-OVERVIEW',
-    'BLK-COM-BREADTH': 'BLK-NEWS-BREADTH',
-    'BLK-COM-TOPWL': 'BLK-NEWS-TOPWL',
-    'BLK-COM-FEED': 'BLK-NEWS-FEED',
     'WGT-COM-001': 'WGT-NEWS-001',
     'WGT-COM-002': 'WGT-NEWS-002',
     'WGT-COM-003': 'WGT-NEWS-003',
@@ -108,10 +57,6 @@
       if (BLOCK_ID_ALIAS[rev] === id && plan.blocks[rev]) return true;
     }
     return false;
-  }
-
-  function canShowBlock(id) {
-    return hasBlock(id);
   }
 
   function getLimit(key, fallback) {
@@ -179,12 +124,8 @@
     resolveTier: resolveTier,
     getPlan: getPlan,
     currentPlan: currentPlan,
-    hasPage: hasPage,
-    canAccessPage: canAccessPage,
-    visibleMenus: visibleMenus,
     hasFeature: hasFeature,
     hasBlock: hasBlock,
-    canShowBlock: canShowBlock,
     getLimit: getLimit,
     canAccessWidget: canAccessWidget,
     enabledBlocks: enabledBlocks,

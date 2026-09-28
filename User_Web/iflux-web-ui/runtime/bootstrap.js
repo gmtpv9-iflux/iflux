@@ -22,37 +22,40 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=stickyRefactor20260811';
+import { bootPage } from './page-runtime.js?v=r20260928q';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=softNavP1_20260810';
-import { installSoftNavigation } from './soft-navigation.js?v=stickyRefactor20260811';
+import { bootShell } from './shell-boot.js?v=r20260928r';
+import { pageKeyFromPath } from './page-keys.js?v=r20260928p';
+import { installSoftNavigation } from './soft-navigation.js?v=r20260928q';
+import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
-var VER = '?v=phaseCW5gate20260721';
+var VER = '?v=r20260928r';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
+var PF = '?v=r20260928r';
 
 var MANIFEST_MAP = {
-  market: function () { return import('../pages/market.manifest.js' + P4); },
-  home: function () { return import('../pages/home.manifest.js' + P4); },
-  flow: function () { return import('../pages/flow.manifest.js?v=sidebarVR01_20260811'); },
-  news: function () { return import('../pages/news.manifest.js?v=stickyRefactor20260811'); },
+  market: function () { return import('../pages/market.manifest.js' + PF); },
+  home: function () { return import('../pages/home.manifest.js' + PF); },
+  flow: function () { return import('../pages/flow.manifest.js' + PF); },
+  news: function () { return import('../pages/news.manifest.js' + PF); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
-  stocks: function () { return import('../pages/stocks.manifest.js?v=sidebarVR03_20260811'); },
-  sectors: function () { return import('../pages/sectors.manifest.js?v=sidebarVR03_20260811'); },
-  ecosystems: function () { return import('../pages/ecosystems.manifest.js?v=sidebarVR03_20260811'); },
-  chuDe: function () { return import('../pages/cau-chuyen.manifest.js?v=sidebarVR03_20260811'); },
-  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js?v=sidebarVR03_20260811'); },
-  stock: function () { return import('../pages/stock.manifest.js?v=sidebarVR04_20260811'); },
-  sector: function () { return import('../pages/sector.manifest.js?v=sidebarVR04_20260811'); },
-  family: function () { return import('../pages/family.manifest.js?v=sidebarVR04_20260811'); },
-  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=sidebarVR04_20260811'); },
-  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=sidebarVR04_20260811'); },
-  faq: function () { return import('../pages/faq.manifest.js' + VER); },
-  loyalty: function () { return import('../pages/loyalty.manifest.js' + VER); },
+  stocks: function () { return import('../pages/stocks.manifest.js' + PF); },
+  sectors: function () { return import('../pages/sectors.manifest.js' + PF); },
+  ecosystems: function () { return import('../pages/ecosystems.manifest.js' + PF); },
+  chuDe: function () { return import('../pages/cau-chuyen.manifest.js' + PF); },
+  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js' + PF); },
+  stock: function () { return import('../pages/stock.manifest.js' + PF); },
+  sector: function () { return import('../pages/sector.manifest.js' + PF); },
+  family: function () { return import('../pages/family.manifest.js' + PF); },
+  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + PF); },
+  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js' + PF); },
+  faq: function () { return import('../pages/faq.manifest.js' + PF); },
+  loyalty: function () { return import('../pages/loyalty.manifest.js' + PF); },
   watchlist: function () { return import('../pages/watchlist.manifest.js' + VER); },
   search: function () { return import('../pages/search.manifest.js' + VER); },
-  messages: function () { return import('../pages/messages.manifest.js' + VER); },
-  article: function () { return import('../pages/news-post.manifest.js?v=scrollWave4early_20260811'); },
+  messages: function () { return import('../pages/messages.manifest.js' + PF); },
+  article: function () { return import('../pages/news-post.manifest.js' + PF); },
   account: function () { return import('../pages/account.manifest.js' + VER); },
   checkout: function () { return import('../pages/checkout.manifest.js' + VER); },
   newsWrite: function () { return import('../pages/news-write.manifest.js' + VER); },
@@ -101,61 +104,7 @@ var PAGE_PUBLISHED = {
 };
 
 function detectPageKey() {
-  var raw = location.pathname || '/';
-  var path = raw;
-  if (window.IfluxNormalizePath) {
-    path = window.IfluxNormalizePath(raw);
-  }
-  path = String(path || '/').toLowerCase();
-
-  /* Path cụ thể TRƯỚC nhánh rộng — học Phase A (viet-bai) + Ownership Proof (comment/checkout). */
-  if (/\/binh-luan(\/|$)/.test(path) || /\/user_web\/comments(\/|$)/.test(path) || /\/comments\/index\.html/.test(path)) {
-    return 'comments';
-  }
-  if (/\/user_web\/stock\/comment/.test(path) || /\/stock\/comment\.html/.test(path)) {
-    return 'stockComment';
-  }
-  if (path.indexOf('/thanh-toan') >= 0 || /\/user_web\/account\/checkout/.test(path) || /\/account\/checkout/.test(path)) {
-    return 'checkout';
-  }
-  /* Viết bài — TRƯỚC nhánh rộng /cong-dong (tránh nhận nhầm pageKey=community → mất AuthGate). */
-  if (/\/(?:tin-tuc|cong-dong)\/(viet|write)/.test(path) || /\/user_web\/(?:news|community)\/write/.test(path) || /\/community\/write/.test(path)) {
-    return 'newsWrite';
-  }
-  if (/\/(tin-tuc|cong-dong|community)\/(bai-viet|posts?|story)\b/.test(path) || /\/user_web\/(?:news|community)\/post/.test(path)) {
-    return 'article';
-  }
-  if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'news';
-
-  if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
-  if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
-  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';
-  if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
-
-  if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'news';
-  if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
-  if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
-  if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
-  if (path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'market';
-  if (path.indexOf('/hoi-dap') >= 0 || path.indexOf('/faq') >= 0) return 'faq';
-  if (path.indexOf('/thanh-vien') >= 0 || path.indexOf('/loyalty') >= 0 || path.indexOf('/membership') >= 0) return 'loyalty';
-  if (path.indexOf('/theo-doi') >= 0 || path.indexOf('/watchlist') >= 0) return 'watchlist';
-  if (path.indexOf('/tim-kiem') >= 0 || path.indexOf('/search') >= 0) return 'search';
-  if (path.indexOf('/tin-nhan') >= 0 || path.indexOf('/messages') >= 0) return 'messages';
-  if (path.indexOf('/chia-se') >= 0 || path.indexOf('/share') >= 0 || /\/user_web\/share/.test(path)) {
-    return 'share';
-  }
-  if (path.indexOf('/tai-khoan') >= 0 || path.indexOf('/account') >= 0 || /\/user_web\/account\/profile/.test(path)) {
-    return 'account';
-  }
-
-  if (/\/(co-phieu|stocks)\/?$/.test(path) || /\/user_web\/stocks(\/|$)/.test(path)) return 'stocks';
-  if (/\/(nganh|sectors)\/?$/.test(path) || /\/user_web\/sectors(\/|$)/.test(path)) return 'sectors';
-  if (/\/(he-sinh-thai|ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
-  if (/\/(cau-chuyen|chu-de|stories)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/index/.test(path)) return 'cauChuyen';
-
-  if (path === '/' || path === '') return 'home';
-  return null;
+  return pageKeyFromPath(location.pathname);
 }
 
 function apiBase() {
@@ -166,6 +115,25 @@ function apiBase() {
   var origin = window.location ? window.location.origin : '';
   if (!origin || origin.indexOf('http') !== 0) return null;
   return origin + '/api';
+}
+
+/* Trang cần gì đã biết từ manifest tĩnh — không đợi App Shell xong mới tải:
+ * CSS trang nạp ngay, module trang được báo trước cho trình duyệt (modulepreload: tải + phân tích, chưa chạy). */
+function preloadModule(href) {
+  if (document.querySelector('link[rel="modulepreload"][href="' + href + '"]')) return;
+  var l = document.createElement('link');
+  l.rel = 'modulepreload';
+  l.href = href;
+  document.head.appendChild(l);
+}
+
+function warmPage(m) {
+  if (!m) return;
+  if (m.css && m.css.length) loadStyles(m.css);
+  (m.widgets || []).forEach(function (w) {
+    if (w && w.lazyModule) preloadModule(w.lazyModule);
+    if (w && w.css && w.css.length) loadStyles(w.css);
+  });
 }
 
 async function loadStaticManifest(pageKey) {
@@ -221,13 +189,14 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
       intro: page.intro != null ? page.intro : (staticManifest && staticManifest.intro) || '',
       documentTitle: page.documentTitle || (staticManifest && staticManifest.documentTitle) || '',
       sections: sections,
+      mainClass: (staticManifest && staticManifest.mainClass) || '',
+      css: (staticManifest && staticManifest.css) || [],
       widgets: []
     };
 
     if (pageKey === 'home') {
-      /* Sidebar Placement (PagePublished) + Gói cước đặc thù (PRF-002) từ static.
-         PRF-001 (Hồ sơ) không đặc thù — không inject. Main = Dashboard shell. */
-      man.publishedSections = ['sidebar'];
+      /* Widget Placement (Sidebar + Main) + nội dung đặc thù từ static: Gói cước (PRF-002),
+         Dashboard cá nhân (HOME-DASH). PRF-001 (Hồ sơ) không đặc thù — không inject. */
       man.title = '';
       man.intro = '';
       man.widgets = (staticManifest.widgets || []).filter(function (w) {
@@ -356,8 +325,8 @@ async function enrichManifestWithSiteSeo(manifest, pageKey, seoOpts) {
      * Rebind mọi lần nav (hard + soft) — xem comment enrichManifestWithSiteSeo. */
     if (bindLogo) {
       var logoEl =
-        document.querySelector('.ifx-topnav-brand [data-ifx-seo-logo]') ||
-        document.querySelector('.ifx-topnav-brand img.ix-brand-logo');
+        document.querySelector('.ifx-app-header-brand [data-ifx-seo-logo]') ||
+        document.querySelector('.ifx-app-header-brand img.ifx-app-header-logo');
       if (logoEl) {
         if (logoUrl) {
           logoEl.setAttribute('src', logoUrl);
@@ -387,6 +356,9 @@ export async function start(opts) {
   if (window.IfluxEntityDefinition && IfluxEntityDefinition.applyEarlyDocumentTitle) {
     IfluxEntityDefinition.applyEarlyDocumentTitle();
   }
+
+  /* Manifest trang tải song song với App Shell (resolveManifest dùng lại module đã tải). */
+  loadStaticManifest(pageKey).then(warmPage).catch(function () { /* resolveManifest báo lỗi sau */ });
 
   var shell = await bootShell(pageKey, { soft: soft });
   if (shell === null) return null;

@@ -1,8 +1,8 @@
 /**
  * Permission Gate — chỉ khóa Widget thuộc Tầng 4 (SoT Phân quyền sử dụng).
  * Ngoài danh sách Tầng 4 (Page Composite WGT-*-PAGE, nội dung đặc thù, …)
- * → không áp dụng badge / ifx-widget-locked.
- * Overlay = Widget Shell · mask tên Entity = Entity Renderer (Template).
+ * → không áp dụng lớp khoá (.uw-locked). Vùng không phải widget (tab, khung trang) không bao giờ bị khoá.
+ * Gate chỉ QUYẾT ĐỊNH khoá; lớp phủ + che tên đối tượng = platform/web/lock (nạp khi có vùng bị khoá).
  */
 (function (global) {
   'use strict';
@@ -18,14 +18,37 @@
     return false;
   }
 
+  /* Lớp phủ khoá (platform/web/lock) — chỉ nạp khi trên trang thật sự có vùng bị khoá. */
+  var LOCK_VER = 'r20260928n';
+  var lockLoading = null;
+  function ensureLockUi() {
+    if (global.IfluxWidgetLock) return Promise.resolve();
+    if (lockLoading) return lockLoading;
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = '/platform/web/lock/widget-lock.css?v=' + LOCK_VER;
+    document.head.appendChild(css);
+    lockLoading = new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = '/platform/web/lock/widget-lock.js?v=' + LOCK_VER;
+      s.onload = s.onerror = function () { resolve(); };
+      document.head.appendChild(s);
+    });
+    return lockLoading;
+  }
+
   function setHostState(el, allowed) {
-    var shell = global.IfluxWidgetShell;
-    if (shell && shell.setLocked) {
-      shell.setLocked(el, !allowed);
-      return;
-    }
-    el.classList.toggle('ifx-widget-locked', !allowed);
+    el.classList.toggle('uw-locked', !allowed);
     el.setAttribute('data-ifx-ent-access', allowed ? 'full' : 'teaser');
+  }
+
+  /* Vẽ / gỡ lớp phủ theo trạng thái vừa gắn. Chưa từng khoá và chưa nạp module → không tải gì. */
+  function syncLockUi() {
+    if (document.querySelector('.uw-locked')) {
+      ensureLockUi().then(function () { if (global.IfluxWidgetLock) IfluxWidgetLock.sync(); });
+    } else if (global.IfluxWidgetLock) {
+      IfluxWidgetLock.sync();
+    }
   }
 
   function apply(pageKey) {
@@ -47,24 +70,7 @@
       setHostState(el, !!ent.hasBlock(wid));
     });
 
-    /* data-ifx-ent-block (BLK-*): tôn trọng plan.blocks qua hasBlock (STATIC + legacy). */
-    document.querySelectorAll('[data-ifx-ent-block]').forEach(function (el) {
-      if (el.getAttribute('data-widget-id')) return;
-      var bid = el.getAttribute('data-ifx-ent-block');
-      el.hidden = false;
-      el.style.display = '';
-      el.removeAttribute('aria-hidden');
-      if (!bid) {
-        setHostState(el, true);
-        return;
-      }
-      setHostState(el, !!ent.hasBlock(bid));
-    });
-
-    document.querySelectorAll('[data-ifx-ent-block-section]').forEach(function (section) {
-      section.hidden = false;
-      section.style.display = '';
-    });
+    syncLockUi();
   }
 
   global.IfluxBlockGate = {

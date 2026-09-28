@@ -1,0 +1,47 @@
+/**
+ * TMP-COMMUNITY-LIST — Danh sách xếp hạng: hạng · avatar (Avatar primitive) · tên + phụ đề · chỉ số.
+ */
+.ifx-rank-list { display: flex; flex-direction: column; gap: var(--ifx-inline-md); }
+.ifx-rank-list-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-space-12);
+  border-radius: var(--ifx-radius-lg);
+  background: var(--ifx-bg-hover);
+}
+.ifx-rank-list-pos {
+  min-width: var(--ifx-space-24);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-extrabold);
+  color: var(--ifx-text-muted);
+}
+.ifx-rank-list-user {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-inline-md);
+  flex: 1;
+  min-width: var(--ifx-size-panel-xs);
+  color: inherit;
+  text-decoration: none;
+}
+.ifx-rank-list-user:hover { text-decoration: none; }
+.ifx-rank-list-user:hover .ifx-rank-list-name { color: var(--ifx-action-primary); }
+.ifx-rank-list-meta { display: flex; flex-direction: column; min-width: 0; }
+.ifx-rank-list-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+.ifx-rank-list-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+/* Chỉ số giữ một dòng, sát phải; widget hẹp → xuống dòng dưới tên thay vì ép tên. */
+.ifx-rank-list-row > .ifx-icon-list { flex-wrap: nowrap; margin-left: auto; }

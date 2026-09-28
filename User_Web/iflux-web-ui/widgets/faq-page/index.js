@@ -1,7 +1,9 @@
 /**
  * WGT-FAQ-PAGE — Composite Câu hỏi thường gặp (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -40,9 +42,9 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
       <div class="ifx-faq-cats" data-ifx-faq-cats></div>
     </div>
 
-    <div data-ifx-faq-list data-ifx-ent-block="BLK-FAQ-LIST"></div>
+    <div data-ifx-faq-list></div>
 
-    <div class="ifx-faq-support" data-ifx-ent-block="BLK-FAQ-SUPPORT">
+    <div class="ifx-faq-support">
       <div class="ix-card">
         <div class="ix-card-body">
           <h3>Chưa tìm thấy câu trả lời?</h3>
@@ -57,13 +59,15 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
     </div>`;
 
 export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el, { noSidebar: true }).mainContent.innerHTML = LAYOUT_HTML;
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
 if (window.IfluxFaqPage) IfluxFaqPage.init();
-  if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('faq');
+  await mountPageWidgets(el, 'faq');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

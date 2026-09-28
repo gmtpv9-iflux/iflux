@@ -849,7 +849,7 @@ function resolveArticleMetadata(article, origin, globalPayload) {
   const description = String(pub.description || '').trim();
   const image = absoluteAssetUrl(pub.og_image || pub.social_image || '', base);
   const slug = item.slug || item.id || '';
-  const canonical = base + '/cong-dong/bai-viet/' + encodeURIComponent(slug);
+  const canonical = base + '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
   const siteName = String(pub.site_name || 'iFlux').trim() || 'iFlux';
   const documentTitle = title.indexOf(siteName) >= 0 ? title : title + ' · ' + siteName;
   return {
@@ -916,7 +916,7 @@ function renderArticleSpaHtml(meta) {
   try {
     html = fs.readFileSync(templatePath, 'utf8');
   } catch (err) {
-    throw new AppError('Không đọc được shell bài viết', 500, 'SPA_SHELL_MISSING');
+    throw new AppError('SPA_SHELL_MISSING', 'Không đọc được shell bài viết', 500);
   }
   const head = buildArticleMetadataHeadHtml(meta);
   /* Bỏ title placeholder trong template — thay bằng Contract head (có <title>). */
@@ -951,7 +951,7 @@ function renderArticleSpaHtml(meta) {
 }
 
 function articlePublicPath(slug) {
-  return '/cong-dong/bai-viet/' + encodeURIComponent(String(slug || '').trim());
+  return '/tin-tuc/bai-viet/' + encodeURIComponent(String(slug || '').trim());
 }
 
 module.exports = {

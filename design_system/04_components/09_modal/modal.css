@@ -1,0 +1,49 @@
+/**
+ * Component — Modal
+ * REWRITE .ix-modal. Open = .is-open (không JS style.display).
+ * Header/Body/Footer = structural. Heading typography = Foundation.
+ */
+.ifx-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--ifx-overlay-scrim);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--ifx-z-modal);
+  padding: var(--ifx-space-16);
+}
+.ifx-modal-overlay.is-open { display: flex; }
+.ifx-modal {
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-modal);
+  box-shadow: var(--ifx-shadow-modal);
+  width: min(100%, var(--ifx-size-panel-md));
+  max-height: calc(100vh - var(--ifx-space-60));
+  display: flex;
+  flex-direction: column;
+}
+.ifx-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ifx-inset-card-header);
+  border-bottom: 1px solid var(--ifx-border-default);
+}
+.ifx-modal-header > h1,
+.ifx-modal-header > h2,
+.ifx-modal-header > h3,
+.ifx-modal-header > h4,
+.ifx-modal-header > h5,
+.ifx-modal-header > h6 {
+  margin: 0;
+}
+.ifx-modal-body { padding: var(--ifx-inset-dialog); overflow-y: auto; flex: 1; }
+.ifx-modal-footer {
+  padding: var(--ifx-inset-card-footer);
+  border-top: 1px solid var(--ifx-border-default);
+  display: flex;
+  gap: var(--ifx-gap-xs);
+  justify-content: flex-end;
+}

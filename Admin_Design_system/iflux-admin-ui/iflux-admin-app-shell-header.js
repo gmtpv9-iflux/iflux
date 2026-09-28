@@ -42,13 +42,13 @@
     var chip = actions.querySelector('[data-ix-admin-env]');
     if (!chip) {
       chip = document.createElement('span');
-      chip.className = 'ix-chip' + (state.env === 'staging' ? ' ix-chip-warning' : ' ix-chip-success');
+      chip.className = 'ifx-chip' + (state.env === 'staging' ? ' ifx-chip-warning' : ' ifx-chip-success');
       chip.setAttribute('data-ix-admin-env', '');
-      var avatar = actions.querySelector('.ix-avatar');
+      var avatar = actions.querySelector('.ifx-avatar, .ix-avatar');
       if (avatar) actions.insertBefore(chip, avatar);
       else actions.appendChild(chip);
     } else {
-      chip.className = 'ix-chip' + (state.env === 'staging' ? ' ix-chip-warning' : ' ix-chip-success');
+      chip.className = 'ifx-chip' + (state.env === 'staging' ? ' ifx-chip-warning' : ' ifx-chip-success');
     }
     chip.textContent = label;
   }
@@ -57,8 +57,10 @@
     var shell = global.IfluxAdminAppShell;
     var state = shell && shell.getHeaderState ? shell.getHeaderState() : {};
     var admin = state.admin;
-    var avatar = nav.querySelector('.ix-avatar');
+    var avatar = nav.querySelector('.ifx-avatar, .ix-avatar');
     if (!avatar) return;
+    avatar.className = 'ifx-avatar ifx-avatar-md';
+    if (!avatar.getAttribute('data-ix-admin-avatar')) avatar.setAttribute('data-ix-admin-avatar', '');
     if (!admin) {
       avatar.textContent = 'AD';
       avatar.removeAttribute('title');
@@ -78,7 +80,7 @@
     if (actions.querySelector('[data-ix-admin-logout]')) return;
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'ix-btn ix-btn-ghost ix-btn-sm';
+    btn.className = 'ifx-btn ifx-btn-ghost ifx-btn-sm';
     btn.setAttribute('data-ix-admin-logout', '');
     btn.innerHTML = '<i class="ti ti-logout"></i>';
     btn.title = 'Đăng xuất';
@@ -91,10 +93,21 @@
     });
   }
 
+  function ensurePageHeaderSlot(nav) {
+    var main = nav.parentNode;
+    if (!main || main.tagName !== 'MAIN') return;
+    if (main.querySelector('[data-admin-page-header]')) return;
+    var slot = document.createElement('div');
+    slot.setAttribute('data-admin-page-header', '');
+    if (nav.nextSibling) main.insertBefore(slot, nav.nextSibling);
+    else main.appendChild(slot);
+  }
+
   function render() {
     var nav = findNavbar();
     if (!nav) return;
     nav.setAttribute('data-ix-admin-shell', 'header');
+    ensurePageHeaderSlot(nav);
     ensureEnvChip(nav);
     ensureLogout(nav);
     renderAvatar(nav);

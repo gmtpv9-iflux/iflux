@@ -8,29 +8,6 @@
 
 const TIER_ORDER = { guest: 0, free: 1, premium: 2, elite: 3 };
 
-const PAGES = [
-  { key: 'market', guestDefault: true, guestNever: false },
-  { key: 'flow', guestDefault: true, guestNever: false },
-  { key: 'news', guestDefault: true, guestNever: false },
-  { key: 'pricing', guestDefault: true, guestNever: false },
-  { key: 'faq', guestDefault: true, guestNever: false },
-  { key: 'loyalty', guestDefault: true, guestNever: false },
-  { key: 'dashboard', guestDefault: false, guestNever: true }
-];
-
-const STATIC_PAGE_BLOCKS = [
-  { id: 'BLK-COM-NEWS', minTier: 'guest', page: 'news' },
-  { id: 'BLK-LOY-INTRO', minTier: 'free', page: 'loyalty' },
-  { id: 'BLK-LOY-AFFILIATE', minTier: 'free', page: 'loyalty' },
-  { id: 'BLK-FAQ-LIST', minTier: 'guest', page: 'faq' },
-  { id: 'BLK-FAQ-SUPPORT', minTier: 'guest', page: 'faq' }
-];
-
-const BLOCK_ALIASES = {
-  'BLK-MKT-HEAT-STORY': 'BLK-MKT-HEAT-CHUDE',
-  'BLK-FLW-NET-STORY': 'BLK-FLW-NET-CHUDE'
-};
-
 const BASE = {
   guest: {
     id: 'guest', name: 'Vãng lai', tier: 'guest', sort: 0,
@@ -64,13 +41,6 @@ const BASE = {
 
 const TIERS = ['guest', 'free', 'premium', 'elite'];
 
-function pageForWidget(id) {
-  if (/^WGT-FLW|^WGT-FLOW/.test(id)) return ['flow'];
-  if (/^WGT-COM/.test(id)) return ['news'];
-  if (/^WGT-WAT/.test(id)) return ['dashboard'];
-  return ['market', 'dashboard'];
-}
-
 function collectWidgetIds(store) {
   const set = new Set();
   const addFromBlocks = (blocks) => {
@@ -90,10 +60,7 @@ function createWidgetIndex(store) {
     widgetIds: () => ids.slice(),
     allWidgetIdsInLibrary: () => ids.slice(),
     canonicalWidgetId: (id) => id,
-    widgetDefaults: (id) => ({ title: id, tier: 'free' }),
-    widgetDeploy: (id) => ({ pages: pageForWidget(id), blocks: [] }),
-    getPageDeploy: (id) => ({ pages: pageForWidget(id), blocks: [] }),
-    widgetsForPage: (pageKey) => ids.filter((id) => pageForWidget(id).indexOf(pageKey) >= 0)
+    widgetDefaults: (id) => ({ title: id, tier: 'free' })
   };
 }
 
@@ -106,43 +73,13 @@ function isWidgetEntitlementId(id) {
   return String(id || '').indexOf('WGT-') === 0;
 }
 
+/* Quyền chỉ theo widget (Tầng 4, Phân quyền sử dụng) — không còn block trang cứng BLK-*. */
 function buildBlocksCatalog(wl) {
-  const list = [];
-  wl.widgetIds().forEach((wid) => {
-    list.push({
-      id: wid,
-      kind: 'widget',
-      minTier: (wl.widgetDefaults(wid).tier) || 'free',
-      page: wl.widgetDeploy(wid).pages[0] || 'dashboard'
-    });
-  });
-  STATIC_PAGE_BLOCKS.forEach((b) => list.push(Object.assign({ kind: 'page' }, b)));
-  return list;
-}
-
-function syncPageBlocksFromWidgets(plan, wl) {
-  if (!plan) return plan;
-  if (!plan.blocks) plan.blocks = {};
-  const blkNeeded = {};
-  STATIC_PAGE_BLOCKS.forEach((b) => { blkNeeded[b.id] = !!plan.blocks[b.id]; });
-  Object.keys(plan.blocks).forEach((key) => {
-    if (key.indexOf('WGT-') !== 0 || !plan.blocks[key]) return;
-    const dep = wl.getPageDeploy(key);
-    (dep && dep.blocks ? dep.blocks : []).forEach((blk) => { blkNeeded[blk] = true; });
-  });
-  Object.keys(blkNeeded).forEach((blk) => { plan.blocks[blk] = blkNeeded[blk]; });
-  return plan;
-}
-
-function defaultPagesForTier(tier) {
-  tier = String(tier || 'guest').toLowerCase();
-  const out = {};
-  PAGES.forEach((p) => {
-    if (tier === 'guest') out[p.key] = p.guestNever ? false : !!p.guestDefault;
-    else if (tier === 'free') out[p.key] = p.key !== 'loyalty';
-    else out[p.key] = true;
-  });
-  return out;
+  return wl.widgetIds().map((wid) => ({
+    id: wid,
+    kind: 'widget',
+    minTier: (wl.widgetDefaults(wid).tier) || 'free'
+  }));
 }
 
 function defaultBlocksForTier(tier, wl) {
@@ -156,7 +93,6 @@ function defaultBlocksForTier(tier, wl) {
   if (tier === 'elite') {
     wl.widgetIds().forEach((id) => { if (isWidgetEntitlementId(id)) out[id] = true; });
   }
-  syncPageBlocksFromWidgets({ tier, blocks: out }, wl);
   return out;
 }
 
@@ -231,24 +167,6 @@ function syncLegacyEntFromActions(plan) {
   plan.ent.flowExclusive = op('flowExclusive', 'view');
 }
 
-function applyPageBlockDefaults(plan, wl) {
-  if (!plan || !plan.pages || !plan.blocks) return plan;
-  const tier = String(plan.tier || plan.id || 'guest').toLowerCase();
-  const blocks = buildBlocksCatalog(wl);
-  PAGES.forEach((page) => {
-    if (!plan.pages[page.key]) return;
-    const pageWidgets = wl.widgetsForPage(page.key);
-    if (!pageWidgets.length) return;
-    if (pageWidgets.some((wid) => !!plan.blocks[wid])) return;
-    pageWidgets.forEach((wid) => {
-      const b = blocks.find((x) => x.id === wid);
-      if (b && tierRank(tier) >= tierRank(b.minTier)) plan.blocks[wid] = true;
-    });
-  });
-  syncPageBlocksFromWidgets(plan, wl);
-  return plan;
-}
-
 function migratePlanWidgetAliases(plan, wl) {
   if (!plan || !plan.blocks) return plan;
   Object.keys(plan.blocks).forEach((id) => {
@@ -266,8 +184,8 @@ function normalizePlan(plan, wl) {
   plan = JSON.parse(JSON.stringify(plan));
   const tier = plan.tier || plan.id || 'free';
 
-  plan.pages = Object.assign(defaultPagesForTier(tier), plan.pages || {});
-  if (tier === 'guest') plan.pages.dashboard = false;
+  /* Không còn quyền theo trang: khách xem mọi trang; quyền chỉ ở widget (Phân quyền sử dụng) + hành động. */
+  delete plan.pages;
 
   plan.ent = Object.assign(defaultCapabilitiesForTier(tier), plan.ent || {});
   const leg = legacyEntToFeatures(plan.ent);
@@ -277,12 +195,12 @@ function normalizePlan(plan, wl) {
   plan.ent.widgets = plan.ent.widgets != null ? plan.ent.widgets : leg.widgets;
 
   plan.blocks = Object.assign(defaultBlocksForTier(tier, wl), plan.blocks || {});
+  /* Dữ liệu cũ: bỏ mọi khoá không phải widget (BLK-* block trang cứng). */
+  Object.keys(plan.blocks).forEach((id) => { if (!isWidgetEntitlementId(id)) delete plan.blocks[id]; });
   migratePlanWidgetAliases(plan, wl);
   plan.actions = Object.assign(defaultActionsForTier(tier), plan.actions || {});
   plan.limits = Object.assign(defaultLimitsForTier(tier), plan.limits || {});
 
-  applyPageBlockDefaults(plan, wl);
-  syncPageBlocksFromWidgets(plan, wl);
   syncLegacyEntFromActions(plan);
 
   plan.ent.newsWrite = false;
@@ -298,7 +216,7 @@ function mergePlan(base, override) {
   if (!override) return JSON.parse(JSON.stringify(base));
   const p = JSON.parse(JSON.stringify(base));
   Object.keys(override).forEach((k) => {
-    if (k === 'blocks' || k === 'pages' || k === 'limits' || k === 'ent' || k === 'actions') {
+    if (k === 'blocks' || k === 'limits' || k === 'ent' || k === 'actions') {
       p[k] = Object.assign({}, p[k] || {}, override[k] || {});
     } else {
       p[k] = override[k];

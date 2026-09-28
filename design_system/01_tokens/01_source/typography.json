@@ -1,0 +1,46 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Typography Token SoT (primitives)",
+    "note": "Gốc 15px (html 93.75%) — rem = px/15. Thang cỡ chữ 10 mốc (W1 2026-09-27): 10·12·13·14·16·18·20·24·30·36. Semantic text roles thuộc foundation/typography.css.",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/typography.css §1–§7 (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "font": {
+      "primary": "'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif",
+      "mono": "ui-monospace, 'SF Mono', 'Menlo', 'Consolas', monospace",
+      "numeric": "{font.primary}",
+      "weight": {
+        "extralight": "200",
+        "regular": "400",
+        "semibold": "600",
+        "extrabold": "800"
+      },
+      "size": {
+        "2xs": "0.6667rem",
+        "xs": "0.8rem",
+        "sm": "0.8667rem",
+        "md": "0.9333rem",
+        "lg": "1.0667rem",
+        "xl": "1.2rem",
+        "2xl": "1.3333rem",
+        "3xl": "1.6rem",
+        "4xl": "2rem",
+        "5xl": "2.4rem"
+      }
+    },
+    "line-height": {
+      "tight": "1.25",
+      "normal": "1.5",
+      "relaxed": "1.625",
+      "loose": "1.75"
+    },
+    "letter-spacing": {
+      "tighter": "-0.04em",
+      "tight": "-0.02em",
+      "normal": "0",
+      "wide": "0.04em",
+      "wider": "0.06em",
+      "caps": "0.08em"
+    }
+  }
+}

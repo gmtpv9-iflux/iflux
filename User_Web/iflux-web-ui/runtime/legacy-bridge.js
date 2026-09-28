@@ -27,7 +27,7 @@ var stylePromises = {};
 function normalizeStyleHref(href) {
   var s = String(href || '');
   if (/\/User_Web\/iflux-web-ui\/community\.css(\?|$)/.test(s)) {
-    return '/User_Web/iflux-web-ui/news.css?v=stickyRefactor20260811';
+    return '/User_Web/iflux-web-ui/news.css?v=r20260928n';
   }
   return s;
 }
@@ -145,10 +145,7 @@ var SHELL_PLATFORM_SKIP = [
   { re: /\/block-templates\.js$/i, global: 'IfluxBlockTemplates' },
   { re: /\/watchlist-taxonomy\.js$/i, global: 'IfluxWatchlistTaxonomy' },
   { re: /\/iflux-market-master\.js$/i, global: 'IfluxMarketMaster' },
-  { re: /\/seo-url\.js$/i, global: 'IfluxSeoUrl' },
-  { re: /\/iflux-market-seed-data\.js$/i, global: 'IfluxMarketSeedData' },
-  { re: /\/iflux-market-ecosystem-seeds\.js$/i, global: 'IfluxMarketEcosystemSeeds' },
-  { re: /\/iflux-market-registry-store\.js$/i, global: 'IfluxMarketRegistryStore' }
+  { re: /\/seo-url\.js$/i, global: 'IfluxSeoUrl' }
 ];
 
 function shouldSkipShellPlatform(src) {

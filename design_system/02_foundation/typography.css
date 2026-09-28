@@ -1,0 +1,236 @@
+/**
+ * iFlux CSS Ownership
+ *
+ * OWNER: GLOBAL DESIGN SYSTEM
+ * LAYER: Foundation
+ * CAPABILITY: Typography
+ *
+ * SCOPE:
+ * - Generic
+ * - Semantic
+ * - Domain-independent
+ * - Platform-independent
+ *
+ * ALLOWED:
+ * - Document contract (html / body)
+ * - Semantic HTML (h1–h6, p, strong, em, small, lists, code, pre, caption/figcaption)
+ * - Heading / body / caption tokens
+ * - Button text tokens temporarily (button.css consumer) — ownership review deferred to button.css audit
+ *
+ * NOT ALLOWED:
+ * - Platform / Module / Page / Widget CSS
+ * - Domain typography (price / market / chart / widget / ranking / status)
+ * - Duplicate heading classes
+ * - Atomic typography utility framework
+ * - Visual helper classes without a single semantic contract
+ *
+ * DEPENDENCY:
+ * Global DS → Platform → Module → Page → Widget
+ *
+ * P6a 2026-08-27 — Owner allocation. See gates/.../css-normalization/01c_typography_execution.md
+ */
+:root {
+  /* ── Heading ──
+   * Base (< md) = mobile: mỗi tiêu đề lùi một mốc trên cùng thang.
+   * ≥ md 768px: H1 30 · H2 24 · H3 20 · H4 18 (xem @media dưới). Nội dung không đổi theo màn hình. */
+  --ifx-text-h1-size: var(--ifx-font-size-3xl);
+  --ifx-text-h1-weight: var(--ifx-font-weight-extrabold);
+  --ifx-text-h1-line: var(--ifx-line-height-tight);
+  --ifx-text-h1-tracking: var(--ifx-letter-spacing-tight);
+
+  --ifx-text-h2-size: var(--ifx-font-size-2xl);
+  --ifx-text-h2-weight: var(--ifx-font-weight-extrabold);
+  --ifx-text-h2-line: var(--ifx-line-height-tight);
+  --ifx-text-h2-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h3-size: var(--ifx-font-size-xl);
+  --ifx-text-h3-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h3-line: var(--ifx-line-height-normal);
+  --ifx-text-h3-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h4-size: var(--ifx-font-size-lg);
+  --ifx-text-h4-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h4-line: var(--ifx-line-height-normal);
+  --ifx-text-h4-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h5-size: var(--ifx-font-size-lg);
+  --ifx-text-h5-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h5-line: var(--ifx-line-height-normal);
+  --ifx-text-h5-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-h6-size: var(--ifx-font-size-md);
+  --ifx-text-h6-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-h6-line: var(--ifx-line-height-normal);
+  --ifx-text-h6-tracking: var(--ifx-letter-spacing-normal);
+
+  /* ── Body ── */
+  --ifx-text-body-lg-size: var(--ifx-font-size-lg);
+  --ifx-text-body-lg-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-lg-line: var(--ifx-line-height-relaxed);
+  --ifx-text-body-lg-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-body-md-size: var(--ifx-font-size-md);
+  --ifx-text-body-md-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-md-line: var(--ifx-line-height-normal);
+  --ifx-text-body-md-tracking: var(--ifx-letter-spacing-normal);
+
+  --ifx-text-body-sm-size: var(--ifx-font-size-sm);
+  --ifx-text-body-sm-weight: var(--ifx-font-weight-regular);
+  --ifx-text-body-sm-line: var(--ifx-line-height-normal);
+  --ifx-text-body-sm-tracking: var(--ifx-letter-spacing-normal);
+
+  /* ── Caption ── */
+  --ifx-text-caption-size: var(--ifx-font-size-xs);
+  --ifx-text-caption-weight: var(--ifx-font-weight-regular);
+  --ifx-text-caption-line: var(--ifx-line-height-normal);
+  --ifx-text-caption-tracking: var(--ifx-letter-spacing-normal);
+
+  /* ── Overline — nhãn nhỏ in hoa đứng trên một nhóm nội dung (vd. .ifx-group-title) ── */
+  --ifx-text-overline-size: var(--ifx-font-size-2xs);
+  --ifx-text-overline-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-overline-line: var(--ifx-line-height-tight);
+  --ifx-text-overline-tracking: var(--ifx-letter-spacing-caps);
+
+  /* ── Button text tokens — Primitive Button consumes; classes not in this file ──
+   * FUTURE: when button.css is audited, decide if these stay here or move to Button. */
+  --ifx-text-btn-lg-size: var(--ifx-font-size-md);
+  --ifx-text-btn-lg-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-lg-line: var(--ifx-line-height-normal);
+
+  --ifx-text-btn-md-size: var(--ifx-font-size-sm);
+  --ifx-text-btn-md-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-md-line: var(--ifx-line-height-normal);
+
+  --ifx-text-btn-sm-size: var(--ifx-font-size-xs);
+  --ifx-text-btn-sm-weight: var(--ifx-font-weight-semibold);
+  --ifx-text-btn-sm-line: var(--ifx-line-height-tight);
+}
+
+@media (min-width: 768px) { /* bp:md */
+  :root {
+    --ifx-text-h1-size: var(--ifx-font-size-4xl);
+    --ifx-text-h2-size: var(--ifx-font-size-3xl);
+    --ifx-text-h3-size: var(--ifx-font-size-2xl);
+    --ifx-text-h4-size: var(--ifx-font-size-xl);
+  }
+}
+
+/* ── Base document ─────────────────────────────────────────────
+ * html rem root = 15px (93.75% của mặc định trình duyệt 16px) — token rem = px/15.
+ * Dùng % để vẫn tôn trọng cỡ chữ người dùng tự đặt trong trình duyệt. */
+html {
+  font-family: var(--ifx-font-primary);
+  font-size: 93.75%;
+  line-height: var(--ifx-line-height-normal);
+  letter-spacing: var(--ifx-letter-spacing-normal);
+}
+body {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-body-md-size);
+  font-weight: var(--ifx-text-body-md-weight);
+  line-height: var(--ifx-line-height-normal);
+  letter-spacing: var(--ifx-letter-spacing-normal);
+}
+
+/* ── Semantic HTML ── */
+h1 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h1-size);
+  font-weight: var(--ifx-text-h1-weight);
+  line-height: var(--ifx-text-h1-line);
+  letter-spacing: var(--ifx-text-h1-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h2 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h2-size);
+  font-weight: var(--ifx-text-h2-weight);
+  line-height: var(--ifx-text-h2-line);
+  letter-spacing: var(--ifx-text-h2-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h3 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h3-size);
+  font-weight: var(--ifx-text-h3-weight);
+  line-height: var(--ifx-text-h3-line);
+  letter-spacing: var(--ifx-text-h3-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h4 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h4-size);
+  font-weight: var(--ifx-text-h4-weight);
+  line-height: var(--ifx-text-h4-line);
+  letter-spacing: var(--ifx-text-h4-tracking);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+h5 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h5-size);
+  font-weight: var(--ifx-text-h5-weight);
+  line-height: var(--ifx-text-h5-line);
+  letter-spacing: var(--ifx-text-h5-tracking);
+  color: var(--ifx-text-secondary);
+  margin: 0 0 var(--ifx-space-4);
+}
+h6 {
+  font-family: var(--ifx-font-primary);
+  font-size: var(--ifx-text-h6-size);
+  font-weight: var(--ifx-text-h6-weight);
+  line-height: var(--ifx-text-h6-line);
+  letter-spacing: var(--ifx-text-h6-tracking);
+  color: var(--ifx-text-secondary);
+  margin: 0 0 var(--ifx-space-4);
+}
+p { margin: 0 0 var(--ifx-stack-sm); }
+/* a — semantic contract ở foundation/reset.css (color: --ifx-text-link) */
+strong { font-weight: var(--ifx-font-weight-semibold); }
+em { font-style: italic; }
+small {
+  font-size: var(--ifx-text-caption-size);
+  color: var(--ifx-text-muted);
+}
+blockquote {
+  margin: var(--ifx-stack-md) 0;
+  padding-left: var(--ifx-space-16);
+  border-left: var(--ifx-space-4) solid var(--ifx-border-default);
+  color: var(--ifx-text-secondary);
+}
+ul, ol {
+  margin: 0 0 var(--ifx-stack-sm);
+  padding-left: var(--ifx-space-24);
+}
+li + li { margin-top: var(--ifx-space-4); }
+code {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-sm);
+}
+pre {
+  margin: 0 0 var(--ifx-stack-sm);
+  padding: var(--ifx-space-12);
+  overflow-x: auto;
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-sm);
+  background: var(--ifx-bg-elevated);
+  border: 1px solid var(--ifx-border-subtle);
+  border-radius: var(--ifx-radius-card);
+  color: var(--ifx-text-secondary);
+}
+figcaption,
+caption {
+  font-size: var(--ifx-text-caption-size);
+  color: var(--ifx-text-muted);
+}
+.ifx-group-label {
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ifx-letter-spacing-caps);
+  color: var(--ifx-text-muted);
+  margin-bottom: var(--ifx-space-12);
+}

@@ -1,0 +1,43 @@
+/**
+ * Canonical primitive — Navigation units only
+ * SPLIT từ .ix-nav-pill (components.css). KHÔNG side-nav / top-bar / drawer-nav.
+ * Structure thuộc platform (Owner LOCK 2026-08-26).
+ */
+.ifx-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-secondary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--ifx-transition-color);
+}
+.ifx-nav-item:hover {
+  background: var(--ifx-bg-hover);
+  color: var(--ifx-text-primary);
+}
+.ifx-nav-item.is-active,
+.ifx-nav-item.is-selected {
+  background: var(--ifx-bg-active);
+  color: var(--ifx-action-primary);
+}
+.ifx-nav-item:disabled,
+.ifx-nav-item.is-disabled {
+  cursor: default;
+  pointer-events: none;
+  color: var(--ifx-text-disabled);
+  background: transparent;
+}
+
+.ifx-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ifx-size-icon-md);
+  height: var(--ifx-size-icon-md);
+  font-size: var(--ifx-size-icon-md);
+}
+.ifx-nav-label { min-width: 0; }

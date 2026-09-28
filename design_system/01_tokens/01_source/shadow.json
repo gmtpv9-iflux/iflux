@@ -1,0 +1,22 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Shadow Token SoT",
+    "note": "Global shadow scale is xs–xl. Bóng khung App Shell (header / bottom menu) là token theme --ifx-shadow-chrome trong color.json (sáng/tối).",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/primitives/shadow.css (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "shadow": {
+      "sm": "0 2px 6px {alpha.black-8}",
+      "md": "0 4px 16px {alpha.black-12}",
+      "lg": "0 8px 24px {alpha.black-16}",
+      "xl": "0 12px 32px {alpha.black-16}"
+    }
+  },
+  "semantic": {
+    "shadow": {
+      "card": "{shadow.sm}",
+      "dropdown": "{shadow.lg}",
+      "modal": "{shadow.xl}"
+    }
+  }
+}

@@ -1,0 +1,102 @@
+<nav class="ifx-tabs ifx-tabs-nav" aria-label="Tokens">
+  
+  <a class="ifx-tab" href="?section=tokens&amp;panel=theme" data-sb-goto="theme">Theme</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=palette" data-sb-goto="palette">Palette</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=spacing" data-sb-goto="spacing">Spacing</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=type" data-sb-goto="type">Type scale</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=radius" data-sb-goto="radius">Radius / Shadow</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=motion" data-sb-goto="motion">Motion / Size / Z</a>
+  <a class="ifx-tab" href="?section=tokens&amp;panel=breakpoints" data-sb-goto="breakpoints">Breakpoints</a>
+</nav>
+
+
+
+<div class="sb-panel" data-sb-panel="theme" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Semantic Theme Tokens</h2>
+      <p>Đổi Dark/Light trên header để thấy giá trị đổi theo.</p>
+    </div>
+    <div class="sb-grid" data-render="theme-colors"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="palette" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Primitive Palette</h2>
+      <p>Raw palette — component không dùng trực tiếp, chỉ qua semantic/theme.</p>
+    </div>
+    <div class="sb-grid" data-render="primitive-colors"></div>
+    <div class="ifx-widget-title">
+      <h3>Alpha</h3>
+    </div>
+    <div class="sb-grid" data-render="alpha"></div>
+    <div class="ifx-widget-title">
+      <h3>Gradient</h3>
+    </div>
+    <div class="sb-grid sb-grid-wide" data-render="gradient"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="spacing" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Spacing Scale</h2>
+      <p>Base 4px · 8pt grid.</p>
+    </div>
+    <div class="sb-rows" data-render="spacing"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="type" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Type Scale</h2>
+      <p>Font: Be Vietnam Pro — <code>foundation/fonts.css</code>.</p>
+    </div>
+    <div class="sb-rows" data-render="type-scale"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="radius" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Radius &amp; Shadow</h2>
+    </div>
+    <div class="sb-grid" data-render="radius"></div>
+    <div class="ifx-widget-title">
+      <h3>Shadow</h3>
+    </div>
+    <div class="sb-grid" data-render="shadow"></div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="motion" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Motion · Size · Z-index</h2>
+    </div>
+    <div class="sb-cols">
+      <div><div class="ifx-widget-title">
+      <h3>Motion</h3>
+    </div><table class="sb-table" data-render="motion"></table></div>
+      <div><div class="ifx-widget-title">
+      <h3>Size</h3>
+    </div><table class="sb-table" data-render="size"></table></div>
+      <div><div class="ifx-widget-title">
+      <h3>Z-index</h3>
+    </div><table class="sb-table" data-render="zindex"></table></div>
+    </div>
+  </section>
+</div>
+
+<div class="sb-panel" data-sb-panel="breakpoints" hidden>
+  <section class="sb-section ifx-stack-md">
+    <div class="ifx-section-title">
+      <h2>Breakpoints</h2>
+      <p>Mobile-first: Base &lt; 480px. Media query dùng literal — cấm <code>var()</code>.</p>
+    </div>
+    <table class="sb-table" data-render="breakpoints"></table>
+  </section>
+</div>

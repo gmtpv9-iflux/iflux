@@ -816,16 +816,7 @@
     }).slice(0, limit);
   }
 
-  function hashStr(s) {
-    var h = 0;
-    s = String(s || '');
-    for (var i = 0; i < s.length; i++) {
-      h = (h * 31 + s.charCodeAt(i)) >>> 0;
-    }
-    return h;
-  }
-
-  /* Số theo dõi thật (profile store) → fallback deterministic để luôn có số hiển thị */
+  /* Số theo dõi thật (profile store); không có nguồn → null (không hiện). */
   function expertFollowerCount(userId) {
     var pu = global.IfluxProfileUsersStore;
     if (pu && pu.getPublic) {
@@ -837,17 +828,7 @@
       var arr = pf.listFollowers(userId);
       if (arr && arr.length) return arr.length;
     }
-    return 120 + (hashStr(userId) % 3000);
-  }
-
-  /* Chưa có nguồn thật cho số thành viên affiliate & số sao đánh giá của chuyên gia
-     → suy ra deterministic theo userId (ổn định giữa các lần render). */
-  function expertDerivedStats(userId) {
-    var h = hashStr('aff:' + userId);
-    return {
-      affiliateMembers: 5 + (h % 240),
-      rating: Math.round((38 + (hashStr('rate:' + userId) % 12))) / 10
-    };
+    return null;
   }
 
   /* Bảng xếp hạng chuyên gia (mở rộng): bài viết, lượt thích, theo dõi, thành viên, sao. */
@@ -874,10 +855,8 @@
     });
     return Object.keys(map).map(function (k) {
       var row = map[k];
-      var derived = expertDerivedStats(row.userId);
+      /* Chỉ số liệu có nguồn thật; chưa có nguồn (thành viên affiliate, sao đánh giá) thì không hiện. */
       row.totalFollows = expertFollowerCount(row.userId);
-      row.affiliateMembers = derived.affiliateMembers;
-      row.rating = derived.rating;
       return row;
     }).sort(function (a, b) {
       return b.totalLikes - a.totalLikes || b.postCount - a.postCount;
@@ -1206,11 +1185,11 @@
     var meta = post.metadata || {};
     var url = meta.canonical || meta.url || (global.IfluxSeoUrl
       ? IfluxSeoUrl.postCanonical(post)
-      : baseUrl + '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug));
+      : baseUrl + '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug));
     return {
       url: url,
       slug: post.slug,
-      path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/cong-dong/bai-viet/' + encodeURIComponent(post.id || post.slug),
+      path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug),
       meta: {
         title: meta.title,
         description: meta.description,

@@ -10,13 +10,38 @@ Environment map: [`docs/SoT — Environment Map (Live Production, Staging 1, Sta
 
 **Rule này SUPERSEDE mọi hướng dẫn cũ nói "sửa trực tiếp trên Production" / "SSH deploy vào Production mặc định"** (bao gồm `docs/SoT — Deployment.md` v1.2 §3.3/§4-6/P-01/F-06 — nay đã amend v1.3, xem file đó mục "AMENDMENT v1.3").
 
+⚠️ **Điều này SUPERSEDE cả memory/rule lưu trong Cursor Settings** nếu memory đó nói "mặc định làm trên Production", "sửa trực tiếp trên Production", hay "SSH deploy: đọc `infra/staging/staging.env`". Những memory đó đã lỗi thời. Gặp mâu thuẫn → theo rule này, và báo Owner xoá memory.
+
+## Owner Directive 2026-08-16 — GitHub là kênh duy nhất
+
+- **CẤM mọi thao tác với GitLab.** Remote `origin` đã gỡ; `gitlab.com` bị chặn ở git config toàn máy và `~/.ssh/config`. Không thêm lại remote, không clone, không đề xuất GitLab.
+- **Deploy = đẩy commit lên GitHub branch `staging`, để CI/CD chạy.** Không rsync, không scp, không `sshpass ... rsync`.
+
+## Owner Directive 2026-08-19 — Git identity (Task 05 Gate 03)
+
+```text
+GitHub staging     → staging.iflux.vn  → :3002
+GitHub production  → iflux.vn          → :3003
+```
+
+| Branch | Môi trường | Workflow |
+|---|---|---|
+| `staging` | Canonical Staging · `staging.iflux.vn` | `deploy-staging.yml` |
+| `production` | Canonical Production · `iflux.vn` | `deploy-production-new.yml` |
+
+- Worktree Staging: `/Users/mac/Documents/Productions/iFLUX_P1` · `staging`.
+- Worktree Production Git: `Staging_2/` · `production` (tên thư mục lịch sử — không phải Staging 2).
+- Không còn branch `staging-2`.
+- Leftover `/var/www/iflux/production` · `/var/iflux/backend` · `/var/iflux/storage` · DB `iflux` = **backup**. `:3001` đã retire. CẤM ghi.
+- SSH không phải kênh deploy. Deploy = push GitHub → CI.
+
 ## Bắt buộc
 
-1. **`iflux.vn` = Protected Live Environment.** CẤM SSH deploy / sửa code / reset / checkout / migrate / restart process trên path Production (`/var/www/iflux/production`, `/var/iflux/backend`, DB `iflux`, PM2 `iflux-api`). Đọc (audit, evidence, so sánh) vẫn được phép — chỉ cấm **write**.
-2. SSH/deploy chỉ hợp lệ trên **Staging 1** (`staging.iflux.vn`) và **Staging 2** (`production.iflux.vn` — chỉ là hostname hiện tại của Staging 2, KHÔNG phải Production thật).
-3. Trước khi chạy bất kỳ lệnh SSH nào có khả năng ghi/thay đổi trạng thái server — tự hỏi: "path này thuộc Production, Staging 1, hay Staging 2?" Không chắc → dừng, hỏi Owner.
-4. Không copy SSH/CI credential của Production vào Staging 1/2 hoặc ngược lại (dù hiện tại 3 môi trường chung 1 server/1 root credential — xem giới hạn kỹ thuật ở SoT §3).
+1. **Canonical Production** = `iflux.vn` → `:3003` / newprod / `iflux_production_next`. Không suy từ path chữ `production`.
+2. Leftover path `/var/www/iflux/production` **không** phải runtime — chỉ backup. CẤM SSH write.
+3. Deploy Staging = push `staging`. Deploy Production = push `production`.
+4. Không copy credential giữa môi trường. Không GitLab.
 
-## Khi nào Production mới được ghi lại
+## Khi nào ghi Production Runtime
 
-Chỉ qua **Production deployment flow riêng + Production Gate** (chưa mở) — không phải qua SSH tay như trước 2026-08-14.
+Chỉ qua CI `deploy-production-new.yml` (push `production`). Không SSH tay như trước 2026-08-14.

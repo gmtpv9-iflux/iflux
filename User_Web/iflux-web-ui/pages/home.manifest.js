@@ -7,20 +7,23 @@
  *   Không phải “page giả” ôm cả trang — chỉ vùng Main.
  */
 
-var VER = '?v=phaseCW120260721';
+var VER = '?v=r20260928r';
 var CSS_HUB = [
-  '/User_Web/iflux-web-ui/hub.css?v=stickyRefactor20260811',
-  '/User_Web/iflux-web-ui/profile.css'
+  '/User_Web/iflux-web-ui/hub.css?v=r20260928n',
+  '/User_Web/iflux-web-ui/profile.css?v=r20260928n'
 ];
 var CSS_DASH = [
-  '/User_Web/iflux-web-ui/widget-shell.css?v=ui00120260723',
-  '/User_Web/iflux-web-ui/watchlist.css',
-  '/User_Web/iflux-web-ui/block-templates.css?v=ui00120260723',
+  '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n',
+  '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
+  '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
   '/User_Web/iflux-web-ui/feature-suggestions.css'
 ];
 
 export default {
   pageKey: 'home',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--hub',
+  css: ['/User_Web/iflux-web-ui/hub.css?v=r20260928n'],
   path: '/trang-chu',
   title: 'Trang chủ',
   documentTitle: 'Trang chủ',
@@ -29,8 +32,7 @@ export default {
     { key: 'main', label: 'Bảng tổng quan', visible: true, layout: 'stack' }
   ],
   widgets: [
-    /* WGT-PRF-001 (Hồ sơ) — Owner: không đặc thù; không inject cứng vào Host sidebar.
-       Profile page giữ widget module riêng — không đụng widgets/profile-card. */
+    /* WGT-PRF-001 (Hồ sơ) — không đặc thù; không inject cứng vào Host sidebar. */
     {
       id: 'WGT-PRF-002',
       title: 'Gói cước',

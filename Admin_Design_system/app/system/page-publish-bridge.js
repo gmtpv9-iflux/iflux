@@ -56,13 +56,14 @@
     };
 
     var widgetDrafts = {};
+    var missing = [];
     widgets.forEach(function (w) {
-      /* Bug A fix: giữ binding SoT #4 — không bịa TMP-LEGACY khi Definition đã có templateRef */
+      /* Template do Kiến trúc 4 tầng chọn — không gán mặc định. */
       var templateId = w.template || w.templateRef || null;
       if (!templateId && global.PageRuntimeManifest && PageRuntimeManifest.resolveTemplateRef) {
         templateId = PageRuntimeManifest.resolveTemplateRef(w.id);
       }
-      if (!templateId) templateId = 'TMP-LEGACY';
+      if (!templateId) missing.push(w.id);
       widgetDrafts[w.id] = {
         id: w.id,
         title: w.title || w.id,
@@ -70,13 +71,11 @@
         template: templateId,
         blocks: Array.isArray(w.blocks) ? w.blocks.slice() : [],
         minTier: w.minTier || 'free',
-        css: Array.isArray(w.css) ? w.css.slice() : [],
-        lazyModule: w.lazyModule || null,
         metadata: { config: w.config || {} }
       };
     });
 
-    return { pageDraft: pageDraft, widgetDrafts: widgetDrafts };
+    return { pageDraft: pageDraft, widgetDrafts: widgetDrafts, missingTemplate: missing };
   }
 
   /**
@@ -102,6 +101,12 @@
     var payload = buildPublishPayload(key, manifest);
     if (!payload) {
       return Promise.resolve({ ok: false, error: 'Không build được publish payload' });
+    }
+    if (payload.missingTemplate.length) {
+      return Promise.resolve({
+        ok: false,
+        error: 'Widget chưa chọn Template trong Kiến trúc 4 tầng: ' + payload.missingTemplate.join(', ')
+      });
     }
 
     return IfluxWidgetPublishClient.publishPage(payload.pageDraft, payload.widgetDrafts)

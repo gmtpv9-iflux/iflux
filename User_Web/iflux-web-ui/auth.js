@@ -1434,18 +1434,85 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     return segs[segs.length - 1] || 'index.html';
   }
 
-  function requireAuth(loginPath) {
-    if (!isLoggedIn()) {
-      var dest;
-      if (global.IfluxRoutes) {
-        if (global.IfluxPncLifecycle && IfluxPncLifecycle.saveReturnTo) {
-          IfluxPncLifecycle.saveReturnTo(IfluxRoutes.pathname());
+  /* Hộp xác nhận đăng nhập (DS Modal + platform/web/auth-prompt) — chỉ nạp khi khách thật sự cần. */
+  var AUTH_PROMPT_VER = 'authPrompt20260928';
+  var authPromptLoading = null;
+  function loadAuthPrompt() {
+    if (global.IfluxAuthPrompt && global.IfxModal) return Promise.resolve();
+    if (authPromptLoading) return authPromptLoading;
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = '/design_system/04_components/09_modal/modal.css?v=' + AUTH_PROMPT_VER;
+    document.head.appendChild(css);
+    function script(src) {
+      return new Promise(function (resolve, reject) {
+        var el = document.createElement('script');
+        el.src = src + '?v=' + AUTH_PROMPT_VER;
+        el.onload = resolve;
+        el.onerror = reject;
+        document.head.appendChild(el);
+      });
+    }
+    authPromptLoading = Promise.all([
+      global.IfxModal ? null : script('/design_system/04_components/09_modal/modal.js'),
+      script('/platform/web/auth-prompt/auth-prompt.js')
+    ]).catch(function (err) { authPromptLoading = null; throw err; });
+    return authPromptLoading;
+  }
+
+  function loginDest(returnPath) {
+    if (!global.IfluxRoutes) return '/dang-nhap?return=' + encodeURIComponent(returnPath || currentReturnPath());
+    if (global.IfluxPncLifecycle && IfluxPncLifecycle.saveReturnTo) {
+      IfluxPncLifecycle.saveReturnTo(returnPath || IfluxRoutes.pathname());
+    }
+    return IfluxRoutes.loginWithReturn(returnPath || IfluxRoutes.pathname());
+  }
+
+  /** Khách muốn mở nội dung cần đăng nhập → hỏi xác nhận, đồng ý mới chuyển sang trang đăng nhập. */
+  function promptLogin(returnPath, opts) {
+    var dest = loginDest(returnPath);
+    return loadAuthPrompt().then(function () {
+      IfluxAuthPrompt.ask(dest, opts);
+    }).catch(function () {
+      global.location.assign(dest);
+    });
+  }
+
+  /* MỘT quy tắc cho mọi trường hợp: khách chỉ bị hỏi đăng nhập khi hệ thống thật sự cần danh tính để
+   * đồng bộ dữ liệu (lưu / kiểm tra / xem / sửa) — tức server trả 401 cho API của iFlux (like, share,
+   * bình luận, bình chọn, dữ liệu cá nhân…). Không cần gắn điều kiện riêng ở từng nút / trang.
+   * (Widget theo Phân quyền sử dụng → lớp khoá; trang cá nhân → shell-boot.) */
+  var authAskAt = 0;
+  function isAuthEndpoint(url) {
+    return /\/api\/(auth|v1\/auth)\//.test(url);
+  }
+  function installAuthRequiredRule() {
+    var orig = global.fetch;
+    if (!orig || orig.__ifxAuthRule) return;
+    var wrapped = function (input) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      return orig.apply(this, arguments).then(function (res) {
+        if (res && res.status === 401 && !isLoggedIn() && url.indexOf('/api/') >= 0 &&
+            !isAuthEndpoint(url) && Date.now() - authAskAt > 1500) {
+          authAskAt = Date.now();
+          promptLogin();
         }
-        dest = IfluxRoutes.loginWithReturn(IfluxRoutes.pathname());
-      } else {
-        dest = (loginPath || '../auth/login.html') + '?return=' + encodeURIComponent(currentReturnPath());
-      }
-      global.location.replace(dest);
+        return res;
+      });
+    };
+    wrapped.__ifxAuthRule = true;
+    global.fetch = wrapped;
+  }
+  installAuthRequiredRule();
+
+  function newsHref() {
+    return global.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true }) : '/tin-tuc';
+  }
+
+  /* Trang hiện tại cần đăng nhập mà khách chưa đăng nhập: hỏi trước; «Để sau» → về Tin tức (trang mặc định). */
+  function requireAuth() {
+    if (!isLoggedIn()) {
+      promptLogin(null, { onCancel: function () { global.location.replace(newsHref()); } });
       return false;
     }
     return true;
@@ -1591,6 +1658,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     getActiveSessionInfo: getActiveSessionInfo,
     submitEmergencyLockRequest: submitEmergencyLockRequest,
     requireAuth: requireAuth,
+    promptLogin: promptLogin,
     redirectAfterAuth: redirectAfterAuth,
     refreshSessionFromApi: refreshSessionFromApi,
     patchUserById: patchUserById

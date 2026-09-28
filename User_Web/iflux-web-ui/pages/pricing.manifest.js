@@ -1,5 +1,8 @@
 export default {
   pageKey: 'pricing',
+  /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
+  mainClass: 'ifx-main--pricing',
+  css: [],
   path: '/goi-cuoc',
   title: '',
   documentTitle: '',
@@ -15,7 +18,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/pricing-page/index.js?v=bpPhaseD20260716',
-    css: ['/User_Web/iflux-web-ui/pricing.css']
+    lazyModule: '/User_Web/iflux-web-ui/widgets/pricing-page/index.js?v=r20260928q',
+    css: ['/User_Web/iflux-web-ui/pricing.css?v=r20260928n']
   }]
 };

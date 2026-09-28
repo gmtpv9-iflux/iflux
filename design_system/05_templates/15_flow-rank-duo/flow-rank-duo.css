@@ -1,0 +1,21 @@
+/**
+ * TMP-FLOW-RANK-DUO — Đối chiếu hai chiều: radar hai cực + danh sách đối xứng (trái = ra, phải = vào).
+ */
+.ifx-card-accent.ifx-flow-duo-frame {
+  --ifx-card-accent: linear-gradient(90deg, var(--ifx-flow-out) 0 50%, var(--ifx-flow-in) 50% 100%);
+}
+.ifx-flow-duo-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: var(--ifx-space-8);
+  align-items: stretch;
+}
+.ifx-flow-duo-axis { background: var(--ifx-border-default); }
+.ifx-flow-duo-grid .ifx-score-rank-head { padding-bottom: var(--ifx-space-8); }
+/* Bên ra: đảo thứ tự cột (hạng sát trục giữa), thanh chạy từ phải sang trái. */
+.ifx-flow-duo-grid .is-mirror { direction: rtl; }
+.ifx-flow-duo-grid .is-mirror > * { direction: ltr; }
+.ifx-flow-duo-grid .is-mirror .ifx-score-rank-name { text-align: right; }
+.ifx-flow-duo-grid .is-mirror .ifx-score-rank-val { text-align: left; }
+.ifx-flow-duo-grid .is-mirror .ifx-progress { transform: scaleX(-1); }
+.ifx-flow-duo-grid .is-empty { visibility: hidden; }

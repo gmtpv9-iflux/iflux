@@ -216,7 +216,7 @@
       if (!String(collected.bankPatch[f.key] || '').trim()) empty.push(f.label);
     });
     if (empty.length) {
-      if (global.ixToast) ixToast('Vui lòng điền: ' + empty.join(', '), 'warning');
+      if (global.IfxToast) IfxToast.show('Vui lòng điền: ' + empty.join(', '), 'warning');
       return;
     }
 
@@ -226,26 +226,26 @@
     Payout.savePrerequisites(state.user, collected).then(function (res) {
       if (btn) btn.disabled = false;
       if (!res.ok) {
-        if (global.ixToast) ixToast(res.error || 'Không lưu được thông tin', 'danger');
+        if (global.IfxToast) IfxToast.show(res.error || 'Không lưu được thông tin', 'danger');
         return;
       }
       state.user = res.user;
       state.check = Payout.checkPrerequisites(state.user);
       if (!state.check.ok) {
         renderPrereqView();
-        if (global.ixToast) ixToast('Vui lòng hoàn tất các mục còn thiếu', 'warning');
+        if (global.IfxToast) IfxToast.show('Vui lòng hoàn tất các mục còn thiếu', 'warning');
         return;
       }
       prepareAmountStep();
       if (state.max < state.min) {
-        if (global.ixToast) {
-          ixToast('Số dư khả dụng (' + Payout.formatVnd(state.max) + ') chưa đủ ngưỡng rút tối thiểu (' + Payout.formatVnd(state.min) + ')', 'warning');
+        if (global.IfxToast) {
+          IfxToast.show('Số dư khả dụng (' + Payout.formatVnd(state.max) + ') chưa đủ ngưỡng rút tối thiểu (' + Payout.formatVnd(state.min) + ')', 'warning');
         }
         close();
         return;
       }
       renderAmountView();
-      if (global.ixToast) ixToast('Đã lưu thông tin. Nhập số tiền muốn rút.', 'success');
+      if (global.IfxToast) IfxToast.show('Đã lưu thông tin. Nhập số tiền muốn rút.', 'success');
     });
   }
 
@@ -311,12 +311,12 @@
     input.value = formatInput(amount);
 
     if (amount < state.min) {
-      if (global.ixToast) ixToast('Số tiền tối thiểu là ' + Payout.formatVnd(state.min), 'warning');
+      if (global.IfxToast) IfxToast.show('Số tiền tối thiểu là ' + Payout.formatVnd(state.min), 'warning');
       updateAmountHint(amount);
       return;
     }
     if (!amount) {
-      if (global.ixToast) ixToast('Vui lòng nhập số tiền muốn rút', 'warning');
+      if (global.IfxToast) IfxToast.show('Vui lòng nhập số tiền muốn rút', 'warning');
       return;
     }
 
@@ -328,14 +328,14 @@
         if (res.prerequisites) {
           state.check = res.prerequisites;
           renderPrereqView();
-          if (global.ixToast) ixToast('Vui lòng cập nhật thông tin còn thiếu', 'warning');
+          if (global.IfxToast) IfxToast.show('Vui lòng cập nhật thông tin còn thiếu', 'warning');
           return;
         }
-        if (global.ixToast) ixToast(res.error || 'Không gửi được yêu cầu', 'danger');
+        if (global.IfxToast) IfxToast.show(res.error || 'Không gửi được yêu cầu', 'danger');
         return;
       }
       close();
-      if (global.ixToast) ixToast('Yêu cầu rút tiền đã gửi! Admin sẽ xử lý trong giờ hành chính.', 'success');
+      if (global.IfxToast) IfxToast.show('Yêu cầu rút tiền đã gửi! Admin sẽ xử lý trong giờ hành chính.', 'success');
       if (typeof state.onSuccess === 'function') state.onSuccess(res);
     });
   }

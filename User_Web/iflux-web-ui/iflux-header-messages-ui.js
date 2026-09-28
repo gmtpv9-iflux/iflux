@@ -48,12 +48,12 @@
     if (!container) return;
     var uid = meId();
     if (!uid || !global.IfluxAuth || !IfluxAuth.isLoggedIn()) {
-      container.innerHTML = '<div class="ifx-user-notif-empty">Đăng nhập để xem tin nhắn</div>';
+      container.innerHTML = '<div class="ifx-app-header-notif-empty">Đăng nhập để xem tin nhắn</div>';
       return;
     }
 
     if (!global.IfluxProfileChatStore) {
-      container.innerHTML = '<div class="ifx-user-notif-empty">Đang tải tin nhắn…</div>';
+      container.innerHTML = '<div class="ifx-app-header-notif-empty">Đang tải tin nhắn…</div>';
       return;
     }
 
@@ -61,8 +61,8 @@
     var threads = IfluxProfileChatStore.listThreads(uid);
     if (!threads.length) {
       container.innerHTML =
-        '<div class="ifx-user-notif-empty">Chưa có tin nhắn</div>' +
-        '<a class="ifx-hdr-msg-all" href="' + esc(homeMessagesUrl()) + '">Mở tin nhắn</a>';
+        '<div class="ifx-app-header-notif-empty">Chưa có tin nhắn</div>' +
+        '<a class="ifx-app-header-msg-all" href="' + esc(homeMessagesUrl()) + '">Mở tin nhắn</a>';
       bindPanelLinks(container.closest('[data-ifx-messages-dropdown]'));
       return;
     }
@@ -75,16 +75,16 @@
         var unread = IfluxProfileChatStore.isThreadUnread
           ? IfluxProfileChatStore.isThreadUnread(uid, t)
           : false;
-        return '<a href="' + esc(homeMessagesUrl(peer.id)) + '" class="ifx-hdr-msg-item' + (unread ? ' is-unread' : '') + '">' +
+        return '<a href="' + esc(homeMessagesUrl(peer.id)) + '" class="ifx-app-header-msg-item' + (unread ? ' is-unread' : '') + '">' +
           '<span class="ifx-hdr-msg-item__avatar">' + esc(peer.initials || 'U') + '</span>' +
-          '<span class="ifx-hdr-msg-item__body">' +
-            '<span class="ifx-hdr-msg-item__name">' + esc(peer.display_name || 'Thành viên') + '</span>' +
-            '<span class="ifx-hdr-msg-item__preview">' + esc(preview) + '</span>' +
+          '<span class="ifx-app-header-msg-item-body">' +
+            '<span class="ifx-app-header-msg-item-name">' + esc(peer.display_name || 'Thành viên') + '</span>' +
+            '<span class="ifx-app-header-msg-item-preview">' + esc(preview) + '</span>' +
           '</span>' +
-          '<span class="ifx-hdr-msg-item__time">' + esc(fmtTime(t.updated_at)) + '</span>' +
+          '<span class="ifx-app-header-msg-item-time">' + esc(fmtTime(t.updated_at)) + '</span>' +
         '</a>';
       }).join('') +
-      '<a class="ifx-hdr-msg-all" href="' + esc(homeMessagesUrl()) + '">Xem tất cả</a>';
+      '<a class="ifx-app-header-msg-all" href="' + esc(homeMessagesUrl()) + '">Xem tất cả</a>';
 
     renderBadge();
     bindPanelLinks(container.closest('[data-ifx-messages-dropdown]'));
@@ -100,7 +100,7 @@
     if (!scope || scope._ifxHdrMsgLinksBound) return;
     scope._ifxHdrMsgLinksBound = true;
     scope.addEventListener('click', function (e) {
-      var link = e.target.closest('.ifx-hdr-msg-item, .ifx-hdr-msg-all');
+      var link = e.target.closest('.ifx-app-header-msg-item, .ifx-app-header-msg-all');
       if (!link) return;
       if (isMobileBar() && global.IfluxWebUI && IfluxWebUI.closeMobileMessages) {
         IfluxWebUI.closeMobileMessages();
@@ -125,24 +125,24 @@
     if (!wrap) return null;
     var dropdown = wrap.querySelector('[data-ifx-messages-dropdown]');
     if (dropdown) return dropdown;
-    header = header || wrap.closest('.ifx-topnav');
+    header = header || wrap.closest('.ifx-app-header');
     if (header) return header.querySelector('[data-ifx-messages-dropdown]');
     return null;
   }
 
   function purgeForeignMsgChrome(dropdown) {
     if (!dropdown || !dropdown.hasAttribute('data-ifx-messages-dropdown')) return;
-    dropdown.querySelectorAll('.ifx-user-notif-head').forEach(function (head) {
+    dropdown.querySelectorAll('.ifx-app-header-notif-head').forEach(function (head) {
       if (head.querySelector('.ti-bell')) head.remove();
     });
-    dropdown.querySelectorAll('[data-ifx-user-notif-panel], .ifx-user-notif-foot, .ifx-user-notif-item, .ifx-user-notif-group, .ifx-user-notif-mark-all').forEach(function (el) {
+    dropdown.querySelectorAll('[data-ifx-user-notif-panel], .ifx-app-header-notif-foot, .ifx-app-header-notif-item, .ifx-app-header-notif-group, .ifx-app-header-notif-mark-all').forEach(function (el) {
       el.remove();
     });
   }
 
   function ensureMessagesPanel(header) {
-    header = header || document.querySelector('.ifx-topnav');
-    var wrap = header ? header.querySelector('.ifx-topnav-messages') : document.querySelector('.ifx-topnav-messages');
+    header = header || document.querySelector('.ifx-app-header');
+    var wrap = header ? header.querySelector('.ifx-app-header-messages') : document.querySelector('.ifx-app-header-messages');
     if (!wrap) return null;
     var dropdown = findMessagesDropdown(wrap, header);
     if (!dropdown || !dropdown.hasAttribute('data-ifx-messages-dropdown')) return null;
@@ -153,7 +153,7 @@
       var btn = wrap.querySelector('[data-ifx-messages-btn]');
       if (btn) {
         var bb = document.createElement('span');
-        bb.className = 'ifx-topnav-notif-badge';
+        bb.className = 'ifx-app-header-badge';
         bb.setAttribute('data-ifx-messages-badge', '');
         bb.hidden = true;
         btn.appendChild(bb);
@@ -162,10 +162,10 @@
 
     if (!dropdown.querySelector('[data-ifx-messages-panel]')) {
       var head = document.createElement('div');
-      head.className = 'ifx-user-notif-head';
+      head.className = 'ifx-app-header-notif-head';
       head.innerHTML = '<span><i class="ti ti-messages"></i> Tin nhắn</span>';
       var panel = document.createElement('div');
-      panel.className = 'ifx-user-notif-panel ifx-hdr-msg-panel';
+      panel.className = 'ifx-app-header-notif-panel ifx-app-header-msg-panel';
       panel.setAttribute('data-ifx-messages-panel', '');
       dropdown.appendChild(head);
       dropdown.appendChild(panel);
@@ -176,14 +176,14 @@
   }
 
   function bindMessagesMenu() {
-    document.querySelectorAll('.ifx-topnav-messages').forEach(function (wrap) {
+    document.querySelectorAll('.ifx-app-header-messages').forEach(function (wrap) {
       if (wrap._ifxMsgBound) return;
       wrap._ifxMsgBound = true;
 
       var btn = wrap.querySelector('[data-ifx-messages-btn]');
       if (!btn) return;
 
-      btn.removeAttribute('data-ix-toggle');
+      btn.removeAttribute('data-ifx-toggle');
       var closeTimer = null;
 
       function openPanel() {
@@ -200,7 +200,7 @@
       function scheduleClose() {
         cancelClose();
         closeTimer = setTimeout(function () {
-          wrap.classList.remove('open');
+          wrap.classList.remove('is-open');
           closeTimer = null;
         }, 260);
       }
@@ -211,21 +211,21 @@
         e.stopPropagation();
         cancelClose();
         var isOpen = wrap.classList.contains('open');
-        document.querySelectorAll('.ix-dropdown.open').forEach(function (d) {
-          d.classList.remove('open');
+        document.querySelectorAll('.ifx-dropdown.is-open').forEach(function (d) {
+          d.classList.remove('is-open');
         });
         if (isOpen) {
-          wrap.classList.remove('open');
+          wrap.classList.remove('is-open');
           return;
         }
-        wrap.classList.add('open');
+        wrap.classList.add('is-open');
         openPanel();
       });
 
       wrap.addEventListener('mouseenter', function () {
         if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
         cancelClose();
-        wrap.classList.add('open');
+        wrap.classList.add('is-open');
         openPanel();
       });
       wrap.addEventListener('mouseleave', function () {
@@ -236,9 +236,9 @@
 
     document.addEventListener('click', function (e) {
       if (global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell()) return;
-      if (e.target.closest('.ifx-topnav-messages')) return;
-      document.querySelectorAll('.ifx-topnav-messages.open').forEach(function (d) {
-        d.classList.remove('open');
+      if (e.target.closest('.ifx-app-header-messages')) return;
+      document.querySelectorAll('.ifx-app-header-messages.is-open').forEach(function (d) {
+        d.classList.remove('is-open');
       });
     });
   }
@@ -255,7 +255,7 @@
   }
 
   function refresh() {
-    document.querySelectorAll('.ifx-topnav').forEach(function (hdr) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (hdr) {
       renderPanel(ensureMessagesPanel(hdr));
     });
     renderBadge();

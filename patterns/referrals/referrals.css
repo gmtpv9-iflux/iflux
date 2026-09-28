@@ -1,0 +1,14 @@
+/**
+ * Pattern-local — Referrals: bố cục các bước giới thiệu và ô mời.
+ */
+.referrals-step {
+  align-items: center;
+  text-align: center;
+  gap: var(--ifx-space-8);
+}
+.referrals-stat-row { width: 100%; }
+.referrals-stat { text-align: center; }
+.referrals-invite {
+  gap: var(--ifx-space-8);
+  align-items: stretch;
+}

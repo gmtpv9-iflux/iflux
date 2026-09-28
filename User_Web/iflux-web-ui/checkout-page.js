@@ -378,14 +378,14 @@
       msg.textContent = '✓ Mã ' + code + ' hợp lệ — đã áp dụng';
       document.getElementById('coupon-row').style.display = 'flex';
       document.getElementById('coupon-discount').textContent = '-' + fmt(couponDiscount);
-      if (window.ixToast) ixToast('Áp dụng mã giảm giá thành công!', 'success');
+      if (window.IfxToast) IfxToast.show('Áp dụng mã giảm giá thành công!', 'success');
     } else if (code === 'IFLUX20' || code === 'WELCOME') {
       couponDiscount = Math.round(baseAmount() * 0.1);
       msg.style.color = 'var(--ix-success)';
       msg.textContent = '✓ Mã hợp lệ! Giảm thêm 10% — đã áp dụng';
       document.getElementById('coupon-row').style.display = 'flex';
       document.getElementById('coupon-discount').textContent = '-' + fmt(couponDiscount);
-      if (window.ixToast) ixToast('Áp dụng mã giảm giá thành công!', 'success');
+      if (window.IfxToast) IfxToast.show('Áp dụng mã giảm giá thành công!', 'success');
     } else {
       couponDiscount = 0;
       msg.style.color = 'var(--ix-danger)';
@@ -455,7 +455,7 @@
 
     var snapshot = buildCheckoutSnapshot();
     if (!snapshot) {
-      if (window.ixToast) ixToast('Không xác định được gói cước. Vui lòng chọn lại gói.', 'danger');
+      if (window.IfxToast) IfxToast.show('Không xác định được gói cước. Vui lòng chọn lại gói.', 'danger');
       return;
     }
 
@@ -500,8 +500,8 @@
             orderId: order.id,
             referrerUserId: referrerUserId
           });
-          if (affResult.ok && affResult.events.length && window.ixToast) {
-            ixToast('Đã ghi nhận hoa hồng cho ' + affResult.events.length + ' thành viên upline', 'success');
+          if (affResult.ok && affResult.events.length && window.IfxToast) {
+            IfxToast.show('Đã ghi nhận hoa hồng cho ' + affResult.events.length + ' thành viên upline', 'success');
           }
         }
 
@@ -514,7 +514,7 @@
             amount: fmt(snapshot.amount),
             transferRef: snapshot.transferRef
           });
-          if (window.ixToast) ixToast('Đơn đang chờ Admin xác nhận chuyển khoản', 'info');
+          if (window.IfxToast) IfxToast.show('Đơn đang chờ Admin xác nhận chuyển khoản', 'info');
         } else {
           showSuccessPanel({
             pending: false,
@@ -543,7 +543,7 @@
         Promise.resolve(created).then(afterOrder).catch(function (err) {
           btn.disabled = false;
           updateReviewPanel();
-          if (window.ixToast) ixToast(err.message || 'Không tạo được đơn', 'danger');
+          if (window.IfxToast) IfxToast.show(err.message || 'Không tạo được đơn', 'danger');
         });
         return;
       }

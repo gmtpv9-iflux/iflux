@@ -53,6 +53,8 @@ function createNewsRouter(deps) {
         ticker: req.query.ticker || null,
         category_id: req.query.category_id || null,
         chu_de_id: req.query.chu_de_id || null,
+        sector: req.query.sector || null,
+        ecosystem: req.query.ecosystem || null,
         related_to: req.query.related_to || null
       });
       return success(res, {
@@ -433,7 +435,7 @@ function createNewsRouter(deps) {
       const requestUri = String(req.headers['x-original-uri'] || req.headers['x-iflux-request-uri'] || '');
       if (!item) {
         const seoPlatform = require('../seo-platform/seo-platform.service');
-        const path = '/cong-dong/bai-viet/' + encodeURIComponent(idOrSlug);
+        const path = '/tin-tuc/bai-viet/' + encodeURIComponent(idOrSlug);
         const out = await seoPlatform.renderHttpErrorShell({
           path: path,
           pageKey: 'news',
@@ -476,7 +478,7 @@ function createNewsRouter(deps) {
       const requestUri = String(req.headers['x-original-uri'] || req.headers['x-iflux-request-uri'] || '');
       if (!item) {
         const seoPlatform = require('../seo-platform/seo-platform.service');
-        const path = '/cong-dong/bai-viet/' + encodeURIComponent(idOrSlug);
+        const path = '/tin-tuc/bai-viet/' + encodeURIComponent(idOrSlug);
         const out = await seoPlatform.renderHttpErrorShell({
           path: path,
           pageKey: 'news',
@@ -538,7 +540,7 @@ function createNewsRouter(deps) {
     }
   });
 
-  /* Public list — User Web /cong-dong/chu-de */
+  /* Public list — User Web /tin-tuc/chu-de */
   router.get('/chu-de', async (req, res, next) => {
     try {
       const list = await articles.listChuDeAdmin({
@@ -552,7 +554,7 @@ function createNewsRouter(deps) {
     }
   });
 
-  /* Public list — User Web /cong-dong/tac-gia */
+  /* Public list — User Web /tin-tuc/tac-gia */
   router.get('/authors', async (req, res, next) => {
     try {
       const list = await articles.listAuthorsAdmin({

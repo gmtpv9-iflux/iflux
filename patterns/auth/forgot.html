@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" data-auth-state="forgot">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ADM-AUTH — Quên mật khẩu · iFlux Admin</title>
+  <link rel="stylesheet" href="../../design_system/01_tokens/02_generated/01_css/primitives.css">
+  <link rel="stylesheet" href="../../design_system/01_tokens/02_generated/01_css/semantic.css">
+  <link rel="stylesheet" href="../../design_system/01_tokens/02_generated/01_css/01_themes/dark.css">
+  <link rel="stylesheet" href="../../design_system/01_tokens/02_generated/01_css/01_themes/light.css">
+  <link rel="stylesheet" href="../../design_system/02_foundation/fonts.css">
+  <link rel="stylesheet" href="../../design_system/02_foundation/reset.css">
+  <link rel="stylesheet" href="../../design_system/02_foundation/typography.css">
+  <link rel="stylesheet" href="../../design_system/02_foundation/layout.css">
+  <link rel="stylesheet" href="../../vendor/tabler/tabler-icons.min.css">
+  <link rel="stylesheet" href="../../design_system/02_foundation/02_icons/icons.css">
+  <link rel="stylesheet" href="../../design_system/03_primitives/04_button/button.css">
+  <link rel="stylesheet" href="../../design_system/03_primitives/01_alert/alert.css">
+  <link rel="stylesheet" href="../../design_system/04_components/03_card/card.css">
+  <link rel="stylesheet" href="../../design_system/04_components/08_form/form.css">
+  <link rel="stylesheet" href="../../design_system/04_components/15_tabs/tabs.css">
+  <link rel="stylesheet" href="../../design_system/04_components/17_toast/toast.css">
+</head>
+<body>
+  <div class="auth-splash">
+    <div class="ifx-card ifx-card-plain auth-card">
+      <div class="auth-brand">iFlux</div>
+      <div class="auth-heading">
+        <h2>Quên mật khẩu? 🔒</h2>
+        <p>Nhập email để nhận hướng dẫn đặt lại mật khẩu</p>
+      </div>
+
+      <div class="ifx-form-group">
+        <label class="ifx-label" for="auth-email-reset">Email</label>
+        <input class="ifx-input" id="auth-email-reset" type="email" placeholder="admin@iflux.vn" autofocus>
+      </div>
+      <button type="button" class="ifx-btn ifx-btn-primary auth-submit auth-submit-forgot" data-ifx-toast="success" data-ifx-toast-msg="Đã gửi link đặt lại mật khẩu">
+        <i class="ti ti-send"></i> Gửi link đặt lại
+      </button>
+
+      <a href="login.html" class="auth-back">
+        <i class="ti ti-chevron-left"></i>
+        Quay lại đăng nhập
+      </a>
+    </div>
+  </div>
+  <script src="../../adapters/web/theme.js"></script>
+  <script src="../../design_system/04_components/15_tabs/tabs.js"></script>
+  <script src="../../design_system/04_components/08_form/form.js"></script>
+  <script src="../../design_system/04_components/17_toast/toast.js"></script>
+  <link rel="stylesheet" href="auth.css">
+  <script src="page.js"></script>
+</body>
+</html>

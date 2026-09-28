@@ -1,0 +1,37 @@
+/**
+ * TMP-FLOW-SUMMARY — Mỗi nhóm một dòng: nhãn · giá trị ròng có dấu · thanh tỉ lệ vào/ra.
+ */
+.ifx-flow-summary-row {
+  padding: var(--ifx-space-12) 0;
+  border-bottom: 1px solid var(--ifx-border-default);
+}
+.ifx-flow-summary-row:first-child { padding-top: 0; }
+.ifx-flow-summary-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.ifx-flow-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  margin-bottom: var(--ifx-space-8);
+}
+.ifx-flow-summary-label {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-flow-summary-net {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+.ifx-flow-summary-net.is-up { color: var(--ifx-flow-in); }
+.ifx-flow-summary-net.is-down { color: var(--ifx-flow-out); }
+.ifx-flow-summary-bar {
+  display: flex;
+  height: var(--ifx-space-8);
+  border-radius: var(--ifx-radius-sm);
+  overflow: hidden;
+  background: var(--ifx-bg-input);
+}
+.ifx-flow-summary-in { flex-shrink: 0; background: var(--ifx-flow-in); }
+.ifx-flow-summary-out { flex-shrink: 0; background: var(--ifx-flow-out); }

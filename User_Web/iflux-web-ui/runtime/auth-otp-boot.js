@@ -1,21 +1,21 @@
-import { loadScriptsSequential } from './legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var ALL = [
-  ASSET + 'iflux-platform-boot.js?v=homeCd20260724',
+  ASSET + 'iflux-platform-boot.js?v=appHeader20260928',
   ASSET + 'iflux-api-bundle.js',
-  ASSET + 'auth.js?v=p6Writer20260730',
+  '/design_system/04_components/17_toast/toast.js?v=r20260928q',
+  ASSET + 'auth.js?v=r20260928q',
   ADMIN + 'iflux-customers-store.js',
-  ADMIN + 'iflux-credentials-store.js?v=20260706',
-  ASSET + 'loyalty-affiliate-store.js?v=shareAffP5_20260727',
+  ADMIN + 'iflux-credentials-store.js?v=r20260928n',
+  ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
   ASSET + 'iflux-otp-input.js?v=20260708otp',
   ASSET + 'iflux-mail-deeplink.js?v=20260708otp',
-  ASSET + 'iflux-user-data-sync.js',
-  ADMIN + 'iflux-admin-ui.js',
-  ASSET + 'iflux-web-ui.js?v=phaseA20260721c',
-  ASSET + 'auth-otp-init.js?v=homeCd20260724'
+  ASSET + 'iflux-user-data-sync.js?v=r20260928n',
+  ASSET + 'iflux-web-ui.js?v=r20260928q',
+  ASSET + 'auth-otp-init.js?v=r20260928q'
 ];
 
 loadScriptsSequential(ALL).catch(function (err) {

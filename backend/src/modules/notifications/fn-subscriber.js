@@ -13,8 +13,8 @@ function preview(text, n) {
 
 function postHref(slug, id) {
   const key = slug || id;
-  if (!key) return '/cong-dong';
-  return '/cong-dong/bai-viet/' + encodeURIComponent(key);
+  if (!key) return '/tin-tuc';
+  return '/tin-tuc/bai-viet/' + encodeURIComponent(key);
 }
 
 function entityHref(type, id, commentId) {

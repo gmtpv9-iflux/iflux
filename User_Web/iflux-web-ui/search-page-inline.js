@@ -17,23 +17,17 @@ function entityHref(e) {
    → null, template hiện "—" (SOL-QUOTE: chỉ IfluxMarketQuotes mới là authority giá). */
 function masterStock(ticker) {
   var mm = global.IfluxMarketMaster;
-  if (!mm || typeof mm.getMasterStocks !== 'function') return null;
-  var list = mm.getMasterStocks();
-  if (!list) return null;
   var t = String(ticker || '').toUpperCase();
-  for (var i = 0; i < list.length; i++) {
-    if (String(list[i].ticker || '').toUpperCase() === t) {
-      return {
-        ticker: t,
-        name: list[i].name || t,
-        short_name: list[i].short_name || list[i].name || t,
-        price: null,
-        change_pct: null,
-        volume: null
-      };
-    }
-  }
-  return null;
+  var s = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+  if (!s) return null;
+  return {
+    ticker: t,
+    name: s.name || t,
+    short_name: s.short_name || s.name || t,
+    price: null,
+    change_pct: null,
+    volume: null
+  };
 }
 
 function renderSearch(q) {

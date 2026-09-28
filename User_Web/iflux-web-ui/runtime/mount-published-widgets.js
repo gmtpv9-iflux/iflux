@@ -1,30 +1,17 @@
-/* ===== IFX-AUDIT-BEGIN =====
-AUDIT-ID: T5A-IGNORE-010
-Priority: IGNORE
-STATUS: IGNORE
-OWNER: Runtime
-Candidate Owner: Runtime
-Usage audit: N/A
-Dep động: N/A
-Migration ROI: 1
-Khả năng bỏ load: Không
-P1 Gate: N/A
-Refs: Task5 PhaseA — không audit / không tối ưu
-===== IFX-AUDIT-END ===== */
 /**
- * Mount path helper — Host Tree → import(display.module) → mount(host, ctx).
- * Ctx chỉ: host (el), artifact, view model (config/slot) — không pageKey/route/section/layout.
+ * Mount Widget đã publish — một đường duy nhất cho mọi Widget.
+ *
+ * Widget không sở hữu UI: User Web hiển thị Template mà widget đã chọn
+ * (artifact.display.renderSpec.templateId) tại host đã đặt, bằng hàm vẽ của Template trong
+ * design_system/05_templates (IfxTemplates.mount). Tiêu đề/mô tả lấy từ widget; widget chưa có
+ * dữ liệu → Template dùng dữ liệu mẫu của chính nó, nên host không bao giờ trống.
  */
-import { loadStyles } from './legacy-bridge.js?v=stickyFix20260811';
+import { loadScript } from './legacy-bridge.js?v=r20260928q';
 
-function stylesheetHrefs(widgetArt) {
-  var deps = (widgetArt && widgetArt.dependencies) || [];
-  var out = [];
-  for (var i = 0; i < deps.length; i++) {
-    var d = deps[i];
-    if (d && d.kind === 'stylesheet' && d.href) out.push(d.href);
-  }
-  return out;
+var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
+
+function templateIdOf(art) {
+  return (art && art.display && art.display.renderSpec && art.display.renderSpec.templateId) || null;
 }
 
 /**
@@ -35,6 +22,7 @@ export async function mountPublishedWidgets(tree, opts) {
   opts = opts || {};
   var prefix = opts.logPrefix || '[mountPublished]';
   if (!tree || !tree.length) return [];
+  if (!window.IfxTemplateLoader) await loadScript(LOADER_SRC);
 
   var loaded = [];
   for (var i = 0; i < tree.length; i++) {
@@ -44,27 +32,21 @@ export async function mountPublishedWidgets(tree, opts) {
       loaded.push({ id: entry.widgetId, host: el, skipped: true });
       continue;
     }
-    var art = entry.artifact;
-    var moduleUrl = art && art.display && art.display.module;
-    if (!moduleUrl) {
-      el.innerHTML = '<div class="ifx-wl-empty">Widget ' + entry.widgetId + ' thiếu display.module</div>';
-      loaded.push({ id: entry.widgetId, host: el, error: 'missing display.module' });
-      continue;
-    }
+    var art = entry.artifact || {};
+    var content = art.content || {};
+    var templateId = templateIdOf(art);
     try {
-      var css = stylesheetHrefs(art);
-      if (css.length) await loadStyles(css);
-      var mod = await import(moduleUrl);
-      if (!mod || typeof mod.mount !== 'function') throw new Error('missing mount()');
-      var instance = await mod.mount(el, {
-        slot: { id: entry.widgetId, config: entry.config || {} },
-        config: entry.config || {},
-        widgetId: entry.widgetId,
-        artifact: art
+      await window.IfxTemplateLoader.ensure(templateId);
+      /* Template không có trong danh mục DS → IfxTemplates hiện trạng thái “Chưa có Template”. */
+      var root = window.IfxTemplates.mount(el, templateId, {
+        title: content.title || entry.widgetId,
+        description: content.description || ''
       });
-      loaded.push({ id: entry.widgetId, host: el, module: mod, instance: instance });
+      if (!templateId || !root) {
+        if (window.console && console.warn) console.warn(prefix, entry.widgetId, 'Template không hợp lệ:', templateId);
+      }
+      loaded.push({ id: entry.widgetId, host: el, templateId: templateId });
     } catch (err) {
-      el.innerHTML = '<div class="ifx-wl-empty">Không tải được Widget ' + entry.widgetId + '</div>';
       if (window.console && console.error) console.error(prefix, entry.widgetId, err);
       loaded.push({ id: entry.widgetId, host: el, error: err });
     }

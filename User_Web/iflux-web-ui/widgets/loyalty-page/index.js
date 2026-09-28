@@ -1,7 +1,9 @@
 /**
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -34,11 +36,11 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
     <p class="ifx-page-intro">Chương trình thành viên iFlux — affiliate, insight card và quyền lợi khi biến tri thức đầu tư thành tài sản số.</p>
 
     <div class="ifx-loyalty-tabs">
-      <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro" data-ifx-ent-block="BLK-LOY-INTRO"><i class="ti ti-sparkles"></i> Giới thiệu</button>
-      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/trang-chu?tab=affiliate" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
+      <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro"><i class="ti ti-sparkles"></i> Giới thiệu</button>
+      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/trang-chu?tab=affiliate"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
     </div>
 
-    <div id="tab-membership-intro" class="ifx-loyalty-panel active" data-ifx-ent-block="BLK-LOY-INTRO">
+    <div id="tab-membership-intro" class="ifx-loyalty-panel active">
 
       <section class="ifx-mship-hero ifx-mship-hero--split">
         <div class="ifx-mship-hero__copy">
@@ -46,7 +48,7 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
           <h1 class="ifx-mship-hero__title">Xây dựng tài sản số từ tri thức đầu tư của bạn</h1>
           <p class="ifx-mship-hero__sub">iFlux không chỉ là nền tảng phân tích dòng tiền — biến kiến thức, kinh nghiệm và góc nhìn đầu tư thành tài sản số có giá trị lâu dài.</p>
           <div class="ifx-mship-hero__actions">
-            <a href="#" data-route-key="home" data-route-query="tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg" data-ifx-ent-block="BLK-LOY-AFFILIATE"><i class="ti ti-affiliate"></i> Vào bảng Affiliate</a>
+            <a href="#" data-route-key="home" data-route-query="tab=affiliate" class="ix-btn ix-btn-primary ix-btn-lg"><i class="ti ti-affiliate"></i> Vào bảng Affiliate</a>
             <a href="#" data-route-key="pricing" class="ix-btn ix-btn-outline ix-btn-lg"><i class="ti ti-crown"></i> Xem gói cước</a>
           </div>
           <div class="ifx-mship-hero__stats">
@@ -442,12 +444,15 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
     </div>`;
 
 export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el).mainContent.innerHTML = LAYOUT_HTML;
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
+  if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
+  await mountPageWidgets(el, 'membership');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

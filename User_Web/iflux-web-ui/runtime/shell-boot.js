@@ -17,12 +17,13 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG nạp widget implementation.
  */
 
-import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
+import { loadScript } from './legacy-bridge.js?v=r20260928q';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260928p';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
 var ADMIN_UI = '/Admin_Design_system/iflux-admin-ui/';
-var MARKET_PLATFORM_VER = 'mockRmWp6_20260809';
+var MARKET_PLATFORM_VER = 'r20260928n';
 var booted = null;
 
 /**
@@ -43,6 +44,19 @@ var MARKET_PLATFORM_PAGES = {
  * Seed / ecosystem / registry chỉ khi Search mở (ensureDeps) hoặc vào trang market.
  * Nhà: chrome nav không phụ thuộc seed — widget dashboard lazy dep riêng.
  */
+/* Trang cá nhân: khách → trang chủ cá nhân về Tin tức (không popup); trang khác hỏi xác nhận đăng nhập. */
+function passAuthGate(pageKey) {
+  if (!AUTH_PAGES[pageKey] || !window.IfluxAuth || IfluxAuth.isLoggedIn()) return true;
+  if (HOME_PAGES[pageKey]) {
+    location.replace(window.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true }) : '/tin-tuc');
+    return false;
+  }
+  IfluxAuth.requireAuth();
+  return false;
+}
+
+var SINGLE_STOCK_PAGES = { stock: 1, stockComment: 1 };
+
 var MARKET_CORE_PAGES = {
   news: 1,
   article: 1,
@@ -133,36 +147,24 @@ function installHeaderSearchLazy(scriptSrc) {
   document.addEventListener('touchstart', onSearchIntent, true);
 }
 
-var AUTH_PAGES = {
-  home: 1, dashboard: 1,
-  stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
-  stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
-  watchlist: 1, messages: 1, search: 1,
-  account: 1, checkout: 1, newsWrite: 1, stockComment: 1
-};
 
 async function ensureMarketLibs(pageKey) {
   if (MARKET_PLATFORM_PAGES[pageKey]) {
-    var host = String((typeof location !== 'undefined' && location.hostname) || '').toLowerCase();
-    var isProdHost = host === 'iflux.vn' || host === 'www.iflux.vn';
     var marketPlatformLibs = [
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoEntityPricing20260810' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=r20260928q' }
     ];
-    if (!isProdHost) {
-      marketPlatformLibs = [
-        { global: 'IfluxMarketSeedData', src: ADMIN_UI + 'iflux-market-seed-data.js?v=' + MARKET_PLATFORM_VER },
-        { global: 'IfluxMarketEcosystemSeeds', src: ADMIN_UI + 'iflux-market-ecosystem-seeds.js?v=' + MARKET_PLATFORM_VER },
-        { global: 'IfluxMarketRegistryStore', src: ADMIN_UI + 'iflux-market-registry-store.js?v=' + MARKET_PLATFORM_VER }
-      ].concat(marketPlatformLibs);
-    }
     await ensureParallel(marketPlatformLibs);
+    /* Danh mục đầy đủ (~0.5MB) chỉ cho trang liệt kê / thành viên nhóm / tìm kiếm / theo dõi.
+       Chi tiết cổ phiếu chỉ lấy đúng một mã (IfluxMarketMaster.getStock). */
+    if (!SINGLE_STOCK_PAGES[pageKey] && window.IfluxMarketMaster) IfluxMarketMaster.ensureMasterReady();
   } else if (MARKET_CORE_PAGES[pageKey]) {
+    /* Tin tức / bài viết: không tải danh mục mã (bài đã có ngành / HST từ API; gợi ý @mã tải khi gõ). */
     await ensureParallel([
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=seoEntityPricing20260810' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=r20260928q' }
     ]);
   }
 }
@@ -191,9 +193,7 @@ export async function bootShell(pageKey, opts) {
   /* Soft path: không re-chrome; nạp lib thiếu + GuestShell + active nav. */
   if (booted && soft && window.IfluxGuestShell) {
     await ensureMarketLibs(pageKey);
-    if (AUTH_PAGES[pageKey]) {
-      if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
-    }
+    if (!passAuthGate(pageKey)) return null;
     await rebootstrapGuest(pageKey);
     if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) {
       try { IfluxWebUI.syncMobileTabbar(); } catch (eTbSoft) { /* ignore */ }
@@ -213,9 +213,13 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=navSlice4ux_20260727' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=appHeader20260928' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=p6Writer20260730' }
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20260928q' },
+    /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
+    { global: 'IfxToast', src: '/design_system/04_components/17_toast/toast.js?v=r20260928q' },
+    /* Dropdown DS — menu người dùng / thông báo / tin nhắn trong header (App Shell) */
+    { global: 'IfxDropdown', src: '/design_system/04_components/07_dropdown/dropdown.js?v=appHeader20260928' }
   ]);
   if (window.IfluxAppShellHeader && IfluxAppShellHeader.render) {
     try { IfluxAppShellHeader.render(); } catch (eChrome) { /* ignore */ }
@@ -226,12 +230,11 @@ export async function bootShell(pageKey, opts) {
   await ensureParallel([
     { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=abhE620260727' },
     { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=abhE620260727' },
-    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=abhE620260727' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=feedCard20260723c' },
-    { global: 'IfluxWidgetShell', src: ASSET + 'iflux-widget-shell.js?v=entShell20260720' },
-    { global: 'IfluxBlockPaywall', src: ASSET + 'iflux-block-paywall.js?v=entShell20260720' },
-    { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=abhE620260727' },
-    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=softNavP1_20260810' }
+    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20260928r' },
+    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260928r' },
+    /* Gate chỉ quyết định khoá; lớp phủ (platform/web/lock) do Gate nạp khi có vùng bị khoá. */
+    { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=r20260928n' },
+    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=r20260928q' }
   ]);
   /* Legacy ABH E4/E5 removed — không boot Admin Store / EntitlementCatalog trên User Web shell:
   { global: 'EntitlementCatalog', src: ADMIN + 'app/subscription/entitlement-catalog.js' },
@@ -243,12 +246,12 @@ export async function bootShell(pageKey, opts) {
 
   /* AS-SEARCH — Task5 Lazy L07 */
   if (document.querySelector('[data-ifx-header-search]')) {
-    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=mockRmWp5_20260809');
+    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=r20260928q');
   }
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=p7ShareSheet20260730' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20260928q' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */
@@ -273,9 +276,7 @@ export async function bootShell(pageKey, opts) {
     } catch (e) { /* ignore */ }
   }
 
-  if (AUTH_PAGES[pageKey]) {
-    if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
-  }
+  if (!passAuthGate(pageKey)) return null;
 
   /* Re-paint sau auth gate (cùng renderer mọi trang). */
   if (window.IfluxAppShellHeader && IfluxAppShellHeader.render) {
@@ -284,8 +285,6 @@ export async function bootShell(pageKey, opts) {
 
   if (window.IfluxGuestShell && IfluxGuestShell.bootstrapPage) {
     await rebootstrapGuest(pageKey);
-  } else if (pageKey === 'dashboard' || pageKey === 'home') {
-    if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
   }
 
   booted = { pageKey: pageKey };

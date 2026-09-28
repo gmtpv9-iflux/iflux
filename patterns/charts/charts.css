@@ -1,0 +1,16 @@
+/**
+ * Pattern-local — Charts: bảng màu riêng của widget "So sánh chuỗi" (10 series).
+ * Widget thật sẽ đặt ở modules/<module>/widgets/ khi được xây.
+ */
+.series-compare {
+  --ifx-chart-series-1: var(--ifx-action-primary);
+  --ifx-chart-series-2: var(--ifx-success);
+  --ifx-chart-series-3: var(--ifx-warning);
+  --ifx-chart-series-4: var(--ifx-danger);
+  --ifx-chart-series-5: var(--ifx-info);
+  --ifx-chart-series-6: var(--ifx-color-orange-500);
+  --ifx-chart-series-7: var(--ifx-color-violet-500);
+  --ifx-chart-series-8: var(--ifx-color-green-500);
+  --ifx-chart-series-9: var(--ifx-color-cyan-500);
+  --ifx-chart-series-10: var(--ifx-text-muted);
+}

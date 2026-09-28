@@ -70,7 +70,7 @@
         doc.write(
           '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/>' +
           '<link rel="stylesheet" href="/User_Web/iflux-web-ui/iflux-web-ui.css"/>' +
-          '<link rel="stylesheet" href="/User_Web/iflux-web-ui/news.css"/>' +
+          '<link rel="stylesheet" href="/User_Web/iflux-web-ui/news.css?v=appShell20260928"/>' +
           '<style>body{margin:0;padding:16px;background:transparent}</style>' +
           '</head><body><div class="ifx-com-article__body">' + clean + '</div></body></html>'
         );

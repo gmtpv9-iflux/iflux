@@ -40,7 +40,7 @@ function buildWidgetPublished(draft, version, placement) {
   assertTransition(state, LIFECYCLE.RESOLVED);
   state = LIFECYCLE.RESOLVED;
 
-  const dep = resolvers.resolveDependency(tpl.display, draft);
+  const dep = resolvers.resolveDependency();
   const body = {
     id: draft.id,
     version: version,

@@ -1,8 +1,3 @@
-.ifx-main--faq {
-  max-width: 920px;
-  margin: 0 auto;
-}
-
 .ifx-faq-hero {
   text-align: center;
   padding: var(--ifx-space-8) 0 28px;

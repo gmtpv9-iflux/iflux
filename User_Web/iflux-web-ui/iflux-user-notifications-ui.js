@@ -24,12 +24,12 @@
 
   function renderNotifItem(n) {
     var unread = !n.read ? ' is-unread' : '';
-    return '<a href="' + esc(n.href || '#') + '" class="ifx-user-notif-item' + unread + '" data-ifx-notif-id="' + esc(n.id) + '">' +
-      '<span class="ifx-user-notif-item__icon" aria-hidden="true"><i class="ti ' + esc(n.icon || 'ti-bell') + '"></i></span>' +
-      '<span class="ifx-user-notif-item__body">' +
-        '<strong class="ifx-user-notif-item__title">' + esc(n.title) + '</strong>' +
-        '<span class="ifx-user-notif-item__msg">' + esc(n.message) + '</span>' +
-        '<time class="ifx-user-notif-item__time">' + esc(fmtTime(n.at)) + '</time>' +
+    return '<a href="' + esc(n.href || '#') + '" class="ifx-app-header-notif-item' + unread + '" data-ifx-notif-id="' + esc(n.id) + '">' +
+      '<span class="ifx-app-header-notif-item-icon" aria-hidden="true"><i class="ti ' + esc(n.icon || 'ti-bell') + '"></i></span>' +
+      '<span class="ifx-app-header-notif-item-body">' +
+        '<strong class="ifx-app-header-notif-item-title">' + esc(n.title) + '</strong>' +
+        '<span class="ifx-app-header-notif-item-msg">' + esc(n.message) + '</span>' +
+        '<time class="ifx-app-header-notif-item-time">' + esc(fmtTime(n.at)) + '</time>' +
       '</span></a>';
   }
 
@@ -57,14 +57,14 @@
   }
 
   function ensureMenuBadges() {
-    document.querySelectorAll('.ifx-topnav-menu .ifx-topnav-link').forEach(function (a) {
+    document.querySelectorAll('.ifx-app-header-menu .ifx-app-header-link').forEach(function (a) {
       var href = a.getAttribute('href') || '';
       var matched = matchMenuKey(href);
       if (!matched) return;
-      a.classList.add('ifx-topnav-link--badged');
+      a.classList.add('ifx-app-header-link-badged');
       if (!a.querySelector('[data-ifx-menu-badge]')) {
         var badge = document.createElement('span');
-        badge.className = 'ifx-topnav-badge';
+        badge.className = 'ifx-app-header-badge';
         badge.setAttribute('data-ifx-menu-badge', matched);
         badge.hidden = true;
         a.appendChild(badge);
@@ -124,12 +124,12 @@
     function paintLocal() {
       var groups = st.groupedForUser(user.id, { limit: 10 });
       if (!groups.length) {
-        container.innerHTML = '<div class="ifx-user-notif-empty">Chưa có thông báo</div>';
+        container.innerHTML = '<div class="ifx-app-header-notif-empty">Chưa có thông báo</div>';
         return;
       }
       container.innerHTML = groups.map(function (g) {
-        return '<div class="ifx-user-notif-group">' +
-          '<div class="ifx-user-notif-group__title">' + esc(g.label) + '</div>' +
+        return '<div class="ifx-app-header-notif-group">' +
+          '<div class="ifx-app-header-notif-group-title">' + esc(g.label) + '</div>' +
           g.items.map(renderNotifItem).join('') +
           '</div>';
       }).join('');
@@ -137,7 +137,7 @@
 
     /* Need Soon: panel page 1 từ server khi mở */
     if (st.fetchInboxPage) {
-      container.innerHTML = '<div class="ifx-user-notif-empty">Đang tải…</div>';
+      container.innerHTML = '<div class="ifx-app-header-notif-empty">Đang tải…</div>';
       st.fetchInboxPage({ limit: 15 }).then(function (page) {
         var items = (page && page.items) || [];
         if (!items.length) {
@@ -145,13 +145,13 @@
           bindPanelActions(container, st);
           return;
         }
-        container.innerHTML = '<div class="ifx-user-notif-group">' +
-          '<div class="ifx-user-notif-group__title">Thông báo</div>' +
+        container.innerHTML = '<div class="ifx-app-header-notif-group">' +
+          '<div class="ifx-app-header-notif-group-title">Thông báo</div>' +
           items.map(renderNotifItem).join('') +
           '</div>';
         if (page.next_cursor) {
           container.insertAdjacentHTML('beforeend',
-            '<button type="button" class="ifx-user-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
+            '<button type="button" class="ifx-app-header-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
         }
         bindPanelActions(container, st);
       }).catch(function () {
@@ -189,12 +189,12 @@
           moreBtn.remove();
           if (!items.length) return;
           var html = items.map(renderNotifItem).join('');
-          var group = container.querySelector('.ifx-user-notif-group');
+          var group = container.querySelector('.ifx-app-header-notif-group');
           if (group) group.insertAdjacentHTML('beforeend', html);
           else container.insertAdjacentHTML('beforeend', html);
           if (page.next_cursor) {
             container.insertAdjacentHTML('beforeend',
-              '<button type="button" class="ifx-user-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
+              '<button type="button" class="ifx-app-header-notif-more" data-ifx-notif-more="' + esc(page.next_cursor) + '">Xem thêm</button>');
           }
           bindPanelActions(container, st);
         }).catch(function () {
@@ -209,24 +209,24 @@
     if (!notifWrap) return null;
     var dropdown = notifWrap.querySelector('[data-ifx-notif-dropdown]');
     if (dropdown) return dropdown;
-    header = header || notifWrap.closest('.ifx-topnav');
+    header = header || notifWrap.closest('.ifx-app-header');
     if (header) return header.querySelector('[data-ifx-notif-dropdown]');
     return null;
   }
 
   function purgeForeignNotifChrome(dropdown) {
     if (!dropdown || !dropdown.hasAttribute('data-ifx-notif-dropdown')) return;
-    dropdown.querySelectorAll('.ifx-user-notif-head').forEach(function (head) {
+    dropdown.querySelectorAll('.ifx-app-header-notif-head').forEach(function (head) {
       if (head.querySelector('.ti-messages')) head.remove();
     });
-    dropdown.querySelectorAll('[data-ifx-messages-panel], .ifx-hdr-msg-item, .ifx-hdr-msg-all').forEach(function (el) {
+    dropdown.querySelectorAll('[data-ifx-messages-panel], .ifx-app-header-msg-item, .ifx-app-header-msg-all').forEach(function (el) {
       el.remove();
     });
   }
 
   function ensureNotifBellPanel(header) {
-    header = header || document.querySelector('.ifx-topnav');
-    var notifWrap = header ? header.querySelector('.ifx-topnav-notif') : document.querySelector('.ifx-topnav-notif');
+    header = header || document.querySelector('.ifx-app-header');
+    var notifWrap = header ? header.querySelector('.ifx-app-header-notif') : document.querySelector('.ifx-app-header-notif');
     if (!notifWrap) return null;
     var dropdown = findNotifDropdown(notifWrap, header);
     if (!dropdown || !dropdown.hasAttribute('data-ifx-notif-dropdown')) return null;
@@ -237,7 +237,7 @@
       var bellBtn = notifWrap.querySelector('[data-ifx-notif-bell]');
       if (bellBtn) {
         var bb = document.createElement('span');
-        bb.className = 'ifx-topnav-notif-badge';
+        bb.className = 'ifx-app-header-badge';
         bb.setAttribute('data-ifx-bell-notif-badge', '');
         bb.hidden = true;
         bellBtn.appendChild(bb);
@@ -246,15 +246,15 @@
 
     if (!dropdown.querySelector('[data-ifx-user-notif-panel]')) {
       var head = document.createElement('div');
-      head.className = 'ifx-user-notif-head';
+      head.className = 'ifx-app-header-notif-head';
       head.innerHTML = '<span><i class="ti ti-bell"></i> Thông báo</span>' +
-        '<button type="button" class="ifx-user-notif-mark-all" data-ifx-notif-mark-all>Đã đọc</button>';
+        '<button type="button" class="ifx-app-header-notif-mark-all" data-ifx-notif-mark-all>Đã đọc</button>';
       var panel = document.createElement('div');
-      panel.className = 'ifx-user-notif-panel';
+      panel.className = 'ifx-app-header-notif-panel';
       panel.setAttribute('data-ifx-user-notif-panel', '');
       var foot = document.createElement('div');
-      foot.className = 'ifx-user-notif-foot';
-      foot.innerHTML = '<span class="ifx-user-notif-hint">Badge số hiển thị trên menu tương ứng</span>';
+      foot.className = 'ifx-app-header-notif-foot';
+      foot.innerHTML = '<span class="ifx-app-header-notif-hint">Badge số hiển thị trên menu tương ứng</span>';
       dropdown.appendChild(head);
       dropdown.appendChild(panel);
       dropdown.appendChild(foot);
@@ -272,17 +272,17 @@
   }
 
   function stripAvatarNotifPanel() {
-    var menu = document.querySelector('.ifx-user-menu');
+    var menu = document.querySelector('.ifx-app-header-user');
     if (!menu) return;
-    var dropdown = menu.querySelector('.ix-dropdown-menu');
+    var dropdown = menu.querySelector('.ifx-dropdown-menu');
     if (!dropdown) return;
-    var head = dropdown.querySelector('.ifx-user-notif-head');
+    var head = dropdown.querySelector('.ifx-app-header-notif-head');
     if (head) {
       var divider = head.previousElementSibling;
-      if (divider && divider.classList.contains('ix-dropdown-divider')) divider.remove();
+      if (divider && divider.classList.contains('ifx-dropdown-divider')) divider.remove();
       head.remove();
     }
-    dropdown.querySelectorAll('[data-ifx-user-notif-panel], .ifx-user-notif-foot').forEach(function (el) {
+    dropdown.querySelectorAll('[data-ifx-user-notif-panel], .ifx-app-header-notif-foot').forEach(function (el) {
       el.remove();
     });
     var avatarBadge = menu.querySelector('[data-ifx-avatar-notif-badge]');
@@ -302,14 +302,14 @@
   }
 
   function bindBellMenu() {
-    document.querySelectorAll('.ifx-topnav-notif').forEach(function (notifWrap) {
+    document.querySelectorAll('.ifx-app-header-notif').forEach(function (notifWrap) {
       if (notifWrap._ifxBellBound) return;
       notifWrap._ifxBellBound = true;
 
       var bellBtn = notifWrap.querySelector('[data-ifx-notif-bell]');
       if (!bellBtn) return;
 
-      bellBtn.removeAttribute('data-ix-toggle');
+      bellBtn.removeAttribute('data-ifx-toggle');
 
       function openPanel() {
         clearTimeout(closeTimer);
@@ -323,14 +323,14 @@
           e.stopPropagation();
         }
         var isOpen = notifWrap.classList.contains('open');
-        document.querySelectorAll('.ix-dropdown.open').forEach(function (d) {
-          d.classList.remove('open');
+        document.querySelectorAll('.ifx-dropdown.is-open').forEach(function (d) {
+          d.classList.remove('is-open');
         });
         if (isOpen) {
-          notifWrap.classList.remove('open');
+          notifWrap.classList.remove('is-open');
           return;
         }
-        notifWrap.classList.add('open');
+        notifWrap.classList.add('is-open');
         openPanel();
       }
 
@@ -340,9 +340,9 @@
 
     document.addEventListener('click', function (e) {
       if (isMobileBar()) return;
-      if (e.target.closest('.ifx-topnav-notif')) return;
-      document.querySelectorAll('.ifx-topnav-notif.open').forEach(function (d) {
-        d.classList.remove('open');
+      if (e.target.closest('.ifx-app-header-notif')) return;
+      document.querySelectorAll('.ifx-app-header-notif.is-open').forEach(function (d) {
+        d.classList.remove('is-open');
       });
     });
   }
@@ -358,10 +358,10 @@
     ensureMenuBadges();
     renderMenuBadges();
     stripAvatarNotifPanel();
-    document.querySelectorAll('.ifx-topnav').forEach(function (header) {
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
       var panel = ensureNotifBellPanel(header);
       if (!panel) return;
-      if (header.classList.contains('ifx-topnav--notif-open') || header.querySelector('.ifx-topnav-notif.open')) {
+      if (header.classList.contains('is-notif-open') || header.querySelector('.ifx-app-header-notif.is-open')) {
         renderPanel(panel);
       }
     });

@@ -44,19 +44,19 @@ describe('P4 singleton First HTML', () => {
       foundationEffective: { site_name: 'iFlux', title: 'Bài' },
       pageKey: 'community',
       entityType: 'article',
-      path: '/cong-dong/bai-viet/demo',
-      requestUri: '/IFLABCDE12345/cong-dong/bai-viet/demo',
+      path: '/tin-tuc/bai-viet/demo',
+      requestUri: '/IFLABCDE12345/tin-tuc/bai-viet/demo',
       httpStatus: 200,
       entity: { title: 'Demo bài', excerpt: 'Tóm tắt' },
       overrides: {
-        cleanPath: '/cong-dong/bai-viet/demo',
-        canonical: 'https://iflux.vn/cong-dong/bai-viet/demo',
+        cleanPath: '/tin-tuc/bai-viet/demo',
+        canonical: 'https://iflux.vn/tin-tuc/bai-viet/demo',
         ogType: 'article'
       }
     });
     assert.equal(c.classification.variant, 'DECORATED');
     assert.ok(c.indexability.robots.indexOf('noindex') >= 0);
-    assert.ok(String(c.identity.canonicalUrl).endsWith('/cong-dong/bai-viet/demo'));
+    assert.ok(String(c.identity.canonicalUrl).endsWith('/tin-tuc/bai-viet/demo'));
     assert.equal(c.indexability.sitemapEligible, false);
     const head = renderHeadFromContract(c, { forceImage: true });
     assert.equal(detectSingletonViolations('<head>\n' + head + '</head>').ok, true);
@@ -68,19 +68,19 @@ describe('P4 singleton First HTML', () => {
       foundationEffective: { site_name: 'iFlux' },
       pageKey: 'community',
       entityType: 'article',
-      path: '/cong-dong/bai-viet/x',
+      path: '/tin-tuc/bai-viet/x',
       httpStatus: 200,
       entity: { title: 'Tin A', excerpt: 'Mô tả A' },
       overrides: {
-        cleanPath: '/cong-dong/bai-viet/x',
-        canonical: 'https://iflux.vn/cong-dong/bai-viet/x',
+        cleanPath: '/tin-tuc/bai-viet/x',
+        canonical: 'https://iflux.vn/tin-tuc/bai-viet/x',
         ogType: 'article'
       }
     });
     const meta = metadataFromContract(c);
     assert.equal(meta._fromContract, true);
     assert.ok(meta._headHtml.indexOf('<title>') >= 0);
-    assert.equal(meta.title, 'Tin A | Cộng đồng iFlux');
-    assert.ok(meta.canonical.endsWith('/cong-dong/bai-viet/x'));
+    assert.equal(meta.title, 'Tin A | Tin tức iFlux');
+    assert.ok(meta.canonical.endsWith('/tin-tuc/bai-viet/x'));
   });
 });

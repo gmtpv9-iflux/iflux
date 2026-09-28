@@ -1,0 +1,15 @@
+{
+  "$meta": {
+    "owner": "platform-admin",
+    "layer": "platform",
+    "sot": "Admin platform chrome sizes",
+    "origin": "Moved from design_system/tokens/source/size.json — Token 03B. Values unchanged."
+  },
+  "primitive": {
+    "size": {
+      "sidebar-w": "260px",
+      "sidebar-w-collapsed": "72px",
+      "navbar-h": "64px"
+    }
+  }
+}

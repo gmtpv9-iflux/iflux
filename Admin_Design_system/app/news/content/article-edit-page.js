@@ -140,7 +140,7 @@
     if ($('fld-slug')) $('fld-slug').value = slug;
     if ($('fld-seo-canonical')) {
       $('fld-seo-canonical').value = slug
-        ? PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(slug)
+        ? PUBLIC_ORIGIN + '/tin-tuc/bai-viet/' + encodeURIComponent(slug)
         : '';
     }
   }
@@ -386,7 +386,7 @@
       $('fld-slug').value = item.slug;
       if ($('fld-seo-canonical')) {
         $('fld-seo-canonical').value =
-          PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(item.slug);
+          PUBLIC_ORIGIN + '/tin-tuc/bai-viet/' + encodeURIComponent(item.slug);
       }
     }
     $('fld-excerpt').value = item.excerpt || '';
@@ -418,7 +418,7 @@
     }
     if ($('fld-seo-canonical') && item.slug) {
       $('fld-seo-canonical').value =
-        PUBLIC_ORIGIN + '/cong-dong/bai-viet/' + encodeURIComponent(item.slug);
+        PUBLIC_ORIGIN + '/tin-tuc/bai-viet/' + encodeURIComponent(item.slug);
     }
     $('fld-status').value = item.status || 'draft';
     var pubAt = item.scheduled_at || item.published_at || '';

@@ -2,9 +2,9 @@
  * WGT-GROUP-PAGE — Composite chi tiết nhóm (ngành / họ CP / chủ đề)
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=phase4Pub20260716b';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR04_20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -29,30 +29,27 @@ var PUBLISH_BY_KIND = {
 /* W4: taxonomy/seeds/mock/registry/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
   [
-    ADMIN + 'iflux-admin-ui.js',
-    ASSET + 'iflux-user-data-sync.js',
+    ASSET + 'iflux-user-data-sync.js?v=r20260928n',
     'https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'
   ],
   [
-    ASSET + 'watchlist-store.js',
-    ASSET + 'stock-store.js?v=ix45Purge20260724',
-    ASSET + 'news-store.js?v=feedDto20260724',
-    ASSET + 'iflux-news-api-bridge.js?v=feedDto20260724',
+    ASSET + 'watchlist-store.js?v=r20260928n',
+    ASSET + 'stock-store.js?v=r20260928n',
+    ASSET + 'news-store.js?v=r20260928r',
+    ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
-    ASSET + 'watchlist-ui.js',
-    ASSET + 'news-ui.js?v=mockRmWp1_20260809',
+    ASSET + 'watchlist-ui.js?v=r20260928q',
+    ASSET + 'news-ui.js?v=r20260928n',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
-    ASSET + 'entity-timeline-feed.js',
-    ASSET + 'news-daily-feed.js?v=entFeed20260724',
-    ASSET + 'iflux-market-quotes.js?v=mockRmWp2_20260809',
-    ASSET + 'market-liquidity.js?v=mockRmWp4_20260809'
+    ASSET + 'news-daily-feed.js?v=r20260928r',
+    ASSET + 'iflux-market-quotes.js?v=r20260928n'
   ],
   [
-    ASSET + 'entity-detail-center.js?v=mockRmWp2_20260809',
-    ASSET + 'group-page.js?v=sidebarVR04_20260811',
-    ASSET + 'runtime/page-layout-engine.js?v=' + P4_VER
+    ASSET + 'entity-detail-center.js?v=r20260928n',
+    ASSET + 'group-page.js?v=r20260928n',
+    ASSET + 'runtime/page-layout-engine.js?v=r20260928n'
   ]
 ];
 
@@ -68,21 +65,8 @@ function publishKeyForKind(kind) {
   return PUBLISH_BY_KIND[kind] || 'sector-detail';
 }
 
-async function mountFromHostTree(root, publishKey) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-GROUP-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, publishKey);
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-GROUP-PAGE] Host Tree rỗng — chưa có placements Published:', publishKey);
-    }
-    return;
-  }
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-GROUP-PAGE/' + publishKey + ']' });
+function mountFromHostTree(root, publishKey) {
+  return mountPageWidgets(root, publishKey);
 }
 
 export async function mount(el, ctx) {
@@ -92,15 +76,8 @@ export async function mount(el, ctx) {
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
-  if (window.IfluxNewsApiBridge && IfluxNewsApiBridge.loadFeed) {
-    try {
-      await IfluxNewsApiBridge.loadFeed({ limit: 36 });
-    } catch (eHyd) { /* seed fallback */ }
-  }
-  /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho
-   * group-page.js (legacy IIFE) dựng Left Sidebar Widget Host canonical trong render(). */
-  window.IfluxRuntimeSections = { ensureSections: ensureSections };
+  /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);
   function onRemount() {
     mountFromHostTree(el, publishKey);

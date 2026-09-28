@@ -11,8 +11,8 @@
  * User override lưu IfluxUserStorage (dashboard-engine).
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=phaseBExit20260721c';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=r20260928r';
 
 var A = '/User_Web/iflux-web-ui/';
 var V = 'ui00120260723';
@@ -26,7 +26,7 @@ var BASE = [
      WP-4: widget-renderers/dashboard-engine bỏ module mock thị trường — bump cache riêng. */
   dep('IfluxWidgetRegistry', 'widget-registry.js'),
   dep('IfluxWidgetRenderers', 'widget-renderers.js?v=mockRmWp4_20260809'),
-  dep('IfluxDashboardEngine', 'dashboard-engine.js?v=mockRmWp4_20260809')
+  dep('IfluxDashboardEngine', 'dashboard-engine.js?v=r20260928q')
 ];
 
 var LAYOUT_HTML =

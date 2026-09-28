@@ -96,10 +96,37 @@
     return _ecosystems ? _ecosystems.slice() : null;
   }
 
-  try { ensureMasterReady(); } catch (e) { /* ignore */ }
+  /* Một mã (GET /market/master/stocks/:ticker) — trang chi tiết cổ phiếu không cần cả danh mục. */
+  var _one = Object.create(null);
+  function getStock(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    if (!t) return Promise.resolve(null);
+    var hit = peekStock(t);
+    if (hit) return Promise.resolve(hit);
+    if (_one[t] && _one[t].then) return _one[t];
+    _one[t] = fetch(apiBase() + '/market/master/stocks/' + encodeURIComponent(t), { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { _one[t] = (d && unwrap(d).item) || null; return _one[t]; })
+      .catch(function () { delete _one[t]; return null; });
+    return _one[t];
+  }
+  /** Tra một mã đã có sẵn (danh mục đầy đủ hoặc đã getStock) — không gọi mạng. */
+  function peekStock(ticker) {
+    var t = String(ticker || '').toUpperCase();
+    if (_one[t] && !_one[t].then) return _one[t];
+    if (!_stocks) return null;
+    for (var i = 0; i < _stocks.length; i++) {
+      if (String((_stocks[i] && _stocks[i].ticker) || '').toUpperCase() === t) return _stocks[i];
+    }
+    return null;
+  }
 
+  /* Không tự tải khi nạp script: danh mục đầy đủ (~0.5MB) chỉ tải khi trang/tính năng gọi ensureMasterReady()
+     (danh sách thực thể, tìm kiếm, theo dõi…). */
   global.IfluxMarketMaster = {
     ensureMasterReady: ensureMasterReady,
+    getStock: getStock,
+    peekStock: peekStock,
     getMasterStocks: getMasterStocks,
     getMasterSectors: getMasterSectors,
     getMasterEcosystems: getMasterEcosystems

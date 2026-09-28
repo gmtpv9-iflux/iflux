@@ -1,6 +1,7 @@
 /* iFlux Admin — Navigation Registry (thuần dữ liệu). Không resolve href.
  * SoT NHÃN DUY NHẤT cho Module / Menu / Submenu trên toàn Admin.
- * CẤM tạo nhãn thứ 2 (catalog, hardcode, bản sao). Thêm menu mới → chỉ thêm nhãn tại đây. */
+ * CẤM tạo nhãn thứ 2 (catalog, hardcode, bản sao). Thêm menu mới → chỉ thêm nhãn tại đây.
+ * CỔNG URL: Admin chỉ English urlSegment. Nhãn menu được tiếng Việt. pathFor() là writer — cấm slug Việt, cấm href cứng App Shell. Mọi menu mới bắt buộc tuân (SoT URL §2.2). */
 (function (global) {
   'use strict';
   if (global.IfluxAdminNavRegistry) return;

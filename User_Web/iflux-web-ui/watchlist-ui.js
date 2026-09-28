@@ -150,14 +150,8 @@
   function masterStockName(ticker) {
     var t = String(ticker || '').toUpperCase();
     var mm = global.IfluxMarketMaster;
-    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
-    if (!list) return t;
-    for (var i = 0; i < list.length; i++) {
-      if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) {
-        return list[i].name || list[i].short_name || t;
-      }
-    }
-    return t;
+    var ms = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+    return (ms && (ms.name || ms.short_name)) || t;
   }
 
   function openModal(ticker) {
@@ -188,10 +182,10 @@
       renderFolderChecks();
       var cb = modal.querySelector('[data-ifx-wl-folder="' + folder.id + '"]');
       if (cb) cb.checked = true;
-      if (global.ixToast) ixToast('Đã tạo thư mục «' + folder.name + '»', 'success');
+      if (global.IfxToast) IfxToast.show('Đã tạo thư mục «' + folder.name + '»', 'success');
       if (global.IfluxWatchlistBlock) IfluxWatchlistBlock.refreshAll();
     } catch (e) {
-      if (global.ixToast) ixToast(e.message, 'warning');
+      if (global.IfxToast) IfxToast.show(e.message, 'warning');
     }
   }
 
@@ -210,7 +204,7 @@
     closeModal();
     if (heart() && heart().refresh) heart().refresh();
     dispatchChange();
-    if (global.ixToast) ixToast('Đã lưu ' + modalTicker, 'success');
+    if (global.IfxToast) IfxToast.show('Đã lưu ' + modalTicker, 'success');
   }
 
   function onRemove() {
@@ -220,7 +214,7 @@
     closeModal();
     if (heart() && heart().refresh) heart().refresh();
     dispatchChange();
-    if (global.ixToast) ixToast('Đã gỡ ' + modalTicker + ' khỏi danh sách theo dõi', 'info');
+    if (global.IfxToast) IfxToast.show('Đã gỡ ' + modalTicker + ' khỏi danh sách theo dõi', 'info');
   }
 
   function dispatchChange() {

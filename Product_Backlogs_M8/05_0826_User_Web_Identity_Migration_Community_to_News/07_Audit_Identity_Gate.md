@@ -57,7 +57,7 @@ Nhãn catalog entitlement: group **Tin tức**. Không tạo `community.*` cho s
 | CSS | `.ifx-com-*` · `.ifx-main--community` |
 | DOM hook | `data-ifx-community-feed` |
 | Notification type | `COMMUNITY_POST_FROM_FOLLOWING` · `community_message` |
-| Media path | `media-storage` folder `community/yyyy/mm/` |
+| Media path | Canonical `news/yyyy/mm/` · leftover URL `/media/community/` 301 `/media/news/` |
 | Comment / historical | comment JS, Product Backlogs cũ, Coverage json |
 | Admin leftover 301 | `/admin/cong-dong` · `/admin/community` — **migration-only**, không leftover vĩnh viễn |
 

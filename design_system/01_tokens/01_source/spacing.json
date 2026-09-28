@@ -1,0 +1,91 @@
+{
+  "$meta": {
+    "sot": "Canonical iFlux Design System — Spacing Token SoT",
+    "note": "Gốc 15px — rem = px/15. Thang W1 (2026-09-27): bước 4px tới 24 (2·4·8·12·16·20·24), bước 6px tới 60 (30·36·42·48·54·60). Giá trị > 60 là kích thước (size.json), không phải khoảng cách. --ifx-space-container và --ifx-grid-gutter thuộc foundation/layout.css.",
+    "origin": "Giá trị lấy nguyên trạng từ Admin_Design_system/iflux-admin-ui/spacing.css §1–§13 (audit Sub-01 P1, 2026-08-26)"
+  },
+  "primitive": {
+    "space": {
+      "0": "0",
+      "2": "0.1333rem",
+      "4": "0.2667rem",
+      "8": "0.5333rem",
+      "12": "0.8rem",
+      "16": "1.0667rem",
+      "20": "1.3333rem",
+      "24": "1.6rem",
+      "30": "2rem",
+      "36": "2.4rem",
+      "42": "2.8rem",
+      "48": "3.2rem",
+      "54": "3.6rem",
+      "60": "4rem"
+    }
+  },
+  "semantic": {
+    "padding": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.30}"
+    },
+    "margin": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.30}"
+    },
+    "gap": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.30}"
+    },
+    "inset": {
+      "card": "{space.16} {space.20}",
+      "card-header": "{space.16} {space.20} 0",
+      "card-body": "{space.16} {space.20} {space.20}",
+      "card-footer": "{space.12} {space.20}",
+      "compact": "{space.12} {space.16}",
+      "panel": "{space.20} {space.24}",
+      "dialog": "{space.24}"
+    },
+    "stack": {
+      "xs": "{space.8}",
+      "sm": "{space.12}",
+      "md": "{space.16}",
+      "lg": "{space.24}",
+      "xl": "{space.30}"
+    },
+    "inline": {
+      "xs": "{space.4}",
+      "sm": "{space.8}",
+      "md": "{space.12}",
+      "lg": "{space.16}",
+      "xl": "{space.24}"
+    },
+    "space": {
+      "section": "{space.48}",
+      "page": "{space.60}",
+      "button-y": "{space.8}",
+      "button-x": "{space.16}",
+      "button-sm-y": "{space.4}",
+      "button-sm-x": "{space.12}",
+      "button-lg-y": "{space.12}",
+      "button-lg-x": "{space.24}",
+      "button-icon-gap": "{space.8}",
+      "input-y": "{space.8}",
+      "input-x": "{space.12}",
+      "input-lg-y": "{space.12}",
+      "chip-y": "{space.4}",
+      "chip-x": "{space.12}",
+      "badge-y": "{space.4}",
+      "badge-x": "{space.8}",
+      "table-cell-y": "{space.12}",
+      "table-cell-x": "{space.16}"
+    }
+  }
+}

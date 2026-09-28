@@ -27,7 +27,7 @@
   }
 
   function toast(msg, type) {
-    if (typeof global.ixToast === 'function') global.ixToast(msg, type || 'success');
+    if (typeof global.IfxToast === 'function') global.IfxToast.show(msg, type || 'success');
   }
 
   function prefill() {

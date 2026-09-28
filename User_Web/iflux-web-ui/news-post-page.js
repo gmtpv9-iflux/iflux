@@ -82,7 +82,7 @@
   }
 
   function scrollOffsetTop() {
-    var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ifx-topnav-h'), 10);
+    var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ifx-size-app-header-h'), 10);
     return (isNaN(navH) ? 56 : navH) + 20;
   }
 
@@ -322,7 +322,7 @@
       consumerNavigate(href);
       return;
     }
-    if (global.ixToast) ixToast('Mở trang bình luận', 'info');
+    if (global.IfxToast) IfxToast.show('Mở trang bình luận', 'info');
   }
 
   /**
@@ -362,8 +362,20 @@
     el.setAttribute('hidden', 'hidden');
   }
 
+  var _ixMounting = false;
   function mountInteractionHosts(root, post) {
     if (!root || !post) return;
+    /* Đang gắn (sự kiện iflux-ix-bottom-slot-ready phát đồng bộ trong lúc tạo ô) → không gắn lồng. */
+    if (_ixMounting) return;
+    _ixMounting = true;
+    try {
+      mountInteractionHostsNow(root, post);
+    } finally {
+      _ixMounting = false;
+    }
+  }
+
+  function mountInteractionHostsNow(root, post) {
     /* Phase 5 RC-IR: Host chưa sẵn → Summary boot rồi retry */
     if (!global.IfluxInteractionHost || !IfluxInteractionHost.mountInteraction) {
       if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {
@@ -490,22 +502,6 @@
     });
   }
 
-  /* Sidebar Widget Host (100826_Scroll — Owner request 2026-08-11): Widget Host canonical
-   * qua ensureSections() giống Community/Stock/Group — chèn TRƯỚC 6 block đặc thù (Chủ đề/
-   * Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận), không promote toàn bộ aside cũ. */
-  function mountSidebarWidgetHost(root) {
-    var aside = root.querySelector('.ifx-com-story-aside');
-    if (!aside) return;
-    var sectionApi = global.IfluxRuntimeSections;
-    if (!sectionApi || !sectionApi.ensureSections) return;
-    var sections = sectionApi.ensureSections(aside, {
-      sections: [{ key: 'sidebar-right', label: 'Widget đặc thù bài viết' }]
-    });
-    if (sections && sections['sidebar-right'] && aside.firstChild !== sections['sidebar-right']) {
-      aside.insertBefore(sections['sidebar-right'], aside.firstChild);
-    }
-  }
-
   function bindEvents(root, post, slug) {
     /* Like / fav / share / comment → Interaction Host sidebar (không CommunityStore.stats++) */
     document.addEventListener('iflux-ix-projection', function onProj(ev) {
@@ -546,20 +542,15 @@
         '<a href="' + esc(routeUrl('news')) + '">Tin tức</a>' +
         '<span class="ifx-com-breadcrumb__sep">/</span>' +
         '<span class="ifx-com-breadcrumb__current">' + esc(post.title) + '</span>' +
-      '</nav>' +
-      (function () {
-        var asideHtml = renderSidebar(post, bodyPrep.headings, presentation);
-        var layoutCls = 'ifx-com-story-layout' + (asideHtml ? '' : ' ifx-com-story-layout--no-aside');
-        return (
-          '<div class="' + layoutCls + '">' +
-            '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
-            asideHtml +
-          '</div>'
-        );
-      })() +
+      '</nav>';
+    /* Khung trang chung: khối liên quan (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận) = nội dung
+       đặc thù Sidebar; bài viết + bài liên quan = nội dung đặc thù Main. Host widget do khung dựng. */
+    var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Thông tin liên quan' });
+    frame.sidebarContent.innerHTML = renderSidebar(post, bodyPrep.headings, presentation);
+    frame.mainContent.innerHTML =
+      '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
       renderRelatedFeed(post);
 
-    mountSidebarWidgetHost(root);
     bindEvents(root, post, slug);
     bindTocLinks(root);
     mountRelatedFeed(root, post);

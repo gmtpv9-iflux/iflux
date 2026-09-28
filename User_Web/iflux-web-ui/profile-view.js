@@ -26,7 +26,7 @@
   }
 
   function showNotFound() {
-    var grid = document.querySelector('.ix-profile-grid');
+    var grid = document.querySelector('.ifx-shell-layout');
     if (grid) grid.hidden = true;
     var main = document.querySelector('.ifx-main');
     if (!main) return;
@@ -127,25 +127,25 @@
       btn.dataset.ifxBound = '1';
       btn.addEventListener('click', function () {
         if (global.IfluxProfileBlockStore && IfluxProfileBlockStore.isBlocked(me.id, profile.id)) {
-          if (global.ixToast) ixToast('Bạn đã chặn người dùng này', 'warning');
+          if (global.IfxToast) IfxToast.show('Bạn đã chặn người dùng này', 'warning');
           return;
         }
         var st = IfluxProfileFriendStore.status(me.id, profile.id);
         if (st === 'friends') {
           IfluxProfileFriendStore.unfriend(me.id, profile.id);
-          if (global.ixToast) ixToast('Đã hủy kết bạn', 'info');
+          if (global.IfxToast) IfxToast.show('Đã hủy kết bạn', 'info');
         } else if (st === 'outgoing') {
           IfluxProfileFriendStore.cancel(me.id, profile.id);
-          if (global.ixToast) ixToast('Đã hủy lời mời kết bạn', 'info');
+          if (global.IfxToast) IfxToast.show('Đã hủy lời mời kết bạn', 'info');
         } else if (st === 'incoming') {
           IfluxProfileFriendStore.accept(me.id, profile.id);
-          if (global.ixToast) ixToast('Đã trở thành bạn bè', 'success');
+          if (global.IfxToast) IfxToast.show('Đã trở thành bạn bè', 'success');
         } else {
           var res = IfluxProfileFriendStore.request(me, profile);
           if (res.status === 'friends') {
-            if (global.ixToast) ixToast('Đã trở thành bạn bè', 'success');
-          } else if (global.ixToast) {
-            ixToast('Đã gửi lời mời kết bạn', 'success');
+            if (global.IfxToast) IfxToast.show('Đã trở thành bạn bè', 'success');
+          } else if (global.IfxToast) {
+            IfxToast.show('Đã gửi lời mời kết bạn', 'success');
           }
         }
         refresh();
@@ -227,12 +227,12 @@
           : IfluxProfileFollowStore.follow(me.id, profile);
         Promise.resolve(op).then(function () {
           followingState = !followingState;
-          if (global.ixToast) {
-            ixToast(followingState ? ('Đã theo dõi ' + profile.display_name) : 'Đã bỏ theo dõi', followingState ? 'success' : 'info');
+          if (global.IfxToast) {
+            IfxToast.show(followingState ? ('Đã theo dõi ' + profile.display_name) : 'Đã bỏ theo dõi', followingState ? 'success' : 'info');
           }
           paint();
         }).catch(function (err) {
-          if (global.ixToast) ixToast((err && err.message) || 'Không thể cập nhật theo dõi', 'danger');
+          if (global.IfxToast) IfxToast.show((err && err.message) || 'Không thể cập nhật theo dõi', 'danger');
           paint();
         });
       });
@@ -255,13 +255,13 @@
       btn.dataset.ifxBound = '1';
       btn.addEventListener('click', function () {
         if (global.IfluxProfileBlockStore && IfluxProfileBlockStore.isBlocked(me.id, profile.id)) {
-          if (global.ixToast) ixToast('Bạn đã chặn người dùng này', 'warning');
+          if (global.IfxToast) IfxToast.show('Bạn đã chặn người dùng này', 'warning');
           return;
         }
         if (global.IfluxProfileChatAccess) {
           var gate = IfluxProfileChatAccess.evaluate(me.id, profile.id);
           if (!gate.ok) {
-            if (global.ixToast) ixToast(gate.message, 'warning');
+            if (global.IfxToast) IfxToast.show(gate.message, 'warning');
             return;
           }
         }
@@ -301,13 +301,13 @@
     btn.addEventListener('click', function () {
       if (IfluxProfileBlockStore.isBlocked(me.id, profile.id)) {
         IfluxProfileBlockStore.unblock(me.id, profile.id);
-        if (global.ixToast) ixToast('Đã bỏ chặn ' + profile.display_name, 'info');
+        if (global.IfxToast) IfxToast.show('Đã bỏ chặn ' + profile.display_name, 'info');
       } else {
         IfluxProfileBlockStore.block(me.id, profile.id);
         if (global.IfluxProfileFollowStore && IfluxProfileFollowStore.isFollowing(me.id, profile.id)) {
           IfluxProfileFollowStore.unfollow(me.id, profile.id);
         }
-        if (global.ixToast) ixToast('Đã chặn ' + profile.display_name, 'warning');
+        if (global.IfxToast) IfxToast.show('Đã chặn ' + profile.display_name, 'warning');
       }
       refresh();
       var followBtn = document.getElementById('btn-follow-user');

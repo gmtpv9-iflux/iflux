@@ -4,37 +4,26 @@
  * Phase C W3: Feature Manifest + Runtime (NOT_LOADED→READY→DISPOSED).
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=calFeedFix20260808';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=calFeedFix20260808';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
-import featureManifest from '../../features/news.manifest.js?v=calFeedFix20260808';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928q';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
+import featureManifest from '../../features/news.manifest.js?v=r20260928r';
 
 export const meta = { id: 'WGT-NEWS-PAGE', title: 'Tin tức' };
 
 var featureRt = null;
 
-async function mountFromHostTree(root) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-NEWS-PAGE] thiếu Layout Engine');
-    }
-    if (window.IfluxNewsPage && IfluxNewsPage.syncEmptyHostChrome) {
-      IfluxNewsPage.syncEmptyHostChrome(root);
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, 'news');
-  if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('news');
+/** Trang con Tin tức có cấu hình Widget Placement riêng (Admin: news-topic / news-cat / news-author). */
+function publishKeyForPath() {
+  var path = String((typeof location !== 'undefined' && location.pathname) || '');
+  if (/^\/(tin-tuc|cong-dong)\/chu-de\/[^/]+/.test(path)) return 'news-topic';
+  if (/^\/(tin-tuc|cong-dong)\/danh-muc\/[^/]+/.test(path)) return 'news-cat';
+  if (/^\/(tin-tuc|cong-dong)\/tac-gia\/[^/]+/.test(path)) return 'news-author';
+  return 'news';
+}
 
-  if (tree && tree.length) {
-    await mountPublishedWidgets(tree, { logPrefix: '[WGT-NEWS-PAGE]' });
-  } else if (window.console && console.warn) {
-    console.warn('[WGT-NEWS-PAGE] Host Tree rỗng — chưa có placements Published');
-  }
-
-  if (window.IfluxNewsPage && IfluxNewsPage.syncEmptyHostChrome) {
-    IfluxNewsPage.syncEmptyHostChrome(root);
-  }
+function mountFromHostTree(root) {
+  return mountPageWidgets(root, publishKeyForPath(), { gateKey: 'news' });
 }
 
 function isCollectionIndexPath() {
@@ -51,9 +40,8 @@ function applyCommunity(root) {
 
 export async function mount(el) {
   el.innerHTML = '<div data-ifx-community-feed></div>';
-  /* AppShell Foundation VR-02 (100826): bridge ensureSections() ESM cho
-   * news-page.js (legacy IIFE) dựng Right Sidebar canonical trong renderShell(). */
-  window.IfluxRuntimeSections = { ensureSections: ensureSections };
+  /* Bridge khung trang chung cho news-page.js (IIFE) — renderShell() dựng qua buildPageFrame. */
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   featureRt = createFeatureRuntime(featureManifest);
   await featureRt.boot({
     init: function () {

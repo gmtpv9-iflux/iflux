@@ -1,0 +1,35 @@
+/**
+ * TMP-SUMMARY — Lưới thẻ chỉ số: nhãn · giá trị · mức thay đổi.
+ */
+.ifx-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ifx-space-12);
+}
+.ifx-summary-card {
+  padding: var(--ifx-space-12) var(--ifx-space-16);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-canvas);
+}
+.ifx-summary-label {
+  margin-bottom: var(--ifx-space-4);
+  font-size: var(--ifx-font-size-2xs);
+  letter-spacing: var(--ifx-letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--ifx-text-muted);
+}
+.ifx-summary-value {
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-lg);
+  font-weight: var(--ifx-font-weight-extrabold);
+  line-height: 1.2;
+}
+.ifx-summary-change {
+  margin-top: var(--ifx-space-4);
+  font-family: var(--ifx-font-mono);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+.ifx-summary-change.is-up { color: var(--ifx-market-up); }
+.ifx-summary-change.is-down { color: var(--ifx-market-down); }
