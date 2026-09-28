@@ -140,38 +140,6 @@
     );
   }
 
-  function maskBullet(len) {
-    var n = Math.max(3, Math.min(12, Number(len) || 6));
-    var out = '';
-    var i;
-    for (i = 0; i < n; i++) out += '•';
-    return out;
-  }
-
-  function maskEntityNames(root) {
-    if (!root || !root.querySelectorAll) return;
-    root.querySelectorAll('[data-ifx-role="entity-name"]').forEach(function (el) {
-      var raw = el.getAttribute('data-ifx-entity-raw');
-      if (raw == null) {
-        raw = el.textContent || '';
-        el.setAttribute('data-ifx-entity-raw', raw);
-      }
-      el.textContent = maskBullet(String(raw).length);
-      el.setAttribute('data-ifx-entity-masked', '1');
-      el.removeAttribute('title');
-    });
-  }
-
-  function unmaskEntityNames(root) {
-    if (!root || !root.querySelectorAll) return;
-    root.querySelectorAll('[data-ifx-role="entity-name"][data-ifx-entity-masked]').forEach(function (el) {
-      var raw = el.getAttribute('data-ifx-entity-raw') || '';
-      el.textContent = raw;
-      el.removeAttribute('data-ifx-entity-masked');
-      if (raw) el.setAttribute('title', raw);
-    });
-  }
-
   function templateForBlock(blockId) {
     var i;
     for (i = 0; i < REGISTRY.length; i++) {
@@ -1065,8 +1033,6 @@
     templateForBlock: templateForBlock,
     esc: esc,
     entityName: entityName,
-    maskEntityNames: maskEntityNames,
-    unmaskEntityNames: unmaskEntityNames,
     fmtPct: fmtPct,
     fmtPct1: fmtPct1,
     dirClass: dirClass,

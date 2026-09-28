@@ -24,7 +24,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=softAll20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=appHeader20260928';
+import { bootShell } from './shell-boot.js?v=lock20260928';
 import { pageKeyFromPath } from './page-keys.js?v=softAll20260928';
 import { installSoftNavigation } from './soft-navigation.js?v=softAll20260928';
 

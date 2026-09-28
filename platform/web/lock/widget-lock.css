@@ -1,0 +1,52 @@
+/**
+ * User Web — lớp phủ khoá widget (Phân quyền sử dụng).
+ * Chỉ nạp khi trên trang có vùng bị khoá (iflux-block-gate.js). Người xem đủ quyền không tải file này.
+ * Nội dung widget vẫn hiện; tên đối tượng bị che •••• ; một thẻ CTA nhỏ ở giữa (không phủ mờ cả widget).
+ */
+.uw-locked { position: relative; }
+.uw-lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ifx-space-16);
+  pointer-events: none;
+}
+.uw-lock-overlay[hidden] { display: none; }
+.uw-lock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ifx-space-4);
+  width: 100%;
+  max-width: var(--ifx-size-header-menu-w);
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  border-radius: var(--ifx-radius-card);
+  background: color-mix(in srgb, var(--ifx-bg-surface) 55%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  text-align: center;
+  pointer-events: auto;
+  overflow: hidden;
+}
+.uw-lock-caption {
+  display: -webkit-box;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--ifx-font-size-xs);
+  line-height: var(--ifx-line-height-normal);
+  color: var(--ifx-text-secondary);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* Tên đối tượng bị che */
+.uw-locked [data-ifx-role="entity-name"][data-ifx-entity-masked] {
+  letter-spacing: 0.08em;
+  color: var(--ifx-text-muted);
+  user-select: none;
+  pointer-events: none;
+}
