@@ -80,8 +80,11 @@
 
   /* Quét & tạo bù — gọi lặp POST /admin/media/cover-profiles/backfill tới khi processed=0
      hoặc bị bấm Dừng. Mỗi lần gọi xử lý tối đa 20 bài (giới hạn phía server để 1 request
-     không chạy quá lâu); vòng lặp ở đây tự gọi lại cho tới khi hết việc. */
-  var runState = { stopping: false, running: false, totalUpdated: 0, totalSkipped: 0, totalFailed: 0, totalProcessed: 0 };
+     không chạy quá lâu); vòng lặp ở đây tự gọi lại cho tới khi hết việc.
+     MAX_STEPS chỉ là lưới an toàn phía client (phòng khi có lỗi ngoài dự kiến ở server khiến
+     hasMore không bao giờ tắt) — chặn ở server (EXISTS media_assets) mới là chỗ sửa gốc. */
+  var MAX_STEPS = 500;
+  var runState = { stopping: false, running: false, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0 };
 
   function renderRunStatus(text, tone) {
     var el = document.getElementById('rgp-run-status');
@@ -93,25 +96,37 @@
     if (runState.stopping) {
       renderRunStatus(
         'Đã dừng — đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' tạo bù thành công, ' +
-          runState.totalSkipped + ' bỏ qua, ' + runState.totalFailed + ' lỗi).'
+          runState.totalFailed + ' lỗi).'
       );
       return finishRun();
     }
+    if (runState.steps >= MAX_STEPS) {
+      renderRunStatus(
+        'Dừng an toàn sau ' + MAX_STEPS + ' lượt gọi (đã xử lý ' + runState.totalProcessed + ' bài) — có thể còn rất nhiều ' +
+          'việc, bấm Chạy Regenerate lại để tiếp tục.',
+        'danger'
+      );
+      return finishRun();
+    }
+    runState.steps += 1;
     renderRunStatus(
       'Đang chạy… đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' thành công, ' +
-        runState.totalSkipped + ' bỏ qua, ' + runState.totalFailed + ' lỗi).'
+        runState.totalFailed + ' lỗi).'
     );
     request('/admin/media/cover-profiles/backfill', { method: 'POST', body: { limit: 20 } })
       .then(function (r) {
         runState.totalProcessed += r.processed || 0;
         runState.totalUpdated += r.updated || 0;
-        runState.totalSkipped += r.skippedNoAsset || 0;
         runState.totalFailed += r.failed || 0;
         if (!r.processed || !r.hasMore) {
+          var notDone = r.notImportedYet || 0;
           renderRunStatus(
             'Xong — đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' tạo bù thành công, ' +
-              runState.totalSkipped + ' bỏ qua vì không tìm thấy ảnh gốc, ' + runState.totalFailed + ' lỗi).' +
-              (runState.totalProcessed === 0 ? ' Mọi bài viết đều đã đủ 5 bản.' : ''),
+              runState.totalFailed + ' lỗi).' +
+              (runState.totalProcessed === 0 ? ' Mọi bài đã có ảnh trong Thư viện đều đủ 5 bản.' : '') +
+              (notDone
+                ? ' Còn ' + notDone + ' bài cover vẫn là ảnh ngoài (chưa "Nhập ảnh vào Thư viện") — Regenerate không tự sửa được, cần mở bài đó và bấm Nhập ảnh trước.'
+                : ''),
             runState.totalFailed ? 'danger' : 'success'
           );
           return finishRun();
@@ -146,7 +161,7 @@
     if (run) {
       run.addEventListener('click', function () {
         if (runState.running) return;
-        runState = { stopping: false, running: true, totalUpdated: 0, totalSkipped: 0, totalFailed: 0, totalProcessed: 0 };
+        runState = { stopping: false, running: true, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0 };
         run.disabled = true;
         setStopVisible(true);
         runStep();

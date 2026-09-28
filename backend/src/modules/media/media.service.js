@@ -349,27 +349,36 @@ var COVER_VARIANT_ROLES = ['cover_thumb', 'cover_card', 'cover_hero', 'cover_det
  * chạy lại toàn bộ pipeline lưu bài (validate danh mục, slug…) như updateArticle.
  * Trả { processed, updated, skippedNoAsset, failed, hasMore } — gọi lặp tới khi processed=0.
  */
+/* Chuẩn hoá cover.url về path tương đối trước khi so với media_assets.public_url (luôn lưu
+ * dạng tương đối) — một số bài (nhập thẳng từ production qua psql) lưu URL tuyệt đối
+ * (vd https://iflux.vn/media/...), so sánh nguyên chuỗi sẽ luôn trật. */
+const COVER_PATH_SQL = "regexp_replace(payload->'cover'->>'url', '^https?://[^/]+', '')";
+
 async function backfillCoverVariants(config, limit) {
   const n = Math.max(1, Math.min(Number(limit) || 20, 100));
+  /* QUAN TRỌNG — chống vòng lặp vô hạn: chỉ chọn bài có ảnh cover ĐÃ nằm trong Thư viện
+   * (EXISTS media_assets). Bài cover vẫn là URL ngoài (chưa từng nhập — media_status
+   * PENDING/FAILED) sẽ không bao giờ khớp; nếu không lọc ở đây, những bài đó bị bỏ qua mỗi
+   * lần mà vẫn nằm trong LIMIT của lần sau → hasMore mãi = true, gọi lặp không dừng. */
   const res = await query(
-    `SELECT id, payload->'cover'->>'url' AS cover_url
+    `SELECT id, ${COVER_PATH_SQL} AS cover_path
      FROM news_posts
      WHERE COALESCE(payload->'cover'->>'url', '') <> ''
        AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)
+       AND EXISTS (SELECT 1 FROM media_assets a WHERE a.public_url = ${COVER_PATH_SQL})
      ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC
      LIMIT $2`,
     [COVER_VARIANT_ROLES, n]
   );
 
   let updated = 0;
-  let skippedNoAsset = 0;
   let failed = 0;
   for (let i = 0; i < res.rows.length; i++) {
     const row = res.rows[i];
     try {
-      const found = await query(`SELECT id FROM media_assets WHERE public_url = $1 LIMIT 1`, [row.cover_url]);
+      const found = await query(`SELECT id FROM media_assets WHERE public_url = $1 LIMIT 1`, [row.cover_path]);
       const assetId = found.rows[0] && found.rows[0].id;
-      if (!assetId) { skippedNoAsset += 1; continue; }
+      if (!assetId) { failed += 1; continue; } /* race hiếm: asset bị xoá giữa 2 câu query */
       const variants = await regenerateCoverVariants(config, assetId);
       await query(
         `UPDATE news_posts SET payload = jsonb_set(payload, '{cover,variants}', $2::jsonb, true) WHERE id = $1`,
@@ -380,12 +389,27 @@ async function backfillCoverVariants(config, limit) {
       failed += 1;
     }
   }
+
+  const hasMore = res.rows.length === n;
+  let notImportedYet = null;
+  if (!hasMore) {
+    /* Chỉ đếm lúc kết thúc (không đếm mỗi vòng) — bài cover còn là URL ngoài, cần
+     * "Nhập ảnh vào Thư viện" ở trang sửa bài, KHÔNG tự sửa được bằng Regenerate. */
+    const c = await query(
+      `SELECT COUNT(*)::int AS n FROM news_posts
+       WHERE COALESCE(payload->'cover'->>'url', '') <> ''
+         AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)`,
+      [COVER_VARIANT_ROLES]
+    );
+    notImportedYet = c.rows[0].n;
+  }
+
   return {
     processed: res.rows.length,
     updated: updated,
-    skippedNoAsset: skippedNoAsset,
     failed: failed,
-    hasMore: res.rows.length === n
+    hasMore: hasMore,
+    notImportedYet: notImportedYet
   };
 }
 
