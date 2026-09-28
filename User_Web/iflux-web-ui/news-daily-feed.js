@@ -80,18 +80,6 @@
     );
   }
 
-  function starsHtml(rating) {
-    var full = Math.floor(rating);
-    var half = (rating - full) >= 0.5;
-    var html = '';
-    for (var i = 1; i <= 5; i++) {
-      if (i <= full) html += '<i class="ti ti-star-filled"></i>';
-      else if (i === full + 1 && half) html += '<i class="ti ti-star-half-filled"></i>';
-      else html += '<i class="ti ti-star"></i>';
-    }
-    return '<span class="ifx-com-expert-stars">' + html + '</span>';
-  }
-
   function spotStat(label, value) {
     return (
       '<div class="ifx-com-expert-spotlight__stat">' +
@@ -109,12 +97,10 @@
         '<span class="ifx-com-expert-spotlight__avatar">' + esc(initials(u.displayName)) + '</span>' +
         '<span class="ix-chip ix-chip-warning ix-chip-sm ifx-com-expert-spotlight__tier">' + esc(u.tierLabel) + '</span>' +
         '<strong class="ifx-com-expert-spotlight__name">' + esc(u.displayName) + '</strong>' +
-        '<span class="ifx-com-expert-spotlight__rating">' + starsHtml(row.rating) + ' <b>' + row.rating.toFixed(1) + '</b></span>' +
         '<div class="ifx-com-expert-spotlight__stats">' +
           spotStat('Bài viết', num(row.postCount)) +
           spotStat('Yêu thích', num(row.totalLikes)) +
-          spotStat('Theo dõi', num(row.totalFollows)) +
-          spotStat('Thành viên', num(row.affiliateMembers)) +
+          (row.totalFollows != null ? spotStat('Theo dõi', num(row.totalFollows)) : '') +
         '</div>' +
       '</a>'
     );
@@ -129,13 +115,11 @@
         '<span class="ifx-com-expert-row__body">' +
           '<span class="ifx-com-expert-row__line1">' +
             '<strong>' + esc(u.displayName) + '</strong>' +
-            '<span class="ifx-com-expert-row__members"><i class="ti ti-users"></i> ' + num(row.affiliateMembers) + ' thành viên</span>' +
           '</span>' +
           '<span class="ifx-com-expert-row__line2">' +
             '<span title="Bài viết"><i class="ti ti-article"></i> ' + num(row.postCount) + '</span>' +
             '<span title="Yêu thích"><i class="ti ti-heart"></i> ' + num(row.totalLikes) + '</span>' +
-            '<span title="Theo dõi"><i class="ti ti-user-plus"></i> ' + num(row.totalFollows) + '</span>' +
-            starsHtml(row.rating) +
+            (row.totalFollows != null ? '<span title="Theo dõi"><i class="ti ti-user-plus"></i> ' + num(row.totalFollows) + '</span>' : '') +
           '</span>' +
         '</span>' +
       '</a>'

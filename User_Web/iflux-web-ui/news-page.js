@@ -73,10 +73,6 @@
 
   /* Permission SoT = IfluxEntitlements. Composite chỉ HỎI engine, không tự quyết.
      Engine vắng mặt => fail-closed (không lộ block paywall). */
-  function blockVisible(blockId) {
-    return !!(global.IfluxEntitlements && IfluxEntitlements.canShowBlock(blockId));
-  }
-
   function applyBlockGate(root) {
     if (!root || !global.IfluxBlockGate) return;
     IfluxBlockGate.apply('news');
@@ -459,9 +455,6 @@
     pane.setAttribute('data-ifx-feed-at', String(Date.now()));
     IfluxDailyFeed.mount(pane, {
       filter: filter,
-      showNews: blockVisible('BLK-COM-NEWS'),
-      showExperts: blockVisible('BLK-COM-EXPERTS'),
-      showExpertPosts: blockVisible('BLK-COM-EXPERTS'),
       expertTitle: 'Bài viết của chuyên gia'
     });
   }

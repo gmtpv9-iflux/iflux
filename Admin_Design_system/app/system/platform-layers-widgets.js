@@ -1253,44 +1253,44 @@
   };
 
   /* Widget → trang User (pages) + block HTML trên trang (blocks, data-ifx-ent-block).
-     Không khai báo = { pages: ['dashboard'], blocks: [] }. */
+     Không khai báo = { pages: ['dashboard'] }. */
   var WGT_DEPLOY = {
-    'WGT-MKT-001': { pages: ['market', 'news', 'dashboard'], blocks: ['BLK-MKT-OVERVIEW', 'BLK-NEWS-OVERVIEW'] },
-    'WGT-MKT-002': { pages: ['market', 'news', 'dashboard'], blocks: ['BLK-MKT-BREADTH', 'BLK-NEWS-BREADTH'] },
-    'WGT-MKT-RISK': { pages: ['flow', 'dashboard'], blocks: [] },
-    'WGT-MKT-003': { pages: ['dashboard'], blocks: [] },
-    'WGT-MKT-004': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-HEAT-SECTOR'] },
-    'WGT-MKT-005': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-HEAT-FAMILY'] },
-    'WGT-MKT-006': { pages: ['market', 'community', 'dashboard'], blocks: ['BLK-MKT-HEAT-CHUDE'] },
-    'WGT-MKT-007': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-LIQ'] },
-    'WGT-MKT-008': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-LIQ'] },
-    'WGT-TOP-001': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-RANKINGS'] },
-    'WGT-TOP-002': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-RANKINGS'] },
-    'WGT-TOP-003': { pages: ['market', 'dashboard'], blocks: ['BLK-MKT-RANKINGS'] },
-    'WGT-SEC-001': { pages: ['dashboard'], blocks: [] },
-    'WGT-FLW-001': { pages: ['dashboard'], blocks: [] },
-    'WGT-FLW-SUBJ-STOCK': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-NET-STOCK'] },
-    'WGT-FLW-SUBJ-SECTOR': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-NET-SECTOR'] },
-    'WGT-FLW-SUBJ-HST': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-NET-HST'] },
-    'WGT-FLW-SUBJ-CHUDE': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-NET-CHUDE'] },
-    'WGT-FLW-STAT_STOCK': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-BASIC'] },
-    'WGT-FLW-STAT_SECTOR': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-ADV'] },
-    'WGT-FLW-STAT_HST': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-ADV'] },
-    'WGT-FLW-STAT_STORY': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-ADV'] },
-    'WGT-FLW-EX_TM_IN': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_SECTOR_IN': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_HST_IN': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_STORY_IN': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_SECTOR_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_HST_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-FLW-EX_TM_STORY_OUT': { pages: ['flow', 'dashboard'], blocks: ['BLK-FLW-SCORE-EX'] },
-    'WGT-NEWS-001': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TRENDING'] },
-    'WGT-NEWS-002': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-ACTIVE'] },
-    'WGT-NEWS-003': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-EXPERTS'] },
-    'WGT-NEWS-TOPIC-TOP': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TOPIC-TOP'] },
-    'WGT-NEWS-004': { pages: ['news', 'dashboard'], blocks: ['BLK-NEWS-TOPWL'] },
-    'WGT-WAT-001': { pages: ['dashboard'], blocks: [] }
+    'WGT-MKT-001': { pages: ['market', 'news', 'dashboard'] },
+    'WGT-MKT-002': { pages: ['market', 'news', 'dashboard'] },
+    'WGT-MKT-RISK': { pages: ['flow', 'dashboard'] },
+    'WGT-MKT-003': { pages: ['dashboard'] },
+    'WGT-MKT-004': { pages: ['market', 'dashboard'] },
+    'WGT-MKT-005': { pages: ['market', 'dashboard'] },
+    'WGT-MKT-006': { pages: ['market', 'community', 'dashboard'] },
+    'WGT-MKT-007': { pages: ['market', 'dashboard'] },
+    'WGT-MKT-008': { pages: ['market', 'dashboard'] },
+    'WGT-TOP-001': { pages: ['market', 'dashboard'] },
+    'WGT-TOP-002': { pages: ['market', 'dashboard'] },
+    'WGT-TOP-003': { pages: ['market', 'dashboard'] },
+    'WGT-SEC-001': { pages: ['dashboard'] },
+    'WGT-FLW-001': { pages: ['dashboard'] },
+    'WGT-FLW-SUBJ-STOCK': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-SUBJ-SECTOR': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-SUBJ-HST': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-SUBJ-CHUDE': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-STAT_STOCK': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-STAT_SECTOR': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-STAT_HST': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-STAT_STORY': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_IN': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_SECTOR_IN': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_HST_IN': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_STORY_IN': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_OUT': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_SECTOR_OUT': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_HST_OUT': { pages: ['flow', 'dashboard'] },
+    'WGT-FLW-EX_TM_STORY_OUT': { pages: ['flow', 'dashboard'] },
+    'WGT-NEWS-001': { pages: ['news', 'dashboard'] },
+    'WGT-NEWS-002': { pages: ['news', 'dashboard'] },
+    'WGT-NEWS-003': { pages: ['news', 'dashboard'] },
+    'WGT-NEWS-TOPIC-TOP': { pages: ['news', 'dashboard'] },
+    'WGT-NEWS-004': { pages: ['news', 'dashboard'] },
+    'WGT-WAT-001': { pages: ['dashboard'] }
   };
 
   /* Nhóm phân loại widget (dùng cho gom nhóm ở Phân quyền sử dụng). */
@@ -1332,12 +1332,12 @@
   function widgetTier(id) { return WGT_TIER[id] || 'free'; }
   function widgetDeploy(id) {
     var d = WGT_DEPLOY[id];
-    if (d) return { pages: d.pages.slice(), blocks: (d.blocks || []).slice() };
+    if (d) return { pages: d.pages.slice() };
     /* Widget tùy chỉnh / chưa map deploy → hiện ở Cài đặt Trang (shared) nhiều trang */
     if (isCustomWidget(id)) {
-      return { pages: CUSTOM_DEPLOY_PAGES.slice(), blocks: [] };
+      return { pages: CUSTOM_DEPLOY_PAGES.slice() };
     }
-    return { pages: ['dashboard'], blocks: [] };
+    return { pages: ['dashboard'] };
   }
   function widgetGroup(id) {
     var g = WGT_GROUP_BY_ID[id];
@@ -1363,7 +1363,6 @@
       template: w.template,
       tier: widgetTier(id),
       pages: dep.pages,
-      blocks: dep.blocks,
       groupId: g.id,
       groupTitle: g.title,
       category: g.category,
@@ -1454,7 +1453,6 @@
   function deployLabel(id) {
     var d = widgetDeploy(id);
     var parts = d.pages.slice();
-    if (d.blocks.length) parts.push(d.blocks.join(', '));
     return parts.join(' · ');
   }
   function canonicalWidgetId(id) { return id; }

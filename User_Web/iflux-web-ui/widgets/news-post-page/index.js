@@ -16,7 +16,7 @@ var CORE_TIERS = [
   [ASSET + 'runtime/page-layout-engine.js?v=r20260928n'],
   [ASSET + 'stock-mentions.js?v=r20260928n'],
   [
-    ASSET + 'news-store.js?v=r20260928n',
+    ASSET + 'news-store.js?v=r20260928r',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ASSET + 'profile-users-store.js',
     ASSET + 'profile-links.js'
@@ -26,7 +26,7 @@ var CORE_TIERS = [
     ASSET + 'watchlist-store.js?v=r20260928n',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724',
     ASSET + 'news-ui.js?v=r20260928n',
-    ASSET + 'news-daily-feed.js?v=r20260928n',
+    ASSET + 'news-daily-feed.js?v=r20260928r',
     ASSET + 'interaction/boot.js?v=r20260928n',
     ASSET + 'news-post-page.js?v=r20260928q'
   ]

@@ -24,91 +24,7 @@
     { key: 'upcom', label: 'UPCOM' }
   ];
 
-  /** SoT: nhóm template ↔ block IDs (map §13 Design Sandbox) */
-  var REGISTRY = [
-    {
-      id: 'TPL-SHELL-CARD',
-      label: 'Card shell (head + body)',
-      classes: 'ifx-block ifx-block--card',
-      blocks: [
-        'BLK-MKT-HEAT', 'BLK-MKT-LIQ', 'BLK-MKT-RANKINGS',
-        'BLK-FLW-NET-STOCK', 'BLK-FLW-NET-SECTOR', 'BLK-FLW-NET-HST', 'BLK-FLW-NET-CHUDE',
-        'BLK-FLW-SCORE', 'BLK-FLW-CTX', 'BLK-FLW-SMART'
-      ]
-    },
-    {
-      id: 'TPL-SHELL-SIDEBAR',
-      label: 'Sidebar widget shell',
-      classes: 'ifx-block ifx-block--sidebar',
-      blocks: ['BLK-MKT-OVERVIEW', 'BLK-MKT-BREADTH', 'BLK-COM-OVERVIEW', 'BLK-COM-BREADTH']
-    },
-    {
-      id: 'TPL-SHELL-WIDGET',
-      label: 'Dashboard widget shell',
-      classes: 'ifx-widget',
-      blocks: ['WGT-*']
-    },
-    {
-      id: 'TPL-BREADTH',
-      label: 'Breadth stat grid + ratio bar',
-      classes: 'ifx-breadth-block, ifx-breadth-stat, ifx-breadth-ratio',
-      blocks: ['BLK-MKT-BREADTH', 'BLK-COM-BREADTH']
-    },
-    {
-      id: 'TPL-TREEMAP',
-      label: 'Treemap heat tile',
-      classes: 'ifx-treemap-tile, ifx-mkt-heat-tile, ifx-cap-tile',
-      blocks: ['BLK-MKT-HEAT-SECTOR', 'BLK-MKT-HEAT-FAMILY', 'BLK-MKT-HEAT-CHUDE', 'BLK-COM-TREND']
-    },
-    {
-      id: 'TPL-DIVERGING-BARS',
-      label: 'Cột hai chiều quanh trục 0 (dương / âm)',
-      classes: 'ifx-stock-flow-chart',
-      blocks: ['BLK-STK-FLOW']
-    },
-    {
-      id: 'TPL-ZONE-POSITION',
-      label: 'Vị trí giữa hai vùng (thanh + %)',
-      classes: 'ifx-zone-pos',
-      blocks: []
-    },
-    {
-      id: 'TPL-SR-HISTORY',
-      label: 'Lịch sử Hỗ trợ — Kháng cự (tab + thanh vị trí)',
-      classes: 'ifx-sr-hist',
-      blocks: []
-    },
-    {
-      id: 'TPL-RANK-BAR',
-      label: 'Horizontal rank / Top 10 bars',
-      classes: 'ifx-rank-bar, ix-top10-market',
-      blocks: ['BLK-MKT-RANKINGS', 'WGT-TOP-001', 'WGT-TOP-002', 'WGT-TOP-003', 'WGT-MKT-003']
-    },
-    {
-      id: 'TPL-FLOW-SPLIT',
-      label: 'Symmetric net-flow chart',
-      classes: 'ifx-flow-split, ifx-flow-split-block',
-      blocks: ['BLK-FLW-NET-STOCK', 'BLK-FLW-NET-SECTOR', 'BLK-FLW-NET-HST', 'BLK-FLW-NET-CHUDE']
-    },
-    {
-      id: 'TPL-INDEX-GRID',
-      label: 'Exchange index mini cards',
-      classes: 'ifx-com-ex-grid, ifx-com-ex-card',
-      blocks: ['BLK-MKT-OVERVIEW', 'BLK-COM-OVERVIEW']
-    },
-    {
-      id: 'TPL-LIST-ROW',
-      label: 'Stock / entity list row',
-      classes: 'ifx-stock-row',
-      blocks: ['BLK-MKT-MOVERS', 'WGT-WAT-001']
-    },
-    {
-      id: 'TPL-FEED-CARD',
-      label: 'Community post card',
-      classes: 'ifx-com-card',
-      blocks: ['BLK-COM-FEED']
-    }
-  ];
+
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -140,22 +56,6 @@
     );
   }
 
-  function templateForBlock(blockId) {
-    var i;
-    for (i = 0; i < REGISTRY.length; i++) {
-      var t = REGISTRY[i];
-      var j;
-      for (j = 0; j < t.blocks.length; j++) {
-        var b = t.blocks[j];
-        if (b === blockId) return t;
-        if (b.indexOf('*') >= 0) {
-          var prefix = b.replace('*', '');
-          if (blockId.indexOf(prefix) === 0) return t;
-        }
-      }
-    }
-    return null;
-  }
 
   /**
    * TPL-SHELL-CARD | TPL-SHELL-SIDEBAR
@@ -1024,13 +924,11 @@
   }
 
   global.IfluxBlockTemplates = {
-    REGISTRY: REGISTRY,
     BREADTH_STATS: BREADTH_STATS,
     BREADTH_EXCHANGES: BREADTH_EXCHANGES,
     RANGE_TABS: RANGE_TABS,
     FLOW_SUBJECT_TABS: FLOW_SUBJECT_TABS,
     CHART_SERIES_COUNT: CHART_SERIES_COUNT,
-    templateForBlock: templateForBlock,
     esc: esc,
     entityName: entityName,
     fmtPct: fmtPct,

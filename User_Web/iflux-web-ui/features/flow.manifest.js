@@ -38,7 +38,6 @@ var manifest = {
     m('user-data-sync', 'js', ASSET + 'iflux-user-data-sync.js?v=r20260928n', 'IfluxUserDataSync'),
     m('stock-mentions', 'js', ASSET + 'stock-mentions.js?v=r20260928n', 'IfluxStockMentions'),
     m('widget-registry', 'js', ASSET + 'widget-registry.js', 'IfluxWidgetRegistry'),
-    m('flow-page', 'js', ASSET + 'flow-page.js?v=bpPhaseD20260716', 'IfluxFlowPage'),
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=r20260928n', 'IfluxPageLayoutEngine'),
     m('flow-css', 'css', ASSET + 'flow.css?v=r20260928n', null)
   ],

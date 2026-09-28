@@ -108,61 +108,25 @@
     'WGT-NEWS-003': 'community_experts',
     'WGT-NEWS-004': 'community_topwl',
     'WGT-WAT-001': 'watchlist',
-    'BLK-MKT-OVERVIEW': 'market_overview',
-    'BLK-MKT-BREADTH': 'breadth',
-    'BLK-MKT-HEAT-SECTOR': 'heatmap_sector',
-    'BLK-MKT-HEAT-FAMILY': 'heatmap_family',
-    'BLK-MKT-HEAT-CHUDE': 'heatmap_chu_de',
-    'BLK-MKT-HEAT-STORY': 'heatmap_chu_de',
-    'BLK-MKT-LIQ': 'liquidity_volume',
-    'BLK-MKT-RANKINGS': 'top10_sector',
-    'BLK-FLW-MKT-SIDE': 'flow_zone',
-    'BLK-FLW-NET-STOCK': 'flow_net_top',
-    'BLK-FLW-NET-SECTOR': 'flow_net_top',
-    'BLK-FLW-NET-HST': 'flow_net_top',
-    'BLK-FLW-NET-CHUDE': 'flow_net_top',
-    'BLK-FLW-SCORE-BASIC': 'flow_score_basic',
-    'BLK-FLW-SCORE-ADV': 'flow_score_adv',
-    'BLK-FLW-SCORE-EX': 'flow_score_ex',
-    'BLK-NEWS-TRENDING': 'community_trending',
-    'BLK-NEWS-TOPIC-TOP': 'community_story_top',
-    'BLK-NEWS-PAGE': 'community_news',
-    'BLK-NEWS-EXPERTS': 'community_experts',
-    'BLK-NEWS-ACTIVE': 'community_active',
-    'BLK-NEWS-OVERVIEW': 'market_overview',
-    'BLK-NEWS-BREADTH': 'breadth',
-    'BLK-NEWS-TOPWL': 'community_topwl',
-    'BLK-LOY-INTRO': 'loyalty_intro',
-    'BLK-LOY-AFFILIATE': 'loyalty_affiliate',
-    'BLK-FAQ-LIST': 'faq_list',
-    'BLK-FAQ-SUPPORT': 'faq_support'
   };
 
   var ALGORITHMS = [
-    { id: 'ALG-MKT-OVERVIEW', label: 'Tổng quan thị trường (IG/PG/Breadth)', group: 'Thị trường', outputs: ['WGT-MKT-001', 'BLK-MKT-OVERVIEW', 'BLK-NEWS-OVERVIEW'], normalized: ['NORM-INDEX-SNAPSHOT', 'NORM-MARKET-AGG', 'NORM-BREADTH'], adminKeys: ['index_weight_method'] },
-    { id: 'ALG-MKT-BREADTH', label: 'Độ rộng thị trường', group: 'Thị trường', outputs: ['WGT-MKT-002', 'BLK-MKT-BREADTH', 'BLK-NEWS-BREADTH'], normalized: ['NORM-BREADTH'], adminKeys: [] },
-    { id: 'ALG-MKT-HEATMAP', label: 'Heatmap ngành / họ / story', group: 'Thị trường', outputs: ['WGT-MKT-004', 'WGT-MKT-005', 'WGT-MKT-006', 'BLK-MKT-HEAT-SECTOR', 'BLK-MKT-HEAT-FAMILY', 'BLK-MKT-HEAT-CHUDE'], normalized: ['NORM-HEATMAP'], adminKeys: ['heatmap_min_members'] },
-    { id: 'ALG-MKT-LIQ', label: 'Thanh khoản lũy kế phiên', group: 'Thị trường', outputs: ['WGT-MKT-007', 'WGT-MKT-008', 'BLK-MKT-LIQ'], normalized: ['NORM-LIQUIDITY'], adminKeys: ['liq_slot_minutes'] },
-    { id: 'ALG-MKT-TOP10', label: 'Top 10 hiệu suất', group: 'Thị trường', outputs: ['WGT-TOP-001', 'WGT-TOP-002', 'WGT-TOP-003', 'BLK-MKT-RANKINGS'], normalized: ['NORM-HEATMAP'], adminKeys: [] },
+    { id: 'ALG-MKT-OVERVIEW', label: 'Tổng quan thị trường (IG/PG/Breadth)', group: 'Thị trường', outputs: ['WGT-MKT-001'], normalized: ['NORM-INDEX-SNAPSHOT', 'NORM-MARKET-AGG', 'NORM-BREADTH'], adminKeys: ['index_weight_method'] },
+    { id: 'ALG-MKT-BREADTH', label: 'Độ rộng thị trường', group: 'Thị trường', outputs: ['WGT-MKT-002'], normalized: ['NORM-BREADTH'], adminKeys: [] },
+    { id: 'ALG-MKT-HEATMAP', label: 'Heatmap ngành / họ / story', group: 'Thị trường', outputs: ['WGT-MKT-004', 'WGT-MKT-005', 'WGT-MKT-006'], normalized: ['NORM-HEATMAP'], adminKeys: ['heatmap_min_members'] },
+    { id: 'ALG-MKT-LIQ', label: 'Thanh khoản lũy kế phiên', group: 'Thị trường', outputs: ['WGT-MKT-007', 'WGT-MKT-008'], normalized: ['NORM-LIQUIDITY'], adminKeys: ['liq_slot_minutes'] },
+    { id: 'ALG-MKT-TOP10', label: 'Top 10 hiệu suất', group: 'Thị trường', outputs: ['WGT-TOP-001', 'WGT-TOP-002', 'WGT-TOP-003'], normalized: ['NORM-HEATMAP'], adminKeys: [] },
     { id: 'ALG-MKT-MOVERS', label: 'Top biến động CP', group: 'Thị trường', outputs: ['WGT-MKT-003'], normalized: ['NORM-STOCK-SNAP'], adminKeys: [] },
     { id: 'ALG-FLW-SUMMARY', label: 'Tóm tắt dòng tiền phiên', group: 'Dòng tiền', outputs: ['WGT-FLW-001'], normalized: ['NORM-FLOW-SUMMARY'], adminKeys: ['flow_lot_big', 'smart_money_threshold'] },
-    { id: 'ALG-FLW-NET-TOP', label: 'Thống kê mua/bán ròng theo entity', group: 'Dòng tiền', outputs: ['WGT-FLW-SUBJ-STOCK', 'WGT-FLW-SUBJ-SECTOR', 'WGT-FLW-SUBJ-HST', 'WGT-FLW-SUBJ-STORY', 'BLK-FLW-NET-STOCK', 'BLK-FLW-NET-SECTOR', 'BLK-FLW-NET-HST', 'BLK-FLW-NET-CHUDE'], normalized: ['NORM-FLOW-NET'], adminKeys: ['flow_lot_big'] },
+    { id: 'ALG-FLW-NET-TOP', label: 'Thống kê mua/bán ròng theo entity', group: 'Dòng tiền', outputs: ['WGT-FLW-SUBJ-STOCK', 'WGT-FLW-SUBJ-SECTOR', 'WGT-FLW-SUBJ-HST', 'WGT-FLW-SUBJ-STORY'], normalized: ['NORM-FLOW-NET'], adminKeys: ['flow_lot_big'] },
     { id: 'ALG-FLW-STATS', label: 'TOP 10 dòng tiền vào/ra', group: 'Dòng tiền', outputs: ['WGT-FLW-STAT_STOCK_IN', 'WGT-FLW-STAT_STOCK_OUT', 'WGT-FLW-STAT_SECTOR_IN', 'WGT-FLW-STAT_SECTOR_OUT', 'WGT-FLW-STAT_HST_IN', 'WGT-FLW-STAT_HST_OUT', 'WGT-FLW-STAT_STORY_IN', 'WGT-FLW-STAT_STORY_OUT'], normalized: ['NORM-FLOW-NET'], adminKeys: ['smart_money_threshold'] },
-    { id: 'ALG-FLW-ZONE', label: 'Ngữ cảnh vùng Hỗ trợ/Kháng cự', group: 'Dòng tiền', outputs: ['WGT-FLW-CTX', 'BLK-FLW-MKT-SIDE'], normalized: ['NORM-MARKET-AGG'], adminKeys: [] },
-    { id: 'ALG-FLW-SCORE', label: 'Score dòng tiền CP', group: 'Dòng tiền', outputs: ['BLK-FLW-SCORE-BASIC', 'BLK-FLW-SCORE-ADV', 'BLK-FLW-SCORE-EX'], normalized: ['NORM-FLOW-NET', 'NORM-STOCK-SNAP'], adminKeys: ['smart_money_threshold'] },
-    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001', 'BLK-NEWS-TRENDING', 'BLK-NEWS-PAGE'], normalized: ['NORM-NEWS'], adminKeys: ['community_rank_window'] },
-    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP', 'BLK-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS'], adminKeys: ['interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
+    { id: 'ALG-FLW-ZONE', label: 'Ngữ cảnh vùng Hỗ trợ/Kháng cự', group: 'Dòng tiền', outputs: ['WGT-FLW-CTX'], normalized: ['NORM-MARKET-AGG'], adminKeys: [] },
+    { id: 'ALG-FLW-SCORE', label: 'Score dòng tiền CP', group: 'Dòng tiền', outputs: [], normalized: ['NORM-FLOW-NET', 'NORM-STOCK-SNAP'], adminKeys: ['smart_money_threshold'] },
+    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001'], normalized: ['NORM-NEWS'], adminKeys: ['community_rank_window'] },
+    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS'], adminKeys: ['interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
     { id: 'ALG-STORY-RELEVANCE', label: 'Relevance Score Story ↔ Stock (cumulative)', group: 'Nội dung', outputs: ['WGT-FLW-SUBJ-STORY', 'WGT-MKT-006', 'WGT-TOP-003'], normalized: ['NORM-CONTENT-STORY', 'NORM-FLOW-NET'], adminKeys: ['relevance_w_follow', 'relevance_keep_min', 'topic_auto_promote', 'topic_auto_promote_min_interest'] },
-    { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-NEWS-002', 'WGT-NEWS-003', 'BLK-NEWS-EXPERTS', 'BLK-NEWS-ACTIVE'], normalized: ['NORM-NEWS'], adminKeys: [] },
-    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'BLK-NEWS-TOPWL', 'WGT-NEWS-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
-  ];
-
-  var STATIC_DISPLAY_BLOCKS = [
-    { id: 'BLK-NEWS-PAGE', label: 'Tin tức', kind: 'page', group: 'Block trang · Tin tức', minTier: 'guest', page: 'news' },
-    { id: 'BLK-LOY-INTRO', label: 'Giới thiệu', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
-    { id: 'BLK-LOY-AFFILIATE', label: 'Affiliate', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
-    { id: 'BLK-FAQ-LIST', label: 'Danh sách FAQ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' },
-    { id: 'BLK-FAQ-SUPPORT', label: 'Khối liên hệ hỗ trợ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' }
+    { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-NEWS-002', 'WGT-NEWS-003'], normalized: ['NORM-NEWS'], adminKeys: [] },
+    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'WGT-NEWS-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
   ];
 
   var PAGE_LABELS = {
@@ -209,7 +173,6 @@
         });
       });
     }
-    STATIC_DISPLAY_BLOCKS.forEach(function (b) { list.push(b); });
     return list;
   }
 

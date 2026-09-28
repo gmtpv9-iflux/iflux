@@ -7,7 +7,7 @@
  *   Không phải “page giả” ôm cả trang — chỉ vùng Main.
  */
 
-var VER = '?v=r20260928q';
+var VER = '?v=r20260928r';
 var CSS_HUB = [
   '/User_Web/iflux-web-ui/hub.css?v=r20260928n',
   '/User_Web/iflux-web-ui/profile.css?v=r20260928n'

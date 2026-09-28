@@ -38,15 +38,6 @@
   }
 
   var BLOCK_ID_ALIAS = {
-    'BLK-COM-NEWS': 'BLK-NEWS-PAGE',
-    'BLK-COM-TRENDING': 'BLK-NEWS-TRENDING',
-    'BLK-COM-CHUDE-TOP': 'BLK-NEWS-TOPIC-TOP',
-    'BLK-COM-EXPERTS': 'BLK-NEWS-EXPERTS',
-    'BLK-COM-ACTIVE': 'BLK-NEWS-ACTIVE',
-    'BLK-COM-OVERVIEW': 'BLK-NEWS-OVERVIEW',
-    'BLK-COM-BREADTH': 'BLK-NEWS-BREADTH',
-    'BLK-COM-TOPWL': 'BLK-NEWS-TOPWL',
-    'BLK-COM-FEED': 'BLK-NEWS-FEED',
     'WGT-COM-001': 'WGT-NEWS-001',
     'WGT-COM-002': 'WGT-NEWS-002',
     'WGT-COM-003': 'WGT-NEWS-003',
@@ -66,10 +57,6 @@
       if (BLOCK_ID_ALIAS[rev] === id && plan.blocks[rev]) return true;
     }
     return false;
-  }
-
-  function canShowBlock(id) {
-    return hasBlock(id);
   }
 
   function getLimit(key, fallback) {
@@ -139,7 +126,6 @@
     currentPlan: currentPlan,
     hasFeature: hasFeature,
     hasBlock: hasBlock,
-    canShowBlock: canShowBlock,
     getLimit: getLimit,
     canAccessWidget: canAccessWidget,
     enabledBlocks: enabledBlocks,

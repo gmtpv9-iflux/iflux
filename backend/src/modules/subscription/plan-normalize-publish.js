@@ -8,19 +8,6 @@
 
 const TIER_ORDER = { guest: 0, free: 1, premium: 2, elite: 3 };
 
-const STATIC_PAGE_BLOCKS = [
-  { id: 'BLK-COM-NEWS', minTier: 'guest', page: 'news' },
-  { id: 'BLK-LOY-INTRO', minTier: 'free', page: 'loyalty' },
-  { id: 'BLK-LOY-AFFILIATE', minTier: 'free', page: 'loyalty' },
-  { id: 'BLK-FAQ-LIST', minTier: 'guest', page: 'faq' },
-  { id: 'BLK-FAQ-SUPPORT', minTier: 'guest', page: 'faq' }
-];
-
-const BLOCK_ALIASES = {
-  'BLK-MKT-HEAT-STORY': 'BLK-MKT-HEAT-CHUDE',
-  'BLK-FLW-NET-STORY': 'BLK-FLW-NET-CHUDE'
-};
-
 const BASE = {
   guest: {
     id: 'guest', name: 'Vãng lai', tier: 'guest', sort: 0,
@@ -54,13 +41,6 @@ const BASE = {
 
 const TIERS = ['guest', 'free', 'premium', 'elite'];
 
-function pageForWidget(id) {
-  if (/^WGT-FLW|^WGT-FLOW/.test(id)) return ['flow'];
-  if (/^WGT-COM/.test(id)) return ['news'];
-  if (/^WGT-WAT/.test(id)) return ['dashboard'];
-  return ['market', 'dashboard'];
-}
-
 function collectWidgetIds(store) {
   const set = new Set();
   const addFromBlocks = (blocks) => {
@@ -80,10 +60,7 @@ function createWidgetIndex(store) {
     widgetIds: () => ids.slice(),
     allWidgetIdsInLibrary: () => ids.slice(),
     canonicalWidgetId: (id) => id,
-    widgetDefaults: (id) => ({ title: id, tier: 'free' }),
-    widgetDeploy: (id) => ({ pages: pageForWidget(id), blocks: [] }),
-    getPageDeploy: (id) => ({ pages: pageForWidget(id), blocks: [] }),
-    widgetsForPage: (pageKey) => ids.filter((id) => pageForWidget(id).indexOf(pageKey) >= 0)
+    widgetDefaults: (id) => ({ title: id, tier: 'free' })
   };
 }
 
@@ -96,32 +73,13 @@ function isWidgetEntitlementId(id) {
   return String(id || '').indexOf('WGT-') === 0;
 }
 
+/* Quyền chỉ theo widget (Tầng 4, Phân quyền sử dụng) — không còn block trang cứng BLK-*. */
 function buildBlocksCatalog(wl) {
-  const list = [];
-  wl.widgetIds().forEach((wid) => {
-    list.push({
-      id: wid,
-      kind: 'widget',
-      minTier: (wl.widgetDefaults(wid).tier) || 'free',
-      page: wl.widgetDeploy(wid).pages[0] || 'dashboard'
-    });
-  });
-  STATIC_PAGE_BLOCKS.forEach((b) => list.push(Object.assign({ kind: 'page' }, b)));
-  return list;
-}
-
-function syncPageBlocksFromWidgets(plan, wl) {
-  if (!plan) return plan;
-  if (!plan.blocks) plan.blocks = {};
-  const blkNeeded = {};
-  STATIC_PAGE_BLOCKS.forEach((b) => { blkNeeded[b.id] = !!plan.blocks[b.id]; });
-  Object.keys(plan.blocks).forEach((key) => {
-    if (key.indexOf('WGT-') !== 0 || !plan.blocks[key]) return;
-    const dep = wl.getPageDeploy(key);
-    (dep && dep.blocks ? dep.blocks : []).forEach((blk) => { blkNeeded[blk] = true; });
-  });
-  Object.keys(blkNeeded).forEach((blk) => { plan.blocks[blk] = blkNeeded[blk]; });
-  return plan;
+  return wl.widgetIds().map((wid) => ({
+    id: wid,
+    kind: 'widget',
+    minTier: (wl.widgetDefaults(wid).tier) || 'free'
+  }));
 }
 
 function defaultBlocksForTier(tier, wl) {
@@ -135,7 +93,6 @@ function defaultBlocksForTier(tier, wl) {
   if (tier === 'elite') {
     wl.widgetIds().forEach((id) => { if (isWidgetEntitlementId(id)) out[id] = true; });
   }
-  syncPageBlocksFromWidgets({ tier, blocks: out }, wl);
   return out;
 }
 
@@ -238,11 +195,12 @@ function normalizePlan(plan, wl) {
   plan.ent.widgets = plan.ent.widgets != null ? plan.ent.widgets : leg.widgets;
 
   plan.blocks = Object.assign(defaultBlocksForTier(tier, wl), plan.blocks || {});
+  /* Dữ liệu cũ: bỏ mọi khoá không phải widget (BLK-* block trang cứng). */
+  Object.keys(plan.blocks).forEach((id) => { if (!isWidgetEntitlementId(id)) delete plan.blocks[id]; });
   migratePlanWidgetAliases(plan, wl);
   plan.actions = Object.assign(defaultActionsForTier(tier), plan.actions || {});
   plan.limits = Object.assign(defaultLimitsForTier(tier), plan.limits || {});
 
-  syncPageBlocksFromWidgets(plan, wl);
   syncLegacyEntFromActions(plan);
 
   plan.ent.newsWrite = false;

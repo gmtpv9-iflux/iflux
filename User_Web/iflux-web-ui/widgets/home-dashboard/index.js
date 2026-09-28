@@ -12,7 +12,7 @@
  */
 
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
-import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=r20260928q';
+import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=r20260928r';
 
 var A = '/User_Web/iflux-web-ui/';
 var V = 'ui00120260723';

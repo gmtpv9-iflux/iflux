@@ -30,17 +30,17 @@ export const WIDGET_DASHBOARD_DEPS = {
   ],
   'WGT-COM-TREND': [
     dashDep('IfluxStockStore', 'stock-store.js?v=r20260928n'),
-    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928n'),
+    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928r'),
     dashDep('IfluxWatchlistStore', 'watchlist-store.js?v=r20260928n'),
     { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
     dashDep('IfluxCommunityTrending', 'news-trending.js?v=mockRmWp1_20260809')
   ],
   'WGT-COM-ACTIVE': [
-    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928n'),
+    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928r'),
     dashDep('IfluxCommunityActiveMembers', 'news-active-members.js')
   ],
   'WGT-COM-EXPERTS': [
-    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928n'),
+    dashDep('IfluxNewsStore', 'news-store.js?v=r20260928r'),
     dashDep('IfluxCommunityFeaturedExperts', 'news-featured-experts.js')
   ],
   'WGT-COM-TOPWL': [

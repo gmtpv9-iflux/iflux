@@ -65,15 +65,6 @@
     { key: 'searchResults', label: 'Kết quả tìm kiếm / lần', unit: 'kết quả', min: 0, step: 1 }
   ];
 
-  /* Block trang không map WGT (FAQ · Membership · Tin tức…) */
-  var STATIC_PAGE_BLOCKS = [
-    { id: 'BLK-NEWS-PAGE', label: 'Tin tức', kind: 'page', group: 'Block trang · Tin tức', minTier: 'guest', page: 'news' },
-    { id: 'BLK-LOY-INTRO', label: 'Giới thiệu', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
-    { id: 'BLK-LOY-AFFILIATE', label: 'Affiliate', kind: 'page', group: 'Block trang · Membership', minTier: 'free', page: 'loyalty' },
-    { id: 'BLK-FAQ-LIST', label: 'Danh sách FAQ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' },
-    { id: 'BLK-FAQ-SUPPORT', label: 'Khối liên hệ hỗ trợ', kind: 'page', group: 'Block trang · FAQ', minTier: 'guest', page: 'faq' }
-  ];
-
   /* ---------------------------------------------------------------
    * Nguồn Widget = Core 4 tầng · Tầng 4 (PlatformLayersWidgets) — SoT DUY NHẤT.
    * Nếu Tầng 4 chưa nạp (một số trang cũ), fallback Thư viện Widget để không vỡ.
@@ -96,7 +87,7 @@
 
     function dep(id) {
       var m = byId[id];
-      return m ? { pages: m.pages.slice(), blocks: m.blocks.slice() } : { pages: ['dashboard'], blocks: [] };
+      return m ? { pages: m.pages.slice() } : { pages: ['dashboard'] };
     }
 
     return {
@@ -133,7 +124,6 @@
       deployLabel: function (id) {
         var d = dep(id);
         var parts = d.pages.slice();
-        if (d.blocks.length) parts.push(d.blocks.join(', '));
         return parts.join(' · ');
       }
     };
@@ -193,7 +183,6 @@
         library: true
       });
     });
-    STATIC_PAGE_BLOCKS.forEach(function (b) { list.push(b); });
     return list;
   }
 
@@ -224,26 +213,11 @@
 
   var BLOCKS = buildBlocksCatalog();
 
-  /** Sync BLK-* trên trang User từ WGT-* đã bật */
-  function syncPageBlocksFromWidgets(plan) {
-    if (!plan) return plan;
-    if (!plan.blocks) plan.blocks = {};
-
-    var blkNeeded = {};
-    STATIC_PAGE_BLOCKS.forEach(function (b) {
-      blkNeeded[b.id] = !!plan.blocks[b.id];
-    });
-
-    Object.keys(plan.blocks).forEach(function (key) {
-      if (key.indexOf('WGT-') !== 0 || !plan.blocks[key]) return;
-      var dep = wl() && wl().getPageDeploy ? wl().getPageDeploy(key) : null;
-      (dep && dep.blocks ? dep.blocks : []).forEach(function (blk) {
-        blkNeeded[blk] = true;
-      });
-    });
-
-    Object.keys(blkNeeded).forEach(function (blk) {
-      plan.blocks[blk] = blkNeeded[blk];
+  /** Quyền chỉ theo widget (Tầng 4) — bỏ mọi khoá cũ không phải widget (BLK-* block trang cứng). */
+  function dropNonWidgetBlocks(plan) {
+    if (!plan || !plan.blocks) return plan;
+    Object.keys(plan.blocks).forEach(function (id) {
+      if (!isWidgetEntitlementId(id)) delete plan.blocks[id];
     });
     return plan;
   }
@@ -251,11 +225,6 @@
   function isWidgetEntitlementId(id) {
     return String(id || '').indexOf('WGT-') === 0;
   }
-
-  var BLOCK_ALIASES = {
-    'BLK-MKT-HEAT-STORY': 'BLK-MKT-HEAT-CHUDE',
-    'BLK-FLW-NET-STORY': 'BLK-FLW-NET-CHUDE'
-  };
 
   /** Widget thuộc SoT Phân quyền = có trong Tầng 4. Ngoài danh sách → không áp dụng Permission. */
   function isPermissionScopedWidget(id) {
@@ -271,47 +240,14 @@
     return false;
   }
 
-  function isStaticPageBlock(id) {
-    return STATIC_PAGE_BLOCKS.some(function (b) { return b.id === id; });
-  }
-
   function resolveBlockEnabled(plan, id) {
-    if (!plan || !plan.blocks) return false;
-    /* Block trang (FAQ · Membership · Tin tức): tôn trọng plan.blocks khi đã set.
-     * Trước đây luôn true → Admin tắt (vd guest BLK-LOY-AFFILIATE) không có tác dụng. */
-    if (isStaticPageBlock(id)) {
-      if (Object.prototype.hasOwnProperty.call(plan.blocks, id)) {
-        return !!plan.blocks[id];
-      }
-      /* Chưa có key → mở theo minTier catalog (guest chỉ guest-min). */
-      var meta = STATIC_PAGE_BLOCKS.filter(function (b) { return b.id === id; })[0];
-      var tier = String((plan && plan.tier) || 'guest').toLowerCase();
-      if (tier === 'guest') {
-        return !!(meta && meta.minTier === 'guest');
-      }
-      return tierRank(tier) >= tierRank(meta && meta.minTier);
-    }
+    if (!plan || !plan.blocks || !isWidgetEntitlementId(id)) return false;
     /* WGT-* không có trong Tầng 4 (vd Page Composite) → ngoài phạm vi Permission → luôn mở. */
-    if (isWidgetEntitlementId(id) && !isPermissionScopedWidget(id)) return true;
+    if (!isPermissionScopedWidget(id)) return true;
     if (plan.blocks[id]) return true;
-    var alias = BLOCK_ALIASES[id];
-    if (alias && plan.blocks[alias]) return true;
-    var rev = Object.keys(BLOCK_ALIASES).filter(function (k) { return BLOCK_ALIASES[k] === id; })[0];
-    if (rev && plan.blocks[rev]) return true;
-    if (isWidgetEntitlementId(id)) {
-      if (wl() && wl().canonicalWidgetId) {
-        var can = wl().canonicalWidgetId(id);
-        if (can !== id && plan.blocks[can]) return true;
-      }
-      return false;
-    }
-    if (!wl() || !wl().allWidgetIdsInLibrary) return false;
-    var ids = wl().allWidgetIdsInLibrary();
-    var i;
-    for (i = 0; i < ids.length; i++) {
-      if (!plan.blocks[ids[i]]) continue;
-      var dep = wl().getPageDeploy(ids[i]);
-      if (dep && dep.blocks && dep.blocks.indexOf(id) >= 0) return true;
+    if (wl() && wl().canonicalWidgetId) {
+      var can = wl().canonicalWidgetId(id);
+      if (can !== id && plan.blocks[can]) return true;
     }
     return false;
   }
@@ -349,7 +285,7 @@
       });
     }
     var plan = { tier: tier, blocks: out };
-    syncPageBlocksFromWidgets(plan);
+    dropNonWidgetBlocks(plan);
     return plan.blocks;
   }
 
@@ -448,7 +384,7 @@
     if (!plan.blocks) plan.blocks = {};
     if (node.blockId && node.type !== 'group') {
       plan.blocks[node.blockId] = !!enabled;
-      if (isWidgetEntitlementId(node.blockId)) syncPageBlocksFromWidgets(plan);
+      if (isWidgetEntitlementId(node.blockId)) dropNonWidgetBlocks(plan);
     }
     return plan;
   }
@@ -499,7 +435,7 @@
     plan.actions = Object.assign(defaultActionsForTier(tier), plan.actions || {});
     plan.limits = Object.assign(defaultLimitsForTier(tier), plan.limits || {});
 
-    syncPageBlocksFromWidgets(plan);
+    dropNonWidgetBlocks(plan);
     syncLegacyEntFromActions(plan);
 
     /* SoT tạm thời: không cho User Web viết bài (mọi tier / override). */
@@ -547,7 +483,7 @@
     defaultLimitsForTier: defaultLimitsForTier,
     getAccessValue: getAccessValue,
     setAccessValue: setAccessValue,
-    syncPageBlocksFromWidgets: syncPageBlocksFromWidgets,
+    dropNonWidgetBlocks: dropNonWidgetBlocks,
     resolveBlockEnabled: resolveBlockEnabled,
     isPermissionScopedWidget: isPermissionScopedWidget,
     isWidgetEntitlementId: isWidgetEntitlementId,

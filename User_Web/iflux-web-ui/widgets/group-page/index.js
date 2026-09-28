@@ -35,7 +35,7 @@ var CORE_TIERS = [
   [
     ASSET + 'watchlist-store.js?v=r20260928n',
     ASSET + 'stock-store.js?v=r20260928n',
-    ASSET + 'news-store.js?v=r20260928n',
+    ASSET + 'news-store.js?v=r20260928r',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
@@ -43,7 +43,7 @@ var CORE_TIERS = [
     ASSET + 'watchlist-ui.js?v=r20260928q',
     ASSET + 'news-ui.js?v=r20260928n',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
-    ASSET + 'news-daily-feed.js?v=r20260928n',
+    ASSET + 'news-daily-feed.js?v=r20260928r',
     ASSET + 'iflux-market-quotes.js?v=r20260928n'
   ],
   [

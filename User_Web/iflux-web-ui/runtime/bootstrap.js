@@ -24,15 +24,15 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=r20260928q';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=r20260928q';
+import { bootShell } from './shell-boot.js?v=r20260928r';
 import { pageKeyFromPath } from './page-keys.js?v=r20260928p';
 import { installSoftNavigation } from './soft-navigation.js?v=r20260928q';
 import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
-var VER = '?v=r20260928q';
+var VER = '?v=r20260928r';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20260928q';
+var PF = '?v=r20260928r';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },

@@ -5,7 +5,7 @@
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928q';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import featureManifest from '../../features/flow.manifest.js?v=r20260928q';
+import featureManifest from '../../features/flow.manifest.js?v=r20260928r';
 
 var featureRt = null;
 
@@ -76,7 +76,6 @@ function bindFlowTabs(root) {
 }
 
 function applyFlow(root) {
-  if (window.IfluxFlowPage && IfluxFlowPage.init) IfluxFlowPage.init();
   bindFlowTabs(root || document);
   if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('flow');
   /* Share: click stub Foundation — không ensure khi mount Flow page. */

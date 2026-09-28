@@ -279,7 +279,7 @@
 
     TIERS.forEach(function (tier) {
       if (tier === 'guest' && out[tier].pages) out[tier].pages.dashboard = false;
-      if (Cat.syncPageBlocksFromWidgets) Cat.syncPageBlocksFromWidgets(out[tier]);
+      if (Cat.dropNonWidgetBlocks) Cat.dropNonWidgetBlocks(out[tier]);
     });
 
     _lastPlans = out;
