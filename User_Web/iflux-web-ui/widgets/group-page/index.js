@@ -41,7 +41,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'watchlist-ui.js?v=r20260928q',
-    ASSET + 'news-ui.js?v=r20260928n',
+    ASSET + 'news-ui.js?v=r20260929a',
     ASSET + 'comments-cta.js?v=ix45Purge20260724',
     ASSET + 'news-daily-feed.js?v=r20260928r',
     ASSET + 'iflux-market-quotes.js?v=r20260928n'
