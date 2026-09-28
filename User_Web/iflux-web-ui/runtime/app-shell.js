@@ -54,27 +54,48 @@ export function ensureSections(root, manifest) {
 }
 
 /**
- * Bố cục trang chung (platform/web/web.css): Sidebar trái + Main.
- * Mọi trang có section sidebar dùng chung — không còn layout riêng từng trang.
+ * Khung trang chung của User Web (platform/web/web.css) — mọi trang dùng:
+ *
+ *   .uw-page-layout
+ *   ├─ aside.uw-page-sidebar   → host [sidebar] (widget đặt qua Widget Placement) + nội dung đặc thù
+ *   └─ .uw-page-main           → host [main] (lưới widget 12 cột) + nội dung đặc thù (feed, tab, biểu đồ…)
+ *
+ * Host chỉ chứa widget (Layout Engine xoá/dựng lại); nội dung đặc thù nằm ở *Content, không bị xoá.
+ * Host rỗng và Sidebar không có gì tự ẩn (CSS) — không cần JS theo dõi.
+ * Tab host của trang (basic/advanced/exclusive/trading…) nằm trong mainContent do trang tự dựng.
+ * Tỉ lệ ≥ md: Sidebar 3/12 · Main 9/12. Biến thể: opts.noSidebar (FAQ, Gói cước…) ·
+ * opts.rightSidebar → thêm Sidebar phải 2/12, Main còn 7/12.
  */
-export function applyPageLayout(root) {
-  if (!root) return;
-  var sidebar = root.querySelector(':scope > [data-section="sidebar"]');
-  var main = root.querySelector(':scope > [data-section="main"]');
-  if (!sidebar || !main) return;
-  root.classList.add('uw-page-layout');
-  sidebar.classList.add('uw-page-sidebar');
-  main.classList.add('uw-page-main');
+function aside(cls, key, label) {
+  return '<aside class="' + cls + '" aria-label="' + String(label).replace(/"/g, '&quot;') + '">' +
+    '<div class="uw-page-host" data-section="' + key + '" data-ifx-section="' + key + '"></div>' +
+    '<div class="uw-page-sidebar-content"></div>' +
+  '</aside>';
 }
 
-/** Sidebar chỉ ẩn khi không có nội dung (không widget, không nội dung đặc thù). Gọi sau khi mount. */
-export function updateSidebarVisibility(root) {
-  if (!root || !root.classList.contains('uw-page-layout')) return;
-  var sidebar = root.querySelector(':scope > [data-section="sidebar"]');
-  root.classList.toggle('is-no-sidebar', !sidebar || !sidebar.children.length);
+export function buildPageFrame(root, opts) {
+  opts = opts || {};
+  var layout = document.createElement('div');
+  layout.className = 'uw-page-layout' + (opts.rightSidebar ? ' uw-page-layout-right' : '');
+  layout.innerHTML =
+    (opts.noSidebar ? '' : aside('uw-page-sidebar', 'sidebar', opts.sidebarLabel || 'Sidebar')) +
+    '<div class="uw-page-main">' +
+      '<div class="uw-page-host ifx-grid" data-section="main" data-ifx-section="main" data-layout="grid-12"></div>' +
+      '<div class="uw-page-main-content"></div>' +
+    '</div>' +
+    (opts.rightSidebar ? aside('uw-page-sidebar uw-page-sidebar-right', 'sidebar-right', 'Sidebar phải') : '');
+  root.appendChild(layout);
+  var left = layout.querySelector('.uw-page-sidebar:not(.uw-page-sidebar-right)');
+  return {
+    layout: layout,
+    sidebarHost: left ? left.querySelector('[data-section="sidebar"]') : null,
+    sidebarContent: left ? left.querySelector('.uw-page-sidebar-content') : null,
+    mainHost: layout.querySelector('[data-section="main"]'),
+    mainContent: layout.querySelector('.uw-page-main-content')
+  };
 }
 
-/** Class nội bộ trang Nhà của tôi (hồ sơ / bảng tổng quan) — bố cục do applyPageLayout. */
+/** Class nội bộ trang Nhà của tôi (hồ sơ / bảng tổng quan). */
 export function applyHubLayout(root) {
   if (!root) return;
   var sidebar = root.querySelector('[data-section="sidebar"]');

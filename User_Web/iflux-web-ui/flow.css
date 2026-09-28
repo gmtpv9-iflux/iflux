@@ -35,12 +35,6 @@
   gap: var(--ifx-space-20);
   align-items: start;
 }
-.ifx-flow-page-layout {
-  display: grid;
-  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
-  gap: var(--ifx-space-20);
-  align-items: start;
-}
 .ifx-flow-market-sidebar {
   display: flex;
   flex-direction: column;
@@ -691,9 +685,6 @@
 }
 
 @media (max-width: 1024px) {
-  .ifx-flow-page-layout {
-    grid-template-columns: 1fr;
-  }
   .ifx-flow-layout {
     grid-template-columns: 1fr;
   }

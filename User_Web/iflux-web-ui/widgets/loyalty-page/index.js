@@ -2,6 +2,8 @@
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -442,12 +444,15 @@ var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
     </div>`;
 
 export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el).mainContent.innerHTML = LAYOUT_HTML;
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
+  if (window.IfluxLoyaltyPage) IfluxLoyaltyPage.init();
+  await mountPageWidgets(el, 'membership');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

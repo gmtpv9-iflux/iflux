@@ -23,7 +23,7 @@
   var DEFAULT_SECTIONS = [
     { id: 'SEC-HEADER', key: 'header', label: 'Header', kind: 'shell', visible: true, locked: true },
     { id: 'SEC-NAV', key: 'nav', label: 'Navigation / Bottom nav', kind: 'shell', visible: true, locked: true },
-    { id: 'SEC-SIDEBAR', key: 'sidebar', label: 'Sidebar trái / Vùng phụ', kind: 'region', visible: false, locked: false },
+    { id: 'SEC-SIDEBAR', key: 'sidebar', label: 'Sidebar trái', kind: 'region', visible: true, locked: false },
     { id: 'SEC-MAIN', key: 'main', label: 'Main — Widget grid', kind: 'content', visible: true, locked: true, layout: 'grid-12' },
     { id: 'SEC-SIDEBAR-RIGHT', key: 'sidebar-right', label: 'Sidebar phải', kind: 'region', visible: false, locked: false },
     { id: 'SEC-FOOTER', key: 'footer', label: 'Footer', kind: 'shell', visible: false, locked: false }
@@ -51,38 +51,24 @@
     { key: 'trading', label: 'Tab Thống kê', icon: 'ti-chart-bar' }
   ];
 
-  var PAGE_REGIONS = {
-    dashboard: ['sidebar', 'main'],
-    market: ['sidebar', 'main'],
-    news: ['main', 'sidebar-right'],
-    community: ['main', 'sidebar-right'],
-    'news-topic': ['main', 'sidebar-right'],
-    'news-cat': ['main', 'sidebar-right'],
-    'news-author': ['main', 'sidebar-right'],
-    'com-topic': ['main', 'sidebar-right'],
-    'com-cat': ['main', 'sidebar-right'],
-    'com-author': ['main', 'sidebar-right'],
-    article: ['sidebar-right'],
-    'com-post-detail': ['sidebar-right'],
-    // Runtime Flow đã có đúng 4 host này. Main là Page Feature, không phải Widget Area.
-    flow: ['sidebar', 'basic', 'advanced', 'exclusive'],
-    membership: ['main'],
-    faq: ['main'],
-    account: ['sidebar', 'main'],
-    messages: ['sidebar', 'main'],
-    // Knowledge Layer — mọi trang Danh sách/Chi tiết đều có Widget Area ở Sidebar trái
-    stocks: ['sidebar', 'main'],
-    'stock-detail': ['sidebar', 'trading'],
-    sectors: ['sidebar', 'main'],
-    'sector-detail': ['sidebar', 'trading'],
-    ecosystems: ['sidebar', 'main'],
-    'eco-detail': ['sidebar', 'trading'],
-    'cau-chuyen': ['sidebar', 'main'],
-    'cau-chuyen-detail': ['sidebar', 'trading']
+  /* Khung chung User Web: Sidebar trái (3/12) + Main (9/12). Sidebar tự ẩn khi không có widget / nội dung đặc thù.
+     Biến thể: trang không có Sidebar (NO_SIDEBAR) · trang có thêm Sidebar phải 2/12 (RIGHT_SIDEBAR, Main còn 7/12). */
+  var BASE_REGIONS = ['sidebar', 'main'];
+  var NO_SIDEBAR = { faq: true };
+  var RIGHT_SIDEBAR = {};
+  var PAGE_TAB_REGIONS = {
+    flow: ['basic', 'advanced', 'exclusive'],
+    'stock-detail': ['trading'],
+    'sector-detail': ['trading'],
+    'eco-detail': ['trading'],
+    'cau-chuyen-detail': ['trading']
   };
 
+
   function pageRegions(pageKey) {
-    return (PAGE_REGIONS[pageKey] || ['main']).slice();
+    var base = NO_SIDEBAR[pageKey] ? ['main'] : BASE_REGIONS.slice();
+    if (RIGHT_SIDEBAR[pageKey]) base.push('sidebar-right');
+    return base.concat(PAGE_TAB_REGIONS[pageKey] || []);
   }
 
   function hasRegion(pageKey, regionKey) {
@@ -139,10 +125,10 @@
       navVisible: true,
       status: 'active',
       userCustomizable: false,
-      description: 'Feed bài viết cộng đồng (entry) — Main + Sidebar phải. Không dùng list /community/posts riêng.',
+      description: 'Feed bài viết cộng đồng (entry) — Sidebar trái + Main. Không dùng list /community/posts riêng.',
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12' },
-        { key: 'sidebar-right', visible: true, label: 'Sidebar phải' }
+        { key: 'sidebar', visible: true }
       ])
     },
     {
@@ -315,7 +301,7 @@
       group: 'News', dynamic: true, description: description || '',
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12', label: 'Main — Feed tin (lọc theo collection)' },
-        { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
+        { key: 'sidebar', visible: true }
       ])
     };
   }
@@ -323,15 +309,15 @@
   var COMMUNITY_PAGES = [
     communityPage(
       'PAGE-NEWS-TOPIC', 'news-topic', 'Chủ đề Tin tức', 'chu-de', '/tin-tuc/chu-de/:slug',
-      'Trang danh sách theo chủ đề (vd /tin-tuc/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar phải: Widget Host riêng (danh sách do Admin thiết kế).'
+      'Trang danh sách theo chủ đề (vd /tin-tuc/chu-de/dau-tu-cong). Main: feed tin gắn chủ đề đó · Sidebar trái: Widget Host riêng (danh sách do Admin thiết kế).'
     ),
     communityPage(
       'PAGE-NEWS-CAT', 'news-cat', 'Danh mục Tin tức', 'danh-muc', '/tin-tuc/danh-muc/:slug',
-      'Trang danh sách theo danh mục. Main: feed tin thuộc danh mục · Sidebar phải: Widget Host riêng.'
+      'Trang danh sách theo danh mục. Main: feed tin thuộc danh mục · Sidebar trái: Widget Host riêng.'
     ),
     communityPage(
       'PAGE-NEWS-AUTHOR', 'news-author', 'Tác giả Tin tức', 'tac-gia', '/tin-tuc/tac-gia/:username',
-      'Trang danh sách theo tác giả. Main: feed tin của tác giả · Sidebar phải: Widget Host riêng.'
+      'Trang danh sách theo tác giả. Main: feed tin của tác giả · Sidebar trái: Widget Host riêng.'
     )
   ];
 
@@ -340,9 +326,10 @@
     {
       id: 'PAGE-ARTICLE', key: 'article', title: 'Chi tiết bài viết', path: '/tin-tuc/bai-viet/:id',
       order: 40 + COMMUNITY_PAGE_ORDER++, navVisible: false, status: 'active', userCustomizable: false, group: 'News', dynamic: true,
-      description: 'Trang chi tiết bài viết. Main: nội dung bài viết (không composable) · Sidebar phải: Widget Host riêng, chèn trước các block đặc thù (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận).',
+      description: 'Trang chi tiết bài viết. Main: lưới widget + nội dung bài viết · Sidebar trái: widget + các block đặc thù (Chủ đề/Ngành/Cổ phiếu/Hệ sinh thái/Mục lục/Bình luận).',
       sections: cloneSections([
-        { key: 'sidebar-right', visible: true, label: 'Sidebar phải — Widget Host' }
+        { key: 'sidebar', visible: true },
+        { key: 'main', visible: true, layout: 'grid-12' }
       ])
     },
     { id: 'PAGE-NEWS-WRITE', key: 'news-write', title: 'Viết bài', path: '/tin-tuc/viet-bai', status: 'inactive' }
@@ -796,7 +783,6 @@
     WIDTH_SPAN: WIDTH_SPAN,
     SPAN_WIDTH: SPAN_WIDTH,
     CUSTOMIZABLE_REGIONS: CUSTOMIZABLE_REGIONS,
-    PAGE_REGIONS: PAGE_REGIONS,
     pageRegions: pageRegions,
     hasRegion: hasRegion,
     regionLabel: regionLabel,

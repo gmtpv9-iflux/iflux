@@ -87,17 +87,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       || root.querySelector('[data-section="' + sectionKey + '"]');
   }
 
-  function ensureSection(root, sectionKey, wantsGrid) {
-    var el = findSection(root, sectionKey);
-    if (el) return el;
-    var wrap = document.createElement(sectionKey === 'sidebar' ? 'aside' : 'div');
-    wrap.setAttribute('data-ifx-section', sectionKey);
-    wrap.setAttribute('data-section', sectionKey);
-    wrap.className = 'ifx-rt-section ifx-rt-section--' + sectionKey;
-    if (wantsGrid) wrap.className += ' ifx-grid';
-    root.appendChild(wrap);
-    return wrap;
-  }
 
   /**
    * Dựng Host Tree từ PagePublished.
@@ -133,9 +122,16 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         sec.innerHTML = '';
       }
 
+      /* Host Admin đã tắt (Hiển thị = off) → không hiện widget đặt vào đó. */
+      var hidden = Object.create(null);
+      (page.sections || []).forEach(function (s) {
+        if (s && s.key && s.visible === false) hidden[s.key] = true;
+      });
+
       var placements = (page.placements || [])
         .filter(function (p) {
           if (!p || !p.widgetId || p.enabled === false) return false;
+          if (hidden[p.section || 'main']) return false;
           if (filterSet && !filterSet[p.section || 'main']) return false;
           return true;
         })
@@ -146,10 +142,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       var tree = [];
       placements.forEach(function (p) {
         var sectionKey = p.section || 'main';
-        var sectionEl = findSection(root, sectionKey)
-          || ensureSection(root, sectionKey, false);
-        if (!sectionEl.getAttribute('data-ifx-section')) {
-          sectionEl.setAttribute('data-ifx-section', sectionKey);
+        var sectionEl = findSection(root, sectionKey);
+        if (!sectionEl) {
+          /* Trang không có host này → không tự tạo host lạc chỗ. */
+          if (global.console && console.warn) console.warn('[LayoutEngine] Trang không có host', sectionKey, '— bỏ qua', p.widgetId);
+          return;
         }
         if (sectionWantsGrid(sectionEl, sectionKey, page.sections)) {
           sectionEl.classList.add('ifx-grid');

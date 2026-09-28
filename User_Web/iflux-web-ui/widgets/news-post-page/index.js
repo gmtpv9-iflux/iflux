@@ -2,8 +2,8 @@
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { ensureSections } from '../../runtime/app-shell.js?v=scrollWave4early_20260811';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -13,7 +13,7 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
 
 /* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928'],
+  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928'],
   [ASSET + 'stock-mentions.js'],
   [
     ASSET + 'news-store.js?v=tickerNoDup20260810',
@@ -28,22 +28,14 @@ var CORE_TIERS = [
     ASSET + 'news-ui.js?v=comQuoteRuntime20260809',
     ASSET + 'news-daily-feed.js?v=comQuoteRuntime20260809',
     ASSET + 'interaction/boot.js?v=b5ixFlat20260727',
-    ASSET + 'news-post-page.js?v=scrollWave4early_20260811'
+    ASSET + 'news-post-page.js?v=pageFrame20260928'
   ]
 ];
 
 var LAYOUT_HTML = `<div data-ifx-community-story></div>`;
 
-async function mountFromHostTree(root) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-NEWS-POST-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, PUBLISH_KEY);
-  if (!tree || !tree.length) return;
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-NEWS-POST-PAGE]' });
+function mountFromHostTree(root) {
+  return mountPageWidgets(root, PUBLISH_KEY);
 }
 
 export async function mount(el) {
@@ -55,10 +47,9 @@ export async function mount(el) {
   }
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-  /* Sidebar Widget Host (100826_Scroll — Owner request 2026-08-11): bridge ensureSections()
-   * ESM cho news-post-page.js (legacy IIFE) dựng Sidebar phải canonical trong paintPost().
-   * iflux-context-ready = signal DOM aside đã build xong (dispatch cuối paintPost()). */
-  window.IfluxRuntimeSections = { ensureSections: ensureSections };
+  /* Bridge khung trang chung cho news-post-page.js (IIFE) — paintPost() dựng qua buildPageFrame.
+   * iflux-context-ready = khung đã dựng xong (dispatch cuối paintPost()) → mount widget vào host. */
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   function onContextReady() {
     mountFromHostTree(el);
   }

@@ -17,18 +17,13 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * Published path (Phase 4): PagePublished → Layout Engine → mount(display.module).
  */
 
-import {
-  ensureSections,
-  applyPageLayout,
-  applyHubLayout,
-  updateSidebarVisibility
-} from './app-shell.js?v=pageLayout20260928';
+import { buildPageFrame } from './app-shell.js?v=pageFrame20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
 import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from './mount-published-widgets.js?v=tplMount20260928';
+import { mountPageWidgets } from './page-widgets.js?v=pageFrame20260928';
 
-var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageLayout20260928';
+var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageFrame20260928';
 
 async function ensureLayoutEngine() {
   if (window.IfluxPageLayoutEngine && IfluxPageLayoutEngine.buildHostTree) return;
@@ -50,38 +45,35 @@ export async function bootPage(m, mountEl) {
   mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid', 'uw-page-layout', 'is-no-sidebar');
   mountEl.classList.add('ifx-rt-page');
 
-  var sectionMap = ensureSections(mountEl, m);
-
-  applyPageLayout(mountEl);
-  if (m.pageKey === 'home') applyHubLayout(mountEl);
+  /* Khung chung: host widget (Placement) + vùng nội dung đặc thù (slot tĩnh của trang).
+     Trang composite (module trang) tự dựng khung qua buildPageFrame — runtime chỉ cấp chỗ mount. */
+  var sectionMap;
+  if (m.composite) {
+    sectionMap = { main: mountEl };
+  } else {
+    var frame = buildPageFrame(mountEl);
+    sectionMap = { sidebar: frame.sidebarContent, main: frame.mainContent };
+  }
 
   /* Definition (đã enrich) TRƯỚC mount — không applyCurrent lại cuối boot. */
   applyDefinitionToDocument(m);
 
   var loaded = [];
 
-  /* Phase 4 mount path: PagePublished → Layout Engine → display.module */
+  /* Widget Placement (PagePublished) → host của khung → Template mà widget chọn. */
   if (m.published) {
     await ensureLayoutEngine();
     var pubKey = m.publishKey || m.pageKey;
     if (m.pagePayload && IfluxPageLayoutEngine.prime) {
       IfluxPageLayoutEngine.prime(pubKey, m.pagePayload);
     }
-    var filter = m.publishedSections || null;
-    var tree = await IfluxPageLayoutEngine.buildHostTree(mountEl, pubKey, {
-      sectionFilter: filter
-    });
-    var publishedLoaded = await mountPublishedWidgets(tree, {
-      logPrefix: '[PageRuntime/' + pubKey + ']'
-    });
-    loaded = loaded.concat(publishedLoaded);
-    /* Permission sau mount — Entity DOM đã có để Shell mask + overlay. */
-    if (window.IfluxBlockGate && IfluxBlockGate.apply) {
-      IfluxBlockGate.apply(m.pageKey === 'home' ? 'home' : m.pageKey);
-    }
+    loaded = loaded.concat(await mountPageWidgets(mountEl, pubKey, {
+      sectionFilter: m.publishedSections || null,
+      gateKey: m.pageKey === 'home' ? 'home' : m.pageKey
+    }));
   }
 
-  /* Slot còn lại (vd Home Main = WGT-HOME-DASH) — không thuộc PagePublished canvas. */
+  /* Nội dung đặc thù của trang (vd Home: Gói cước, Dashboard cá nhân) — không phải Widget Placement. */
   var slots = (m.widgets || [])
     .filter(function (w) { return w && w.enabled !== false; })
     .sort(function (a, b) { return (a.position || 0) - (b.position || 0); });
@@ -100,6 +92,5 @@ export async function bootPage(m, mountEl) {
     loaded.push(entry);
   }
 
-  updateSidebarVisibility(mountEl);
   return { manifest: m, widgets: loaded };
 }

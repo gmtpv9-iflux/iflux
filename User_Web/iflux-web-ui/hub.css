@@ -1,9 +1,3 @@
-.ifx-hub-grid {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
-  gap: var(--ifx-space-24);
-  align-items: start;
-}
 .ifx-hub-sidebar {
   display: flex;
   flex-direction: column;
@@ -71,9 +65,4 @@
 }
 #tab-dashboard .ifx-dash-toolbar {
   margin-bottom: var(--ifx-space-16);
-}
-@media (max-width: 768px) {
-  .ifx-hub-grid {
-    grid-template-columns: 1fr;
-  }
 }

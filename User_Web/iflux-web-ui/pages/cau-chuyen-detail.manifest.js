@@ -2,7 +2,7 @@
  * Page Manifest — Chi tiết câu chuyện (/cau-chuyen/:slug)
  * Giao diện tái dùng group-page (trước đây /chu-de/:slug).
  */
-var VER = '?v=sidebarVR04_20260811';
+var VER = '?v=pageFrame20260928';
 
 export default {
   pageKey: 'cauChuyenDetail',
@@ -28,7 +28,7 @@ export default {
       '/User_Web/iflux-web-ui/watchlist.css',
       '/User_Web/iflux-web-ui/news.css',
       '/User_Web/iflux-web-ui/block-templates.css',
-      '/User_Web/iflux-web-ui/stock.css?v=sidebarVR04_20260811'
+      '/User_Web/iflux-web-ui/stock.css?v=pageFrame20260928'
     ]
   }]
 };

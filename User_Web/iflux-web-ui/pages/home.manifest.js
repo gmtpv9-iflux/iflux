@@ -9,7 +9,7 @@
 
 var VER = '?v=phaseCW120260721';
 var CSS_HUB = [
-  '/User_Web/iflux-web-ui/hub.css?v=stickyRefactor20260811',
+  '/User_Web/iflux-web-ui/hub.css?v=pageFrame20260928',
   '/User_Web/iflux-web-ui/profile.css'
 ];
 var CSS_DASH = [

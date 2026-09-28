@@ -2,6 +2,8 @@
  * WGT-MSG-PAGE — Composite Tin nhắn (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -99,7 +101,9 @@ function renderLayout(manifest) {
 
 export async function mount(el, ctx) {
   ctx = ctx || {};
-  el.innerHTML = renderLayout(ctx.manifest);
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el).mainContent.innerHTML = renderLayout(ctx.manifest);
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
@@ -112,6 +116,7 @@ export async function mount(el, ctx) {
   }
   if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
   setTimeout(function () { if (window.IfluxProfilePage) IfluxProfilePage.renderFollowing(); }, 0);
+  await mountPageWidgets(el, 'messages');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

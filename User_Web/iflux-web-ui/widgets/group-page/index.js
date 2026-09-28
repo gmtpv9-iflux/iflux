@@ -3,8 +3,8 @@
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR04_20260811';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -51,8 +51,8 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'entity-detail-center.js?v=mockRmWp2_20260809',
-    ASSET + 'group-page.js?v=sidebarVR04_20260811',
-    ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928'
+    ASSET + 'group-page.js?v=pageFrame20260928',
+    ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928'
   ]
 ];
 
@@ -68,21 +68,8 @@ function publishKeyForKind(kind) {
   return PUBLISH_BY_KIND[kind] || 'sector-detail';
 }
 
-async function mountFromHostTree(root, publishKey) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-GROUP-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, publishKey);
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-GROUP-PAGE] Host Tree rỗng — chưa có placements Published:', publishKey);
-    }
-    return;
-  }
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-GROUP-PAGE/' + publishKey + ']' });
+function mountFromHostTree(root, publishKey) {
+  return mountPageWidgets(root, publishKey);
 }
 
 export async function mount(el, ctx) {
@@ -98,9 +85,8 @@ export async function mount(el, ctx) {
       await IfluxNewsApiBridge.loadFeed({ limit: 36 });
     } catch (eHyd) { /* seed fallback */ }
   }
-  /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho
-   * group-page.js (legacy IIFE) dựng Left Sidebar Widget Host canonical trong render(). */
-  window.IfluxRuntimeSections = { ensureSections: ensureSections };
+  /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);
   function onRemount() {
     mountFromHostTree(el, publishKey);

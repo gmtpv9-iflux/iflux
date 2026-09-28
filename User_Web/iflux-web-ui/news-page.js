@@ -344,7 +344,6 @@
     });
     /* Acquisition = DailyFeed (WP-0) — không loadFeed ở page */
     mountDailyFeed(root);
-    syncEmptyHostChrome(root);
   }
 
   function bindFeaturedTabs(root) {
@@ -412,77 +411,19 @@
   /**
    * Sidebar Page Feature hooks — hosts Published Widget do Layout Engine dựng.
    */
-  function hostHasWidgets(host) {
-    if (!host) return false;
-    if (host.querySelector('[data-widget-id], .ifx-rt-widget')) return true;
-    return !!(host.children && host.children.length);
-  }
-
-  /**
-   * Host trống → không hiện tiêu đề/mô tả Section (vd «Tổng quan»).
-   * Sidebar phải trống → ẩn cột phụ.
-   * Gọi sau Layout Engine mount placements.
-   */
-  function syncEmptyHostChrome(root) {
-    root = root || document.querySelector('[data-ifx-community-feed]');
-    if (!root) return;
-
-    var section = root.querySelector('.ifx-com-list-section--community');
-    if (section) {
-      var mainHost = section.querySelector('[data-ifx-section="main"]');
-      var hasMain = hostHasWidgets(mainHost);
-      var head = section.querySelector('.ifx-com-list-head');
-      if (head) head.hidden = !hasMain;
-      var banner = section.querySelector('.ifx-com-ticker-banner');
-      var hasBanner = !!(banner && String(banner.textContent || '').trim());
-      section.hidden = !hasMain && !hasBanner;
-    }
-
-    var side = root.querySelector('[data-ifx-section="sidebar-right"]');
-    var hasSide = hostHasWidgets(side);
-    if (side) side.hidden = !hasSide;
-    var layout = root.querySelector('.ifx-com-feed-layout');
-    if (layout) {
-      layout.style.gridTemplateColumns = hasSide ? '' : 'minmax(0, 1fr)';
-    }
-  }
-
-  /* AppShell Foundation VR-02 (100826): Right Sidebar host phải qua ensureSections()
-   * canonical (giống Home/Market/Flow) — không tự dựng <aside> bằng HTML cứng. */
+  /* Khung trang chung (buildPageFrame): host Sidebar/Main + nội dung đặc thù (bộ lọc, tab nổi bật, feed).
+   * Host rỗng / Sidebar không có gì tự ẩn bằng CSS — không cần đồng bộ lại sau khi mount. */
   function renderShell(root) {
     if (!root) return;
-    var banner = filterBannerHtml();
-
-    root.innerHTML = '<div class="ifx-com-feed-layout"></div>';
-    var layout = root.querySelector('.ifx-com-feed-layout');
-    layout.insertAdjacentHTML('beforeend',
-      '<div class="ifx-com-feed-main">' +
-        '<section class="ifx-com-list-section ifx-com-list-section--community" hidden>' +
-          '<div class="ifx-com-list-head" hidden>' +
-            '<h2 class="ifx-com-list-title"><i class="ti ti-layout-grid"></i> Tổng quan</h2>' +
-          '</div>' +
-          banner +
-          '<div class="ifx-dash-grid ifx-com-dedicated-grid" data-ifx-section="main"></div>' +
-        '</section>' +
-        /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host sidebar). */
-        '<div data-ifx-com-featured-cats-slot></div>' +
-        /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
-        '<div data-ifx-com-daily-feed></div>' +
-      '</div>'
-    );
-
-    var sectionApi = global.IfluxRuntimeSections;
-    var sections = sectionApi && sectionApi.ensureSections
-      ? sectionApi.ensureSections(layout, { sections: [{ key: 'sidebar-right', label: 'Cộng đồng' }] })
-      : null;
-    if (sections && sections['sidebar-right']) {
-      sections['sidebar-right'].classList.add('ifx-com-feed-sidebar');
-      sections['sidebar-right'].hidden = true;
-    }
-
+    root.innerHTML = '';
+    var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Tin tức' });
+    frame.mainContent.innerHTML =
+      filterBannerHtml() +
+      /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host). */
+      '<div data-ifx-com-featured-cats-slot></div>' +
+      /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
+      '<div data-ifx-com-daily-feed></div>';
     applyBlockGate(root);
-    /* Chưa mount Placement → tạm 1 cột; syncEmptyHostChrome chỉnh lại sau. */
-    layout.style.gridTemplateColumns = 'minmax(0, 1fr)';
     state.shellReady = true;
   }
 
@@ -606,11 +547,9 @@
       if (hasUrlFilter) state.featuredCategoryId = '';
       injectFeaturedTabs(root);
       mountDailyFeed(root);
-      syncEmptyHostChrome(root);
     }).catch(function () {
       injectFeaturedTabs(root);
       mountDailyFeed(root);
-      syncEmptyHostChrome(root);
     });
 
     document.addEventListener('iflux-watchlist-change', function () {
@@ -632,7 +571,6 @@
   }
 
   global.IfluxNewsPage = {
-    init: init,
-    syncEmptyHostChrome: syncEmptyHostChrome
+    init: init
   };
 })(window);

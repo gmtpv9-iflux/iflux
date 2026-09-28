@@ -53,9 +53,9 @@ var manifest = {
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=entFeed20260724', 'IfluxDailyFeed'),
     m('market-liquidity', 'js', ASSET + 'market-liquidity.js?v=mockRmWp4_20260809', 'IfluxMarketLiquidity'),
     m('entity-detail-center', 'js', ASSET + 'entity-detail-center.js?v=mockRmWp2_20260809', 'IfluxEntityDetailCenter'),
-    m('stock-page', 'js', ASSET + 'stock-page.js?v=sidebarVR04_20260811', 'IfluxStockPage'),
-    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928', 'IfluxPageLayoutEngine'),
-    m('stock-css', 'css', ASSET + 'stock.css?v=sidebarVR04_20260811', null)
+    m('stock-page', 'js', ASSET + 'stock-page.js?v=pageFrame20260928', 'IfluxStockPage'),
+    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928', 'IfluxPageLayoutEngine'),
+    m('stock-css', 'css', ASSET + 'stock.css?v=pageFrame20260928', null)
   ],
   lazyChildren: [],
   lifecycle: {

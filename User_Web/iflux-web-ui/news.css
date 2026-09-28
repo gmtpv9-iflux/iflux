@@ -181,17 +181,6 @@
   display: inline-block;
   vertical-align: bottom;
 }
-
-.ifx-com-story-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: var(--ifx-space-24);
-  align-items: start;
-}
-/* WP-7: không aside content → một cột */
-.ifx-com-story-layout--no-aside {
-  grid-template-columns: minmax(0, 1fr);
-}
 .ifx-com-story-main { min-width: 0; }
 
 .ifx-com-article {
@@ -1476,23 +1465,6 @@
   flex-wrap: wrap;
   gap: var(--ifx-inline-sm);
 }
-
-/* ── Trending / Widget đặc thù main (span từ Product Composition) ── */
-.ifx-com-dedicated-grid {
-  margin-bottom: 20px;
-}
-.ifx-com-dedicated-grid > .ifx-rt-widget,
-.ifx-com-dedicated-grid > [data-widget-id] {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.ifx-com-dedicated-grid .ifx-com-trending-panel,
-.ifx-com-dedicated-grid .ifx-wgt-block {
-  flex: 1 1 auto;
-  height: 100%;
-  box-sizing: border-box;
-}
 /* Giữ class cũ cho InsightShare / markup khác — không còn dùng 1fr 1fr cứng */
 .ifx-com-trending-row {
   display: grid;
@@ -2002,9 +1974,6 @@
   .ifx-com-feed-layout {
     grid-template-columns: 1fr;
   }
-  .ifx-com-story-layout {
-    grid-template-columns: 1fr;
-  }
   .ifx-com-side-card--toc {
     max-height: none;
   }
@@ -2023,14 +1992,11 @@
     display: none;
   }
   .ifx-com-overview__grid { grid-template-columns: 1fr; }
-  .ifx-com-trending-row,
-  .ifx-com-dedicated-grid {
+  .ifx-com-trending-row {
     grid-template-columns: 1fr;
   }
   .ifx-com-trending-row > [data-widget-id],
-  .ifx-com-trending-row > .ifx-rt-widget,
-  .ifx-com-dedicated-grid > [data-widget-id],
-  .ifx-com-dedicated-grid > .ifx-rt-widget {
+  .ifx-com-trending-row > .ifx-rt-widget {
     grid-column: 1 / -1 !important;
   }
   .ifx-com-hero { grid-template-columns: 1fr; }
@@ -2246,7 +2212,6 @@ a.ifx-profile-link { color: inherit; text-decoration: none; font-weight: inherit
 a.ifx-profile-link:hover { color: var(--ix-accent); text-decoration: underline; }
 a.ifx-profile-link-avatar { text-decoration: none; color: inherit; }
 a.ifx-com-card__avatar.ifx-profile-link-avatar:hover { opacity: .88; }
-
 
 /* ===== IFX-AUDIT-BEGIN =====
 AUDIT-ID: T5A-P2-DUAL-COPY-001

@@ -2,6 +2,8 @@
  * WGT-FAQ-PAGE — Composite Câu hỏi thường gặp (Blueprint Phase D)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -57,13 +59,15 @@ var LAYOUT_HTML = `<div class="ifx-faq-hero">
     </div>`;
 
 export async function mount(el) {
-  el.innerHTML = LAYOUT_HTML;
+  /* Khung trang chung: nội dung trang ở Main, host widget Sidebar/Main theo Cài đặt trang. */
+  el.innerHTML = '';
+  buildPageFrame(el, { noSidebar: true }).mainContent.innerHTML = LAYOUT_HTML;
   applyConsumerLinks(el);
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
 if (window.IfluxFaqPage) IfluxFaqPage.init();
-  if (window.IfluxBlockGate && IfluxBlockGate.apply) IfluxBlockGate.apply('faq');
+  await mountPageWidgets(el, 'faq');
   return { unmount: function () { if (el) el.innerHTML = ''; } };
 }
 

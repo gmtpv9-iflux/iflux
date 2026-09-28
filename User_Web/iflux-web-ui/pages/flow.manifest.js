@@ -23,10 +23,10 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=sidebarVR01_20260811',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=pageFrame20260928',
       css: [
         '/User_Web/iflux-web-ui/market-components.css',
-        '/User_Web/iflux-web-ui/flow.css?v=stickyRefactor20260811',
+        '/User_Web/iflux-web-ui/flow.css?v=pageFrame20260928',
         '/User_Web/iflux-web-ui/block-templates.css'
       ]
     }

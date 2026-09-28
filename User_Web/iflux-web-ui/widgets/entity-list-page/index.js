@@ -2,8 +2,8 @@
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR03_20260811';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -42,31 +42,17 @@ var CORE_TIERS = [
   [
     ASSET + 'alert-page.js',
     ASSET + 'entity-list-page.js?v=' + ELP_VER,
-    ASSET + 'runtime/page-layout-engine.js?v=pageLayout20260928'
+    ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928'
   ]
 ];
 
-/* AppShell Foundation VR-03 (100826): Left Sidebar host phải qua ensureSections()
- * canonical (giống Home/Market/Flow/Community) — không tự dựng <aside> bằng HTML cứng. */
-var LAYOUT_HTML =
-  '<h1 class="ix-page-title" data-elp-title></h1>' +
-  '<p class="ifx-page-intro" data-elp-intro></p>' +
-  '<div class="ifx-mkt-layout"></div>';
-
-var MAIN_COL_HTML =
-  '<div class="ifx-mkt-main">' +
-    '<div data-ifx-section="main" data-section="main" data-layout="grid-12"></div>' +
-    '<div data-elp-main></div>' +
-  '</div>';
-
+/* Khung trang chung (buildPageFrame): Sidebar trái + Main; danh sách chủ thể = nội dung đặc thù Main. */
 function buildElpLayout(el) {
-  el.innerHTML = LAYOUT_HTML;
-  var layoutRoot = el.querySelector('.ifx-mkt-layout');
-  var sections = ensureSections(layoutRoot, {
-    sections: [{ key: 'sidebar', label: 'Tổng quan chủ thể' }]
-  });
-  if (sections.sidebar) sections.sidebar.classList.add('ifx-mkt-sidebar');
-  layoutRoot.insertAdjacentHTML('beforeend', MAIN_COL_HTML);
+  el.innerHTML =
+    '<h1 class="ix-page-title" data-elp-title></h1>' +
+    '<p class="ifx-page-intro" data-elp-intro></p>';
+  var frame = buildPageFrame(el, { sidebarLabel: 'Tổng quan chủ thể' });
+  frame.mainContent.innerHTML = '<div data-elp-main></div>';
 }
 
 function resolveKind(ctx) {
@@ -82,21 +68,8 @@ function publishKeyForKind(kind) {
   return kind;
 }
 
-async function mountFromHostTree(root, publishKey) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-ELP-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, publishKey);
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-ELP-PAGE] Host Tree rỗng — chưa có placements Published:', publishKey);
-    }
-    return;
-  }
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-ELP-PAGE/' + publishKey + ']' });
+function mountFromHostTree(root, publishKey) {
+  return mountPageWidgets(root, publishKey);
 }
 
 export async function mount(el, ctx) {

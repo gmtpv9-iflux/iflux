@@ -2,7 +2,7 @@
  * Page Manifest — Danh sách câu chuyện (/cau-chuyen)
  * Entity core: cùng layout với /co-phieu, /nganh, /he-sinh-thai.
  */
-var VER = '?v=sidebarVR03_20260811';
+var VER = '?v=pageFrame20260928';
 
 export default {
   pageKey: 'cauChuyen',

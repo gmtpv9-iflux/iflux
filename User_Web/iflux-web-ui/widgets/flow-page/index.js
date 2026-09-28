@@ -3,23 +3,20 @@
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR02_20260811';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
 import featureManifest from '../../features/flow.manifest.js?v=mockRmWp5_20260809';
 
 var featureRt = null;
 
 export const meta = { id: 'WGT-FLW-PAGE', title: 'Dòng tiền' };
 
-/* AppShell Foundation VR-01 (100826): Left Sidebar host phải qua ensureSections()
- * canonical (giống Home/Market) — không tự dựng <aside> bằng HTML cứng. */
-var LAYOUT_HTML =
+var HEAD_HTML =
   '<div class="ifx-flow-title-row">' +
     '<h1 class="ix-page-title" style="margin:0">Dòng tiền</h1>' +
     '<span class="ifx-flow-exclusive"><i class="ti ti-sparkles"></i> Độc quyền iFlux</span>' +
   '</div>' +
-  '<p class="ifx-page-intro">Top 10 sức mạnh dòng tiền và thống kê mua/bán ròng theo cổ phiếu, ngành, hệ sinh thái, chủ đề.</p>' +
-  '<div class="ifx-flow-page-layout"></div>';
+  '<p class="ifx-page-intro">Top 10 sức mạnh dòng tiền và thống kê mua/bán ròng theo cổ phiếu, ngành, hệ sinh thái, chủ đề.</p>';
 
 var MAIN_COL_HTML =
   '<div class="ifx-flow-main-col">' +
@@ -41,34 +38,15 @@ var MAIN_COL_HTML =
     '</div>' +
   '</div>';
 
-/** VR-01 CONVERGE: dựng Left Sidebar qua ensureSections() canonical, giữ class
- * layout cũ (ifx-flow-market-sidebar) trên section để không đổi CSS 2-cột hiện có
- * — cùng pattern applyMarketLayout/applyHubLayout (canonical section + page-family class). */
+/* Khung trang chung (buildPageFrame); tab Thống kê (host basic/advanced/exclusive) = nội dung đặc thù Main. */
 function buildFlowLayout(el) {
-  el.innerHTML = LAYOUT_HTML;
-  var layoutRoot = el.querySelector('.ifx-flow-page-layout');
-  var sections = ensureSections(layoutRoot, {
-    sections: [{ key: 'sidebar', label: 'Widget đặc thù dòng tiền' }]
-  });
-  if (sections.sidebar) sections.sidebar.classList.add('ifx-flow-market-sidebar');
-  layoutRoot.insertAdjacentHTML('beforeend', MAIN_COL_HTML);
+  el.innerHTML = HEAD_HTML;
+  var frame = buildPageFrame(el, { sidebarLabel: 'Widget dòng tiền' });
+  frame.mainContent.innerHTML = MAIN_COL_HTML;
 }
 
-async function mountFromHostTree(root) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-FLW-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, 'flow');
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-FLW-PAGE] Host Tree rỗng — chưa có placements Published');
-    }
-    return;
-  }
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-FLW-PAGE]' });
+function mountFromHostTree(root) {
+  return mountPageWidgets(root, 'flow');
 }
 
 function bindFlowTabs(root) {

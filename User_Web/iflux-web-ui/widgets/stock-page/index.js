@@ -3,8 +3,8 @@
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=tplMount20260928';
-import { ensureSections } from '../../runtime/app-shell.js?v=sidebarVR04_20260811';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=pageFrame20260928';
 import featureManifest from '../../features/stock.manifest.js?v=mdmShell20260808';
 
 var PUBLISH_KEY = 'stock-detail';
@@ -12,21 +12,8 @@ var featureRt = null;
 
 export const meta = { id: 'WGT-STOCK-PAGE', title: 'Chi tiết cổ phiếu' };
 
-async function mountFromHostTree(root) {
-  if (!root || !window.IfluxPageLayoutEngine) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-STOCK-PAGE] thiếu Layout Engine');
-    }
-    return;
-  }
-  var tree = await IfluxPageLayoutEngine.buildHostTree(root, PUBLISH_KEY);
-  if (!tree || !tree.length) {
-    if (window.console && console.warn) {
-      console.warn('[WGT-STOCK-PAGE] Host Tree rỗng — chưa có placements Published');
-    }
-    return;
-  }
-  await mountPublishedWidgets(tree, { logPrefix: '[WGT-STOCK-PAGE]' });
+function mountFromHostTree(root) {
+  return mountPageWidgets(root, PUBLISH_KEY);
 }
 
 export async function mount(el) {
@@ -51,9 +38,8 @@ export async function mount(el) {
       await IfluxNewsApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
     } catch (eHyd) { /* seed fallback */ }
   }
-  /* AppShell Foundation VR-04 (100826): bridge ensureSections() ESM cho
-   * stock-page.js (legacy IIFE) dựng Left Sidebar Widget Host canonical trong render(). */
-  window.IfluxRuntimeSections = { ensureSections: ensureSections };
+  /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   if (window.IfluxStockPage) IfluxStockPage.init();
   function onRemount() {
     mountFromHostTree(el);

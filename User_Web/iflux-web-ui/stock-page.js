@@ -27,19 +27,17 @@
   }
 
   function remountLeftColumn(root, ticker, detail) {
-    var layout = root.querySelector('.ifx-stock-layout');
+    var layout = root.querySelector('.uw-page-sidebar-content');
     if (!layout || layout.querySelector('.ifx-stock-col--left') || !detail) return;
     layout.insertAdjacentHTML('afterbegin', renderLeft(detail));
-    mountSidebarHost(layout.querySelector('.ifx-stock-col--left'));
     enrichRealtime(root, ticker);
     document.dispatchEvent(new CustomEvent('iflux-knowledge-remount-widgets'));
   }
 
   function syncMobileLeftColumn(root, tabKey, ticker, detail) {
     if (!isMobileShell()) return;
-    var layout = root.querySelector('.ifx-stock-layout');
+    var layout = root.querySelector('.uw-page-layout');
     if (!layout) return;
-    layout.classList.toggle('ifx-stock-layout--mobile-screen', tabKey !== 'articles');
     if (tabKey === 'articles') remountLeftColumn(root, ticker, detail);
     else removeLeftColumn(root);
   }
@@ -249,22 +247,6 @@
     );
   }
 
-  /* AppShell Foundation VR-04 (100826): Left Sidebar Widget Host phải qua ensureSections()
-   * canonical (giống Home/Market/Flow/Community/ELP) — không tự dựng <div data-ifx-section>
-   * bằng HTML cứng. Host phải nằm TRƯỚC candlestick panel (page-specific data, giữ nguyên
-   * trong Main, không lồng vào Section) → dùng insertBefore thay vì ensureSections append. */
-  function mountSidebarHost(leftEl) {
-    if (!leftEl) return;
-    var sectionApi = global.IfluxRuntimeSections;
-    if (!sectionApi || !sectionApi.ensureSections) return;
-    var sections = sectionApi.ensureSections(leftEl, {
-      sections: [{ key: 'sidebar', label: 'Widget đặc thù cổ phiếu' }]
-    });
-    if (sections && sections.sidebar && leftEl.firstChild !== sections.sidebar) {
-      leftEl.insertBefore(sections.sidebar, leftEl.firstChild);
-    }
-  }
-
   function buildFeedSections(entityName, newsState) {
     var tf = timelineFeed();
     var name = esc(entityName);
@@ -412,12 +394,11 @@
       storyBase: '../news/'
     };
 
-    root.innerHTML =
-      '<div class="ifx-stock-layout">' +
-        renderLeft(detail) +
-        renderCenter(currentTicker, detail, newsState) +
-      '</div>';
-    mountSidebarHost(root.querySelector('.ifx-stock-col--left'));
+    /* Khung trang chung: cột biểu đồ = nội dung đặc thù Sidebar, tab = nội dung đặc thù Main. */
+    root.innerHTML = '';
+    var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Widget cổ phiếu' });
+    frame.sidebarContent.innerHTML = renderLeft(detail);
+    frame.mainContent.innerHTML = renderCenter(currentTicker, detail, newsState);
 
     bindEvents(root, currentTicker, detail, newsState);
     enrichRealtime(root, currentTicker);
