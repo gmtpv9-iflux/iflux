@@ -59,7 +59,7 @@
   --ifx-inset-sheet: var(--ifx-space-16) var(--ifx-space-20);
 
   /* ── 7. Layout Spacing ────────────────────────────────────── */
-  --ifx-space-container: var(--ifx-space-24);
+  /* --ifx-space-container: do Foundation DS (02_foundation/layout.css) định nghĩa theo 5 mốc breakpoint. */
   --ifx-space-section: var(--ifx-space-64);
   --ifx-space-page: var(--ifx-space-80);
   --ifx-space-sidebar-gap: var(--ifx-space-16);
@@ -123,7 +123,6 @@
 /* ── 12. Responsive (layout only) ───────────────────────────── */
 @media (max-width: 768px) {
   :root {
-    --ifx-space-container: var(--ifx-space-16);
     --ifx-space-section: var(--ifx-space-48);
     --ifx-space-page: var(--ifx-space-64);
     --ifx-grid-gutter: var(--ifx-space-16);
@@ -135,7 +134,6 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   :root {
-    --ifx-space-container: var(--ifx-space-20);
     --ifx-space-section: var(--ifx-space-56);
     --ifx-space-page: var(--ifx-space-64);
   }
@@ -143,7 +141,6 @@
 
 @media (min-width: 1440px) {
   :root {
-    --ifx-space-container: var(--ifx-space-32);
     --ifx-space-section: var(--ifx-space-80);
     --ifx-space-page: var(--ifx-space-96);
   }

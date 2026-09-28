@@ -1,25 +1,18 @@
 /**
  * Component — App Shell (khung trang dùng chung mọi nền tảng)
  *
- *   main.ifx-shell                 → container chuẩn: rộng tối đa --ifx-size-container-max, căn giữa, lề --ifx-space-container
- *   ├─ .ifx-shell-banner            → (tuỳ chọn) banner ngay dưới header, trên khung
+ *   main.ifx-container.ifx-container-max   → container của Foundation (lề theo breakpoint: --ifx-space-container
+ *                                              16 · md 24 · lg 24 · xl 30; rộng tối đa --ifx-size-container-max)
+ *   ├─ .ifx-shell-banner                   → (tuỳ chọn) banner ngay dưới header, trên khung
  *   └─ .ifx-shell-layout
- *      ├─ aside.ifx-shell-sidebar   → host [sidebar] + nội dung đặc thù           (3/12)
- *      ├─ .ifx-shell-main           → host [main] (lưới 12 cột) + nội dung đặc thù (9/12)
- *      └─ aside.ifx-shell-sidebar-right (tuỳ chọn .ifx-shell-layout-right)      (2/12, Main còn 7/12)
+ *      ├─ aside.ifx-shell-sidebar          → host [sidebar] + nội dung đặc thù            (3/12)
+ *      ├─ .ifx-shell-main                  → host [main] (lưới 12 cột) + nội dung đặc thù  (9/12)
+ *      └─ aside.ifx-shell-sidebar-right    → (tuỳ chọn .ifx-shell-layout-right)          (2/12, Main còn 7/12)
  *
+ * Mobile-first: < lg (mobile/tablet, có bottom menu) xếp 1 cột; ≥ lg (1024) chia cột — cùng mốc với span widget.
  * Host chỉ chứa widget (Widget Placement); nội dung đặc thù nằm ở *-content. Host / Sidebar trống tự ẩn.
  * Header và bottom menu (menu) không có host widget.
  */
-.ifx-shell {
-  width: 100%;
-  max-width: var(--ifx-size-container-max);
-  margin-inline: auto;
-  padding-inline: var(--ifx-space-container);
-  box-sizing: border-box;
-}
-.ifx-shell-banner { margin-bottom: var(--ifx-space-20); }
-
 .ifx-shell-layout {
   display: flex;
   flex-direction: column;
@@ -30,7 +23,7 @@
 }
 .ifx-shell-layout > * { width: 100%; }
 /* ≥ md: Sidebar 3/12 · Main 9/12 · (Sidebar phải 2/12 → Main 7/12). Sidebar trống ẩn → Main tự giãn hết. */
-@media (min-width: 768px) { /* bp:md */
+@media (min-width: 1024px) { /* bp:lg */
   .ifx-shell-layout { flex-direction: row; }
   .ifx-shell-layout > .ifx-shell-sidebar { flex: 0 0 max(var(--ifx-size-panel-sm), calc((100% - var(--ifx-space-20)) * 3 / 12)); width: auto; }
   .ifx-shell-layout > .ifx-shell-sidebar-right { flex-basis: calc((100% - 2 * var(--ifx-space-20)) * 2 / 12); }

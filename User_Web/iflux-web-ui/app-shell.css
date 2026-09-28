@@ -225,7 +225,7 @@ body.ifx-user-web *::-webkit-scrollbar {
   gap: var(--ifx-space-4);
 }
 .ifx-main {
-  /* Bề rộng / căn giữa / lề ngang = container DS .ifx-shell (App Shell). Ở đây chỉ chừa chỗ cho header / bottom menu. */
+  /* Bề rộng / căn giữa / lề ngang = container Foundation DS (.ifx-container.ifx-container-max). Ở đây chỉ chừa chỗ cho header / bottom menu. */
   flex: 1;
   padding-top: calc(var(--ifx-topnav-h) + 24px);
   padding-bottom: 24px;

@@ -54,7 +54,7 @@
         template: 'TMP-COM-STOCK-HEAT',
         blocks: ['BLK-NEWS-TRENDING'],
         css: [
-          '/User_Web/iflux-web-ui/news.css',
+          '/User_Web/iflux-web-ui/news.css?v=appShell20260928',
           '/User_Web/iflux-web-ui/block-templates.css',
           '/User_Web/iflux-web-ui/watchlist.css'
         ]
@@ -64,7 +64,7 @@
         title: 'Chủ đề tích cực hàng đầu',
         template: 'TMP-COM-STORY-TOP',
         blocks: ['BLK-NEWS-TOPIC-TOP'],
-        css: ['/User_Web/iflux-web-ui/news.css', '/User_Web/iflux-web-ui/block-templates.css']
+        css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928', '/User_Web/iflux-web-ui/block-templates.css']
       },
       'WGT-MKT-006': {
         id: 'WGT-MKT-006',
@@ -73,7 +73,7 @@
         blocks: ['BLK-MKT-HEAT-CHUDE'],
         css: [
           '/User_Web/iflux-web-ui/block-templates.css',
-          '/User_Web/iflux-web-ui/market.css',
+          '/User_Web/iflux-web-ui/market.css?v=appShell20260928',
           '/User_Web/iflux-web-ui/market-components.css'
         ]
       },
@@ -82,7 +82,7 @@
         title: 'Thành viên tích cực',
         template: 'TMP-COM-ACTIVE',
         blocks: ['BLK-NEWS-ACTIVE'],
-        css: ['/User_Web/iflux-web-ui/news.css']
+        css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928']
       }
     };
   }

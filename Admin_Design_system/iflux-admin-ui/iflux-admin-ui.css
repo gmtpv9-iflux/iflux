@@ -14,7 +14,7 @@
 @import url('./semantic/business-tokens.css');
 @import url('./semantic/aliases.css');
 @import url('./typography.css?v=feedCard20260723');
-@import url('./spacing.css');
+@import url('./spacing.css?v=appShell20260928');
 @import url('./foundation/heart-action.css');
 @import url('./components.css?v=hostScroll20260831');
 @import url('./atoms-extensions.css?v=tdCaptionFix20260808');
