@@ -77,7 +77,6 @@ export async function mount(el, ctx) {
   await loadScriptTiers(CORE_TIERS);
   /* AS-SEARCH: App Shell Entry (shell-boot) — không tải từ composite. */
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) return { unmount: function () { if (el) el.innerHTML = ''; } };
   /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
   window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   if (window.IfluxGroupPage) IfluxGroupPage.init(kind);

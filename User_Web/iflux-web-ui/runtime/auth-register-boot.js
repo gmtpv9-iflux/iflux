@@ -13,7 +13,7 @@ var ALL = [
   ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
   ADMIN + 'iflux-admin-ui.js',
-  ASSET + 'iflux-web-ui.js?v=r20260928n',
+  ASSET + 'iflux-web-ui.js?v=r20260928p',
   ASSET + 'auth-register-init.js?v=gisArch20260730'
 ];
 

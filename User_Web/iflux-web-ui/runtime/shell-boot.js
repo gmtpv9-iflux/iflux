@@ -18,7 +18,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  */
 
 import { loadScript } from './legacy-bridge.js?v=r20260928n';
-import { AUTH_PAGES } from './page-keys.js?v=r20260928n';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260928p';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
@@ -44,6 +44,17 @@ var MARKET_PLATFORM_PAGES = {
  * Seed / ecosystem / registry chỉ khi Search mở (ensureDeps) hoặc vào trang market.
  * Nhà: chrome nav không phụ thuộc seed — widget dashboard lazy dep riêng.
  */
+/* Trang cá nhân: khách → trang chủ cá nhân về Tin tức (không popup); trang khác hỏi xác nhận đăng nhập. */
+function passAuthGate(pageKey) {
+  if (!AUTH_PAGES[pageKey] || !window.IfluxAuth || IfluxAuth.isLoggedIn()) return true;
+  if (HOME_PAGES[pageKey]) {
+    location.replace(window.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true }) : '/tin-tuc');
+    return false;
+  }
+  IfluxAuth.requireAuth();
+  return false;
+}
+
 var SINGLE_STOCK_PAGES = { stock: 1, stockComment: 1 };
 
 var MARKET_CORE_PAGES = {
@@ -191,9 +202,7 @@ export async function bootShell(pageKey, opts) {
   /* Soft path: không re-chrome; nạp lib thiếu + GuestShell + active nav. */
   if (booted && soft && window.IfluxGuestShell) {
     await ensureMarketLibs(pageKey);
-    if (AUTH_PAGES[pageKey]) {
-      if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
-    }
+    if (!passAuthGate(pageKey)) return null;
     await rebootstrapGuest(pageKey);
     if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) {
       try { IfluxWebUI.syncMobileTabbar(); } catch (eTbSoft) { /* ignore */ }
@@ -249,7 +258,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20260928n' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20260928p' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */
@@ -274,9 +283,7 @@ export async function bootShell(pageKey, opts) {
     } catch (e) { /* ignore */ }
   }
 
-  if (AUTH_PAGES[pageKey]) {
-    if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
-  }
+  if (!passAuthGate(pageKey)) return null;
 
   /* Re-paint sau auth gate (cùng renderer mọi trang). */
   if (window.IfluxAppShellHeader && IfluxAppShellHeader.render) {
@@ -285,8 +292,6 @@ export async function bootShell(pageKey, opts) {
 
   if (window.IfluxGuestShell && IfluxGuestShell.bootstrapPage) {
     await rebootstrapGuest(pageKey);
-  } else if (pageKey === 'dashboard' || pageKey === 'home') {
-    if (window.IfluxAuth && !IfluxAuth.requireAuth()) return null;
   }
 
   booted = { pageKey: pageKey };

@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Chi tiết hệ sinh thái (/he-sinh-thai/:id)
  */
-var VER = '?v=r20260928n';
+var VER = '?v=r20260928p';
 
 export default {
   pageKey: 'family',

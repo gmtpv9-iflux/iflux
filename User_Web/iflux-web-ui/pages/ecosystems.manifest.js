@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Danh sách hệ sinh thái (/he-sinh-thai)
  */
-var VER = '?v=r20260928n';
+var VER = '?v=r20260928p';
 
 export default {
   pageKey: 'ecosystems',

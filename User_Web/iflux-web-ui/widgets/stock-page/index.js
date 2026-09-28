@@ -24,11 +24,6 @@ export async function mount(el) {
       if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
     }
   });
-  if (window.IfluxAuth && !IfluxAuth.requireAuth()) {
-    featureRt.dispose();
-    featureRt = null;
-    return { unmount: function () { if (el) el.innerHTML = ''; } };
-  }
   /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
   window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
   if (window.IfluxStockPage) IfluxStockPage.init();

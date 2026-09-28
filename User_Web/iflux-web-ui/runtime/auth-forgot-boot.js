@@ -10,7 +10,7 @@ var ALL = [
   ADMIN + 'iflux-credentials-store.js?v=r20260928n',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
   ADMIN + 'iflux-admin-ui.js',
-  ASSET + 'iflux-web-ui.js?v=r20260928n',
+  ASSET + 'iflux-web-ui.js?v=r20260928p',
   ASSET + 'auth-forgot-init.js?v=phaseA20260721c'
 ];
 

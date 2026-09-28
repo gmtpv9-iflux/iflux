@@ -1179,16 +1179,14 @@
         slot.setAttribute('data-ifx-ix-article-bottom-root', '');
         slot.className = 'ifx-tabbar-ix';
         bar.appendChild(slot);
-      } else {
-        if (entities.parentNode !== bar) {
-          bar.insertBefore(entities, slot);
-        } else if (slot.previousElementSibling !== entities) {
-          bar.insertBefore(entities, slot);
-        }
+        /* Chỉ báo khi ô vừa được tạo — người nghe (bài viết) gắn Host vào ô rồi gọi lại hàm này;
+           báo lại mỗi lần gọi sẽ thành đệ quy vô hạn (mỗi vòng một request summary). */
+        try {
+          document.dispatchEvent(new CustomEvent('iflux-ix-bottom-slot-ready'));
+        } catch (e) { /* ignore */ }
+      } else if (entities.parentNode !== bar || slot.previousElementSibling !== entities) {
+        bar.insertBefore(entities, slot);
       }
-      try {
-        document.dispatchEvent(new CustomEvent('iflux-ix-bottom-slot-ready'));
-      } catch (e) { /* ignore */ }
       return slot;
     }
 

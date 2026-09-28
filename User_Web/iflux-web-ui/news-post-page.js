@@ -362,8 +362,20 @@
     el.setAttribute('hidden', 'hidden');
   }
 
+  var _ixMounting = false;
   function mountInteractionHosts(root, post) {
     if (!root || !post) return;
+    /* Đang gắn (sự kiện iflux-ix-bottom-slot-ready phát đồng bộ trong lúc tạo ô) → không gắn lồng. */
+    if (_ixMounting) return;
+    _ixMounting = true;
+    try {
+      mountInteractionHostsNow(root, post);
+    } finally {
+      _ixMounting = false;
+    }
+  }
+
+  function mountInteractionHostsNow(root, post) {
     /* Phase 5 RC-IR: Host chưa sẵn → Summary boot rồi retry */
     if (!global.IfluxInteractionHost || !IfluxInteractionHost.mountInteraction) {
       if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {

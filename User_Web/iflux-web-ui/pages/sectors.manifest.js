@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Danh sách ngành (/nganh)
  */
-var VER = '?v=r20260928n';
+var VER = '?v=r20260928p';
 
 export default {
   pageKey: 'sectors',
