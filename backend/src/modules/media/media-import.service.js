@@ -39,6 +39,14 @@ function replaceImgSrcs(html, urlMap) {
   });
 }
 
+function buildCoverVariantsMap(variants) {
+  const out = {};
+  (variants || []).forEach(function (v) {
+    if (v && v.role && v.role !== 'delivery' && v.public_url) out[v.role] = v.public_url;
+  });
+  return out;
+}
+
 function escapeAttr(s) {
   return String(s || '')
     .replace(/&/g, '&amp;')
@@ -112,6 +120,7 @@ async function importArticle(config, articleId, actor) {
     };
     try {
       const buf = await processImg.downloadImage(item.source_url);
+      const isCover = item.locations.indexOf('cover') !== -1;
       const created = await mediaService.createAssetFromBuffer(config, buf, {
         filenameHint: titleHint,
         seq: seq++,
@@ -119,6 +128,7 @@ async function importArticle(config, articleId, actor) {
         sourceUrl: item.source_url,
         channel: 'import',
         provider: null,
+        isCover: isCover,
         createdBy: actor && (actor.admin_id || actor.email)
       });
       if (created.reused) reused += 1;
@@ -126,7 +136,8 @@ async function importArticle(config, articleId, actor) {
       urlMap[item.source_url] = {
         media_url: created.asset.public_url,
         asset_id: created.asset.id,
-        alt: created.asset.alt_text || item.alt || ''
+        alt: created.asset.alt_text || item.alt || '',
+        variants: isCover ? buildCoverVariantsMap(created.asset.variants) : {}
       };
       row.status = created.reused ? 'reused' : 'succeeded';
       row.asset_id = created.asset.id;
@@ -148,6 +159,7 @@ async function importArticle(config, articleId, actor) {
   if (coverOrig && urlMap[coverOrig]) {
     cover.url = urlMap[coverOrig].media_url;
     if (!cover.alt) cover.alt = urlMap[coverOrig].alt || '';
+    cover.variants = urlMap[coverOrig].variants || {};
   }
 
   const seo = Object.assign({}, article.seo || {});

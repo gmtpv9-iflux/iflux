@@ -56,6 +56,9 @@
     div.querySelectorAll('img').forEach(function (img) {
       img.removeAttribute('width');
       img.removeAttribute('height');
+      /* Ảnh thân bài tải SAU ảnh đại diện (eager) — lazy để không cạnh tranh băng thông với LCP */
+      img.setAttribute('loading', 'lazy');
+      img.setAttribute('decoding', 'async');
       try {
         img.style.removeProperty('width');
         img.style.removeProperty('height');

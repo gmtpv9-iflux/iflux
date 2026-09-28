@@ -307,13 +307,21 @@
     return parts.join('');
   }
 
-  /** Ảnh hiển thị card/feed — từ cover/image_url (Feed DTO) hoặc seo.og_image (detail). Không ghi vào metadata. */
-  function resolvePostDisplayImage(post) {
+  /**
+   * Ảnh hiển thị card/feed — từ cover/image_url (Feed DTO) hoặc seo.og_image (detail).
+   * `role` (tuỳ chọn): mã trường hợp regenerate ở cover.variants (cover_thumb/cover_card/
+   * cover_hero/cover_detail) — ưu tiên dùng bản đã regenerate đúng kích thước vị trí đó;
+   * bài cũ chưa có variants sẽ rơi về ảnh gốc như trước. Không ghi vào metadata.
+   */
+  function resolvePostDisplayImage(post, role) {
     post = post || {};
     var seo = post.seo || {};
     var cover = post.cover || {};
     var meta = post.metadata || {};
+    var variants = cover.variants || {};
+    var variantSrc = role && variants[role] ? String(variants[role]).trim() : '';
     var src =
+      variantSrc ||
       (seo.og_image && String(seo.og_image).trim()) ||
       (cover.url && String(cover.url).trim()) ||
       (post.image_url && String(post.image_url).trim()) ||
@@ -327,10 +335,10 @@
     return { src: src, alt: alt };
   }
 
-  function thumbHtml(post) {
-    var img = resolvePostDisplayImage(post);
+  function thumbHtml(post, role) {
+    var img = resolvePostDisplayImage(post, role);
     if (img.src) {
-      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" loading="lazy" onerror="this.remove()" />';
+      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" loading="lazy" decoding="async" onerror="this.remove()" />';
     }
     var story = (post.story_tags && post.story_tags[0]) ? post.story_tags[0].name : '';
     var icon = 'ti-article';
@@ -358,6 +366,7 @@
     var href = postStoryHref(post, opts);
     var showExcerpt = !!opts.showExcerpt;
     var thumbCls = opts.thumbClass || '';
+    var imageRole = opts.imageRole || '';
     var timeStr = fmtPostCardTime(post.published_at || post.created_at);
     var stats = postStats(post);
     /* Avatar / tên / nguồn RSS không render trên card tin — chỉ trên bài chi tiết */
@@ -369,7 +378,7 @@
     if (global.IfluxBlockTemplates) {
       return IfluxBlockTemplates.renderFeedPostBody({
         href: href,
-        thumbHtml: thumbHtml(post),
+        thumbHtml: thumbHtml(post, imageRole),
         thumbClass: thumbCls,
         title: post.title || 'Bài viết',
         time: timeStr,
@@ -381,7 +390,7 @@
     }
 
     return (
-      '<a class="ifx-com-post__thumb' + (thumbCls ? ' ' + thumbCls : '') + '" href="' + href + '">' + thumbHtml(post) + '</a>' +
+      '<a class="ifx-com-post__thumb' + (thumbCls ? ' ' + thumbCls : '') + '" href="' + href + '">' + thumbHtml(post, imageRole) + '</a>' +
       '<div class="ifx-com-post__body">' +
         '<div class="ifx-com-post__title-row">' +
           '<a class="ifx-com-post__title-text" href="' + href + '">' + (post.title || 'Bài viết') + '</a>' +
@@ -398,46 +407,50 @@
     );
   }
 
+  /* Card vừa (4/12, lưới 3 cột) — dùng bản regenerate cover_card */
   function postCardHtml(post) {
     if (global.IfluxBlockTemplates) {
       return IfluxBlockTemplates.renderFeedPost({
         slug: post.slug,
-        bodyHtml: postCardInnerHtml(post)
+        bodyHtml: postCardInnerHtml(post, { imageRole: 'cover_card' })
       });
     }
     return (
       '<article class="ifx-com-post" data-ifx-com-slug="' + post.slug + '">' +
-        postCardInnerHtml(post) +
+        postCardInnerHtml(post, { imageRole: 'cover_card' }) +
       '</article>'
     );
   }
 
+  /* Card lớn (6/12, nổi bật) — dùng bản regenerate cover_hero */
   function featuredPostHtml(post) {
     if (global.IfluxBlockTemplates) {
       return IfluxBlockTemplates.renderFeedPost({
         slug: post.slug,
         variant: 'featured',
-        bodyHtml: postCardInnerHtml(post, { showExcerpt: true })
+        bodyHtml: postCardInnerHtml(post, { showExcerpt: true, imageRole: 'cover_hero' })
       });
     }
     return (
       '<article class="ifx-com-post ifx-com-post--featured" data-ifx-com-slug="' + post.slug + '">' +
-        postCardInnerHtml(post, { showExcerpt: true }) +
+        postCardInnerHtml(post, { showExcerpt: true, imageRole: 'cover_hero' }) +
       '</article>'
     );
   }
 
+  /* Card nhỏ (sidebar/compact, kể cả "Bài viết liên quan") — dùng bản regenerate cover_thumb */
   function compactPostHtml(post, opts) {
+    var merged = Object.assign({ imageRole: 'cover_thumb' }, opts || {});
     if (global.IfluxBlockTemplates) {
       return IfluxBlockTemplates.renderFeedPost({
         slug: post.slug,
         variant: 'compact',
-        bodyHtml: postCardInnerHtml(post, opts || {})
+        bodyHtml: postCardInnerHtml(post, merged)
       });
     }
     return (
       '<article class="ifx-com-post ifx-com-post--compact" data-ifx-com-slug="' + post.slug + '">' +
-        postCardInnerHtml(post, opts || {}) +
+        postCardInnerHtml(post, merged) +
       '</article>'
     );
   }
@@ -723,11 +736,13 @@
   }
 
   function articleHeroImageHtml(post) {
-    var img = resolvePostDisplayImage(post);
+    var img = resolvePostDisplayImage(post, 'cover_detail');
     if (!img.src) return '';
+    /* Ảnh đại diện = ưu tiên tải đầu tiên (LCP) — eager + fetchpriority=high, KHÔNG lazy.
+       Ảnh thân bài và "Bài viết liên quan" đều loading="lazy" nên luôn tải sau ảnh này. */
     return (
       '<figure class="ifx-com-article__figure" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">' +
-        '<img src="' + img.src + '" alt="' + (img.alt || '') + '" itemprop="url" loading="eager" />' +
+        '<img src="' + img.src + '" alt="' + (img.alt || '') + '" itemprop="url" loading="eager" fetchpriority="high" decoding="async" />' +
         (img.alt ? '<figcaption itemprop="caption">' + img.alt + '</figcaption>' : '') +
       '</figure>'
     );

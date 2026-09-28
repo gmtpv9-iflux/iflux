@@ -51,7 +51,8 @@
         { type: 'item', key: "news-content-dashboard", routeKey: "news-content-dashboard", label: "Tổng quan", icon: "ti-layout-dashboard", urlSegment: "overview", nav: false },
         { type: 'item', key: "news-content-index", routeKey: "news-content-index", label: "Danh sách Bài viết", icon: "ti-article", urlSegment: "articles" },
         { type: 'item', key: "news-categories", routeKey: "news-categories", label: "Danh sách Danh mục", icon: "ti-category", urlSegment: "categories" },
-        { type: 'item', key: "news-chu-de-list", routeKey: "news-chu-de-list", label: "Danh sách Chủ đề", icon: "ti-book-2", urlSegment: "topics" }
+        { type: 'item', key: "news-chu-de-list", routeKey: "news-chu-de-list", label: "Danh sách Chủ đề", icon: "ti-book-2", urlSegment: "topics" },
+        { type: 'item', key: "news-cover-regenerate", routeKey: "news-cover-regenerate", label: "Regenerate", icon: "ti-photo-cog", urlSegment: "regenerate" }
       ]
     },
     { type: 'item', key: "news-content-edit", routeKey: "news-content-edit", label: "Sửa bài viết", icon: "ti-pencil", urlSegment: "news/edit", nav: false },

@@ -140,7 +140,9 @@ function normalizeArticleInput(input, actor) {
       url: String(cover.url || input.cover_url || '').trim(),
       alt: String(cover.alt || '').trim(),
       caption: String(cover.caption || '').trim(),
-      credit: String(cover.credit || '').trim()
+      credit: String(cover.credit || '').trim(),
+      /* Các bản kích thước regenerate cho ảnh đại diện (card nhỏ/vừa/lớn, trang chi tiết, MXH) — xem cover-image-profiles.js */
+      variants: cover.variants && typeof cover.variants === 'object' ? cover.variants : {}
     },
     seo: {
       title: String(seo.title || seo.seo_title || '').trim() || title,

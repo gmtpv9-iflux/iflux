@@ -9,6 +9,7 @@ const mediaImport = require('./media-import.service');
 const storage = require('./media-storage');
 const articles = require('../news/news-articles.service');
 const { mediaRoot } = require('./media-util');
+const { COVER_IMAGE_PROFILES } = require('./cover-image-profiles');
 
 function success(res, data, status) {
   return res.status(status || 200).json({ ok: true, data: data });
@@ -45,6 +46,10 @@ function createMediaRouter(deps) {
       root: mediaRoot(config),
       public_base: require('./media-util').publicBase(config)
     });
+  });
+
+  router.get('/cover-profiles', perm('news.articles.view'), function (req, res) {
+    return success(res, { profiles: COVER_IMAGE_PROFILES });
   });
 
   router.get('/assets', perm('news.articles.view'), async function (req, res, next) {

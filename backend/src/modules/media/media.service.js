@@ -166,6 +166,7 @@ async function createAssetFromBuffer(config, buf, opts) {
 
   let fingerprint;
   let pack;
+  let rotatedBuffer = null;
   if (isShare) {
     const meta = await processImg.validateShareImageBuffer(buf);
     fingerprint = processImg.fingerprint(buf);
@@ -180,6 +181,7 @@ async function createAssetFromBuffer(config, buf, opts) {
     const variantsPack = await processImg.normalizeAndVariants(buf);
     fingerprint = variantsPack.fingerprint;
     pack = variantsPack.delivery;
+    rotatedBuffer = variantsPack.rotatedBuffer;
   }
 
   const existing = await findByFingerprint(fingerprint);
@@ -250,6 +252,31 @@ async function createAssetFromBuffer(config, buf, opts) {
       delivery.public_url
     ]
   );
+
+  if (opts.isCover && !isShare && rotatedBuffer) {
+    const coverVariants = await processImg.generateCoverVariants(rotatedBuffer);
+    for (let i = 0; i < coverVariants.length; i++) {
+      const cv = coverVariants[i];
+      const cvKey = pathJoin(dir, baseName + '-' + cv.role + '.' + cv.ext);
+      const cw = await storage.writeVariantFile(config, cvKey, cv.buffer);
+      await query(
+        `INSERT INTO media_variants
+          (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [
+          newId('mvar'),
+          assetId,
+          cv.role,
+          cv.ext,
+          cv.width,
+          cv.height,
+          cv.buffer.length,
+          cw.storageKey,
+          cw.publicUrl
+        ]
+      );
+    }
+  }
 
   if (opts.sourceUrl || opts.channel) {
     await query(
@@ -329,9 +356,9 @@ async function resolveSocialCompatibleImage(url) {
          FROM media_variants d
          JOIN media_variants v ON v.asset_id = d.asset_id
          WHERE d.public_url = $1 AND d.role = 'delivery'
-           AND v.role IN ('social', 'original')
+           AND v.role IN ('cover_social', 'social', 'original')
            AND lower(v.format) IN ('jpeg','jpg','png')
-         ORDER BY CASE WHEN v.role = 'social' THEN 0 ELSE 1 END
+         ORDER BY CASE WHEN v.role = 'cover_social' THEN 0 WHEN v.role = 'social' THEN 1 ELSE 2 END
          LIMIT 1`,
         [pathOnly]
       );

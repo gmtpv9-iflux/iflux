@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 const path = require('path');
 const { AppError } = require('../../shared/exceptions/app-error');
+const { COVER_IMAGE_PROFILES } = require('./cover-image-profiles');
 
 let sharp = null;
 try {
@@ -64,6 +65,7 @@ async function normalizeAndVariants(buf) {
     const meta = await validateImageBuffer(buf);
     return {
       fingerprint: fp,
+      rotatedBuffer: buf,
       delivery: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) }
     };
   }
@@ -78,6 +80,7 @@ async function normalizeAndVariants(buf) {
   const deliveryMeta = await sharp(deliveryBuf).metadata();
   return {
     fingerprint: fingerprint(rotatedBuf),
+    rotatedBuffer: rotatedBuf,
     delivery: {
       buffer: deliveryBuf,
       mime: 'image/webp',
@@ -86,6 +89,37 @@ async function normalizeAndVariants(buf) {
       ext: 'webp'
     }
   };
+}
+
+/**
+ * Sinh các bản kích thước cố định cho ẢNH ĐẠI DIỆN (cover) — theo COVER_IMAGE_PROFILES
+ * (backend/src/modules/media/cover-image-profiles.js). Chỉ gọi cho ảnh cover, không
+ * gọi cho ảnh thân bài / ảnh thường để tránh phình storage ngoài ý muốn.
+ */
+async function generateCoverVariants(rotatedBuf) {
+  if (!sharp || !rotatedBuf) return [];
+  const out = [];
+  for (let i = 0; i < COVER_IMAGE_PROFILES.length; i++) {
+    const p = COVER_IMAGE_PROFILES[i];
+    const isJpeg = p.format === 'jpeg';
+    let pipeline = sharp(rotatedBuf).resize(p.width, p.height, {
+      fit: p.fit || 'cover',
+      position: 'centre'
+    });
+    pipeline = isJpeg
+      ? pipeline.flatten({ background: '#ffffff' }).jpeg({ quality: p.quality || 85 })
+      : pipeline.webp({ quality: p.quality || 82 });
+    const buffer = await pipeline.toBuffer();
+    out.push({
+      role: p.key,
+      buffer: buffer,
+      mime: isJpeg ? 'image/jpeg' : 'image/webp',
+      width: p.width,
+      height: p.height,
+      ext: isJpeg ? 'jpg' : 'webp'
+    });
+  }
+  return out;
 }
 
 function extForMime(mime) {
@@ -158,6 +192,7 @@ module.exports = {
   validateImageBuffer,
   validateShareImageBuffer,
   normalizeAndVariants,
+  generateCoverVariants,
   downloadImage,
   extForMime,
   MAX_BYTES,
