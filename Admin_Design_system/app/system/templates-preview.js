@@ -14,7 +14,8 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function render(mount, template, demo, overrides) {
+  /* done (tuỳ chọn) — gọi sau khi dựng xong (Template có thể nạp bất đồng bộ). */
+  function render(mount, template, demo, overrides, done) {
     if (!mount) return;
     mount.innerHTML =
       '<div class="tpl-pv-head"><code>' + esc(template.id) + '</code>' +
@@ -25,11 +26,20 @@
     var hdr = (overrides && overrides.headers) ||
       (global.TemplatesStore && TemplatesStore.getHeaders ? TemplatesStore.getHeaders(template) : null) ||
       template.headers || {};
-    try {
-      IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: raw.slice(HEAD_N), headers: hdr });
-    } catch (err) {
-      host.innerHTML = '<p class="tpl-pv-hint">Không dựng được preview: ' + esc(err && err.message) + '</p>';
+    function draw() {
+      try {
+        IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: raw.slice(HEAD_N), headers: hdr });
+      } catch (err) {
+        host.innerHTML = '<p class="tpl-pv-hint">Không dựng được preview: ' + esc(err && err.message) + '</p>';
+      }
+      if (done) done();
     }
+    /* Trang chưa nạp sẵn Template (vd Kiến trúc 4 tầng) → nạp đúng Template đó từ DS rồi dựng. */
+    if (global.IfxTemplates && IfxTemplates.has && IfxTemplates.has(template.id)) return draw();
+    if (!global.IfxTemplateLoader) return draw();
+    IfxTemplateLoader.ensure(template.id).then(function () {
+      if (host.isConnected) draw();
+    }, draw);
   }
 
   function empty(mount) {

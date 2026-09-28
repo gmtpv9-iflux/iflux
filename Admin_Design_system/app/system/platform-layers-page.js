@@ -397,25 +397,14 @@
     if (!template) return;
     applyPreviewViewport(card, frame);
     var outputs = collectOutputs(card);
-    var demo = ['', ''].concat(outputs.map(function (out) { return out.demo; }));
-    global.TemplatesPreview.render(mount, template, demo, null);
-    /* Bỏ header kỹ thuật của Template Preview (TMP-* · "Giao diện thật…") —
-       cột Preview Tầng 4 chỉ hiện Widget thật (title/desc + body). */
-    var techHead = mount.querySelector('.tpl-pv-head');
-    if (techHead) techHead.remove();
-    /* Head Preview = Tiêu đề + Mô tả của WIDGET (working copy) — không phải của Template.
-       Chèn sau render bằng DS renderWgtHead; không sửa Template Preview renderer. */
-    var T = global.IfluxBlockTemplates;
-    var block = mount.querySelector('.tpl-pv-live .ifx-wgt-block');
-    if (block && T && T.renderWgtHead) {
-      function fv(f) { var el = card.querySelector('[data-l4-f="' + f + '"]'); return el ? el.value : ''; }
-      var iconValue = fv('iconKey');
-      block.insertAdjacentHTML('afterbegin', T.renderWgtHead(
-        fv('title'),
-        fv('description'),
-        iconValue === '' ? null : iconValue
-      ));
-    }
+    function fv(f) { var el = card.querySelector('[data-l4-f="' + f + '"]'); return el ? el.value : ''; }
+    /* Head Preview = Tiêu đề + Mô tả của WIDGET (working copy) — Template DS tự dựng header từ 2 giá trị này. */
+    var demo = [fv('title'), fv('description')].concat(outputs.map(function (out) { return out.demo; }));
+    global.TemplatesPreview.render(mount, template, demo, null, function () {
+      /* Cột Preview Tầng 4 chỉ hiện Widget thật — bỏ dòng kỹ thuật của Template Preview (TMP-* · "Giao diện thật…"). */
+      var techHead = mount.querySelector('.tpl-pv-head');
+      if (techHead) techHead.remove();
+    });
   }
 
   function renderWidgetCreate() {
