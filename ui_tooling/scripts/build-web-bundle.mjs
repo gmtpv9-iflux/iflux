@@ -2,7 +2,7 @@
 /**
  * Gói CSS global của User Web — nạp MỘT lần cho mọi trang (App Shell + DS + gói cũ đang chuyển dần).
  *
- *   node ui_tooling/scripts/build-web-bundle.mjs          → sinh platform/web/dist/web.css + cập nhật <link> trong User_Web/**.html
+ *   node ui_tooling/scripts/build-web-bundle.mjs          → sinh platform/web/generated/web.css + cập nhật <link> trong User_Web/**.html
  *   node ui_tooling/scripts/build-web-bundle.mjs --check  → kiểm tra gói khớp nguồn + mọi trang trỏ đúng version (governance / CI)
  *
  * Gộp phẳng @import (theo thứ tự nguồn, file trùng chỉ lấy lần đầu), đổi url() tương đối thành đường dẫn tuyệt đối,
@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const OUT = 'platform/web/dist/web.css';
+const OUT = 'platform/web/generated/web.css';
 
 /* Thứ tự = thứ tự cascade. DS (platform/web/web.css) trước gói cũ: tên trùng giữ giá trị cũ tới W4. */
 const ENTRIES = [
@@ -27,7 +27,7 @@ const ENTRIES = [
 /* Không đưa vào gói User Web: bộ icon cũ (DS đã có đủ icon User Web dùng — vendor/tabler). */
 const EXCLUDE = new Set(['/Admin_Design_system/iflux-admin-ui/vendor/tabler-icons/tabler-icons.min.css']);
 /* <link> cũ trong trang được thay bằng gói. */
-const REPLACED_LINKS = /(Admin_Design_system\/iflux-admin-ui\/fonts\.css|platform\/web\/web\.css|Admin_Design_system\/iflux-admin-ui\/iflux-admin-ui\.css|iflux-web-ui\/app-shell\.css|platform\/web\/dist\/web\.css)/;
+const REPLACED_LINKS = /(Admin_Design_system\/iflux-admin-ui\/fonts\.css|platform\/web\/web\.css|Admin_Design_system\/iflux-admin-ui\/iflux-admin-ui\.css|iflux-web-ui\/app-shell\.css|platform\/web\/(?:dist|generated)\/web\.css)/;
 
 function webPath(from, ref) {
   const clean = ref.split('?')[0].split('#')[0];
@@ -77,7 +77,7 @@ function pages() {
     }
   };
   walk('User_Web');
-  return res.filter((f) => /iflux-admin-ui\.css|platform\/web\/(dist\/)?web\.css/.test(fs.readFileSync(path.join(REPO, f), 'utf8')));
+  return res.filter((f) => /iflux-admin-ui\.css|platform\/web\/((dist|generated)\/)?web\.css/.test(fs.readFileSync(path.join(REPO, f), 'utf8')));
 }
 
 function rewritePage(html, hash) {
