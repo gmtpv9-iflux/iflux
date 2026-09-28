@@ -5,7 +5,7 @@ export default {
   pageKey: 'messages',
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--messages',
-  css: ['/User_Web/iflux-web-ui/profile.css?v=softAll20260928', '/User_Web/iflux-web-ui/hub.css?v=softAll20260928'],
+  css: ['/User_Web/iflux-web-ui/profile.css?v=r20260928n', '/User_Web/iflux-web-ui/hub.css?v=r20260928n'],
   path: '/tin-nhan',
   title: 'Tin nhắn',
   documentTitle: '',
@@ -19,10 +19,10 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/messages-page/index.js?v=pageFrame20260928',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/messages-page/index.js?v=r20260928n',
     css: [
-      '/User_Web/iflux-web-ui/profile.css?v=appHeader20260928',
-      '/User_Web/iflux-web-ui/hub.css'
+      '/User_Web/iflux-web-ui/profile.css?v=r20260928n',
+      '/User_Web/iflux-web-ui/hub.css?v=r20260928n'
     ]
   }]
 };

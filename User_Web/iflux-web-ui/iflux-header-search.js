@@ -323,9 +323,9 @@ Note: Chạy khi mở search — không P1 PASS
 
     var web = webUiBase();
     var chain = [
-      { g: 'IfluxMarketMaster', src: web + 'iflux-market-master.js' },
-      { g: 'IfluxWatchlistTaxonomy', src: web + 'watchlist-taxonomy.js' },
-      { g: 'IfluxStockMentions', src: web + 'stock-mentions.js' }
+      { g: 'IfluxMarketMaster', src: web + 'iflux-market-master.js?v=r20260928n' },
+      { g: 'IfluxWatchlistTaxonomy', src: web + 'watchlist-taxonomy.js?v=r20260928n' },
+      { g: 'IfluxStockMentions', src: web + 'stock-mentions.js?v=r20260928n' }
     ];
 
     function finish() {

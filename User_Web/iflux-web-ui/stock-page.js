@@ -42,13 +42,10 @@
     else removeLeftColumn(root);
   }
 
-  function comStore() { return global.IfluxNewsStore; }
-  function comUi() { return global.IfluxNewsUI; }
   function cta() { return global.IfluxCommentsCta; }
   function stockSt() { return global.IfluxStockStore; }
   function wlUi() { return global.IfluxWatchlistUI; }
   function auth() { return global.IfluxAuth; }
-  function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
   function master() { return global.IfluxMarketMaster; }
 
@@ -191,16 +188,11 @@
       price_state: 'ref'
     };
     var mm = master();
-    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
-    if (list && list.length) {
-      for (var i = 0; i < list.length; i++) {
-        var s = list[i];
-        if (String((s && s.ticker) || '').toUpperCase() !== t) continue;
-        detail.name = s.name || t;
-        detail.short_name = s.short_name || s.name || t;
-        detail.exchange = normalizeExchange(s.exchange);
-        break;
-      }
+    var s = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+    if (s) {
+      detail.name = s.name || t;
+      detail.short_name = s.short_name || s.name || t;
+      detail.exchange = normalizeExchange(s.exchange);
     }
     var mq = quotes();
     var q = mq && typeof mq.peekQuote === 'function' ? mq.peekQuote(t) : null;
@@ -247,48 +239,6 @@
     );
   }
 
-  function buildFeedSections(entityName, newsState) {
-    var tf = timelineFeed();
-    var name = esc(entityName);
-
-    var articlesBody, articlesCount, newsBody, newsCount;
-    if (tf) {
-      articlesBody = tf.articlesListHtml(newsState);
-      articlesCount = tf.articlesCount(newsState);
-      newsBody = tf.newsListHtml(newsState);
-      newsCount = tf.newsCount(newsState);
-    } else {
-      var posts = comStore() ? comStore().getPosts(newsState.postsFilter) : [];
-      var listHtml = posts.length && comUi() && comUi().compactPostHtml
-        ? '<div class="ifx-stock-news-list">' + posts.map(function (p) {
-            return comUi().compactPostHtml(p, { storyBase: '../news/' });
-          }).join('') + '</div>'
-        : '<div class="ifx-stock-empty">Chưa có bài viết liên quan.</div>';
-      articlesBody = listHtml; articlesCount = posts.length;
-      newsBody = listHtml; newsCount = posts.length;
-    }
-
-    var articlesSectionHtml =
-      '<section class="ifx-stock-panel" data-ifx-stock-articles>' +
-        '<div class="ifx-stock-news-head">' +
-          '<h1>Bài viết · ' + name + '</h1>' +
-          '<p data-ifx-stock-articles-sub>' + articlesCount + ' bài viết chuyên gia</p>' +
-        '</div>' +
-        '<div data-ifx-stock-articles-body>' + articlesBody + '</div>' +
-      '</section>';
-
-    var newsSectionHtml =
-      '<section class="ifx-stock-panel" data-ifx-stock-news>' +
-        '<div class="ifx-stock-news-head">' +
-          '<h1>Tin tức · ' + name + '</h1>' +
-          '<p data-ifx-stock-news-sub>' + newsCount + ' tin tức</p>' +
-        '</div>' +
-        '<div data-ifx-stock-news-body>' + newsBody + '</div>' +
-      '</section>';
-
-    return { articlesSectionHtml: articlesSectionHtml, newsSectionHtml: newsSectionHtml };
-  }
-
   function commentCount(ticker) {
     return 0;
   }
@@ -308,24 +258,14 @@
               : '/co-phieu/' + encodeURIComponent(ticker) + '/binh-luan'))) +
           '">Bình luận</a></div>';
 
-    if (global.IfluxEntityDetailCenter) {
-      return IfluxEntityDetailCenter.render({
-        kind: 'stock',
-        ticker: ticker,
-        feedFilter: newsState.postsFilter,
-        storyBase: newsState.storyBase,
-        commentsSectionHtml: commentsSectionHtml,
-        commentCount: commentCount(ticker)
-      });
-    }
-
-    var sections = buildFeedSections(detail.name || ticker, newsState);
-    return (
-      '<div class="ifx-stock-col ifx-stock-col--center">' +
-        sections.articlesSectionHtml +
-        sections.newsSectionHtml +
-      '</div>'
-    );
+    return IfluxEntityDetailCenter.render({
+      kind: 'stock',
+      ticker: ticker,
+      feedFilter: newsState.postsFilter,
+      storyBase: newsState.storyBase,
+      commentsSectionHtml: commentsSectionHtml,
+      commentCount: commentCount(ticker)
+    });
   }
 
   function renderNotFound(ticker) {
@@ -342,7 +282,6 @@
     if (cta()) {
       cta().mount(root, { type: 'stock', id: String(ticker || '').toUpperCase() });
     }
-    if (timelineFeed() && newsState) timelineFeed().bind(root, newsState);
 
     if (wlUi() && wlUi().bindRowActions) wlUi().bindRowActions(root);
     else {
@@ -376,9 +315,8 @@
     currentTicker = parseTicker();
     var detail = resolveStockDetail(currentTicker);
 
-    var posts = comStore() ? comStore().getPosts({ ticker: currentTicker }) : [];
     if (global.IfluxSeoUrl) {
-      IfluxSeoUrl.applyStockSeoToDocument(detail, { newsCount: posts.length });
+      IfluxSeoUrl.applyStockSeoToDocument(detail);
     } else if (pageDef() && pageDef().applyPatch) {
       var company = detail.name || detail.short_name || currentTicker;
       var docTitle = currentTicker + ' - ' + company;
@@ -418,8 +356,9 @@
     var ticker = parseTicker();
     var tasks = [];
     var mm = master();
-    if (mm && typeof mm.ensureMasterReady === 'function') {
-      tasks.push(mm.ensureMasterReady().catch(function () { return null; }));
+    /* Chỉ thông tin của mã đang xem — không tải cả danh mục. */
+    if (mm && typeof mm.getStock === 'function') {
+      tasks.push(mm.getStock(ticker).catch(function () { return null; }));
     }
     if (quotes() && typeof quotes().getQuote === 'function') {
       tasks.push(quotes().getQuote(ticker).catch(function () { return null; }));

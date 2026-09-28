@@ -32,10 +32,7 @@
     else removeLeftColumn(root);
   }
 
-  function comStore() { return global.IfluxNewsStore; }
-  function comUi() { return global.IfluxNewsUI; }
   function cta() { return global.IfluxCommentsCta; }
-  function timelineFeed() { return global.IfluxEntityTimelineFeed; }
   function pageDef() { return global.IfluxPageDefinition; }
   function taxApi() { return global.IfluxWatchlistTaxonomy; }
 
@@ -137,48 +134,6 @@
     return { type: kind, id: String(detail.id || '') };
   }
 
-  function buildFeedSections(detail, newsState) {
-    var tf = timelineFeed();
-    var name = esc(detail.name);
-
-    var articlesBody, articlesCount, newsBody, newsCount;
-    if (tf) {
-      articlesBody = tf.articlesListHtml(newsState);
-      articlesCount = tf.articlesCount(newsState);
-      newsBody = tf.newsListHtml(newsState);
-      newsCount = tf.newsCount(newsState);
-    } else {
-      var posts = comStore() ? comStore().getPosts(newsState.postsFilter || postsFilter(detail)) : [];
-      var list = posts.length && comUi() && comUi().compactPostHtml
-        ? '<div class="ifx-stock-news-list">' + posts.map(function (p) {
-            return comUi().compactPostHtml(p, { storyBase: '../news/' });
-          }).join('') + '</div>'
-        : '<div class="ifx-stock-empty">Chưa có bài viết liên quan đến <strong>' + name + '</strong>.</div>';
-      articlesBody = list; articlesCount = posts.length;
-      newsBody = list; newsCount = posts.length;
-    }
-
-    var articlesSectionHtml =
-      '<section class="ifx-stock-panel" data-ifx-stock-articles>' +
-        '<div class="ifx-stock-news-head">' +
-          '<h1>Bài viết · ' + name + '</h1>' +
-          '<p data-ifx-stock-articles-sub>' + articlesCount + ' bài viết chuyên gia</p>' +
-        '</div>' +
-        '<div data-ifx-stock-articles-body>' + articlesBody + '</div>' +
-      '</section>';
-
-    var newsSectionHtml =
-      '<section class="ifx-stock-panel" data-ifx-stock-news>' +
-        '<div class="ifx-stock-news-head">' +
-          '<h1>Tin tức · ' + name + '</h1>' +
-          '<p data-ifx-stock-news-sub>' + newsCount + ' tin tức</p>' +
-        '</div>' +
-        '<div data-ifx-stock-news-body>' + newsBody + '</div>' +
-      '</section>';
-
-    return { articlesSectionHtml: articlesSectionHtml, newsSectionHtml: newsSectionHtml };
-  }
-
   function commentCount() {
     return 0;
   }
@@ -190,24 +145,14 @@
       ? cta().html({ target: target, count: null })
       : '<div class="ifx-com-empty">Bình luận</div>';
 
-    if (global.IfluxEntityDetailCenter) {
-      return IfluxEntityDetailCenter.render({
-        kind: detail.kind,
-        detail: detail,
-        feedFilter: newsState.postsFilter || postsFilter(detail),
-        storyBase: newsState.storyBase,
-        commentsSectionHtml: commentsSectionHtml,
-        commentCount: commentCount()
-      });
-    }
-
-    var sections = buildFeedSections(detail, newsState);
-    return (
-      '<div class="ifx-stock-col ifx-stock-col--center">' +
-        sections.articlesSectionHtml +
-        sections.newsSectionHtml +
-      '</div>'
-    );
+    return IfluxEntityDetailCenter.render({
+      kind: detail.kind,
+      detail: detail,
+      feedFilter: newsState.postsFilter || postsFilter(detail),
+      storyBase: newsState.storyBase,
+      commentsSectionHtml: commentsSectionHtml,
+      commentCount: commentCount()
+    });
   }
 
   function renderNotFound(source, id) {
@@ -226,7 +171,6 @@
   function bindEvents(root, detail, newsState) {
     var target = interactionTarget(detail);
     if (cta() && target) cta().mount(root, target);
-    if (timelineFeed() && newsState) timelineFeed().bind(root, newsState);
     if (global.IfluxEntityDetailCenter) {
       IfluxEntityDetailCenter.mount(root, {
         kind: detail.kind,
@@ -331,6 +275,9 @@
     if ((source === 'story' || source === 'chu-de' || source === 'chu_de' || source === 'cau-chuyen') && tax && tax.hydrateChuDeFromApi) {
       root.innerHTML = '<div class="ifx-stock-not-found"><p style="color:var(--ix-text-muted)">Đang tải chủ đề…</p></div>';
       tax.hydrateChuDeFromApi().then(boot).catch(boot);
+    } else if (tax && tax.ensureMasterGroups) {
+      /* Ngành / HST: thành viên nhóm lấy từ Market Master — chờ danh mục trước khi dựng. */
+      tax.ensureMasterGroups().then(boot, boot);
     } else {
       boot();
     }

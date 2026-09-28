@@ -6,7 +6,7 @@
  * design_system/05_templates (IfxTemplates.mount). Tiêu đề/mô tả lấy từ widget; widget chưa có
  * dữ liệu → Template dùng dữ liệu mẫu của chính nó, nên host không bao giờ trống.
  */
-import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
+import { loadScript } from './legacy-bridge.js?v=r20260928n';
 
 var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
 

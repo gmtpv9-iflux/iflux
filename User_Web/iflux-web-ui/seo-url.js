@@ -640,9 +640,6 @@
       }
     }) || fallbackTitle;
 
-    if (opts.newsCount != null) {
-      setMeta('iflux:news-count', String(opts.newsCount));
-    }
     return docTitle;
   }
 

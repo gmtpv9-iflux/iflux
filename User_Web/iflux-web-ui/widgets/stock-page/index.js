@@ -2,10 +2,10 @@
  * WGT-STOCK-PAGE — Composite chi tiết cổ phiếu
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928n';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import featureManifest from '../../features/stock.manifest.js?v=mdmShell20260808';
+import featureManifest from '../../features/stock.manifest.js?v=r20260928n';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;
@@ -28,15 +28,6 @@ export async function mount(el) {
     featureRt.dispose();
     featureRt = null;
     return { unmount: function () { if (el) el.innerHTML = ''; } };
-  }
-  /* Entity Tin tức — FeedCard theo ticker (Data Provider), không dump posts?limit=100 */
-  if (window.IfluxNewsApiBridge && IfluxNewsApiBridge.loadEntityFeed) {
-    var tk = (window.IfluxSeoUrl && IfluxSeoUrl.parseStockTicker && IfluxSeoUrl.parseStockTicker())
-      || (window.IfluxStockPage && IfluxStockPage.currentTicker)
-      || null;
-    try {
-      await IfluxNewsApiBridge.loadEntityFeed({ ticker: tk || undefined, limit: 20 });
-    } catch (eHyd) { /* seed fallback */ }
   }
   /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
   window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };

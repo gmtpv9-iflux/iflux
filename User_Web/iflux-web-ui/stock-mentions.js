@@ -32,7 +32,10 @@
   function buildIndex() {
     var list = [];
     var mm = global.IfluxMarketMaster;
-    var stocks = (mm && typeof mm.getMasterStocks === 'function' && mm.getMasterStocks()) || [];
+    var stocks = (mm && typeof mm.getMasterStocks === 'function' && mm.getMasterStocks()) || null;
+    /* Danh mục mã chỉ tải khi người dùng bắt đầu gõ @ — lần gõ kế tiếp đã có gợi ý mã. */
+    if (!stocks && mm && typeof mm.ensureMasterReady === 'function') mm.ensureMasterReady();
+    stocks = stocks || [];
     stocks.forEach(function (s) {
       var tk = String((s && s.ticker) || '').toUpperCase();
       if (!tk) return;

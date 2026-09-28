@@ -12,6 +12,15 @@ export var STATIC_PAGES = {
   share: 1
 };
 
+/* Trang cần đăng nhập. Khách mở trang này → hỏi xác nhận trước khi sang trang đăng nhập (IfluxAuth.promptLogin). */
+export var AUTH_PAGES = {
+  home: 1, dashboard: 1,
+  stocks: 1, sectors: 1, ecosystems: 1, chuDe: 1, cauChuyen: 1,
+  stock: 1, sector: 1, family: 1, chuDeDetail: 1, cauChuyenDetail: 1,
+  watchlist: 1, messages: 1, search: 1,
+  account: 1, checkout: 1, newsWrite: 1, stockComment: 1
+};
+
 export function pageKeyFromPath(pathname) {
   var raw = pathname || '/';
   var path = raw;

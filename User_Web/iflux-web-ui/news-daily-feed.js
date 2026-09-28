@@ -3,9 +3,10 @@
 (function (global) {
   'use strict';
 
-  var FEED_PAGE_SIZE = 50;
+  /* Mỗi lần user cuộn tới cuối → tải + dựng đúng 1 section (A: 1 nổi bật + 4 nhỏ · B: 2 hàng × 3). */
   var BATCH_A = 5;
   var BATCH_B = 6;
+  var FEED_PAGE_SIZE = BATCH_A + BATCH_B;
 
   function st() { return global.IfluxNewsStore; }
   function ui() { return global.IfluxNewsUI; }
@@ -172,6 +173,11 @@
     if (filter.categoryId) q.category_id = filter.categoryId;
     if (filter.ticker) q.ticker = filter.ticker;
     if (filter.taxSource === 'chu-de' && filter.taxGroupId) q.chu_de_id = filter.taxGroupId;
+    if (filter.chuDeId) q.chu_de_id = filter.chuDeId;
+    /* Trang thực thể Ngành / Hệ sinh thái: bài gắn mã thuộc nhóm (backend suy ra từ danh mục mã). */
+    if (filter.taxSource === 'sector' && filter.taxGroupId) q.sector = filter.taxGroupId;
+    if (filter.taxSource === 'family' && filter.taxGroupId) q.ecosystem = filter.taxGroupId;
+    if (filter.relatedTo) q.related_to = filter.relatedTo.id || filter.relatedTo.slug;
     return q;
   }
 
@@ -226,6 +232,7 @@
     var mount = container.querySelector('[data-ifx-daily]');
     if (!mount || !html) return;
     mount.insertAdjacentHTML('beforeend', html);
+    if (ui() && ui().clampTagRows) ui().clampTagRows(mount);
     if (global.IfluxHeartAction) IfluxHeartAction.bind(container);
   }
 
@@ -294,6 +301,9 @@
       category_id: q.category_id,
       ticker: q.ticker,
       chu_de_id: q.chu_de_id,
+      related_to: q.related_to,
+      sector: q.sector,
+      ecosystem: q.ecosystem,
       replace: doReplace
     }).then(function (out) {
       if (!container._ifxFeed || container._ifxFeed.generation !== gen) {
@@ -307,8 +317,10 @@
       }
       var cards = out.cards || [];
       var before = s.buffer.length;
+      var exclude = s.filter.excludeId;
       cards.forEach(function (c) {
         if (!c || !c.id || s.bufferIds[c.id]) return;
+        if (exclude && (c.id === exclude || c.slug === exclude)) return;
         s.bufferIds[c.id] = true;
         s.buffer.push(c);
       });
@@ -483,11 +495,6 @@
       composeOneBatch(container);
       s.initialDone = true;
       updateSentinel(container);
-      /* Nếu sentinel đã trong viewport — lấy batch 2 một lần (không loop) */
-      var more = container.querySelector('[data-ifx-daily-more]');
-      if (more && !more.hidden && !s.ended) {
-        loadNextBatch(container);
-      }
     }).catch(function () {
       if (container._ifxFeed && container._ifxFeed.generation === gen) {
         container._ifxFeed.batchLoading = false;

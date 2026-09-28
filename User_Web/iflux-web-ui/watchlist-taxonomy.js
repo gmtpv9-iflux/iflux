@@ -174,7 +174,7 @@ Note: requiresShell IfluxWatchlistTaxonomy
     return Promise.resolve(refreshMasterGroups());
   }
 
-  try { ensureMasterGroups(); } catch (e) { /* ignore */ }
+  /* Không tự tải Market Master: getGroups() tự làm mới khi danh mục đã có; trang cần nhóm ngành/HST gọi ensureMasterGroups(). */
 
   var SOURCE_LABELS = {
     sector: 'Ngành',

@@ -2,6 +2,7 @@
  * User Web — lớp phủ khoá widget (Phân quyền sử dụng). Nạp theo nhu cầu bởi iflux-block-gate.js,
  * chỉ khi trên trang có vùng .uw-locked. Không quyết định quyền — chỉ vẽ theo trạng thái người xem:
  *   khách (chưa đăng nhập) → «Đăng nhập» · đã đăng nhập, chưa đủ gói → «Nâng cấp gói».
+ * Chỉ thân widget bị làm mờ; header widget luôn hiện.
  * Vùng khoá lồng trong vùng khoá khác → chỉ vùng ngoài cùng có lớp phủ.
  */
 (function (global) {
@@ -52,22 +53,25 @@
     });
   }
 
-  function overlayOf(host, create) {
-    var ov = null;
-    for (var i = 0; i < host.children.length; i++) {
-      if (host.children[i].hasAttribute('data-uw-lock-overlay')) { ov = host.children[i]; break; }
-    }
+  /* Vùng bị làm mờ = thân widget (.ifx-card-body); header giữ nguyên để người xem thấy widget là gì. */
+  function bodyOf(host) {
+    return host.querySelector(':scope > .ifx-card > .ifx-card-body') || host;
+  }
+
+  function overlayOf(target, create) {
+    var ov = target.querySelector(':scope > [data-uw-lock-overlay]');
     if (!ov && create) {
       ov = document.createElement('div');
       ov.className = 'uw-lock-overlay';
       ov.setAttribute('data-uw-lock-overlay', '');
-      host.appendChild(ov);
+      target.classList.add('uw-lock-target');
+      target.appendChild(ov);
     }
     return ov;
   }
 
   function paint(host, show) {
-    var ov = overlayOf(host, show);
+    var ov = overlayOf(bodyOf(host), show);
     if (!ov) return;
     if (!show) { ov.hidden = true; ov.innerHTML = ''; return; }
     var c = copyFor(tier());
@@ -75,14 +79,14 @@
       ? '<a href="' + esc(c.href) + '" class="ifx-btn ifx-btn-primary ifx-btn-sm">' + esc(c.label) + '</a>'
       : '<button type="button" class="ifx-btn ifx-btn-primary ifx-btn-sm" data-uw-lock-cta="' +
           esc(JSON.stringify({ reason: c.reason, message: c.caption })) + '">' + esc(c.label) + '</button>';
-    ov.innerHTML = '<div class="uw-lock-card">' + btn + '<p class="uw-lock-caption">' + esc(c.caption) + '</p></div>';
+    ov.innerHTML = btn + '<p class="uw-lock-caption">' + esc(c.caption) + '</p>';
     ov.hidden = false;
   }
 
   /** Đồng bộ toàn trang theo trạng thái .uw-locked hiện tại. */
   function sync() {
     document.querySelectorAll('.uw-locked, [data-uw-lock-overlay]:not([hidden])').forEach(function (el) {
-      var host = el.hasAttribute('data-uw-lock-overlay') ? el.parentElement : el;
+      var host = el.hasAttribute('data-uw-lock-overlay') ? el.closest('[data-widget-id]') : el;
       if (!host) return;
       var locked = host.classList.contains('uw-locked');
       var outer = host.parentElement && host.parentElement.closest('.uw-locked');

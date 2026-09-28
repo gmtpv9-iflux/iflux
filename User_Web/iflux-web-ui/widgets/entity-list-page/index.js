@@ -1,8 +1,8 @@
 /**
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928n';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -23,26 +23,26 @@ var KIND_BY_PAGE = {
 var CORE_TIERS = [
   [
     ADMIN + 'iflux-admin-ui.js',
-    ASSET + 'iflux-user-data-sync.js'
+    ASSET + 'iflux-user-data-sync.js?v=r20260928n'
   ],
   [
-    ASSET + 'iflux-market-quotes.js',
-    ASSET + 'watchlist-store.js',
+    ASSET + 'iflux-market-quotes.js?v=r20260928n',
+    ASSET + 'watchlist-store.js?v=r20260928n',
     ASSET + 'alert-store.js',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724'
   ],
   [
-    ASSET + 'watchlist-ui.js',
-    ASSET + 'alert-ui.js',
-    ASSET + 'stock-mentions.js',
+    ASSET + 'watchlist-ui.js?v=r20260928n',
+    ASSET + 'alert-ui.js?v=r20260928n',
+    ASSET + 'stock-mentions.js?v=r20260928n',
     ASSET + 'market-heatmap.js?v=mockRmWp4_20260809',
     ASSET + 'market-rankings.js?v=mockRmWp4_20260809',
     ASSET + 'stock-scroll-feed.js'
   ],
   [
-    ASSET + 'alert-page.js',
+    ASSET + 'alert-page.js?v=r20260928n',
     ASSET + 'entity-list-page.js?v=' + ELP_VER,
-    ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928'
+    ASSET + 'runtime/page-layout-engine.js?v=r20260928n'
   ]
 ];
 

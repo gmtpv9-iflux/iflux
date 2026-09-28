@@ -1,7 +1,7 @@
 /**
  * Permission Gate — chỉ khóa Widget thuộc Tầng 4 (SoT Phân quyền sử dụng).
  * Ngoài danh sách Tầng 4 (Page Composite WGT-*-PAGE, nội dung đặc thù, …)
- * → không áp dụng lớp khoá (.uw-locked).
+ * → không áp dụng lớp khoá (.uw-locked). Vùng không phải widget (tab, khung trang) không bao giờ bị khoá.
  * Gate chỉ QUYẾT ĐỊNH khoá; lớp phủ + che tên đối tượng = platform/web/lock (nạp khi có vùng bị khoá).
  */
 (function (global) {
@@ -19,7 +19,7 @@
   }
 
   /* Lớp phủ khoá (platform/web/lock) — chỉ nạp khi trên trang thật sự có vùng bị khoá. */
-  var LOCK_VER = 'lock20260928';
+  var LOCK_VER = 'r20260928n';
   var lockLoading = null;
   function ensureLockUi() {
     if (global.IfluxWidgetLock) return Promise.resolve();
@@ -70,24 +70,6 @@
       setHostState(el, !!ent.hasBlock(wid));
     });
 
-    /* data-ifx-ent-block (BLK-*): tôn trọng plan.blocks qua hasBlock (STATIC + legacy). */
-    document.querySelectorAll('[data-ifx-ent-block]').forEach(function (el) {
-      if (el.getAttribute('data-widget-id')) return;
-      var bid = el.getAttribute('data-ifx-ent-block');
-      el.hidden = false;
-      el.style.display = '';
-      el.removeAttribute('aria-hidden');
-      if (!bid) {
-        setHostState(el, true);
-        return;
-      }
-      setHostState(el, !!ent.hasBlock(bid));
-    });
-
-    document.querySelectorAll('[data-ifx-ent-block-section]').forEach(function (section) {
-      section.hidden = false;
-      section.style.display = '';
-    });
     syncLockUi();
   }
 

@@ -19,11 +19,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { buildPageFrame } from './app-shell.js?v=appHeader20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { loadWidget } from './widget-loader.js?v=pageLayout20260928';
-import { loadScript, loadStyles } from './legacy-bridge.js?v=stickyFix20260811';
-import { mountPageWidgets } from './page-widgets.js?v=pageFrame20260928';
+import { loadWidget } from './widget-loader.js?v=r20260928n';
+import { loadScript, loadStyles } from './legacy-bridge.js?v=r20260928n';
+import { mountPageWidgets } from './page-widgets.js?v=r20260928n';
 
-var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageFrame20260928';
+var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=r20260928n';
 
 async function ensureLayoutEngine() {
   if (window.IfluxPageLayoutEngine && IfluxPageLayoutEngine.buildHostTree) return;

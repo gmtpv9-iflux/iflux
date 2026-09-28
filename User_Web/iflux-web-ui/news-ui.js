@@ -141,6 +141,7 @@
         if (tags) tags.innerHTML = postTagsHtml(p);
       }
     });
+    clampTagRows(elRoot);
     var articleTags = elRoot.querySelector('.ifx-com-article__tags');
     if (articleTags && posts && posts[0]) {
       articleTags.innerHTML = postTagsHtml(posts[0]);
@@ -196,29 +197,55 @@
     return idHref(c);
   }
 
-  function trendStatHtml(chg) {
-    if (chg == null || isNaN(chg)) return '';
-    if (chg > 0) {
-      return '<span class="ix-stat-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> ' + fmtPct(chg) + '</span>';
-    }
-    if (chg < 0) {
-      return '<span class="ix-stat-trend down"><i class="ti ti-trending-down" style="font-size:11px"></i> ' + fmtPct(chg) + '</span>';
-    }
-    return '<span class="ix-stat-trend">' + fmtPct(chg) + '</span>';
-  }
-
+  /* Chip mã: chỉ mã + % thay đổi; màu + dấu thể hiện tăng/giảm (không mũi tên). */
   function tickerTagHtml(ticker) {
-    var q = getStockQuote(ticker);
-    var chg = quoteChangePct(q);
-    var price = quotePrice(q);
+    var chg = quoteChangePct(getStockQuote(ticker));
+    var has = chg != null && !isNaN(chg);
+    var dir = has ? (chg > 0 ? ' is-up' : (chg < 0 ? ' is-down' : '')) : '';
     return (
-      '<a class="ix-chip ix-chip-sm ix-chip-outline" href="' + tickerArchiveUrl(ticker) + '">' +
+      '<a class="ix-chip ix-chip-sm ix-chip-outline ifx-com-tick' + dir + '" href="' + tickerArchiveUrl(ticker) + '">' +
         ticker +
-        (price != null ? ' ' + price : '') +
-        trendStatHtml(chg) +
+        (has ? ' <span class="ifx-com-tick__chg">' + fmtPct(chg) + '</span>' : '') +
       '</a>'
     );
   }
+
+  /* Tag trên card tin: tối đa 2 hàng, phần dư thay bằng «…» — card không bị kéo cao. */
+  var TAG_ROWS = 2;
+  function clampTagRows(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('.ifx-com-post__tags').forEach(function (box) {
+      var more = box.querySelector(':scope > [data-ifx-tags-more]');
+      if (more) more.remove();
+      var items = Array.prototype.slice.call(box.children);
+      items.forEach(function (el) { el.hidden = false; });
+      if (!items.length || !box.offsetParent) return;
+      var tops = [];
+      var cut = -1;
+      for (var i = 0; i < items.length; i++) {
+        var t = items[i].offsetTop;
+        if (tops.indexOf(t) < 0) tops.push(t);
+        if (tops.length > TAG_ROWS) { cut = i; break; }
+      }
+      if (cut < 0) return;
+      for (var j = cut; j < items.length; j++) items[j].hidden = true;
+      more = document.createElement('span');
+      more.className = 'ix-chip ix-chip-sm ix-chip-outline';
+      more.setAttribute('data-ifx-tags-more', '');
+      more.textContent = '…';
+      box.appendChild(more);
+      var lastRowTop = tops[TAG_ROWS - 1];
+      while (more.offsetTop > lastRowTop && cut > 0) {
+        cut -= 1;
+        items[cut].hidden = true;
+      }
+    });
+  }
+  var clampTimer = null;
+  global.addEventListener('resize', function () {
+    clearTimeout(clampTimer);
+    clampTimer = setTimeout(function () { clampTagRows(document); }, 150);
+  });
 
   function postTagsHtml(post) {
     var html = '';
@@ -514,23 +541,6 @@
     return idHref(c);
   }
 
-  /* Gom ngành / hệ sinh thái duy nhất mà các mã CP trong bài thuộc về */
-  function aggregateMemberships(post, source) {
-    var t = tax();
-    if (!t || !t.getTickerMemberships) return [];
-    var seen = {};
-    var out = [];
-    (post.tickers || []).forEach(function (tk) {
-      var m = t.getTickerMemberships(tk);
-      var g = m && m[source];
-      if (g && g.id != null && !seen[g.id]) {
-        seen[g.id] = true;
-        out.push(g);
-      }
-    });
-    return out;
-  }
-
   function sideLinkRowHtml(href, icon, name, perf, extra) {
     var cls = 'ifx-com-side-row' + (dirClass(perf) ? ' ' + dirClass(perf) : '');
     return (
@@ -747,6 +757,7 @@
     featuredPostHtml: featuredPostHtml,
     compactPostHtml: compactPostHtml,
     postTagsHtml: postTagsHtml,
+    clampTagRows: clampTagRows,
     postEntityChipsHtml: postEntityChipsHtml,
     getPrimaryStory: getPrimaryStory,
     tickerArchiveUrl: tickerArchiveUrl,

@@ -7,7 +7,7 @@
   if (global.IfluxInteractionBoot) return;
 
   var BASE = '/User_Web/iflux-web-ui/interaction/';
-  var V = '?v=b5ixFlat20260727';
+  var V = '?v=r20260928n';
   var SHARE_STORE = '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=p7ShareSheet20260730';
 
   /* RC-IR-01: Summary — Persistence + Api + Store projection + Permission + Catalog + Host */

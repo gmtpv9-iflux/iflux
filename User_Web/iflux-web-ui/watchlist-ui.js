@@ -150,14 +150,8 @@
   function masterStockName(ticker) {
     var t = String(ticker || '').toUpperCase();
     var mm = global.IfluxMarketMaster;
-    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
-    if (!list) return t;
-    for (var i = 0; i < list.length; i++) {
-      if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) {
-        return list[i].name || list[i].short_name || t;
-      }
-    }
-    return t;
+    var ms = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+    return (ms && (ms.name || ms.short_name)) || t;
   }
 
   function openModal(ticker) {

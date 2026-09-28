@@ -1842,13 +1842,9 @@
   text-decoration: none;
   font-weight: var(--ifx-font-weight-bold);
 }
-.ifx-com-post__tags .ix-stat-trend,
-.ifx-com-article__tags .ix-stat-trend {
-  margin-top: 0;
-  font-size: var(--ifx-font-size-10);
-  font-family: var(--ifx-font-primary);
-  font-weight: var(--ifx-font-weight-semibold);
-}
+.ifx-com-tick__chg { font-weight: var(--ifx-font-weight-semibold); }
+.ifx-com-tick.is-up { color: var(--ifx-market-up); }
+.ifx-com-tick.is-down { color: var(--ifx-market-down); }
 .ifx-com-post__footer {
   display: flex;
   align-items: center;

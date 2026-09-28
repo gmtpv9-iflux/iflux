@@ -193,6 +193,28 @@ async function fetchCommunityRows(filters) {
     )`;
   }
 
+  /* Ngành / Hệ sinh thái (id, code hoặc slug): bài gắn trực tiếp, hoặc có mã CP thuộc nhóm đó. */
+  [['sector', 'sectors', 'sector_id'], ['ecosystem', 'ecosystems', 'ecosystem_id']].forEach(function (g) {
+    const key = filters[g[0]];
+    if (!key) return;
+    params.push(String(key).trim());
+    const n = params.length;
+    sql += ` AND (
+      EXISTS (
+        SELECT 1 FROM jsonb_array_elements_text(COALESCE(payload->'tickers', '[]'::jsonb)) t(val)
+        JOIN stocks st ON st.ticker = UPPER(t.val)
+        JOIN ${g[1]} grp ON grp.id = st.${g[2]}
+        WHERE grp.id::text = $${n} OR grp.code = $${n} OR grp.slug = $${n}
+      )
+      OR EXISTS (
+        SELECT 1 FROM jsonb_array_elements(COALESCE(payload->'${g[1]}', '[]'::jsonb)) e(val)
+        WHERE (CASE WHEN jsonb_typeof(e.val) = 'object'
+                 THEN COALESCE(e.val->>'id', e.val->>'slug', e.val->>'code')
+                 ELSE e.val #>> '{}' END) = $${n}
+      )
+    )`;
+  });
+
   if (filters.exclude_id) {
     params.push(String(filters.exclude_id));
     sql += ` AND id <> $${params.length} AND COALESCE(payload->>'slug', '') <> $${params.length}`;
@@ -246,7 +268,7 @@ async function resolveRelatedSeed(relatedTo) {
 
 /**
  * GET /community/feed — FeedCard[]
- * Query: limit, offset, ticker, category_id, chu_de_id, related_to, type (content_type)
+ * Query: limit, offset, ticker, category_id, chu_de_id, sector, ecosystem, related_to, type (content_type)
  */
 async function listFeed(filters) {
   filters = filters || {};
@@ -259,18 +281,20 @@ async function listFeed(filters) {
     const seed = await resolveRelatedSeed(filters.related_to);
     if (!seed) return { cards: [], total: 0, limit, offset, has_more: false };
 
+    /* Hợp nhiều nguồn theo thứ tự ưu tiên rồi cắt theo offset — mỗi nguồn lấy đủ tới trang đang hỏi (tối đa 51). */
+    const want = Math.min(offset + limit + 1, 51);
     let cards = [];
     if (seed.category_id) {
       cards = await fetchCommunityRows({
-        limit: limit + 1,
+        limit: want,
         offset: 0,
         category_id: seed.category_id,
         exclude_id: seed.id
       });
     }
-    if (cards.length < limit + 1 && seed.chu_de_id) {
+    if (cards.length < want && seed.chu_de_id) {
       const more = await fetchCommunityRows({
-        limit: limit + 1,
+        limit: want,
         offset: 0,
         chu_de_id: seed.chu_de_id,
         exclude_id: seed.id
@@ -284,9 +308,9 @@ async function listFeed(filters) {
         }
       });
     }
-    if (cards.length < limit + 1 && seed.tickers && seed.tickers.length) {
+    if (cards.length < want && seed.tickers && seed.tickers.length) {
       const more = await fetchCommunityRows({
-        limit: limit + 1,
+        limit: want,
         offset: 0,
         ticker: seed.tickers[0],
         exclude_id: seed.id
@@ -300,9 +324,9 @@ async function listFeed(filters) {
         }
       });
     }
-    if (cards.length < limit + 1) {
+    if (cards.length < want) {
       const more = await fetchCommunityRows({
-        limit: limit + 1,
+        limit: want,
         offset: 0,
         exclude_id: seed.id
       });
@@ -315,9 +339,9 @@ async function listFeed(filters) {
         }
       });
     }
-    const has_more = cards.length > limit;
-    cards = cards.slice(0, limit);
-    return { cards: cards, total: cards.length, limit: limit, offset: 0, has_more: has_more };
+    const has_more = cards.length > offset + limit;
+    cards = cards.slice(offset, offset + limit);
+    return { cards: cards, total: cards.length, limit: limit, offset: offset, has_more: has_more };
   }
 
   /* L+1 → has_more; cùng filter + ORDER BY deterministic (fetchCommunityRows) */
@@ -327,6 +351,8 @@ async function listFeed(filters) {
     ticker: filters.ticker,
     category_id: filters.category_id,
     chu_de_id: filters.chu_de_id,
+    sector: filters.sector,
+    ecosystem: filters.ecosystem,
     content_type: filters.content_type || filters.type || null
   });
 

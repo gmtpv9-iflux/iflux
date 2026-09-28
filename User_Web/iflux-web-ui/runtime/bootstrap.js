@@ -22,16 +22,16 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
  */
 
-import { bootPage } from './page-runtime.js?v=softAll20260928';
+import { bootPage } from './page-runtime.js?v=r20260928n';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=lock20260928';
-import { pageKeyFromPath } from './page-keys.js?v=softAll20260928';
-import { installSoftNavigation } from './soft-navigation.js?v=softAll20260928';
+import { bootShell } from './shell-boot.js?v=r20260928n';
+import { pageKeyFromPath } from './page-keys.js?v=r20260928n';
+import { installSoftNavigation } from './soft-navigation.js?v=r20260928n';
 
-var VER = '?v=softAll20260928';
+var VER = '?v=r20260928n';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=softAll20260928';
+var PF = '?v=r20260928n';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },

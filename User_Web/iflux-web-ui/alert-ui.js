@@ -346,17 +346,9 @@
     modalTicker = ticker;
     var modal = ensureModal();
     var t = String(ticker || '').toUpperCase();
-    var name = t;
     var mm = global.IfluxMarketMaster;
-    var list = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
-    if (list) {
-      for (var i = 0; i < list.length; i++) {
-        if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) {
-          name = list[i].name || list[i].short_name || t;
-          break;
-        }
-      }
-    }
+    var ms = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+    var name = (ms && (ms.name || ms.short_name)) || t;
     var priceLabel = '—';
     var mq = global.IfluxMarketQuotes;
     var q = mq && typeof mq.peekQuote === 'function' ? mq.peekQuote(t) : null;

@@ -3,8 +3,8 @@
  * Mọi trang dựng bằng runtime (page-keys.js); trang HTML tĩnh / modifier-click / lỗi → tải đầy đủ.
  * Class <main> và CSS riêng của trang do manifest trang khai báo (page-runtime áp dụng).
  */
-import { unloadWidget } from './widget-loader.js?v=pageLayout20260928';
-import { pageKeyFromPath, isSoftPage } from './page-keys.js?v=softAll20260928';
+import { unloadWidget } from './widget-loader.js?v=r20260928n';
+import { pageKeyFromPath, isSoftPage, AUTH_PAGES } from './page-keys.js?v=r20260928n';
 
 var SOFT_VER = 'softAll_20260928';
 
@@ -163,6 +163,14 @@ export async function softNavigate(href, opts) {
   }
 }
 
+function guestNeedsLogin(href) {
+  if (!window.IfluxAuth || !IfluxAuth.promptLogin || IfluxAuth.isLoggedIn()) return false;
+  var url;
+  try { url = new URL(toAbsoluteUrl(href)); } catch (e) { return false; }
+  if (url.origin !== location.origin) return false;
+  return !!AUTH_PAGES[pageKeyFromPath(url.pathname)];
+}
+
 function onDocumentClick(e) {
   if (e.defaultPrevented) return;
   if (e.button != null && e.button !== 0) return;
@@ -176,6 +184,13 @@ function onDocumentClick(e) {
 
   var href = a.getAttribute('href');
   if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+  if (guestNeedsLogin(href)) {
+    /* Khách bấm vào nội dung cần đăng nhập → hỏi trước, ở lại trang nếu chọn «Để sau». */
+    e.preventDefault();
+    var u = new URL(toAbsoluteUrl(href));
+    window.IfluxAuth.promptLogin(u.pathname + u.search);
+    return;
+  }
   if (!canSoftNavigate(href)) return;
 
   e.preventDefault();

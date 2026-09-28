@@ -160,8 +160,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         host.className = 'ifx-rt-widget';
         host.setAttribute('data-widget-id', p.widgetId);
         applySpan(host, p.span);
-        var blocks = art && art.permission && art.permission.blocks;
-        if (blocks && blocks[0]) host.setAttribute('data-ifx-ent-block', blocks[0]);
         sectionEl.appendChild(host);
 
         tree.push({

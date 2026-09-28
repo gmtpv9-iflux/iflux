@@ -2,10 +2,10 @@
  * WGT-FLW-PAGE — Composite Dòng tiền
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=phaseCW5gate20260721';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928n';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import featureManifest from '../../features/flow.manifest.js?v=mockRmWp5_20260809';
+import featureManifest from '../../features/flow.manifest.js?v=r20260928n';
 
 var featureRt = null;
 
@@ -20,7 +20,7 @@ var HEAD_HTML =
 
 var MAIN_COL_HTML =
   '<div class="ifx-flow-main-col">' +
-    '<div class="ifx-flow-score-wrap" data-ifx-ent-block="BLK-FLW-SCORE-BASIC">' +
+    '<div class="ifx-flow-score-wrap">' +
       '<div class="ix-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
         '<button type="button" class="ix-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê cơ bản</button>' +
         '<button type="button" class="ix-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Thống kê nâng cao</button>' +
@@ -29,10 +29,10 @@ var MAIN_COL_HTML =
       '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
         '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
       '</div>' +
-      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-ADV">' +
+      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden>' +
         '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
       '</div>' +
-      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden data-ifx-ent-block="BLK-FLW-SCORE-EX">' +
+      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden>' +
         '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
       '</div>' +
     '</div>' +

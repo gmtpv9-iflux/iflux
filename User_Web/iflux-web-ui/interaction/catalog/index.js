@@ -185,7 +185,7 @@
   function handleShareUrlClick(target) {
     var r = perm() ? perm().resolve({ action: 'share_url', target: target }) : 'Allow';
     if (r === 'LoginRequired') {
-      if (global.IfluxAuth && IfluxAuth.requireAuth) IfluxAuth.requireAuth();
+      if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
       else if (global.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
       return;
     }

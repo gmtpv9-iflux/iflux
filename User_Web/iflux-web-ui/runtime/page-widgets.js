@@ -2,10 +2,10 @@
  * Widget Placement của một trang — dựng host tree từ PagePublished rồi hiển thị Template mà mỗi widget chọn.
  * Mọi trang (runtime chung hoặc module trang) dùng hàm này; trang chỉ cần có khung buildPageFrame.
  */
-import { loadScript } from './legacy-bridge.js?v=stickyFix20260811';
-import { mountPublishedWidgets } from './mount-published-widgets.js?v=tplMount20260928';
+import { loadScript } from './legacy-bridge.js?v=r20260928n';
+import { mountPublishedWidgets } from './mount-published-widgets.js?v=r20260928n';
 
-var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=pageFrame20260928';
+var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=r20260928n';
 
 /**
  * @param {Element} root — phần tử chứa khung trang

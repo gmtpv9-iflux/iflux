@@ -48,6 +48,7 @@
     { key: 'basic', label: 'Tab Thống kê cơ bản', icon: 'ti-chart-bar' },
     { key: 'advanced', label: 'Tab Thống kê nâng cao', icon: 'ti-chart-dots' },
     { key: 'exclusive', label: 'Tab Độc quyền', icon: 'ti-crown' },
+    { key: 'info', label: 'Tab Thông tin', icon: 'ti-info-circle' },
     { key: 'trading', label: 'Tab Thống kê', icon: 'ti-chart-bar' }
   ];
 
@@ -58,15 +59,18 @@
   var RIGHT_SIDEBAR = {};
   var PAGE_TAB_REGIONS = {
     flow: ['basic', 'advanced', 'exclusive'],
-    'stock-detail': ['trading'],
-    'sector-detail': ['trading'],
-    'eco-detail': ['trading'],
-    'cau-chuyen-detail': ['trading']
+    'stock-detail': ['info', 'trading'],
+    'sector-detail': ['info', 'trading'],
+    'eco-detail': ['info', 'trading'],
+    'cau-chuyen-detail': ['info', 'trading']
   };
+  /* Trang chi tiết thực thể: Main là cụm tab đặc thù (Tin tức · Thông tin · Thống kê · Bình luận) —
+     widget chỉ đặt ở Sidebar trái, Tab Thông tin, Tab Thống kê; không có host Main riêng. */
+  var ENTITY_DETAIL = { 'stock-detail': true, 'sector-detail': true, 'eco-detail': true, 'cau-chuyen-detail': true };
 
 
   function pageRegions(pageKey) {
-    var base = NO_SIDEBAR[pageKey] ? ['main'] : BASE_REGIONS.slice();
+    var base = NO_SIDEBAR[pageKey] ? ['main'] : (ENTITY_DETAIL[pageKey] ? ['sidebar'] : BASE_REGIONS.slice());
     if (RIGHT_SIDEBAR[pageKey]) base.push('sidebar-right');
     return base.concat(PAGE_TAB_REGIONS[pageKey] || []);
   }
@@ -255,12 +259,12 @@
   ];
 
   function knowledgePage(id, key, title, slug, path, group, dynamic, sidebarLabel, description) {
-    var sections = [
-      { key: 'sidebar', visible: true, label: sidebarLabel || 'Sidebar tiện ích' },
-      { key: 'main', visible: true, layout: 'grid-12' }
-    ];
+    var sections = [{ key: 'sidebar', visible: true, label: sidebarLabel || 'Sidebar tiện ích' }];
     if (dynamic) {
+      sections.push({ key: 'info', visible: true, label: 'Tab Thông tin', layout: 'grid-12' });
       sections.push({ key: 'trading', visible: true, label: 'Tab Thống kê', layout: 'grid-12' });
+    } else {
+      sections.push({ key: 'main', visible: true, layout: 'grid-12' });
     }
     return {
       id: id, key: key, title: title, slug: slug, path: path,

@@ -53,6 +53,8 @@ function createNewsRouter(deps) {
         ticker: req.query.ticker || null,
         category_id: req.query.category_id || null,
         chu_de_id: req.query.chu_de_id || null,
+        sector: req.query.sector || null,
+        ecosystem: req.query.ecosystem || null,
         related_to: req.query.related_to || null
       });
       return success(res, {

@@ -29,7 +29,7 @@
   /* Task5 — Heart = Foundation; Store = Watchlist data. Không tải watchlist-ui. */
   var heartLoadPromise = null;
   var HEART_JS = '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724';
-  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=followFound20260724';
+  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=r20260928n';
 
   function ensureHeartLazy() {
     if (global.IfluxHeartAction && global.IfluxWatchlistStore) {
@@ -435,11 +435,30 @@
     bindFeaturedTabs(root);
   }
 
+  /* Mỗi tab một khung feed riêng, giữ lại khi đổi tab: quay lại tab đã xem → hiện ngay, không tải lại.
+   * Khung cũ hơn FEED_TTL_MS được dựng lại để tin mới vẫn xuất hiện. */
+  var FEED_TTL_MS = 5 * 60 * 1000;
+
   function mountDailyFeed(root) {
     var mount = root.querySelector('[data-ifx-com-daily-feed]');
     if (!mount || !global.IfluxDailyFeed) return;
-    IfluxDailyFeed.mount(mount, {
-      filter: listFilterParams(),
+    var filter = listFilterParams();
+    var key = JSON.stringify(filter);
+    var pane = null;
+    Array.prototype.forEach.call(mount.children, function (el) {
+      var on = el.getAttribute('data-ifx-feed-key') === key;
+      el.hidden = !on;
+      if (on) pane = el;
+    });
+    if (pane && Date.now() - Number(pane.getAttribute('data-ifx-feed-at')) < FEED_TTL_MS) return;
+    if (!pane) {
+      pane = document.createElement('div');
+      pane.setAttribute('data-ifx-feed-key', key);
+      mount.appendChild(pane);
+    }
+    pane.setAttribute('data-ifx-feed-at', String(Date.now()));
+    IfluxDailyFeed.mount(pane, {
+      filter: filter,
       showNews: blockVisible('BLK-COM-NEWS'),
       showExperts: blockVisible('BLK-COM-EXPERTS'),
       showExpertPosts: blockVisible('BLK-COM-EXPERTS'),

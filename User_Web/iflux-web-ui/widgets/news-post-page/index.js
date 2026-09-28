@@ -1,9 +1,9 @@
 /**
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=stickyFix20260811';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928n';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=pageFrame20260928';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928n';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -13,21 +13,21 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
 
 /* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
-  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=pageFrame20260928'],
-  [ASSET + 'stock-mentions.js'],
+  [ADMIN + 'iflux-admin-ui.js', ASSET + 'runtime/page-layout-engine.js?v=r20260928n'],
+  [ASSET + 'stock-mentions.js?v=r20260928n'],
   [
-    ASSET + 'news-store.js?v=tickerNoDup20260810',
-    ASSET + 'iflux-news-api-bridge.js?v=calFeedFix20260808',
+    ASSET + 'news-store.js?v=r20260928n',
+    ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ASSET + 'profile-users-store.js',
     ASSET + 'profile-links.js'
   ],
   [
-    ASSET + 'iflux-market-quotes.js?v=comQuoteRuntime20260809',
-    ASSET + 'watchlist-store.js?v=followFound20260724',
+    ASSET + 'iflux-market-quotes.js?v=r20260928n',
+    ASSET + 'watchlist-store.js?v=r20260928n',
     ADMIN + 'foundation/heart-action.js?v=followFound20260724',
-    ASSET + 'news-ui.js?v=comQuoteRuntime20260809',
-    ASSET + 'news-daily-feed.js?v=comQuoteRuntime20260809',
-    ASSET + 'interaction/boot.js?v=b5ixFlat20260727',
+    ASSET + 'news-ui.js?v=r20260928n',
+    ASSET + 'news-daily-feed.js?v=r20260928n',
+    ASSET + 'interaction/boot.js?v=r20260928n',
     ASSET + 'news-post-page.js?v=appHeader20260928'
   ]
 ];

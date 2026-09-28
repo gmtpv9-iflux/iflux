@@ -97,17 +97,9 @@
   function masterStockRow(ticker) {
     var t = String(ticker || '').toUpperCase();
     var mm = global.IfluxMarketMaster;
-    var stocks = mm && typeof mm.getMasterStocks === 'function' ? mm.getMasterStocks() : null;
-    var name = t;
-    var exchange = '';
-    if (stocks) {
-      for (var i = 0; i < stocks.length; i++) {
-        if (String((stocks[i] && stocks[i].ticker) || '').toUpperCase() !== t) continue;
-        name = stocks[i].name || stocks[i].short_name || t;
-        exchange = stocks[i].exchange || '';
-        break;
-      }
-    }
+    var ms = mm && typeof mm.peekStock === 'function' ? mm.peekStock(t) : null;
+    var name = (ms && (ms.name || ms.short_name)) || t;
+    var exchange = (ms && ms.exchange) || '';
     var q = global.IfluxMarketQuotes && typeof IfluxMarketQuotes.peekQuote === 'function'
       ? IfluxMarketQuotes.peekQuote(t) : null;
     var pct = null;

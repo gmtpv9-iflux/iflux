@@ -1434,18 +1434,58 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     return segs[segs.length - 1] || 'index.html';
   }
 
-  function requireAuth(loginPath) {
+  /* Hộp xác nhận đăng nhập (DS Modal + platform/web/auth-prompt) — chỉ nạp khi khách thật sự cần. */
+  var AUTH_PROMPT_VER = 'authPrompt20260928';
+  var authPromptLoading = null;
+  function loadAuthPrompt() {
+    if (global.IfluxAuthPrompt && global.IfxModal) return Promise.resolve();
+    if (authPromptLoading) return authPromptLoading;
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = '/design_system/04_components/09_modal/modal.css?v=' + AUTH_PROMPT_VER;
+    document.head.appendChild(css);
+    function script(src) {
+      return new Promise(function (resolve, reject) {
+        var el = document.createElement('script');
+        el.src = src + '?v=' + AUTH_PROMPT_VER;
+        el.onload = resolve;
+        el.onerror = reject;
+        document.head.appendChild(el);
+      });
+    }
+    authPromptLoading = Promise.all([
+      global.IfxModal ? null : script('/design_system/04_components/09_modal/modal.js'),
+      script('/platform/web/auth-prompt/auth-prompt.js')
+    ]).catch(function (err) { authPromptLoading = null; throw err; });
+    return authPromptLoading;
+  }
+
+  function loginDest(returnPath) {
+    if (!global.IfluxRoutes) return '/dang-nhap?return=' + encodeURIComponent(returnPath || currentReturnPath());
+    if (global.IfluxPncLifecycle && IfluxPncLifecycle.saveReturnTo) {
+      IfluxPncLifecycle.saveReturnTo(returnPath || IfluxRoutes.pathname());
+    }
+    return IfluxRoutes.loginWithReturn(returnPath || IfluxRoutes.pathname());
+  }
+
+  /** Khách muốn mở nội dung cần đăng nhập → hỏi xác nhận, đồng ý mới chuyển sang trang đăng nhập. */
+  function promptLogin(returnPath, opts) {
+    var dest = loginDest(returnPath);
+    return loadAuthPrompt().then(function () {
+      IfluxAuthPrompt.ask(dest, opts);
+    }).catch(function () {
+      global.location.assign(dest);
+    });
+  }
+
+  function newsHref() {
+    return global.IfluxRoutes ? IfluxRoutes.to('news', { canonical: true, skipDecorate: true }) : '/tin-tuc';
+  }
+
+  /* Trang hiện tại cần đăng nhập mà khách chưa đăng nhập: hỏi trước; «Để sau» → về Tin tức (trang mặc định). */
+  function requireAuth() {
     if (!isLoggedIn()) {
-      var dest;
-      if (global.IfluxRoutes) {
-        if (global.IfluxPncLifecycle && IfluxPncLifecycle.saveReturnTo) {
-          IfluxPncLifecycle.saveReturnTo(IfluxRoutes.pathname());
-        }
-        dest = IfluxRoutes.loginWithReturn(IfluxRoutes.pathname());
-      } else {
-        dest = (loginPath || '../auth/login.html') + '?return=' + encodeURIComponent(currentReturnPath());
-      }
-      global.location.replace(dest);
+      promptLogin(null, { onCancel: function () { global.location.replace(newsHref()); } });
       return false;
     }
     return true;
@@ -1591,6 +1631,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     getActiveSessionInfo: getActiveSessionInfo,
     submitEmergencyLockRequest: submitEmergencyLockRequest,
     requireAuth: requireAuth,
+    promptLogin: promptLogin,
     redirectAfterAuth: redirectAfterAuth,
     refreshSessionFromApi: refreshSessionFromApi,
     patchUserById: patchUserById

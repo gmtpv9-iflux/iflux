@@ -51,20 +51,15 @@
 
   function masterStock(ticker) {
     var t = String(ticker || '').toUpperCase();
-    var list = master() && typeof master().getMasterStocks === 'function' ? master().getMasterStocks() : null;
-    if (!list) return null;
-    for (var i = 0; i < list.length; i++) {
-      if (String((list[i] && list[i].ticker) || '').toUpperCase() === t) return list[i];
-    }
-    return null;
+    return master() && typeof master().peekStock === 'function' ? master().peekStock(t) : null;
   }
 
   function stockIdentity(ticker) {
     var t = String(ticker || '').toUpperCase();
     var s = masterStock(t);
-    var sectorName = '';
+    var sectorName = (s && s.sector_name) || '';
     var tx = tax();
-    if (tx && typeof tx.getTickerMemberships === 'function') {
+    if (!sectorName && tx && typeof tx.getTickerMemberships === 'function') {
       var mem = tx.getTickerMemberships(t) || {};
       if (mem.sector && mem.sector.name) sectorName = mem.sector.name;
     }
@@ -181,7 +176,7 @@
     var html =
       tabsBar({ entityType: isStock ? 'stock' : (ctx.kind || '_default'), commentCount: ctx.commentCount }) +
       panel('news', true, feedHtml) +
-      panel('info', false, infoHtml) +
+      panel('info', false, infoHtml + '<div data-ifx-section="info" data-section="info" data-layout="grid-12"></div>') +
       panel('trading', false, '<div data-ifx-section="trading" data-section="trading" data-layout="grid-12"></div>') +
       (isStock ? panel('events', false, eventsPanel(ctx.ticker)) : '') +
       panel('comments', false, ctx.commentsSectionHtml || '');

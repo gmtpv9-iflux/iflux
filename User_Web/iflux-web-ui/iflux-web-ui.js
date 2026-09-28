@@ -1624,7 +1624,7 @@
       if (!window.IfluxAuth || !IfluxAuth.isLoggedIn || !IfluxAuth.isLoggedIn()) {
         e.preventDefault();
         e.stopPropagation();
-        if (IfluxAuth && IfluxAuth.requireAuth) IfluxAuth.requireAuth();
+        if (IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
         else if (window.ixToast) ixToast('Đăng nhập để chia sẻ link của bạn.', 'warning');
         return;
       }
