@@ -1,0 +1,92 @@
+name: Deploy to Production
+
+# GitHub `production` → iflux.vn (runtime newprod, API :3003).
+# Cùng cây nguồn và cùng mô hình với Staging (deploy-staging.yml): checkout → kiểm tra → atomic release
+# → stage nginx + switch từ Git → switch → migrate (062+) → health. Mỗi release là thư mục mới,
+# live = symlink → Production chỉ chứa đúng những gì có trong Git (không chép đè bản cũ).
+# CẤM: Live cũ dự phòng (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api) và Staging.
+# Runner self-hosted label "staging", user iflux-deploy.
+# Sudo chỉ /usr/local/bin/iflux-newprod-deploy-switch.sh (script tự refresh từ Git).
+
+on:
+  push:
+    branches:
+      - production
+
+concurrency:
+  group: iflux-production-new-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, staging]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # File sinh tự động (gói CSS global User Web) phải có trong Git và khớp nguồn.
+      - name: Kiểm tra gói CSS global
+        run: node ui_tooling/scripts/build-web-bundle.mjs --check
+
+      - name: Xác định release id
+        id: rel
+        run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+
+      - name: Build frontend release (atomic)
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="/var/www/iflux/releases-newprod/${{ steps.rel.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          for d in User_Web Admin_Design_system design_system platform modules patterns adapters ui_tooling vendor; do
+            if [ -d "$GITHUB_WORKSPACE/$d" ]; then
+              cp -a "$GITHUB_WORKSPACE/$d" "$RELEASE_DIR/$d"
+            fi
+          done
+
+      - name: Build backend release (atomic)
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="/var/iflux/backend-newprod/releases/${{ steps.rel.outputs.id }}"
+          mkdir -p "$RELEASE_DIR"
+          cp -a "$GITHUB_WORKSPACE/backend/." "$RELEASE_DIR/"
+          cd "$RELEASE_DIR"
+          npm install --omit=dev --no-audit --no-fund
+
+      - name: Stage nginx + switch (từ Git, ngoài web root)
+        run: |
+          set -euo pipefail
+          META="/var/www/iflux/releases-newprod/${{ steps.rel.outputs.id }}.deploy"
+          mkdir -p "$META"
+          cp "$GITHUB_WORKSPACE/infra/production/iflux-newprod-app.conf" "$META/iflux-newprod-app.conf"
+          cp "$GITHUB_WORKSPACE/infra/production/iflux-newprod-deploy-switch.sh" "$META/iflux-newprod-deploy-switch.sh"
+
+      - name: Atomic switch + nginx + refresh switch
+        run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}"
+
+      - name: Apply pending Production DB migrations (062+) + media
+        run: sudo -n /usr/local/bin/iflux-newprod-deploy-switch.sh "${{ steps.rel.outputs.id }}" --migrate-only
+
+      - name: Health check (iflux.vn)
+        run: |
+          set -euo pipefail
+          sleep 3
+          curl -fsS http://127.0.0.1:3003/health
+          for u in /admin/login /tin-tuc /design_system/05_templates/templates.json; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' "https://iflux.vn$u")
+            if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
+              echo "FAIL HTTPS iflux.vn$u → $code" >&2
+              exit 1
+            fi
+          done
+
+      - name: Dọn release cũ (giữ 5 bản, kèm .deploy)
+        run: |
+          set -euo pipefail
+          cd /var/www/iflux/releases-newprod
+          ls -1dt [0-9]* 2>/dev/null | grep -v '\.deploy$' | tail -n +6 | xargs -r rm -rf
+          for d in *.deploy; do
+            [ -e "$d" ] || continue
+            base="${d%.deploy}"
+            [ -d "$base" ] || rm -rf "$d"
+          done
+          cd /var/iflux/backend-newprod/releases && ls -1t | tail -n +6 | xargs -r rm -rf
