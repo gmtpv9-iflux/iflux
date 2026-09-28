@@ -56,9 +56,9 @@ export function ensureSections(root, manifest) {
 /**
  * Khung trang chung của User Web (platform/web/web.css) — mọi trang dùng:
  *
- *   .uw-page-layout
- *   ├─ aside.uw-page-sidebar   → host [sidebar] (widget đặt qua Widget Placement) + nội dung đặc thù
- *   └─ .uw-page-main           → host [main] (lưới widget 12 cột) + nội dung đặc thù (feed, tab, biểu đồ…)
+ *   .ifx-shell-layout
+ *   ├─ aside.ifx-shell-sidebar   → host [sidebar] (widget đặt qua Widget Placement) + nội dung đặc thù
+ *   └─ .ifx-shell-main           → host [main] (lưới widget 12 cột) + nội dung đặc thù (feed, tab, biểu đồ…)
  *
  * Host chỉ chứa widget (Layout Engine xoá/dựng lại); nội dung đặc thù nằm ở *Content, không bị xoá.
  * Host rỗng và Sidebar không có gì tự ẩn (CSS) — không cần JS theo dõi.
@@ -68,30 +68,30 @@ export function ensureSections(root, manifest) {
  */
 function aside(cls, key, label) {
   return '<aside class="' + cls + '" aria-label="' + String(label).replace(/"/g, '&quot;') + '">' +
-    '<div class="uw-page-host" data-section="' + key + '" data-ifx-section="' + key + '"></div>' +
-    '<div class="uw-page-sidebar-content"></div>' +
+    '<div class="ifx-shell-host" data-section="' + key + '" data-ifx-section="' + key + '"></div>' +
+    '<div class="ifx-shell-sidebar-content"></div>' +
   '</aside>';
 }
 
 export function buildPageFrame(root, opts) {
   opts = opts || {};
   var layout = document.createElement('div');
-  layout.className = 'uw-page-layout' + (opts.rightSidebar ? ' uw-page-layout-right' : '');
+  layout.className = 'ifx-shell-layout' + (opts.rightSidebar ? ' ifx-shell-layout-right' : '');
   layout.innerHTML =
-    (opts.noSidebar ? '' : aside('uw-page-sidebar', 'sidebar', opts.sidebarLabel || 'Sidebar')) +
-    '<div class="uw-page-main">' +
-      '<div class="uw-page-host ifx-grid" data-section="main" data-ifx-section="main" data-layout="grid-12"></div>' +
-      '<div class="uw-page-main-content"></div>' +
+    (opts.noSidebar ? '' : aside('ifx-shell-sidebar', 'sidebar', opts.sidebarLabel || 'Sidebar')) +
+    '<div class="ifx-shell-main">' +
+      '<div class="ifx-shell-host ifx-grid" data-section="main" data-ifx-section="main" data-layout="grid-12"></div>' +
+      '<div class="ifx-shell-main-content"></div>' +
     '</div>' +
-    (opts.rightSidebar ? aside('uw-page-sidebar uw-page-sidebar-right', 'sidebar-right', 'Sidebar phải') : '');
+    (opts.rightSidebar ? aside('ifx-shell-sidebar ifx-shell-sidebar-right', 'sidebar-right', 'Sidebar phải') : '');
   root.appendChild(layout);
-  var left = layout.querySelector('.uw-page-sidebar:not(.uw-page-sidebar-right)');
+  var left = layout.querySelector('.ifx-shell-sidebar:not(.ifx-shell-sidebar-right)');
   return {
     layout: layout,
     sidebarHost: left ? left.querySelector('[data-section="sidebar"]') : null,
-    sidebarContent: left ? left.querySelector('.uw-page-sidebar-content') : null,
+    sidebarContent: left ? left.querySelector('.ifx-shell-sidebar-content') : null,
     mainHost: layout.querySelector('[data-section="main"]'),
-    mainContent: layout.querySelector('.uw-page-main-content')
+    mainContent: layout.querySelector('.ifx-shell-main-content')
   };
 }
 

@@ -225,12 +225,10 @@ body.ifx-user-web *::-webkit-scrollbar {
   gap: var(--ifx-space-4);
 }
 .ifx-main {
+  /* Bề rộng / căn giữa / lề ngang = container DS .ifx-shell (App Shell). Ở đây chỉ chừa chỗ cho header / bottom menu. */
   flex: 1;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: calc(var(--ifx-topnav-h) + 24px) 24px 24px;
-  box-sizing: border-box;
+  padding-top: calc(var(--ifx-topnav-h) + 24px);
+  padding-bottom: 24px;
 }
 .ifx-main .ix-page-title {
   margin-bottom: 10px;
@@ -1273,7 +1271,8 @@ body.ifx-nav-drawer-open {
 @media (max-width: 768px) {
   .ifx-topnav { padding: 0 12px; gap: var(--ifx-space-8); }
   .ifx-main {
-    padding: calc(var(--ifx-topnav-active-h, var(--ifx-topnav-h)) + 16px) 16px calc(16px + var(--ifx-tabbar-h) + env(safe-area-inset-bottom, 0px));
+    padding-top: calc(var(--ifx-topnav-active-h, var(--ifx-topnav-h)) + 16px);
+    padding-bottom: calc(16px + var(--ifx-tabbar-h) + env(safe-area-inset-bottom, 0px));
   }
   .ifx-aff-ref-fields { grid-template-columns: 1fr; }
   .ifx-aff-ref-layers { width: 100%; }

@@ -794,4 +794,4 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
 }
 
 /* Thẻ hồ sơ nằm trong Sidebar của khung chung — theo bề rộng Sidebar (3/12). */
-.uw-page-sidebar-content > .ix-profile-sidebar { width: auto; }
+.ifx-shell-sidebar-content > .ix-profile-sidebar { width: auto; }

@@ -17,6 +17,6 @@ export default {
     enabled: true,
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/loyalty-page/index.js?v=pageFrame20260928',
-    css: ['/User_Web/iflux-web-ui/loyalty.css']
+    css: ['/User_Web/iflux-web-ui/loyalty.css?v=appShell20260928']
   }]
 };

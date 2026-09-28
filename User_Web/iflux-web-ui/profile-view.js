@@ -26,7 +26,7 @@
   }
 
   function showNotFound() {
-    var grid = document.querySelector('.uw-page-layout');
+    var grid = document.querySelector('.ifx-shell-layout');
     if (grid) grid.hidden = true;
     var main = document.querySelector('.ifx-main');
     if (!main) return;

@@ -31,7 +31,7 @@ export default {
         '/User_Web/iflux-web-ui/widget-shell.css?v=ui00120260723',
         '/User_Web/iflux-web-ui/block-templates.css?v=ui00120260723',
         /* Heart CSS = Admin Foundation (iflux-admin-ui.css → foundation/heart-action.css) */
-        '/User_Web/iflux-web-ui/news.css?v=pageFrame20260928'
+        '/User_Web/iflux-web-ui/news.css?v=appShell20260928'
       ]
     }
   ]

@@ -343,7 +343,7 @@ async function main() {
   await loadScriptsSequential(scripts);
   bootAccountPage();
   /* Widget Placement trang Tài khoản → host Sidebar / Main của khung chung. */
-  var layout = document.querySelector('.uw-page-layout');
+  var layout = document.querySelector('.ifx-shell-layout');
   if (layout) await mountPageWidgets(layout.parentElement, 'account');
 }
 

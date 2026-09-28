@@ -18,8 +18,8 @@ export default {
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/faq-page/index.js?v=pageFrame20260928',
     css: [
-      '/User_Web/iflux-web-ui/pricing.css',
-      '/User_Web/iflux-web-ui/faq.css'
+      '/User_Web/iflux-web-ui/pricing.css?v=appShell20260928',
+      '/User_Web/iflux-web-ui/faq.css?v=appShell20260928'
     ]
   }]
 };

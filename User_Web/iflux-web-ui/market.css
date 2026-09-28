@@ -1,11 +1,3 @@
-/* Trang Thị trường */
-.ifx-main.ifx-main--market {
-  max-width: 1320px;
-}
-/* Trang danh sách (Cổ phiếu / Ngành / Họ CP / Chủ đề) — tràn toàn bộ chiều ngang */
-.ifx-main.ifx-main--list {
-  max-width: 100%;
-}
 .ifx-mkt-intro {
   color: var(--ix-text-muted);
   margin: 0 0 28px;

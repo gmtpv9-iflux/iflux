@@ -27,7 +27,7 @@
   }
 
   function remountLeftColumn(root, ticker, detail) {
-    var layout = root.querySelector('.uw-page-sidebar-content');
+    var layout = root.querySelector('.ifx-shell-sidebar-content');
     if (!layout || layout.querySelector('.ifx-stock-col--left') || !detail) return;
     layout.insertAdjacentHTML('afterbegin', renderLeft(detail));
     enrichRealtime(root, ticker);
@@ -36,7 +36,7 @@
 
   function syncMobileLeftColumn(root, tabKey, ticker, detail) {
     if (!isMobileShell()) return;
-    var layout = root.querySelector('.uw-page-layout');
+    var layout = root.querySelector('.ifx-shell-layout');
     if (!layout) return;
     if (tabKey === 'articles') remountLeftColumn(root, ticker, detail);
     else removeLeftColumn(root);

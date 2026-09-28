@@ -18,7 +18,7 @@
   }
 
   function remountLeftColumn(root, detail) {
-    var layout = root.querySelector('.uw-page-sidebar-content');
+    var layout = root.querySelector('.ifx-shell-sidebar-content');
     if (!layout || layout.querySelector('.ifx-stock-col--left') || !detail) return;
     layout.insertAdjacentHTML('afterbegin', renderLeft(detail));
     document.dispatchEvent(new CustomEvent('iflux-knowledge-remount-widgets'));
@@ -26,7 +26,7 @@
 
   function syncMobileLeftColumn(root, tabKey, detail) {
     if (!isMobileShell()) return;
-    var layout = root.querySelector('.uw-page-layout');
+    var layout = root.querySelector('.ifx-shell-layout');
     if (!layout) return;
     if (tabKey === 'articles') remountLeftColumn(root, detail);
     else removeLeftColumn(root);

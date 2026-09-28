@@ -42,7 +42,7 @@ export async function bootPage(m, mountEl) {
   /* Soft-nav: innerHTML không gỡ class layout trên mount root.
    * ifx-mkt-layout / ifx-hub-grid + CSS còn từ trang trước → 1 section community
    * bị nhét cột sidebar (~1fr) — chỉ còn sidebar. Flow/pricing không add class nên OK. */
-  mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid', 'uw-page-layout', 'is-no-sidebar');
+  mountEl.classList.remove('ifx-mkt-layout', 'ifx-hub-grid', 'ifx-shell-layout', 'is-no-sidebar');
   mountEl.classList.add('ifx-rt-page');
 
   /* Khung chung: host widget (Placement) + vùng nội dung đặc thù (slot tĩnh của trang).

@@ -162,10 +162,6 @@
 }
 
 /* Article detail — SEO/GEO layout + sidebar */
-.ifx-main.ifx-main--article {
-  max-width: 1200px;
-}
-
 .ifx-com-breadcrumb__sep {
   margin: 0 8px;
   color: var(--ix-text-muted);
@@ -754,10 +750,6 @@
 .ix-chip-sm { font-size: var(--ifx-font-size-10); padding: 2px 8px; }
 
 /* ── Feed list layout + sidebar ─────────────────────────── */
-.ifx-main.ifx-main--community {
-  max-width: 1240px;
-}
-
 .ifx-com-feed-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;

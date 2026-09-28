@@ -1,7 +1,5 @@
 /* Pricing & Checkout — ported from Admin_Design_system/files (3) */
 
-.ifx-main--pricing { max-width: 1140px; }
-.ifx-main--checkout { max-width: 1100px; }
 .ifx-pricing-banner { display: flex;
  align-items: flex-start;
  gap: var(--ifx-space-12);

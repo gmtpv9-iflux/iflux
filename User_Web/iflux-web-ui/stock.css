@@ -1,6 +1,5 @@
 /* Trang chi tiết cổ phiếu / nhóm — bố cục do khung trang chung (platform/web/web.css). */
 .ifx-main--stock {
-  max-width: 1440px;
   padding-bottom: 40px;
 }
 
@@ -752,10 +751,6 @@ a.ifx-mention:hover {
 }
 
 /* ── Trang chi tiết bình luận ─────────────────────── */
-.ifx-main--comment-detail {
-  max-width: 720px;
-}
-
 .ifx-stock-cmt-detail {
   display: flex;
   flex-direction: column;

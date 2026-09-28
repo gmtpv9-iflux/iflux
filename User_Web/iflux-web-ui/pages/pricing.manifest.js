@@ -16,6 +16,6 @@ export default {
     enabled: true,
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/pricing-page/index.js?v=bpPhaseD20260716',
-    css: ['/User_Web/iflux-web-ui/pricing.css']
+    css: ['/User_Web/iflux-web-ui/pricing.css?v=appShell20260928']
   }]
 };
