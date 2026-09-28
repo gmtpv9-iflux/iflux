@@ -30,7 +30,7 @@ import { installSoftNavigation } from './soft-navigation.js?v=stickyRefactor2026
 var VER = '?v=phaseCW5gate20260721';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=pageFrame20260928';
+var PF = '?v=appHeader20260928';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
