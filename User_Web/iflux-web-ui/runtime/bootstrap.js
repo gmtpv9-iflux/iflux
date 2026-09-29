@@ -16,17 +16,16 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * Boot tối thiểu: detect page → App Shell deps → resolve manifest → page-runtime.
  *
  * Nguồn manifest (Phase 4):
- *  - market / home: GET /api/pages/:pageKey (PagePublished) — KHÔNG page-composition, KHÔNG catalog.
- *  - Trang composite: flow, community, … tự fetch PagePublished trong page module.
- *  - home ↔ dashboard: Publish key = dashboard; runtime pageKey = home.
- *  - Nhà: sidebar từ PagePublished; Main = WGT-HOME-DASH (Dashboard Engine).
+ *  - market: GET /api/pages/:pageKey (PagePublished) — KHÔNG page-composition, KHÔNG catalog.
+ *  - Trang composite: flow, community, home, … tự fetch PagePublished trong page module.
+ *  - home ↔ dashboard: Publish key = dashboard; runtime pageKey = home (widgets/home-page tự mountPageWidgets).
  */
 
 import { bootPage } from './page-runtime.js?v=r20260928q';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=r20260928r';
-import { pageKeyFromPath } from './page-keys.js?v=r20260928p';
-import { installSoftNavigation } from './soft-navigation.js?v=r20260928q';
+import { bootShell } from './shell-boot.js?v=r20260929e';
+import { pageKeyFromPath } from './page-keys.js?v=r20260929e';
+import { installSoftNavigation } from './soft-navigation.js?v=r20260929e';
 import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
 var VER = '?v=r20260928r';
@@ -36,7 +35,7 @@ var PF = '?v=r20260928r';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
-  home: function () { return import('../pages/home.manifest.js' + PF); },
+  home: function () { return import('../pages/home.manifest.js?v=r20260929e'); },
   flow: function () { return import('../pages/flow.manifest.js' + PF); },
   news: function () { return import('../pages/news.manifest.js' + PF); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
@@ -97,10 +96,9 @@ function seoCatalogKey(pageKey) {
   return SEO_KEY_ALIAS[pageKey] || PUBLISH_KEY_ALIAS[pageKey] || pageKey;
 }
 
-/** Trang slot dùng PagePublished (mount path Phase 4). */
+/** Trang slot dùng PagePublished (mount path Phase 4). Home composite (widgets/home-page) tự fetch — không qua đây. */
 var PAGE_PUBLISHED = {
-  market: true,
-  home: true
+  market: true
 };
 
 function detectPageKey() {
@@ -193,22 +191,6 @@ async function resolvePagePublishedManifest(pageKey, staticManifest) {
       css: (staticManifest && staticManifest.css) || [],
       widgets: []
     };
-
-    if (pageKey === 'home') {
-      /* Widget Placement (Sidebar + Main) + nội dung đặc thù từ static: Gói cước (PRF-002),
-         Dashboard cá nhân (HOME-DASH). PRF-001 (Hồ sơ) không đặc thù — không inject. */
-      man.title = '';
-      man.intro = '';
-      man.widgets = (staticManifest.widgets || []).filter(function (w) {
-        if (!w || w.enabled === false) return false;
-        if (w.id === 'WGT-PRF-001') return false;
-        return w.id === 'WGT-HOME-DASH' || w.id === 'WGT-PRF-002' || w.section === 'main';
-      }).map(function (w) { return Object.assign({}, w); });
-      /* Đảm bảo sections có sidebar + main từ static nếu Publish chỉ sidebar. */
-      if (!sections.some(function (s) { return s && s.key === 'main'; })) {
-        man.sections = (staticManifest.sections || []).slice();
-      }
-    }
 
     return man;
   } catch (e) {

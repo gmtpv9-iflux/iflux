@@ -18,7 +18,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  */
 
 import { loadScript } from './legacy-bridge.js?v=r20260928q';
-import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260928p';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260929e';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';

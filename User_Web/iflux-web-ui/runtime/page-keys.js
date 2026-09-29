@@ -13,16 +13,16 @@ export var STATIC_PAGES = {
 };
 
 /* Chỉ trang cá nhân cần đăng nhập — mọi trang khác khách xem tự do (quyền xem sâu hơn do widget quyết định).
- * Khách bấm vào trang này → hỏi xác nhận trước khi sang trang đăng nhập (IfluxAuth.promptLogin). */
+ * Khách bấm vào trang này → hỏi xác nhận trước khi sang trang đăng nhập (IfluxAuth.promptLogin).
+ * Trang chủ (home) KHÔNG còn ở đây — khách vào /trang-chu thấy landing phẳng (widgets/home-page). */
 export var AUTH_PAGES = {
-  home: 1, dashboard: 1,
   account: 1, checkout: 1,
   watchlist: 1, messages: 1,
   newsWrite: 1, stockComment: 1
 };
 
-/* Trang chủ cá nhân: khách vào thẳng (bookmark, redirect cũ) → về Tin tức, không hỏi đăng nhập. */
-export var HOME_PAGES = { home: 1, dashboard: 1 };
+/* Không còn trang nào redirect-quiet-về-Tin-tức riêng cho khách — giữ export rỗng để khỏi vỡ import cũ. */
+export var HOME_PAGES = {};
 
 export function pageKeyFromPath(pathname) {
   var raw = pathname || '/';

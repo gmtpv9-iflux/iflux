@@ -4,7 +4,7 @@
  * Class <main> và CSS riêng của trang do manifest trang khai báo (page-runtime áp dụng).
  */
 import { unloadWidget } from './widget-loader.js?v=r20260928q';
-import { pageKeyFromPath, isSoftPage, AUTH_PAGES } from './page-keys.js?v=r20260928p';
+import { pageKeyFromPath, isSoftPage, AUTH_PAGES } from './page-keys.js?v=r20260929e';
 
 var SOFT_VER = 'softAll_20260928';
 
