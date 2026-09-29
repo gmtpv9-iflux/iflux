@@ -2,7 +2,7 @@
  * Page Manifest — Danh sách cổ phiếu (/co-phieu)
  * Composite: Page Feature entity-list (kind=stocks).
  */
-var VER = '?v=r20260928r';
+var VER = '?v=r20260929e';
 
 export default {
   pageKey: 'stocks',

@@ -2,6 +2,64 @@
 (function (global) {
   'use strict';
 
+  /* Nội dung widget = Template DS đã publish (đường vẽ DUY NHẤT, giống mọi trang khác) —
+     KHÔNG còn renderer riêng theo widget_type. ctx.title/description để rỗng để Template
+     không tự vẽ header (header/mô tả/actions của thẻ dashboard do buildWidgetNode dựng). */
+  var _artifactCache = {};
+  function fetchWidgetArtifact(id) {
+    if (_artifactCache[id]) return _artifactCache[id];
+    _artifactCache[id] = fetch('/api/widgets/' + encodeURIComponent(id), { headers: { Accept: 'application/json' } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (body) { return (body && body.data) || null; })
+      .catch(function () { return null; });
+    return _artifactCache[id];
+  }
+
+  var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
+  function ensureTemplateLoader() {
+    if (global.IfxTemplateLoader) return Promise.resolve();
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOADER_SRC;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error('Không tải được template loader')); };
+      document.head.appendChild(s);
+    });
+  }
+
+  /* Không gọi runtime/mount-published-widgets.js (dùng chung cho mọi trang, luôn tự vẽ
+     header theo title/description) — thẻ dashboard đã có header riêng (registry + L4 copy,
+     xem buildWidgetNode), nên mount thẳng qua IfxTemplates với title/description rỗng để
+     Template không vẽ header của nó nữa (widget.js: headHtml rỗng khi cả 3 đều rỗng). */
+  function mountWidgetBody(bodyEl, widgetType, generation) {
+    /* Watchlist chưa publish qua Template (tương tác thêm/bớt mã, không phải hiển thị tĩnh)
+       — dùng component riêng, nạp sẵn cùng BASE của trang (xem widgets/home-dashboard/index.js). */
+    if (widgetType === 'WGT-WAT-001') {
+      if (global.IfluxWatchlistBlock) global.IfluxWatchlistBlock.mount(bodyEl);
+      else bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+      return;
+    }
+    bodyEl.innerHTML = '<div class="ifx-wl-empty">Đang tải tiện ích…</div>';
+    Promise.all([fetchWidgetArtifact(widgetType), ensureTemplateLoader()]).then(function (res) {
+      var art = res[0];
+      if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
+      var templateId = art && art.display && art.display.renderSpec && art.display.renderSpec.templateId;
+      if (!templateId) {
+        bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+        return;
+      }
+      return IfxTemplateLoader.ensure(templateId).then(function () {
+        if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
+        var root = global.IfxTemplates && IfxTemplates.mount(bodyEl, templateId, { title: '', description: '' });
+        if (!root) bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+      });
+    }).catch(function (err) {
+      if (bodyEl._ifxGen !== generation) return;
+      bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+      if (global.console && console.error) console.error('Widget mount failed:', widgetType, err);
+    });
+  }
+
   var STORAGE_KEY = 'iflux_web_dashboard_layout_v2';
   var LEGACY_STORAGE_KEYS = ['iflux_web_dashboard_layout_v2', 'iflux_web_dashboard_layout'];
   var SUBJ_WIDTH_MIGRATED_KEY = 'iflux_dash_subj_width_half_v1';
@@ -720,13 +778,9 @@
           message: meta.title + ' là tiện ích ' + (meta.tier === 'elite' ? 'Elite' : 'Premium') + '. Nâng cấp để sử dụng.'
         });
       });
-    } else if (global.IfluxWidgetRenderers) {
-      try {
-        IfluxWidgetRenderers.render(instance.widget_type, body, instance.config);
-      } catch (err) {
-        body.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
-        if (global.console && console.error) console.error('Widget render failed:', instance.widget_type, err);
-      }
+    } else {
+      body._ifxGen = (body._ifxGen || 0) + 1;
+      mountWidgetBody(body, instance.widget_type, body._ifxGen);
     }
 
     if (widgetScope(instance) === SCOPES.dashboard) {

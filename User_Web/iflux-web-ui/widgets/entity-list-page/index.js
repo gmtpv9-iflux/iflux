@@ -34,8 +34,6 @@ var CORE_TIERS = [
     ASSET + 'watchlist-ui.js?v=r20260928q',
     ASSET + 'alert-ui.js?v=r20260928q',
     ASSET + 'stock-mentions.js?v=r20260928n',
-    ASSET + 'market-heatmap.js?v=mockRmWp4_20260809',
-    ASSET + 'market-rankings.js?v=mockRmWp4_20260809',
     ASSET + 'stock-scroll-feed.js'
   ],
   [

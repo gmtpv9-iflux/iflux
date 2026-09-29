@@ -231,7 +231,7 @@ export async function bootShell(pageKey, opts) {
     { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=abhE620260727' },
     { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=abhE620260727' },
     { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20260928r' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260928r' },
+    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260929e' },
     /* Gate chỉ quyết định khoá; lớp phủ (platform/web/lock) do Gate nạp khi có vùng bị khoá. */
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=r20260928n' },
     { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=r20260928q' }
