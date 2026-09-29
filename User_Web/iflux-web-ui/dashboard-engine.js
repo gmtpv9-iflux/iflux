@@ -50,7 +50,9 @@
       }
       return IfxTemplateLoader.ensure(templateId).then(function () {
         if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
-        var root = global.IfxTemplates && IfxTemplates.mount(bodyEl, templateId, { title: '', description: '' });
+        var defs = art.content && Array.isArray(art.content.dataDefinition) ? art.content.dataDefinition : null;
+        var input = defs && defs.length ? defs.map(function (d) { return (d && d.demo) || ''; }) : undefined;
+        var root = global.IfxTemplates && IfxTemplates.mount(bodyEl, templateId, { title: '', description: '', input: input });
         if (!root) bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
       });
     }).catch(function (err) {

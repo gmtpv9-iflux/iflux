@@ -21,7 +21,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - home ↔ dashboard: Publish key = dashboard; runtime pageKey = home (widgets/home-page tự mountPageWidgets).
  */
 
-import { bootPage } from './page-runtime.js?v=r20260928q';
+import { bootPage } from './page-runtime.js?v=r20260929e';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { bootShell } from './shell-boot.js?v=r20260929e';
 import { pageKeyFromPath } from './page-keys.js?v=r20260929e';

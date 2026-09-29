@@ -6,7 +6,7 @@
  * Vãng lai: không sidebar, landing phẳng — nội dung Discovery/giới thiệu iFlux bổ sung sau.
  */
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260928q';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
 import { loadWidget } from '../../runtime/widget-loader.js?v=r20260928q';
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
 
