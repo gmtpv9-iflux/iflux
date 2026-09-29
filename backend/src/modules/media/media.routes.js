@@ -9,6 +9,7 @@ const mediaImport = require('./media-import.service');
 const storage = require('./media-storage');
 const articles = require('../news/news-articles.service');
 const { mediaRoot } = require('./media-util');
+const { COVER_IMAGE_PROFILES } = require('./cover-image-profiles');
 
 function success(res, data, status) {
   return res.status(status || 200).json({ ok: true, data: data });
@@ -45,6 +46,23 @@ function createMediaRouter(deps) {
       root: mediaRoot(config),
       public_base: require('./media-util').publicBase(config)
     });
+  });
+
+  router.get('/cover-profiles', perm('news.articles.view'), function (req, res) {
+    return success(res, { profiles: COVER_IMAGE_PROFILES });
+  });
+
+  /* Quét bài viết có cover đã nhập trước đây (chưa đủ 5 bản kích thước) và tạo bù —
+     đọc lại ảnh delivery đã lưu, KHÔNG tải lại từ nguồn ngoài. Idempotent, gọi lặp tới khi
+     processed=0. limit mặc định 20 / lần gọi để một request không chạy quá lâu. */
+  router.post('/cover-profiles/backfill', perm('news.articles.edit'), async function (req, res, next) {
+    try {
+      const limit = req.body && req.body.limit;
+      const result = await mediaService.backfillCoverVariants(config, limit);
+      return success(res, result);
+    } catch (err) {
+      next(err);
+    }
   });
 
   router.get('/assets', perm('news.articles.view'), async function (req, res, next) {

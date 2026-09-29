@@ -4,7 +4,7 @@
   <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADM-COM-CNT — Danh sách bài viết · iFlux Admin</title>
+  <title>Regenerate ảnh đại diện · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
   <link rel="stylesheet" href="/platform/admin/admin.css?v=w3a20260927" />
@@ -22,50 +22,60 @@
     <main class="ix-main">
       <header class="ix-navbar" data-ix-admin-shell="header">
         <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-        <div class="ix-search"><i class="ti ti-search"></i><input type="text" id="art-q" placeholder="Tìm bài viết..." /></div>
+        <div class="ix-search"></div>
         <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
       </header>
       <div class="ix-content">
-        <h1 class="ix-page-title">Danh sách bài viết</h1>
+        <h1 class="ix-page-title">Regenerate ảnh đại diện</h1>
         <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
-        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">Quản lý bài viết Cộng đồng — nguồn, danh mục, chủ đề, chủ thể và trạng thái xuất bản.</p>
+        <p style="font-size:13px;color:var(--ix-text-muted);margin:-8px 0 20px">
+          Khi tải ảnh đại diện (cover) của bài viết về, hệ thống tự động chuyển sang WebP tối ưu và nhân bản
+          sang các kích thước dưới đây cho từng vị trí hiển thị. Ảnh trong thân bài viết và ảnh thường không
+          bị nhân bản — chỉ ảnh đại diện.
+        </p>
 
         <div class="ix-card">
           <div class="ix-table-toolbar">
-            <div style="font-size:13px;color:var(--ix-text-muted)">Tổng: <strong id="art-count">0</strong> bài viết</div>
-            <div style="display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap">
-              <select class="ix-select" id="art-status" style="width:auto;min-width:160px">
-                <option value="">Tất cả trạng thái</option>
-                <option value="draft">Nháp</option>
-                <option value="pending">Chờ duyệt</option>
-                <option value="published">Xuất bản</option>
-                <option value="published_rss">Xuất bản (RSS)</option>
-                <option value="scheduled">Đã lên lịch</option>
-              </select>
-              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-reload"><i class="ti ti-refresh"></i> Làm mới</button>
-              <a href="/admin/news/edit" class="ix-btn ix-btn-primary ix-btn-sm" data-ix-perm="news.articles.create"><i class="ti ti-plus"></i> Tạo bài viết</a>
+            <div style="font-size:13px;color:var(--ix-text-muted)">Tổng: <strong id="rgp-count">0</strong> trường hợp đang hỗ trợ</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="rgp-reload"><i class="ti ti-refresh"></i> Làm mới</button>
             </div>
           </div>
           <div class="ix-table-responsive">
-            <table class="ix-table" id="art-table">
+            <table class="ix-table" id="rgp-table">
               <thead>
                 <tr>
-                  <th>Nguồn</th>
-                  <th>Ngày đăng</th>
-                  <th>Tiêu đề</th>
-                  <th>Danh mục</th>
-                  <th>Chủ đề</th>
-                  <th>Chủ thể</th>
-                  <th>Trạng thái</th>
-                  <th></th>
+                  <th>Mã (role)</th>
+                  <th>Vị trí sử dụng</th>
+                  <th>Kích thước</th>
+                  <th>Định dạng</th>
+                  <th>Mô tả</th>
                 </tr>
               </thead>
-              <tbody id="art-tbody">
-                <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ix-text-muted);font-size:13px">Đang tải…</td></tr>
+              <tbody id="rgp-tbody">
+                <tr><td colspan="5" style="text-align:center;padding:28px;color:var(--ix-text-muted);font-size:13px">Đang tải…</td></tr>
               </tbody>
             </table>
           </div>
-          <div class="ix-pagination" id="art-pagination"></div>
+        </div>
+
+        <div class="ix-card" style="margin-top:24px">
+          <div class="ix-table-toolbar">
+            <div>
+              <div style="font-weight:600">Tạo bù cho bài viết cũ</div>
+              <div style="font-size:13px;color:var(--ix-text-muted);margin-top:2px">
+                Bài viết nhập trước khi có tính năng này chỉ có ảnh gốc. Bấm để quét và tạo bù 5 bản —
+                đọc lại ảnh đã lưu, không tải lại từ nguồn ngoài. Có thể bấm lại; bài đã đủ 5 bản sẽ tự bỏ qua.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-left:auto;flex-shrink:0">
+              <button type="button" class="ix-btn ix-btn-primary ix-btn-sm" id="rgp-run"><i class="ti ti-player-play"></i> Chạy Regenerate</button>
+              <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="rgp-stop" style="display:none">Dừng</button>
+            </div>
+          </div>
+          <div style="padding:16px 20px" id="rgp-run-status">
+            <div style="font-size:13px;color:var(--ix-text-muted)">Chưa chạy lần nào.</div>
+          </div>
         </div>
       </div>
     </main>
@@ -81,6 +91,6 @@
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-theme.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/admin-rbac-client.js?v=r20260929a" data-ix-rbac=""></script>
-<script src="/Admin_Design_system/app/news/content/article-list-page.js?v=authorSotWaveB20260810"></script>
+<script src="/Admin_Design_system/app/news/regenerate-anh-dai-dien.js?v=r20260929c"></script>
 </body>
 </html>

@@ -166,6 +166,7 @@ async function createAssetFromBuffer(config, buf, opts) {
 
   let fingerprint;
   let pack;
+  let rotatedBuffer = null;
   if (isShare) {
     const meta = await processImg.validateShareImageBuffer(buf);
     fingerprint = processImg.fingerprint(buf);
@@ -180,6 +181,7 @@ async function createAssetFromBuffer(config, buf, opts) {
     const variantsPack = await processImg.normalizeAndVariants(buf);
     fingerprint = variantsPack.fingerprint;
     pack = variantsPack.delivery;
+    rotatedBuffer = variantsPack.rotatedBuffer;
   }
 
   const existing = await findByFingerprint(fingerprint);
@@ -251,6 +253,31 @@ async function createAssetFromBuffer(config, buf, opts) {
     ]
   );
 
+  if (opts.isCover && !isShare && rotatedBuffer) {
+    const coverVariants = await processImg.generateCoverVariants(rotatedBuffer);
+    for (let i = 0; i < coverVariants.length; i++) {
+      const cv = coverVariants[i];
+      const cvKey = pathJoin(dir, baseName + '-' + cv.role + '.' + cv.ext);
+      const cw = await storage.writeVariantFile(config, cvKey, cv.buffer);
+      await query(
+        `INSERT INTO media_variants
+          (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [
+          newId('mvar'),
+          assetId,
+          cv.role,
+          cv.ext,
+          cv.width,
+          cv.height,
+          cv.buffer.length,
+          cw.storageKey,
+          cw.publicUrl
+        ]
+      );
+    }
+  }
+
   if (opts.sourceUrl || opts.channel) {
     await query(
       `INSERT INTO media_sources (id, asset_id, original_url, channel, provider)
@@ -271,6 +298,119 @@ async function createAssetFromBuffer(config, buf, opts) {
 
 function pathJoin() {
   return Array.prototype.slice.call(arguments).join('/').replace(/\/+/g, '/');
+}
+
+/**
+ * Tạo lại (hoặc lần đầu tạo) 5 bản kích thước cover cho MỘT ảnh đã lưu sẵn — đọc lại bản
+ * 'delivery' từ đĩa, không tải lại từ nguồn ngoài. Idempotent: bản role đã có thì ghi đè
+ * (cùng đường dẫn file, UPDATE row); role chưa có thì tạo mới (INSERT row).
+ * Dùng cho backfill (ảnh cover cũ, nhập trước khi có tính năng 5 bản) và cho phép chạy lại an toàn.
+ */
+async function regenerateCoverVariants(config, assetId) {
+  const asset = await getAsset(assetId);
+  if (!asset) throw AppError.notFound('Không tìm thấy ảnh');
+  const delivery = (asset.variants || []).find(function (v) { return v.role === 'delivery'; });
+  if (!delivery) throw AppError.badRequest('MEDIA_VERIFY', 'Ảnh không có bản delivery để tạo bản cover');
+
+  const buf = await fs.promises.readFile(storage.absolutePath(config, delivery.storage_key));
+  const coverVariants = await processImg.generateCoverVariants(buf);
+  const dir = storage.assetDir(config, assetId, asset.created_at);
+  const byRole = {};
+  (asset.variants || []).forEach(function (v) { if (v.role !== 'delivery') byRole[v.role] = v; });
+
+  const out = {};
+  for (let i = 0; i < coverVariants.length; i++) {
+    const cv = coverVariants[i];
+    const key = pathJoin(dir, asset.filename + '-' + cv.role + '.' + cv.ext);
+    const w = await storage.writeVariantFile(config, key, cv.buffer);
+    const prev = byRole[cv.role];
+    if (prev) {
+      await query(
+        `UPDATE media_variants SET format=$2, width=$3, height=$4, byte_size=$5, storage_key=$6, public_url=$7 WHERE id=$1`,
+        [prev.id, cv.ext, cv.width, cv.height, cv.buffer.length, w.storageKey, w.publicUrl]
+      );
+    } else {
+      await query(
+        `INSERT INTO media_variants (id, asset_id, role, format, width, height, byte_size, storage_key, public_url)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [newId('mvar'), assetId, cv.role, cv.ext, cv.width, cv.height, cv.buffer.length, w.storageKey, w.publicUrl]
+      );
+    }
+    out[cv.role] = w.publicUrl;
+  }
+  return out;
+}
+
+var COVER_VARIANT_ROLES = ['cover_thumb', 'cover_card', 'cover_hero', 'cover_detail', 'cover_social'];
+
+/**
+ * Quét bài viết có ảnh cover NỘI BỘ (đã nhập trước đây) nhưng chưa đủ 5 bản kích thước,
+ * tạo bù rồi ghi lại vào payload.cover.variants — chỉ vá đúng field đó (jsonb_set), không
+ * chạy lại toàn bộ pipeline lưu bài (validate danh mục, slug…) như updateArticle.
+ * Trả { processed, updated, skippedNoAsset, failed, hasMore } — gọi lặp tới khi processed=0.
+ */
+/* Chuẩn hoá cover.url về path tương đối trước khi so với media_assets.public_url (luôn lưu
+ * dạng tương đối) — một số bài (nhập thẳng từ production qua psql) lưu URL tuyệt đối
+ * (vd https://iflux.vn/media/...), so sánh nguyên chuỗi sẽ luôn trật. */
+const COVER_PATH_SQL = "regexp_replace(payload->'cover'->>'url', '^https?://[^/]+', '')";
+
+async function backfillCoverVariants(config, limit) {
+  const n = Math.max(1, Math.min(Number(limit) || 20, 100));
+  /* QUAN TRỌNG — chống vòng lặp vô hạn: chỉ chọn bài có ảnh cover ĐÃ nằm trong Thư viện
+   * (EXISTS media_assets). Bài cover vẫn là URL ngoài (chưa từng nhập — media_status
+   * PENDING/FAILED) sẽ không bao giờ khớp; nếu không lọc ở đây, những bài đó bị bỏ qua mỗi
+   * lần mà vẫn nằm trong LIMIT của lần sau → hasMore mãi = true, gọi lặp không dừng. */
+  const res = await query(
+    `SELECT id, ${COVER_PATH_SQL} AS cover_path
+     FROM news_posts
+     WHERE COALESCE(payload->'cover'->>'url', '') <> ''
+       AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)
+       AND EXISTS (SELECT 1 FROM media_assets a WHERE a.public_url = ${COVER_PATH_SQL})
+     ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC
+     LIMIT $2`,
+    [COVER_VARIANT_ROLES, n]
+  );
+
+  let updated = 0;
+  let failed = 0;
+  for (let i = 0; i < res.rows.length; i++) {
+    const row = res.rows[i];
+    try {
+      const found = await query(`SELECT id FROM media_assets WHERE public_url = $1 LIMIT 1`, [row.cover_path]);
+      const assetId = found.rows[0] && found.rows[0].id;
+      if (!assetId) { failed += 1; continue; } /* race hiếm: asset bị xoá giữa 2 câu query */
+      const variants = await regenerateCoverVariants(config, assetId);
+      await query(
+        `UPDATE news_posts SET payload = jsonb_set(payload, '{cover,variants}', $2::jsonb, true) WHERE id = $1`,
+        [row.id, JSON.stringify(variants)]
+      );
+      updated += 1;
+    } catch (e) {
+      failed += 1;
+    }
+  }
+
+  const hasMore = res.rows.length === n;
+  let notImportedYet = null;
+  if (!hasMore) {
+    /* Chỉ đếm lúc kết thúc (không đếm mỗi vòng) — bài cover còn là URL ngoài, cần
+     * "Nhập ảnh vào Thư viện" ở trang sửa bài, KHÔNG tự sửa được bằng Regenerate. */
+    const c = await query(
+      `SELECT COUNT(*)::int AS n FROM news_posts
+       WHERE COALESCE(payload->'cover'->>'url', '') <> ''
+         AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)`,
+      [COVER_VARIANT_ROLES]
+    );
+    notImportedYet = c.rows[0].n;
+  }
+
+  return {
+    processed: res.rows.length,
+    updated: updated,
+    failed: failed,
+    hasMore: hasMore,
+    notImportedYet: notImportedYet
+  };
 }
 
 async function createJob(kind, articleId, actorId) {
@@ -329,9 +469,9 @@ async function resolveSocialCompatibleImage(url) {
          FROM media_variants d
          JOIN media_variants v ON v.asset_id = d.asset_id
          WHERE d.public_url = $1 AND d.role = 'delivery'
-           AND v.role IN ('social', 'original')
+           AND v.role IN ('cover_social', 'social', 'original')
            AND lower(v.format) IN ('jpeg','jpg','png')
-         ORDER BY CASE WHEN v.role = 'social' THEN 0 ELSE 1 END
+         ORDER BY CASE WHEN v.role = 'cover_social' THEN 0 WHEN v.role = 'social' THEN 1 ELSE 2 END
          LIMIT 1`,
         [pathOnly]
       );
@@ -384,6 +524,8 @@ module.exports = {
   updateAlt,
   createAssetFromBuffer,
   findByFingerprint,
+  regenerateCoverVariants,
+  backfillCoverVariants,
   resolveSocialCompatibleImage,
   createJob,
   finishJob,
