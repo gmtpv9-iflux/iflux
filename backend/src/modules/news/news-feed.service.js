@@ -56,6 +56,7 @@ function pickCover(cover, imageUrl) {
     };
     if (cover.asset_id) out.asset_id = cover.asset_id;
     if (cover.profiles) out.profiles = cover.profiles;
+    if (cover.variants && typeof cover.variants === 'object') out.variants = cover.variants;
     return out;
   }
   if (imageUrl) return { url: String(imageUrl), alt: null, caption: null };
