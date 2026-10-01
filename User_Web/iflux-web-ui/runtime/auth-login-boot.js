@@ -19,7 +19,7 @@ var FEATURE = [
   ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
   ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'iflux-web-ui.js?v=r20260928q',
+  ASSET + 'iflux-web-ui.js?v=r20261001a',
   ASSET + 'auth-login-init.js?v=r20260928q'
 ];
 

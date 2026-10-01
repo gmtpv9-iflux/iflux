@@ -8,7 +8,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 
 var FEATURE = [
   ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
-  '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=p7ShareSheet20260730'
+  '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=r20261001a'
 ];
 
 function waitShell(pageKey) {

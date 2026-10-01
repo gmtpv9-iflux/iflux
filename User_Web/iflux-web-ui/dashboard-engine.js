@@ -716,13 +716,12 @@
     var meta = IfluxWidgetRegistry.byType(instance.widget_type);
     if (!meta) return null;
 
-    var copy = global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy
-      ? L4RuntimeReader.resolveWidgetCopy(instance.widget_type)
-      : (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy
-        ? L4RuntimeReader.resolveWidgetCopy(instance.widget_type)
-        : null);
-    var displayTitle = copy ? copy.title : meta.title;
-    var displayDescription = copy ? copy.description : (meta.description || '');
+    /* Tiêu đề/mô tả = cùng 1 nguồn duy nhất với body (artifact widget đã publish), không qua
+       L4RuntimeReader riêng — tránh 2 đường lấy dữ liệu khác nhau cho cùng 1 widget. Hiện
+       Danh mục tiện ích (widget-registry, do Admin đặt sẵn) ngay khi dựng node — đã là tên
+       người dùng đọc được, không phải mã — rồi nâng cấp đúng theo artifact khi fetch xong. */
+    var displayTitle = meta.title;
+    var displayDescription = meta.description || '';
     if (meta.type === 'WGT-WAT-001' && displayTitle === 'Watchlist') displayTitle = 'Theo dõi';
     var footerLabel = meta.footerLabel || '';
     if (meta.type === 'WGT-WAT-001' && /Watchlist/i.test(footerLabel)) {
@@ -783,6 +782,27 @@
     } else {
       body._ifxGen = (body._ifxGen || 0) + 1;
       mountWidgetBody(body, instance.widget_type, body._ifxGen);
+      /* Cùng 1 lần fetch artifact mà mountWidgetBody vừa gọi (cache theo id) — chỉ nâng cấp
+         tiêu đề/mô tả header lên đúng bản Kiến trúc 4 tầng nếu khác với registry tĩnh ở trên;
+         KHÔNG fetch riêng, không có giai đoạn hiện mã rồi tự sửa. */
+      if (instance.widget_type !== 'WGT-WAT-001') {
+        fetchWidgetArtifact(instance.widget_type).then(function (art) {
+          if (!node.isConnected) return;
+          var c = art && art.content;
+          if (!c) return;
+          var h3 = node.querySelector('.ifx-widget__header > h3');
+          if (c.title && h3 && h3.textContent !== c.title) h3.textContent = c.title;
+          if (c.description) {
+            var sub = node.querySelector('.ifx-widget__subtitle');
+            if (!sub) {
+              sub = document.createElement('p');
+              sub.className = 'ifx-widget__subtitle';
+              if (h3) h3.insertAdjacentElement('afterend', sub);
+            }
+            if (sub.textContent !== c.description) sub.textContent = c.description;
+          }
+        });
+      }
     }
 
     if (widgetScope(instance) === SCOPES.dashboard) {
@@ -939,12 +959,10 @@
   }
 
   function bindWidgetActions(canvas, layout, editMode, afterChange) {
-    canvas.querySelectorAll('.ifx-widget').forEach(function (wrap) {
-      if (editMode || !global.IfluxInsightShare) return;
-      var wtype = wrap.getAttribute('data-widget-type') || '';
-      if (['WGT-MKT-001', 'WGT-MKT-007', 'WGT-MKT-008'].indexOf(wtype) >= 0) return;
-      IfluxInsightShare.bindWidgetShare(wrap, wtype);
-    });
+    /* Nút chia sẻ trong header widget: dựng + gắn listener qua đúng 1 luồng duy nhất
+       (Foundation Share Action — patchAll/MutationObserver, xem iflux-admin-ui/foundation/
+       share-action.js) — không tự bind riêng ở đây nữa để khỏi có 2 đường nối dây khác nhau
+       cho cùng 1 nút. */
     canvas.querySelectorAll('.ifx-widget-remove').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var wrap = btn.closest('.ifx-widget');
@@ -1149,13 +1167,10 @@
     });
   }
 
+  /* Tên/mô tả tiện ích trong Danh mục = widget-registry (Admin đặt sẵn, đồng bộ luôn, không
+     mã) — cùng nguồn đồng bộ với fallback title trong buildWidgetNode, không qua
+     L4RuntimeReader (tránh 2 đường dữ liệu khác nhau cho cùng 1 khái niệm "tên widget"). */
   function widgetDisplayCopy(type) {
-    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
-      return L4RuntimeReader.resolveWidgetCopy(type);
-    }
-    if (global.L4RuntimeReader && L4RuntimeReader.resolveWidgetCopy) {
-      return L4RuntimeReader.resolveWidgetCopy(type);
-    }
     var meta = registry() && registry().byType(type);
     return {
       title: meta ? meta.title : type,

@@ -97,7 +97,7 @@
       done(SF);
       return;
     }
-    var src = '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=p7ShareSheet20260730';
+    var src = '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=r20261001a';
     function finish() {
       done(shareFoundation());
     }
