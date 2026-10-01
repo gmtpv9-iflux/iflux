@@ -31,7 +31,7 @@
     };
   }
 
-  /** Cặp vào/ra gộp 1 widget (radar 20 + list đối chiếu) — SoT cho Thư viện & Nhà của tôi */
+  /** Cặp vào/ra gộp 1 widget — đồng bộ User registry & Thư viện Widget */
   function flowScoreDuoCatalog(entity, title, tier, popularity, width) {
     var entityKey = String(entity || 'stock').toLowerCase();
     return {
@@ -66,8 +66,8 @@
       kind: 'chart',
       popularity: 98,
       defaultConfig: { width: 'half' },
-      footerHref: '/thi-truong',
-      footerLabel: 'Mở Thị trường',
+      footerHref: '../market/index.html',
+      footerLabel: 'Mở Thị trường'
     },
     {
       type: 'WGT-MKT-002',
@@ -334,7 +334,7 @@
     {
       type: 'WGT-COM-001',
       renderAs: 'WGT-COM-TREND',
-      group: 'news',
+      group: 'community',
       groupLabel: 'Tin tức',
       title: 'Cổ phiếu được quan tâm hàng đầu',
       description: 'Diện tích = mức độ quan tâm của cộng đồng · màu = hiệu suất phiên.',
@@ -348,7 +348,7 @@
     {
       type: 'WGT-COM-CHUDE-TOP',
       renderAs: 'WGT-COM-TREND',
-      group: 'news',
+      group: 'community',
       groupLabel: 'Tin tức',
       title: 'Chủ đề tích cực hàng đầu',
       description: 'Top Topic/Story theo Interest Score — tabs Ngày|Tuần|Tháng',
@@ -362,7 +362,7 @@
     {
       type: 'WGT-COM-002',
       renderAs: 'WGT-COM-ACTIVE',
-      group: 'news',
+      group: 'community',
       groupLabel: 'Tin tức',
       title: 'Thành viên tích cực',
       description: 'Xếp hạng Tích cực − Tiêu cực trên bình luận CP',
@@ -376,7 +376,7 @@
     {
       type: 'WGT-COM-003',
       renderAs: 'WGT-COM-EXPERTS',
-      group: 'news',
+      group: 'community',
       groupLabel: 'Tin tức',
       title: 'Chuyên gia nổi bật',
       description: 'Top chuyên gia theo tổng lượt thích bài viết',
@@ -390,9 +390,9 @@
     {
       type: 'WGT-COM-004',
       renderAs: 'WGT-COM-TOPWL',
-      group: 'news',
+      group: 'community',
       groupLabel: 'Tin tức',
-      title: 'Top theo dõi mạnh nhất',
+      title: 'Top Watchlist mạnh nhất',
       description: 'Hiệu suất TB watchlist · chép danh mục Elite',
       tier: 'elite',
       kind: 'list',
@@ -403,8 +403,7 @@
     },
 
     /* ── Cá nhân ──
-       WGT-PRF-001/002 = thành phần trang (sidebar Nhà của tôi), KHÔNG thuộc danh mục widget.
-       Giữ META_PAGE để dashboard-engine render sidebar cố định. */
+       WGT-PRF-001/002 = thành phần trang (sidebar), KHÔNG thuộc danh mục widget. */
     {
       type: 'WGT-WAT-001',
       group: 'personal',
@@ -420,7 +419,6 @@
     }
   ];
 
-  /** Thành phần trang cố định — không nằm trong CATALOG / Thư viện / picker. */
   var PAGE_SIDEBAR_COMPONENTS = [
     {
       type: 'WGT-PRF-001',
@@ -448,14 +446,15 @@
     }
   ];
 
-  /* PRF-001 (Hồ sơ) — Owner: không đặc thù trên Nhà; không còn default inject.
-     PRF-002 (Gói cước) — Owner: đặc thù, giữ. PAGE_SIDEBAR_COMPONENTS vẫn có PRF-001 cho Profile. */
   var SIDEBAR_DEFAULT = [
-    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 0, config: {} }
+    { widget_type: 'WGT-PRF-001', scope: 'sidebar', column: 'main', position: 0, config: {} },
+    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} }
   ];
 
   var DASHBOARD_DEFAULT = [
-    { widget_type: 'WGT-WAT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'full' } }
+    { widget_type: 'WGT-WAT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'full' } },
+    { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half' } },
+    { widget_type: 'WGT-MKT-007', scope: 'dashboard', column: 'grid', position: 2, config: { width: 'half', metric: 'volume' } }
   ];
 
   var DEFAULT_LAYOUT = SIDEBAR_DEFAULT.concat(DASHBOARD_DEFAULT);
@@ -468,8 +467,6 @@
 
   function byType(type) {
     if (WGT_TYPE_ALIASES[type]) type = WGT_TYPE_ALIASES[type];
-    else if (WGT_TYPE_REVERSE[type]) { /* canonical CHUDE */ }
-
     if (!type) return null;
     for (var i = 0; i < CATALOG.length; i++) {
       if (CATALOG[i].type === type) return CATALOG[i];
@@ -477,65 +474,17 @@
     for (var p = 0; p < PAGE_SIDEBAR_COMPONENTS.length; p++) {
       if (PAGE_SIDEBAR_COMPONENTS[p].type === type) return PAGE_SIDEBAR_COMPONENTS[p];
     }
-    /* Fallback membership từ Tầng 4 — L4RuntimeReader (ABH E6) */
-    var cat = global.L4RuntimeReader;
-    if (!cat) return null;
-    var can = type;
-    var libs = cat.widgetIds ? cat.widgetIds() : [];
-    if (libs.indexOf(can) < 0 && libs.indexOf(type) < 0) return null;
-    var meta = cat.entitlementMeta ? cat.entitlementMeta(can) : null;
-    var spec = meta
-      ? { title: meta.title, description: meta.description, tier: meta.tier }
-      : { title: can, description: '', tier: 'free' };
-    var dep = meta && meta.pages ? { pages: meta.pages } : { pages: ['dashboard'] };
-    var pages = dep.pages || ['dashboard'];
-    var group = 'market';
-    var groupLabel = 'Thị trường';
-    if (pages.indexOf('flow') >= 0) { group = 'flow'; groupLabel = 'Dòng tiền'; }
-    else if (pages.indexOf('news') >= 0) { group = 'news'; groupLabel = 'Tin tức'; }
-    else if (/^WGT-WAT/.test(can)) { group = 'personal'; groupLabel = 'Cá nhân'; }
-    return {
-      type: can,
-      group: group,
-      groupLabel: groupLabel,
-      title: spec.title || can,
-      description: spec.description || '',
-      tier: spec.tier || 'free',
-      kind: 'chart',
-      popularity: 50,
-      defaultConfig: { width: 'half' },
-      fromLayer4: true
-    };
+    return null;
   }
 
-  /**
-   * Nhóm tiện ích cho picker Nhà của tôi.
-   * SoT membership = Core 4 tầng · Tầng 4; registry = render/tier bổ sung.
-   * Bỏ qua pageComponent (WGT-PRF-*) — thành phần trang, không chọn trong Tùy chỉnh.
-   */
   function grouped() {
-    var P = global.L4RuntimeReader;
-    var order = ['market', 'flow', 'news', 'personal'];
+    var order = ['market', 'flow', 'community', 'personal'];
     var map = {};
-
-    function pushItem(w) {
-      if (!w || !w.type || w.pageComponent) return;
-      if (!map[w.group]) map[w.group] = { label: w.groupLabel || w.group, items: [] };
-      if (map[w.group].items.some(function (x) { return x.type === w.type; })) return;
+    CATALOG.forEach(function (w) {
+      if (!w || w.pageComponent) return;
+      if (!map[w.group]) map[w.group] = { label: w.groupLabel, items: [] };
       map[w.group].items.push(w);
-    }
-
-    var ids = P && P.widgetIds ? P.widgetIds() : null;
-
-    if (ids && ids.length) {
-      ids.forEach(function (wid) {
-        var meta = byType(wid);
-        if (meta) pushItem(meta);
-      });
-    } else {
-      CATALOG.forEach(pushItem);
-    }
-
+    });
     var out = {};
     order.forEach(function (key) {
       if (map[key]) out[key] = map[key];

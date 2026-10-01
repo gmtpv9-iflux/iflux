@@ -35,7 +35,7 @@ var PF = '?v=r20261002a';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
-  home: function () { return import('../pages/home.manifest.js?v=r20261001a'); },
+  home: function () { return import('../pages/home.manifest.js?v=r20261002d'); },
   flow: function () { return import('../pages/flow.manifest.js' + PF); },
   news: function () { return import('../pages/news.manifest.js' + PF); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },

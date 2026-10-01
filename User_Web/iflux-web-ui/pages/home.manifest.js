@@ -6,7 +6,7 @@
  *  - Vãng lai: không sidebar, landing phẳng (nội dung Discovery bổ sung sau).
  */
 
-var VER = '?v=r20261001a';
+var VER = '?v=r20261002d';
 
 export default {
   pageKey: 'home',
