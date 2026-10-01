@@ -255,7 +255,7 @@ export async function bootShell(pageKey, opts) {
   }
 
   await ensureParallel([
-    { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
+    { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
     { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20261001b' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
