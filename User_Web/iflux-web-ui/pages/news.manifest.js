@@ -1,8 +1,8 @@
 /**
  * Page Manifest — Cộng đồng (/community)
  * Composite: 1 widget "page" tự dựng layout feed + widget dedicated bên trong.
- * Widget dedicated (SoT Product Composition): WGT-NEWS-001, WGT-NEWS-TOPIC-TOP,
- * WGT-MKT-006, WGT-NEWS-002 — render trong composite theo đúng entitlement/block gate.
+ * Widget dedicated (SoT Product Composition): WGT-COM-001, WGT-COM-CHUDE-TOP,
+ * WGT-MKT-006, WGT-COM-002 — render trong composite theo đúng entitlement/block gate.
  */
 
 export default {

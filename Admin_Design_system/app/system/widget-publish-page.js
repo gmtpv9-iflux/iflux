@@ -98,18 +98,18 @@
         { key: 'sidebar-right', label: 'Sidebar phải', visible: true, layout: null }
       ],
       placements: [
-        { widgetId: 'WGT-NEWS-001', section: 'main', position: 0, span: 6, enabled: true, locked: true, config: {} },
-        { widgetId: 'WGT-NEWS-TOPIC-TOP', section: 'main', position: 1, span: 6, enabled: true, locked: true, config: {} },
+        { widgetId: 'WGT-COM-001', section: 'main', position: 0, span: 6, enabled: true, locked: true, config: {} },
+        { widgetId: 'WGT-COM-CHUDE-TOP', section: 'main', position: 1, span: 6, enabled: true, locked: true, config: {} },
         { widgetId: 'WGT-MKT-006', section: 'sidebar-right', position: 0, span: 12, enabled: true, locked: true, config: { source: 'story' } },
-        { widgetId: 'WGT-NEWS-002', section: 'sidebar-right', position: 1, span: 12, enabled: true, locked: true, config: {} }
+        { widgetId: 'WGT-COM-002', section: 'sidebar-right', position: 1, span: 12, enabled: true, locked: true, config: {} }
       ]
     };
   }
 
   function baseWidgetDrafts() {
     return {
-      'WGT-NEWS-001': {
-        id: 'WGT-NEWS-001',
+      'WGT-COM-001': {
+        id: 'WGT-COM-001',
         title: 'Heatmap cổ phiếu cộng đồng',
         template: 'TMP-COM-STOCK-HEAT',
         css: [
@@ -118,8 +118,8 @@
           '/User_Web/iflux-web-ui/watchlist.css'
         ]
       },
-      'WGT-NEWS-TOPIC-TOP': {
-        id: 'WGT-NEWS-TOPIC-TOP',
+      'WGT-COM-CHUDE-TOP': {
+        id: 'WGT-COM-CHUDE-TOP',
         title: 'Chủ đề tích cực hàng đầu',
         template: 'TMP-COM-STORY-TOP',
         css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928', '/User_Web/iflux-web-ui/block-templates.css']
@@ -134,8 +134,8 @@
           '/User_Web/iflux-web-ui/market-components.css'
         ]
       },
-      'WGT-NEWS-002': {
-        id: 'WGT-NEWS-002',
+      'WGT-COM-002': {
+        id: 'WGT-COM-002',
         title: 'Thành viên tích cực',
         template: 'TMP-COM-ACTIVE',
         css: ['/User_Web/iflux-web-ui/news.css?v=appShell20260928']

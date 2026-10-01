@@ -332,7 +332,7 @@
 
     /* ── Cộng đồng ── */
     {
-      type: 'WGT-NEWS-001',
+      type: 'WGT-COM-001',
       renderAs: 'WGT-COM-TREND',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -346,7 +346,7 @@
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-NEWS-TOPIC-TOP',
+      type: 'WGT-COM-CHUDE-TOP',
       renderAs: 'WGT-COM-TREND',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -360,7 +360,7 @@
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-NEWS-002',
+      type: 'WGT-COM-002',
       renderAs: 'WGT-COM-ACTIVE',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -374,7 +374,7 @@
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-NEWS-003',
+      type: 'WGT-COM-003',
       renderAs: 'WGT-COM-EXPERTS',
       group: 'community',
       groupLabel: 'Tin tức',
@@ -388,7 +388,7 @@
       footerLabel: 'Mở Tin tức'
     },
     {
-      type: 'WGT-NEWS-004',
+      type: 'WGT-COM-004',
       renderAs: 'WGT-COM-TOPWL',
       group: 'community',
       groupLabel: 'Tin tức',

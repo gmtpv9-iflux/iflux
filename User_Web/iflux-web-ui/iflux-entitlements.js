@@ -37,26 +37,10 @@
     return !!(plan && plan.ent && plan.ent[key]);
   }
 
-  var BLOCK_ID_ALIAS = {
-    'WGT-COM-001': 'WGT-NEWS-001',
-    'WGT-COM-002': 'WGT-NEWS-002',
-    'WGT-COM-003': 'WGT-NEWS-003',
-    'WGT-COM-004': 'WGT-NEWS-004',
-    'WGT-COM-CHUDE-TOP': 'WGT-NEWS-TOPIC-TOP',
-    'WGT-COM-PAGE': 'WGT-NEWS-PAGE'
-  };
-
   function hasBlock(id) {
     var plan = currentPlan();
     if (!plan || !plan.blocks) return false;
-    if (plan.blocks[id]) return true;
-    var aliased = BLOCK_ID_ALIAS[id];
-    if (aliased && plan.blocks[aliased]) return true;
-    var rev;
-    for (rev in BLOCK_ID_ALIAS) {
-      if (BLOCK_ID_ALIAS[rev] === id && plan.blocks[rev]) return true;
-    }
-    return false;
+    return !!plan.blocks[id];
   }
 
   function getLimit(key, fallback) {

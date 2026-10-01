@@ -48,10 +48,10 @@ var manifest = {
     m('community-css', 'css', ASSET + 'news.css?v=r20260928n', null)
   ],
   lazyChildren: [
-    'WGT-NEWS-001',
-    'WGT-NEWS-TOPIC-TOP',
+    'WGT-COM-001',
+    'WGT-COM-CHUDE-TOP',
     'WGT-MKT-006',
-    'WGT-NEWS-002'
+    'WGT-COM-002'
   ],
   lifecycle: {
     boot: 'boot',
