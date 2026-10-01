@@ -1591,7 +1591,7 @@
       return Promise.resolve(api);
     }
     if (shareLoadPromise) return shareLoadPromise;
-    var ver = 'r20261001a';
+    var ver = 'r20261001b';
     shareLoadPromise = new Promise(function (resolve) {
       var link = document.querySelector('link[href*="share-action.css"], link[href*="insight-share.css"]');
       if (!link) {

@@ -1242,21 +1242,16 @@
       return;
     }
 
-    /* Brief §6B — ưu tiên Native Share Sheet với Self URL; Insight card = fallback */
-    shareViaNativeSheet(shareResult).then(function (usedSheet) {
-      if (usedSheet) {
-        block.dataset.ifxShareBusy = '0';
-        SF.clearShareStorage && SF.clearShareStorage();
-        return;
-      }
-      openModal();
-      setPreviewLoading();
-      captureElement(captureEl, profile, function (capture) {
-        buildAndShowCard(meta, capture, shareResult, ts);
-        SF.clearShareStorage && SF.clearShareStorage();
-        block.dataset.ifxShareBusy = '0';
-        if (global.ixToast) ixToast('Insight Card đã sẵn sàng!', 'success');
-      });
+    /* Luôn hiện Insight Card trước (tải ảnh / copy link kèm mã affiliate) — không ưu tiên
+       Native Share Sheet của thiết bị cho nút share widget (Owner 20261001: OS share sheet
+       nhảy thẳng ra ngoài app, không đúng mục đích Insight Card). */
+    openModal();
+    setPreviewLoading();
+    captureElement(captureEl, profile, function (capture) {
+      buildAndShowCard(meta, capture, shareResult, ts);
+      SF.clearShareStorage && SF.clearShareStorage();
+      block.dataset.ifxShareBusy = '0';
+      if (global.ixToast) ixToast('Insight Card đã sẵn sàng!', 'success');
     });
   }
 
