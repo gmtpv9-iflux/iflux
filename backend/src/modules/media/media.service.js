@@ -361,7 +361,7 @@ async function backfillCoverVariants(config, limit) {
    * PENDING/FAILED) sẽ không bao giờ khớp; nếu không lọc ở đây, những bài đó bị bỏ qua mỗi
    * lần mà vẫn nằm trong LIMIT của lần sau → hasMore mãi = true, gọi lặp không dừng. */
   const res = await query(
-    `SELECT id, ${COVER_PATH_SQL} AS cover_path
+    `SELECT id, payload->>'title' AS title, payload->>'slug' AS slug, ${COVER_PATH_SQL} AS cover_path
      FROM news_posts
      WHERE COALESCE(payload->'cover'->>'url', '') <> ''
        AND NOT (COALESCE(payload->'cover'->'variants', '{}'::jsonb) ?& $1)
@@ -373,20 +373,33 @@ async function backfillCoverVariants(config, limit) {
 
   let updated = 0;
   let failed = 0;
+  const items = [];
   for (let i = 0; i < res.rows.length; i++) {
     const row = res.rows[i];
+    const item = { id: row.id, title: row.title || row.id, slug: row.slug || row.id };
     try {
       const found = await query(`SELECT id FROM media_assets WHERE public_url = $1 LIMIT 1`, [row.cover_path]);
       const assetId = found.rows[0] && found.rows[0].id;
-      if (!assetId) { failed += 1; continue; } /* race hiếm: asset bị xoá giữa 2 câu query */
+      if (!assetId) {
+        failed += 1;
+        item.ok = false;
+        item.error = 'Không tìm thấy ảnh trong Thư viện (asset bị xoá) — cover_path: ' + row.cover_path;
+        items.push(item);
+        continue;
+      }
       const variants = await regenerateCoverVariants(config, assetId);
       await query(
         `UPDATE news_posts SET payload = jsonb_set(payload, '{cover,variants}', $2::jsonb, true) WHERE id = $1`,
         [row.id, JSON.stringify(variants)]
       );
       updated += 1;
+      item.ok = true;
+      items.push(item);
     } catch (e) {
       failed += 1;
+      item.ok = false;
+      item.error = (e && e.message) || String(e);
+      items.push(item);
     }
   }
 
@@ -409,7 +422,8 @@ async function backfillCoverVariants(config, limit) {
     updated: updated,
     failed: failed,
     hasMore: hasMore,
-    notImportedYet: notImportedYet
+    notImportedYet: notImportedYet,
+    items: items
   };
 }
 

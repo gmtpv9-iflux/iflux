@@ -84,12 +84,52 @@
      MAX_STEPS chỉ là lưới an toàn phía client (phòng khi có lỗi ngoài dự kiến ở server khiến
      hasMore không bao giờ tắt) — chặn ở server (EXISTS media_assets) mới là chỗ sửa gốc. */
   var MAX_STEPS = 500;
-  var runState = { stopping: false, running: false, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0 };
+  var runState = { stopping: false, running: false, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0, recent: [] };
 
   function renderRunStatus(text, tone) {
     var el = document.getElementById('rgp-run-status');
     var color = tone === 'danger' ? 'var(--ix-chip-danger,#e5484d)' : (tone === 'success' ? 'var(--ix-success,#2dd4bf)' : 'var(--ix-text-muted)');
     el.innerHTML = '<div style="font-size:13px;color:' + color + '">' + text + '</div>';
+  }
+
+  /* Tổng việc chưa biết trước (quét theo trang 20 bài/lần) — dùng % theo nấc MAX_STEPS
+     làm thanh tiến trình tương đối; khi hasMore=false thì set 100%. */
+  function renderProgress(pct, done) {
+    var wrap = document.getElementById('rgp-progress-wrap');
+    var bar = document.getElementById('rgp-progress-bar');
+    if (!wrap || !bar) return;
+    wrap.style.display = '';
+    bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+    bar.style.background = done ? 'var(--ix-success,#2dd4bf)' : 'var(--ix-accent)';
+  }
+
+  function hideProgress() {
+    var wrap = document.getElementById('rgp-progress-wrap');
+    if (wrap) wrap.style.display = 'none';
+  }
+
+  function addRecentItems(items) {
+    (items || []).forEach(function (it) {
+      runState.recent.unshift(it);
+    });
+    runState.recent = runState.recent.slice(0, 10);
+    renderRecentList();
+  }
+
+  function renderRecentList() {
+    var wrap = document.getElementById('rgp-recent-wrap');
+    var ul = document.getElementById('rgp-recent-list');
+    if (!wrap || !ul) return;
+    if (!runState.recent.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    ul.innerHTML = runState.recent.map(function (it) {
+      var href = '/tin-tuc/bai-viet/' + esc(it.slug || it.id);
+      var icon = it.ok ? '<i class="ti ti-circle-check" style="color:var(--ix-success,#2dd4bf)"></i>' : '<i class="ti ti-circle-x" style="color:var(--ix-chip-danger,#e5484d)"></i>';
+      var tip = it.ok ? '' : (' <span style="color:var(--ix-text-muted);font-size:11px">— ' + esc(it.error || '') + '</span>');
+      return '<li style="display:flex;align-items:center;gap:6px">' + icon +
+        '<a href="' + href + '" target="_blank" rel="noopener" style="color:var(--ix-text-primary);text-decoration:none">' + esc(it.title) + '</a>' +
+        tip + '</li>';
+    }).join('');
   }
 
   function runStep() {
@@ -113,11 +153,13 @@
       'Đang chạy… đã xử lý ' + runState.totalProcessed + ' bài (' + runState.totalUpdated + ' thành công, ' +
         runState.totalFailed + ' lỗi).'
     );
+    renderProgress((runState.steps / MAX_STEPS) * 100, false);
     request('/admin/media/cover-profiles/backfill', { method: 'POST', body: { limit: 20 } })
       .then(function (r) {
         runState.totalProcessed += r.processed || 0;
         runState.totalUpdated += r.updated || 0;
         runState.totalFailed += r.failed || 0;
+        addRecentItems(r.items);
         if (!r.processed || !r.hasMore) {
           var notDone = r.notImportedYet || 0;
           renderRunStatus(
@@ -129,6 +171,7 @@
                 : ''),
             runState.totalFailed ? 'danger' : 'success'
           );
+          renderProgress(100, true);
           return finishRun();
         }
         runStep();
@@ -161,7 +204,9 @@
     if (run) {
       run.addEventListener('click', function () {
         if (runState.running) return;
-        runState = { stopping: false, running: true, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0 };
+        runState = { stopping: false, running: true, totalUpdated: 0, totalFailed: 0, totalProcessed: 0, steps: 0, recent: [] };
+        renderRecentList();
+        renderProgress(0, false);
         run.disabled = true;
         setStopVisible(true);
         runStep();
