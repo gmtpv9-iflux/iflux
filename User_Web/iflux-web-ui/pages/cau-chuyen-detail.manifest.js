@@ -2,7 +2,7 @@
  * Page Manifest — Chi tiết câu chuyện (/cau-chuyen/:slug)
  * Giao diện tái dùng group-page (trước đây /chu-de/:slug).
  */
-var VER = '?v=r20260928r';
+var VER = '?v=r20261002a';
 
 export default {
   pageKey: 'cauChuyenDetail',

@@ -21,7 +21,7 @@
     color var(--ifx-ix-hover-duration, 0.12s),
     background var(--ifx-ix-hover-duration, 0.12s),
     transform var(--ifx-ix-active-duration, 0.1s);
-  border-radius: var(--ix-radius, var(--ifx-radius-md));
+  border-radius: var(--ifx-radius-md, var(--ifx-radius-md));
 }
 
 .ifx-follow:hover:not(.is-readonly):not(.is-active),

@@ -15,7 +15,7 @@
 @import url('./semantic/aliases.css');
 @import url('./typography.css?v=appHeader20260928');
 @import url('./spacing.css?v=appHeader20260928');
-@import url('./foundation/heart-action.css');
+@import url('/design_system/04_components/29_follow/follow.css');
 @import url('./components.css?v=hostScroll20260831');
 @import url('./atoms-extensions.css?v=tdCaptionFix20260808');
 @import url('./utilities.css');

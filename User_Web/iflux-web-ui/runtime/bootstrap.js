@@ -28,10 +28,10 @@ import { pageKeyFromPath } from './page-keys.js?v=r20260929e';
 import { installSoftNavigation } from './soft-navigation.js?v=r20260929e';
 import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
-var VER = '?v=r20260928r';
+var VER = '?v=r20261002a';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20260928r';
+var PF = '?v=r20261002a';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
