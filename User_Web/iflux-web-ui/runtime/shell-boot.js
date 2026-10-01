@@ -235,7 +235,7 @@ export async function bootShell(pageKey, opts) {
   await ensureParallel([
     { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=abhE620260727' },
     { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=r20261001a' },
-    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20260928r' },
+    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20261002c' },
     { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260929e' },
     /* Gate chỉ quyết định khoá; lớp phủ (platform/web/lock) do Gate nạp khi có vùng bị khoá. */
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=r20260928n' },
@@ -243,7 +243,7 @@ export async function bootShell(pageKey, opts) {
   ]);
   /* Legacy ABH E4/E5 removed — không boot Admin Store / EntitlementCatalog trên User Web shell:
   { global: 'EntitlementCatalog', src: ADMIN + 'app/subscription/entitlement-catalog.js' },
-  { global: 'PlatformLayersWidgets', src: ADMIN + 'app/system/platform-layers-widgets.js' },
+  { global: 'PlatformLayersWidgets', src: ADMIN + 'app/system/platform-layers-widgets.js?v=r20261002c' },
   { global: 'PlansStore', src: ADMIN + 'app/subscription/plans-store.js' },
   */
 
