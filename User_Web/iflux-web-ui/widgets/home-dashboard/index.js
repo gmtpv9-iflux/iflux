@@ -12,21 +12,26 @@
  */
 
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
-import { resolveDashboardWidgetDeps } from '../../runtime/widget-module-catalog.js?v=r20260928r';
 
 var A = '/User_Web/iflux-web-ui/';
-var V = 'ui00120260723';
+var V = 'r20261001a';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 
 function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' : '?v=' + V) }; }
 
 var BASE = [
-  /* W4: seo-url = Shell MARKET_CORE (home) — seed registry lazy theo widget.
-     WP-4: widget-renderers/dashboard-engine bỏ module mock thị trường — bump cache riêng. */
+  /* Nội dung mỗi widget = Template DS đã publish (dashboard-engine.js tự fetch artifact +
+     mount qua IfxTemplateLoader/IfxTemplates — một đường DUY NHẤT, giống mọi trang khác). */
   dep('IfluxWidgetRegistry', 'widget-registry.js'),
-  dep('IfluxWidgetRenderers', 'widget-renderers.js?v=mockRmWp4_20260809'),
-  dep('IfluxDashboardEngine', 'dashboard-engine.js?v=r20260928q')
+  dep('IfluxDashboardEngine', 'dashboard-engine.js'),
+  /* Watchlist là widget tương tác (thêm/bớt mã) — chưa publish qua Template, dùng component
+     riêng; nạp sẵn ở đây vì hầu như dashboard nào cũng có. */
+  dep('IfluxWatchlistStore', 'watchlist-store.js?v=r20260928n'),
+  dep('IfluxWatchlistTaxonomy', 'watchlist-taxonomy.js?v=r20260928q'),
+  { global: 'IfluxHeartAction', src: '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724' },
+  dep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928q'),
+  dep('IfluxWatchlistBlock', 'watchlist-block.js?v=r20260928q')
 ];
 
 var LAYOUT_HTML =
@@ -68,38 +73,12 @@ var LAYOUT_HTML =
     '</div>' +
   '</div>';
 
-/* Bọc IfluxWidgetRenderers.render để lazy-load dep của từng widget khi render. */
-function installLazyRenderer() {
-  var R = window.IfluxWidgetRenderers;
-  if (!R || R._ifxLazyWrapped) return;
-  var orig = R.render;
-  R._ifxLazyWrapped = true;
-  R.render = function (type, el, config) {
-    var reg = window.IfluxWidgetRegistry;
-    var m = reg && reg.byType ? reg.byType(type) : null;
-    var key = (m && m.renderAs) || type;
-    var rt = resolveDashboardWidgetDeps(key);
-    var deps = rt && rt.deps;
-    if (!deps || !deps.length) return orig.call(R, type, el, config);
-    var missing = deps.some(function (d) { return !window[d.global]; });
-    if (!missing) return orig.call(R, type, el, config);
-    if (el) el.innerHTML = '<div class="ifx-wl-empty">Đang tải tiện ích…</div>';
-    ensureSequence(deps).then(function () {
-      if (rt.afterLoad) rt.afterLoad();
-      try { orig.call(R, type, el, config); }
-      catch (e) {
-        if (el) el.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
-      }
-    }).catch(function () {
-      if (el) el.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
-    });
-  };
-}
-
 export async function mount(el) {
   el.innerHTML = LAYOUT_HTML;
   await ensureSequence(BASE);
-  installLazyRenderer();
+  if (window.IfluxWatchlistStore && IfluxWatchlistStore.ensureSeedFromDemo) {
+    try { IfluxWatchlistStore.ensureSeedFromDemo(); } catch (e) { /* ignore */ }
+  }
   if (window.IfluxDashboardEngine && IfluxDashboardEngine.init) {
     IfluxDashboardEngine.init();
   }

@@ -17,8 +17,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG nạp widget implementation.
  */
 
-import { loadScript } from './legacy-bridge.js?v=r20260928q';
-import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260928p';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=r20260928q';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260929e';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
@@ -225,13 +225,18 @@ export async function bootShell(pageKey, opts) {
     try { IfluxAppShellHeader.render(); } catch (eChrome) { /* ignore */ }
   }
 
+  /* Nút chia sẻ Insight trong header widget là global (mọi trang có widget) — nạp sẵn CSS
+     ngay từ đầu để nút đúng style ngay, không chờ click đầu tiên mới nạp (JS vẫn lazy khi
+     click, xem ensureShareAction trong iflux-web-ui.js — chỉ CSS tải trước). */
+  loadStyle('/Admin_Design_system/iflux-admin-ui/foundation/share-action.css?v=r20261001b');
+
   // Phần còn lại App Shell — không chặn chrome đã paint.
   // ABH E4/E5 — Runtime readers + pure normalize (no Admin subscription on shell)
   await ensureParallel([
     { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=abhE620260727' },
-    { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=abhE620260727' },
+    { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=r20261001a' },
     { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20260928r' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260928r' },
+    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260929e' },
     /* Gate chỉ quyết định khoá; lớp phủ (platform/web/lock) do Gate nạp khi có vùng bị khoá. */
     { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=r20260928n' },
     { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=r20260928q' }
@@ -251,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: ADMIN_UI + 'foundation/iflux-breakpoint.js?v=bpSlice3_20260727' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20260928q' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20261001b' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

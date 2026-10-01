@@ -9,6 +9,7 @@
   var _ids = [];
   var _missing = {};
   var _pending = {};
+  var _fetchStarted = {};
   var _ready = false;
 
   function pageForWidget(id) {
@@ -68,12 +69,17 @@
     };
   }
 
+  /* _meta[id] có thể là stub (title===id, đặt sẵn để dùng đồng bộ) — không được coi stub
+     là "đã có dữ liệu thật" rồi bỏ fetch luôn. Theo dõi riêng _fetchStarted để chỉ fetch
+     đúng 1 lần/id nhưng KHÔNG bị stub chặn mất lần fetch thật duy nhất đó. */
   function fetchWidgetOnce(id) {
     id = String(id || '');
-    if (!id || _missing[id] || _meta[id]) {
+    if (!id || _missing[id]) {
       return Promise.resolve(_meta[id] || null);
     }
     if (_pending[id]) return _pending[id];
+    if (_fetchStarted[id]) return Promise.resolve(_meta[id] || null);
+    _fetchStarted[id] = true;
     _pending[id] = fetch('/api/widgets/' + encodeURIComponent(id), {
       cache: 'no-store',
       headers: { Accept: 'application/json' }
@@ -85,9 +91,15 @@
       return res.json();
     }).then(function (body) {
       var parsed = parseWidgetArtifact(id, body);
+      var hadStub = _meta[id] && _meta[id].title === id;
       if (parsed) _meta[id] = parsed;
       else _missing[id] = true;
       delete _pending[id];
+      /* Danh mục tiện ích (registry modal) và header widget đã dựng với stub (mã) trước đó
+         → phát sự kiện để các nơi đang hiện stub tự vẽ lại đúng tên/mô tả thật. */
+      if (parsed && hadStub && typeof document !== 'undefined') {
+        document.dispatchEvent(new CustomEvent('iflux-widget-copy-ready', { detail: { id: id } }));
+      }
       return _meta[id] || null;
     }).catch(function () {
       _missing[id] = true;

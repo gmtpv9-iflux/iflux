@@ -14,6 +14,14 @@ function templateIdOf(art) {
   return (art && art.display && art.display.renderSpec && art.display.renderSpec.templateId) || null;
 }
 
+/* content.dataDefinition = outputs khai báo ở Kiến trúc 4 tầng ([{symbol,name,source,demo}, …]),
+   đúng thứ tự input của Template. Rỗng/thiếu → Template dùng demo mặc định của chính nó. */
+function inputOf(content) {
+  var defs = content && Array.isArray(content.dataDefinition) ? content.dataDefinition : null;
+  if (!defs || !defs.length) return undefined;
+  return defs.map(function (d) { return (d && d.demo) || ''; });
+}
+
 /**
  * @param {Array<{widgetId, host, config, artifact}>} tree
  * @param {{ logPrefix?: string }=} opts
@@ -40,7 +48,8 @@ export async function mountPublishedWidgets(tree, opts) {
       /* Template không có trong danh mục DS → IfxTemplates hiện trạng thái “Chưa có Template”. */
       var root = window.IfxTemplates.mount(el, templateId, {
         title: content.title || entry.widgetId,
-        description: content.description || ''
+        description: content.description || '',
+        input: inputOf(content)
       });
       if (!templateId || !root) {
         if (window.console && console.warn) console.warn(prefix, entry.widgetId, 'Template không hợp lệ:', templateId);

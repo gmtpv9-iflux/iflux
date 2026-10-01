@@ -1242,37 +1242,41 @@
       return;
     }
 
-    /* Brief §6B — ưu tiên Native Share Sheet với Self URL; Insight card = fallback */
-    shareViaNativeSheet(shareResult).then(function (usedSheet) {
-      if (usedSheet) {
-        block.dataset.ifxShareBusy = '0';
-        SF.clearShareStorage && SF.clearShareStorage();
-        return;
-      }
-      openModal();
-      setPreviewLoading();
-      captureElement(captureEl, profile, function (capture) {
-        buildAndShowCard(meta, capture, shareResult, ts);
-        SF.clearShareStorage && SF.clearShareStorage();
-        block.dataset.ifxShareBusy = '0';
-        if (global.ixToast) ixToast('Insight Card đã sẵn sàng!', 'success');
-      });
+    /* Luôn hiện Insight Card trước (tải ảnh / copy link kèm mã affiliate) — không ưu tiên
+       Native Share Sheet của thiết bị cho nút share widget (Owner 20261001: OS share sheet
+       nhảy thẳng ra ngoài app, không đúng mục đích Insight Card). */
+    openModal();
+    setPreviewLoading();
+    captureElement(captureEl, profile, function (capture) {
+      buildAndShowCard(meta, capture, shareResult, ts);
+      SF.clearShareStorage && SF.clearShareStorage();
+      block.dataset.ifxShareBusy = '0';
+      if (global.ixToast) ixToast('Insight Card đã sẵn sàng!', 'success');
     });
   }
 
-  function createShareButton(block, def) {
-    var btn = document.createElement('button');
+  /* Widget/host có thể đã tự dựng sẵn nút .ifx-insight-share-btn tĩnh (stub — chờ đúng lần
+     click đầu tiên mới nạp Foundation Share Action, xem iflux-web-ui.js ensureShareAction).
+     Gắn listener thật lên nút đó khi nó đã tồn tại — KHÔNG bỏ qua — nếu không nút chỉ đổi
+     style (do CSS vừa nạp) nhưng click lần 2 không có tác dụng gì (chưa từng có handler). */
+  function wireShareButton(btn, block, def) {
+    if (!btn || btn.dataset.ifxShareWired === '1') return btn;
+    btn.dataset.ifxShareWired = '1';
     btn.type = 'button';
-    btn.className = 'ifx-insight-share-btn';
-    btn.title = 'Chia sẻ Insight Card';
-    btn.setAttribute('aria-label', 'Chia sẻ Insight Card');
-    btn.innerHTML = '<i class="ti ti-share-3"></i>';
+    if (btn.className.indexOf('ifx-insight-share-btn') < 0) btn.className = 'ifx-insight-share-btn';
+    if (!btn.title) btn.title = 'Chia sẻ Insight Card';
+    if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', 'Chia sẻ Insight Card');
+    if (!btn.querySelector('i')) btn.innerHTML = '<i class="ti ti-share-3"></i>';
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       shareBlock(block, def);
     });
     return btn;
+  }
+
+  function createShareButton(block, def) {
+    return wireShareButton(document.createElement('button'), block, def);
   }
 
   var SOURCE_PAGE_LABELS = {
@@ -1303,9 +1307,9 @@
       wrap.className = 'ifx-block-share-actions';
       actionsMount.insertBefore(wrap, actionsMount.firstChild);
     }
-    if (!wrap.querySelector('.ifx-insight-share-btn')) {
-      wrap.appendChild(createShareButton(block, def));
-    }
+    var existingBtn = wrap.querySelector('.ifx-insight-share-btn');
+    if (existingBtn) wireShareButton(existingBtn, block, def);
+    else wrap.appendChild(createShareButton(block, def));
   }
 
   /** Gắn share cùng hàng với h3 (sau title, trước subtitle). */
@@ -1373,9 +1377,9 @@
         block.dataset.ifxSharePatched = '1';
         return;
       }
-      if (!actions.querySelector('.ifx-insight-share-btn')) {
-        actions.appendChild(createShareButton(block, def));
-      }
+      var existingHeadBtn = actions.querySelector('.ifx-insight-share-btn');
+      if (existingHeadBtn) wireShareButton(existingHeadBtn, block, def);
+      else actions.appendChild(createShareButton(block, def));
     }
     block.dataset.ifxSharePatched = '1';
   }
@@ -1405,58 +1409,6 @@
     });
     var canvas = document.querySelector('[data-ifx-dash-canvas]') || document.body;
     observer.observe(canvas, { childList: true, subtree: true });
-  }
-
-  function shareButtonHtml() {
-    return '<button type="button" class="ifx-insight-share-btn" title="Chia sẻ Insight Card" aria-label="Chia sẻ Insight Card"><i class="ti ti-share-3"></i></button>';
-  }
-
-  function shareActionsHtml() {
-    return '<span class="ifx-block-share-actions">' + shareButtonHtml() + '</span>';
-  }
-
-  function bindWidgetShare(node, widgetType) {
-    if (!node) return;
-    stripBugButtons(node);
-    var btn = node.querySelector('.ifx-insight-share-btn');
-    if (btn && btn.dataset.ifxBound) return;
-    if (!btn) {
-      var actions = node.querySelector('.ifx-widget__actions');
-      if (!actions) return;
-      var wrap = actions.querySelector('.ifx-block-share-actions');
-      if (!wrap) {
-        wrap = document.createElement('span');
-        wrap.className = 'ifx-block-share-actions';
-        actions.insertBefore(wrap, actions.firstChild);
-      }
-      if (!wrap.querySelector('.ifx-insight-share-btn')) {
-        wrap.insertAdjacentHTML('beforeend', shareButtonHtml());
-      }
-      btn = wrap.querySelector('.ifx-insight-share-btn');
-    }
-    if (!btn) return;
-    btn.dataset.ifxBound = '1';
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      shareBlock(node, {
-        group: dashboardWidgetGroup,
-        meta: function () {
-          var reg = global.IfluxWidgetRegistry && widgetType ? IfluxWidgetRegistry.byType(widgetType) : null;
-          return {
-            entityType: 'widget',
-            entityId: widgetType || 'widget',
-            title: reg ? reg.title : text(node, '.ifx-widget__header > h3') || 'Tiện ích',
-            subtitle: reg ? reg.description : '',
-            sourcePage: 'dashboard'
-          };
-        },
-        root: '.ifx-widget',
-        captureResolver: function () {
-          return node;
-        }
-      });
-    });
   }
 
   function fitLandingCapture(record, imgEl, cardEl) {
@@ -1508,9 +1460,6 @@
     init: init,
     patchAll: patchAll,
     shareBlock: shareBlock,
-    shareButtonHtml: shareButtonHtml,
-    shareActionsHtml: shareActionsHtml,
-    bindWidgetShare: bindWidgetShare,
     fitLandingCapture: fitLandingCapture,
     initLandingPage: initLandingPage,
     openFromPayload: function (payload, bodyEl) {
