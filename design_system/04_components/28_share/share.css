@@ -55,20 +55,20 @@
   width: 30px;
   height: 30px;
   padding: 0;
-  border: 1px solid var(--ix-border);
-  border-radius: var(--ix-radius);
-  background: var(--ix-bg-card);
-  color: var(--ix-text-secondary);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-surface);
+  color: var(--ifx-text-secondary);
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .ifx-insight-share-btn:hover {
-  background: var(--ix-accent-soft);
+  background: var(--ifx-action-primary-soft);
   border-color: rgba(105, 108, 255, 0.35);
-  color: var(--ix-accent);
+  color: var(--ifx-action-primary);
 }
 .ifx-insight-share-btn:focus-visible {
-  outline: 2px solid var(--ix-accent);
+  outline: 2px solid var(--ifx-action-primary);
   outline-offset: 2px;
 }
 .ifx-widget__header .ifx-insight-share-btn {
@@ -99,32 +99,32 @@
   overflow: hidden;
   width: calc(100vw - 32px);
   max-width: 720px;
-  background: var(--ix-bg-card);
-  border: 1px solid var(--ix-border);
-  border-radius: var(--ix-radius-lg);
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-lg);
   padding: 20px 22px 18px;
   box-sizing: border-box;
 }
 .ifx-insight-modal__head {
   flex-shrink: 0;
 }
-.ifx-insight-modal__head .ix-modal-sub {
+.ifx-insight-modal__head .ifx-share-modal-sub {
   margin-bottom: 0;
 }
-.ifx-insight-modal .ix-modal-box {
+.ifx-insight-modal .ifx-share-modal-box {
   max-width: 720px;
   width: calc(100vw - 32px);
 }
 .ifx-insight-modal__preview-wrap {
   margin-top: 12px;
-  border-radius: var(--ix-radius-lg);
+  border-radius: var(--ifx-radius-lg);
   overflow-x: hidden;
   overflow-y: auto;
   flex: 1 1 auto;
   min-height: 120px;
   max-height: min(52vh, 520px);
   max-height: min(52dvh, 520px);
-  border: 1px solid var(--ix-border);
+  border: 1px solid var(--ifx-border-default);
   background: #0f1117;
   display: flex;
   align-items: flex-start;
@@ -136,7 +136,7 @@
   flex-shrink: 0;
   margin-top: 12px;
   padding-top: 4px;
-  border-top: 1px solid var(--ix-border);
+  border-top: 1px solid var(--ifx-border-default);
 }
 .ifx-insight-modal .ifx-insight-card {
   flex-shrink: 0;
@@ -144,7 +144,7 @@
 .ifx-insight-modal__loading {
   padding: 48px 24px;
   text-align: center;
-  color: var(--ix-text-muted);
+  color: var(--ifx-text-muted);
   font-size: var(--ifx-font-size-14);
 }
 @keyframes ifx-spin {
@@ -156,15 +156,15 @@
 .ifx-insight-modal__aff {
   margin-top: 12px;
   padding: 10px 12px;
-  border-radius: var(--ix-radius);
+  border-radius: var(--ifx-radius-md);
   background: rgba(40, 199, 111, 0.08);
   border: 1px solid rgba(40, 199, 111, 0.22);
   font-size: var(--ifx-font-size-12);
-  color: var(--ix-text-secondary);
+  color: var(--ifx-text-secondary);
   line-height: 1.45;
 }
 .ifx-insight-modal__aff strong {
-  color: var(--ix-success);
+  color: var(--ifx-success);
 }
 .ifx-insight-modal__url {
   margin-top: 14px;
@@ -182,10 +182,10 @@
   width: 100%;
   font-size: var(--ifx-font-size-12);
   padding: var(--ifx-space-8) 10px;
-  border: 1px solid var(--ix-border);
-  border-radius: var(--ix-radius);
-  background: var(--ix-bg-input);
-  color: var(--ix-text-primary);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-input);
+  color: var(--ifx-text-primary);
 }
 
 /* Insight Card — khung = header + block + footer QR (DS §4.9) */
@@ -248,8 +248,8 @@
   box-shadow: 0 2px 14px rgba(0, 0, 0, 0.28);
 }
 .ifx-insight-capture-bundle {
-  background: var(--ix-bg-card, #fff);
-  border-radius: var(--ix-radius-lg);
+  background: var(--ifx-bg-surface, #fff);
+  border-radius: var(--ifx-radius-lg);
   padding: var(--ifx-space-12);
 }
 .ifx-insight-card__summary {
@@ -326,7 +326,7 @@
 
 .ifx-insight-card--landing {
   margin: 0 auto;
-  border-radius: var(--ix-radius-lg);
+  border-radius: var(--ifx-radius-lg);
 }
 .ifx-insight-card--landing .ifx-insight-card__body {
   display: block;
@@ -341,10 +341,10 @@
   margin-bottom: var(--ifx-space-24);
 }
 .ifx-shr-card-wrap {
-  border-radius: var(--ix-radius-lg);
+  border-radius: var(--ifx-radius-lg);
   overflow-x: auto;
   overflow-y: visible;
-  border: 1px solid var(--ix-border);
+  border: 1px solid var(--ifx-border-default);
   margin-bottom: var(--ifx-space-24);
   display: flex;
   justify-content: center;
@@ -360,9 +360,9 @@
 .ifx-shr-ref-banner {
   margin-top: var(--ifx-space-16);
   padding: var(--ifx-space-12) 14px;
-  border-radius: var(--ix-radius);
+  border-radius: var(--ifx-radius-md);
   background: rgba(105, 108, 255, 0.08);
   border: 1px solid rgba(105, 108, 255, 0.2);
   font-size: var(--ifx-font-size-14);
-  color: var(--ix-text-secondary);
+  color: var(--ifx-text-secondary);
 }

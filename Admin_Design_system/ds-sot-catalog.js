@@ -151,7 +151,7 @@
       items: [
         { name: 'Comment / Thread', status: 'ok', cls: '.ifx-stock-cmt*', file: 'stock-comments-ui.js' },
         { name: 'Reaction Bar', status: 'partial', note: 'Inline community icons' },
-        { name: 'Share / Insight Card', status: 'ok', cls: '.ifx-insight-*', file: 'foundation/share-action.js' },
+        { name: 'Share / Insight Card', status: 'ok', cls: '.ifx-insight-*', file: '04_components/28_share/share.js' },
         { name: 'Rich Text Editor', status: 'partial', file: 'news/write.html' },
         { name: 'Chat', status: 'ok', cls: '.ix-chat-*', file: 'patterns/chat.html' },
         { name: 'Mention / Tag', status: 'partial', file: 'stock-mentions.js' },
@@ -199,7 +199,7 @@
         { name: 'Plan Card', status: 'ok', cls: '.ix-plan-card, .ifx-hub-plan-card', preview: 'plan-card' },
         { name: 'Widget Shell (dashboard)', status: 'ok', cls: '.ifx-widget', file: 'widget-shell.css', preview: 'widget' },
         { name: 'Page block wrappers', status: 'ok', cls: '.ifx-block, .ifx-mkt-card, .ifx-flow-card', file: 'block-templates.css', note: 'SoT shell → §15 Block Templates' },
-        { name: 'Insight Share modal', status: 'ok', file: 'foundation/share-action.css' },
+        { name: 'Insight Share modal', status: 'ok', file: '04_components/28_share/share.css' },
         { name: 'Dashboard toolbar', status: 'ok', cls: '.ifx-dash-toolbar', file: 'widget-shell.css' },
         { name: 'Auth card', status: 'ok', cls: '.ix-auth-card', file: 'auth/login.html' },
         { name: 'Checkout summary', status: 'ok', file: 'account/checkout.html' }

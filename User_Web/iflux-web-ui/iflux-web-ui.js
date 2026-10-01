@@ -1580,9 +1580,10 @@
   window.IfluxWebUI.installHeaderChromeLazy = installHeaderChromeLazy;
   window.IfluxWebUI.ensureUserNotifications = ensureUserNotifications;
 
-  /* Foundation Share Action — không idle / shell preload.
-     Trigger: click nút Share · hoặc Widget/Feature gọi ensureShareAction(). */
-  var FOUNDATION = '/Admin_Design_system/iflux-admin-ui/foundation/';
+  /* Share — design_system/04_components/28_share (DS component, dùng toàn cục) —
+     không idle / shell preload. Trigger: click nút Share · hoặc Widget/Feature gọi
+     ensureShareAction(). CSS nạp sẵn ở Shell Boot — JS vẫn lazy khi click. */
+  var SHARE_DS = '/design_system/04_components/28_share/';
   var shareLoadPromise = null;
 
   function ensureShareAction() {
@@ -1591,18 +1592,18 @@
       return Promise.resolve(api);
     }
     if (shareLoadPromise) return shareLoadPromise;
-    var ver = 'r20261001b';
+    var ver = 'r20261002a';
     shareLoadPromise = new Promise(function (resolve) {
-      var link = document.querySelector('link[href*="share-action.css"], link[href*="insight-share.css"]');
+      var link = document.querySelector('link[href*="04_components/28_share/share.css"]');
       if (!link) {
         link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = FOUNDATION + 'share-action.css?v=' + ver;
+        link.href = SHARE_DS + 'share.css?v=' + ver;
         document.head.appendChild(link);
       }
-      loadScriptChain(FOUNDATION, [
-        { src: 'share-action-store.js?v=' + ver, g: 'IfluxInsightShareStore' },
-        { src: 'share-action.js?v=' + ver, g: 'IfluxInsightShare' }
+      loadScriptChain(SHARE_DS, [
+        { src: 'share-store.js?v=' + ver, g: 'IfluxInsightShareStore' },
+        { src: 'share.js?v=' + ver, g: 'IfluxInsightShare' }
       ], function () {
         var S = window.IfluxShareAction || window.IfluxInsightShare;
         if (S && S.init) S.init();

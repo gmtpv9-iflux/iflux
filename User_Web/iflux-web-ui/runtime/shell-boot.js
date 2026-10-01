@@ -228,7 +228,7 @@ export async function bootShell(pageKey, opts) {
   /* Nút chia sẻ Insight trong header widget là global (mọi trang có widget) — nạp sẵn CSS
      ngay từ đầu để nút đúng style ngay, không chờ click đầu tiên mới nạp (JS vẫn lazy khi
      click, xem ensureShareAction trong iflux-web-ui.js — chỉ CSS tải trước). */
-  loadStyle('/Admin_Design_system/iflux-admin-ui/foundation/share-action.css?v=r20261001b');
+  loadStyle('/design_system/04_components/28_share/share.css?v=r20261002a');
 
   // Phần còn lại App Shell — không chặn chrome đã paint.
   // ABH E4/E5 — Runtime readers + pure normalize (no Admin subscription on shell)
