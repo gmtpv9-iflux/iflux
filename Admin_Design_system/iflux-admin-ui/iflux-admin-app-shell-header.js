@@ -27,7 +27,7 @@
   }
 
   function ensureEnvChip(nav) {
-    var actions = nav.querySelector('.ix-nav-actions');
+    var actions = nav.querySelector('.ifx-nav-actions');
     if (!actions) return;
     var shell = global.IfluxAdminAppShell;
     var state = shell && shell.getHeaderState ? shell.getHeaderState() : { env: 'production' };
@@ -75,7 +75,7 @@
   }
 
   function ensureLogout(nav) {
-    var actions = nav.querySelector('.ix-nav-actions');
+    var actions = nav.querySelector('.ifx-nav-actions');
     if (!actions) return;
     if (actions.querySelector('[data-ix-admin-logout]')) return;
     var btn = document.createElement('button');

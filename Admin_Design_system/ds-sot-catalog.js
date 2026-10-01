@@ -42,7 +42,7 @@
         { name: 'Iconography (Tabler)', status: 'ok', surface: 'Shared', cls: '.ti' },
         { name: 'Illustration / empty art', status: 'partial', surface: 'User', cls: '.ifx-dash-empty, .ifx-com-empty' },
         { name: 'Motion / Pulse GĐ1', status: 'ok', surface: 'Shared', cls: '--ifx-duration-*, --transition-*', file: 'primitives/motion.css' },
-        { name: 'Theme Dark/Light', status: 'ok', surface: 'Shared', cls: '[data-theme]', file: 'semantic/theme.css, iflux-theme.js' }
+        { name: 'Theme Dark/Light', status: 'ok', surface: 'Shared', cls: '[data-theme]', file: 'semantic/theme.css, theme.js' }
       ]
     },
     {

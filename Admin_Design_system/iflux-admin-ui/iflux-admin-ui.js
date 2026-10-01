@@ -491,7 +491,7 @@ document.querySelectorAll('.ix-perm-select-all').forEach(function (cb) {
       var path = location.pathname || '';
       if (path.indexOf('/app/') >= 0 || path.indexOf('Admin_Design_system') >= 0) return true;
     }
-    return !!document.querySelector('.ix-nav-actions');
+    return !!document.querySelector('.ifx-nav-actions');
   }
   if (window.IfluxAdminNotifications || !isAdminShell()) return;
   var scripts = document.getElementsByTagName('script');
@@ -520,7 +520,7 @@ if (window.IfluxAdminAuth && IfluxAdminAuth.patchNavbarAdmin) {
     var host = (window.location && window.location.hostname) || '';
     var isLocal = !host || host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' ||
       /^192\.168\./.test(host) || /^10\./.test(host) || window.location.protocol === 'file:';
-    var chips = document.querySelectorAll('.ix-nav-actions .ix-chip');
+    var chips = document.querySelectorAll('.ifx-nav-actions .ix-chip');
     chips.forEach(function (chip) {
       if ((chip.textContent || '').trim().indexOf('Môi trường local') !== 0) return;
       if (isLocal) return;
