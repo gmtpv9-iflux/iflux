@@ -56,19 +56,6 @@
     "marketing-onboarding": { key: "marketing-onboarding", slug: "/admin/tiep-thi/onboarding", file: "marketing/onboarding.html" },
     "system-page-settings": { key: "system-page-settings", slug: "/admin/he-thong/page-settings", file: "system/page-settings.html" },
     "system-templates": { key: "system-templates", slug: "/admin/he-thong/templates", file: "system/templates.html" },
-    "system-ds-studio": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-primitive-tokens", file: "system/ds-studio.html" },
-    "system-ds-studio-2": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-foundations", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-3": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-design-tokens", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-4": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-icons", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-5": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-charts", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-6": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-atoms", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-7": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-items", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-8": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-blocks", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-9": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-cards", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-10": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-organisms", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-11": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-sections", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-12": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-business-objects", file: "system/ds-studio.html", legacy: true },
-    "system-ds-studio-13": { key: "system-ds-studio", slug: "/admin/he-thong/ds-studio#page-user-flows", file: "system/ds-studio.html", legacy: true },
     "system-sla": { key: "system-sla", slug: "/admin/he-thong/sla", file: "system/sla.html" },
     "market-cau-hinh-thoi-gian": { key: "market-cau-hinh-thoi-gian", slug: "/admin/thi-truong/cau-hinh-thoi-gian", file: "market/cau-hinh-thoi-gian.html", legacySlugs: ["/admin/thi-truong/du-lieu-giao-dich", "/admin/du-lieu/du-lieu-giao-dich"] },
     /* legacy bookmark → cùng trang Thị trường */
@@ -113,8 +100,6 @@
     "analytics-chu-de": { key: "analytics-chu-de", slug: "/admin/phan-tich/chu-de", file: "analytics/chu-de.html" },
     "analytics-revenue": { key: "analytics-revenue", slug: "/admin/phan-tich/revenue", file: "analytics/revenue.html" },
     "analytics-funnel": { key: "analytics-funnel", slug: "/admin/phan-tich/funnel", file: "analytics/funnel.html" },
-    "Admin-Design-system-hub": { key: "Admin-Design-system-hub", slug: "/Admin_Design_system/hub.html", file: null },
-    "Admin-Design-system-design-system": { key: "Admin-Design-system-design-system", slug: "/Admin_Design_system/design-system.html", file: null },
     "Admin-Design-system-patterns-table-list": { key: "Admin-Design-system-patterns-table-list", slug: "/Admin_Design_system/patterns/table-list.html", file: null },
     "Admin-Design-system-patterns-form-add": { key: "Admin-Design-system-patterns-form-add", slug: "/Admin_Design_system/patterns/form-add.html", file: null },
     "Admin-Design-system-patterns-charts": { key: "Admin-Design-system-patterns-charts", slug: "/Admin_Design_system/patterns/charts.html", file: null },
@@ -275,20 +260,7 @@
     if (/\/don-hang\/edit(\.html)?$/.test(pathOnly) || /\/orders\/edit(\.html)?$/.test(pathOnly) || /\/admin\/orders\/edit$/.test(pathOnly)) {
       return 'orders-list';
     }
-    var ident = matchPath(path, hash);
-    /* D-03: identity = system-ds-studio; nav highlight vẫn theo region hash. */
-    if (ident === 'system-ds-studio' && hash) {
-      var sk;
-      for (sk in PAGES) {
-        if (!Object.prototype.hasOwnProperty.call(PAGES, sk)) continue;
-        var sp = PAGES[sk];
-        if (!sp || String(sp.slug || '').indexOf('/ds-studio') < 0) continue;
-        var sh = String(sp.slug);
-        var shash = sh.indexOf('#') >= 0 ? '#' + sh.split('#').slice(1).join('#') : '';
-        if (shash && shash === hash) return sk;
-      }
-    }
-    return ident;
+    return matchPath(path, hash);
   }
 
   global.IfluxAdminRoutes = {

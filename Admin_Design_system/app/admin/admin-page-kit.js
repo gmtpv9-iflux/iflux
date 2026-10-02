@@ -196,7 +196,7 @@
     var introEl = document.getElementById('adm-page-intro');
     if (titleEl) titleEl.textContent = cfg.title || cfg.code;
     if (bcEl) {
-      bcEl.innerHTML = '<a href="../../hub.html">Admin</a><i class="ti ti-chevron-right"></i><span>' + esc(cfg.code) + '</span>';
+      bcEl.innerHTML = '<a href="/Admin_Design_system/app/dashboard/index.html">Admin</a><i class="ti ti-chevron-right"></i><span>' + esc(cfg.code) + '</span>';
     }
     if (introEl) introEl.textContent = cfg.intro || '';
 

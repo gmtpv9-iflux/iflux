@@ -156,23 +156,10 @@
     { type: 'item', key: "notifications-history", routeKey: "notifications-history", label: "Lịch sử phát sóng", icon: "ti-history", badge: "···", urlSegment: "history" },
     { type: 'item', key: "system-announcements", routeKey: "system-announcements", label: "Thiết lập mẫu thông báo", icon: "ti-template", urlSegment: "templates" },
 
-    /* 11. Quản lý giao diện — giữ nguyên toàn bộ */
+    /* 11. Quản lý giao diện — chỉ còn Cài đặt Trang + Mẫu giao diện (DS Studio cũ đã gỡ). */
     { type: 'group', label: "Quản lý giao diện", urlSegment: "interface" },
     { type: 'item', key: "system-page-settings", routeKey: "system-page-settings", label: "Cài đặt Trang", icon: "ti-sitemap", urlSegment: "page-settings" },
     { type: 'item', key: "system-templates", routeKey: "system-templates", label: "Mẫu giao diện", icon: "ti-template", urlSegment: "templates" },
-    { type: 'item', key: "system-ds-studio", routeKey: "system-ds-studio", label: "Token nguyên thủy", icon: "ti-palette", urlSegment: "ds-studio" },
-    { type: 'item', key: "system-ds-studio-2", routeKey: "system-ds-studio-2", label: "Nền tảng", icon: "ti-layers-linked" },
-    { type: 'item', key: "system-ds-studio-3", routeKey: "system-ds-studio-3", label: "Token thiết kế", icon: "ti-adjustments" },
-    { type: 'item', key: "system-ds-studio-4", routeKey: "system-ds-studio-4", label: "Biểu tượng", icon: "ti-icons" },
-    { type: 'item', key: "system-ds-studio-5", routeKey: "system-ds-studio-5", label: "Biểu đồ", icon: "ti-chart-bar" },
-    { type: 'item', key: "system-ds-studio-6", routeKey: "system-ds-studio-6", label: "Nguyên tử", icon: "ti-box" },
-    { type: 'item', key: "system-ds-studio-7", routeKey: "system-ds-studio-7", label: "Mục", icon: "ti-list" },
-    { type: 'item', key: "system-ds-studio-8", routeKey: "system-ds-studio-8", label: "Khối", icon: "ti-layout-grid" },
-    { type: 'item', key: "system-ds-studio-9", routeKey: "system-ds-studio-9", label: "Thẻ", icon: "ti-id" },
-    { type: 'item', key: "system-ds-studio-10", routeKey: "system-ds-studio-10", label: "Tổ hợp", icon: "ti-components", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-11", routeKey: "system-ds-studio-11", label: "Phần bố cục", icon: "ti-layout-board", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-12", routeKey: "system-ds-studio-12", label: "Đối tượng nghiệp vụ", icon: "ti-building-bank", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-13", routeKey: "system-ds-studio-13", label: "Luồng người dùng", icon: "ti-route", badge: "soon" },
 
     /* 12. Quản lý Data Sources — group không urlSegment (mixed market + community) */
     { type: 'group', label: "Quản lý Data Sources" },
