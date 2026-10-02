@@ -21,9 +21,17 @@
   border: 0;
   background: transparent;
   transition: var(--ifx-transition-color);
+  /* <button> mặc định có "nền pressed" riêng theo giao diện hệ điều hành (UA chrome) —
+     background: transparent không chặn hết, bấm vào vẫn thấy chớp màu lạ rồi mới trở
+     lại đúng màu khi rê chuột ra. Tắt hẳn appearance để toàn quyền kiểm soát màu. */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 /* Hover: chỉ đổi nền, giữ nguyên màu chữ — không áp cho biến thể Segmented (widget). */
 .ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:hover { background: var(--ifx-action-primary-soft); }
+.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:active { background: var(--ifx-action-primary-soft); }
+.ifx-tab.is-active:active { background: var(--ifx-action-primary); }
 /* Active: nền đặc + chữ trắng — tăng tương phản/khả năng đọc so với nền mờ trước đây. */
 .ifx-tab.is-active {
   background: var(--ifx-action-primary);

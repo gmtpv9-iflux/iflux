@@ -110,14 +110,25 @@
       plotOptions: { candlestick: { colors: { upward: up, downward: down }, wick: { useFillColor: true } } },
       tooltip: { theme: 'dark' }
     };
-    try {
-      if (container._apex) { container._apex.destroy(); container._apex = null; }
-      var ch = new ApexCharts(container, opts);
-      ch.render();
-      container._apex = ch;
-    } catch (e) {
-      container.innerHTML = '<div class="ifx-stock-empty">Không tải được biểu đồ</div>';
+    /* Soft-navigate: container có thể vào DOM trước khi layout (flex/grid cha) ổn định
+       xong 1 nhịp — ApexCharts đo offsetWidth=0 lúc đó ra NaN cho mọi thuộc tính SVG.
+       Đợi tới khi container có bề ngang thật (tối đa vài khung hình) rồi mới render. */
+    function renderWhenSized(attemptsLeft) {
+      if (!container.isConnected) return;
+      if (container.offsetWidth > 0 || attemptsLeft <= 0) {
+        try {
+          if (container._apex) { container._apex.destroy(); container._apex = null; }
+          var ch = new ApexCharts(container, opts);
+          ch.render();
+          container._apex = ch;
+        } catch (e) {
+          container.innerHTML = '<div class="ifx-stock-empty">Không tải được biểu đồ</div>';
+        }
+        return;
+      }
+      global.requestAnimationFrame(function () { renderWhenSized(attemptsLeft - 1); });
     }
+    renderWhenSized(10);
   }
 
   function quoteChangePct(q) {
