@@ -16,8 +16,6 @@
     var path = (global.location && global.location.pathname) || '';
     if (/\/auth\/(login|forgot|register|verify-2fa)\.html$/i.test(path)) return true;
     if (/\/admin\/(login|dang-nhap)\/?$/i.test(path)) return true;
-    /* Checklist hub — đọc menu SoT không bắt buộc đăng nhập */
-    if (/\/Admin_Design_system\/hub\.html$/i.test(path)) return true;
     return false;
   }
 

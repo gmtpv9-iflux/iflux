@@ -156,23 +156,20 @@
     { type: 'item', key: "notifications-history", routeKey: "notifications-history", label: "Lịch sử phát sóng", icon: "ti-history", badge: "···", urlSegment: "history" },
     { type: 'item', key: "system-announcements", routeKey: "system-announcements", label: "Thiết lập mẫu thông báo", icon: "ti-template", urlSegment: "templates" },
 
-    /* 11. Quản lý giao diện — giữ nguyên toàn bộ */
+    /* 11. Quản lý giao diện — Cài đặt Trang + Mẫu giao diện (DS Studio cũ đã gỡ);
+       các trang Pattern (patterns/*) đặt ngay dưới Mẫu giao diện để tham khảo. */
     { type: 'group', label: "Quản lý giao diện", urlSegment: "interface" },
     { type: 'item', key: "system-page-settings", routeKey: "system-page-settings", label: "Cài đặt Trang", icon: "ti-sitemap", urlSegment: "page-settings" },
     { type: 'item', key: "system-templates", routeKey: "system-templates", label: "Mẫu giao diện", icon: "ti-template", urlSegment: "templates" },
-    { type: 'item', key: "system-ds-studio", routeKey: "system-ds-studio", label: "Token nguyên thủy", icon: "ti-palette", urlSegment: "ds-studio" },
-    { type: 'item', key: "system-ds-studio-2", routeKey: "system-ds-studio-2", label: "Nền tảng", icon: "ti-layers-linked" },
-    { type: 'item', key: "system-ds-studio-3", routeKey: "system-ds-studio-3", label: "Token thiết kế", icon: "ti-adjustments" },
-    { type: 'item', key: "system-ds-studio-4", routeKey: "system-ds-studio-4", label: "Biểu tượng", icon: "ti-icons" },
-    { type: 'item', key: "system-ds-studio-5", routeKey: "system-ds-studio-5", label: "Biểu đồ", icon: "ti-chart-bar" },
-    { type: 'item', key: "system-ds-studio-6", routeKey: "system-ds-studio-6", label: "Nguyên tử", icon: "ti-box" },
-    { type: 'item', key: "system-ds-studio-7", routeKey: "system-ds-studio-7", label: "Mục", icon: "ti-list" },
-    { type: 'item', key: "system-ds-studio-8", routeKey: "system-ds-studio-8", label: "Khối", icon: "ti-layout-grid" },
-    { type: 'item', key: "system-ds-studio-9", routeKey: "system-ds-studio-9", label: "Thẻ", icon: "ti-id" },
-    { type: 'item', key: "system-ds-studio-10", routeKey: "system-ds-studio-10", label: "Tổ hợp", icon: "ti-components", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-11", routeKey: "system-ds-studio-11", label: "Phần bố cục", icon: "ti-layout-board", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-12", routeKey: "system-ds-studio-12", label: "Đối tượng nghiệp vụ", icon: "ti-building-bank", badge: "soon" },
-    { type: 'item', key: "system-ds-studio-13", routeKey: "system-ds-studio-13", label: "Luồng người dùng", icon: "ti-route", badge: "soon" },
+    { type: 'item', key: "Admin-Design-system-patterns-table-list", routeKey: "Admin-Design-system-patterns-table-list", label: "Mẫu: Bảng", icon: "ti-table" },
+    { type: 'item', key: "Admin-Design-system-patterns-form-add", routeKey: "Admin-Design-system-patterns-form-add", label: "Mẫu: Form", icon: "ti-forms" },
+    { type: 'item', key: "Admin-Design-system-patterns-order-list", routeKey: "Admin-Design-system-patterns-order-list", label: "Mẫu: Danh sách giao dịch", icon: "ti-clipboard-list" },
+    { type: 'item', key: "Admin-Design-system-patterns-order-detail", routeKey: "Admin-Design-system-patterns-order-detail", label: "Mẫu: Chi tiết giao dịch", icon: "ti-file-description" },
+    { type: 'item', key: "Admin-Design-system-patterns-user-profile", routeKey: "Admin-Design-system-patterns-user-profile", label: "Mẫu: Hồ sơ người dùng", icon: "ti-user" },
+    { type: 'item', key: "Admin-Design-system-patterns-wizard", routeKey: "Admin-Design-system-patterns-wizard", label: "Mẫu: Wizard", icon: "ti-stairs-up" },
+    { type: 'item', key: "Admin-Design-system-patterns-chat", routeKey: "Admin-Design-system-patterns-chat", label: "Mẫu: Chat", icon: "ti-messages" },
+    { type: 'item', key: "Admin-Design-system-patterns-referrals", routeKey: "Admin-Design-system-patterns-referrals", label: "Mẫu: Referrals", icon: "ti-users-group" },
+    { type: 'item', key: "Admin-Design-system-patterns-charts", routeKey: "Admin-Design-system-patterns-charts", label: "Mẫu: Biểu đồ", icon: "ti-chart-pie" },
 
     /* 12. Quản lý Data Sources — group không urlSegment (mixed market + community) */
     { type: 'group', label: "Quản lý Data Sources" },
@@ -263,12 +260,6 @@
     { type: 'item', key: "analytics-chu-de", routeKey: "analytics-chu-de", label: "Phân tích chủ đề", icon: "ti-chart-area", badge: "GĐ2", urlSegment: "topics" },
     { type: 'item', key: "analytics-revenue", routeKey: "analytics-revenue", label: "Phân tích doanh thu", icon: "ti-chart-pie", badge: "GĐ2", urlSegment: "revenue" },
     { type: 'item', key: "analytics-funnel", routeKey: "analytics-funnel", label: "Phễu chuyển đổi", icon: "ti-filter", badge: "GĐ2", urlSegment: "funnel" },
-    { type: 'group', label: "Hướng dẫn" },
-    { type: 'item', key: "Admin-Design-system-hub", routeKey: "Admin-Design-system-hub", label: "Checklist", icon: "ti-checklist" },
-    { type: 'item', key: "Admin-Design-system-design-system", routeKey: "Admin-Design-system-design-system", label: "Thành phần UI", icon: "ti-color-swatch" },
-    { type: 'item', key: "Admin-Design-system-patterns-table-list", routeKey: "Admin-Design-system-patterns-table-list", label: "Mẫu: Bảng", icon: "ti-table" },
-    { type: 'item', key: "Admin-Design-system-patterns-form-add", routeKey: "Admin-Design-system-patterns-form-add", label: "Mẫu: Form", icon: "ti-forms" },
-    { type: 'item', key: "Admin-Design-system-patterns-charts", routeKey: "Admin-Design-system-patterns-charts", label: "Mẫu: Biểu đồ", icon: "ti-chart-pie" },
   ];
 
   function pathFor(routeKey) {

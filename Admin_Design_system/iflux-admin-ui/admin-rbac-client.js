@@ -102,7 +102,6 @@
     'system-admin-list': 'access.admin_accounts.view',
     'system-admin-roles': 'access.roles.view',
     'system-admin-permissions': 'access.permissions.view',
-    'system-ds-studio': 'interface.design_system.view',
     'system-page-settings': 'interface.page_settings.view',
     'system-templates': 'interface.design_system.view',
     'system-sla': 'system.sla.view',

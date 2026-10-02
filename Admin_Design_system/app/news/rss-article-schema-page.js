@@ -147,9 +147,15 @@
       });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function boot() {
     var input = document.getElementById('rss-schema-q');
     if (input) input.addEventListener('input', render);
     load();
-  });
+  }
+
+  /* Admin dùng soft-nav (eval lại page script mỗi lần chuyển trang qua menu) —
+     DOMContentLoaded chỉ fire 1 lần duy nhất trong đời document (lúc tải trang đầu),
+     nên nếu chuyển tới trang này KHÔNG qua F5, listener không bao giờ chạy. */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
