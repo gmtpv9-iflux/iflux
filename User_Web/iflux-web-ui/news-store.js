@@ -36,6 +36,26 @@
       .slice(0, 80);
   }
 
+  /* Dữ liệu RSS cũ (trước khi sửa rss-ingest.service.js decodeEntities) còn lưu nguyên
+     entity thô trong title/excerpt (vd "&#039;" thay vì dấu nháy) — decode lại ở đây để
+     bài cũ hiển thị đúng ngay, không cần sửa dữ liệu đã lưu trong DB. */
+  function decodeHtmlEntities(s) {
+    s = String(s == null ? '' : s);
+    if (s.indexOf('&') === -1) return s;
+    return s
+      .replace(/&amp;/g, '&')
+      .replace(/&#0*39;|&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&#0*8216;|&lsquo;/g, '‘')
+      .replace(/&#0*8217;|&rsquo;/g, '’')
+      .replace(/&#0*8220;|&ldquo;/g, '“')
+      .replace(/&#0*8221;|&rdquo;/g, '”')
+      .replace(/&#0*8211;|&ndash;/g, '–')
+      .replace(/&#0*8212;|&mdash;/g, '—')
+      .replace(/&#0*8230;|&hellip;/g, '…')
+      .replace(/&nbsp;/g, ' ');
+  }
+
   function nowIso() {
     return new Date().toISOString();
   }
@@ -162,6 +182,8 @@
         favorites: 0
       };
     }
+    post.title = decodeHtmlEntities(post.title);
+    post.excerpt = decodeHtmlEntities(post.excerpt);
     if (!post.slug && post.title) post.slug = slugify(post.title);
     if (!post.title) post.title = 'Bài viết cộng đồng';
     post.chu_de_tags = normalizePrimaryStory(post.chu_de_tags || post.story_tags);
