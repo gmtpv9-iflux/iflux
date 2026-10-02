@@ -91,6 +91,54 @@ async function normalizeAndVariants(buf) {
   };
 }
 
+/* Khung hiển thị thật trên web (Header brand ≤ 150px ngang, favicon ≤ 32px vuông,
+   apple-touch-icon ≤ 180px vuông) × buffer Retina/2x. Resize "inside" — KHÔNG crop,
+   KHÔNG upscale (ảnh gốc nhỏ hơn khung thì giữ nguyên) — để không méo logo/biểu tượng. */
+const BRAND_MARK_BOUNDS = {
+  logo: { width: 320, height: 120 },
+  favicon: { width: 256, height: 256 }
+};
+
+/**
+ * Chuẩn hoá ảnh logo header / favicon — khác ảnh cover (không crop theo khung hiển thị,
+ * vì logo cần giữ toàn bộ nội dung + tỉ lệ gốc). Dùng purpose='logo'|'favicon'.
+ */
+async function normalizeBrandMarkBuffer(buf, purpose) {
+  const bounds = BRAND_MARK_BOUNDS[purpose] || BRAND_MARK_BOUNDS.logo;
+  const fp = fingerprint(buf);
+  if (!sharp) {
+    const meta = await validateImageBuffer(buf);
+    return {
+      fingerprint: fp,
+      rotatedBuffer: buf,
+      delivery: { buffer: buf, mime: meta.mime, width: null, height: null, ext: extForMime(meta.mime) }
+    };
+  }
+
+  const meta = await sharp(buf, { failOn: 'none' }).rotate().metadata();
+  if ((meta.width || 0) > 8000 || (meta.height || 0) > 8000) {
+    throw AppError.badRequest('MEDIA_DIMENSION', 'Kích thước ảnh vượt giới hạn');
+  }
+
+  const rotatedBuf = await sharp(buf, { failOn: 'none' }).rotate().toBuffer();
+  const deliveryBuf = await sharp(rotatedBuf)
+    .resize(bounds.width, bounds.height, { fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 90 })
+    .toBuffer();
+  const deliveryMeta = await sharp(deliveryBuf).metadata();
+  return {
+    fingerprint: fingerprint(rotatedBuf),
+    rotatedBuffer: rotatedBuf,
+    delivery: {
+      buffer: deliveryBuf,
+      mime: 'image/webp',
+      width: deliveryMeta.width || null,
+      height: deliveryMeta.height || null,
+      ext: 'webp'
+    }
+  };
+}
+
 /**
  * Sinh các bản kích thước cố định cho ẢNH ĐẠI DIỆN (cover) — theo COVER_IMAGE_PROFILES
  * (backend/src/modules/media/cover-image-profiles.js). Chỉ gọi cho ảnh cover, không
@@ -192,6 +240,7 @@ module.exports = {
   validateImageBuffer,
   validateShareImageBuffer,
   normalizeAndVariants,
+  normalizeBrandMarkBuffer,
   generateCoverVariants,
   downloadImage,
   extForMime,

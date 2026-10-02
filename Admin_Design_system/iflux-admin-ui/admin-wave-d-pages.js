@@ -223,7 +223,7 @@
           }
           var fd = new FormData();
           fd.append('file', file);
-          if (fieldRef === 'social' || fieldRef === 'og') fd.append('purpose', fieldRef);
+          fd.append('purpose', fieldRef);
           var h = authHeaders();
           delete h['Content-Type'];
           fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })
@@ -365,7 +365,7 @@
           var pageKey = val('seo-p-pageKey');
           var fd = new FormData();
           fd.append('file', file);
-          if (fieldRef === 'social' || fieldRef === 'og') fd.append('purpose', fieldRef);
+          fd.append('purpose', fieldRef);
           var h = authHeaders();
           delete h['Content-Type'];
           fetch(apiBase() + '/admin/media/upload', { method: 'POST', headers: h, body: fd })

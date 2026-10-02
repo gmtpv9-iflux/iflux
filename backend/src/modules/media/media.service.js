@@ -162,6 +162,7 @@ async function createAssetFromBuffer(config, buf, opts) {
   opts = opts || {};
   const purpose = String(opts.purpose || '').toLowerCase();
   const isShare = purpose === 'social' || purpose === 'og';
+  const isBrandMark = purpose === 'logo' || purpose === 'favicon';
   storage.ensureMediaRoot(config);
 
   let fingerprint;
@@ -177,6 +178,11 @@ async function createAssetFromBuffer(config, buf, opts) {
       height: null,
       ext: processImg.extForMime(meta.mime)
     };
+  } else if (isBrandMark) {
+    const variantsPack = await processImg.normalizeBrandMarkBuffer(buf, purpose);
+    fingerprint = variantsPack.fingerprint;
+    pack = variantsPack.delivery;
+    rotatedBuffer = variantsPack.rotatedBuffer;
   } else {
     const variantsPack = await processImg.normalizeAndVariants(buf);
     fingerprint = variantsPack.fingerprint;
