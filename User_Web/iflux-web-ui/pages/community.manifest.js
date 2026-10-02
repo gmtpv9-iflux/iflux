@@ -8,7 +8,10 @@
 export default {
   pageKey: 'community',
   mainClass: 'ifx-main--community-social',
-  css: ['/User_Web/iflux-web-ui/community.css?v=r20261002c'],
+  css: [
+    '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
+    '/User_Web/iflux-web-ui/community.css?v=r20261003a'
+  ],
   path: '/cong-dong',
   title: 'Cộng đồng',
   intro: 'Nơi nhà đầu tư Việt Nam chia sẻ nhận định, theo dõi nhau và thảo luận về thị trường.',
@@ -28,8 +31,11 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=r20261002c',
-      css: ['/User_Web/iflux-web-ui/community.css?v=r20261002c']
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=r20261003a',
+      css: [
+        '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
+        '/User_Web/iflux-web-ui/community.css?v=r20261003a'
+      ]
     }
   ]
 };

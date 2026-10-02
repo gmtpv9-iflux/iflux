@@ -3,18 +3,20 @@
  *
  * ⚠️ PHASE 0 — SEED DATA (được chủ sản phẩm cho phép hardcode để dàn trang đúng bố cục
  * demo wireframe-cong-dong.png + mô tả nghiệp vụ, KHÔNG phải dữ liệu thật). Toàn bộ nội
- * dung trong SEED_* bên dưới là mẫu tĩnh — không gọi API, không ghi DB, không có chart
- * thật. Khi Phase 1 (Post API) + Phase 2 (Story API) + Phase 3 (Feed ranking) xong, xoá
- * SEED_* và thay loadInitialTimeline() bằng gọi API thật (xem SoT §6 §7 §10) — cấu trúc
- * DOM/CSS (.ifx-com2-*) giữ nguyên, không cần dựng lại layout.
+ * dung trong SEED_* bên dưới là mẫu tĩnh — không gọi API, không ghi DB. Khi Phase 1
+ * (Post API) + Phase 2 (Story API) + Phase 3 (Feed ranking) xong, xoá SEED_* và thay
+ * loadInitialTimeline() bằng gọi API thật (xem SoT §6 §7 §10) — cấu trúc DOM/CSS
+ * (.ifx-com2-*) giữ nguyên, không cần dựng lại layout.
  *
- * Bố cục main content (trên xuống dưới — theo yêu cầu 2026-10-02):
+ * Bố cục main content (trên xuống dưới — theo yêu cầu 2026-10-02/03):
  *   1. Chủ đề HOT (card)
- *   2. Composer ("bạn đang nghĩ gì")
+ *   2. Composer ("bạn đang nghĩ gì") — có thể Viết bài / Chia sẻ tin (đăng lại, kèm hoặc
+ *      không kèm bình luận) / Gắn thẻ thực thể (Cổ phiếu, Ngành, Hệ sinh thái, Câu chuyện)
+ *      / Tạo chủ đề.
  *   3. Tabs lọc feed: Mới nhất (mặc định) · Thịnh hành · Nổi bật
  *   4. Danh sách bài đăng — Phase 1: bài từ người user đang theo dõi + bài có gắn MÃ
- *      CHÍNH là 1 mã user đang quan tâm (watchlist). Chỉ mã chính của 1 bài mới có lựa
- *      chọn hiển thị biểu đồ nến (mini, 5 phút, chỉ xem, bấm vào → trang chi tiết mã đó).
+ *      CHÍNH là 1 mã user đang quan tâm (watchlist).
+ * (Bỏ biểu đồ nến đính kèm theo yêu cầu 2026-10-03 — gắn thẻ thực thể là đủ.)
  * Sidebar trái: Cộng đồng iFlux (giới thiệu) + Mã được thảo luận nhiều + Nhà đầu tư nên
  * theo dõi. Sidebar phải: Tạo chủ đề + Hoạt động bạn theo dõi + Lối tắt nhanh + Mời bạn bè.
  */
@@ -41,14 +43,15 @@
     toast((label ? label + ' — ' : '') + 'Tính năng đang hoàn thiện, sẽ sớm ra mắt.', 'info');
   }
 
-  function readToken(name, fb) {
-    try {
-      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      return v || fb;
-    } catch (e) { return fb; }
-  }
-
   /* ───────────────────────── SEED DATA (Phase 0 — xem ghi chú đầu file) ───────────────────────── */
+
+  /* Loại thực thể có thể gắn thẻ vào bài viết — icon + đường dẫn trang chi tiết. */
+  var ENTITY_TYPES = {
+    stock: { icon: 'chart-candle', hrefBase: '/co-phieu/' },
+    sector: { icon: 'building-factory', hrefBase: '/nganh/' },
+    family: { icon: 'stack-2', hrefBase: '/he-sinh-thai/' },
+    story: { icon: 'bookmark', hrefBase: '/cau-chuyen/' }
+  };
 
   var SEED_HOT_TOPICS = [
     { title: 'Dòng tiền quay lại nhóm chứng khoán?', tone: 'up', count: 256 },
@@ -92,17 +95,15 @@
     { key: 'top', label: 'Nổi bật' }
   ];
 
-  /* Giá tham chiếu để sinh nến mẫu (không phải giá thật) — chỉ để biểu đồ demo nhìn hợp lý. */
-  var SEED_BASE_PRICE = { HPG: 28.5, VIX: 18.2, FPT: 135, MWG: 62, VCB: 92, SSI: 33 };
-
-  /* Post seed — đủ 5 dạng để demo: (1) bài thường có gắn mã, (2) chia sẻ lại Tin tức
-   * KÈM bình luận, (3) chia sẻ lại Tin tức KHÔNG kèm bình luận (như tính năng "đăng lại"),
-   * (4) bài có gắn mã CHÍNH + bật hiển thị biểu đồ nến, (5) bài dạng chủ đề cộng đồng (poll). */
+  /* Post seed — đủ các dạng để demo: (1) bài thường gắn thẻ Cổ phiếu, (2) chia sẻ lại
+   * Tin tức KÈM bình luận, (3) chia sẻ lại Tin tức KHÔNG kèm bình luận ("đăng lại") + gắn
+   * thẻ Hệ sinh thái, (4) gắn thẻ Cổ phiếu + Ngành cùng lúc, (5) bài dạng chủ đề cộng đồng
+   * (poll) gắn thẻ Câu chuyện. */
   var SEED_POSTS = [
     {
       initials: 'NH', name: 'Nguyễn Hoàng', badge: 'Top Contributor', time: '2 giờ trước',
       text: 'Dòng tiền có dấu hiệu quay lại nhóm chứng khoán. Thanh khoản cải thiện rõ rệt trong 2 phiên gần đây, kỳ vọng nhịp hồi ngắn hạn. Anh em theo dõi thêm vùng 1.250 - 1.280 của VN-Index.',
-      tags: [{ code: 'VIX', primary: true }, { code: 'SSI' }],
+      tags: [{ type: 'stock', code: 'VIX' }, { type: 'stock', code: 'SSI' }],
       likes: 68, comments: 24, shares: 5
     },
     {
@@ -114,7 +115,7 @@
         excerpt: 'Theo thông tin từ SBV, mặt bằng lãi suất sẽ tiếp tục được duy trì ở mức hợp lý nhằm hỗ trợ tăng trưởng kinh tế năm nay.',
         href: '/tin-tuc/bai-viet/nhnn-giu-nguyen-lai-suat-dieu-hanh'
       },
-      tags: [{ code: 'VCB', primary: true }, { code: 'TCB' }, { code: 'MBB' }],
+      tags: [{ type: 'stock', code: 'VCB' }, { type: 'stock', code: 'TCB' }, { type: 'stock', code: 'MBB' }],
       likes: 41, comments: 12, shares: 3
     },
     {
@@ -126,19 +127,20 @@
         excerpt: 'Thống kê giao dịch tuần cho thấy khối ngoại mua ròng trở lại ở nhiều mã đầu ngành sau 3 tuần bán ròng liên tiếp.',
         href: '/tin-tuc/bai-viet/dong-tien-khoi-ngoai-tro-lai'
       },
-      tags: [], likes: 30, comments: 9, shares: 2
+      tags: [{ type: 'family', code: 'ho-ngan-hang', label: 'Họ Ngân hàng' }],
+      likes: 30, comments: 9, shares: 2
     },
     {
       initials: 'LI', name: 'Long Invest', badge: 'Nhà đầu tư nổi bật', time: '4 giờ trước',
-      text: 'HPG đang tích luỹ rất chặt, vùng 27-28 là hỗ trợ mạnh. Kỳ vọng break trong thời gian tới nếu thị trường thuận lợi. Anh em theo dõi thêm tín hiệu từ thanh khoản.',
-      tags: [{ code: 'HPG', primary: true }],
-      chartTicker: 'HPG',
+      text: 'HPG đang tích luỹ rất chặt, vùng 27-28 là hỗ trợ mạnh. Kỳ vọng break trong thời gian tới nếu thị trường thuận lợi. Anh em theo dõi thêm tín hiệu từ ngành thép nói chung.',
+      tags: [{ type: 'stock', code: 'HPG' }, { type: 'sector', code: 'thep', label: 'Ngành Thép' }],
       likes: 92, comments: 36, shares: 12
     },
     {
       initials: 'MA', name: 'Minh Anh', badge: 'Chủ đề cộng đồng', time: '3 giờ trước',
       text: 'VN-Index có vượt 1.300 điểm trong tháng này? Theo bạn, VN-Index sẽ vượt mốc 1.300 điểm trong tháng này không? Cùng thảo luận và chia sẻ quan điểm!',
-      tags: [], isPoll: true, agree: 412, comments: 236
+      tags: [{ type: 'story', code: 'vn-index-1300', label: 'VN-Index 1.300' }],
+      isPoll: true, agree: 412, comments: 236
     }
   ];
 
@@ -265,7 +267,7 @@
           '<div class="ifx-com2-composer__actions">' +
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="write">' + icon('edit') + ' Viết bài</button>' +
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="share">' + icon('repeat') + ' Chia sẻ tin</button>' +
-            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag">' + icon('chart-candle') + ' Gắn mã</button>' +
+            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag">' + icon('tags') + ' Gắn thẻ</button>' +
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story">' + icon('tag') + ' Tạo chủ đề</button>' +
             '<button type="button" class="ifx-btn ifx-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="submit">Đăng bài</button>' +
           '</div>' +
@@ -284,26 +286,28 @@
     );
   }
 
+  /* Thẻ thực thể đính kèm bài viết — Cổ phiếu / Ngành / Hệ sinh thái / Câu chuyện, bấm
+     vào đi thẳng tới trang chi tiết thực thể đó (Phase 0: href thật, điều hướng mềm). */
   function tagChipHtml(t) {
-    var cls = t.primary ? 'ifx-badge-primary' : 'ifx-badge-soft';
-    return '<span class="ifx-badge ' + cls + '">' + esc(t.code) + (t.primary ? ' ' + icon('chart-candle', 'ifx-com2-tag__chart') : '') + '</span>';
-  }
-
-  function repostHtml(r) {
+    var meta = ENTITY_TYPES[t.type] || ENTITY_TYPES.stock;
     return (
-      '<a href="' + esc(r.href || '#') + '" class="ifx-com2-repost" data-ifx-href="soft">' +
-        '<div class="ifx-com2-repost__meta">' + icon('news') + ' ' + esc(r.source) + ' · ' + esc(r.time) + '</div>' +
-        '<div class="ifx-com2-repost__title">' + esc(r.title) + '</div>' +
-        '<p class="ifx-com2-repost__excerpt">' + esc(r.excerpt) + '</p>' +
+      '<a href="' + meta.hrefBase + esc(t.code) + '" class="ifx-badge ifx-badge-soft ifx-com2-tagchip" data-ifx-href="soft">' +
+        icon(meta.icon) + ' ' + esc(t.label || t.code) +
       '</a>'
     );
   }
 
-  function chartBlockHtml(ticker) {
+  /* Chia sẻ lại bài Tin tức (giống "đăng lại") — có ảnh đại diện bài gốc, responsive:
+     ảnh bên trái trên màn rộng, xếp lên trên khi màn hẹp (xem community.css). */
+  function repostHtml(r) {
     return (
-      '<a href="/co-phieu/' + esc(ticker) + '" class="ifx-com2-chart" data-ifx-href="soft" aria-label="Xem chi tiết ' + esc(ticker) + '">' +
-        '<div class="ifx-com2-chart__head"><strong>' + esc(ticker) + '</strong><span>Nến 5 phút · Chỉ xem</span></div>' +
-        '<div class="ifx-com2-chart__canvas" data-ifx-com2-chart="' + esc(ticker) + '"></div>' +
+      '<a href="' + esc(r.href || '#') + '" class="ifx-com2-repost" data-ifx-href="soft">' +
+        '<div class="ifx-com2-repost__media" aria-hidden="true">' + icon('news') + '</div>' +
+        '<div class="ifx-com2-repost__body">' +
+          '<div class="ifx-com2-repost__meta">' + esc(r.source) + ' · ' + esc(r.time) + '</div>' +
+          '<div class="ifx-com2-repost__title">' + esc(r.title) + '</div>' +
+          '<p class="ifx-com2-repost__excerpt">' + esc(r.excerpt) + '</p>' +
+        '</div>' +
       '</a>'
     );
   }
@@ -320,7 +324,6 @@
       body += '<p class="ifx-com2-post__text">' + esc(p.text) + '</p>';
     }
     if (p.repost) body += repostHtml(p.repost);
-    if (p.chartTicker) body += chartBlockHtml(p.chartTicker);
     var stats = p.isPoll
       ? '<footer class="ifx-com2-post__stats"><button type="button" class="ifx-btn ifx-btn-secondary ifx-btn-sm" data-ifx-com2-action="agree">' + icon('thumb-up') + ' ' + p.agree + ' đồng tình</button>' +
         '<button type="button" data-ifx-com2-action="comment">' + icon('message-circle') + ' ' + p.comments + ' thảo luận</button></footer>'
@@ -401,62 +404,6 @@
     );
   }
 
-  /* ───────────────────────── Biểu đồ nến mini (demo — seed OHLC) ───────────────────────── */
-
-  function seedOhlc(ticker, basePrice, n) {
-    n = n || 40;
-    var rows = [];
-    var price = basePrice;
-    var now = Date.now();
-    var seed = ticker.split('').reduce(function (a, c) { return a + c.charCodeAt(0); }, 0);
-    for (var i = n - 1; i >= 0; i--) {
-      var t = new Date(now - i * 5 * 60000);
-      var open = price;
-      var vol = basePrice * 0.012;
-      var wobble = Math.sin((i + seed) * 0.6) * vol;
-      var close = open + wobble + (Math.random() - 0.5) * vol * 0.5;
-      var high = Math.max(open, close) + Math.random() * vol * 0.4;
-      var low = Math.min(open, close) - Math.random() * vol * 0.4;
-      rows.push({ date: t, open: open, high: high, low: low, close: close });
-      price = close;
-    }
-    return rows;
-  }
-
-  function mountMiniChart(container, ticker) {
-    if (!container || !global.ApexCharts) return;
-    var rows = seedOhlc(ticker, SEED_BASE_PRICE[ticker] || 30);
-    var up = readToken('--ifx-success', '#22c55e');
-    var down = readToken('--ifx-danger', '#ef4444');
-    var data = rows.map(function (r) {
-      return { x: r.date, y: [r.open, r.high, r.low, r.close].map(function (v) { return Number(v.toFixed(2)); }) };
-    });
-    var opts = {
-      chart: { type: 'candlestick', height: 160, toolbar: { show: false }, animations: { enabled: false }, background: 'transparent', fontFamily: 'inherit', selection: { enabled: false } },
-      series: [{ name: ticker, data: data }],
-      xaxis: { type: 'category', labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } },
-      yaxis: { show: false },
-      grid: { show: false, padding: { left: 0, right: 0, top: 4, bottom: 0 } },
-      plotOptions: { candlestick: { colors: { upward: up, downward: down }, wick: { useFillColor: true } } },
-      tooltip: { theme: 'dark', x: { show: false }, enabled: true }
-    };
-    function renderWhenSized(attemptsLeft) {
-      if (!container.isConnected) return;
-      if (container.offsetWidth > 0 || attemptsLeft <= 0) {
-        try { new global.ApexCharts(container, opts).render(); } catch (e) { /* demo — bỏ qua lỗi render */ }
-        return;
-      }
-      global.requestAnimationFrame(function () { renderWhenSized(attemptsLeft - 1); });
-    }
-    renderWhenSized(10);
-  }
-
-  function mountCharts(root) {
-    root.querySelectorAll('[data-ifx-com2-chart]').forEach(function (el) {
-      mountMiniChart(el, el.getAttribute('data-ifx-com2-chart'));
-    });
-  }
-
   /* ───────────────────────── Bind + mount ───────────────────────── */
 
   function bindActions(root) {
@@ -464,7 +411,7 @@
       btn.addEventListener('click', function () {
         var action = btn.getAttribute('data-ifx-com2-action');
         var labels = {
-          write: 'Viết bài', share: 'Chia sẻ tin', tag: 'Gắn mã', story: 'Tạo chủ đề', submit: 'Đăng bài',
+          write: 'Viết bài', share: 'Chia sẻ tin', tag: 'Gắn thẻ', story: 'Tạo chủ đề', submit: 'Đăng bài',
           follow: 'Theo dõi', like: 'Thích', comment: 'Bình luận', agree: 'Đồng tình', more: 'Tuỳ chọn',
           'view-all': 'Xem tất cả', shortcut: 'Lối tắt', invite: 'Mời bạn bè'
         };
@@ -493,7 +440,6 @@
     if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
     bindActions(frame.mainContent);
     bindFilters(frame.mainContent);
-    mountCharts(frame.mainContent);
     if (frame.sidebarContent) bindActions(frame.sidebarContent);
     if (frame.rightSidebarContent) bindActions(frame.rightSidebarContent);
   }

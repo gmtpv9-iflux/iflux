@@ -250,7 +250,8 @@
   gap: var(--ifx-space-4);
   margin-bottom: var(--ifx-space-12);
 }
-.ifx-com2-tag__chart { font-size: 10px; margin-left: var(--ifx-space-2); }
+.ifx-com2-tagchip { text-decoration: none; cursor: pointer; }
+.ifx-com2-tagchip:hover { background: var(--ifx-action-primary-soft); }
 .ifx-com2-post__stats {
   display: flex;
   align-items: center;
@@ -284,7 +285,9 @@
   margin-bottom: var(--ifx-space-12);
 }
 .ifx-com2-repost {
-  display: block;
+  display: flex;
+  gap: var(--ifx-space-12);
+  align-items: stretch;
   border: 1px solid var(--ifx-border-default);
   border-radius: var(--ifx-radius-md);
   background: var(--ifx-bg-subtle);
@@ -293,10 +296,22 @@
   text-decoration: none;
 }
 .ifx-com2-repost:hover { border-color: var(--ifx-action-primary); }
-.ifx-com2-repost__meta {
-  display: inline-flex;
+/* Ảnh đại diện bài gốc — Phase 0 chưa có cover thật nên dùng khối gradient + icon làm chỗ
+   trống (đổi sang <img src="..."> thật khi Phase 1 có media). */
+.ifx-com2-repost__media {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--ifx-radius-sm);
+  background: linear-gradient(135deg, var(--ifx-action-primary-soft), var(--ifx-bg-hover));
+  display: flex;
   align-items: center;
-  gap: var(--ifx-space-4);
+  justify-content: center;
+  color: var(--ifx-action-primary);
+  font-size: 28px;
+}
+.ifx-com2-repost__body { flex: 1 1 auto; min-width: 0; }
+.ifx-com2-repost__meta {
   font-size: var(--ifx-font-size-2xs);
   color: var(--ifx-text-muted);
   margin-bottom: var(--ifx-space-4);
@@ -317,26 +332,11 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-
-/* ── Biểu đồ nến mini đính kèm (mã chính, 5 phút, chỉ xem) ── */
-.ifx-com2-chart {
-  display: block;
-  border: 1px solid var(--ifx-border-default);
-  border-radius: var(--ifx-radius-md);
-  padding: var(--ifx-space-12);
-  margin-bottom: var(--ifx-space-12);
-  text-decoration: none;
+/* Màn hẹp (mobile) — ảnh xếp lên trên, full-width, text xuống dưới. */
+@media (max-width: 480px) {
+  .ifx-com2-repost { flex-direction: column; }
+  .ifx-com2-repost__media { width: 100%; height: 140px; font-size: 36px; }
 }
-.ifx-com2-chart:hover { border-color: var(--ifx-action-primary); }
-.ifx-com2-chart__head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--ifx-space-8);
-  margin-bottom: var(--ifx-space-8);
-}
-.ifx-com2-chart__head strong { font-size: var(--ifx-font-size-sm); color: var(--ifx-text-primary); }
-.ifx-com2-chart__head span { font-size: var(--ifx-font-size-2xs); color: var(--ifx-text-muted); }
-.ifx-com2-chart__canvas { min-height: 160px; pointer-events: none; }
 
 /* ── CTA card (Tạo chủ đề / Mời bạn bè — sidebar phải) ── */
 .ifx-com2-cta,
