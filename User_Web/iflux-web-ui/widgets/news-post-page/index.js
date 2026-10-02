@@ -21,7 +21,7 @@ var CORE_TIERS = [
   [
     ASSET + 'runtime/page-layout-engine.js?v=r20260928n',
     ASSET + 'stock-mentions.js?v=r20260928n',
-    ASSET + 'news-store.js?v=r20260928r',
+    ASSET + 'news-store.js?v=r20261002x',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ASSET + 'profile-users-store.js',
     ASSET + 'profile-links.js',
