@@ -27,7 +27,7 @@ var stylePromises = {};
 function normalizeStyleHref(href) {
   var s = String(href || '');
   if (/\/User_Web\/iflux-web-ui\/community\.css(\?|$)/.test(s)) {
-    return '/User_Web/iflux-web-ui/news.css?v=r20261002l';
+    return '/User_Web/iflux-web-ui/news.css?v=r20261002t';
   }
   return s;
 }
