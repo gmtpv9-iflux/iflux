@@ -209,15 +209,15 @@
 .ifx-com-article__lead {
   font-size: var(--ifx-font-size-18);
   line-height: 1.65;
-  color: var(--ix-text-secondary);
+  color: var(--ifx-text-primary);
   margin: 0 0 20px;
   font-weight: var(--ifx-font-weight-regular);
 }
 .ifx-com-article__figure {
   margin: 0 0 20px;
-  border-radius: var(--ix-radius-lg);
+  border-radius: var(--ifx-radius-lg);
   overflow: hidden;
-  border: 1px solid var(--ix-border);
+  border: 1px solid var(--ifx-border-default);
 }
 .ifx-com-article__figure img {
   width: 100%;
@@ -227,9 +227,9 @@
 }
 .ifx-com-article__figure figcaption {
   font-size: var(--ifx-font-size-12);
-  color: var(--ix-text-muted);
+  color: var(--ifx-text-muted);
   padding: var(--ifx-space-8) 12px;
-  background: var(--ix-bg-body);
+  background: var(--ifx-bg-subtle);
 }
 .ifx-com-article__byline {
   display: flex;
@@ -303,6 +303,12 @@
   line-height: 1.8;
   color: var(--ix-text-primary);
   padding: var(--ifx-space-container) 32px 32px;
+}
+/* Rác sót lại từ nguồn RSS gốc (CafeF/Vietstock...) — badge "TIN MỚI" không
+   dẫn tới đâu (href="javascript:;"), không thuộc markup của iFlux. */
+.ifx-com-article__body .title_box,
+.ifx-com-article__body a[href="javascript:;"] {
+  display: none !important;
 }
 .ifx-com-article__body h2 {
   font-size: var(--ifx-font-size-20);

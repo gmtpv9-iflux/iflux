@@ -118,53 +118,21 @@
 
           ui().articleHeroImageHtml(post) +
 
-          '<div class="ifx-com-article__byline">' +
-            '<div class="ifx-com-article__byline-main">' +
-              (function () {
-                var author = post.author;
-                if (!author || !author.display_name) return '';
-                var name = author.display_name;
-                var aid = String(author.id || '');
-                var isBrand =
-                  aid === 'cafef' || aid === 'vietstock' || aid === 'baodautu';
-                var authorHref = isBrand
-                  ? '/tin-tuc/tac-gia/' + encodeURIComponent(aid)
-                  : '';
-                var nameHtml = authorHref
-                  ? ('<a class="ifx-profile-link" href="' +
-                      esc(authorHref) +
-                      '" itemprop="name">' +
-                      esc(name) +
-                      '</a>')
-                  : global.IfluxProfileLinks && aid
-                    ? IfluxProfileLinks.nameLink(aid, name, 'ifx-profile-link', {
-                        base: '../account/',
-                        itemprop: 'name'
-                      })
-                    : '<span itemprop="name">' + esc(name) + '</span>';
-                return (
-                  '<span itemprop="author" itemscope itemtype="https://schema.org/Person">' +
-                    nameHtml +
-                  '</span>'
-                );
-              })() +
-              (published
-                ? '<meta itemprop="datePublished" content="' + esc(published) + '" />'
-                : '') +
-              '<div class="ifx-com-article__dates">' +
-                (modified
-                  ? '<time itemprop="dateModified" datetime="' +
-                    esc(modified) +
-                    '"> - Cập nhật ' +
-                    ui().fmtDate(modified) +
-                    '</time>'
-                  : '') +
-              '</div>' +
-            '</div>' +
-            '<div class="ifx-com-article__tags" aria-label="Thẻ bài viết">' +
-              ui().postTagsHtml(post) +
-            '</div>' +
-          '</div>' +
+          /* Nguồn/ngày/mã cổ phiếu: đã có ở sidebar — không lặp lại trong main content.
+             Giữ microdata (ẩn, chỉ phục vụ SEO schema.org) cho author/datePublished/dateModified. */
+          (function () {
+            var author = post.author;
+            var authorMeta = (author && author.display_name)
+              ? '<meta itemprop="author" content="' + esc(author.display_name) + '" />'
+              : '';
+            var publishedMeta = published
+              ? '<meta itemprop="datePublished" content="' + esc(published) + '" />'
+              : '';
+            var modifiedMeta = modified
+              ? '<meta itemprop="dateModified" content="' + esc(modified) + '" />'
+              : '';
+            return authorMeta + publishedMeta + modifiedMeta;
+          })() +
           /* Entity mobile = slot trên bottom IX (Shell); desktop = sidebar. CẤM strip trên thân bài. */
         '</header>' +
 

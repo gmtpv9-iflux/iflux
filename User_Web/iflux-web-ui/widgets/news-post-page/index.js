@@ -31,7 +31,7 @@ var CORE_TIERS = [
     ASSET + 'news-ui.js?v=r20260929a',
     ASSET + 'news-daily-feed.js?v=r20260928r',
     ASSET + 'interaction/boot.js?v=r20260928n',
-    ASSET + 'news-post-page.js?v=r20260929a'
+    ASSET + 'news-post-page.js?v=r20261002s'
   ]
 ];
 
