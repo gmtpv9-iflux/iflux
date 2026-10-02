@@ -52,12 +52,18 @@
     }).join('');
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function boot() {
     ['rss-map-q', 'rss-map-provider', 'rss-map-status'].forEach(function (id) {
       var el = document.getElementById(id);
       if (!el) return;
       el.addEventListener(id === 'rss-map-q' ? 'input' : 'change', render);
     });
     render();
-  });
+  }
+
+  /* Admin dùng soft-nav (eval lại page script mỗi lần chuyển trang qua menu) —
+     DOMContentLoaded chỉ fire 1 lần duy nhất trong đời document (lúc tải trang đầu),
+     nên nếu chuyển tới trang này KHÔNG qua F5, listener không bao giờ chạy. */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
