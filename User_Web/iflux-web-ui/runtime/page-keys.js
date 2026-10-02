@@ -51,6 +51,11 @@ export function pageKeyFromPath(pathname) {
   }
   if (/\/(?:tin-tuc|cong-dong)\/(chu-de|tac-gia|danh-muc)(\/|$)/.test(path)) return 'news';
 
+  /* Cộng đồng (mạng xã hội, trang MỚI) — chỉ path gốc /cong-dong hoặc file community/index.html.
+   * Mọi sub-path cụ thể của /cong-dong (bai-viet, chu-de, viet-bai...) đã được các nhánh HẸP hơn
+   * phía trên xử lý trước (alias Tin tức cũ) nên không rơi xuống đây. */
+  if (/\/cong-dong\/?$/.test(path) || /\/user_web\/community\/index\.html$/.test(path)) return 'community';
+
   if (/\/(co-phieu|stocks?)\/[^/]+/.test(path) || /\/user_web\/stock(\/|$)/.test(path)) return 'stock';
   if (/\/(nganh|sectors?)\/[^/]+/.test(path) || /\/user_web\/sector(\/|$)/.test(path)) return 'sector';
   if (/\/(he-sinh-thai|ho-co-phieu|ecosystems?)\/[^/]+/.test(path) || /\/user_web\/family(\/|$)/.test(path)) return 'family';

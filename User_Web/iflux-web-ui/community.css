@@ -1,0 +1,91 @@
+/* iFlux User Web — Cộng đồng (/cong-dong), CSS cục bộ (chỉ trang này dùng).
+ * Prefix .ifx-com2-* để không đụng .ifx-com-* (đã dùng cho Tin tức — community cũ).
+ * Token: dùng đúng DS (--ifx-*), không dùng --ix-*/--color-* cũ.
+ */
+.ifx-com2-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+}
+
+.ifx-com2-composer {
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-lg);
+  padding: var(--ifx-space-16);
+}
+.ifx-com2-composer__row {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-composer__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-button);
+  background: var(--ifx-bg-subtle);
+  color: var(--ifx-text-primary);
+  padding: var(--ifx-space-12) var(--ifx-space-16);
+  font-size: var(--ifx-font-size-sm);
+  font-family: inherit;
+  cursor: pointer;
+}
+.ifx-com2-composer__input::placeholder { color: var(--ifx-text-muted); }
+.ifx-com2-composer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  margin-top: var(--ifx-space-12);
+  padding-top: var(--ifx-space-12);
+  border-top: 1px solid var(--ifx-border-subtle);
+}
+.ifx-com2-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  border-radius: var(--ifx-radius-button);
+  border: 0;
+  background: transparent;
+  color: var(--ifx-text-secondary);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.ifx-com2-action:hover { background: var(--ifx-action-primary-soft); color: var(--ifx-action-primary); }
+.ifx-com2-composer__submit { margin-left: auto; }
+
+.ifx-com2-timeline { min-height: 160px; }
+
+.ifx-com2-empty {
+  text-align: center;
+  padding: var(--ifx-space-container, 48px) var(--ifx-space-16);
+  color: var(--ifx-text-secondary);
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-lg);
+}
+.ifx-com2-empty i {
+  font-size: 32px;
+  color: var(--ifx-text-muted);
+  margin-bottom: var(--ifx-space-12);
+  display: inline-block;
+}
+.ifx-com2-empty h3 {
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+.ifx-com2-empty p {
+  font-size: var(--ifx-font-size-sm);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 420px;
+  margin-inline: auto;
+}

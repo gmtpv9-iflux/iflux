@@ -23,8 +23,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=r20260929e';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
-import { bootShell } from './shell-boot.js?v=r20261002h';
-import { pageKeyFromPath } from './page-keys.js?v=r20260929e';
+import { bootShell } from './shell-boot.js?v=communityV1b';
+import { pageKeyFromPath } from './page-keys.js?v=communityV1b';
 import { installSoftNavigation } from './soft-navigation.js?v=r20260929e';
 import { loadStyles } from './legacy-bridge.js?v=r20260928q';
 
@@ -38,6 +38,7 @@ var MANIFEST_MAP = {
   home: function () { return import('../pages/home.manifest.js?v=r20261002d'); },
   flow: function () { return import('../pages/flow.manifest.js' + PF); },
   news: function () { return import('../pages/news.manifest.js' + PF); },
+  community: function () { return import('../pages/community.manifest.js' + PF); },
   pricing: function () { return import('../pages/pricing.manifest.js' + VER); },
   stocks: function () { return import('../pages/stocks.manifest.js' + PF); },
   sectors: function () { return import('../pages/sectors.manifest.js' + PF); },

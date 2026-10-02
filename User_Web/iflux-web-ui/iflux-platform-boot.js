@@ -30,6 +30,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     stories: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     cauChuyen: { public: '/cau-chuyen', file: '/User_Web/cau-chuyen/index.html', zone: 'app', auth: true },
     news: { public: '/tin-tuc', file: '/User_Web/news/index.html', zone: 'app' },
+    community: { public: '/cong-dong', file: '/User_Web/community/index.html', zone: 'app' },
     pricing: { public: '/goi-cuoc', file: '/User_Web/pricing/index.html', zone: 'app' },
     faq: { public: '/hoi-dap', file: '/User_Web/faq/index.html', zone: 'app' },
     loyalty: { public: '/thanh-vien', file: '/User_Web/loyalty/index.html', zone: 'app' },
@@ -537,6 +538,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     { key: 'dashboard', route: 'home',      label: 'Trang chủ', icon: 'ti-home',            appOnly: true, onboard: 'home' },
     { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
     { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-users', onboard: 'news' },
+    { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-message-circle-2', onboard: 'community' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' }
   ];
@@ -731,7 +733,10 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         if (f.indexOf('/home/') >= 0) return 'dashboard';
         if (f.indexOf('/market/') >= 0) return 'market';
         if (f.indexOf('/flow/') >= 0) return 'flow';
-        if (f.indexOf('/news/') >= 0 || f.indexOf('/community/') >= 0) return 'news';
+        /* Legacy: bài viết cũ còn trỏ /User_Web/community/post (xem ENTITY_ROUTES) — chỉ alias
+           đúng sub-path "post", KHÔNG bắt luôn trang chủ Cộng đồng mới (/User_Web/community/index.html). */
+        if (f.indexOf('/news/') >= 0 || f.indexOf('/community/post') >= 0) return 'news';
+        if (f.indexOf('/community/') >= 0) return 'community';
         if (f.indexOf('/pricing/') >= 0) return 'pricing';
         if (f.indexOf('/account/') >= 0) return 'account';
       }
@@ -742,7 +747,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (/\/(trang-chu|nha-cua-toi|home)(\/|$)/.test(path)) return 'dashboard';
     if (/\/(thi-truong|market)(\/|$)/.test(path)) return 'market';
     if (/\/(dong-tien|flow)(\/|$)/.test(path)) return 'flow';
-    if (/\/(tin-tuc|cong-dong|community)(\/|$)/.test(path)) return 'news';
+    /* /cong-dong/bai-viet/* = alias bài viết cũ (list: /tin-tuc, xem ENTITY_ROUTES) — vẫn tính
+       là "news". /cong-dong gốc = trang Cộng đồng mới, active tab riêng. */
+    if (/\/(cong-dong|community)\/(bai-viet|posts?)(\/|$)/.test(path)) return 'news';
+    if (/\/(cong-dong|community)(\/|$)/.test(path)) return 'community';
+    if (/\/tin-tuc(\/|$)/.test(path)) return 'news';
     if (/\/(goi-cuoc|pricing)(\/|$)/.test(path)) return 'pricing';
     if (isAccountProfileRoute()) return 'account';
     return '';

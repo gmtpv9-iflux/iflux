@@ -56,7 +56,7 @@
      Biến thể: trang không có Sidebar (NO_SIDEBAR) · trang có thêm Sidebar phải 2/12 (RIGHT_SIDEBAR, Main còn 7/12). */
   var BASE_REGIONS = ['sidebar', 'main'];
   var NO_SIDEBAR = { faq: true };
-  var RIGHT_SIDEBAR = {};
+  var RIGHT_SIDEBAR = { community: true };
   var PAGE_TAB_REGIONS = {
     flow: ['basic', 'advanced', 'exclusive'],
     'stock-detail': ['info', 'trading'],
@@ -133,6 +133,23 @@
       sections: cloneSections([
         { key: 'main', visible: true, layout: 'grid-12' },
         { key: 'sidebar', visible: true }
+      ])
+    },
+    {
+      id: 'PAGE-COMMUNITY',
+      key: 'community',
+      title: 'Cộng đồng',
+      slug: 'cong-dong',
+      path: '/cong-dong',
+      order: 3.5,
+      navVisible: true,
+      status: 'active',
+      userCustomizable: false,
+      description: 'Mạng xã hội nhà đầu tư (Post/Follow/Story) — Sidebar trái + Main (Composer/Timeline, không host widget) + Sidebar phải. Xem docs/SoT — Community (Cộng đồng) Architecture V1.md.',
+      sections: cloneSections([
+        { key: 'sidebar', visible: true, label: 'Sidebar Cộng đồng' },
+        { key: 'main', visible: true, layout: 'grid-12' },
+        { key: 'sidebar-right', visible: true, label: 'Sidebar phải' }
       ])
     },
     {
