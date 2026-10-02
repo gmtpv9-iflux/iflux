@@ -16,11 +16,13 @@ var ASSET = '/User_Web/iflux-web-ui/';
 
 export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
 
-/* Phase 0: chỉ cần community-page.js (render Composer + Sidebar trái/phải seed data).
+/* Phase 0: community-page.js (render Composer + Feed + Sidebar trái/phải seed data) +
+   ApexCharts (biểu đồ nến mini đính kèm bài viết có mã chính — xem postCardHtml/chart).
    Phase 1+ (Post model thật) sẽ thêm community-store.js / community-feed.js vào đây
    theo đúng pattern news-store.js + news-daily-feed.js đã có cho Tin tức. */
 var CORE_TIERS = [
-  [ASSET + 'community-page.js?v=r20261002b']
+  ['https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js'],
+  [ASSET + 'community-page.js?v=r20261002c']
 ];
 
 export async function mount(el) {

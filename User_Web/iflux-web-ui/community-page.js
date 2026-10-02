@@ -2,11 +2,21 @@
  * SoT: docs/SoT — Community (Cộng đồng) Architecture V1.md
  *
  * ⚠️ PHASE 0 — SEED DATA (được chủ sản phẩm cho phép hardcode để dàn trang đúng bố cục
- * demo wireframe-cong-dong.png, KHÔNG phải dữ liệu thật). Toàn bộ nội dung trong SEED_*
- * bên dưới là mẫu tĩnh — không gọi API, không ghi DB. Khi Phase 1 (Post API) + Phase 2
- * (Story API) + Phase 3 (Feed ranking) xong, xoá SEED_* và thay loadInitialTimeline() /
- * renderLeftSidebar() / renderRightSidebar() bằng gọi API thật (xem SoT §6 §7 §10) —
- * cấu trúc DOM/CSS (.ifx-com2-*) giữ nguyên, không cần dựng lại layout.
+ * demo wireframe-cong-dong.png + mô tả nghiệp vụ, KHÔNG phải dữ liệu thật). Toàn bộ nội
+ * dung trong SEED_* bên dưới là mẫu tĩnh — không gọi API, không ghi DB, không có chart
+ * thật. Khi Phase 1 (Post API) + Phase 2 (Story API) + Phase 3 (Feed ranking) xong, xoá
+ * SEED_* và thay loadInitialTimeline() bằng gọi API thật (xem SoT §6 §7 §10) — cấu trúc
+ * DOM/CSS (.ifx-com2-*) giữ nguyên, không cần dựng lại layout.
+ *
+ * Bố cục main content (trên xuống dưới — theo yêu cầu 2026-10-02):
+ *   1. Chủ đề HOT (card)
+ *   2. Composer ("bạn đang nghĩ gì")
+ *   3. Tabs lọc feed: Mới nhất (mặc định) · Thịnh hành · Nổi bật
+ *   4. Danh sách bài đăng — Phase 1: bài từ người user đang theo dõi + bài có gắn MÃ
+ *      CHÍNH là 1 mã user đang quan tâm (watchlist). Chỉ mã chính của 1 bài mới có lựa
+ *      chọn hiển thị biểu đồ nến (mini, 5 phút, chỉ xem, bấm vào → trang chi tiết mã đó).
+ * Sidebar trái: Cộng đồng iFlux (giới thiệu) + Mã được thảo luận nhiều + Nhà đầu tư nên
+ * theo dõi. Sidebar phải: Tạo chủ đề + Hoạt động bạn theo dõi + Lối tắt nhanh + Mời bạn bè.
  */
 (function (global) {
   'use strict';
@@ -29,6 +39,13 @@
 
   function comingSoon(label) {
     toast((label ? label + ' — ' : '') + 'Tính năng đang hoàn thiện, sẽ sớm ra mắt.', 'info');
+  }
+
+  function readToken(name, fb) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fb;
+    } catch (e) { return fb; }
   }
 
   /* ───────────────────────── SEED DATA (Phase 0 — xem ghi chú đầu file) ───────────────────────── */
@@ -69,36 +86,59 @@
     { icon: 'bell', label: 'Cài đặt thông báo' }
   ];
 
+  var FILTERS = [
+    { key: 'latest', label: 'Mới nhất' },
+    { key: 'trending', label: 'Thịnh hành' },
+    { key: 'top', label: 'Nổi bật' }
+  ];
+
+  /* Giá tham chiếu để sinh nến mẫu (không phải giá thật) — chỉ để biểu đồ demo nhìn hợp lý. */
+  var SEED_BASE_PRICE = { HPG: 28.5, VIX: 18.2, FPT: 135, MWG: 62, VCB: 92, SSI: 33 };
+
+  /* Post seed — đủ 5 dạng để demo: (1) bài thường có gắn mã, (2) chia sẻ lại Tin tức
+   * KÈM bình luận, (3) chia sẻ lại Tin tức KHÔNG kèm bình luận (như tính năng "đăng lại"),
+   * (4) bài có gắn mã CHÍNH + bật hiển thị biểu đồ nến, (5) bài dạng chủ đề cộng đồng (poll). */
   var SEED_POSTS = [
     {
-      section: 'following', sectionLabel: 'Từ người bạn theo dõi', sectionIcon: 'users',
       initials: 'NH', name: 'Nguyễn Hoàng', badge: 'Top Contributor', time: '2 giờ trước',
       text: 'Dòng tiền có dấu hiệu quay lại nhóm chứng khoán. Thanh khoản cải thiện rõ rệt trong 2 phiên gần đây, kỳ vọng nhịp hồi ngắn hạn. Anh em theo dõi thêm vùng 1.250 - 1.280 của VN-Index.',
-      tags: ['VIX', 'SSI'], likes: 68, comments: 24, shares: 5
+      tags: [{ code: 'VIX', primary: true }, { code: 'SSI' }],
+      likes: 68, comments: 24, shares: 5
     },
     {
-      section: 'featured', sectionLabel: 'Bài viết nổi bật', sectionIcon: 'star',
-      initials: 'MP', name: 'Mai Phương', badge: '', time: '4 giờ trước',
-      text: 'MWG: Lợi nhuận Q1 tăng ấn tượng, mở rộng chuỗi Bách Hóa Xanh. KQKD quý 1 cho thấy tín hiệu phục hồi rõ nét, đặc biệt mảng Bách Hóa Xanh với doanh thu từng cửa hàng tăng trở lại.',
-      tags: ['MWG', 'FRT'], likes: 52, comments: 18, shares: 4
+      initials: 'TH', name: 'Trần Thu Hà', time: '3 giờ trước',
+      text: 'Theo mình đây là tín hiệu khá tích cực cho nhóm ngân hàng trong ngắn hạn.',
+      repost: {
+        source: 'CafeF', time: '5 giờ trước',
+        title: 'NHNN giữ nguyên lãi suất điều hành, định hướng hỗ trợ tăng trưởng',
+        excerpt: 'Theo thông tin từ SBV, mặt bằng lãi suất sẽ tiếp tục được duy trì ở mức hợp lý nhằm hỗ trợ tăng trưởng kinh tế năm nay.',
+        href: '/tin-tuc/bai-viet/nhnn-giu-nguyen-lai-suat-dieu-hanh'
+      },
+      tags: [{ code: 'VCB', primary: true }, { code: 'TCB' }, { code: 'MBB' }],
+      likes: 41, comments: 12, shares: 3
     },
     {
-      section: 'news', sectionLabel: 'Chia sẻ từ Tin tức', sectionIcon: 'news',
-      initials: 'TH', name: 'Trần Thu Hà', badge: '', time: '3 giờ trước',
-      text: 'NHNN giữ nguyên lãi suất điều hành, định hướng hỗ trợ tăng trưởng. Theo thông tin từ SBV, mặt bằng lãi suất sẽ tiếp tục được duy trì ở mức hợp lý nhằm hỗ trợ tăng trưởng kinh tế năm nay.',
-      tags: ['VCB', 'TCB', 'MBB'], likes: 41, comments: 12, shares: 3
+      initials: 'LI', name: 'Long Invest', badge: 'Nhà đầu tư nổi bật', time: '4 giờ trước',
+      text: '',
+      repost: {
+        source: 'Tin tức iFlux', time: '1 giờ trước',
+        title: 'Dòng tiền khối ngoại trở lại nhóm chứng khoán trong tuần qua',
+        excerpt: 'Thống kê giao dịch tuần cho thấy khối ngoại mua ròng trở lại ở nhiều mã đầu ngành sau 3 tuần bán ròng liên tiếp.',
+        href: '/tin-tuc/bai-viet/dong-tien-khoi-ngoai-tro-lai'
+      },
+      tags: [], likes: 30, comments: 9, shares: 2
     },
     {
-      section: 'ticker', sectionLabel: 'Thảo luận theo mã', sectionIcon: 'chart-candle',
       initials: 'LI', name: 'Long Invest', badge: 'Nhà đầu tư nổi bật', time: '4 giờ trước',
       text: 'HPG đang tích luỹ rất chặt, vùng 27-28 là hỗ trợ mạnh. Kỳ vọng break trong thời gian tới nếu thị trường thuận lợi. Anh em theo dõi thêm tín hiệu từ thanh khoản.',
-      tags: ['HPG'], likes: 92, comments: 36, shares: 12
+      tags: [{ code: 'HPG', primary: true }],
+      chartTicker: 'HPG',
+      likes: 92, comments: 36, shares: 12
     },
     {
-      section: 'story', sectionLabel: 'Chủ đề cộng đồng', sectionIcon: 'tag',
       initials: 'MA', name: 'Minh Anh', badge: 'Chủ đề cộng đồng', time: '3 giờ trước',
       text: 'VN-Index có vượt 1.300 điểm trong tháng này? Theo bạn, VN-Index sẽ vượt mốc 1.300 điểm trong tháng này không? Cùng thảo luận và chia sẻ quan điểm!',
-      tags: [], likes: 0, comments: 236, shares: 0, isPoll: true, agree: 412
+      tags: [], isPoll: true, agree: 412, comments: 236
     }
   ];
 
@@ -112,11 +152,13 @@
     return '<span class="ifx-avatar ifx-avatar-' + (size || 'md') + ' ifx-avatar-accent">' + esc(initials) + '</span>';
   }
 
-  function sectionHeaderHtml(iconName, title) {
+  function sectionHeaderHtml(iconName, title, opts) {
+    opts = opts || {};
+    var right = opts.noViewAll ? '' : '<a href="#" class="ifx-com2-link" data-ifx-com2-action="view-all">Xem tất cả ' + icon('chevron-right') + '</a>';
     return (
       '<div class="ifx-com2-sectionhead">' +
         '<span class="ifx-com2-sectionhead__title">' + icon(iconName) + ' ' + esc(title) + '</span>' +
-        '<a href="#" class="ifx-com2-link" data-ifx-com2-action="view-all">Xem tất cả ' + icon('chevron-right') + '</a>' +
+        right +
       '</div>'
     );
   }
@@ -134,6 +176,23 @@
         toneBadge +
         '<span class="ifx-com2-hotitem__count">' + icon('flame') + ' ' + t.count + '</span>' +
       '</li>'
+    );
+  }
+
+  /* Chủ đề HOT — đặt ở MAIN, phía trên Composer (yêu cầu 2026-10-02). */
+  function hotTopicsCardHtml() {
+    return (
+      '<div class="ifx-card">' +
+        sectionHeaderHtml('flame', 'Chủ đề HOT') +
+        '<div class="ifx-card-body">' +
+          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period">' +
+            '<button type="button" class="ifx-tab is-active">Ngày</button>' +
+            '<button type="button" class="ifx-tab">Tuần</button>' +
+            '<button type="button" class="ifx-tab">Tháng</button>' +
+          '</div>' +
+          '<ol class="ifx-com2-hotlist">' + SEED_HOT_TOPICS.map(hotTopicItemHtml).join('') + '</ol>' +
+        '</div>' +
+      '</div>'
     );
   }
 
@@ -164,80 +223,104 @@
 
   function leftSidebarHtml() {
     return (
-      '<div class="ifx-com2-side">' +
-        '<div class="ifx-card ifx-com2-brand">' +
-          '<div class="ifx-card-body">' +
-            '<div class="ifx-com2-brand__head">' +
-              '<div>' +
-                '<h3>Cộng đồng iFlux</h3>' +
-                '<p>Kết nối nhà đầu tư Việt Nam — chia sẻ tri thức, đồng hành đầu tư.</p>' +
-              '</div>' +
-              icon('users', 'ifx-com2-brand__icon') +
+      '<div class="ifx-card ifx-com2-brand">' +
+        '<div class="ifx-card-body">' +
+          '<div class="ifx-com2-brand__head">' +
+            '<div>' +
+              '<h3>Cộng đồng iFlux</h3>' +
+              '<p>Kết nối nhà đầu tư Việt Nam — chia sẻ tri thức, đồng hành đầu tư.</p>' +
             '</div>' +
-            '<div class="ifx-com2-filtergrid" data-ifx-com2-filters>' +
-              '<button type="button" class="ifx-btn ifx-btn-primary is-active" data-filter="for-you">Dành cho iFlux</button>' +
-              '<button type="button" class="ifx-btn ifx-btn-secondary" data-filter="following">Đang theo dõi</button>' +
-              '<button type="button" class="ifx-btn ifx-btn-secondary" data-filter="trending">Thịnh hành</button>' +
-              '<button type="button" class="ifx-btn ifx-btn-secondary" data-filter="latest">Mới nhất</button>' +
-            '</div>' +
+            icon('users', 'ifx-com2-brand__icon') +
           '</div>' +
         '</div>' +
+      '</div>' +
 
-        '<div class="ifx-card">' +
-          sectionHeaderHtml('flame', 'Chủ đề HOT') +
-          '<div class="ifx-card-body">' +
-            '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period">' +
-              '<button type="button" class="ifx-tab is-active">Ngày</button>' +
-              '<button type="button" class="ifx-tab">Tuần</button>' +
-              '<button type="button" class="ifx-tab">Tháng</button>' +
-            '</div>' +
-            '<ol class="ifx-com2-hotlist">' + SEED_HOT_TOPICS.map(hotTopicItemHtml).join('') + '</ol>' +
+      '<div class="ifx-card">' +
+        sectionHeaderHtml('flame', 'Mã được thảo luận nhiều') +
+        '<div class="ifx-card-body ifx-com2-tickergrid">' + SEED_TICKERS.map(tickerChipHtml).join('') + '</div>' +
+      '</div>' +
+
+      '<div class="ifx-card">' +
+        sectionHeaderHtml('users', 'Nhà đầu tư nên theo dõi') +
+        '<div class="ifx-card-body">' +
+          '<ul class="ifx-com2-investorlist">' + SEED_INVESTORS.map(investorItemHtml).join('') + '</ul>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  /* ───────────────────────── Main — Composer + Filter + Feed ───────────────────────── */
+
+  function composerHtml() {
+    var user = currentUser();
+    var initials = (user && user.display_name ? user.display_name.trim().charAt(0) : 'U').toUpperCase();
+    return (
+      '<div class="ifx-card ifx-com2-composer">' +
+        '<div class="ifx-card-body">' +
+          '<div class="ifx-com2-composer__row">' +
+            avatar(initials) +
+            '<input type="text" class="ifx-com2-composer__input" data-ifx-com2-open-composer readonly ' +
+              'placeholder="Bạn đang nghĩ gì về thị trường?" aria-label="Tạo bài viết" />' +
           '</div>' +
-        '</div>' +
-
-        '<div class="ifx-card">' +
-          sectionHeaderHtml('flame', 'Mã được thảo luận nhiều') +
-          '<div class="ifx-card-body ifx-com2-tickergrid">' + SEED_TICKERS.map(tickerChipHtml).join('') + '</div>' +
-        '</div>' +
-
-        '<div class="ifx-card">' +
-          sectionHeaderHtml('users', 'Nhà đầu tư nên theo dõi') +
-          '<div class="ifx-card-body">' +
-            '<ul class="ifx-com2-investorlist">' + SEED_INVESTORS.map(investorItemHtml).join('') + '</ul>' +
+          '<div class="ifx-com2-composer__actions">' +
+            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="write">' + icon('edit') + ' Viết bài</button>' +
+            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="share">' + icon('repeat') + ' Chia sẻ tin</button>' +
+            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag">' + icon('chart-candle') + ' Gắn mã</button>' +
+            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story">' + icon('tag') + ' Tạo chủ đề</button>' +
+            '<button type="button" class="ifx-btn ifx-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="submit">Đăng bài</button>' +
           '</div>' +
         '</div>' +
       '</div>'
     );
   }
 
-  /* ───────────────────────── Main — Composer + Feed ───────────────────────── */
-
-  function composerHtml() {
-    var user = currentUser();
-    var initials = (user && user.display_name ? user.display_name.trim().charAt(0) : 'U').toUpperCase();
+  function filterTabsHtml(active) {
     return (
-      '<div class="ifx-com2-composer">' +
-        '<div class="ifx-com2-composer__row">' +
-          avatar(initials) +
-          '<input type="text" class="ifx-com2-composer__input" data-ifx-com2-open-composer readonly ' +
-            'placeholder="Bạn đang nghĩ gì về thị trường?" aria-label="Tạo bài viết" />' +
-        '</div>' +
-        '<div class="ifx-com2-composer__actions">' +
-          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="write">' + icon('edit') + ' Viết bài</button>' +
-          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="share">' + icon('share') + ' Chia sẻ tin</button>' +
-          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag">' + icon('chart-candle') + ' Gắn mã</button>' +
-          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story">' + icon('tag') + ' Tạo chủ đề</button>' +
-          '<button type="button" class="ifx-btn ifx-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="submit">Đăng bài</button>' +
-        '</div>' +
+      '<div class="ifx-tabs ifx-com2-feedfilter" data-ifx-com2-filters>' +
+        FILTERS.map(function (f) {
+          return '<button type="button" class="ifx-tab' + (f.key === active ? ' is-active' : '') + '" data-filter="' + f.key + '">' + esc(f.label) + '</button>';
+        }).join('') +
       '</div>'
+    );
+  }
+
+  function tagChipHtml(t) {
+    var cls = t.primary ? 'ifx-badge-primary' : 'ifx-badge-soft';
+    return '<span class="ifx-badge ' + cls + '">' + esc(t.code) + (t.primary ? ' ' + icon('chart-candle', 'ifx-com2-tag__chart') : '') + '</span>';
+  }
+
+  function repostHtml(r) {
+    return (
+      '<a href="' + esc(r.href || '#') + '" class="ifx-com2-repost" data-ifx-href="soft">' +
+        '<div class="ifx-com2-repost__meta">' + icon('news') + ' ' + esc(r.source) + ' · ' + esc(r.time) + '</div>' +
+        '<div class="ifx-com2-repost__title">' + esc(r.title) + '</div>' +
+        '<p class="ifx-com2-repost__excerpt">' + esc(r.excerpt) + '</p>' +
+      '</a>'
+    );
+  }
+
+  function chartBlockHtml(ticker) {
+    return (
+      '<a href="/co-phieu/' + esc(ticker) + '" class="ifx-com2-chart" data-ifx-href="soft" aria-label="Xem chi tiết ' + esc(ticker) + '">' +
+        '<div class="ifx-com2-chart__head"><strong>' + esc(ticker) + '</strong><span>Nến 5 phút · Chỉ xem</span></div>' +
+        '<div class="ifx-com2-chart__canvas" data-ifx-com2-chart="' + esc(ticker) + '"></div>' +
+      '</a>'
     );
   }
 
   function postCardHtml(p) {
     var badge = p.badge ? ' <span class="ifx-badge ifx-badge-soft">' + esc(p.badge) + '</span>' : '';
     var tags = p.tags && p.tags.length
-      ? '<div class="ifx-com2-post__tags">' + p.tags.map(function (t) { return '<span class="ifx-badge ifx-badge-soft">' + esc(t) + '</span>'; }).join('') + '</div>'
+      ? '<div class="ifx-com2-post__tags">' + p.tags.map(tagChipHtml).join('') + '</div>'
       : '';
+    var body = '';
+    if (p.repost && !p.text) {
+      body += '<div class="ifx-com2-repost-label">' + icon('repeat') + ' đã chia sẻ 1 bài viết</div>';
+    } else if (p.text) {
+      body += '<p class="ifx-com2-post__text">' + esc(p.text) + '</p>';
+    }
+    if (p.repost) body += repostHtml(p.repost);
+    if (p.chartTicker) body += chartBlockHtml(p.chartTicker);
     var stats = p.isPoll
       ? '<footer class="ifx-com2-post__stats"><button type="button" class="ifx-btn ifx-btn-secondary ifx-btn-sm" data-ifx-com2-action="agree">' + icon('thumb-up') + ' ' + p.agree + ' đồng tình</button>' +
         '<button type="button" data-ifx-com2-action="comment">' + icon('message-circle') + ' ' + p.comments + ' thảo luận</button></footer>'
@@ -255,7 +338,7 @@
             '<button type="button" class="ifx-btn ifx-btn-secondary ifx-btn-sm" data-ifx-com2-action="follow">+ Theo dõi</button>' +
             '<button type="button" class="ifx-com2-post__more" data-ifx-com2-action="more">' + icon('dots-vertical') + '</button>' +
           '</header>' +
-          '<p class="ifx-com2-post__text">' + esc(p.text) + '</p>' +
+          body +
           tags +
           stats +
         '</div>' +
@@ -263,22 +346,9 @@
     );
   }
 
-  function feedHtml() {
-    var bySection = {};
-    var order = [];
-    SEED_POSTS.forEach(function (p) {
-      if (!bySection[p.section]) { bySection[p.section] = []; order.push(p.section); }
-      bySection[p.section].push(p);
-    });
-    return order.map(function (key) {
-      var posts = bySection[key];
-      return (
-        '<section class="ifx-com2-feedsection">' +
-          sectionHeaderHtml(posts[0].sectionIcon, posts[0].sectionLabel) +
-          posts.map(postCardHtml).join('') +
-        '</section>'
-      );
-    }).join('');
+  function feedHtml(active) {
+    /* Phase 0: cùng 1 danh sách seed cho cả 3 tab lọc (chưa có ranking thật — xem SoT §6). */
+    return SEED_POSTS.map(postCardHtml).join('');
   }
 
   /* ───────────────────────── Sidebar phải ───────────────────────── */
@@ -302,35 +372,89 @@
 
   function rightSidebarHtml() {
     return (
-      '<div class="ifx-com2-side">' +
-        '<div class="ifx-card ifx-com2-cta">' +
-          '<div class="ifx-card-body">' +
-            icon('plus', 'ifx-com2-cta__icon') +
-            '<h4>Tạo chủ đề</h4>' +
-            '<p>Tạo chủ đề thị trường để cộng đồng bình chọn và thảo luận.</p>' +
-            '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="story">Tạo chủ đề ngay ' + icon('arrow-right') + '</button>' +
-          '</div>' +
+      '<div class="ifx-card ifx-com2-cta">' +
+        '<div class="ifx-card-body">' +
+          icon('plus', 'ifx-com2-cta__icon') +
+          '<h4>Tạo chủ đề</h4>' +
+          '<p>Tạo chủ đề thị trường để cộng đồng bình chọn và thảo luận.</p>' +
+          '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="story">Tạo chủ đề ngay ' + icon('arrow-right') + '</button>' +
         '</div>' +
+      '</div>' +
 
-        '<div class="ifx-card">' +
-          sectionHeaderHtml('bell', 'Hoạt động từ người bạn theo dõi') +
-          '<div class="ifx-card-body"><ul class="ifx-com2-activitylist">' + SEED_ACTIVITIES.map(activityItemHtml).join('') + '</ul></div>' +
-        '</div>' +
+      '<div class="ifx-card">' +
+        sectionHeaderHtml('bell', 'Hoạt động từ người bạn theo dõi') +
+        '<div class="ifx-card-body"><ul class="ifx-com2-activitylist">' + SEED_ACTIVITIES.map(activityItemHtml).join('') + '</ul></div>' +
+      '</div>' +
 
-        '<div class="ifx-card">' +
-          '<div class="ifx-card-header"><span class="ifx-com2-sectionhead__title">Lối tắt nhanh</span></div>' +
-          '<div class="ifx-card-body"><ul class="ifx-com2-shortcutlist">' + SEED_SHORTCUTS.map(shortcutItemHtml).join('') + '</ul></div>' +
-        '</div>' +
+      '<div class="ifx-card">' +
+        '<div class="ifx-card-header"><span class="ifx-com2-sectionhead__title">Lối tắt nhanh</span></div>' +
+        '<div class="ifx-card-body"><ul class="ifx-com2-shortcutlist">' + SEED_SHORTCUTS.map(shortcutItemHtml).join('') + '</ul></div>' +
+      '</div>' +
 
-        '<div class="ifx-card ifx-com2-invite">' +
-          '<div class="ifx-card-body">' +
-            '<h4>Tham gia cộng đồng iFlux</h4>' +
-            '<p>Chia sẻ góc nhìn, học hỏi kinh nghiệm và cùng nhau đầu tư hiệu quả hơn.</p>' +
-            '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="invite">Mời bạn bè tham gia</button>' +
-          '</div>' +
+      '<div class="ifx-card ifx-com2-invite">' +
+        '<div class="ifx-card-body">' +
+          '<h4>Tham gia cộng đồng iFlux</h4>' +
+          '<p>Chia sẻ góc nhìn, học hỏi kinh nghiệm và cùng nhau đầu tư hiệu quả hơn.</p>' +
+          '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="invite">Mời bạn bè tham gia</button>' +
         '</div>' +
       '</div>'
     );
+  }
+
+  /* ───────────────────────── Biểu đồ nến mini (demo — seed OHLC) ───────────────────────── */
+
+  function seedOhlc(ticker, basePrice, n) {
+    n = n || 40;
+    var rows = [];
+    var price = basePrice;
+    var now = Date.now();
+    var seed = ticker.split('').reduce(function (a, c) { return a + c.charCodeAt(0); }, 0);
+    for (var i = n - 1; i >= 0; i--) {
+      var t = new Date(now - i * 5 * 60000);
+      var open = price;
+      var vol = basePrice * 0.012;
+      var wobble = Math.sin((i + seed) * 0.6) * vol;
+      var close = open + wobble + (Math.random() - 0.5) * vol * 0.5;
+      var high = Math.max(open, close) + Math.random() * vol * 0.4;
+      var low = Math.min(open, close) - Math.random() * vol * 0.4;
+      rows.push({ date: t, open: open, high: high, low: low, close: close });
+      price = close;
+    }
+    return rows;
+  }
+
+  function mountMiniChart(container, ticker) {
+    if (!container || !global.ApexCharts) return;
+    var rows = seedOhlc(ticker, SEED_BASE_PRICE[ticker] || 30);
+    var up = readToken('--ifx-success', '#22c55e');
+    var down = readToken('--ifx-danger', '#ef4444');
+    var data = rows.map(function (r) {
+      return { x: r.date, y: [r.open, r.high, r.low, r.close].map(function (v) { return Number(v.toFixed(2)); }) };
+    });
+    var opts = {
+      chart: { type: 'candlestick', height: 160, toolbar: { show: false }, animations: { enabled: false }, background: 'transparent', fontFamily: 'inherit', selection: { enabled: false } },
+      series: [{ name: ticker, data: data }],
+      xaxis: { type: 'category', labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } },
+      yaxis: { show: false },
+      grid: { show: false, padding: { left: 0, right: 0, top: 4, bottom: 0 } },
+      plotOptions: { candlestick: { colors: { upward: up, downward: down }, wick: { useFillColor: true } } },
+      tooltip: { theme: 'dark', x: { show: false }, enabled: true }
+    };
+    function renderWhenSized(attemptsLeft) {
+      if (!container.isConnected) return;
+      if (container.offsetWidth > 0 || attemptsLeft <= 0) {
+        try { new global.ApexCharts(container, opts).render(); } catch (e) { /* demo — bỏ qua lỗi render */ }
+        return;
+      }
+      global.requestAnimationFrame(function () { renderWhenSized(attemptsLeft - 1); });
+    }
+    renderWhenSized(10);
+  }
+
+  function mountCharts(root) {
+    root.querySelectorAll('[data-ifx-com2-chart]').forEach(function (el) {
+      mountMiniChart(el, el.getAttribute('data-ifx-com2-chart'));
+    });
   }
 
   /* ───────────────────────── Bind + mount ───────────────────────── */
@@ -349,26 +473,27 @@
     });
     var openEl = root.querySelector('[data-ifx-com2-open-composer]');
     if (openEl) openEl.addEventListener('click', function () { comingSoon('Viết bài'); });
-    var filters = root.querySelector('[data-ifx-com2-filters]');
-    if (filters) {
-      filters.querySelectorAll('button').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          filters.querySelectorAll('button').forEach(function (b) {
-            b.classList.remove('is-active', 'ifx-btn-primary');
-            b.classList.add('ifx-btn-secondary');
-          });
-          btn.classList.add('is-active', 'ifx-btn-primary');
-          btn.classList.remove('ifx-btn-secondary');
-        });
+  }
+
+  function bindFilters(root) {
+    var bar = root.querySelector('[data-ifx-com2-filters]');
+    if (!bar) return;
+    bar.querySelectorAll('.ifx-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        bar.querySelectorAll('.ifx-tab').forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        /* Phase 0: chưa có ranking thật — đổi tab chỉ đổi trạng thái UI, danh sách seed giữ nguyên. */
       });
-    }
+    });
   }
 
   function render(frame) {
-    frame.mainContent.innerHTML = '<div class="ifx-com2-feed">' + composerHtml() + feedHtml() + '</div>';
+    frame.mainContent.innerHTML = hotTopicsCardHtml() + composerHtml() + filterTabsHtml('latest') + feedHtml('latest');
     if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
     if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
     bindActions(frame.mainContent);
+    bindFilters(frame.mainContent);
+    mountCharts(frame.mainContent);
     if (frame.sidebarContent) bindActions(frame.sidebarContent);
     if (frame.rightSidebarContent) bindActions(frame.rightSidebarContent);
   }
