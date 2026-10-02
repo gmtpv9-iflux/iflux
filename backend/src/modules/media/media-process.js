@@ -92,10 +92,11 @@ async function normalizeAndVariants(buf) {
 }
 
 /* Khung hiển thị thật trên web (Header brand ≤ 150px ngang, favicon ≤ 32px vuông,
-   apple-touch-icon ≤ 180px vuông) × buffer Retina/2x. Resize "inside" — KHÔNG crop,
-   KHÔNG upscale (ảnh gốc nhỏ hơn khung thì giữ nguyên) — để không méo logo/biểu tượng. */
+   apple-touch-icon ≤ 180px vuông) × buffer gấp đôi khung hiển thị (dư nét trên
+   màn hình Retina/mật độ điểm ảnh cao). Resize "inside" — KHÔNG crop, KHÔNG
+   upscale (ảnh gốc nhỏ hơn khung thì giữ nguyên) — để không méo logo/biểu tượng. */
 const BRAND_MARK_BOUNDS = {
-  logo: { width: 320, height: 120 },
+  logo: { width: 640, height: 240 },
   favicon: { width: 256, height: 256 }
 };
 
