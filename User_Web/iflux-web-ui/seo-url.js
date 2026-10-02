@@ -41,18 +41,6 @@
     return global.location && global.location.protocol === 'file:';
   }
 
-  function primaryTicker(post) {
-    if (!post || !post.tickers || !post.tickers.length) return '';
-    return String(post.tickers[0]).toUpperCase();
-  }
-
-  function primaryTopic(post) {
-    var tags = (post && (post.chu_de_tags || post.story_tags)) || [];
-    if (!tags.length) return '';
-    var t = tags[0];
-    return t.sourceId || slugify(t.name) || '';
-  }
-
   function sectorSlug(slugOrId) {
     var tax = global.IfluxWatchlistTaxonomy;
     if (tax && tax.groupSlug) {
@@ -216,58 +204,18 @@
     return chuDePath(slugOrId);
   }
 
-  function communityPath() {
-    if (isFileProto()) return userWebRoot() + 'news/index.html';
-    return '/tin-tuc';
-  }
-
-  function pagePath(pageKey) {
-    var map = {
-      home: 'home', market: 'market', flow: 'flow', news: 'news',
-      pricing: 'pricing', loyalty: 'loyalty', membership: 'loyalty',
-      faq: 'faq', watchlist: 'watchlist', search: 'search',
-      account: 'account', messages: 'account'
-    };
-    var seg = map[pageKey] || pageKey;
-    return userWebRoot() + seg;
-  }
-
   /* ── Href (absolute clean path) ── */
 
   function stockHref(ticker) { return stockPath(ticker); }
   function sectorHref(id) { return sectorPath(id); }
   function ecosystemHref(id) { return ecosystemPath(id); }
-  function tagHref(id) { return tagPath(id); }
   function topicHref(id) { return topicPath(id); }
 
   /* Aliases — story* = Story ENTITY (không dùng cho community post) */
   function storyHref(slugOrId) { return storyEntityHref(slugOrId); }
-  function storyPath(slug) { return storyEntityPath(slug); }
-  function storyCanonical(slugOrPost, origin) {
-    if (slugOrPost && typeof slugOrPost === 'object' && (slugOrPost.id || slugOrPost.slug) && slugOrPost.title) {
-      return postCanonical(slugOrPost, origin);
-    }
-    return storyEntityCanonical(slugOrPost, origin);
-  }
-  function storySlugPath(slugOrPost) {
-    if (slugOrPost && typeof slugOrPost === 'object' && (slugOrPost.id || slugOrPost.slug) && slugOrPost.title) {
-      return postSlugPath(slugOrPost);
-    }
-    var s = typeof slugOrPost === 'string' ? slugOrPost : (slugOrPost && slugOrPost.slug);
-    return '/cau-chuyen/' + encodeURIComponent(s || '');
-  }
-  function parseStorySlug(loc) { return parseStoryEntitySlug(loc); }
 
   function stockCanonical(ticker, origin) {
     return (origin || PROD_ORIGIN) + '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
-  }
-
-  function sectorCanonical(slug, origin) {
-    return (origin || PROD_ORIGIN) + '/nganh/' + encodeURIComponent(sectorSlug(slug));
-  }
-
-  function ecosystemCanonical(slug, origin) {
-    return (origin || PROD_ORIGIN) + '/he-sinh-thai/' + encodeURIComponent(slugify(slug) || slug);
   }
 
   function parseStockTicker(loc) {
@@ -310,10 +258,6 @@
     m = (loc.pathname || '').match(/\/family\/([^/?#]+)\/?$/i);
     if (m && m[1].toLowerCase() !== 'index.html') return decodeURIComponent(m[1]);
     return null;
-  }
-
-  function parseTopicSlug(loc) {
-    return parseTagSlug(loc);
   }
 
   function parseTagSlug(loc) {
@@ -448,10 +392,6 @@
       }
     };
     pageDefinition().applyPatch(patch);
-  }
-
-  function applyStorySeoToDocument(post) {
-    applyPostSeoToDocument(post);
   }
 
   /* Tên pháp lý — ưu tiên SoT B2 (IfluxEntityDefinition); fallback map local. */
@@ -643,10 +583,6 @@
     return docTitle;
   }
 
-  function stockSlugPath(ticker) {
-    return '/co-phieu/' + encodeURIComponent(String(ticker || '').toUpperCase());
-  }
-
   /* ── Trang bình luận riêng ── */
 
   function commentsPath(scope, id) {
@@ -737,8 +673,6 @@
     userWebRoot: userWebRoot,
     slugify: slugify,
     sectorSlug: sectorSlug,
-    primaryTicker: primaryTicker,
-    primaryTopic: primaryTopic,
     chuDePath: chuDePath,
     chuDeHref: chuDeHref,
     chuDeCanonical: chuDeCanonical,
@@ -756,16 +690,11 @@
     postCanonical: postCanonical,
     postSlugPath: postSlugPath,
     parsePostRef: parsePostRef,
-    storyPath: storyPath,
     stockPath: stockPath,
     sectorPath: sectorPath,
     ecosystemPath: ecosystemPath,
     topicPath: topicPath,
     tagPath: tagPath,
-    communityPath: communityPath,
-    pagePath: pagePath,
-    storySlugPath: storySlugPath,
-    stockSlugPath: stockSlugPath,
     commentsPath: commentsPath,
     postCommentsPath: postCommentsPath,
     stockCommentsPath: stockCommentsPath,
@@ -774,27 +703,20 @@
     storyCommentsPath: storyCommentsPath,
     parseCommentsContext: parseCommentsContext,
     commentsHrefFromLocation: commentsHrefFromLocation,
-    storyCanonical: storyCanonical,
     stockCanonical: stockCanonical,
-    sectorCanonical: sectorCanonical,
-    ecosystemCanonical: ecosystemCanonical,
     storyHref: storyHref,
     stockHref: stockHref,
     sectorHref: sectorHref,
     ecosystemHref: ecosystemHref,
     topicHref: topicHref,
-    tagHref: tagHref,
-    parseStorySlug: parseStorySlug,
     parseStockTicker: parseStockTicker,
     parseSectorId: parseSectorId,
     parseEcosystemId: parseEcosystemId,
-    parseTopicSlug: parseTopicSlug,
     parseTagSlug: parseTagSlug,
     ensurePathBase: ensurePathBase,
     autoPathBase: autoPathBase,
     resolvePostShareMeta: resolvePostShareMeta,
     applyPostSeoToDocument: applyPostSeoToDocument,
-    applyStorySeoToDocument: applyStorySeoToDocument,
     applyStockSeoToDocument: applyStockSeoToDocument,
     resolveSeoTitleTemplate: resolveSeoTitleTemplate,
     applySeoPageTitle: applySeoPageTitle,
