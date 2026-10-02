@@ -28,7 +28,7 @@
 
   /* Task5 — Heart = Foundation; Store = Watchlist data. Không tải watchlist-ui. */
   var heartLoadPromise = null;
-  var HEART_JS = '/Admin_Design_system/iflux-admin-ui/foundation/heart-action.js?v=followFound20260724';
+  var HEART_JS = '/design_system/04_components/29_follow/follow.js?v=r20261002a';
   var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=r20260928n';
 
   function ensureHeartLazy() {

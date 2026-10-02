@@ -8,7 +8,7 @@
 
   var BASE = '/User_Web/iflux-web-ui/interaction/';
   var V = '?v=r20260928n';
-  var SHARE_STORE = '/Admin_Design_system/iflux-admin-ui/foundation/share-action-store.js?v=r20261001a';
+  var SHARE_STORE = '/design_system/04_components/28_share/share-store.js?v=r20261002a';
 
   /* RC-IR-01: Summary — Persistence + Api + Store projection + Permission + Catalog + Host */
   var SCRIPTS_SUMMARY = [

@@ -161,7 +161,7 @@ Note: community.manifest css[] load nhầm Owner
 .ifx-stock-row__actions { display: flex;
  align-items: stretch;
  flex-shrink: 0; }
-/* Heart UI → Admin Foundation heart-action.css (.ifx-heart) */
+/* Heart UI → design_system/04_components/29_follow/follow.css (.ifx-heart) */
 .ifx-stock-row__alert {
   flex-shrink: 0;
   width: 40px;

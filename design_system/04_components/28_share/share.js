@@ -343,7 +343,7 @@
       body.style.display = 'grid';
     });
     el.querySelectorAll('.ifx-mcmp__chart').forEach(function (chart) {
-      chart.style.borderRight = '1px solid var(--ix-border)';
+      chart.style.borderRight = '1px solid var(--ifx-border-default)';
       chart.style.borderBottom = 'none';
       chart.style.maxWidth = 'none';
       chart.style.margin = '0';
@@ -763,10 +763,10 @@
     _modalEl.setAttribute('role', 'dialog');
     _modalEl.setAttribute('aria-modal', 'true');
     _modalEl.innerHTML =
-      '<div class="ix-modal-box ifx-insight-modal__box">' +
+      '<div class="ifx-share-modal-box ifx-insight-modal__box">' +
         '<div class="ifx-insight-modal__head">' +
           '<div class="ix-modal-title">Insight Card</div>' +
-          '<div class="ix-modal-sub">Tải ảnh PNG đăng mạng xã hội · QR/link dẫn về trang chủ iFlux kèm mã giới thiệu</div>' +
+          '<div class="ifx-share-modal-sub">Tải ảnh PNG đăng mạng xã hội · QR/link dẫn về trang chủ iFlux kèm mã giới thiệu</div>' +
         '</div>' +
         '<div class="ifx-insight-modal__preview-wrap" data-ifx-insight-preview>' +
           '<div class="ifx-insight-modal__loading"><i class="ti ti-loader" style="font-size:24px;animation:spin 1s linear infinite"></i><p style="margin:12px 0 0">Đang tạo Insight Card…</p></div>' +
@@ -973,7 +973,7 @@
             body.style.setProperty('display', 'grid', 'important');
           });
           target.querySelectorAll('.ifx-mcmp__chart').forEach(function (chart) {
-            chart.style.setProperty('border-right', '1px solid var(--ix-border)', 'important');
+            chart.style.setProperty('border-right', '1px solid var(--ifx-border-default)', 'important');
             chart.style.setProperty('border-bottom', 'none', 'important');
             chart.style.setProperty('max-width', 'none', 'important');
             chart.style.setProperty('margin', '0', 'important');

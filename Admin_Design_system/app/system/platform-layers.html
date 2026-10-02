@@ -6,7 +6,7 @@
   <title>ADM-SYS-007 — Kiến trúc 4 tầng · iFlux Admin</title>
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
-<link rel="stylesheet" href="/platform/admin/admin.css?v=w3a20260927" />
+<link rel="stylesheet" href="/platform/admin/admin.css?v=r20261002a" />
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/market.css?v=appShell20260928" />
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/market-components.css?v=menuFix20260725" />
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/flow.css?v=appShell20260928" />
@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/watchlist.css?v=breakpointSoT20260718" />
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/widget-shell.css?v=tmpDivBars20260718" />
   <link rel="stylesheet" href="/User_Web/iflux-web-ui/block-templates.css?v=segmentedSoT20260718" />
-  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/foundation/share-action.css?v=shareFound20260723" />
+  <link rel="stylesheet" href="/design_system/04_components/28_share/share.css?v=r20261002a" />
   <style>
     .pl-flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:20px; padding:14px 16px; background:rgba(105,108,255,.06); border:1px solid rgba(105,108,255,.15); border-radius:var(--ix-radius-lg); font-size:12px; color:var(--ix-text-muted); }
     .pl-flow span { display:inline-flex; align-items:center; gap:4px; }
@@ -120,9 +120,9 @@
     </aside>
     <main class="ix-main">
       <header class="ix-navbar" data-ix-admin-shell="header">
-        <button class="ix-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <button class="ifx-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
         <div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm (Ctrl+K)..." /></div>
-        <div class="ix-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
+        <div class="ifx-nav-actions"><span class="ix-chip ix-chip-warning">Môi trường local</span><div class="ix-avatar"></div></div>
       </header>
       <div class="ix-content">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px">
@@ -192,16 +192,15 @@
   </div>
 </div>
 <div class="ix-overlay" id="ix-overlay" style="display:none"></div>
-<script src="/Admin_Design_system/iflux-admin-ui/widget-registry.js?v=stripTabTopN20260718"></script>
+<script src="/User_Web/iflux-web-ui/widget-registry.js?v=r20261002d"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/watchlist-taxonomy.js"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/mock-market.js"></script>
 <script src="/Admin_Design_system/ds-sot-icons-catalog.js?v=tmpDivBars20260718"></script>
 <script src="/Admin_Design_system/ds-sot-viewport-registry.js?v=viewportSoT20260718"></script>
-<script src="/Admin_Design_system/app/system/platform-layers-catalog.js?v=r20260928r"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-catalog.js?v=r20261002c"></script>
 <script src="/Admin_Design_system/app/system/platform-layers-resolver.js?v=storyTop20260714"></script>
 <!-- Preview dùng nguyên renderer hiện có của trang Mẫu giao diện; không tạo renderer Widget riêng. -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
-<script src="/User_Web/iflux-web-ui/squarified-treemap.js"></script>
 <script src="/User_Web/iflux-web-ui/flow-market-sidebar.js"></script>
 <script src="/User_Web/iflux-web-ui/stock-mentions.js"></script>
 <script src="/User_Web/iflux-web-ui/news-store.js"></script>
@@ -221,7 +220,7 @@
 <script src="/design_system/05_templates/00_widget/widget.js?v=r20260928s"></script>
 <script src="/design_system/05_templates/00_widget/loader.js?v=r20260928s"></script>
 <script src="/Admin_Design_system/app/system/templates-preview.js?v=r20260928s"></script>
-<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=r20260928r"></script>
+<script src="/Admin_Design_system/app/system/platform-layers-widgets.js?v=r20261002c"></script>
 <!-- ABH E3: entitlement-catalog.js removed — L4 không load Permission module -->
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=r20260929a"></script>
 <script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=r20260929a"></script>

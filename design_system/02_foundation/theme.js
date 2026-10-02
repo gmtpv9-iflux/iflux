@@ -49,7 +49,7 @@
   function createToggleButton(className) {
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = (className || 'ix-nav-btn') + ' ifx-theme-toggle';
+    btn.className = (className || 'ifx-nav-btn') + ' ifx-theme-toggle';
     btn.setAttribute('data-ifx-theme-toggle', '1');
     btn.innerHTML = '<i class="ti ti-sun" data-ifx-theme-icon></i>';
     btn.addEventListener('click', function (e) {
@@ -71,7 +71,7 @@
       }
     });
 
-    document.querySelectorAll('.ix-nav-actions .ix-nav-btn').forEach(function (btn) {
+    document.querySelectorAll('.ifx-nav-actions .ifx-nav-btn').forEach(function (btn) {
       if (btn.getAttribute('data-ifx-theme-bound')) return;
       var icon = btn.querySelector('i.ti-sun, i.ti-moon');
       if (!icon) return;
@@ -86,16 +86,16 @@
 
     document.querySelectorAll('.ifx-topnav-actions').forEach(function (actions) {
       if (actions.querySelector('[data-ifx-theme-toggle]')) return;
-      var btn = createToggleButton('ix-nav-btn');
+      var btn = createToggleButton('ifx-nav-btn');
       var tier = actions.querySelector('[data-ifx-tier]');
       if (tier) actions.insertBefore(btn, tier);
       else actions.insertBefore(btn, actions.firstChild);
     });
 
-    document.querySelectorAll('.ix-nav-actions').forEach(function (actions) {
+    document.querySelectorAll('.ifx-nav-actions').forEach(function (actions) {
       if (actions.querySelector('[data-ifx-theme-toggle]')) return;
-      var btn = createToggleButton('ix-nav-btn');
-      var chip = actions.querySelector('[data-ix-admin-env], .ifx-chip, .ix-chip');
+      var btn = createToggleButton('ifx-nav-btn');
+      var chip = actions.querySelector('[data-ix-admin-env], .ifx-chip');
       if (chip) actions.insertBefore(btn, chip);
       else actions.insertBefore(btn, actions.firstChild);
     });

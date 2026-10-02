@@ -37,7 +37,7 @@ var CORE_TIERS = [
     ASSET + 'stock-store.js?v=r20260928n',
     ASSET + 'news-store.js?v=r20260928r',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
-    ADMIN + 'foundation/heart-action.js?v=followFound20260724'
+    '/design_system/04_components/29_follow/follow.js?v=r20261002a'
   ],
   [
     ASSET + 'watchlist-ui.js?v=r20260928q',

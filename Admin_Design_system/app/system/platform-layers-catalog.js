@@ -103,10 +103,10 @@
     'WGT-FLW-STAT_CHUDE_OUT': 'flow_stat_chu_de_out',
     'WGT-FLW-EX_TM_IN': 'flow_ex_tm_in',
     'WGT-FLW-EX_TM_OUT': 'flow_ex_tm_out',
-    'WGT-NEWS-001': 'community_trending',
-    'WGT-NEWS-002': 'community_active',
-    'WGT-NEWS-003': 'community_experts',
-    'WGT-NEWS-004': 'community_topwl',
+    'WGT-COM-001': 'community_trending',
+    'WGT-COM-002': 'community_active',
+    'WGT-COM-003': 'community_experts',
+    'WGT-COM-004': 'community_topwl',
     'WGT-WAT-001': 'watchlist',
   };
 
@@ -122,11 +122,11 @@
     { id: 'ALG-FLW-STATS', label: 'TOP 10 dòng tiền vào/ra', group: 'Dòng tiền', outputs: ['WGT-FLW-STAT_STOCK_IN', 'WGT-FLW-STAT_STOCK_OUT', 'WGT-FLW-STAT_SECTOR_IN', 'WGT-FLW-STAT_SECTOR_OUT', 'WGT-FLW-STAT_HST_IN', 'WGT-FLW-STAT_HST_OUT', 'WGT-FLW-STAT_STORY_IN', 'WGT-FLW-STAT_STORY_OUT'], normalized: ['NORM-FLOW-NET'], adminKeys: ['smart_money_threshold'] },
     { id: 'ALG-FLW-ZONE', label: 'Ngữ cảnh vùng Hỗ trợ/Kháng cự', group: 'Dòng tiền', outputs: ['WGT-FLW-CTX'], normalized: ['NORM-MARKET-AGG'], adminKeys: [] },
     { id: 'ALG-FLW-SCORE', label: 'Score dòng tiền CP', group: 'Dòng tiền', outputs: [], normalized: ['NORM-FLOW-NET', 'NORM-STOCK-SNAP'], adminKeys: ['smart_money_threshold'] },
-    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-NEWS-001'], normalized: ['NORM-NEWS'], adminKeys: ['community_rank_window'] },
-    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-NEWS-TOPIC-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS'], adminKeys: ['interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
+    { id: 'ALG-NEWS-FEED', label: 'Feed & trending cộng đồng', group: 'Cộng đồng', outputs: ['WGT-COM-001'], normalized: ['NORM-NEWS'], adminKeys: ['community_rank_window'] },
+    { id: 'ALG-TOPIC-TREND', label: 'Chủ đề tích cực hàng đầu (Interest Score)', group: 'Cộng đồng', outputs: ['WGT-COM-CHUDE-TOP'], normalized: ['NORM-CONTENT-TOPIC', 'NORM-NEWS'], adminKeys: ['interest_w_view', 'interest_w_search', 'interest_w_like', 'interest_w_favorite', 'interest_w_share', 'interest_w_comment'] },
     { id: 'ALG-STORY-RELEVANCE', label: 'Relevance Score Story ↔ Stock (cumulative)', group: 'Nội dung', outputs: ['WGT-FLW-SUBJ-STORY', 'WGT-MKT-006', 'WGT-TOP-003'], normalized: ['NORM-CONTENT-STORY', 'NORM-FLOW-NET'], adminKeys: ['relevance_w_follow', 'relevance_keep_min', 'topic_auto_promote', 'topic_auto_promote_min_interest'] },
-    { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-NEWS-002', 'WGT-NEWS-003'], normalized: ['NORM-NEWS'], adminKeys: [] },
-    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'WGT-NEWS-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
+    { id: 'ALG-NEWS-MEMBERS', label: 'Thành viên & chuyên gia', group: 'Cộng đồng', outputs: ['WGT-COM-002', 'WGT-COM-003'], normalized: ['NORM-NEWS'], adminKeys: [] },
+    { id: 'ALG-WATCHLIST', label: 'Watchlist cá nhân', group: 'Cá nhân', outputs: ['WGT-WAT-001', 'WGT-COM-004'], normalized: ['NORM-WATCHLIST'], adminKeys: ['watchlist_max_items'] }
   ];
 
   var PAGE_LABELS = {
@@ -441,7 +441,7 @@
         fi('shares', 'Chia sẻ', 'số', 'L2', 'NORM-NEWS'),
         fi('comments', 'Bình luận', 'số', 'L2', 'NORM-NEWS'),
         fi('period', 'Cửa sổ Ngày|Tuần|Tháng', 'enum', 'L3', 'ALG-TOPIC-TREND'),
-        fi('top_n', 'Top N', 'số', 'L4', 'WGT-NEWS-TOPIC-TOP')
+        fi('top_n', 'Top N', 'số', 'L4', 'WGT-COM-CHUDE-TOP')
       ],
       out: [
         f('story', 'Tên Story/Topic', 'text'),
@@ -461,7 +461,7 @@
         'period_days = Ngày→1 · Tuần→7 · Tháng→30.\n' +
         'top_n = số dòng tối đa (mặc định 10).\n' +
         'score = views×1 + searches×3 + likes×5 + favorites×8 + shares×8 + comments×10.\n' +
-        'rank = vị trí sau xếp score giảm dần, lấy Top N. Cấp WGT-NEWS-TOPIC-TOP.'
+        'rank = vị trí sau xếp score giảm dần, lấy Top N. Cấp WGT-COM-CHUDE-TOP.'
     },
     'ALG-STORY-RELEVANCE': {
       inp: [

@@ -35,7 +35,7 @@ function panelHtml(key, active) {
 async function mountDashboardTab(panelEl) {
   if (panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js' + '?v=r20261001a');
+  var mod = await import('../home-dashboard/index.js' + '?v=r20261002d');
   await mod.mount(panelEl);
 }
 

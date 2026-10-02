@@ -300,7 +300,7 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('color-bull', 'market.price.up', '--ifx-item-bull'),
             sem('color-bear', 'market.price.down', '--ifx-item-bear')
-          ], { file: 'foundation/share-action.css', anatomy: 'icon · label · chip' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'icon · label · chip' }),
           item('insight-confidence', 'Confidence Meter', 'item.insight.confidence', 'ifx-item-confidence', 'user', 'confidence', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('value', 'Score', 'text.body', 'strong'),
@@ -308,31 +308,31 @@
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('fill', 'action.primary', '--ifx-item-progress')
-          ], { file: 'foundation/share-action.css', anatomy: 'label · value\n└── bar' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'label · value\n└── bar' }),
           item('insight-scenario', 'Scenario Tag', 'item.insight.scenario', 'ifx-item-scenario', 'user', 'scenario', [
             slot('chip', 'Scenario', 'chip.outline', 'ix-chip'),
             slot('desc', 'Description', 'text.muted', 'span')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing')
-          ], { file: 'foundation/share-action.css', anatomy: 'chip · desc' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'chip · desc' }),
           item('insight-risk', 'Risk Level', 'item.insight.risk', 'ifx-item-risk', 'user', 'risk', [
             slot('label', 'Risk label', 'text.body', 'span'),
             slot('level', 'Level chip', 'badge.warning', 'ix-badge')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('color', 'status.warning', '--ifx-item-color')
-          ], { file: 'foundation/share-action.css', anatomy: 'label · level' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'label · level' }),
           item('insight-framework', 'Analysis Framework', 'item.insight.framework', 'ifx-item-framework', 'user', 'framework', [
             slot('icon', 'Icon', 'icon.chart', 'ti-chart-dots'),
             slot('name', 'Framework', 'text.body', 'span')
-          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'icon · name' }),
+          ], layoutProps(), { file: '04_components/28_share/share.css', anatomy: 'icon · name' }),
           item('insight-ref-price', 'Reference Level', 'item.insight.ref-price', 'ifx-item-ref-price', 'user', 'ref-price', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('value', 'Level', 'financial.price.m', 'ifx-typo-price-m')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
             sem('color', 'text.secondary', '--ifx-item-color')
-          ], { file: 'foundation/share-action.css', anatomy: 'label\n└── value' })
+          ], { file: '04_components/28_share/share.css', anatomy: 'label\n└── value' })
         ]
       },
       {
@@ -345,26 +345,26 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-300', '--ifx-font-size-14', 'font-size'),
             sem('color', 'text.secondary', '--ifx-item-color')
-          ], { file: 'foundation/share-action.css', anatomy: 'icon · text', note: 'Slot trong ifx-insight-card (share modal) · Product rename insight widget: TBD · ≠ Dashboard WGT-*' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'icon · text', note: 'Slot trong ifx-insight-card (share modal) · Product rename insight widget: TBD · ≠ Dashboard WGT-*' }),
           item('ai-score', 'AI Score', 'item.ai.score', 'ifx-item-ai-score', 'user', 'ai-score', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('score', 'Score', 'text.body', 'strong'),
             slot('badge', 'Grade', 'badge.info', 'ix-badge')
-          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'label · score · badge' }),
+          ], layoutProps(), { file: '04_components/28_share/share.css', anatomy: 'label · score · badge' }),
           item('ai-confidence', 'AI Confidence', 'item.ai.confidence', 'ifx-item-ai-confidence', 'user', 'ai-confidence', [
             slot('label', 'Label', 'label.caption', 'span'),
             slot('pct', 'Percent', 'financial.percent.up', 'span')
           ], [
             prim('gap', 'space-4', '--ifx-item-gap', 'spacing'),
             sem('color', 'action.primary', '--ifx-item-color')
-          ], { file: 'foundation/share-action.css', anatomy: 'label · pct' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'label · pct' }),
           item('ai-reason', 'AI Reason', 'item.ai.reason', 'ifx-item-ai-reason', 'user', 'ai-reason', [
             slot('bullet', 'Bullet', 'dot.status', 'span'),
             slot('text', 'Reason', 'text.muted', 'span')
           ], [
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             prim('font-size', 'fs-200', '--ifx-font-size-12', 'font-size')
-          ], { file: 'foundation/share-action.css', anatomy: 'bullet · text' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'bullet · text' }),
           item('ai-warning', 'AI Warning', 'item.ai.warning', 'ifx-item-ai-warning', 'user', 'ai-warning', [
             slot('icon', 'Warning', 'icon.alert', 'ti-alert-circle'),
             slot('message', 'Message', 'text.body', 'span')
@@ -372,11 +372,11 @@
             prim('gap', 'space-8', '--ifx-item-gap', 'spacing'),
             sem('background', 'status.warning.soft', '--ifx-item-bg'),
             sem('color', 'status.warning', '--ifx-item-color')
-          ], { file: 'foundation/share-action.css', anatomy: 'icon · message' }),
+          ], { file: '04_components/28_share/share.css', anatomy: 'icon · message' }),
           item('ai-highlight', 'AI Highlight', 'item.ai.highlight', 'ifx-item-ai-highlight', 'user', 'ai-highlight', [
             slot('marker', 'Marker', 'badge.info', 'ix-badge'),
             slot('text', 'Highlight', 'text.body', 'span')
-          ], layoutProps(), { file: 'foundation/share-action.css', anatomy: 'marker · text' })
+          ], layoutProps(), { file: '04_components/28_share/share.css', anatomy: 'marker · text' })
         ]
       },
       {

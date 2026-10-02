@@ -11,7 +11,7 @@
       var path = location.pathname || '';
       if (path.indexOf('/app/') >= 0 || path.indexOf('Admin_Design_system') >= 0) return true;
     }
-    return !!document.querySelector('.ix-nav-actions');
+    return !!document.querySelector('.ifx-nav-actions');
   }
 
   function readToastSeen() {
@@ -192,7 +192,7 @@
 
     container.insertAdjacentHTML('beforeend',
       '<div class="ix-dropdown ifx-admin-notif" data-ifx-admin-notif-wrap>' +
-        '<button type="button" class="ix-nav-btn" data-ix-toggle="dropdown" data-ifx-admin-notif-bell aria-label="Thông báo">' +
+        '<button type="button" class="ifx-nav-btn" data-ix-toggle="dropdown" data-ifx-admin-notif-bell aria-label="Thông báo">' +
           '<i class="ti ti-bell"></i>' +
           '<span class="ix-nav-dot" data-ifx-admin-notif-dot style="display:none"></span>' +
         '</button>' +
@@ -266,7 +266,7 @@
 
   function initNavbarBell() {
     if (!isAdminShell()) return;
-    document.querySelectorAll('.ix-nav-actions').forEach(function (actions) {
+    document.querySelectorAll('.ifx-nav-actions').forEach(function (actions) {
       if (actions.querySelector('[data-ifx-admin-notif-bell]')) return;
       var avatar = actions.querySelector('.ix-avatar');
       var holder = document.createElement('div');

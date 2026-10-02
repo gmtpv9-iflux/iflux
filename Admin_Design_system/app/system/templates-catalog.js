@@ -98,7 +98,7 @@
       render: 'heatmap',
       preview: { type: 'WGT-MKT-004', config: { source: 'sector' } },
       resources: {
-        component: ['squarified-treemap.js', 'block-templates.js'],
+        component: ['treemap.js', 'block-templates.js'],
         css: ['block-templates.css', 'market-components.css'],
         js: ['templates-preview.js'],
         library: []
@@ -121,7 +121,7 @@
       render: 'com-stock-heat',
       preview: { type: 'WGT-COM-001', config: { stocksOnly: true } },
       resources: {
-        component: ['squarified-treemap.js', 'news-trending.js'],
+        component: ['treemap.js', 'news-trending.js'],
         css: ['news.css', 'block-templates.css', 'watchlist.css'],
         js: ['templates-preview.js'],
         library: []

@@ -333,13 +333,13 @@ body {
 }
 .ix-search input::placeholder { color: var(--ix-text-muted); }
 
-.ix-nav-actions {
+.ifx-nav-actions {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: var(--ifx-space-4);
 }
-.ix-nav-btn {
+.ifx-nav-btn {
   width: 36px; height: 36px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -350,8 +350,8 @@ body {
   background: none;
   border: none;
 }
-.ix-nav-btn:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
-.ix-nav-btn i { font-size: var(--ifx-font-size-20); }
+.ifx-nav-btn:hover { background: var(--ix-bg-hover); color: var(--ix-text-primary); }
+.ifx-nav-btn i { font-size: var(--ifx-font-size-20); }
 .ix-nav-dot {
   position: absolute;
   top: 6px; right: 6px;

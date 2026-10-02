@@ -435,7 +435,7 @@
       el.title = admin.name ? admin.name + ' · ' + admin.email : admin.email;
     });
 
-    var navActions = document.querySelector('.ix-nav-actions');
+    var navActions = document.querySelector('.ifx-nav-actions');
     if (navActions && !navActions.querySelector('[data-ix-admin-logout]')) {
       var btn = document.createElement('button');
       btn.type = 'button';

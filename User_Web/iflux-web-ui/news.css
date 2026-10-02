@@ -2204,7 +2204,7 @@ a.ifx-com-card__avatar.ifx-profile-link-avatar:hover { opacity: .88; }
 /* ===== IFX-AUDIT-BEGIN =====
 AUDIT-ID: T5A-P2-DUAL-COPY-001
 Priority: P2
-STATUS: Partial — heart dual-copy đã gỡ (Owner = Foundation heart-action.css)
+STATUS: Partial — heart dual-copy đã gỡ (Owner = design_system/04_components/29_follow/follow.css)
 OWNER: news.css (Page Local) chỉ còn layout com-* / block alias
 from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 ===== IFX-AUDIT-END ===== */

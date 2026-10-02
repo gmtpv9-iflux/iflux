@@ -41,7 +41,7 @@ var manifest = {
     m('profile-links', 'js', ASSET + 'profile-links.js', 'IfluxProfileLinks'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=r20260928n', 'IfluxMarketQuotes'),
     m('watchlist-store', 'store', ASSET + 'watchlist-store.js?v=r20260928n', 'IfluxWatchlistStore'),
-    m('heart-action', 'js', ADMIN + 'foundation/heart-action.js?v=followFound20260724', 'IfluxHeartAction'),
+    m('heart-action', 'js', '/design_system/04_components/29_follow/follow.js?v=r20261002a', 'IfluxHeartAction'),
     m('stock-store', 'store', ASSET + 'stock-store.js?v=r20260928n', 'IfluxStockStore'),
     m('community-store', 'store', ASSET + 'news-store.js?v=r20260928r', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=r20260928n', 'IfluxNewsApiBridge'),
