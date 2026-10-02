@@ -312,12 +312,6 @@ Note: requiresShell IfluxWatchlistTaxonomy
     return hashRank(source, sourceId);
   }
 
-  function getTickerGroupRank(source, ticker) {
-    var m = getTickerMemberships(ticker)[source];
-    if (!m) return null;
-    return { group: m, rank: getGroupRank(source, m.id) };
-  }
-
   global.IfluxWatchlistTaxonomy = {
     GROUPS: GROUPS,
     SOURCE_LABELS: SOURCE_LABELS,
@@ -327,7 +321,6 @@ Note: requiresShell IfluxWatchlistTaxonomy
     getGroupTickers: getGroupTickers,
     getTickerMemberships: getTickerMemberships,
     getGroupRank: getGroupRank,
-    getTickerGroupRank: getTickerGroupRank,
     sourceLabel: sourceLabel,
     filterAvailable: filterAvailable,
     hydrateChuDeFromApi: hydrateChuDeFromApi,

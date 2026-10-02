@@ -57,16 +57,6 @@
     return n > 0 ? 'is-up' : 'is-down';
   }
 
-  function tierBadge(author) {
-    if (!author || !author.tier_label) return '';
-    var tier = String(author.tier || '').toLowerCase();
-    var cls = 'ix-chip-primary';
-    if (tier === 'ctv') cls = 'ix-chip-warning';
-    else if (tier === 'elite') cls = 'ix-chip-warning ifx-com-badge--elite';
-    else if (tier === 'admin') cls = 'ix-chip-secondary';
-    return '<span class="ix-chip ' + cls + ' ix-chip-sm">' + author.tier_label + '</span>';
-  }
-
   function getGroupPerformance(source, sourceId) {
     /* D1 / SOL-UNAVAIL: sector/eco/family/story aggregate không có runtime authority → UNAVAILABLE (null).
      * Cấm getSectorPerf / avg mock change_pct / FE aggregate. */
@@ -517,30 +507,9 @@
     /* Phase B: không fallback ghi title/meta — Page Definition là SoT. */
   }
 
-  function storyOptionsHtml() {
-    var t = tax();
-    if (!t) return '';
-    var groups = t.getGroups('story');
-    return groups.map(function (g) {
-      return '<option value="' + g.id + '">' + g.name + '</option>';
-    }).join('');
-  }
-
-  function seoHint(len, min, max) {
-    var cls = 'ifx-com-hint';
-    if (len < min || len > max) cls += ' is-warn';
-    else cls += ' is-ok';
-    return cls;
-  }
-
   function currentUserId() {
     var u = auth() && auth().getUser();
     return u && u.id ? u.id : 'usr_local';
-  }
-
-  function getPostStories(post) {
-    var story = getPrimaryStory(post);
-    return story ? [story] : [];
   }
 
   /* Link chủ đề: market story → /chu-de/:slug; nếu là chủ đề cộng đồng → trang topic */
@@ -633,53 +602,6 @@
     var inner = sidebarTickerRowsInnerHtml(post);
     if (!inner) return '';
     return '<div data-ifx-com-ticker-rows="1">' + inner + '</div>';
-  }
-
-  function sortComments(comments, mode) {
-    var list = (comments || []).slice();
-    if (mode === 'liked') {
-      list.sort(function (a, b) {
-        return (b.likes || 0) - (a.likes || 0) || new Date(b.created_at) - new Date(a.created_at);
-      });
-    } else if (mode === 'debate') {
-      list.sort(function (a, b) {
-        var sa = (a.replies || 0) * 3 + (a.likes || 0);
-        var sb = (b.replies || 0) * 3 + (b.likes || 0);
-        return sb - sa || new Date(b.created_at) - new Date(a.created_at);
-      });
-    } else if (mode === 'shared') {
-      list.sort(function (a, b) {
-        return (b.shares || 0) - (a.shares || 0) || new Date(b.created_at) - new Date(a.created_at);
-      });
-    } else {
-      list.sort(function (a, b) {
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-    }
-    return list;
-  }
-
-  function commentItemHtml(c) {
-    var nameHtml = global.IfluxProfileLinks && c.user_id
-      ? IfluxProfileLinks.nameLink(c.user_id, c.user_name, 'ifx-com-comment__author', { base: '../account/' })
-      : '<strong>' + String(c.user_name).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</strong>';
-    return (
-      '<div class="ifx-com-comment" data-ifx-com-comment-id="' + c.id + '">' +
-        '<div class="ifx-com-comment__head">' +
-          nameHtml +
-          '<span>' + fmtRelative(c.created_at) + '</span>' +
-        '</div>' +
-        '<p>' + String(c.body || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' +
-        (c.image && global.IfluxCommentComposer ? IfluxCommentComposer.imageHtml(c.image) : (c.image
-          ? '<div class="ifx-cmt-image"><img src="' + String(c.image).replace(/"/g, '&quot;') + '" alt="Ảnh bình luận" loading="lazy" /></div>'
-          : '')) +
-        '<div class="ifx-com-comment__stats">' +
-          '<span><i class="ti ti-heart"></i> ' + (c.likes || 0) + '</span>' +
-          '<span><i class="ti ti-message"></i> ' + (c.replies || 0) + '</span>' +
-          '<span><i class="ti ti-share"></i> ' + (c.shares || 0) + '</span>' +
-        '</div>' +
-      '</div>'
-    );
   }
 
   function applyStorySeoExtras(post) {
@@ -777,22 +699,16 @@
     getPrimaryStory: getPrimaryStory,
     tickerArchiveUrl: tickerArchiveUrl,
     getGroupPerformance: getGroupPerformance,
-    getPostStories: getPostStories,
     sidebarStoryRowsHtml: sidebarStoryRowsHtml,
     sidebarSectorRowsHtml: sidebarSectorRowsHtml,
     sidebarEcosystemRowsHtml: sidebarEcosystemRowsHtml,
     sidebarTickerRowsHtml: sidebarTickerRowsHtml,
     hydrateTickerQuotes: hydrateTickerQuotes,
     prefetchTickerQuotes: prefetchTickerQuotes,
-    sortComments: sortComments,
-    commentItemHtml: commentItemHtml,
     applySeoToDocument: applySeoToDocument,
     applyStorySeoExtras: applyStorySeoExtras,
     articleHeroImageHtml: articleHeroImageHtml,
     articleGeoFooterHtml: articleGeoFooterHtml,
-    storyOptionsHtml: storyOptionsHtml,
-    seoHint: seoHint,
-    currentUserId: currentUserId,
-    tierBadge: tierBadge
+    currentUserId: currentUserId
   };
 })(window);
