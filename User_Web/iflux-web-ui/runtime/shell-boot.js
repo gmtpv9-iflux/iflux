@@ -17,7 +17,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG nạp widget implementation.
  */
 
-import { loadScript, loadStyle } from './legacy-bridge.js?v=r20260928q';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=r20261002communityfix';
 import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20260929e';
 
 var ASSET = '/User_Web/iflux-web-ui/';

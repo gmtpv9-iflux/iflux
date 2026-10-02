@@ -26,12 +26,12 @@ import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729
 import { bootShell } from './shell-boot.js?v=communityV1f';
 import { pageKeyFromPath } from './page-keys.js?v=communityV1b';
 import { installSoftNavigation } from './soft-navigation.js?v=r20260929e';
-import { loadStyles } from './legacy-bridge.js?v=r20260928q';
+import { loadStyles } from './legacy-bridge.js?v=r20261002communityfix';
 
 var VER = '?v=r20261002a';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20261002an';
+var PF = '?v=r20261002ao';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },

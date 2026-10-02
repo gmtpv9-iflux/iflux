@@ -8,7 +8,7 @@
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=appHeader20260928';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
 import { loadWidget } from '../../runtime/widget-loader.js?v=r20260928q';
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { id: 'WGT-HOME-PAGE', title: 'Trang chủ' };

@@ -1,4 +1,4 @@
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 

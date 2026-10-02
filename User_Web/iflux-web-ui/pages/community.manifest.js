@@ -1,14 +1,14 @@
 /**
  * Page Manifest — Cộng đồng (/cong-dong)
  * Mạng xã hội nhà đầu tư — xem docs/SoT — Community (Cộng đồng) Architecture V1.md
- * Sidebar trái (3/12) + Sidebar phải (2/12, MỚI — xem app-shell.js opts.rightSidebar)
- * đều là Widget host qua Admin > Cài đặt trang (giống mọi trang khác).
- * Main (7/12) KHÔNG host widget — Composer + Timeline do widgets/community-page tự dựng.
+ * Sidebar trái (3/12) + Main (7/12) + Sidebar phải (2/12, MỚI — xem app-shell.js
+ * opts.rightSidebar). Phase 0: CẢ 3 vùng do widgets/community-page tự dựng bằng seed
+ * data (không qua Widget host Admin — xem ghi chú trong widgets/community-page/index.js).
  */
 export default {
   pageKey: 'community',
   mainClass: 'ifx-main--community-social',
-  css: ['/User_Web/iflux-web-ui/community.css?v=r20261002a'],
+  css: ['/User_Web/iflux-web-ui/community.css?v=r20261002b'],
   path: '/cong-dong',
   title: 'Cộng đồng',
   intro: 'Nơi nhà đầu tư Việt Nam chia sẻ nhận định, theo dõi nhau và thảo luận về thị trường.',
@@ -28,8 +28,8 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=r20261002a',
-      css: ['/User_Web/iflux-web-ui/community.css?v=r20261002a']
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=r20261002b',
+      css: ['/User_Web/iflux-web-ui/community.css?v=r20261002b']
     }
   ]
 };

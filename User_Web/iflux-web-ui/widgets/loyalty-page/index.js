@@ -1,7 +1,7 @@
 /**
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
 

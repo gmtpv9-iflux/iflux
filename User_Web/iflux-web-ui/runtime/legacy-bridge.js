@@ -24,14 +24,6 @@ var scriptPromises = {};
 var stylePromises = {};
 
 /** Chuẩn hoá CSS path — tránh nạp 2 version cùng file (cascade ghi đè). */
-function normalizeStyleHref(href) {
-  var s = String(href || '');
-  if (/\/User_Web\/iflux-web-ui\/community\.css(\?|$)/.test(s)) {
-    return '/User_Web/iflux-web-ui/news.css?v=r20261002t';
-  }
-  return s;
-}
-
 /** Nạp 1 <script> cổ điển (idempotent) — trả Promise resolve khi onload.
  *  Khi src có ?v=… mà bản không version (hoặc version khác) đã nạp → gỡ rồi nạp lại. */
 export function loadScript(src) {
@@ -76,7 +68,7 @@ export function loadScript(src) {
 /** Nạp 1 stylesheet (idempotent).
  *  Khi href có ?v=… mà bản không version / version khác đã nạp → gỡ rồi nạp lại. */
 export function loadStyle(href) {
-  href = normalizeStyleHref(href);
+  href = String(href || '');
   if (stylePromises[href]) return stylePromises[href];
   var bare = String(href || '').split('?')[0];
   if (href && href.indexOf('?') >= 0 && bare) {

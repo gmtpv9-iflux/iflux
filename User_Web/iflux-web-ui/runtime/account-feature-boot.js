@@ -2,7 +2,7 @@
  * Phase A — Feature Tài khoản (sau App Shell Entry).
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
 import { mountPageWidgets } from './page-widgets.js?v=r20260929e';
 
 var ASSET = '/User_Web/iflux-web-ui/';
