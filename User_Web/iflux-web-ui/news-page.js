@@ -300,12 +300,12 @@
     return id;
   }
 
-  /** Tab Danh mục nổi bật + Tất cả — DS: .ix-tabs / .ix-tab / .active */
+  /** Tab Danh mục nổi bật + Tất cả — DS: .ifx-tabs / .ifx-tab / .is-active */
   function featuredCatsTabsHtml(cats, activeId) {
     var activeTab = tabIdFromState(activeId);
     var allOn = activeTab === FILTER_ALL;
     var tabs =
-      '<button type="button" class="ix-tab' + (allOn ? ' active' : '') + '" role="tab"' +
+      '<button type="button" class="ifx-tab' + (allOn ? ' is-active' : '') + '" role="tab"' +
         ' aria-selected="' + (allOn ? 'true' : 'false') + '"' +
         ' data-ifx-com-cat-id="' + FILTER_ALL + '">' +
         '<i class="ti ti-layout-grid" aria-hidden="true"></i> Tất cả' +
@@ -315,7 +315,7 @@
       if (!id) return;
       var on = id === activeTab;
       tabs +=
-        '<button type="button" class="ix-tab' + (on ? ' active' : '') + '" role="tab"' +
+        '<button type="button" class="ifx-tab' + (on ? ' is-active' : '') + '" role="tab"' +
           ' aria-selected="' + (on ? 'true' : 'false') + '"' +
           ' data-ifx-com-cat-id="' + esc(id) + '">' +
           '<i class="' + esc(categoryIconClass(c.icon)) + '" aria-hidden="true"></i> ' +
@@ -323,7 +323,7 @@
         '</button>';
     });
     return (
-      '<div class="ix-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
+      '<div class="ifx-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
         tabs +
       '</div>'
     );
@@ -333,9 +333,9 @@
     if (!root) return;
     state.featuredCategoryId = stateIdFromTab(tabId);
     var activeTab = tabIdFromState(state.featuredCategoryId);
-    root.querySelectorAll('[data-ifx-com-featured-cats] .ix-tab').forEach(function (btn) {
+    root.querySelectorAll('[data-ifx-com-featured-cats] .ifx-tab').forEach(function (btn) {
       var on = btn.getAttribute('data-ifx-com-cat-id') === activeTab;
-      btn.classList.toggle('active', on);
+      btn.classList.toggle('is-active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     /* Acquisition = DailyFeed (WP-0) — không loadFeed ở page */

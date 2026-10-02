@@ -16,16 +16,19 @@
   font-size: var(--ifx-font-size-sm);
   font-weight: var(--ifx-font-weight-semibold);
   font-family: inherit;
-  color: var(--ifx-text-muted);
+  color: var(--ifx-action-primary);
   cursor: pointer;
   border: 0;
   background: transparent;
   transition: var(--ifx-transition-color);
 }
-.ifx-tab:hover { color: var(--ifx-text-primary); }
+/* Hover: chỉ đổi nền, giữ nguyên màu chữ — không áp cho biến thể Segmented (widget). */
+.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:hover { background: var(--ifx-action-primary-soft); }
+/* Active: nền đặc + chữ trắng — tăng tương phản/khả năng đọc so với nền mờ trước đây. */
 .ifx-tab.is-active {
-  background: var(--ifx-action-primary-soft);
-  color: var(--ifx-action-primary);
+  background: var(--ifx-action-primary);
+  color: var(--ifx-text-on-primary);
+  box-shadow: none;
 }
 .ifx-tabs-col {
   flex-direction: column;

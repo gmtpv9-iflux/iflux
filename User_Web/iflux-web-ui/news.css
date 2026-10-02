@@ -1375,7 +1375,7 @@
 /* SYNC:mobile-shell → bp-lg Foundation layout.css --ifx-bp-lg = 1024px
    Mobile: icon trên chữ; desktop giữ icon ngang với text (inline mặc định). */
 @media (max-width: 1024px) {
-  [data-ifx-com-featured-cats] .ix-tab {
+  [data-ifx-com-featured-cats] .ifx-tab {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
