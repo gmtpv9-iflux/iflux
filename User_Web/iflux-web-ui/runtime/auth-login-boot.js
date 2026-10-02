@@ -10,7 +10,8 @@ var SHELL = [
   ASSET + 'iflux-platform-boot.js?v=appHeader20260928',
   ASSET + 'iflux-api-bundle.js',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
-  ASSET + 'auth.js?v=r20260928q'
+  ASSET + 'auth.js?v=r20261002g',
+  ASSET + 'auth-forms.js?v=r20261002g'
 ];
 
 var FEATURE = [

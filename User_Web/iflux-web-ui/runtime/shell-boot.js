@@ -215,7 +215,7 @@ export async function bootShell(pageKey, opts) {
   await ensureParallel([
     { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=appHeader20260928' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20260928q' },
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20261002g' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
     { global: 'IfxToast', src: '/design_system/04_components/17_toast/toast.js?v=r20260928q' },
     /* Dropdown DS — menu người dùng / thông báo / tin nhắn trong header (App Shell) */
