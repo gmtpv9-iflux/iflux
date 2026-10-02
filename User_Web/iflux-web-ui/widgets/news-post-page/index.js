@@ -11,17 +11,20 @@ var PUBLISH_KEY = 'article';
 
 export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồng' };
 
-/* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM */
+/* W4: registry/seeds/mock/taxonomy/seo = Shell MARKET_PLATFORM
+ * Trước đây tách 4 tầng tuần tự (tầng sau đợi tầng trước tải xong) — không file
+ * nào trong 9 file này gọi hàm của file khác NGAY khi vừa tải (chỉ định nghĩa
+ * hàm/export global, mọi lệnh gọi chéo đều nằm trong init() — chạy sau khi CẢ
+ * 9 file đã tải xong). Không có phụ thuộc thứ tự thật → gộp 1 tầng, tải song
+ * song toàn bộ giống đúng cách trang danh sách tin tức đang làm (nhanh hơn). */
 var CORE_TIERS = [
-  [ASSET + 'runtime/page-layout-engine.js?v=r20260928n'],
-  [ASSET + 'stock-mentions.js?v=r20260928n'],
   [
+    ASSET + 'runtime/page-layout-engine.js?v=r20260928n',
+    ASSET + 'stock-mentions.js?v=r20260928n',
     ASSET + 'news-store.js?v=r20260928r',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ASSET + 'profile-users-store.js',
-    ASSET + 'profile-links.js'
-  ],
-  [
+    ASSET + 'profile-links.js',
     ASSET + 'iflux-market-quotes.js?v=r20260928n',
     ASSET + 'watchlist-store.js?v=r20260928n',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
