@@ -538,7 +538,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     { key: 'dashboard', route: 'home',      label: 'Trang chủ', icon: 'ti-home',            appOnly: true, onboard: 'home' },
     { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
     { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-users', onboard: 'news' },
-    { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-message-circle-2', onboard: 'community' },
+    { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-world', onboard: 'community' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' }
   ];

@@ -36,7 +36,7 @@
     return (
       '<div class="ifx-com2-composer">' +
         '<div class="ifx-com2-composer__row">' +
-          '<span class="ix-avatar ix-avatar-md ix-avatar-accent">' + esc(initials) + '</span>' +
+          '<span class="ifx-avatar ifx-avatar-md ifx-avatar-accent">' + esc(initials) + '</span>' +
           '<input type="text" class="ifx-com2-composer__input" data-ifx-com2-open-composer readonly ' +
             'placeholder="Bạn đang nghĩ gì về thị trường?" aria-label="Tạo bài viết" />' +
         '</div>' +
@@ -44,8 +44,8 @@
           '<button type="button" class="ifx-com2-action" data-ifx-com2-action="write"><i class="ti ti-edit"></i> Viết bài</button>' +
           '<button type="button" class="ifx-com2-action" data-ifx-com2-action="share"><i class="ti ti-share"></i> Chia sẻ tin</button>' +
           '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag"><i class="ti ti-chart-candle"></i> Gắn mã</button>' +
-          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story"><i class="ti ti-hash"></i> Tạo chủ đề</button>' +
-          '<button type="button" class="ix-btn ix-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="submit">Đăng bài</button>' +
+          '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story"><i class="ti ti-tag"></i> Tạo chủ đề</button>' +
+          '<button type="button" class="ifx-btn ifx-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="submit">Đăng bài</button>' +
         '</div>' +
       '</div>'
     );
@@ -54,7 +54,7 @@
   function emptyTimelineHtml() {
     return (
       '<div class="ifx-com2-empty">' +
-        '<i class="ti ti-message-circle-2" aria-hidden="true"></i>' +
+        '<i class="ti ti-message-circle" aria-hidden="true"></i>' +
         '<h3>Dòng thời gian Cộng đồng sắp ra mắt</h3>' +
         '<p>Tính năng đăng bài, theo dõi nhà đầu tư khác và thảo luận chủ đề thị trường đang được hoàn thiện. ' +
           'Quay lại sớm nhé!</p>' +

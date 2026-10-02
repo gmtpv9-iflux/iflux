@@ -21,17 +21,13 @@
   border: 0;
   background: transparent;
   transition: var(--ifx-transition-color);
-  /* <button> mặc định có "nền pressed" riêng theo giao diện hệ điều hành (UA chrome) —
-     background: transparent không chặn hết, bấm vào vẫn thấy chớp màu lạ rồi mới trở
-     lại đúng màu khi rê chuột ra. Tắt hẳn appearance để toàn quyền kiểm soát màu. */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
-/* Hover: chỉ đổi nền, giữ nguyên màu chữ — không áp cho biến thể Segmented (widget). */
-.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:hover { background: var(--ifx-action-primary-soft); }
-.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:active { background: var(--ifx-action-primary-soft); }
-.ifx-tab.is-active:active { background: var(--ifx-action-primary); }
+/* Hover/Active: chỉ đổi nền nhạt khi tab CHƯA active — thêm :not(.is-active) để loại tab
+   đang active khỏi 2 rule này. Trước đây thiếu điều kiện này nên .ifx-tab:active (độ ưu
+   tiên cao hơn .ifx-tab.is-active vì :not() cũng tính 1 class) đè mất nền đặc + lộ ra
+   nền nhạt trong lúc chữ vẫn đang là màu trắng của is-active → chớp màu lạ lúc bấm. */
+.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:not(.is-active):hover { background: var(--ifx-action-primary-soft); }
+.ifx-tabs:not(.ifx-tabs-segmented) .ifx-tab:not(.is-active):active { background: var(--ifx-action-primary-soft); }
 /* Active: nền đặc + chữ trắng — tăng tương phản/khả năng đọc so với nền mờ trước đây. */
 .ifx-tab.is-active {
   background: var(--ifx-action-primary);
