@@ -364,14 +364,6 @@
     return request('/content/interest', { method: 'POST', body: payload || {} });
   }
 
-  function promoteContentTopic(topicId, payload) {
-    return request('/content/topics/' + encodeURIComponent(topicId) + '/promote', {
-      method: 'POST',
-      headers: adminHeaders(),
-      body: payload || {}
-    });
-  }
-
   function listContentStories(params) {
     params = params || {};
     var qs = [];
@@ -395,26 +387,6 @@
     return request('/content/mappings' + (qs.length ? '?' + qs.join('&') : ''));
   }
 
-  function recordContentRelevance(payload) {
-    return request('/content/relevance', { method: 'POST', body: payload || {} });
-  }
-
-  function recomputeContentRelevance(payload) {
-    return request('/content/relevance/recompute', {
-      method: 'POST',
-      headers: adminHeaders(),
-      body: payload || {}
-    });
-  }
-
-  function autoPromoteContentTopics(payload) {
-    return request('/content/topics/auto-promote', {
-      method: 'POST',
-      headers: adminHeaders(),
-      body: payload || {}
-    });
-  }
-
   function listCommunityCategories(params) {
     params = params || {};
     var qs = [];
@@ -424,41 +396,6 @@
     return request('/news/categories' + suffix);
   }
 
-  function listCommunityCategoriesAdmin(params) {
-    params = params || {};
-    var qs = [];
-    if (params.q) qs.push('q=' + encodeURIComponent(params.q));
-    if (params.parent_id != null) qs.push('parent_id=' + encodeURIComponent(params.parent_id));
-    var suffix = qs.length ? '?' + qs.join('&') : '';
-    return request('/news/admin/categories' + suffix, { headers: adminHeaders() });
-  }
-
-  function getCommunityCategoryAdmin(id) {
-    return request('/news/admin/categories/' + encodeURIComponent(id), { headers: adminHeaders() });
-  }
-
-  function createCommunityCategoryAdmin(payload) {
-    return request('/news/admin/categories', {
-      method: 'POST',
-      headers: adminHeaders(),
-      body: payload
-    });
-  }
-
-  function updateCommunityCategoryAdmin(id, payload) {
-    return request('/news/admin/categories/' + encodeURIComponent(id), {
-      method: 'PUT',
-      headers: adminHeaders(),
-      body: payload
-    });
-  }
-
-  function deleteCommunityCategoryAdmin(id) {
-    return request('/news/admin/categories/' + encodeURIComponent(id), {
-      method: 'DELETE',
-      headers: adminHeaders()
-    });
-  }
 
   function createCommunityPost(token, payload) {
     return request('/news/posts', {
@@ -556,20 +493,11 @@
     listCommunityPosts: listCommunityPosts,
     listContentTopics: listContentTopics,
     recordContentInterest: recordContentInterest,
-    promoteContentTopic: promoteContentTopic,
     listContentStories: listContentStories,
     getContentStory: getContentStory,
     listContentMappings: listContentMappings,
-    recordContentRelevance: recordContentRelevance,
-    recomputeContentRelevance: recomputeContentRelevance,
-    autoPromoteContentTopics: autoPromoteContentTopics,
     createCommunityPost: createCommunityPost,
     listCommunityCategories: listCommunityCategories,
-    listCommunityCategoriesAdmin: listCommunityCategoriesAdmin,
-    getCommunityCategoryAdmin: getCommunityCategoryAdmin,
-    createCommunityCategoryAdmin: createCommunityCategoryAdmin,
-    updateCommunityCategoryAdmin: updateCommunityCategoryAdmin,
-    deleteCommunityCategoryAdmin: deleteCommunityCategoryAdmin,
     listOnboardingSteps: listOnboardingSteps,
     listOnboardingStepsAdmin: listOnboardingStepsAdmin,
     createOnboardingStepAdmin: createOnboardingStepAdmin,
