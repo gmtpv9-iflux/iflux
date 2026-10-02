@@ -10,9 +10,6 @@
   var LEGACY_BUSINESS_KEYS = ['iflux_community_v2', 'iflux_community_v1'];
   /* Runtime SoT mirror — không ghi nghiệp vụ xuống localStorage */
   var memStore = null;
-  /* User Web: tắt viết bài mọi tier (bài chuyên gia quản lý ở Admin — giai đoạn sau). */
-  var WRITE_TIERS = {};
-  var EXPERT_WRITE_TIERS = {};
   var CONTENT_TYPE_NEWS = 'news';
   var CONTENT_TYPE_EXPERT = 'expert';
   var ADMIN_AUTHOR = {
@@ -121,12 +118,6 @@
       });
       return '>' + linked + '<';
     });
-  }
-
-  function chuDeTagsOf(postOrTags) {
-    if (Array.isArray(postOrTags)) return normalizePrimaryStory(postOrTags);
-    if (!postOrTags) return [];
-    return normalizePrimaryStory(postOrTags.chu_de_tags || postOrTags.story_tags || []);
   }
 
   function normalizePrimaryStory(storyTags) {
@@ -370,15 +361,6 @@
     return { ok: true, post: normalized };
   }
 
-  function canWrite(user) {
-    if (!user) return false;
-    return !!WRITE_TIERS[String(user.tier || '').toLowerCase()];
-  }
-
-  function canWriteExpert(user) {
-    return false;
-  }
-
   function postMatchesTaxonomy(post, source, groupId) {
     if (!source || !groupId) return true;
     var tax = global.IfluxWatchlistTaxonomy;
@@ -582,215 +564,6 @@
     return posts;
   }
 
-  function countPosts(filter) {
-    filter = Object.assign({}, filter, { returnMeta: true, limit: null, offset: null });
-    var r = getPosts(filter);
-    return r.total;
-  }
-
-  function getPostsByAuthor(authorId, filter) {
-    filter = Object.assign({}, filter || {}, { authorId: authorId });
-    return getPosts(filter);
-  }
-
-  function postEngagement(post) {
-    var commentCount = post.stats && post.stats.comments != null
-      ? post.stats.comments
-      : (post.comments || []).length;
-    return {
-      comments: commentCount,
-      positive: (post.stats && post.stats.likes || 0) + (post.stats && post.stats.favorites || 0)
-    };
-  }
-
-  /* Interest Score v1 — trọng số ChatGPT (versioned): View < Search < Like < Favorite ≈ Share < Comment */
-  var INTEREST_WEIGHTS = {
-    views: 1,
-    searches: 3,
-    likes: 5,
-    favorites: 8,
-    shares: 8,
-    comments: 10
-  };
-
-  var STORY_PERIODS = {
-    day: { label: 'Ngày', ms: 24 * 60 * 60 * 1000 },
-    week: { label: 'Tuần', ms: 7 * 24 * 60 * 60 * 1000 },
-    month: { label: 'Tháng', ms: 30 * 24 * 60 * 60 * 1000 }
-  };
-
-  function interestScore(parts) {
-    parts = parts || {};
-    return (
-      (parts.views || 0) * INTEREST_WEIGHTS.views +
-      (parts.searches || 0) * INTEREST_WEIGHTS.searches +
-      (parts.likes || 0) * INTEREST_WEIGHTS.likes +
-      (parts.favorites || 0) * INTEREST_WEIGHTS.favorites +
-      (parts.shares || 0) * INTEREST_WEIGHTS.shares +
-      (parts.comments || 0) * INTEREST_WEIGHTS.comments
-    );
-  }
-
-  function postInPeriod(post, periodKey) {
-    var def = STORY_PERIODS[periodKey] || STORY_PERIODS.week;
-    var ts = Date.parse(post.published_at || post.created_at || '') || 0;
-    if (!ts) return true;
-    return (Date.now() - ts) <= def.ms;
-  }
-
-  function storyKeysFromPost(p) {
-    var out = [];
-    var seen = {};
-    function push(id, name) {
-      var key = String(id || name || '').trim();
-      if (!key || seen[key]) return;
-      seen[key] = true;
-      out.push({ id: key, name: name || key });
-    }
-    var story = normalizePrimaryStory(p.story_tags || [])[0];
-    if (story) push(story.sourceId || story.name, story.name);
-    (p.topics || []).forEach(function (t) {
-      push(t.slug || t.id || t.name, t.name || t.label || t.slug || t.id);
-    });
-    return out;
-  }
-
-  function getTrendingStoriesLocal(limit, periodKey) {
-    limit = limit || 10;
-    periodKey = periodKey || 'week';
-    var map = {};
-    getPosts().forEach(function (p) {
-      if (!postInPeriod(p, periodKey)) return;
-      var keys = storyKeysFromPost(p);
-      if (!keys.length) return;
-      var stats = p.stats || {};
-      var views = stats.views || 0;
-      var likes = stats.likes || 0;
-      var favorites = stats.favorites || 0;
-      var shares = stats.shares || 0;
-      var comments = postEngagement(p).comments;
-      /* Search chưa có event store — proxy nhẹ từ view (≈8%) để Interest có thành phần Search */
-      var searches = Math.round(views * 0.08);
-      keys.forEach(function (sk) {
-        if (!map[sk.id]) {
-          map[sk.id] = {
-            id: sk.id,
-            name: sk.name,
-            views: 0,
-            searches: 0,
-            likes: 0,
-            favorites: 0,
-            shares: 0,
-            comments: 0,
-            positive: 0,
-            score: 0
-          };
-        }
-        var m = map[sk.id];
-        m.views += views;
-        m.searches += searches;
-        m.likes += likes;
-        m.favorites += favorites;
-        m.shares += shares;
-        m.comments += comments;
-        m.positive += likes + favorites;
-      });
-    });
-    var list = Object.keys(map).map(function (key) {
-      var m = map[key];
-      m.score = interestScore(m);
-      m.period = periodKey;
-      return m;
-    });
-    list.sort(function (a, b) {
-      return b.score - a.score || b.comments - a.comments || b.views - a.views;
-    });
-    return list.slice(0, limit);
-  }
-
-  /** Cache Topic trending từ Content Engine P1 (/api/content/topics/trending). */
-  var _topicTrendCache = {};
-
-  function mapApiTopicRow(row, periodKey) {
-    return {
-      id: row.slug || row.topic_id || row.id,
-      topic_id: row.topic_id || row.id,
-      story_id: row.story_id || null,
-      name: row.name || row.label,
-      status: row.status,
-      period: periodKey || row.period || 'week',
-      score: Number(row.score) || 0,
-      views: Number(row.views) || 0,
-      searches: Number(row.searches) || 0,
-      likes: Number(row.likes) || 0,
-      comments: Number(row.comments) || 0,
-      shares: Number(row.shares) || 0,
-      favorites: Number(row.favorites) || 0,
-      rank: row.rank,
-      href: row.href || null,
-      mappings: row.mappings || row.top_tickers || null,
-      flow_net_value: row.flow_net_value != null ? Number(row.flow_net_value) : null,
-      lifecycle: row.lifecycle || null,
-      fromContentEngine: true
-    };
-  }
-
-  function getTrendingStories(limit, periodKey) {
-    limit = limit || 10;
-    periodKey = periodKey || 'week';
-    var cached = _topicTrendCache[periodKey];
-    if (cached && cached.length) {
-      return cached.slice(0, limit);
-    }
-    return getTrendingStoriesLocal(limit, periodKey);
-  }
-
-  function hydrateTrendingStoriesFromApi(periodKey, limit) {
-    periodKey = periodKey || 'week';
-    limit = limit || 10;
-    var api = global.IfluxApiClient;
-    if (!api || !api.listContentTopics) {
-      return Promise.resolve(getTrendingStoriesLocal(limit, periodKey));
-    }
-    return api.listContentTopics({ trending: true, period: periodKey, limit: limit })
-      .then(function (res) {
-        var raw = (res && res.data && res.data.topics) || (res && res.topics) || [];
-        if (!raw.length) {
-          _topicTrendCache[periodKey] = [];
-          return getTrendingStoriesLocal(limit, periodKey);
-        }
-        var mapped = raw.map(function (row) { return mapApiTopicRow(row, periodKey); });
-        _topicTrendCache[periodKey] = mapped;
-        return mapped.slice(0, limit);
-      })
-      .catch(function () {
-        return getTrendingStoriesLocal(limit, periodKey);
-      });
-  }
-
-  function getTrendingTickers(limit) {
-    limit = limit || 8;
-    var map = {};
-    getPosts().forEach(function (p) {
-      var eng = postEngagement(p);
-      (p.tickers || []).forEach(function (tk) {
-        tk = String(tk).toUpperCase();
-        if (!map[tk]) map[tk] = { ticker: tk, comments: 0, positive: 0, score: 0 };
-        map[tk].comments += eng.comments;
-        map[tk].positive += eng.positive;
-      });
-    });
-    var list = Object.keys(map).map(function (tk) {
-      var m = map[tk];
-      m.score = m.comments * 2 + m.positive;
-      return m;
-    });
-    list.sort(function (a, b) {
-      return b.score - a.score || b.comments - a.comments;
-    });
-    return list.slice(0, limit);
-  }
-
   function getTopExpertsByLikes(limit) {
     limit = limit || 5;
     var map = {};
@@ -904,175 +677,6 @@
     return incoming;
   }
 
-  function applyCommentsToPost(postKey, comments, total) {
-    var data = ensureStore();
-    var post = data.posts.find(function (p) {
-      return p.slug === postKey || p.id === postKey;
-    });
-    if (!post) return null;
-    post.comments = Array.isArray(comments) ? comments.slice() : [];
-    post._commentsFromApi = true;
-    post.stats = post.stats || {};
-    post.stats.comments = total != null ? total : post.comments.length;
-    writeAll(data, { silent: true });
-    return post;
-  }
-
-  /** GET comment SoT từ server → mirror vào memStore */
-  function loadComments(slugOrId, opts) {
-    opts = opts || {};
-    var key = String(slugOrId || '').trim();
-    if (!key) return Promise.reject(new Error('Thiếu bài viết'));
-    var url = communityApiBase() + '/news/posts/' + encodeURIComponent(key) + '/comments';
-    if (opts.limit) url += '?limit=' + encodeURIComponent(opts.limit);
-    return fetch(url, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
-      .then(function (res) {
-        return res.json().catch(function () { return {}; }).then(function (body) {
-          if (!res.ok) {
-            var msg = (body && body.error && body.error.message) || body.message || ('HTTP ' + res.status);
-            throw new Error(msg);
-          }
-          return body;
-        });
-      })
-      .then(function (body) {
-        var payload = (body && body.data) || body || {};
-        var list = payload.comments || [];
-        var total = payload.total != null ? payload.total : list.length;
-        var post = applyCommentsToPost(key, list, total);
-        return { ok: true, comments: list, total: total, post: post };
-      });
-  }
-
-  /**
-   * POST comment → Server SoT → cập nhật memStore.
-   * Trả Promise<{ post, comment }>. Không ghi localStorage.
-   */
-  function addComment(slug, user, bodyOrPayload) {
-    var payload = (bodyOrPayload && typeof bodyOrPayload === 'object')
-      ? bodyOrPayload
-      : { body: bodyOrPayload };
-    var body = String(payload.body || '').trim();
-    var image = payload.image || null;
-    if (!body && !image) return Promise.reject(new Error('Nhập nội dung hoặc đính kèm hình ảnh.'));
-    if (!user || !user.id) return Promise.reject(new Error('Đăng nhập để bình luận.'));
-
-    var data = ensureStore();
-    var post = data.posts.find(function (p) {
-      return p.slug === slug || p.id === slug;
-    }) || null;
-    if (!post) return Promise.reject(new Error('Bài viết không tồn tại.'));
-
-    var token = authToken();
-    if (!token || String(token).indexOf('mock_jwt_') === 0) {
-      return Promise.reject(new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.'));
-    }
-
-    var postKey = post.id || post.slug || slug;
-    var url = communityApiBase() + '/news/posts/' + encodeURIComponent(postKey) + '/comments';
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify({ body: body, image: image })
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (resp) {
-        if (!res.ok) {
-          var msg = (resp && resp.error && resp.error.message) || resp.message || ('HTTP ' + res.status);
-          throw new Error(msg);
-        }
-        return resp;
-      });
-    }).then(function (resp) {
-      var payloadOut = (resp && resp.data) || resp || {};
-      var comment = payloadOut.comment;
-      if (!comment) throw new Error('Server không trả bình luận.');
-      post.comments = post.comments || [];
-      /* Tránh trùng nếu đã có */
-      var exists = post.comments.some(function (c) { return c && c.id === comment.id; });
-      if (!exists) post.comments.unshift(comment);
-      post._commentsFromApi = true;
-      post.stats = post.stats || {};
-      post.stats.comments = payloadOut.total != null ? payloadOut.total : post.comments.length;
-      writeAll(data);
-      return { post: post, comment: comment };
-    });
-  }
-
-  function uniqueSlug(base, excludeId) {
-    var slug = slugify(base) || 'bai-viet';
-    var posts = ensureStore().posts;
-    var n = 0;
-    var candidate = slug;
-    while (posts.some(function (p) { return p.slug === candidate && p.id !== excludeId; })) {
-      n += 1;
-      candidate = slug + '-' + n;
-    }
-    return candidate;
-  }
-
-  function savePost(payload, user) {
-    if (!canWrite(user)) throw new Error('Chức năng viết bài cộng đồng tạm đóng. Bài chuyên gia sẽ được quản lý ở giai đoạn sau.');
-    var data = ensureStore();
-    var ts = nowIso();
-    var isNew = !payload.id;
-    var post = isNew ? { id: uid('post'), stats: { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 }, liked_by: [], favorited_by: [], comments: [] } : getPostById(payload.id);
-    if (!post) throw new Error('Không tìm thấy bài viết.');
-
-    post.slug = uniqueSlug(payload.slug || payload.title, post.id);
-    post.title = (payload.title || '').trim();
-    post.excerpt = (payload.excerpt || '').trim();
-    post.story_tags = normalizePrimaryStory(payload.chu_de_tags || payload.story_tags || []);
-    post.chu_de_tags = post.story_tags;
-    var rawBody = payload.body_html || '';
-    post.tickers = Array.isArray(payload.tickers) ? payload.tickers.slice() : [];
-    post.ecosystems = Array.isArray(payload.ecosystems) ? payload.ecosystems.slice() : [];
-    post.entity_occurrences = Array.isArray(payload.entity_occurrences) ? payload.entity_occurrences : [];
-    post.body_html = linkifyTickersInHtml(rawBody, post.tickers, post.entity_occurrences);
-    post.seo = Object.assign({}, post.seo || {}, payload.seo || {});
-    post.geo = Object.assign({}, post.geo || {}, payload.geo || {});
-    post.geo_ai = global.IfluxCommunityGeoAi
-      ? IfluxCommunityGeoAi.normalizeGeoAi({ geo_ai: payload.geo_ai || {}, excerpt: post.excerpt, schema: payload.schema })
-      : (payload.geo_ai || {});
-    post.schema = Object.assign({ type: 'NewsArticle', faq: [] }, post.schema || {}, payload.schema || {});
-    if (post.geo_ai && post.geo_ai.faq && post.geo_ai.faq.length) {
-      post.schema.faq = post.geo_ai.faq.slice();
-    }
-    post.status = payload.status || 'draft';
-    post.content_type = payload.content_type || CONTENT_TYPE_NEWS;
-    post.updated_at = ts;
-    if (!post.created_at) post.created_at = ts;
-    if (post.status === 'published' && !post.published_at) post.published_at = ts;
-    if (isNew) {
-      post.author = {
-        id: user.id || 'usr_local',
-        display_name: user.display_name || 'Thành viên',
-        tier: user.tier || 'premium',
-        tier_label: user.tier_label || 'Premium'
-      };
-      data.posts.unshift(post);
-    }
-    writeAll(data);
-    if (isNew && post.status === 'published' && global.IfluxApiClient && global.IfluxAuth) {
-      var token = IfluxAuth.getToken && IfluxAuth.getToken();
-      if (token && token.indexOf('mock_jwt_') !== 0 && IfluxApiClient.createCommunityPost) {
-        IfluxApiClient.createCommunityPost(token, {
-          title: post.title,
-          excerpt: post.excerpt,
-          body_html: post.body_html,
-          content_type: post.content_type,
-          tickers: post.tickers,
-          slug: post.slug
-        }).catch(function () { /* offline */ });
-      }
-    }
-    return post;
-  }
-
   function bumpView(slug) {
     var data = ensureStore();
     var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
@@ -1081,49 +685,6 @@
     post.stats.views = (post.stats.views || 0) + 1;
     /* silent: tránh iflux-news-change → remount trang chi tiết */
     writeAll(data, { silent: true });
-  }
-
-  function toggleLike(slug, userId) {
-    var data = ensureStore();
-    var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
-    if (!post || !userId) return post;
-    post.liked_by = post.liked_by || [];
-    post.stats = post.stats || {};
-    var idx = post.liked_by.indexOf(userId);
-    if (idx >= 0) {
-      post.liked_by.splice(idx, 1);
-      post.stats.likes = Math.max(0, (post.stats.likes || 0) - 1);
-    } else {
-      post.liked_by.push(userId);
-      post.stats.likes = (post.stats.likes || 0) + 1;
-    }
-    writeAll(data);
-    return post;
-  }
-
-  function toggleFavorite(slug, userId) {
-    var data = ensureStore();
-    var post = data.posts.find(function (p) { return p.slug === slug || p.id === slug; });
-    if (!post || !userId) return post;
-    post.favorited_by = post.favorited_by || [];
-    post.stats = post.stats || {};
-    var idx = post.favorited_by.indexOf(userId);
-    if (idx >= 0) {
-      post.favorited_by.splice(idx, 1);
-      post.stats.favorites = Math.max(0, (post.stats.favorites || 0) - 1);
-    } else {
-      post.favorited_by.push(userId);
-      post.stats.favorites = (post.stats.favorites || 0) + 1;
-    }
-    writeAll(data);
-    return post;
-  }
-
-  function bumpShare(slug) {
-    var post = getPostBySlug(slug);
-    if (!post) return;
-    post.stats.shares = (post.stats.shares || 0) + 1;
-    writeAll(ensureStore());
   }
 
   function buildJsonLd(post, pageUrl) {
@@ -1180,52 +741,10 @@
     return ld;
   }
 
-  function exportSeoSeed(post, baseUrl) {
-    baseUrl = baseUrl || (global.IfluxSeoUrl ? IfluxSeoUrl.PROD_ORIGIN : '');
-    var meta = post.metadata || {};
-    var url = meta.canonical || meta.url || (global.IfluxSeoUrl
-      ? IfluxSeoUrl.postCanonical(post)
-      : baseUrl + '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug));
-    return {
-      url: url,
-      slug: post.slug,
-      path: global.IfluxSeoUrl ? IfluxSeoUrl.postSlugPath(post) : '/tin-tuc/bai-viet/' + encodeURIComponent(post.id || post.slug),
-      meta: {
-        title: meta.title,
-        description: meta.description,
-        canonical: meta.canonical || meta.url || url,
-        robots: (post.seo && post.seo.robots) || 'index,follow',
-        keywords: [post.seo && post.seo.focus_keyword].concat((post.seo && post.seo.secondary_keywords) || []).concat((post.geo && post.geo.geo_keywords) || []).filter(Boolean),
-        og: {
-          title: meta.title,
-          description: meta.description,
-          image: meta.image,
-          image_alt: post.seo && post.seo.og_image_alt,
-          locale: (post.geo && post.geo.target_locale) || 'vi_VN'
-        }
-      },
-      geo: post.geo || {},
-      geo_ai: global.IfluxCommunityGeoAi ? IfluxCommunityGeoAi.normalizeGeoAi(post) : (post.geo_ai || {}),
-      keywords: {
-        focus: post.seo && post.seo.focus_keyword,
-        secondary: post.seo && post.seo.secondary_keywords
-      },
-      entities: {
-        tickers: post.tickers || [],
-        stories: (post.story_tags || []).map(function (t) { return t.name; })
-      },
-      json_ld: buildJsonLd(post, url)
-    };
-  }
-
   ensureStore();
 
   global.IfluxNewsStore = {
-    canWrite: canWrite,
-    canWriteExpert: canWriteExpert,
     getPosts: getPosts,
-    getPostsByAuthor: getPostsByAuthor,
-    countPosts: countPosts,
     setFeed: setFeed,
     setArticle: setArticle,
     postMatchesTaxonomy: postMatchesTaxonomy,
@@ -1235,29 +754,13 @@
     getPostBySlug: getPostBySlug,
     getPostById: getPostById,
     upsertPostLocal: upsertPostLocal,
-    loadComments: loadComments,
-    savePost: savePost,
     bumpView: bumpView,
-    toggleLike: toggleLike,
-    toggleFavorite: toggleFavorite,
-    addComment: addComment,
-    bumpShare: bumpShare,
     buildJsonLd: buildJsonLd,
-    exportSeoSeed: exportSeoSeed,
     slugify: slugify,
     extractTickersFromPost: extractTickersFromPost,
     linkifyTickersInHtml: linkifyTickersInHtml,
     normalizePrimaryStory: normalizePrimaryStory,
-    getTrendingTickers: getTrendingTickers,
-    getTrendingStories: getTrendingStories,
-    getTrendingStoriesLocal: getTrendingStoriesLocal,
-    hydrateTrendingStoriesFromApi: hydrateTrendingStoriesFromApi,
-    INTEREST_WEIGHTS: INTEREST_WEIGHTS,
-    STORY_PERIODS: STORY_PERIODS,
-    interestScore: interestScore,
     getTopExpertsByLikes: getTopExpertsByLikes,
-    getExpertLeaderboard: getExpertLeaderboard,
-    WRITE_TIERS: WRITE_TIERS,
-    EXPERT_WRITE_TIERS: EXPERT_WRITE_TIERS
+    getExpertLeaderboard: getExpertLeaderboard
   };
 })(window);
