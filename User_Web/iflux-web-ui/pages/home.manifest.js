@@ -8,7 +8,7 @@
  * gần đây + widget host Admin). Luôn cần đăng nhập, không còn phiên bản vãng lai.
  */
 
-var VER = '?v=r20261003a';
+var VER = '?v=r20261003c';
 
 export default {
   pageKey: 'home',
@@ -16,7 +16,7 @@ export default {
   mainClass: 'ifx-main--hub',
   css: [
     '/User_Web/iflux-web-ui/hub.css?v=r20261003a',
-    '/User_Web/iflux-web-ui/profile.css?v=r20260928n',
+    '/User_Web/iflux-web-ui/profile.css?v=r20261003b',
     '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n',
     '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
     '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',

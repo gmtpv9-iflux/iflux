@@ -6,12 +6,18 @@
      KHÔNG còn renderer riêng theo widget_type. ctx.title/description để rỗng để Template
      không tự vẽ header (header/mô tả/actions của thẻ dashboard do buildWidgetNode dựng). */
   var _artifactCache = {};
+  /* Trả { data, notPublished } — phân biệt "Admin chưa publish widget này" (404, trạng thái
+     thiếu NỘI DUNG, không phải lỗi code) với lỗi thật (mạng/500/JSON hỏng) để
+     mountWidgetBody hiện đúng thông báo, dễ nhận ra ngay đây là thiếu dữ liệu Admin. */
   function fetchWidgetArtifact(id) {
     if (_artifactCache[id]) return _artifactCache[id];
     _artifactCache[id] = fetch('/api/widgets/' + encodeURIComponent(id), { headers: { Accept: 'application/json' } })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (body) { return (body && body.data) || null; })
-      .catch(function () { return null; });
+      .then(function (res) {
+        if (res.ok) return res.json().then(function (body) { return { data: (body && body.data) || null, notPublished: false }; });
+        if (res.status === 404) return { data: null, notPublished: true };
+        return { data: null, notPublished: false };
+      })
+      .catch(function () { return { data: null, notPublished: false }; });
     return _artifactCache[id];
   }
 
@@ -41,11 +47,13 @@
     }
     bodyEl.innerHTML = '<div class="ifx-wl-empty">Đang tải tiện ích…</div>';
     Promise.all([fetchWidgetArtifact(widgetType), ensureTemplateLoader()]).then(function (res) {
-      var art = res[0];
+      var art = res[0].data;
       if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
       var templateId = art && art.display && art.display.renderSpec && art.display.renderSpec.templateId;
       if (!templateId) {
-        bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+        bodyEl.innerHTML = res[0].notPublished
+          ? '<div class="ifx-wl-empty">Chưa có nội dung — Admin chưa xuất bản tiện ích này</div>'
+          : '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
         return;
       }
       return IfxTemplateLoader.ensure(templateId).then(function () {
@@ -773,9 +781,9 @@
          tiêu đề/mô tả header lên đúng bản Kiến trúc 4 tầng nếu khác với registry tĩnh ở trên;
          KHÔNG fetch riêng, không có giai đoạn hiện mã rồi tự sửa. */
       if (instance.widget_type !== 'WGT-WAT-001') {
-        fetchWidgetArtifact(instance.widget_type).then(function (art) {
+        fetchWidgetArtifact(instance.widget_type).then(function (res) {
           if (!node.isConnected) return;
-          var c = art && art.content;
+          var c = res.data && res.data.content;
           if (!c) return;
           var h3 = node.querySelector('.ifx-widget__header > h3');
           if (c.title && h3 && h3.textContent !== c.title) h3.textContent = c.title;
@@ -1308,7 +1316,7 @@
         html +=
           '<div class="ifx-registry-item">' +
             '<div><div class="ifx-registry-item__name">' + display.title + tierChip +
-              (onDash ? ' <span class="ix-chip ix-chip-secondary" style="font-size:10px">Đã có</span>' : '') +
+              (onDash ? ' <span class="ix-chip ix-chip-secondary" style="font-size:10px">Đang sử dụng</span>' : '') +
             '</div><div class="ifx-registry-item__desc">' + display.description + '</div></div>' +
             '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-add-type="' + w.type + '" data-add-col="' + actionCol + '"' +
               ' data-add-locked="' + (locked ? '1' : '0') + '" data-add-max="' + (atMax ? '1' : '0') + '"' + btnDisabled + '>Thêm</button>' +

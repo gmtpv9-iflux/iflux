@@ -29,7 +29,7 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
   { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=r20261003g' },
-  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261003g' },
+  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261003i' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=r20260928n' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=r20260928q' },
   { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
@@ -37,8 +37,12 @@ var SIDEBAR_DEPS = [
   { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=r20260928q' }
 ];
 
+/* ifx-wl-stock-panel + ifx-wl-block = đúng cặp class cho viền/khung thẻ (watchlist.css,
+   ".ifx-wl-stock-panel.ifx-wl-block"), y như widgets/watchlist-page dùng ở /theo-doi — mount
+   trực tiếp IfluxWatchlistBlock vào 1 div trần (không class) sẽ KHÔNG có viền, vì component
+   watchlist-block.js không tự vẽ khung, luôn phải do nơi gọi bọc class này. */
 var SIDEBAR_LEFT_HTML =
-  '<div class="ifx-hub-watchlist" data-ifx-hub-watchlist></div>' +
+  '<div class="ifx-hub-watchlist ifx-wl-stock-panel ifx-wl-block" data-ifx-hub-watchlist data-ifx-wl-block></div>' +
   '<div class="ifx-hub-sidebar-canvas" data-ifx-hub-sidebar-canvas></div>';
 
 /* Card Hồ sơ — y nguyên profile.html (.ix-profile-sidebar), bind bởi profile-bind.js
@@ -83,9 +87,8 @@ var PROFILE_CARD_HTML = `
 
     <div style="padding:0 20px 20px">
       <div data-ifx-side-view>
-        <div style="font-size:14px;font-weight:600;color:var(--ix-text-primary);margin-bottom:12px">Chi tiết</div>
         <ul class="ix-detail-list">
-          <li data-ifx-privacy="username"><span class="ix-detail-label">Tên đăng nhập</span><span class="ix-detail-val"><span data-bind="username">—</span></span></li>
+          <li data-ifx-privacy="username"><span class="ix-detail-label ifx-label-icon" title="Tên đăng nhập"><i class="ti ti-at"></i></span><span class="ix-detail-val">@<span data-bind="username">—</span></span></li>
           <li data-ifx-own-only><span class="ix-detail-label">Email</span><span class="ix-detail-val"><span data-bind="email">—</span></span></li>
           <li data-ifx-privacy="status"><span class="ix-detail-label">Trạng thái</span><span class="ix-chip ix-chip-success" style="font-size:11px" data-bind="status_label">—</span></li>
           <li data-ifx-privacy="role"><span class="ix-detail-label">Vai trò</span><span class="ix-detail-val"><span data-bind="role">—</span></span></li>
@@ -119,7 +122,7 @@ var PROFILE_CARD_HTML = `
 
   <div class="ix-card ix-plan-card ix-mb-24" data-ifx-own-only data-ifx-plan-promo>
     <div class="ix-card-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px">
         <span class="ix-chip ix-chip-primary"><span data-bind="plan_name">—</span></span>
         <div class="ix-plan-price" data-bind="plan_price"><span class="ix-plan-price-cur">₫</span><span class="ix-plan-price-num">—</span><span class="ix-plan-price-per">/tháng</span></div>
       </div>

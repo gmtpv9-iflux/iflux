@@ -120,3 +120,17 @@
 @media (min-width: 768px) {
   .ifx-flex-row-md { flex-direction: row; }
 }
+
+/* Nhãn chữ → icon khi khu vực quá hẹp (vd Sidebar 2/12) mà nhãn chữ cố định (vd min-width 90px
+   của .ix-detail-label/.ifx-meta-list-key) làm tràn lề giá trị. Gắn kèm class nhãn hiện có, giữ
+   nghĩa qua title=; không đổi được min-width của class nhãn (dùng ở nhiều nơi khác vẫn cần chữ). */
+.ifx-label-icon {
+  min-width: 0 !important;
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-muted);
+}

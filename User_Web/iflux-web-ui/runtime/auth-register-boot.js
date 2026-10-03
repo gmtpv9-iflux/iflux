@@ -4,7 +4,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var ALL = [
-  ASSET + 'iflux-platform-boot.js?v=r20261003h',
+  ASSET + 'iflux-platform-boot.js?v=r20261003j',
   ASSET + 'iflux-api-bundle.js',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
   ASSET + 'auth.js?v=r20261002g',
