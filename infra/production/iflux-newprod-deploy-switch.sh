@@ -1,19 +1,19 @@
 #!/bin/bash
-# IFLUX_DEPLOY_TARGET=production
-# Atomic deploy switch — Production runtime (iflux.vn).
+# IFLUX_DEPLOY_TARGET=staging-2
+# Atomic deploy switch — Production runtime (iflux.vn / newprod).
 # Artifact = cùng cây nguồn với Staging (User_Web, Admin_Design_system, design_system, platform, modules… + backend).
-# (Marker IFLUX_DEPLOY_TARGET=production và tên file *-production giữ nguyên: bản script đang cài trên server kiểm tra chúng khi tự cập nhật.)
+# (Marker IFLUX_DEPLOY_TARGET=staging-2 và tên file *-newprod giữ nguyên: bản script đang cài trên server kiểm tra chúng khi tự cập nhật.)
 # CHỈ đụng:
-#   /var/www/iflux/production
-#   /var/www/iflux/releases-production
-#   /var/iflux/backend-production
-#   /etc/nginx/snippets/iflux-production-app.conf
-#   PM2 iflux-api-production
+#   /var/www/iflux/newprod
+#   /var/www/iflux/releases-newprod
+#   /var/iflux/backend-newprod
+#   /etc/nginx/snippets/iflux-newprod-app.conf
+#   PM2 iflux-api-newprod
 # Không lấy apply vhost production.iflux.vn.conf làm điều kiện thành công.
-# KHÔNG bao giờ chạm Staging 1 (/var/www/iflux/staging, /var/iflux/backend-staging).
-# (Stack "true production" cũ trước cutover 18/08/2026 — /var/www/iflux/production thời đó,
-#  PM2 iflux-api, DB `iflux` — đã retire hoàn toàn 03/10/2026, không còn tồn tại trên server.
-#  Tên "production" từ nay trỏ thẳng vào runtime đang chạy thật, không còn 2 nghĩa.)
+# KHÔNG bao giờ chạm Live Production
+#   (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api,
+#    iflux-production.conf, iflux-prod-app.conf)
+# hay Staging 1 (/var/www/iflux/staging, /var/iflux/backend-staging).
 # Chạy bằng root qua sudo (NOPASSWD) do user iflux-deploy (CI) gọi.
 set -euo pipefail
 
@@ -35,21 +35,20 @@ elif [ -n "${2:-}" ]; then
   exit 1
 fi
 
-FRONTEND_RELEASE="/var/www/iflux/releases-production/${RELEASE_ID}"
-FRONTEND_LIVE="/var/www/iflux/production"
-BACKEND_RELEASE="/var/iflux/backend-production/releases/${RELEASE_ID}"
-BACKEND_LIVE="/var/iflux/backend-production/current"
-BACKEND_SHARED_ENV="/var/iflux/backend-production/shared/.env"
-DEPLOY_META="/var/www/iflux/releases-production/${RELEASE_ID}.deploy"
-NGINX_APP_SRC="${DEPLOY_META}/iflux-production-app.conf"
-NGINX_APP_DEST="/etc/nginx/snippets/iflux-production-app.conf"
-SWITCH_SRC="${DEPLOY_META}/iflux-production-deploy-switch.sh"
-SWITCH_DEST="/usr/local/bin/iflux-production-deploy-switch.sh"
+FRONTEND_RELEASE="/var/www/iflux/releases-newprod/${RELEASE_ID}"
+FRONTEND_LIVE="/var/www/iflux/newprod"
+BACKEND_RELEASE="/var/iflux/backend-newprod/releases/${RELEASE_ID}"
+BACKEND_LIVE="/var/iflux/backend-newprod/current"
+BACKEND_SHARED_ENV="/var/iflux/backend-newprod/shared/.env"
+DEPLOY_META="/var/www/iflux/releases-newprod/${RELEASE_ID}.deploy"
+NGINX_APP_SRC="${DEPLOY_META}/iflux-newprod-app.conf"
+NGINX_APP_DEST="/etc/nginx/snippets/iflux-newprod-app.conf"
+SWITCH_SRC="${DEPLOY_META}/iflux-newprod-deploy-switch.sh"
+SWITCH_DEST="/usr/local/bin/iflux-newprod-deploy-switch.sh"
 
 run_migrations() {
   # schema_migrations chỉ có snapshot cũ. CẤM migrate-only.js full queue
   # — sẽ replay 001–061 và gãy. Chỉ apply file mới từ Task 05 (062+) lên iflux_production_next.
-  # (Tên DB iflux_production_next giữ nguyên — đổi tên DB là việc riêng, chưa làm trong lần dọn tên này.)
   local mig_dir="${BACKEND_RELEASE}/migrations"
   local f base already
   if [ ! -d "$BACKEND_RELEASE" ] || [ ! -d "$mig_dir" ]; then
@@ -102,11 +101,26 @@ move_news_media() {
   fi
 }
 
-# Guard duy nhất còn ý nghĩa sau khi dọn tên: không bao giờ được vô tình trỏ vào Staging 1.
 refuse_if_forbidden() {
   local file="$1"
   local live
   live="$(grep -v '^[[:space:]]*#' "$file")"
+  if printf '%s\n' "$live" | grep -E -q 'server_name[[:space:]]+(www\.)?iflux\.vn([[:space:]]|;|$)'; then
+    echo "Refusing $file: Live Production server_name" >&2
+    exit 1
+  fi
+  if printf '%s\n' "$live" | grep -F -q 'root /var/www/iflux/production'; then
+    echo "Refusing $file: Live Production web root" >&2
+    exit 1
+  fi
+  if printf '%s\n' "$live" | grep -F -q 'iflux-prod-app'; then
+    echo "Refusing $file: Live Production nginx snippet" >&2
+    exit 1
+  fi
+  if printf '%s\n' "$live" | grep -F -q 'proxy_pass http://127.0.0.1:3001'; then
+    echo "Refusing $file: Live Production API port 3001" >&2
+    exit 1
+  fi
   if printf '%s\n' "$live" | grep -F -q '/var/www/iflux/staging'; then
     echo "Refusing $file: Staging 1 web root" >&2
     exit 1
@@ -122,8 +136,8 @@ apply_nginx() {
     echo "Missing Git nginx snippet in $DEPLOY_META" >&2
     exit 1
   fi
-  if ! grep -F -q 'root /var/www/iflux/production' "$NGINX_APP_SRC"; then
-    echo "Refusing nginx app: missing production web root" >&2
+  if ! grep -F -q 'root /var/www/iflux/newprod' "$NGINX_APP_SRC"; then
+    echo "Refusing nginx app: missing newprod web root" >&2
     exit 1
   fi
   if ! grep -F -q '127.0.0.1:3003' "$NGINX_APP_SRC"; then
@@ -156,15 +170,19 @@ refresh_switch() {
     echo "Missing switch source: $SWITCH_SRC" >&2
     exit 1
   fi
-  if ! grep -F -q 'IFLUX_DEPLOY_TARGET=production' "$SWITCH_SRC"; then
-    echo "Refusing switch self-update: missing production marker" >&2
+  if ! grep -F -q 'IFLUX_DEPLOY_TARGET=staging-2' "$SWITCH_SRC"; then
+    echo "Refusing switch self-update: missing staging-2 marker" >&2
     exit 1
   fi
-  if ! grep -F -q 'FRONTEND_LIVE="/var/www/iflux/production"' "$SWITCH_SRC"; then
-    echo "Refusing switch self-update: missing production frontend live path" >&2
+  if ! grep -F -q 'FRONTEND_LIVE="/var/www/iflux/newprod"' "$SWITCH_SRC"; then
+    echo "Refusing switch self-update: missing newprod frontend live path" >&2
     exit 1
   fi
   live_fe="$(awk -F= '/^FRONTEND_LIVE=/{gsub(/"/,"",$2); print $2; exit}' "$SWITCH_SRC")"
+  if [ "$live_fe" = "/var/www/iflux/production" ]; then
+    echo "Refusing switch self-update: Live Production frontend path" >&2
+    exit 1
+  fi
   if [ "$live_fe" = "/var/www/iflux/staging" ]; then
     echo "Refusing switch self-update: Staging 1 frontend path" >&2
     exit 1
@@ -174,11 +192,11 @@ refresh_switch() {
 }
 
 start_or_restart_api() {
-  if pm2 describe iflux-api-production >/dev/null 2>&1; then
-    pm2 delete iflux-api-production
+  if pm2 describe iflux-api-newprod >/dev/null 2>&1; then
+    pm2 delete iflux-api-newprod
   fi
-  pm2 start src/server.js --name iflux-api-production --cwd "$BACKEND_LIVE"
-  echo "OK: PM2 iflux-api-production cwd=$BACKEND_LIVE"
+  pm2 start src/server.js --name iflux-api-newprod --cwd "$BACKEND_LIVE"
+  echo "OK: PM2 iflux-api-newprod cwd=$BACKEND_LIVE"
 }
 
 if [ "$MIGRATE_ONLY" = "1" ]; then
@@ -228,4 +246,4 @@ start_or_restart_api
 apply_nginx
 refresh_switch
 
-echo "OK: switched production frontend -> $FRONTEND_RELEASE, backend -> $BACKEND_RELEASE"
+echo "OK: switched newprod frontend -> $FRONTEND_RELEASE, backend -> $BACKEND_RELEASE"
