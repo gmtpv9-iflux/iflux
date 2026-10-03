@@ -456,3 +456,9 @@
   max-width: 420px;
   margin-inline: auto;
 }
+
+/* ── Phase 4: nút "Xem thêm" dưới Feed (pagination cursor thật, lazy-load cuộn-chạm-đáy là Phase 6) ── */
+.ifx-com2-loadmore {
+  display: block;
+  margin: var(--ifx-space-16) auto 0;
+}
