@@ -288,8 +288,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   margin: 0;
   width: 100%;
   font-family: var(--ifx-font-primary);
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-semibold);
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
   line-height: 1.35;
   color: var(--ix-text-primary);
   text-align: left;
