@@ -314,7 +314,25 @@ Timeline: lazy-load 10 bản tin/lần, cuộn xuống đáy mới tải thêm l
   - Đã test đầy đủ trên staging + production (tạo bài/feed/timeline/like/summary/xoá) — PASS.
   - **CHƯA làm**: trang Cộng đồng (`widgets/community-page`) vẫn hiển thị seed data tĩnh, CHƯA
     đọc/viết qua API Phase 1 này (nối dây Composer + Feed thật là việc tiếp theo, thuộc Phase 4).
-- [ ] **Phase 2 — Story/Chủ đề** (độc lập Phase 1, có thể làm song song)
+- [x] **Phase 2 — Story/Chủ đề (backend)** (2026-10-03):
+  - Migration `073_stories.sql` — bảng `stories` (title/description/author_id/stock_tags/sentiment/
+    status). KHÔNG lưu `agree_count`/`comment_count` làm cột riêng — đọc qua Interaction (cùng
+    nguyên tắc `social_posts`, §4.1): "Đồng tình" qua `interaction_likes` (entity_type='story',
+    action đã có sẵn trong REGISTRY từ trước), bình luận qua `interaction_comments`.
+  - API `backend/src/modules/community/stories.{service,routes}.js`, mount cùng prefix
+    `/api/community`: `POST /stories`, `GET /stories` (sort=latest|trending&range=day|week|month),
+    `GET /stories/:id`, `DELETE /stories/:id` (archive — tác giả hoặc admin), `POST`/`DELETE
+    /stories/:id/agree` (gọi lại `interaction-thread.service.likeEntity/unlikeEntity` với
+    entityType='story' — route public đặt tên `/agree` không phải `/like` để khớp §7.3, nhưng cơ
+    chế lưu trữ dùng lại nguyên, không viết thêm hệ riêng).
+  - `sort=trending` đếm số "Đồng tình" **phát sinh trong khoảng `range`** (không phải tổng toàn thời
+    gian) — đúng 2 chu kỳ Ngày/Tuần/Tháng của bảng "Chủ đề HOT" (§7.4), cố ý KHÔNG gộp với "Mã được
+    thảo luận nhiều" (nguồn khác, xem bảng §7.4).
+  - Topic Engine V1/V2 (state machine 5 trạng thái, Topic Score) — xác nhận SUPERSEDED, không có
+    dòng code nào trong Phase 2 này triển khai lại (đúng §8).
+  - Đã test đầy đủ trên staging (tạo chủ đề/agree/unagree/trending/archive) — PASS, không regression
+    Phase 1. **CHƯA làm**: trang Admin "Cộng đồng > Danh sách chủ đề" (§9 Phase 2 liệt kê, là UI
+    Admin riêng — chưa bắt buộc để các API trên hoạt động, để dành làm cùng lúc với Phase 4/5 UI).
 - [ ] **Phase 3 — Feed Ranking thật** (FeedScore — Phase 1 đang tạm dùng `created_at DESC` cho
   mode `trending`, chưa tính DirectFollowWeight/InteractionWeight/Recency/Engagement thật)
 - [ ] **Phase 4 — Composer UI** (nối Composer hiện tại — đang báo "đang hoàn thiện" — vào
