@@ -4,11 +4,11 @@
  * Merge Trang chủ cũ (Dashboard tùy chỉnh) + Tài khoản cũ (/tai-khoan) — xem
  * docs/SoT — Trang chủ = Cộng đồng, Cá nhân = Trang chủ cũ + Tài khoản cũ (Migration V1).md
  * Composite: widgets/home-page tự dựng khung 3 cột (buildPageFrame rightSidebar:true) —
- * Sidebar trái (Watchlist + canvas tùy chỉnh) · Main (5 tab) · Sidebar phải (Hồ sơ + Hoạt động
- * gần đây + widget host Admin). Luôn cần đăng nhập, không còn phiên bản vãng lai.
+ * Sidebar trái (Hồ sơ + Watchlist + canvas tùy chỉnh) · Main (5 tab) · Sidebar phải (Gói cước +
+ * Hoạt động gần đây + widget host Admin). Luôn cần đăng nhập, không còn phiên bản vãng lai.
  */
 
-var VER = '?v=r20261003c';
+var VER = '?v=r20261003d';
 
 export default {
   pageKey: 'home',

@@ -4,15 +4,16 @@
  * docs/SoT — Trang chủ = Cộng đồng, Cá nhân = Trang chủ cũ + Tài khoản cũ (Migration V1).md
  *
  * Bố cục 3 cột (buildPageFrame rightSidebar:true):
- *  - Sidebar trái (3/12): Watchlist cố định (IfluxWatchlistBlock, không qua dashboard-engine) +
- *    khu vực kéo-thả tiện ích tùy chỉnh ([data-ifx-hub-sidebar-canvas] — dashboard-engine.js,
- *    nhận widget user kéo từ Dashboard sang).
+ *  - Sidebar trái (3/12): card Hồ sơ (profile-bind.js, y nguyên profile.html, rút gọn — owner
+ *    yêu cầu 2026-10-03: nhãn → icon, bỏ Vai trò/Quốc gia/Tham gia) + Watchlist cố định
+ *    (IfluxWatchlistBlock, không qua dashboard-engine) + khu vực kéo-thả tiện ích tùy chỉnh
+ *    ([data-ifx-hub-sidebar-canvas] — dashboard-engine.js, nhận widget user kéo từ Dashboard sang).
  *  - Main (7/12): 5 tab — Dashboard | Affiliate | Liên kết thẻ | Riêng tư | Mật khẩu. 4 tab sau
  *    migrate VERBATIM từ User_Web/account/profile.html (giữ nguyên id/data-attribute), chạy qua
  *    CHÍNH runtime/account-feature-boot.js (đã tổng quát hoá cho context composite) — không viết
  *    lại logic nghiệp vụ Affiliate/Thanh toán/Riêng tư/Bảo mật.
- *  - Sidebar phải (2/12): card Hồ sơ (profile-bind.js, cũng y nguyên profile.html) + Hoạt động
- *    gần đây + Widget host Admin publishKey 'dashboard' section 'sidebar-right' (chỗ cho Template
+ *  - Sidebar phải (2/12): card Gói cước & ưu đãi (tách khỏi card Hồ sơ) + Hoạt động gần đây +
+ *    Widget host Admin publishKey 'dashboard' section 'sidebar-right' (chỗ cho Template
  *    "Promotion" — Phase 3, hiện trống tới khi Admin đặt widget).
  *
  * Trang luôn yêu cầu đăng nhập (AUTH_PAGES.home — runtime/page-keys.js) — không còn phiên bản
@@ -37,16 +38,10 @@ var SIDEBAR_DEPS = [
   { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=r20260928q' }
 ];
 
-/* ifx-wl-stock-panel + ifx-wl-block = đúng cặp class cho viền/khung thẻ (watchlist.css,
-   ".ifx-wl-stock-panel.ifx-wl-block"), y như widgets/watchlist-page dùng ở /theo-doi — mount
-   trực tiếp IfluxWatchlistBlock vào 1 div trần (không class) sẽ KHÔNG có viền, vì component
-   watchlist-block.js không tự vẽ khung, luôn phải do nơi gọi bọc class này. */
-var SIDEBAR_LEFT_HTML =
-  '<div class="ifx-hub-watchlist ifx-wl-stock-panel ifx-wl-block" data-ifx-hub-watchlist data-ifx-wl-block></div>' +
-  '<div class="ifx-hub-sidebar-canvas" data-ifx-hub-sidebar-canvas></div>';
-
 /* Card Hồ sơ — y nguyên profile.html (.ix-profile-sidebar), bind bởi profile-bind.js
-   (IfluxProfileSidebar) qua account-feature-boot.js, không viết lại. */
+   (IfluxProfileSidebar) qua account-feature-boot.js, không viết lại. Ở Sidebar TRÁI, trên
+   Watchlist (owner yêu cầu 2026-10-03) — scope [data-ifx-profile-sidebar] độc lập vị trí DOM,
+   chỉ cần tồn tại ĐÚNG 1 lần trong trang (profile-bind.js dùng querySelector, không phải All). */
 var PROFILE_CARD_HTML = `
 <div class="ix-profile-sidebar" data-ifx-profile-sidebar>
   <div class="ix-card ix-mb-24">
@@ -89,13 +84,10 @@ var PROFILE_CARD_HTML = `
       <div data-ifx-side-view>
         <ul class="ix-detail-list">
           <li data-ifx-privacy="username"><span class="ix-detail-label ifx-label-icon" title="Tên đăng nhập"><i class="ti ti-at"></i></span><span class="ix-detail-val">@<span data-bind="username">—</span></span></li>
-          <li data-ifx-own-only><span class="ix-detail-label">Email</span><span class="ix-detail-val"><span data-bind="email">—</span></span></li>
-          <li data-ifx-privacy="status"><span class="ix-detail-label">Trạng thái</span><span class="ix-chip ix-chip-success" style="font-size:11px" data-bind="status_label">—</span></li>
-          <li data-ifx-privacy="role"><span class="ix-detail-label">Vai trò</span><span class="ix-detail-val"><span data-bind="role">—</span></span></li>
-          <li data-ifx-own-only><span class="ix-detail-label">Số điện thoại</span><span class="ix-detail-val"><span data-bind="phone">—</span></span></li>
-          <li data-ifx-privacy="joined_at"><span class="ix-detail-label">Tham gia</span><span class="ix-detail-val"><span data-bind="joined_at">—</span></span></li>
-          <li data-ifx-privacy="country"><span class="ix-detail-label">Quốc gia</span><span class="ix-detail-val"><span data-bind="country">—</span></span></li>
-          <li data-ifx-privacy="bio"><span class="ix-detail-label">Giới thiệu</span><span class="ix-detail-val" style="font-size:13px;line-height:1.5"><span data-bind="bio">—</span></span></li>
+          <li data-ifx-own-only><span class="ix-detail-label ifx-label-icon" title="Email"><i class="ti ti-mail"></i></span><span class="ix-detail-val"><span data-bind="email">—</span></span></li>
+          <li data-ifx-privacy="status"><span class="ix-detail-label ifx-label-icon" title="Trạng thái"><i class="ti ti-activity"></i></span><span class="ix-chip ix-chip-success" style="font-size:11px" data-bind="status_label">—</span></li>
+          <li data-ifx-own-only><span class="ix-detail-label ifx-label-icon" title="Số điện thoại"><i class="ti ti-phone"></i></span><span class="ix-detail-val"><span data-bind="phone">—</span></span></li>
+          <li data-ifx-privacy="bio"><span class="ix-detail-label ifx-label-icon" title="Giới thiệu"><i class="ti ti-info-circle"></i></span><span class="ix-detail-val" style="font-size:13px;line-height:1.5"><span data-bind="bio">—</span></span></li>
         </ul>
         <div style="display:flex;gap:10px;margin-top:16px" data-ifx-own-only>
           <button type="button" class="ix-btn ix-btn-primary" style="flex:1" data-ifx-side-edit-open>
@@ -110,7 +102,6 @@ var PROFILE_CARD_HTML = `
         <div class="ix-form-group"><label class="ix-label">Tên đăng nhập</label><input type="text" class="ix-input" data-bind-input="username" /></div>
         <div class="ix-form-group"><label class="ix-label">Email</label><input type="email" class="ix-input" data-bind-input="email" /></div>
         <div class="ix-form-group"><label class="ix-label">Số điện thoại</label><input type="text" class="ix-input" data-bind-input="phone" /></div>
-        <div class="ix-form-group"><label class="ix-label">Quốc gia</label><input type="text" class="ix-input" data-bind-input="country" /></div>
         <div class="ix-form-group"><label class="ix-label">Giới thiệu</label><textarea class="ix-input" rows="3" data-bind-input="bio" style="resize:vertical"></textarea></div>
         <div style="display:flex;gap:10px;margin-top:8px">
           <button type="button" class="ix-btn ix-btn-primary" style="flex:1" id="btn-save-profile"><i class="ti ti-device-floppy" style="font-size:14px"></i> Lưu</button>
@@ -119,29 +110,45 @@ var PROFILE_CARD_HTML = `
       </div>
     </div>
   </div>
+</div>`;
 
-  <div class="ix-card ix-plan-card ix-mb-24" data-ifx-own-only data-ifx-plan-promo>
-    <div class="ix-card-body">
-      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px">
-        <span class="ix-chip ix-chip-primary"><span data-bind="plan_name">—</span></span>
-        <div class="ix-plan-price" data-bind="plan_price"><span class="ix-plan-price-cur">₫</span><span class="ix-plan-price-num">—</span><span class="ix-plan-price-per">/tháng</span></div>
-      </div>
-      <div data-ifx-plan-features></div>
-      <div style="margin:16px 0 8px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ix-text-muted);margin-bottom:6px">
-          <span>Chu kỳ thanh toán</span><span style="color:var(--ix-text-primary);font-weight:600"><span data-bind="plan_days">—</span></span>
-        </div>
-        <div style="height:6px;background:rgba(105,108,255,.2);border-radius:3px;overflow:hidden">
-          <div data-bind="plan_progress" style="width:0%;height:100%;background:var(--ix-accent);border-radius:3px"></div>
-        </div>
-      </div>
-      <a href="/goi-cuoc" class="ix-btn ix-btn-primary" data-ifx-plan-upgrade style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px">
-        <i class="ti ti-arrow-up-circle" style="font-size:13px"></i> Nâng cấp Premium
-      </a>
+/* ifx-wl-stock-panel + ifx-wl-block = đúng cặp class cho viền/khung thẻ (watchlist.css,
+   ".ifx-wl-stock-panel.ifx-wl-block"), y như widgets/watchlist-page dùng ở /theo-doi — mount
+   trực tiếp IfluxWatchlistBlock vào 1 div trần (không class) sẽ KHÔNG có viền, vì component
+   watchlist-block.js không tự vẽ khung, luôn phải do nơi gọi bọc class này. Card Hồ sơ đứng
+   TRÊN Watchlist (owner yêu cầu 2026-10-03). */
+var SIDEBAR_LEFT_HTML =
+  PROFILE_CARD_HTML +
+  '<div class="ifx-hub-watchlist ifx-wl-stock-panel ifx-wl-block" data-ifx-hub-watchlist data-ifx-wl-block></div>' +
+  '<div class="ifx-hub-sidebar-canvas" data-ifx-hub-sidebar-canvas></div>';
+
+/* Gói cước & ưu đãi — tách riêng khỏi card Hồ sơ (card Hồ sơ đã dời sang Sidebar trái), ở lại
+   Sidebar phải. Binding qua profile-bind.js dùng querySelectorAll toàn trang cho khối này
+   ([data-ifx-plan-promo]/.ix-plan-card), không phụ thuộc vị trí DOM — tách ra an toàn. */
+var PLAN_PROMO_HTML = `
+<div class="ix-card ix-plan-card ix-mb-24" data-ifx-own-only data-ifx-plan-promo>
+  <div class="ix-card-body">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px">
+      <span class="ix-chip ix-chip-primary"><span data-bind="plan_name">—</span></span>
+      <div class="ix-plan-price" data-bind="plan_price"><span class="ix-plan-price-cur">₫</span><span class="ix-plan-price-num">—</span><span class="ix-plan-price-per">/tháng</span></div>
     </div>
+    <div data-ifx-plan-features></div>
+    <div style="margin:16px 0 8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ix-text-muted);margin-bottom:6px">
+        <span>Chu kỳ thanh toán</span><span style="color:var(--ix-text-primary);font-weight:600"><span data-bind="plan_days">—</span></span>
+      </div>
+      <div style="height:6px;background:rgba(105,108,255,.2);border-radius:3px;overflow:hidden">
+        <div data-bind="plan_progress" style="width:0%;height:100%;background:var(--ix-accent);border-radius:3px"></div>
+      </div>
+    </div>
+    <a href="/goi-cuoc" class="ix-btn ix-btn-primary" data-ifx-plan-upgrade style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px">
+      <i class="ti ti-arrow-up-circle" style="font-size:13px"></i> Nâng cấp Premium
+    </a>
   </div>
 </div>`;
 
+/* Hoạt động gần đây — chỉ tiêu đề + thời gian tương đối (bỏ avatar, xếp dọc — owner yêu cầu
+   2026-10-03). Nội dung thật do profile-activity-page.js render vào [data-ifx-hub-activity]. */
 var ACTIVITY_HTML = '<div class="ix-card"><div class="ix-card-header"><div class="ix-card-title">Hoạt động gần đây</div></div>' +
   '<div class="ix-card-body" style="padding-top:0"><div id="ifx-profile-activity" data-ifx-hub-activity></div></div></div>';
 
@@ -478,7 +485,7 @@ export async function mount(el) {
   frame.rightSidebarContent = rightAside ? rightAside.querySelector('.ifx-shell-sidebar-content') : null;
 
   frame.sidebarContent.innerHTML = SIDEBAR_LEFT_HTML;
-  if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = PROFILE_CARD_HTML + ACTIVITY_HTML;
+  if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = PLAN_PROMO_HTML + ACTIVITY_HTML;
   frame.mainContent.innerHTML = mainHtml();
 
   /* Cầu nối cho account-feature-boot.js (activateAccountProfilePanel) mount lazy tab Dashboard
