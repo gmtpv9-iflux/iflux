@@ -1,7 +1,7 @@
 /**
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
 
@@ -21,7 +21,7 @@ var CORE_TIERS = [
   [
     ASSET + 'runtime/page-layout-engine.js?v=r20260928n',
     ASSET + 'stock-mentions.js?v=r20260928n',
-    ASSET + 'news-store.js?v=r20260928r',
+    ASSET + 'news-store.js?v=r20261002x',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     ASSET + 'profile-users-store.js',
     ASSET + 'profile-links.js',

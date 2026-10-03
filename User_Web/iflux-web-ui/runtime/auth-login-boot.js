@@ -1,13 +1,13 @@
 /**
  * Phase A — Auth login: Shell Entry tối thiểu + Feature (không viết lại nghiệp vụ).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var SHELL = [
-  ASSET + 'iflux-platform-boot.js?v=appHeader20260928',
+  ASSET + 'iflux-platform-boot.js?v=r20261003l',
   ASSET + 'iflux-api-bundle.js',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
   ASSET + 'auth.js?v=r20261002g',
@@ -20,7 +20,7 @@ var FEATURE = [
   ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
   ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'iflux-web-ui.js?v=r20261002a',
+  ASSET + 'iflux-web-ui.js?v=r20261003m',
   ASSET + 'auth-login-init.js?v=r20260928q'
 ];
 

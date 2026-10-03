@@ -271,11 +271,13 @@ async function previewAdmin(pageKey, articleOverlay) {
     var seoPlatform = require('../seo-platform/seo-platform.service');
     var healthMod = require('../seo-platform/health');
     var contractBuilder = require('../seo-platform/seo-contract');
+    /* Mặc định xem trước/health-check khi không truyền pageKey = trang chủ thật hiện tại
+       (Cộng đồng) — trước đây '/thi-truong' (Thị trường, đã xoá 2026-10-03). */
     var path =
       (pageKey && contractBuilder.PAGE_KEY_TO_PATH[pageKey]) ||
-      '/thi-truong';
+      '/';
     var contract = await seoPlatform.resolveContract({
-      pageKey: pageKey || 'market',
+      pageKey: pageKey || 'community',
       path: path,
       httpStatus: 200
     });

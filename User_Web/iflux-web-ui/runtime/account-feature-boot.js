@@ -2,7 +2,7 @@
  * Phase A — Feature Tài khoản (sau App Shell Entry).
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
 import { mountPageWidgets } from './page-widgets.js?v=r20260929e';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -44,16 +44,25 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'profile-chat-store.js?v=r20260928n',
   ASSET + 'stock-mentions.js?v=r20260928n',
   ASSET + 'stock-store.js?v=r20260928n',
-  ASSET + 'news-store.js?v=r20260928r',
+  ASSET + 'news-store.js?v=r20261002x',
   ASSET + 'news-ui.js?v=r20260929a',
   ASSET + 'profile-page.js'
 ];
 
-function waitShellReady(pageKey) {
-  if (window.__IFLUX_SHELL_READY === pageKey) return Promise.resolve();
+/* Chờ Shell sẵn sàng — tổng quát theo pageKey (mảng chấp nhận nhiều key), vì script này giờ
+ * boot từ CẢ 2 ngữ cảnh: trang tĩnh SHELL_ONLY cũ ('account', bắn qua event 'iflux-shell-ready')
+ * LẪN trang composite mới ('home' — Cá nhân, Shell đã sẵn sàng ngay khi page-runtime gọi tới
+ * composite widget, không bắn event riêng — coi như sẵn sàng luôn). */
+function waitShellReady(pageKeys) {
+  var keys = [].concat(pageKeys);
+  if (keys.indexOf(window.__IFLUX_SHELL_READY) >= 0) return Promise.resolve();
+  if (keys.indexOf('home') >= 0 && document.querySelector('[data-ifx-page-runtime]')) {
+    /* Composite page (vd Cá nhân): page-runtime đã mount tới widget này nghĩa là Shell xong rồi. */
+    return Promise.resolve();
+  }
   return new Promise(function (resolve) {
     function onReady(ev) {
-      if (ev.detail && ev.detail.pageKey === pageKey) {
+      if (ev.detail && keys.indexOf(ev.detail.pageKey) >= 0) {
         window.removeEventListener('iflux-shell-ready', onReady);
         resolve();
       }
@@ -140,6 +149,12 @@ function activateAccountProfilePanel(tabId) {
   document.querySelectorAll('.ix-tab-content').forEach(function (panel) {
     panel.classList.toggle('active', panel.id === tabId);
   });
+  /* Tab Dashboard (chỉ có ở trang Cá nhân mới) mount lazy qua cầu nối widgets/home-page —
+     không mount sẵn vì canvas dashboard-engine khá nặng (template loader, watchlist…). */
+  if (tabId === 'tab-dashboard' && window.IfluxHomeDashboardTab && window.IfluxHomeDashboardTab.ensureMounted) {
+    var panel = document.getElementById('tab-dashboard');
+    if (panel) window.IfluxHomeDashboardTab.ensureMounted(panel);
+  }
 }
 
 /** Mobile: sidebar chỉ trên tab Hồ sơ. Desktop: luôn hiện. */
@@ -266,7 +281,9 @@ function bootAccountPage() {
     var params = new URLSearchParams(location.search);
     var tab = params.get('tab');
     if (!tab) {
-      switchAccountProfileTab('tab-affiliate');
+      /* Không ?tab= → mặc định theo resolver (tab-dashboard ở trang Cá nhân mới /ca-nhan,
+         tab-affiliate ở /tai-khoan cũ — xem resolveActiveAccountTabId trong iflux-platform-boot.js). */
+      switchAccountProfileTab(getActiveAccountTabIdFromResolver());
       clearEarlyAccountShellHtmlState();
       return;
     }
@@ -334,19 +351,31 @@ function bootAccountPage() {
   if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
 }
 
-async function main() {
-  await waitShellReady('account');
+/** Gọi lại được nhiều lần (export) — trang Cá nhân mới (composite, soft-nav) rebuild DOM mỗi lần
+ * ghé lại nên cần boot lại để bind đúng node mới; loadScriptsSequential tự cache theo src, gọi
+ * lại không tải/":chạy đôi" classic script. */
+export async function boot() {
+  await waitShellReady(['account', 'home']);
   var scripts = CORE_SCRIPTS.slice();
   if (isPublicProfileBoot()) {
     scripts = scripts.concat(PUBLIC_PROFILE_SCRIPTS);
   }
   await loadScriptsSequential(scripts);
   bootAccountPage();
-  /* Widget Placement trang Tài khoản → host Sidebar / Main của khung chung. */
-  var layout = document.querySelector('.ifx-shell-layout');
-  if (layout) await mountPageWidgets(layout.parentElement, 'account');
+  /* Widget Placement publishKey 'account' — CHỈ cho trang /tai-khoan cũ (SHELL_ONLY). Trang Cá
+     nhân mới (pageKey 'home') tự quản sidebar/widget riêng, không qua publishKey này nữa. */
+  if (window.__IFLUX_SHELL_READY === 'account') {
+    var layout = document.querySelector('.ifx-shell-layout');
+    if (layout) await mountPageWidgets(layout.parentElement, 'account');
+  }
 }
 
-main().catch(function (err) {
-  if (window.console && console.error) console.error('[Account Feature] boot failed', err);
-});
+/* /tai-khoan cũ (SHELL_ONLY, luôn hard-reload) → tự boot khi module nạp, như trước giờ.
+   Trang Cá nhân mới (composite, có [data-ifx-page-runtime]) soft-nav rebuild DOM mỗi lần ghé —
+   widgets/home-page/index.js tự gọi boot() lại sau khi dựng markup, KHÔNG tự boot ở đây (tránh
+   chạy 2 lần trên cùng 1 DOM lúc mới vào trang lần đầu). */
+if (!document.querySelector('[data-ifx-page-runtime]')) {
+  boot().catch(function (err) {
+    if (window.console && console.error) console.error('[Account Feature] boot failed', err);
+  });
+}

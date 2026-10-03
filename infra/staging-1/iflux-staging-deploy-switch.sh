@@ -9,9 +9,8 @@
 #   /etc/nginx/snippets/iflux-staging-app.conf
 #   PM2 iflux-api-staging (user iflux-app)
 # KHÔNG bao giờ chạm Production
-#   (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api,
-#    iflux-production.conf, iflux-prod-app.conf)
-# hay Staging 2 (/var/www/iflux/newprod, /var/iflux/backend-newprod).
+#   (/var/www/iflux/production, /var/iflux/backend-production, PM2 iflux-api-production,
+#    iflux-production-app.conf).
 # Chạy bằng root qua sudo (NOPASSWD) do user iflux-deploy (CI) gọi.
 set -euo pipefail
 

@@ -14,13 +14,18 @@ var db = require('../../core/database/connection');
 var mediaService = require('../media/media.service');
 
 var PATH_TO_PAGE_KEY = {
-  '/': 'dashboard',
-  '/thi-truong': 'market',
+  /* Trang chủ thật = Cộng đồng từ 2026-10-03 (xem SoT Migration V1) — "/trang-chu" cũ đổi tên
+     "Cá nhân", path mới "/ca-nhan", vẫn dùng pageKey SEO "dashboard" (chưa đổi tên pageKey SEO
+     để tránh vỡ dữ liệu site-seo đã cấu hình theo key này). */
+  /* /thi-truong đã xoá 2026-10-03 (Dòng tiền phản ánh đủ) — nginx 301 sang /dong-tien, không
+     còn map pageKey SEO riêng cho path này. */
+  '/': 'community',
+  '/ca-nhan': 'dashboard',
   '/trang-chu': 'dashboard',
   '/nha-cua-toi': 'dashboard',
   '/dong-tien': 'flow',
   '/tin-tuc': 'news',
-  '/cong-dong': 'news',
+  '/cong-dong': 'community',
   '/co-phieu': 'stocks',
   '/nganh': 'sectors',
   '/he-sinh-thai': 'ecosystems',
@@ -34,7 +39,7 @@ var PATH_TO_PAGE_KEY = {
 };
 
 var SITEMAP_STATIC = [
-  { pageKey: 'market', path: '/thi-truong', changefreq: 'hourly', priority: '1.0' },
+  { pageKey: 'community', path: '/', changefreq: 'hourly', priority: '1.0' },
   { pageKey: 'news', path: '/tin-tuc', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'flow', path: '/dong-tien', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'stocks', path: '/co-phieu', changefreq: 'daily', priority: '0.8' },
@@ -57,7 +62,10 @@ function pageKeyFromPath(path) {
   if (/^\/(?:tin-tuc|cong-dong)\/danh-muc\//i.test(clean)) return 'com-cat';
   if (/^\/(?:tin-tuc|cong-dong)\/chu-de\//i.test(clean)) return 'com-topic';
   if (/^\/(?:tin-tuc|cong-dong)\/bai-viet\//i.test(clean)) return 'news';
-  return PATH_TO_PAGE_KEY[clean] || 'market';
+  /* Mặc định cuối cùng = trang chủ thật hiện tại (Cộng đồng) — trước đây là 'market' (Thị
+     trường), đã xoá 2026-10-03. PATH_TO_PAGE_KEY[clean] đã check ở đầu hàm (dòng 56), không
+     cần lặp lại ở đây. */
+  return 'community';
 }
 
 function decodeSeg(raw) {
@@ -825,7 +833,9 @@ function buildRobotsTxt() {
 
 async function resolveFaviconRedirect() {
   try {
-    var eff = await siteSeo.getPublicEffective('market');
+    /* favicon_url là cấu hình toàn site, chỉ cần đọc qua 1 pageKey chắc chắn có effective config
+       — trước đây dùng 'market' (đã xoá 2026-10-03), đổi sang 'community' (trang chủ thật hiện tại). */
+    var eff = await siteSeo.getPublicEffective('community');
     var url = eff && eff.favicon_url ? String(eff.favicon_url).trim() : '';
     if (url) return url;
   } catch (e) {

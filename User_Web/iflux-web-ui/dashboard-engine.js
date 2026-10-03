@@ -6,12 +6,18 @@
      KHÔNG còn renderer riêng theo widget_type. ctx.title/description để rỗng để Template
      không tự vẽ header (header/mô tả/actions của thẻ dashboard do buildWidgetNode dựng). */
   var _artifactCache = {};
+  /* Trả { data, notPublished } — phân biệt "Admin chưa publish widget này" (404, trạng thái
+     thiếu NỘI DUNG, không phải lỗi code) với lỗi thật (mạng/500/JSON hỏng) để
+     mountWidgetBody hiện đúng thông báo, dễ nhận ra ngay đây là thiếu dữ liệu Admin. */
   function fetchWidgetArtifact(id) {
     if (_artifactCache[id]) return _artifactCache[id];
     _artifactCache[id] = fetch('/api/widgets/' + encodeURIComponent(id), { headers: { Accept: 'application/json' } })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (body) { return (body && body.data) || null; })
-      .catch(function () { return null; });
+      .then(function (res) {
+        if (res.ok) return res.json().then(function (body) { return { data: (body && body.data) || null, notPublished: false }; });
+        if (res.status === 404) return { data: null, notPublished: true };
+        return { data: null, notPublished: false };
+      })
+      .catch(function () { return { data: null, notPublished: false }; });
     return _artifactCache[id];
   }
 
@@ -41,11 +47,13 @@
     }
     bodyEl.innerHTML = '<div class="ifx-wl-empty">Đang tải tiện ích…</div>';
     Promise.all([fetchWidgetArtifact(widgetType), ensureTemplateLoader()]).then(function (res) {
-      var art = res[0];
+      var art = res[0].data;
       if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
       var templateId = art && art.display && art.display.renderSpec && art.display.renderSpec.templateId;
       if (!templateId) {
-        bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+        bodyEl.innerHTML = res[0].notPublished
+          ? '<div class="ifx-wl-empty">Chưa có nội dung — Admin chưa xuất bản tiện ích này</div>'
+          : '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
         return;
       }
       return IfxTemplateLoader.ensure(templateId).then(function () {
@@ -590,16 +598,16 @@
     var reg = registry();
     if (!reg || !reg.SIDEBAR_DEFAULT) return layout;
 
+    /* WGT-PRF* (Hồ sơ / Gói cước) không còn được dashboard-engine dựng mới nữa — cả trang Cá
+       nhân mới lẫn /tai-khoan cũ đều vẽ card Hồ sơ bằng markup riêng (profile-bind.js), không
+       qua widget-registry. Đoạn dưới chỉ CÒN để dọn an toàn dữ liệu localStorage cũ (nếu ai đã
+       lưu layout từ trước có WGT-PRF) — ép về sidebar + bỏ trùng, KHÔNG tự thêm mới, để không
+       render ra một thẻ Hồ sơ/Gói cước thứ 2, trùng với card đã có sẵn ở Sidebar phải. */
     layout.widgets.forEach(function (w) {
       var t = w.widget_type;
       if (t && t.indexOf('WGT-PRF') === 0) {
         w.scope = SCOPES.sidebar;
         w.column = SIDEBAR_COL;
-        return;
-      }
-      if (widgetScope(w) === SCOPES.sidebar) {
-        w.scope = SCOPES.dashboard;
-        w.column = !w.column || w.column === SIDEBAR_COL ? 'left' : w.column;
       }
     });
 
@@ -613,19 +621,6 @@
       return true;
     });
 
-    reg.SIDEBAR_DEFAULT.forEach(function (def, i) {
-      var exists = layout.widgets.some(function (w) { return w.widget_type === def.widget_type; });
-      if (!exists) {
-        layout.widgets.push(migrateWidget({
-          instance_id: uid(),
-          widget_type: def.widget_type,
-          scope: SCOPES.sidebar,
-          column: SIDEBAR_COL,
-          position: i,
-          config: def.config || {}
-        }, layout.widgets.length));
-      }
-    });
     normalizeLayout(layout);
     return layout;
   }
@@ -786,9 +781,9 @@
          tiêu đề/mô tả header lên đúng bản Kiến trúc 4 tầng nếu khác với registry tĩnh ở trên;
          KHÔNG fetch riêng, không có giai đoạn hiện mã rồi tự sửa. */
       if (instance.widget_type !== 'WGT-WAT-001') {
-        fetchWidgetArtifact(instance.widget_type).then(function (art) {
+        fetchWidgetArtifact(instance.widget_type).then(function (res) {
           if (!node.isConnected) return;
-          var c = art && art.content;
+          var c = res.data && res.data.content;
           if (!c) return;
           var h3 = node.querySelector('.ifx-widget__header > h3');
           if (c.title && h3 && h3.textContent !== c.title) h3.textContent = c.title;
@@ -943,14 +938,31 @@
     if (!canvas) return;
     canvas.innerHTML = '';
 
-    widgetsInColumn(layout, SIDEBAR_COL, SCOPES.sidebar)
-      .filter(function (inst) {
-        return inst.widget_type && inst.widget_type.indexOf('WGT-PRF') === 0;
-      })
-      .forEach(function (inst) {
-        var node = buildWidgetNode(inst, false);
-        if (node) canvas.appendChild(node);
-      });
+    widgetsInColumn(layout, SIDEBAR_COL, SCOPES.sidebar).forEach(function (inst) {
+      /* WGT-PRF* (Hồ sơ/Gói cước) đã có card riêng (markup + profile-bind.js) ở Sidebar phải —
+         bỏ qua ở đây để không hiện trùng 2 nơi (xem ghi chú ensureSidebarDefaults). */
+      if (inst.widget_type && inst.widget_type.indexOf('WGT-PRF') === 0) return;
+      var node = buildWidgetNode(inst, false);
+      if (!node) return;
+      /* Widget user kéo từ Dashboard sang — cho gỡ lại ngay tại đây, vì khu vực này không có
+         nút "Tùy chỉnh" riêng như Dashboard. */
+      var actions = node.querySelector('.ifx-widget__actions');
+      if (actions) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ix-btn ix-btn-outline ix-btn-sm ifx-widget-remove';
+        btn.title = 'Gỡ tiện ích';
+        btn.innerHTML = '<i class="ti ti-x"></i>';
+        btn.addEventListener('click', function () {
+          layout.widgets = layout.widgets.filter(function (w) { return w.instance_id !== inst.instance_id; });
+          saveLayout(layout);
+          renderSidebarStack(canvas, layout);
+          if (global.IfxToast) IfxToast.show('Đã gỡ tiện ích', 'info');
+        });
+        actions.appendChild(btn);
+      }
+      canvas.appendChild(node);
+    });
 
     // Top Watchlist (WGT-COM-004) là shared/custom — không hardcode khi Widget tùy chỉnh tắt.
     // User thêm qua Tùy chỉnh nếu Admin bật shared cho trang dashboard.
@@ -1008,15 +1020,21 @@
     scope = scope || SCOPES.dashboard;
     var w = getWidget(layout, id);
     if (!w) return;
-
-    var others = layout.widgets.filter(function (item) { return widgetScope(item) !== scope; });
-    var scoped = layout.widgets.filter(function (item) { return widgetScope(item) === scope; })
-      .filter(function (x) { return x.instance_id !== id; });
-
-    w = getWidget(layout, id);
+    /* Đổi scope TRƯỚC khi lọc others/scoped theo instance_id (không theo widgetScope cũ) — lọc
+       theo scope cũ như trước đây khiến w (đổi scope) vẫn lọt vào "others" (điều kiện scope cũ
+       !== scope mới vẫn đúng tại thời điểm lọc) RỒI lại được chèn thêm vào "scoped"/"dash" →
+       cùng 1 object xuất hiện 2 lần trong layout.widgets (bug khi kéo-thả đổi vùng Dashboard ↔
+       Sidebar — trong-scope reorder cũ không lộ vì scope không đổi). */
     w.scope = scope;
 
+    var others = layout.widgets.filter(function (item) {
+      return item.instance_id !== id && widgetScope(item) !== scope;
+    });
+
     if (scope === SCOPES.sidebar) {
+      var scoped = layout.widgets.filter(function (item) {
+        return item.instance_id !== id && widgetScope(item) === scope;
+      });
       targetCol = SIDEBAR_COL;
       if (targetIndex < 0) targetIndex = 0;
       if (targetIndex > scoped.length) targetIndex = scoped.length;
@@ -1026,11 +1044,8 @@
       return;
     }
 
-    var sidebar = layout.widgets.filter(function (item) { return widgetScope(item) === SCOPES.sidebar; });
     var dash = dashboardWidgetsOrdered(layout).filter(function (x) { return x.instance_id !== id; });
 
-    w = getWidget(layout, id);
-    w.scope = scope;
     w.column = DASH_GRID_COL;
 
     if (targetIndex < 0) targetIndex = 0;
@@ -1041,7 +1056,7 @@
       x.position = i;
       ensureWidgetWidth(x);
     });
-    layout.widgets = sidebar.concat(dash);
+    layout.widgets = others.concat(dash);
   }
 
   function getColumnAt(canvas, clientX, scope) {
@@ -1064,6 +1079,21 @@
     var dragId = null;
     var sourceEl = null;
     var hoverCol = null;
+    /* Kéo từ Dashboard thả sang khu tùy chỉnh ở Sidebar trái — đổi scope widget ngay khi thả
+       (xem docs/SoT Migration V1 §4/§7b). Chỉ áp dụng khi kéo TỪ Dashboard; widget trong Sidebar
+       chưa có drag handle của chính nó (renderSidebarStack luôn render editMode=false). */
+    var sidebarCanvasEl = dragScope === SCOPES.dashboard
+      ? document.querySelector('[data-ifx-hub-sidebar-canvas]')
+      : null;
+    var overSidebar = false;
+
+    function clearSidebarMarks() {
+      if (!sidebarCanvasEl) return;
+      sidebarCanvasEl.classList.remove('is-drag-over');
+      sidebarCanvasEl.querySelectorAll('[data-drop-placeholder]').forEach(function (el) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      });
+    }
 
     function clearMarks() {
       canvas.querySelectorAll('[data-drop-placeholder]').forEach(function (el) {
@@ -1072,9 +1102,31 @@
       canvas.querySelectorAll('.ifx-widget').forEach(function (w) {
         w.classList.remove('is-drop-push-before', 'is-drop-push-after', 'is-dragging');
       });
+      clearSidebarMarks();
       if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
       ghost = null;
       hoverCol = null;
+      overSidebar = false;
+    }
+
+    function isOverSidebar(clientX, clientY) {
+      if (!sidebarCanvasEl) return false;
+      var rect = sidebarCanvasEl.getBoundingClientRect();
+      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+    }
+
+    function updateSidebarDropIndicator(clientY) {
+      sidebarCanvasEl.querySelectorAll('[data-drop-placeholder]').forEach(function (el) {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      });
+      var idx = findInsertIndex(sidebarCanvasEl, clientY, dragId);
+      var ph = document.createElement('div');
+      ph.className = 'ifx-drop-placeholder';
+      ph.setAttribute('data-drop-placeholder', '1');
+      ph.style.minHeight = (ghost && ghost._height ? ghost._height : 72) + 'px';
+      var widgets = sidebarCanvasEl.querySelectorAll('.ifx-widget');
+      if (idx >= widgets.length) sidebarCanvasEl.appendChild(ph);
+      else sidebarCanvasEl.insertBefore(ph, widgets[idx]);
     }
 
     function updateDropIndicator(colKey, clientY) {
@@ -1112,6 +1164,25 @@
       ghost.style.left = (e.clientX - ghost._offsetX) + 'px';
       ghost.style.top = (e.clientY - ghost._offsetY) + 'px';
 
+      if (sidebarCanvasEl && isOverSidebar(e.clientX, e.clientY)) {
+        if (!overSidebar) {
+          overSidebar = true;
+          sidebarCanvasEl.classList.add('is-drag-over');
+          canvas.querySelectorAll('[data-drop-placeholder]').forEach(function (el) {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          });
+          canvas.querySelectorAll('.ifx-widget').forEach(function (w) {
+            w.classList.remove('is-drop-push-before', 'is-drop-push-after');
+          });
+        }
+        updateSidebarDropIndicator(e.clientY);
+        return;
+      }
+      if (overSidebar) {
+        overSidebar = false;
+        clearSidebarMarks();
+      }
+
       var colKey = getColumnAt(canvas, e.clientX, dragScope);
       hoverCol = colKey;
       updateDropIndicator(colKey, e.clientY);
@@ -1123,6 +1194,21 @@
 
       if (!dragId) {
         clearMarks();
+        return;
+      }
+
+      if (overSidebar) {
+        var sidebarIndex = findInsertIndex(sidebarCanvasEl, e.clientY, dragId);
+        moveWidget(layout, dragId, SIDEBAR_COL, sidebarIndex, SCOPES.sidebar);
+        if (typeof afterChange === 'function') afterChange();
+        else {
+          renderCanvas(canvas, layout, true);
+          renderSidebarStack(sidebarCanvasEl, layout);
+        }
+        if (global.IfxToast) IfxToast.show('Đã chuyển tiện ích sang Sidebar trái', 'info');
+        clearMarks();
+        dragId = null;
+        sourceEl = null;
         return;
       }
 
@@ -1230,7 +1316,7 @@
         html +=
           '<div class="ifx-registry-item">' +
             '<div><div class="ifx-registry-item__name">' + display.title + tierChip +
-              (onDash ? ' <span class="ix-chip ix-chip-secondary" style="font-size:10px">Đã có</span>' : '') +
+              (onDash ? ' <span class="ix-chip ix-chip-secondary" style="font-size:10px">Đang sử dụng</span>' : '') +
             '</div><div class="ifx-registry-item__desc">' + display.description + '</div></div>' +
             '<button type="button" class="ix-btn ix-btn-primary ix-btn-sm" data-add-type="' + w.type + '" data-add-col="' + actionCol + '"' +
               ' data-add-locked="' + (locked ? '1' : '0') + '" data-add-max="' + (atMax ? '1' : '0') + '"' + btnDisabled + '>Thêm</button>' +

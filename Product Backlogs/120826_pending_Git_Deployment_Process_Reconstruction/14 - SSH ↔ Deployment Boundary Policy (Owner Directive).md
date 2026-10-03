@@ -1,5 +1,7 @@
 # 14 — SSH ↔ Deployment Boundary Policy (Owner Directive, 2026-08-14)
 
+> **SUPERSEDED (2026-10-03):** Tên gọi trong tài liệu này ("Staging 2", "newprod", domain `production.iflux.vn`) không còn đúng thực tế. Owner đã chốt dọn sạch + chuẩn hoá tên: hệ thống thực tế chỉ còn **Staging** (`staging.iflux.vn`) và **Production** (`iflux.vn`, trước đây gọi nội bộ là "newprod"/"Staging 2"). Stack "Production" cũ mô tả trong tài liệu này (`/var/www/iflux/production` thời điểm 2026-08, PM2 `iflux-api`, DB `iflux`) đã retire hoàn toàn. Domain `production.iflux.vn` không còn phân giải DNS. Owner cũng đã cấp quyền SSH đứng cho mọi trường hợp không đi được qua CI/CD (không cần hỏi lại mỗi lần như mục đích ban đầu của tài liệu này). Giữ nguyên nội dung bên dưới để tham khảo lịch sử — không dùng làm nguồn sự thật cho tên gọi/ranh giới hiện tại.
+
 **Trạng thái: LOCKED — SoT cho mọi thao tác SSH/deploy kể từ ngày ban hành.**
 **Nguồn:** Chỉ thị trực tiếp Owner trong chat, ngay sau `13 - Production ↔ Staging Baseline Verification Report.md` và khi bắt đầu Phase 3 (dựng `production.iflux.vn`).
 

@@ -900,7 +900,7 @@ function resolveUserWebRoot() {
   if (process.env.IFLUX_WEB_ROOT) return process.env.IFLUX_WEB_ROOT;
   if (process.env.APP_ENV === 'staging') return '/var/www/iflux/staging';
   if (process.env.APP_ENV === 'production') {
-    return process.env.DEPLOY_WEB_PRODUCTION || '/var/www/iflux/newprod';
+    return process.env.DEPLOY_WEB_PRODUCTION || '/var/www/iflux/production';
   }
   const path = require('path');
   return path.resolve(__dirname, '../../../..');

@@ -1,0 +1,458 @@
+/* iFlux User Web — Cộng đồng (/cong-dong), CSS cục bộ (chỉ trang này dùng).
+ * Prefix .ifx-com2-* để không đụng .ifx-com-* (đã dùng cho Tin tức — community cũ).
+ * Token: dùng đúng DS (--ifx-*), không dùng --ix-*/--color-* cũ.
+ * Phase 0: nội dung sidebar/feed là seed data (xem community-page.js) — style vẫn
+ * dùng chuẩn DS (.ifx-card/.ifx-btn/.ifx-badge/.ifx-tabs/.ifx-avatar) để khi thay seed
+ * bằng API thật không cần viết lại CSS.
+ * Spacing: KHÔNG tự bọc thêm div/gap riêng — mọi card là con trực tiếp của
+ * .ifx-shell-sidebar-content / .ifx-shell-main-content (đã có gap:16 dùng chung toàn bộ
+ * nền tảng, xem app-shell.css) để đồng bộ với các trang khác.
+ */
+
+/* ── Card header dùng chung (icon + title + "Xem tất cả") ── */
+.ifx-com2-sectionhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-12);
+  padding: var(--ifx-inset-card-header);
+}
+.ifx-com2-sectionhead__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-action-primary);
+  text-decoration: none;
+}
+.ifx-com2-link:hover { text-decoration: underline; }
+
+/* ── Card "Cộng đồng iFlux" (header sidebar trái) ── */
+.ifx-com2-brand__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-brand__head h3 {
+  margin: 0 0 var(--ifx-space-4);
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-brand__head p {
+  margin: 0;
+  font-size: var(--ifx-font-size-xs);
+  line-height: 1.5;
+  color: var(--ifx-text-secondary);
+}
+.ifx-com2-brand__icon {
+  font-size: 28px;
+  color: var(--ifx-action-primary);
+  flex-shrink: 0;
+}
+
+/* ── Chủ đề HOT (main, phía trên Composer) ── */
+.ifx-com2-period { margin-bottom: var(--ifx-space-12); width: 100%; }
+.ifx-com2-hotlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-hotitem {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+}
+.ifx-com2-hotitem__rank {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ifx-radius-sm);
+  background: var(--ifx-bg-subtle);
+  color: var(--ifx-text-secondary);
+  font-size: var(--ifx-font-size-2xs);
+  font-weight: var(--ifx-font-weight-bold);
+}
+.ifx-com2-hotitem__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ifx-com2-hotitem__count {
+  flex-shrink: 0;
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+  white-space: nowrap;
+}
+.ifx-com2-tone-up { color: var(--ifx-success); white-space: nowrap; flex-shrink: 0; }
+.ifx-com2-tone-down { color: var(--ifx-danger); white-space: nowrap; flex-shrink: 0; }
+
+/* ── Mã được thảo luận nhiều (sidebar trái) ── */
+.ifx-com2-tickergrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ifx-space-8);
+}
+.ifx-com2-ticker {
+  padding: var(--ifx-space-12);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-subtle);
+  text-align: center;
+}
+.ifx-com2-ticker__code {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-ticker__count {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+  margin: var(--ifx-space-2) 0;
+}
+.ifx-com2-ticker__pct {
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-2);
+}
+.ifx-com2-ticker__pct.is-up { color: var(--ifx-success); }
+.ifx-com2-ticker__pct.is-down { color: var(--ifx-danger); }
+
+/* ── Nhà đầu tư nên theo dõi (sidebar trái) ── */
+.ifx-com2-investorlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-investor {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  flex-wrap: wrap;
+}
+.ifx-com2-investor__who { flex: 1 1 auto; min-width: 0; }
+.ifx-com2-investor__who .name {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-investor__who .desc {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+
+/* ── Composer (nằm trong .ifx-card) ── */
+.ifx-com2-composer__row {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-composer__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-button);
+  background: var(--ifx-bg-subtle);
+  color: var(--ifx-text-primary);
+  padding: var(--ifx-space-12) var(--ifx-space-16);
+  font-size: var(--ifx-font-size-sm);
+  font-family: inherit;
+  cursor: pointer;
+}
+.ifx-com2-composer__input::placeholder { color: var(--ifx-text-muted); }
+.ifx-com2-composer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  margin-top: var(--ifx-space-12);
+  padding-top: var(--ifx-space-12);
+  border-top: 1px solid var(--ifx-border-subtle);
+}
+.ifx-com2-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  border-radius: var(--ifx-radius-button);
+  border: 0;
+  background: transparent;
+  color: var(--ifx-text-secondary);
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-semibold);
+  cursor: pointer;
+}
+.ifx-com2-action:hover { background: var(--ifx-action-primary-soft); color: var(--ifx-action-primary); }
+.ifx-com2-composer__submit { margin-left: auto; }
+
+/* ── Tabs lọc feed (Mới nhất / Thịnh hành / Nổi bật) ── */
+.ifx-com2-feedfilter { width: 100%; }
+
+/* ── Post card ── */
+.ifx-com2-post__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-12);
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-com2-post__who { flex: 1 1 auto; min-width: 0; }
+.ifx-com2-post__who .name {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-post__who .time {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+}
+.ifx-com2-post__more {
+  border: 0;
+  background: transparent;
+  color: var(--ifx-text-muted);
+  cursor: pointer;
+  padding: var(--ifx-space-4);
+  border-radius: var(--ifx-radius-sm);
+}
+.ifx-com2-post__more:hover { background: var(--ifx-bg-hover); }
+.ifx-com2-post__text {
+  margin: 0 0 var(--ifx-space-12);
+  font-size: var(--ifx-font-size-sm);
+  line-height: 1.6;
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-post__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ifx-space-4);
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-com2-tagchip { text-decoration: none; cursor: pointer; }
+.ifx-com2-tagchip:hover { background: var(--ifx-action-primary-soft); }
+.ifx-com2-post__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-16);
+  padding-top: var(--ifx-space-12);
+  border-top: 1px solid var(--ifx-border-subtle);
+}
+.ifx-com2-post__stats button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  border: 0;
+  background: transparent;
+  color: var(--ifx-text-secondary);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  cursor: pointer;
+  padding: var(--ifx-space-4) var(--ifx-space-8);
+  border-radius: var(--ifx-radius-sm);
+}
+.ifx-com2-post__stats button:hover { background: var(--ifx-bg-hover); color: var(--ifx-text-primary); }
+
+/* ── Chia sẻ lại bài viết Tin tức ("đăng lại", kèm/không kèm bình luận) ── */
+.ifx-com2-repost-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-4);
+  font-size: var(--ifx-font-size-xs);
+  font-weight: var(--ifx-font-weight-semibold);
+  color: var(--ifx-text-muted);
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-com2-repost {
+  display: flex;
+  gap: var(--ifx-space-12);
+  align-items: stretch;
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-md);
+  background: var(--ifx-bg-subtle);
+  padding: var(--ifx-space-12);
+  margin-bottom: var(--ifx-space-12);
+  text-decoration: none;
+}
+.ifx-com2-repost:hover { border-color: var(--ifx-action-primary); }
+/* Ảnh đại diện bài gốc — Phase 0 chưa có cover thật nên dùng khối gradient + icon làm chỗ
+   trống (đổi sang <img src="..."> thật khi Phase 1 có media). */
+.ifx-com2-repost__media {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--ifx-radius-sm);
+  background: linear-gradient(135deg, var(--ifx-action-primary-soft), var(--ifx-bg-hover));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifx-action-primary);
+  font-size: 28px;
+}
+.ifx-com2-repost__body { flex: 1 1 auto; min-width: 0; }
+.ifx-com2-repost__meta {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+  margin-bottom: var(--ifx-space-4);
+}
+.ifx-com2-repost__title {
+  font-size: var(--ifx-font-size-sm);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  margin-bottom: var(--ifx-space-4);
+}
+.ifx-com2-repost__excerpt {
+  margin: 0;
+  font-size: var(--ifx-font-size-xs);
+  line-height: 1.5;
+  color: var(--ifx-text-secondary);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* Màn hẹp (mobile) — ảnh xếp lên trên, full-width, text xuống dưới. */
+@media (max-width: 480px) {
+  .ifx-com2-repost { flex-direction: column; }
+  .ifx-com2-repost__media { width: 100%; height: 140px; font-size: 36px; }
+}
+
+/* ── CTA card (Tạo chủ đề / Mời bạn bè — sidebar phải) ── */
+.ifx-com2-cta,
+.ifx-com2-invite {
+  text-align: center;
+}
+.ifx-com2-cta .ifx-card-body,
+.ifx-com2-invite .ifx-card-body { display: flex; flex-direction: column; align-items: center; gap: var(--ifx-space-8); }
+.ifx-com2-cta__icon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ifx-action-primary-soft);
+  color: var(--ifx-action-primary);
+  font-size: var(--ifx-font-size-lg);
+}
+.ifx-com2-cta h4,
+.ifx-com2-invite h4 {
+  margin: 0;
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+}
+.ifx-com2-cta p,
+.ifx-com2-invite p {
+  margin: 0;
+  font-size: var(--ifx-font-size-xs);
+  color: var(--ifx-text-secondary);
+  line-height: 1.5;
+}
+.ifx-com2-cta .ifx-btn,
+.ifx-com2-invite .ifx-btn { width: 100%; justify-content: center; }
+
+/* ── Hoạt động từ người theo dõi (sidebar phải) ── */
+.ifx-com2-activitylist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-12);
+}
+.ifx-com2-activity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ifx-space-8);
+  font-size: var(--ifx-font-size-xs);
+  line-height: 1.5;
+  color: var(--ifx-text-secondary);
+}
+.ifx-com2-activity strong { color: var(--ifx-text-primary); }
+.ifx-com2-activity__dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--ifx-action-primary);
+}
+.ifx-com2-activity__time {
+  font-size: var(--ifx-font-size-2xs);
+  color: var(--ifx-text-muted);
+  margin-top: var(--ifx-space-2);
+}
+
+/* ── Lối tắt nhanh (sidebar phải) ── */
+.ifx-com2-shortcutlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-4);
+}
+.ifx-com2-shortcut {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
+  padding: var(--ifx-space-8);
+  border-radius: var(--ifx-radius-sm);
+  font-size: var(--ifx-font-size-sm);
+  color: var(--ifx-text-primary);
+  cursor: pointer;
+}
+.ifx-com2-shortcut:hover { background: var(--ifx-bg-hover); }
+.ifx-com2-shortcut span { flex: 1 1 auto; }
+.ifx-com2-shortcut__chevron { color: var(--ifx-text-muted); font-size: var(--ifx-font-size-sm); }
+
+/* ── Trạng thái rỗng dự phòng (giữ lại cho Phase 1 khi feed thật chưa có bài) ── */
+.ifx-com2-empty {
+  text-align: center;
+  padding: var(--ifx-space-container, 48px) var(--ifx-space-16);
+  color: var(--ifx-text-secondary);
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-lg);
+}
+.ifx-com2-empty i {
+  font-size: 32px;
+  color: var(--ifx-text-muted);
+  margin-bottom: var(--ifx-space-12);
+  display: inline-block;
+}
+.ifx-com2-empty h3 {
+  font-size: var(--ifx-font-size-md);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  margin: 0 0 var(--ifx-space-8);
+}
+.ifx-com2-empty p {
+  font-size: var(--ifx-font-size-sm);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 420px;
+  margin-inline: auto;
+}

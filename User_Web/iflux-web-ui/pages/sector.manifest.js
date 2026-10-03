@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Chi tiết ngành (/nganh/:id)
  */
-var VER = '?v=r20261002a';
+var VER = '?v=r20261002af';
 
 export default {
   pageKey: 'sector',
@@ -28,7 +28,7 @@ export default {
     css: [
       '/User_Web/iflux-web-ui/market-components.css',
       '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
-      '/User_Web/iflux-web-ui/news.css?v=r20261002t',
+      '/User_Web/iflux-web-ui/news.css?v=r20261003c',
       '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
       '/User_Web/iflux-web-ui/stock.css?v=appHeader20260928'
     ]

@@ -1,10 +1,9 @@
 name: Deploy to Staging
 
-# Staging 1 — staging.iflux.vn. Cùng mô hình CI Staging 2:
+# Staging — staging.iflux.vn. Cùng mô hình CI với Production (deploy-production.yml):
 # checkout → atomic release → stage nginx + switch từ Git → switch → health.
-# CHỈ path Staging 1. KHÔNG đụng Production
-# (/var/www/iflux/production, /var/iflux/backend, PM2 iflux-api)
-# hay Staging 2 (/var/www/iflux/newprod, /var/iflux/backend-newprod).
+# CHỈ path Staging. KHÔNG đụng Production
+# (/var/www/iflux/production, /var/iflux/backend-production, PM2 iflux-api-production).
 # Runner self-hosted label "staging", user iflux-deploy.
 # Sudo chỉ /usr/local/bin/iflux-staging-deploy-switch.sh (script tự refresh từ Git).
 

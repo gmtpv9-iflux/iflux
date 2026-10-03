@@ -1,7 +1,7 @@
 /**
  * Feature /binh-luan — Slice 4.5: API-only Host (không dual-read LS).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20260928q';
+import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -9,7 +9,7 @@ var V = '?v=ixP5s520260724';
 
 var IX_FEATURE = [
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'news-store.js?v=r20260928r' + V,
+  ASSET + 'news-store.js?v=r20261002x' + V,
   ASSET + 'comment-composer.js' + V,
   ASSET + 'interaction/boot.js' + V,
   ASSET + 'comments-page.js' + V

@@ -15,7 +15,6 @@ var PUBLIC_ORIGIN = 'https://iflux.vn';
 
 var PAGE_KEY_TO_PATH = {
   dashboard: '/trang-chu',
-  market: '/thi-truong',
   news: '/tin-tuc',
   flow: '/dong-tien',
   membership: '/thanh-vien',

@@ -2,7 +2,7 @@
  * WGT-GROUP-PAGE — Composite chi tiết nhóm (ngành / họ CP / chủ đề)
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20260928q';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
 
@@ -35,7 +35,7 @@ var CORE_TIERS = [
   [
     ASSET + 'watchlist-store.js?v=r20260928n',
     ASSET + 'stock-store.js?v=r20260928n',
-    ASSET + 'news-store.js?v=r20260928r',
+    ASSET + 'news-store.js?v=r20261002x',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a'
   ],

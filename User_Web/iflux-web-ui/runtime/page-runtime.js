@@ -20,7 +20,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 import { buildPageFrame } from './app-shell.js?v=appHeader20260928';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { loadWidget } from './widget-loader.js?v=r20260928q';
-import { loadScript, loadStyles } from './legacy-bridge.js?v=r20260928q';
+import { loadScript, loadStyles } from './legacy-bridge.js?v=r20261002communityfix';
 import { mountPageWidgets } from './page-widgets.js?v=r20260929e';
 
 var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=r20260928n';

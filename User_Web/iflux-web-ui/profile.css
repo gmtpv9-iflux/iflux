@@ -789,3 +789,14 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
 
 /* Thẻ hồ sơ nằm trong Sidebar của khung chung — theo bề rộng Sidebar (3/12). */
 .ifx-shell-sidebar-content > .ix-profile-sidebar { width: auto; }
+
+/* Sidebar phải trang Cá nhân hẹp hơn (2/12) — nhãn chữ "Tên đăng nhập" cố định 90px
+   (.ix-detail-label) tràn lề giá trị. Utility .ifx-label-icon (design_system/02_foundation/
+   layout.css) đổi nhãn dòng @username thành icon hẹp, giữ nghĩa qua title=. */
+.ix-detail-val { overflow-wrap: anywhere; }
+
+/* Gói cước & ưu đãi — số tiền (36px, cạnh chip tên gói) tràn lề ở Sidebar hẹp vì hàng chứa nó
+   không cho phép xuống dòng (flex mặc định nowrap). Hàng đã thêm flex-wrap ở markup; ở đây chỉ
+   phòng khi số quá dài (vd 7 chữ số) vẫn tràn trong chính .ix-plan-price. */
+.ix-plan-price { flex-wrap: wrap; }
+.ix-plan-price-num { overflow-wrap: anywhere; }

@@ -45,15 +45,12 @@
       return;
     }
 
+    /* Chỉ tiêu đề hoạt động + thời gian tương đối, xếp dọc — bỏ icon-dot (chiếm chỗ, không cần
+       thiết) và mô tả phụ (owner yêu cầu 2026-10-03). */
     wrap.innerHTML = '<ul class="ix-act-timeline">' + items.map(function (item) {
-      return '<li class="ix-act-item">' +
-        '<div class="ix-act-dot ix-stat-icon ' + iconClass(item.iconClass) + '" style="width:32px;height:32px;font-size:14px">' +
-          '<i class="ti ' + esc(item.icon || 'ti-activity') + '"></i></div>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div class="ix-act-title">' + esc(item.title) + '</div>' +
-          '<div class="ix-act-desc">' + esc(item.desc) + '</div>' +
-        '</div>' +
-        '<div class="ix-act-time">' + esc(fmtTime(item.at)) + '</div>' +
+      return '<li class="ix-act-item" style="display:flex;flex-direction:column;gap:2px">' +
+        '<div class="ix-act-title">' + esc(item.title) + '</div>' +
+        '<div class="ix-act-time" style="margin-top:0">' + esc(fmtTime(item.at)) + '</div>' +
       '</li>';
     }).join('') + '</ul>';
   }

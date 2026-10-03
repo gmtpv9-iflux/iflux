@@ -26,7 +26,6 @@ class StaticSitemapProvider {
       '/goi-cuoc',
       '/hoi-dap',
       '/thanh-vien',
-      '/thi-truong',
       '/dong-tien'
     ];
 

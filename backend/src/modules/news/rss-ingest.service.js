@@ -48,7 +48,18 @@ function decodeEntities(s) {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    /* Entity số có thể có số 0 đệm trước (&#39; lẫn &#039; đều hợp lệ theo chuẩn HTML —
+       nguồn RSS hay dùng dạng đệm số 0, trước đây chỉ khớp &#39; nên lọt chữ "&#039;"
+       hiển thị thô ra tiêu đề). \u0*39 khớp cả 2 dạng. */
+    .replace(/&#0*39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#0*8216;|&lsquo;/g, '‘')
+    .replace(/&#0*8217;|&rsquo;/g, '’')
+    .replace(/&#0*8220;|&ldquo;/g, '“')
+    .replace(/&#0*8221;|&rdquo;/g, '”')
+    .replace(/&#0*8211;|&ndash;/g, '–')
+    .replace(/&#0*8212;|&mdash;/g, '—')
+    .replace(/&#0*8230;|&hellip;/g, '…')
     .replace(/&nbsp;/g, ' ')
     .trim();
 }

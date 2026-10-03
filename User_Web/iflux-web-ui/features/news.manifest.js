@@ -39,13 +39,13 @@ var manifest = {
     m('profile-links', 'js', ASSET + 'profile-links.js', 'IfluxProfileLinks'),
     /* Task5: Heart = Foundation (click / widget mount). Không boot watchlist-ui trên feed. */
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=r20260928n', 'IfluxPageLayoutEngine'),
-    m('community-store', 'store', ASSET + 'news-store.js?v=r20260928r', 'IfluxNewsStore'),
+    m('community-store', 'store', ASSET + 'news-store.js?v=r20261002x', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=r20260928n', 'IfluxNewsApiBridge'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=r20260928n', 'IfluxMarketQuotes'),
     m('community-ui', 'js', ASSET + 'news-ui.js?v=r20260929a', 'IfluxNewsUI'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=r20260928r', 'IfluxDailyFeed'),
     m('community-page', 'js', ASSET + 'news-page.js?v=r20261002k', 'IfluxNewsPage'),
-    m('community-css', 'css', ASSET + 'news.css?v=r20261002t', null)
+    m('community-css', 'css', ASSET + 'news.css?v=r20261003c', null)
   ],
   lazyChildren: [
     'WGT-COM-001',

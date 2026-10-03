@@ -105,6 +105,34 @@ function createInteractionV1Router(deps) {
     }
   );
 
+  /* Like/unlike 1 entity (post|communityPost|stock|sector|family|story) — generic, dùng chung
+     mọi nơi (IA-001 registry), không riêng Cộng đồng. */
+  router.post(
+    '/:entityType/:entityId/like',
+    auth.authenticate,
+    async (req, res, next) => {
+      try {
+        const data = await thread.likeEntity(req.params.entityType, req.params.entityId, req.user);
+        return success(res, data);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.delete(
+    '/:entityType/:entityId/like',
+    auth.authenticate,
+    async (req, res, next) => {
+      try {
+        const data = await thread.unlikeEntity(req.params.entityType, req.params.entityId, req.user);
+        return success(res, data);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
   return router;
 }
 

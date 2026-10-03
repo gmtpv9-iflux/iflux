@@ -407,6 +407,19 @@
     return '<div class="ifx-cmt-image"><img src="' + esc(url) + '" alt="Ảnh bình luận" loading="lazy" /></div>';
   }
 
+  /* Avatar + tên tác giả comment — bấm vào vào trang cá nhân (/tai-khoan?user=<id>) nếu
+   * comment có user_id thật (comment ẩn danh/di dời dữ liệu cũ có thể thiếu trường này). */
+  function commentAuthorHtml(c, name) {
+    var initials = String(name || 'U').trim().charAt(0).toUpperCase() || 'U';
+    var avatarHtml = '<span class="ifx-avatar ifx-avatar-sm ifx-avatar-accent">' + esc(initials) + '</span>';
+    var nameHtml = '<strong class="ifx-com-comment__name">' + esc(name) + '</strong>';
+    if (c && c.user_id) {
+      var href = '/tai-khoan?user=' + encodeURIComponent(c.user_id);
+      return '<a class="ifx-com-comment__author" href="' + href + '">' + avatarHtml + nameHtml + '</a>';
+    }
+    return '<span class="ifx-com-comment__author">' + avatarHtml + nameHtml + '</span>';
+  }
+
   function renderThread(root, thread, ctx) {
     var el = root.querySelector('[data-ifx-ix-thread]');
     if (!el) return;
@@ -422,7 +435,7 @@
       var time = relativeTime(c.created_at);
       return (
         '<div class="ifx-com-comment" data-ifx-ix-comment-id="' + esc(c.id) + '">' +
-          '<strong class="ifx-com-comment__name">' + esc(name) + '</strong>' +
+          commentAuthorHtml(c, name) +
           '<p class="ifx-com-comment__body">' + esc(c.body || '') + '</p>' +
           commentImageHtml(c.image || c.image_url) +
           '<div class="ifx-com-comment__meta">' +
