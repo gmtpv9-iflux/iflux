@@ -93,18 +93,33 @@ Admin tự publish được). Cần dựng Template mới (`TMP-PROMOTION` hay t
 Widget-Publish hiện có (xem `backend/src/modules/widget-publish/`) để Admin vào Cài đặt trang tự tạo
 Widget từ Template này và đặt vào Sidebar-phải-Cá-nhân.
 
-## 6. Khung `[+]` hiện sẵn khi canvas rỗng
+## 6. Khung `[+]` khi canvas rỗng — ĐÃ CÓ SẴN, gần đúng ý, không cần code mới
 
-Cần audit `dashboard-engine.js`'s `renderCanvas`/`renderSidebarStack` xem logic "rỗng → hiện khung
-thêm" đã có sẵn cho trường hợp đã bấm "Tùy chỉnh" chưa, rồi mở rộng để hiện NGAY cả khi CHƯA bấm
-"Tùy chỉnh" (tức editMode=false nhưng canvas rỗng vẫn hiện `[+]`) — khác hành vi mặc định hiện tại
-(ẩn hẳn toolbar/canvas rỗng, chỉ hiện khi bấm Tùy chỉnh).
+Audit xác nhận: `renderCanvas()` khi Dashboard rỗng + chưa bấm Tùy chỉnh đã tự hiện
+`heroEmptyHtml()` — khối mời gọi rõ ràng (icon + text + 2 nút "Phổ biến"/"Tùy chỉnh"), không phải
+ẩn trắng trơn như lo ngại ban đầu. Khác 1 chút so với mô tả gốc ("hiện khung [+] y hệt lúc đã bấm
+Tùy chỉnh"): bấm vào đây sẽ VÀO edit mode trước (thêm 1 bước) thay vì mở thẳng modal chọn widget.
+Đánh giá: đủ tốt để DÙNG NGAY, khác biệt là polish nhỏ (có thể tinh chỉnh sau, không chặn Phase 2).
 
-## 7. Giới hạn widget theo cấp quyền
+## 7. Giới hạn widget theo cấp quyền — ĐÃ CÓ SẴN, không cần code mới
 
-Cần tìm cơ chế entitlement/tier hiện có (IfluxEntitlements hoặc tương đương) và áp dụng giới hạn số
-widget tối đa có thể đặt trong canvas user-customizable (Dashboard + Sidebar trái), theo tier của
-user — audit trước khi code, tránh trùng lặp cơ chế đã có.
+`maxWidgets()` trong `dashboard-engine.js` đã đọc đúng entitlement (`ent().getLimit('maxWidgets')`),
+fallback theo tier (Free mặc định `FREE_MAX_WIDGETS` từ `IfluxWidgetRegistry`, Premium/Elite/Partner/
+Admin = không giới hạn thực tế). `handleAddSlotClick()` đã chặn thêm khi đạt giới hạn + báo toast.
+Không cần xây gì thêm cho mục này.
+
+## 7b. ⚠️ Phát hiện ràng buộc cần quyết định — Sidebar chỉ nhận widget `WGT-PRF*`
+
+`renderSidebarStack()` lọc CỨNG: chỉ render widget có `widget_type` bắt đầu bằng `"WGT-PRF"` (profile
+widgets) vào vùng Sidebar, dù dữ liệu `scope` của widget khác đã là `'sidebar'`. Nghĩa là: nếu user
+kéo 1 widget KHÔNG thuộc họ `WGT-PRF` (ví dụ widget thị trường, watchlist mở rộng...) từ Dashboard
+sang Sidebar trái, dữ liệu `scope` đổi đúng nhưng **widget đó sẽ KHÔNG hiện ra** ở Sidebar (bị lọc
+mất) — không vỡ, nhưng user sẽ thấy "biến mất" khó hiểu.
+**Cần quyết định trước khi bật tính năng kéo-thả tự do cho mọi loại widget**: (a) nới lọc này để
+Sidebar nhận MỌI loại widget (khớp đúng mô tả "kéo bất kỳ Widget nào sang Sidebar"), hay (b) giữ
+nguyên giới hạn — Sidebar trái CHỈ nhận một số loại widget nhất định (nếu có lý do thiết kế riêng
+chưa được nói tới). Mặc định sẽ làm theo hướng (a) — nới lọc — vì khớp đúng nghĩa đen lời mô tả gốc
+("user có thể kéo sang Sidebar trái tùy chỉnh vị trí được", không giới hạn loại widget).
 
 ## 8. ⚠️ CẦN OWNER XÁC NHẬN — 2 điểm có nhiều hơn 1 cách làm hợp lý
 
