@@ -93,19 +93,24 @@ function syncActiveChrome() {
   }
 }
 
+/** Link trỏ đúng trang + search hiện tại — không cần điều hướng (soft lẫn hard đều vô ích). */
+export function isSamePage(href) {
+  var abs = toAbsoluteUrl(href);
+  if (!abs) return false;
+  return (
+    abs.origin === location.origin &&
+    normalizePath(abs.pathname) === normalizePath(location.pathname) &&
+    String(abs.search || '') === String(location.search || '')
+  );
+}
+
 export function canSoftNavigate(href) {
   var abs = toAbsoluteUrl(href);
   if (!abs) return false;
   if (abs.origin !== location.origin) return false;
   var key = pageKeyFromPath(abs.pathname);
   if (!isSoftPage(key)) return false;
-  /* Cùng trang + cùng search → không soft (tránh remount vô ích). */
-  if (
-    normalizePath(abs.pathname) === normalizePath(location.pathname) &&
-    String(abs.search || '') === String(location.search || '')
-  ) {
-    return false;
-  }
+  if (isSamePage(href)) return false;
   return true;
 }
 
@@ -191,6 +196,15 @@ function onDocumentClick(e) {
     window.IfluxAuth.promptLogin(u.pathname + u.search);
     return;
   }
+  /* Link trỏ đúng trang đang xem (vd bấm lại nav item đang active) — chặn hẳn, KHÔNG để trình
+   * duyệt tự reload thật (trước đây bug: rơi qua nhánh dưới, không preventDefault → tải lại toàn
+   * bộ bootstrap/shell/mọi JS/CSS global dù đã có sẵn, cực kỳ lãng phí). Không làm gì thêm — đã ở
+   * đúng trang rồi. */
+  if (isSamePage(href)) {
+    e.preventDefault();
+    return;
+  }
+
   if (!canSoftNavigate(href)) return;
 
   e.preventDefault();
