@@ -9,22 +9,10 @@
  * nền tảng, xem app-shell.css) để đồng bộ với các trang khác.
  */
 
-/* ── Card header dùng chung (icon + title + "Xem tất cả") ── */
-.ifx-com2-sectionhead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-12);
-  padding: var(--ifx-inset-card-header);
-}
-.ifx-com2-sectionhead__title {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ifx-space-8);
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-bold);
-  color: var(--ifx-text-primary);
-}
+/* ── Card header: icon trong <h3> của .ifx-widget-title (DS 03_primitives/08_title) +
+   "Xem tất cả" đặt trong slot .ifx-inline-sm bên phải — khớp đúng khung Widget thật dùng ở
+   mọi nơi khác trên nền tảng (xem design_system/05_templates/00_widget/widget.js headHtml()),
+   KHÔNG còn tự định nghĩa 1 kiểu "section head" cục bộ riêng cho trang này nữa. ── */
 .ifx-com2-link {
   display: inline-flex;
   align-items: center;
@@ -36,25 +24,8 @@
 }
 .ifx-com2-link:hover { text-decoration: underline; }
 
-/* ── Card "Cộng đồng iFlux" (header sidebar trái) ── */
-.ifx-com2-brand__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ifx-space-12);
-}
-.ifx-com2-brand__head h3 {
-  margin: 0 0 var(--ifx-space-4);
-  font-size: var(--ifx-font-size-md);
-  font-weight: var(--ifx-font-weight-bold);
-  color: var(--ifx-text-primary);
-}
-.ifx-com2-brand__head p {
-  margin: 0;
-  font-size: var(--ifx-font-size-xs);
-  line-height: 1.5;
-  color: var(--ifx-text-secondary);
-}
+/* ── Card "Cộng đồng iFlux" (header sidebar trái) — tiêu đề qua .ifx-widget-title, icon đặt
+   trong slot .ifx-inline-sm giống mọi Widget khác (xem .ifx-card-header trong markup). ── */
 .ifx-com2-brand__icon {
   font-size: 28px;
   color: var(--ifx-action-primary);
@@ -356,20 +327,8 @@
   color: var(--ifx-action-primary);
   font-size: var(--ifx-font-size-lg);
 }
-.ifx-com2-cta h4,
-.ifx-com2-invite h4 {
-  margin: 0;
-  font-size: var(--ifx-font-size-md);
-  font-weight: var(--ifx-font-weight-bold);
-  color: var(--ifx-text-primary);
-}
-.ifx-com2-cta p,
-.ifx-com2-invite p {
-  margin: 0;
-  font-size: var(--ifx-font-size-xs);
-  color: var(--ifx-text-secondary);
-  line-height: 1.5;
-}
+/* Tiêu đề h4+p của 2 card này qua .ifx-cta-title (DS 03_primitives/08_title) — không tự định
+   nghĩa lại margin/font-size cục bộ ở đây nữa (xem title.css: cùng rule cho mọi CTA card). */
 .ifx-com2-cta .ifx-btn,
 .ifx-com2-invite .ifx-btn { width: 100%; justify-content: center; }
 
@@ -455,4 +414,10 @@
   margin: 0;
   max-width: 420px;
   margin-inline: auto;
+}
+
+/* ── Phase 4: nút "Xem thêm" dưới Feed (pagination cursor thật, lazy-load cuộn-chạm-đáy là Phase 6) ── */
+.ifx-com2-loadmore {
+  display: block;
+  margin: var(--ifx-space-16) auto 0;
 }

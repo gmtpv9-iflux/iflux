@@ -67,9 +67,29 @@ function rowToPost(row) {
       comments: Number(row.comments_count) || 0,
       shares: Number(row.shares_count) || 0
     },
+    viewer_liked: false,
     created_at: row.created_at ? new Date(row.created_at).toISOString() : null,
     updated_at: row.updated_at ? new Date(row.updated_at).toISOString() : null
   };
+}
+
+/**
+ * Gắn `viewer_liked` cho danh sách Post trả về từ Feed/Timeline (getPostById đã tự làm việc này
+ * riêng — xem dưới). Dùng 1 query riêng theo lô id (không nhúng vào STATS_SELECT) để khỏi phải
+ * tính lại vị trí placeholder $N mỗi khi buildCursorWhere/limit đổi số lượng param — an toàn hơn,
+ * rẻ hơn 1 query so với rủi ro lệch tham số trong câu SELECT chính.
+ */
+async function attachViewerLiked(result, viewer) {
+  if (!viewer || !viewer.id || !result.items.length) return result;
+  const ids = result.items.map((p) => p.id);
+  const res = await query(
+    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'communitypost' AND user_id = $1 AND entity_id = ANY($2::text[])`,
+    [viewer.id, ids]
+  );
+  const liked = {};
+  res.rows.forEach((r) => { liked[r.entity_id] = true; });
+  result.items.forEach((p) => { p.viewer_liked = !!liked[p.id]; });
+  return result;
 }
 
 const STATS_SELECT = `
@@ -194,7 +214,7 @@ async function getFeed(opts, viewer) {
     const res = await query(sql, params);
     const out = paginate(res.rows, limit);
     out.mode = mode;
-    return out;
+    return attachViewerLiked(out, viewer);
   }
 
   const params = [];
@@ -210,7 +230,7 @@ async function getFeed(opts, viewer) {
   const res = await query(sql, params);
   const out = paginate(res.rows, limit);
   out.mode = mode;
-  return out;
+  return attachViewerLiked(out, viewer);
 }
 
 /** GET /community/users/:id/timeline — toàn bộ Post của 1 author (§6). */
@@ -230,7 +250,7 @@ async function getUserTimeline(authorId, opts, viewer) {
   params.push(limit + 1);
   sql += ` ORDER BY p.created_at DESC, p.id DESC LIMIT $${params.length}`;
   const res = await query(sql, params);
-  return paginate(res.rows, limit);
+  return attachViewerLiked(paginate(res.rows, limit), viewer);
 }
 
 /** GET /community/stocks/:ticker/posts — Thảo luận theo mã, phục vụ Stock Detail tab Discussion (§6). */

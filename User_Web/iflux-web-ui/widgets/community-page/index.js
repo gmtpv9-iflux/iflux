@@ -16,11 +16,11 @@ var ASSET = '/User_Web/iflux-web-ui/';
 
 export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
 
-/* Phase 0: community-page.js (render Composer + Feed + Sidebar trái/phải seed data).
-   Phase 1+ (Post model thật) sẽ thêm community-store.js / community-feed.js vào đây
-   theo đúng pattern news-store.js + news-daily-feed.js đã có cho Tin tức. */
+/* Phase 4 (2026-10-03): community-store.js (API client Post+Story thật) tải TRƯỚC
+   community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
-  [ASSET + 'community-page.js?v=r20261003a']
+  [ASSET + 'community-store.js?v=r20261003a'],
+  [ASSET + 'community-page.js?v=r20261003c']
 ];
 
 export async function mount(el) {
