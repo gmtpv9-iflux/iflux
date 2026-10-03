@@ -172,6 +172,11 @@ function createApp(config) {
   const { createCommunityPostsRouter } = require('./modules/community/community-posts.routes');
   app.use(`${config.LEGACY_API_PREFIX}/community`, createCommunityPostsRouter({ auth: userAndAdminAuth }));
 
+  /* Community V1 Phase 2 — Story/Chủ đề (SoT §7/§9), thay thế Topic Engine V1/V2 (SUPERSEDED §8).
+   * Mount cùng prefix /community (sibling router, path /stories không trùng /posts|/feed|/users|/stocks). */
+  const { createStoriesRouter } = require('./modules/community/stories.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/community`, createStoriesRouter({ auth: userAndAdminAuth }));
+
   const { createNotificationsRouter } = require('./modules/notifications/notifications.routes');
   app.use(`${config.LEGACY_API_PREFIX}/notifications`, createNotificationsRouter({ auth }));
 
