@@ -141,14 +141,17 @@
     return '<span class="ifx-avatar ifx-avatar-' + (size || 'md') + ' ifx-avatar-accent">' + esc(initials) + '</span>';
   }
 
+  /* Tiêu đề khối — ĐÚNG khung Widget title dùng chung toàn nền tảng (DS 03_primitives/08_title
+     .ifx-widget-title, trong .ifx-card-header — xem design_system/05_templates/00_widget/widget.js
+     headHtml()), không còn 1 kiểu "section head" cục bộ riêng cho trang Cộng đồng nữa. */
   function sectionHeaderHtml(iconName, title, opts) {
     opts = opts || {};
     var right = opts.noViewAll ? '' : '<a href="#" class="ifx-com2-link" data-ifx-com2-action="view-all">Xem tất cả ' + icon('chevron-right') + '</a>';
     return (
-      '<div class="ifx-com2-sectionhead">' +
-        '<span class="ifx-com2-sectionhead__title">' + icon(iconName) + ' ' + esc(title) + '</span>' +
-        right +
-      '</div>'
+      '<header class="ifx-card-header">' +
+        '<div class="ifx-widget-title"><h3>' + (iconName ? icon(iconName) + ' ' : '') + esc(title) + '</h3></div>' +
+        (right ? '<div class="ifx-inline-sm">' + right + '</div>' : '') +
+      '</header>'
     );
   }
 
@@ -216,15 +219,13 @@
   function leftSidebarHtml() {
     return (
       '<div class="ifx-card ifx-com2-brand">' +
-        '<div class="ifx-card-body">' +
-          '<div class="ifx-com2-brand__head">' +
-            '<div>' +
-              '<h3>Cộng đồng iFlux</h3>' +
-              '<p>Kết nối nhà đầu tư Việt Nam — chia sẻ tri thức, đồng hành đầu tư.</p>' +
-            '</div>' +
-            icon('users', 'ifx-com2-brand__icon') +
+        '<header class="ifx-card-header">' +
+          '<div class="ifx-widget-title">' +
+            '<h3>Cộng đồng iFlux</h3>' +
+            '<p>Kết nối nhà đầu tư Việt Nam — chia sẻ tri thức, đồng hành đầu tư.</p>' +
           '</div>' +
-        '</div>' +
+          '<div class="ifx-inline-sm">' + icon('users', 'ifx-com2-brand__icon') + '</div>' +
+        '</header>' +
       '</div>' +
 
       '<div class="ifx-card">' +
@@ -369,8 +370,10 @@
       '<div class="ifx-card ifx-com2-cta">' +
         '<div class="ifx-card-body">' +
           icon('plus', 'ifx-com2-cta__icon') +
-          '<h4>Tạo chủ đề</h4>' +
-          '<p>Tạo chủ đề thị trường để cộng đồng bình chọn và thảo luận.</p>' +
+          '<div class="ifx-cta-title">' +
+            '<h4>Tạo chủ đề</h4>' +
+            '<p>Tạo chủ đề thị trường để cộng đồng bình chọn và thảo luận.</p>' +
+          '</div>' +
           '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="story">Tạo chủ đề ngay ' + icon('arrow-right') + '</button>' +
         '</div>' +
       '</div>' +
@@ -381,14 +384,16 @@
       '</div>' +
 
       '<div class="ifx-card">' +
-        '<div class="ifx-card-header"><span class="ifx-com2-sectionhead__title">Lối tắt nhanh</span></div>' +
+        sectionHeaderHtml(null, 'Lối tắt nhanh', { noViewAll: true }) +
         '<div class="ifx-card-body"><ul class="ifx-com2-shortcutlist">' + SEED_SHORTCUTS.map(shortcutItemHtml).join('') + '</ul></div>' +
       '</div>' +
 
       '<div class="ifx-card ifx-com2-invite">' +
         '<div class="ifx-card-body">' +
-          '<h4>Tham gia cộng đồng iFlux</h4>' +
-          '<p>Chia sẻ góc nhìn, học hỏi kinh nghiệm và cùng nhau đầu tư hiệu quả hơn.</p>' +
+          '<div class="ifx-cta-title">' +
+            '<h4>Tham gia cộng đồng iFlux</h4>' +
+            '<p>Chia sẻ góc nhìn, học hỏi kinh nghiệm và cùng nhau đầu tư hiệu quả hơn.</p>' +
+          '</div>' +
           '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="invite">Mời bạn bè tham gia</button>' +
         '</div>' +
       '</div>'
