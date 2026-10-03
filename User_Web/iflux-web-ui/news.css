@@ -638,10 +638,16 @@
   font-size: var(--ifx-font-size-14);
 }
 .ifx-com-comment__head span { color: var(--ix-text-muted); font-size: var(--ifx-font-size-12); }
-.ifx-com-comment__name {
-  display: block;
-  font-size: var(--ifx-font-size-14);
+.ifx-com-comment__author {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
   margin-bottom: var(--ifx-space-4);
+  text-decoration: none;
+}
+a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underline; }
+.ifx-com-comment__name {
+  font-size: var(--ifx-font-size-14);
 }
 .ifx-com-comment__body,
 .ifx-com-comment p {

@@ -31,7 +31,7 @@ import { loadStyles } from './legacy-bridge.js?v=r20261002communityfix';
 var VER = '?v=r20261002a';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20261003b';
+var PF = '?v=r20261003c';
 
 var MANIFEST_MAP = {
   market: function () { return import('../pages/market.manifest.js' + PF); },
