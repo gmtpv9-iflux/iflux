@@ -4,7 +4,7 @@ const express = require('express');
 const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
-const posts = require('./social-posts.service');
+const posts = require('./community-posts.service');
 
 const createPostSchema = z.object({
   body: z.object({
@@ -17,7 +17,7 @@ const createPostSchema = z.object({
   })
 });
 
-function createSocialPostsRouter(deps) {
+function createCommunityPostsRouter(deps) {
   const router = express.Router();
   const auth = deps.auth || {};
 
@@ -88,4 +88,4 @@ function createSocialPostsRouter(deps) {
   return router;
 }
 
-module.exports = { createSocialPostsRouter };
+module.exports = { createCommunityPostsRouter };

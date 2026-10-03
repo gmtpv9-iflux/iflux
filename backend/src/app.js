@@ -156,7 +156,6 @@ function createApp(config) {
   app.use(`${config.LEGACY_API_PREFIX}`, createMarketRouter());
   const newsRouter = createNewsRouter({ auth: userAndAdminAuth, config });
   app.use(`${config.LEGACY_API_PREFIX}/news`, newsRouter);
-  app.use(`${config.LEGACY_API_PREFIX}/community`, newsRouter);
   app.use(`${config.LEGACY_API_PREFIX}/admin/media`, createMediaRouter({ config, auth: adminAuthMw }));
   app.use('/media', express.static(mediaRoot(config), { fallthrough: true, maxAge: '7d', index: false }));
   const { createInteractionV1Router } = require('./modules/interaction/interaction.routes');
@@ -166,11 +165,12 @@ function createApp(config) {
   app.use(`${config.LEGACY_API_PREFIX}/follow`, createFollowRouter({ auth }));
 
   /* Community V1 Phase 1 — Post model (SoT "Community (Cộng đồng) Architecture V1" §4/§9).
-   * Mount tại /social (KHÔNG /community) — "${LEGACY_API_PREFIX}/community" đã bị newsRouter
-   * chiếm từ trước (dòng app.use community → newsRouter ở trên, di sản thời Cộng đồng từng =
-   * Tin tức) — dùng path đó sẽ đụng GET /community/feed (feed TIN TỨC) đã tồn tại sẵn. */
-  const { createSocialPostsRouter } = require('./modules/social/social-posts.routes');
-  app.use(`${config.LEGACY_API_PREFIX}/social`, createSocialPostsRouter({ auth: userAndAdminAuth }));
+   * Mount tại ĐÚNG /community (2026-10-03) — trước đó phải tạm dùng /social vì prefix này còn bị
+   * newsRouter chiếm (di sản thời "Cộng đồng = Tin tức", dòng app.use community→newsRouter cũ đã
+   * GỠ BỎ hẳn ở trên, cùng alias admin/community-ops→newsOpsRouter bên dưới) — từ nay
+   * "community" trong API chỉ còn nghĩa là mạng xã hội nhà đầu tư, không còn lẫn với Tin tức. */
+  const { createCommunityPostsRouter } = require('./modules/community/community-posts.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/community`, createCommunityPostsRouter({ auth: userAndAdminAuth }));
 
   const { createNotificationsRouter } = require('./modules/notifications/notifications.routes');
   app.use(`${config.LEGACY_API_PREFIX}/notifications`, createNotificationsRouter({ auth }));
@@ -265,9 +265,10 @@ function createApp(config) {
   } = require('./modules/seo-platform/seo-platform.routes');
   app.use(`${config.LEGACY_API_PREFIX}/seo/platform`, createSeoPlatformApiRouter());
   mountSeoPlatformPublicRoots(app);
+  /* Alias /admin/community-ops (di sản "Cộng đồng = Tin tức") đã gỡ 2026-10-03 — 0 consumer thật
+     (chỉ còn nhắc tới trong 1 trang doc tĩnh, không phải lệnh gọi API). Canonical: news-ops. */
   const newsOpsRouter = createCommunityOpsAdminRouter({ config, auth: adminAuthMw });
   app.use(`${config.LEGACY_API_PREFIX}/admin/news-ops`, newsOpsRouter);
-  app.use(`${config.LEGACY_API_PREFIX}/admin/community-ops`, newsOpsRouter);
 
   const {
     createSubscriptionWaveERouter,

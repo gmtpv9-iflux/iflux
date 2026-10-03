@@ -268,7 +268,7 @@ async function resolveRelatedSeed(relatedTo) {
 }
 
 /**
- * GET /community/feed — FeedCard[]
+ * GET /news/feed — FeedCard[] (trước đây dual-mount /community/feed — alias đã gỡ 2026-10-03, /community giờ là Post model thật, xem backend/src/modules/community/)
  * Query: limit, offset, ticker, category_id, chu_de_id, sector, ecosystem, related_to, type (content_type)
  */
 async function listFeed(filters) {

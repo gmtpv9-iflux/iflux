@@ -4,6 +4,13 @@
  * Community V1 Phase 1 — Post model thống nhất (SoT "Community (Cộng đồng) Architecture V1" §4).
  * MỘT bảng `social_posts` duy nhất — Feed/Timeline/Stock Detail chỉ là query khác nhau trên
  * cùng 1 bảng (§6), không phải 3 API/bảng riêng.
+ *
+ * Tên bảng SQL cố ý vẫn là `social_posts` (không phải `community_posts`) dù API public giờ đã
+ * chuyển về đúng path /api/community/* (2026-10-03, sau khi gỡ bỏ hẳn alias community→newsRouter
+ * cũ) — vì `community_posts` là tên bảng LỊCH SỬ đã đổi thành `news_posts` (migration 063, thời
+ * "Cộng đồng = Tin tức"). Dùng lại đúng tên đó cho bảng MỚI (ý nghĩa khác hẳn) sẽ gây lẫn lộn khi
+ * tra cứu lịch sử migration sau này — tên bảng SQL (nội bộ) và tên API public (đối ngoại) KHÔNG
+ * bắt buộc phải trùng nhau, miễn API đúng và rõ nghĩa là đủ.
  */
 const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
@@ -160,7 +167,7 @@ function paginate(rows, limit) {
 }
 
 /**
- * GET /social/feed — mode=latest|following|trending (§6). `trending` dùng thứ tự mới nhất làm
+ * GET /community/feed — mode=latest|following|trending (§6). `trending` dùng thứ tự mới nhất làm
  * mặc định ở Phase 1 — FeedScore thật (DirectFollow + InteractionWeight + Recency + Engagement)
  * là Phase 3 riêng (§9), không đoán số trước khi có traffic thật (đúng nguyên tắc SoT §5).
  */
@@ -206,7 +213,7 @@ async function getFeed(opts, viewer) {
   return out;
 }
 
-/** GET /social/users/:id/timeline — toàn bộ Post của 1 author (§6). */
+/** GET /community/users/:id/timeline — toàn bộ Post của 1 author (§6). */
 async function getUserTimeline(authorId, opts, viewer) {
   opts = opts || {};
   const limit = clampLimit(opts.limit, 10);
@@ -226,7 +233,7 @@ async function getUserTimeline(authorId, opts, viewer) {
   return paginate(res.rows, limit);
 }
 
-/** GET /social/stocks/:ticker/posts — Thảo luận theo mã, phục vụ Stock Detail tab Discussion (§6). */
+/** GET /community/stocks/:ticker/posts — Thảo luận theo mã, phục vụ Stock Detail tab Discussion (§6). */
 async function getStockPosts(ticker, opts) {
   opts = opts || {};
   const limit = clampLimit(opts.limit, 10);
