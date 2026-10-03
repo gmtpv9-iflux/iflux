@@ -10,7 +10,10 @@ const newsComments = require('../news/news-comments.service');
 
 const REGISTRY = {
   post: 1,
-  communityPost: 1,
+  /* normalizeType() luôn lowercase input trước khi tra REGISTRY (dòng dưới) — key phải viết
+     thường, không phải 'communityPost' (camelCase sẽ không bao giờ khớp, API vẫn gọi được với
+     case bất kỳ vì được tự lowercase). */
+  communitypost: 1,
   stock: 1,
   sector: 1,
   family: 1,
