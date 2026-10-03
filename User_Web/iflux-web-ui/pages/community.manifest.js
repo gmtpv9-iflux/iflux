@@ -10,6 +10,7 @@ export default {
   mainClass: 'ifx-main--community-social',
   css: [
     '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
+    '/design_system/04_components/03_card/card.css?v=20260928d',
     '/User_Web/iflux-web-ui/community.css?v=r20261003a'
   ],
   path: '/cong-dong',
