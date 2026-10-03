@@ -283,8 +283,47 @@ Timeline: lazy-load 10 bản tin/lần, cuộn xuống đáy mới tải thêm l
 | Sidebar phải (2/12) layout | ✅ Có sẵn, chưa ai dùng | `app-shell.js` `opts.rightSidebar`, CSS `25_app-shell/app-shell.css` |
 | Widget Placement cho sidebar-right | ✅ Có sẵn generic, chỉ cần thêm page vào whitelist | `page-settings-catalog.js` `RIGHT_SIDEBAR = {}` |
 | Lazy-load feed 10/lần + sentinel | ✅ Có pattern mẫu | `news-daily-feed.js` (IfluxDailyFeed) — tái dùng kỹ thuật, không tái dùng data Tin tức |
-| Post model thống nhất | ❌ Chưa có — cần xây (Phase 1) | — |
+| Post model thống nhất | ✅ Xong (Phase 1, 2026-10-03) | `backend/src/modules/community/` |
 | Story/Chủ đề do User/Admin tạo trực tiếp | ❌ Chưa có — Topic Engine cũ không khớp mô hình mới | Thay thế theo §8 |
+
+---
+
+## 12. Tiến độ
+
+- [x] **Phase 0 — Scaffold trang** — route `/cong-dong`, `community.manifest.js`, `widgets/community-page`,
+  CSS cục bộ, seed data tĩnh khớp wireframe.
+- [x] **Phase 1 — Post model (backend)** (2026-10-03):
+  - Migration `072_social_posts.sql` — bảng `social_posts` (1 bảng duy nhất cho Feed/Timeline/
+    Stock Detail, đúng §4.1) + bảng `interaction_likes` (generic, trước đây CHỈ có comment).
+    Đặt tên `social_posts` (không phải `community_posts`) để tránh trùng tên bảng lịch sử đã
+    rename thành `news_posts` (migration 063).
+  - API `backend/src/modules/community/`: `POST /api/community/posts`, `GET /api/community/feed`
+    (mode=latest|following|trending), `GET /api/community/users/:id/timeline`,
+    `GET /api/community/stocks/:ticker/posts`, `DELETE /api/community/posts/:id`.
+    **Đúng path đề xuất ban đầu của tài liệu này** — ban đầu phải tạm đổi sang `/api/social/*` vì
+    phát hiện prefix `/community` lúc đó còn bị `newsRouter` chiếm (di sản "Cộng đồng = Tin tức",
+    dùng sẽ đụng `GET /community/feed` feed Tin tức cũ). 2026-10-03: gỡ hẳn alias
+    `community→newsRouter` + `admin/community-ops→newsOpsRouter` (0 consumer thật, xác nhận qua
+    audit) rồi đổi API Phase 1 này về đúng `/api/community/*` — "community" trong API từ nay chỉ
+    còn nghĩa mạng xã hội nhà đầu tư, hết lẫn với Tin tức. Tên BẢNG SQL vẫn giữ `social_posts`
+    (không đổi `community_posts`) để tránh trùng tên bảng lịch sử đã rename thành `news_posts`
+    (migration 063) — tên bảng nội bộ và tên API đối ngoại không bắt buộc trùng nhau.
+  - Đăng ký entity type `communitypost` vào Interaction registry (tái dùng nguyên luồng comment
+    generic đã chạy tốt cho stock/sector/family/story — đúng §5, không viết lại). Thêm
+    `POST/DELETE /api/interaction/v1/:entityType/:entityId/like` (generic, dùng chung mọi nơi).
+  - Đã test đầy đủ trên staging + production (tạo bài/feed/timeline/like/summary/xoá) — PASS.
+  - **CHƯA làm**: trang Cộng đồng (`widgets/community-page`) vẫn hiển thị seed data tĩnh, CHƯA
+    đọc/viết qua API Phase 1 này (nối dây Composer + Feed thật là việc tiếp theo, thuộc Phase 4).
+- [ ] **Phase 2 — Story/Chủ đề** (độc lập Phase 1, có thể làm song song)
+- [ ] **Phase 3 — Feed Ranking thật** (FeedScore — Phase 1 đang tạm dùng `created_at DESC` cho
+  mode `trending`, chưa tính DirectFollowWeight/InteractionWeight/Recency/Engagement thật)
+- [ ] **Phase 4 — Composer UI** (nối Composer hiện tại — đang báo "đang hoàn thiện" — vào
+  `POST /api/community/posts`; Feed/Timeline đọc qua `GET /api/community/feed`)
+- [ ] **Phase 5 — Sidebar widgets** (Chủ đề HOT, Mã được thảo luận nhiều, Hoạt động từ người theo
+  dõi — có thể tận dụng ngay `GET /api/community/users/:id/timeline` theo danh sách Follow cho mục
+  "Hoạt động từ người theo dõi")
+- [ ] **Phase 6 — Timeline lazy-load** (hạ tầng cursor-based đã sẵn trong API Phase 1, chỉ còn nối
+  UI sentinel + IntersectionObserver kiểu `news-daily-feed.js`)
 
 ---
 

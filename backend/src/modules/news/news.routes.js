@@ -41,7 +41,7 @@ function createNewsRouter(deps) {
 
   /**
    * SoT FeedCard — semantic list (không đổi GET /posts legacy).
-   * GET /community/feed → FeedCard[] (Forbidden: body, body_html, …)
+   * GET /news/feed → FeedCard[] (Forbidden: body, body_html, …)
    */
   router.get('/feed', async (req, res, next) => {
     try {
