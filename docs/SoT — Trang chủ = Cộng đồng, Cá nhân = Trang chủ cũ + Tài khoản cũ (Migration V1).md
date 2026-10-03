@@ -119,6 +119,24 @@ user — audit trước khi code, tránh trùng lặp cơ chế đã có.
    của tôi"/"Bài viết đã lưu" ở Lối tắt nhanh Cộng đồng đã có sẵn). **Mặc định đang chọn: bỏ hẳn** —
    sẽ làm theo hướng này nếu Owner không phản hồi khác.
 
+## 8b. Ràng buộc kỹ thuật phát hiện thêm (Phase 2) — `account-feature-boot.js`
+
+Audit `/tai-khoan` cũ (`User_Web/account/profile.html`, 503 dòng) xác nhận: toàn bộ 4 tab
+(Affiliate/Thanh toán/Riêng tư/Bảo mật) là HTML tĩnh với id/data-attribute cố định
+(`#tab-affiliate`, `#ref-link`, `data-bind="..."`, `data-pay-field`, `data-sec-field`...), được
+"bind" hành vi thật bởi `account-feature-boot.js` (classic script, ~352 dòng) — script này đã hoạt
+động tốt, **không viết lại logic nghiệp vụ**, chỉ di chuyển nguyên markup + script.
+
+**Ràng buộc chặn cần xử lý trước khi di chuyển**: `account-feature-boot.js`'s `main()` gọi
+`await waitShellReady('account')` — chờ đúng sự kiện `iflux-shell-ready` với
+`detail.pageKey === 'account'`, do `bootstrap.js` chỉ bắn sự kiện này cho `SHELL_ONLY` pages
+(trang HTML tĩnh kiểu cũ). Trang Cá nhân mới là **composite page** (pageKey `home`, qua
+`buildPageFrame`/page-runtime bình thường) — sự kiện `shell-ready` với pageKey `'account'` SẼ
+KHÔNG BAO GIỜ bắn ra nữa, khiến `account-feature-boot.js` treo vĩnh viễn nếu giữ nguyên.
+→ Cần sửa `waitShellReady()` thành tổng quát (không khoá cứng theo 1 pageKey, hoặc nhận pageKey
+làm tham số) và bỏ dòng `mountPageWidgets(layout.parentElement, 'account')` cuối `main()` (sidebar
+Admin Widget giờ do khung trang Cá nhân mới tự quản, không qua publishKey `'account'` cũ nữa).
+
 ## 9. Thứ tự Phase (dependency — làm đúng trình tự, không đảo)
 
 - **Phase 1 — Routing + Nav (không đụng layout trang)**: `/` → pageKey community; nav "Cộng đồng" lên
@@ -138,7 +156,7 @@ user — audit trước khi code, tránh trùng lặp cơ chế đã có.
 
 ## 10. Tiến độ
 
-- [ ] Phase 1 — Routing + Nav
+- [x] Phase 1 — Routing + Nav (commit `cc74dd1`, đã test local đầy đủ, đợi xác nhận staging)
 - [ ] Phase 2 — Khung trang Cá nhân mới + kích hoạt Sidebar trái kéo-thả
 - [ ] Phase 3 — Template Promotion + Placement Sidebar phải
 - [ ] Phase 4 — Khung [+] rỗng + giới hạn theo tier

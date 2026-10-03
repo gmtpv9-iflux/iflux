@@ -49,11 +49,20 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'profile-page.js'
 ];
 
-function waitShellReady(pageKey) {
-  if (window.__IFLUX_SHELL_READY === pageKey) return Promise.resolve();
+/* Chờ Shell sẵn sàng — tổng quát theo pageKey (mảng chấp nhận nhiều key), vì script này giờ
+ * boot từ CẢ 2 ngữ cảnh: trang tĩnh SHELL_ONLY cũ ('account', bắn qua event 'iflux-shell-ready')
+ * LẪN trang composite mới ('home' — Cá nhân, Shell đã sẵn sàng ngay khi page-runtime gọi tới
+ * composite widget, không bắn event riêng — coi như sẵn sàng luôn). */
+function waitShellReady(pageKeys) {
+  var keys = [].concat(pageKeys);
+  if (keys.indexOf(window.__IFLUX_SHELL_READY) >= 0) return Promise.resolve();
+  if (keys.indexOf('home') >= 0 && document.querySelector('[data-ifx-page-runtime]')) {
+    /* Composite page (vd Cá nhân): page-runtime đã mount tới widget này nghĩa là Shell xong rồi. */
+    return Promise.resolve();
+  }
   return new Promise(function (resolve) {
     function onReady(ev) {
-      if (ev.detail && ev.detail.pageKey === pageKey) {
+      if (ev.detail && keys.indexOf(ev.detail.pageKey) >= 0) {
         window.removeEventListener('iflux-shell-ready', onReady);
         resolve();
       }
@@ -335,16 +344,19 @@ function bootAccountPage() {
 }
 
 async function main() {
-  await waitShellReady('account');
+  await waitShellReady(['account', 'home']);
   var scripts = CORE_SCRIPTS.slice();
   if (isPublicProfileBoot()) {
     scripts = scripts.concat(PUBLIC_PROFILE_SCRIPTS);
   }
   await loadScriptsSequential(scripts);
   bootAccountPage();
-  /* Widget Placement trang Tài khoản → host Sidebar / Main của khung chung. */
-  var layout = document.querySelector('.ifx-shell-layout');
-  if (layout) await mountPageWidgets(layout.parentElement, 'account');
+  /* Widget Placement publishKey 'account' — CHỈ cho trang /tai-khoan cũ (SHELL_ONLY). Trang Cá
+     nhân mới (pageKey 'home') tự quản sidebar/widget riêng, không qua publishKey này nữa. */
+  if (window.__IFLUX_SHELL_READY === 'account') {
+    var layout = document.querySelector('.ifx-shell-layout');
+    if (layout) await mountPageWidgets(layout.parentElement, 'account');
+  }
 }
 
 main().catch(function (err) {
