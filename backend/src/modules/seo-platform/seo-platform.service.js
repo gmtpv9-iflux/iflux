@@ -14,13 +14,17 @@ var db = require('../../core/database/connection');
 var mediaService = require('../media/media.service');
 
 var PATH_TO_PAGE_KEY = {
-  '/': 'dashboard',
+  /* Trang chủ thật = Cộng đồng từ 2026-10-03 (xem SoT Migration V1) — "/trang-chu" cũ đổi tên
+     "Cá nhân", path mới "/ca-nhan", vẫn dùng pageKey SEO "dashboard" (chưa đổi tên pageKey SEO
+     để tránh vỡ dữ liệu site-seo đã cấu hình theo key này). */
+  '/': 'community',
   '/thi-truong': 'market',
+  '/ca-nhan': 'dashboard',
   '/trang-chu': 'dashboard',
   '/nha-cua-toi': 'dashboard',
   '/dong-tien': 'flow',
   '/tin-tuc': 'news',
-  '/cong-dong': 'news',
+  '/cong-dong': 'community',
   '/co-phieu': 'stocks',
   '/nganh': 'sectors',
   '/he-sinh-thai': 'ecosystems',
@@ -34,6 +38,7 @@ var PATH_TO_PAGE_KEY = {
 };
 
 var SITEMAP_STATIC = [
+  { pageKey: 'community', path: '/', changefreq: 'hourly', priority: '1.0' },
   { pageKey: 'market', path: '/thi-truong', changefreq: 'hourly', priority: '1.0' },
   { pageKey: 'news', path: '/tin-tuc', changefreq: 'hourly', priority: '0.9' },
   { pageKey: 'flow', path: '/dong-tien', changefreq: 'hourly', priority: '0.9' },

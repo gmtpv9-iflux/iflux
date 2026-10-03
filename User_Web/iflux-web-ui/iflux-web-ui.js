@@ -1015,7 +1015,7 @@
     if (mobileNavLoaded) return;
     mobileNavLoaded = true;
     var s = document.createElement('script');
-    s.src = iwuAssetBase() + 'mobile-nav.js?v=r20261002a';
+    s.src = iwuAssetBase() + 'mobile-nav.js?v=r20261003a';
     document.body.appendChild(s);
   }
   if (ifxIsMobileShell()) {

@@ -162,8 +162,8 @@
       document.body.appendChild(bar);
     }
 
-    var SHORT = { dashboard: 'Nhà' };
-    var ORDER = ['dashboard', 'market', 'news', 'flow', 'pricing'];
+    var SHORT = {};
+    var ORDER = ['community', 'market', 'news', 'flow', 'pricing', 'dashboard'];
 
     function tabbarItemHtml(it, label) {
       var chip = it.exclusive ? '<span class="ifx-tabbar-chip">ĐỘC QUYỀN</span>' : '';

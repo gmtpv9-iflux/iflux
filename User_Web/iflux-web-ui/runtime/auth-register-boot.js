@@ -4,7 +4,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var ALL = [
-  ASSET + 'iflux-platform-boot.js?v=communityV1e',
+  ASSET + 'iflux-platform-boot.js?v=communityV1g',
   ASSET + 'iflux-api-bundle.js',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
   ASSET + 'auth.js?v=r20261002g',
@@ -14,7 +14,7 @@ var ALL = [
   ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
   ASSET + 'auth-social.js?v=affOwnerRead20260808',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'iflux-web-ui.js?v=r20261002a',
+  ASSET + 'iflux-web-ui.js?v=r20261003a',
   ASSET + 'auth-register-init.js?v=r20260928q'
 ];
 

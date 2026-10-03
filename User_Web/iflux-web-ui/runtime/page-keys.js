@@ -64,7 +64,10 @@ export function pageKeyFromPath(pathname) {
   if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'news';
   if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
   if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
-  if (path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
+  /* /ca-nhan = path mới (trang "Cá nhân", trước đây gọi "Trang chủ") — /trang-chu giữ lại nhận diện
+   * phía client cho an toàn (server đã 301 sang /ca-nhan, đây chỉ là lưới dự phòng nếu soft-nav tới
+   * thẳng path cũ mà chưa qua redirect server). */
+  if (path.indexOf('/ca-nhan') >= 0 || path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
   if (path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'market';
   if (path.indexOf('/hoi-dap') >= 0 || path.indexOf('/faq') >= 0) return 'faq';
   if (path.indexOf('/thanh-vien') >= 0 || path.indexOf('/loyalty') >= 0 || path.indexOf('/membership') >= 0) return 'loyalty';
@@ -83,7 +86,9 @@ export function pageKeyFromPath(pathname) {
   if (/\/(he-sinh-thai|ho-co-phieu|ecosystems)\/?$/.test(path) || /\/user_web\/ecosystems(\/|$)/.test(path)) return 'ecosystems';
   if (/\/(cau-chuyen|chu-de|stories)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/?$/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/index/.test(path)) return 'cauChuyen';
 
-  if (path === '/' || path === '') return 'home';
+  /* Path gốc = Cộng đồng (trang chủ thật từ 2026-10-03 — xem SoT Migration V1).
+   * "Trang chủ" cũ đổi tên "Cá nhân", path riêng /ca-nhan — không còn chiếm path gốc. */
+  if (path === '/' || path === '') return 'community';
   return null;
 }
 
