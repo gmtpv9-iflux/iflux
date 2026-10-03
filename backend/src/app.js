@@ -165,6 +165,13 @@ function createApp(config) {
   const { createFollowRouter } = require('./modules/follow/follow.routes');
   app.use(`${config.LEGACY_API_PREFIX}/follow`, createFollowRouter({ auth }));
 
+  /* Community V1 Phase 1 — Post model (SoT "Community (Cộng đồng) Architecture V1" §4/§9).
+   * Mount tại /social (KHÔNG /community) — "${LEGACY_API_PREFIX}/community" đã bị newsRouter
+   * chiếm từ trước (dòng app.use community → newsRouter ở trên, di sản thời Cộng đồng từng =
+   * Tin tức) — dùng path đó sẽ đụng GET /community/feed (feed TIN TỨC) đã tồn tại sẵn. */
+  const { createSocialPostsRouter } = require('./modules/social/social-posts.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/social`, createSocialPostsRouter({ auth: userAndAdminAuth }));
+
   const { createNotificationsRouter } = require('./modules/notifications/notifications.routes');
   app.use(`${config.LEGACY_API_PREFIX}/notifications`, createNotificationsRouter({ auth }));
 

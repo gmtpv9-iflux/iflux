@@ -10,6 +10,7 @@ const newsComments = require('../news/news-comments.service');
 
 const REGISTRY = {
   post: 1,
+  communityPost: 1,
   stock: 1,
   sector: 1,
   family: 1,
@@ -232,6 +233,46 @@ async function createThreadComment(entityType, entityId, user, payload) {
   return createEntityComment(type, id, user, payload);
 }
 
+async function countEntityLikes(type, id) {
+  const res = await query(
+    `SELECT COUNT(*)::int AS n FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2`,
+    [type, id]
+  );
+  return (res.rows[0] && res.rows[0].n) || 0;
+}
+
+async function likeEntity(entityType, entityId, user) {
+  const type = normalizeType(entityType);
+  const id = normalizeId(type, entityId);
+  /* post (bài Tin tức) có hệ like/favorite RIÊNG — persist trong news_posts.payload.stats/
+     liked_by (xem news/interaction.service.js persistStats), KHÔNG qua interaction_likes. Dùng
+     chung bảng này cho 'post' sẽ tạo 2 nguồn đếm like lệch nhau cho cùng 1 bài. */
+  if (type === 'post') return newsInteraction.mutate(id, user, 'like');
+  const uid = user && user.id ? user.id : null;
+  if (!uid) throw AppError.unauthorized('Cần đăng nhập');
+  await query(
+    `INSERT INTO interaction_likes (entity_type, entity_id, user_id) VALUES ($1, $2, $3)
+     ON CONFLICT DO NOTHING`,
+    [type, id, uid]
+  );
+  const likes = await countEntityLikes(type, id);
+  return { liked: true, likes: likes, target: { type: type, id: id } };
+}
+
+async function unlikeEntity(entityType, entityId, user) {
+  const type = normalizeType(entityType);
+  const id = normalizeId(type, entityId);
+  if (type === 'post') return newsInteraction.mutate(id, user, 'unlike');
+  const uid = user && user.id ? user.id : null;
+  if (!uid) throw AppError.unauthorized('Cần đăng nhập');
+  await query(
+    `DELETE FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND user_id = $3`,
+    [type, id, uid]
+  );
+  const likes = await countEntityLikes(type, id);
+  return { liked: false, likes: likes, target: { type: type, id: id } };
+}
+
 async function getSummary(entityType, entityId) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
@@ -239,9 +280,10 @@ async function getSummary(entityType, entityId) {
     return newsInteraction.getSummary('post', id);
   }
   const comments = await countEntityComments(type, id);
+  const likes = await countEntityLikes(type, id);
   return {
     target: { type: type, id: id },
-    likes: 0,
+    likes: likes,
     comments: comments,
     shares: 0,
     favorites: 0
@@ -289,5 +331,8 @@ module.exports = {
   migrateEntityComments: migrateEntityComments,
   getSummary: getSummary,
   countEntityComments: countEntityComments,
-  likeComment: likeComment
+  countEntityLikes: countEntityLikes,
+  likeComment: likeComment,
+  likeEntity: likeEntity,
+  unlikeEntity: unlikeEntity
 };
