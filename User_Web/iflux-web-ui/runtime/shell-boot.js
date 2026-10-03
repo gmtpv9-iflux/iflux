@@ -18,7 +18,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  */
 
 import { loadScript, loadStyle } from './legacy-bridge.js?v=r20261002communityfix';
-import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20261003f';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20261003m';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
@@ -213,7 +213,7 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=r20261003j' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=r20261003l' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
     { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20261002g' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
@@ -256,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20261003a' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20261003m' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

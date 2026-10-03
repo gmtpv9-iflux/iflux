@@ -163,7 +163,7 @@
     }
 
     var SHORT = {};
-    var ORDER = ['community', 'market', 'news', 'flow', 'pricing', 'dashboard'];
+    var ORDER = ['community', 'news', 'flow', 'pricing', 'dashboard'];
 
     function tabbarItemHtml(it, label) {
       var chip = it.exclusive ? '<span class="ifx-tabbar-chip">ĐỘC QUYỀN</span>' : '';

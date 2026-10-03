@@ -63,13 +63,15 @@ export function pageKeyFromPath(pathname) {
   if (/\/(cau-chuyen|chu-de|stories)\/[^/]+/.test(path) || /\/user_web\/(cau-chuyen|chu-de)\/chi-tiet/.test(path)) return 'cauChuyenDetail';
 
   if (path.indexOf('/tin-tuc') >= 0 || path.indexOf('/cong-dong') >= 0 || path.indexOf('/community') >= 0) return 'news';
-  if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0) return 'flow';
+  /* Thị trường (/thi-truong) đã xoá — Dòng tiền phản ánh đủ (2026-10-03). Alias path cũ sang
+     'flow' ở tầng soft-nav (nginx 301 /thi-truong → /dong-tien chỉ chặn hard-nav, không chặn
+     click soft-nav nếu đâu đó còn link cũ sót lại). */
+  if (path.indexOf('/dong-tien') >= 0 || path.indexOf('/flow') >= 0 || path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'flow';
   if (path.indexOf('/goi-cuoc') >= 0 || path.indexOf('/pricing') >= 0) return 'pricing';
   /* /ca-nhan = path mới (trang "Cá nhân", trước đây gọi "Trang chủ") — /trang-chu giữ lại nhận diện
    * phía client cho an toàn (server đã 301 sang /ca-nhan, đây chỉ là lưới dự phòng nếu soft-nav tới
    * thẳng path cũ mà chưa qua redirect server). */
   if (path.indexOf('/ca-nhan') >= 0 || path.indexOf('/trang-chu') >= 0 || path.indexOf('/nha-cua-toi') >= 0 || path.indexOf('/home') >= 0) return 'home';
-  if (path.indexOf('/thi-truong') >= 0 || path.indexOf('/market') >= 0) return 'market';
   if (path.indexOf('/hoi-dap') >= 0 || path.indexOf('/faq') >= 0) return 'faq';
   if (path.indexOf('/thanh-vien') >= 0 || path.indexOf('/loyalty') >= 0 || path.indexOf('/membership') >= 0) return 'loyalty';
   if (path.indexOf('/theo-doi') >= 0 || path.indexOf('/watchlist') >= 0) return 'watchlist';

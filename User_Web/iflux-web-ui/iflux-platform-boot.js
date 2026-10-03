@@ -21,7 +21,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
   var ROUTES = {
     home: { public: '/ca-nhan', file: '/User_Web/home/index.html', zone: 'app', auth: true },
-    market: { public: '/thi-truong', file: '/User_Web/market/index.html', zone: 'app' },
+    /* Thị trường (/thi-truong) đã xoá 2026-10-03 — Dòng tiền phản ánh đủ, nginx 301 sang
+       /dong-tien. KHÔNG xoá market-status-bar.js/iflux-market-master.js/api/market/* — hạ tầng
+       dùng chung cho Cổ phiếu/Ngành/Hệ sinh thái/Dashboard Cá nhân, không riêng trang này. */
     flow: { public: '/dong-tien', file: '/User_Web/flow/index.html', zone: 'app' },
     stocks: { public: '/co-phieu', file: '/User_Web/stocks/index.html', zone: 'app', auth: true },
     sectors: { public: '/nganh', file: '/User_Web/sectors/index.html', zone: 'app', auth: true },
@@ -536,7 +538,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
    * appOnly: chỉ hiện khi đã đăng nhập. exclusive: kiểu link Độc quyền. */
   var primary = [
     { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-world', onboard: 'community' },
-    { key: 'market',    route: 'market',    label: 'Thị trường',  icon: 'ti-chart-candle', onboard: 'market' },
     { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-news', onboard: 'news' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' },
@@ -637,7 +638,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   var LEGACY_HREF = {
-    home: '/trang-chu', market: '/thi-truong', flow: '/dong-tien',
+    home: '/trang-chu', flow: '/dong-tien',
     news: '/tin-tuc', pricing: '/goi-cuoc', account: '/tai-khoan', faq: '/hoi-dap'
   };
   function hrefFor(routeKey) {
@@ -751,7 +752,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       if (rt && rt.file) {
         var f = rt.file;
         if (f.indexOf('/home/') >= 0) return 'dashboard';
-        if (f.indexOf('/market/') >= 0) return 'market';
         if (f.indexOf('/flow/') >= 0) return 'flow';
         /* Legacy: bài viết cũ còn trỏ /User_Web/community/post (xem ENTITY_ROUTES) — chỉ alias
            đúng sub-path "post", KHÔNG bắt luôn trang chủ Cộng đồng mới (/User_Web/community/index.html). */
@@ -766,8 +766,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     try { path = (global.location && global.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
     if (path === '/' || path === '') return 'community';
     if (/\/(ca-nhan|trang-chu|nha-cua-toi|home)(\/|$)/.test(path)) return 'dashboard';
-    if (/\/(thi-truong|market)(\/|$)/.test(path)) return 'market';
-    if (/\/(dong-tien|flow)(\/|$)/.test(path)) return 'flow';
+    /* Thị trường (/thi-truong) đã xoá — alias sang 'flow' (Dòng tiền phản ánh đủ). */
+    if (/\/(dong-tien|flow|thi-truong|market)(\/|$)/.test(path)) return 'flow';
     /* /cong-dong/bai-viet/* = alias bài viết cũ (list: /tin-tuc, xem ENTITY_ROUTES) — vẫn tính
        là "news". /cong-dong gốc = trang Cộng đồng mới, active tab riêng. */
     if (/\/(cong-dong|community)\/(bai-viet|posts?)(\/|$)/.test(path)) return 'news';

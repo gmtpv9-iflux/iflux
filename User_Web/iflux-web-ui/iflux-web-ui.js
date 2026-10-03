@@ -286,7 +286,10 @@
       a.style.display = 'none';
     });
 
-    var onFlow = location.pathname.indexOf('/flow/') >= 0;
+    /* '/flow/' = đường dẫn file tĩnh cũ; URL canonical thật là /dong-tien (đổi tên từ lâu) —
+       chỉ check '/flow/' khiến is-active luôn bị tắt trên /dong-tien (upgradeFlowNavLink dưới
+       đây toggle is-active=false, xoá mất trạng thái active mà nav-registry đã gán đúng). */
+    var onFlow = /\/(dong-tien|flow)(\/|$)/.test(location.pathname);
 
     document.querySelectorAll('.ifx-app-header-menu').forEach(function (menu) {
       var marketLink = findMarketLink(menu);
@@ -1015,7 +1018,7 @@
     if (mobileNavLoaded) return;
     mobileNavLoaded = true;
     var s = document.createElement('script');
-    s.src = iwuAssetBase() + 'mobile-nav.js?v=r20261003a';
+    s.src = iwuAssetBase() + 'mobile-nav.js?v=r20261003b';
     document.body.appendChild(s);
   }
   if (ifxIsMobileShell()) {

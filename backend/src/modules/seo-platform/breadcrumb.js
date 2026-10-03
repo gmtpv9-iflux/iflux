@@ -11,7 +11,6 @@ var PUBLIC_ORIGIN = 'https://iflux.vn';
 var HOME = { name: 'Trang chủ', path: '/trang-chu' };
 
 var HUB = {
-  market: { name: 'Thị trường', path: '/thi-truong' },
   news: { name: 'Tin tức', path: '/tin-tuc' },
   flow: { name: 'Dòng tiền', path: '/dong-tien' },
   membership: { name: 'Thành viên', path: '/thanh-vien' },
@@ -77,18 +76,15 @@ function resolveBreadcrumb(input) {
     /* Leaf bài viết; HOME crumb = Trang chủ /trang-chu */
     pushUnique(items, crumb(title || 'Bài viết', path, origin));
   } else if (pageKey === 'stock-detail' || /^\/co-phieu\/[^/]+/i.test(path)) {
-    addHub('market');
     addHub('stocks');
     pushUnique(
       items,
       crumb(hints.ticker || hints.stockName || title || path.split('/').pop(), path, origin)
     );
   } else if (pageKey === 'sector-detail' || /^\/nganh\/[^/]+/i.test(path)) {
-    addHub('market');
     addHub('sectors');
     pushUnique(items, crumb(hints.sectorName || title || path.split('/').pop(), path, origin));
   } else if (pageKey === 'eco-detail' || /^\/he-sinh-thai\/[^/]+/i.test(path)) {
-    addHub('market');
     addHub('ecosystems');
     pushUnique(items, crumb(hints.ecoName || title || path.split('/').pop(), path, origin));
   } else if (pageKey === 'cau-chuyen-detail' || /^\/cau-chuyen\/[^/]+/i.test(path) || /^\/chu-de\/[^/]+/i.test(path)) {
@@ -101,13 +97,10 @@ function resolveBreadcrumb(input) {
   } else if (pageKey === 'com-topic' || /^\/(?:tin-tuc|cong-dong)\/chu-de\//i.test(path)) {
     pushUnique(items, crumb(hints.topicName || title || 'Chủ đề', path, origin));
   } else if (pageKey === 'stocks') {
-    addHub('market');
     addHub('stocks');
   } else if (pageKey === 'sectors') {
-    addHub('market');
     addHub('sectors');
   } else if (pageKey === 'ecosystems') {
-    addHub('market');
     addHub('ecosystems');
   } else if (HUB[pageKey]) {
     addHub(pageKey);

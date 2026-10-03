@@ -16,7 +16,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * Boot tối thiểu: detect page → App Shell deps → resolve manifest → page-runtime.
  *
  * Nguồn manifest (Phase 4):
- *  - market: GET /api/pages/:pageKey (PagePublished) — KHÔNG page-composition, KHÔNG catalog.
+ *  - PAGE_PUBLISHED[pageKey]: GET /api/pages/:pageKey (PagePublished) — KHÔNG page-composition,
+ *    KHÔNG catalog. Hiện rỗng (trang "market" từng dùng đường này đã xoá 2026-10-03).
  *  - Trang composite: flow, community, home, … tự fetch PagePublished trong page module.
  *  - home ↔ dashboard: Publish key = dashboard; runtime pageKey = home (widgets/home-page tự mountPageWidgets).
  */
@@ -24,7 +25,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 import { bootPage } from './page-runtime.js?v=r20260929e';
 import { applyDefinitionToDocument } from './page-definition.js?v=seoFnd20260729';
 import { bootShell } from './shell-boot.js?v=communityV1i';
-import { pageKeyFromPath } from './page-keys.js?v=r20261003f';
+import { pageKeyFromPath } from './page-keys.js?v=r20261003m';
 import { installSoftNavigation } from './soft-navigation.js?v=r20261003e';
 import { loadStyles } from './legacy-bridge.js?v=r20261002communityfix';
 
@@ -34,7 +35,6 @@ var B2 = '?v=phaseB220260721a';
 var PF = '?v=r20261003c';
 
 var MANIFEST_MAP = {
-  market: function () { return import('../pages/market.manifest.js' + PF); },
   home: function () { return import('../pages/home.manifest.js?v=r20261002d'); },
   flow: function () { return import('../pages/flow.manifest.js' + PF); },
   news: function () { return import('../pages/news.manifest.js' + PF); },
@@ -97,10 +97,10 @@ function seoCatalogKey(pageKey) {
   return SEO_KEY_ALIAS[pageKey] || PUBLISH_KEY_ALIAS[pageKey] || pageKey;
 }
 
-/** Trang slot dùng PagePublished (mount path Phase 4). Home composite (widgets/home-page) tự fetch — không qua đây. */
-var PAGE_PUBLISHED = {
-  market: true
-};
+/** Trang slot dùng PagePublished (mount path Phase 4). Home composite (widgets/home-page) tự fetch — không qua đây.
+ * Rỗng từ khi xoá Thị trường (2026-10-03, pageKey 'market' từng là slot duy nhất dùng đường này) —
+ * giữ lại cơ chế cho trang tương lai nào cần, không phải code chết. */
+var PAGE_PUBLISHED = {};
 
 function detectPageKey() {
   return pageKeyFromPath(location.pathname);
