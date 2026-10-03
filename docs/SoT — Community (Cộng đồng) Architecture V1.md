@@ -335,13 +335,35 @@ Timeline: lazy-load 10 bản tin/lần, cuộn xuống đáy mới tải thêm l
     Admin riêng — chưa bắt buộc để các API trên hoạt động, để dành làm cùng lúc với Phase 4/5 UI).
 - [ ] **Phase 3 — Feed Ranking thật** (FeedScore — Phase 1 đang tạm dùng `created_at DESC` cho
   mode `trending`, chưa tính DirectFollowWeight/InteractionWeight/Recency/Engagement thật)
-- [ ] **Phase 4 — Composer UI** (nối Composer hiện tại — đang báo "đang hoàn thiện" — vào
-  `POST /api/community/posts`; Feed/Timeline đọc qua `GET /api/community/feed`)
-- [ ] **Phase 5 — Sidebar widgets** (Chủ đề HOT, Mã được thảo luận nhiều, Hoạt động từ người theo
-  dõi — có thể tận dụng ngay `GET /api/community/users/:id/timeline` theo danh sách Follow cho mục
-  "Hoạt động từ người theo dõi")
-- [ ] **Phase 6 — Timeline lazy-load** (hạ tầng cursor-based đã sẵn trong API Phase 1, chỉ còn nối
-  UI sentinel + IntersectionObserver kiểu `news-daily-feed.js`)
+- [x] **Phase 4 — Composer UI (một phần)** (2026-10-03):
+  - `community-store.js` (mới) — API client Post+Story, cùng pattern `apiBase/authHeaders` đã dùng
+    ở `profile-follow-store.js`. `community-page.js`: Feed (Mới nhất/Thịnh hành) đọc
+    `GET /api/community/feed` thật, "Chủ đề HOT" đọc `GET /api/community/stories?sort=trending`
+    thật — bỏ hẳn `SEED_POSTS`/`SEED_HOT_TOPICS`. Composer "Viết bài"/"Gắn thẻ"/"Tạo chủ đề" mở
+    modal thật (tái dùng `.ix-modal-*` có sẵn trong DS) → gọi đúng API tạo Post/Story. Like tối ưu
+    UI ngay rồi gọi Interaction generic. Tab "Nổi bật" tạm dùng chung `mode=trending` với "Thịnh
+    hành" (chờ Phase 3 FeedScore thật để tách).
+  - `community-posts.service.js`: thêm `attachViewerLiked()` cho `getFeed`/`getUserTimeline` — Phase
+    1 trước đó chỉ `getPostById` mới trả `viewer_liked`, khiến nút Thích hiện sai sau khi tải lại
+    trang; đã fix + verify qua Playwright (reload giữ đúng trạng thái đã thích).
+  - **Rà soát đồng bộ DS title** (owner phát hiện card "Cộng đồng iFlux" không dùng đúng kiểu tiêu
+    đề chuẩn): toàn bộ tiêu đề khối (Chủ đề HOT, Mã được thảo luận nhiều, Nhà đầu tư nên theo dõi,
+    Cộng đồng iFlux, Hoạt động từ người theo dõi, Lối tắt nhanh) đổi từ 1 kiểu "section head" cục bộ
+    tự chế (`.ifx-com2-sectionhead*`) sang đúng `.ifx-widget-title` trong `.ifx-card-header` — khung
+    Widget title CHUẨN dùng chung mọi nơi trên nền tảng (`design_system/05_templates/00_widget/widget.js`).
+    2 CTA card (Tạo chủ đề / Mời bạn bè) là tiêu đề khác loại thật (canh giữa, đi kèm icon lớn + nút)
+    → thêm primitive MỚI `.ifx-cta-title` vào DS (`03_primitives/08_title/title.css`) để tái dùng,
+    không tự định nghĩa cục bộ nữa.
+  - Đã test đầy đủ qua Playwright trên staging + production (đăng bài/like/reload giữ trạng
+    thái/tạo chủ đề/đổi tab) — PASS, không lỗi console. **CHƯA làm** (còn lại của Phase 4 + Phase 5):
+    "Chia sẻ tin" từ Article (cần UI chọn bài Tin tức nguồn), mở thread bình luận thật, Follow tác
+    giả ngay trong Feed, Sidebar "Mã được thảo luận nhiều"/"Nhà đầu tư nên theo dõi" (còn seed —
+    thuộc Phase 5), trang Admin "Cộng đồng > Danh sách chủ đề".
+- [ ] **Phase 5 — Sidebar widgets** (Chủ đề HOT và Composer→Story đã xong ở Phase 4 trên; còn lại:
+  Mã được thảo luận nhiều, Nhà đầu tư nên theo dõi, Hoạt động từ người theo dõi — có thể tận dụng
+  ngay `GET /api/community/users/:id/timeline` theo danh sách Follow cho mục cuối)
+- [ ] **Phase 6 — Timeline lazy-load** (hạ tầng cursor-based đã sẵn trong API Phase 1, Phase 4 tạm
+  dùng nút "Xem thêm" — còn lại nối UI sentinel + IntersectionObserver kiểu `news-daily-feed.js`)
 
 ---
 
