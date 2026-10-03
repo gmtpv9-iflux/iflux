@@ -6,6 +6,12 @@
 thực thi, không phải câu hỏi chờ duyệt. Chỉ các mục đánh dấu **⚠️ CẦN OWNER XÁC NHẬN** là thật sự
 chặn lại chờ quyết định; phần còn lại cứ theo đúng thứ tự Phase mà làm.
 
+**Cập nhật 2026-10-03 (giữa Phase 2)**: Owner xác nhận KHÔNG còn coi Affiliate/Thanh toán/Bảo mật là
+"dữ liệu nhạy cảm cần thận trọng" nữa — chưa có user thật, chưa cần trả thưởng affiliate, dữ liệu
+test có thể reset tự do. Yêu cầu: làm đúng nghiệp vụ/logic/chuẩn runtime-tải-DS về mặt CHỨC NĂNG,
+không cần né tránh vì lo dữ liệu thật. Tiếp tục Phase 2 đầy đủ, không dừng giữa chừng vì lý do này
+nữa.
+
 ## 1. Mục tiêu cuối cùng
 
 - **`iflux.vn` (path gốc `/`) = Cộng đồng.** Nav "Cộng đồng" đứng ĐẦU danh sách (desktop lẫn mobile).
@@ -79,10 +85,33 @@ Audit code xác nhận **engine đã dựng sẵn đầy đủ cơ chế này, c
 
 **Xác nhận bằng grep: `[data-ifx-hub-sidebar-canvas]` CHƯA từng được dùng ở bất kỳ trang nào** — tức
 tính năng đã được dựng sẵn từ trước (đón đầu đúng nhu cầu này) nhưng chưa trang nào gắn phần tử host
-vào để kích hoạt. Việc cần làm ở Phase 3 chỉ là: đặt 1 `<div data-ifx-hub-sidebar-canvas>` vào đúng
-vị trí Sidebar trái của trang Cá nhân mới (cạnh Watchlist), gọi `IfluxDashboardEngine.init()` như
-bình thường — KHÔNG cần sửa `dashboard-engine.js`. Việc còn lại là **test kỹ** đường kéo-thả 2 chiều
-này vì nhiều khả năng chưa từng được chạy thật end-to-end trước đây (code có nhưng chưa ai dùng).
+vào để kích hoạt.
+
+**Cập nhật sau khi làm thật (Phase 2) — đánh giá "không cần sửa engine" ở trên SAI một phần**: tầng
+dữ liệu (`moveWidget` nhận `scope`) đúng là có sẵn, nhưng khi test end-to-end xuất hiện 2 vấn đề thật
+phải sửa trong `dashboard-engine.js`:
+1. **Bug thật trong `moveWidget`**: biến `others` được lọc theo `widgetScope(item) !== scope` TRƯỚC
+   khi gán `w.scope = scope` — khi đổi scope (Dashboard→Sidebar) widget đang kéo vẫn lọt vào `others`
+   (vì scope cũ lúc lọc chưa đổi) RỒI bị chèn thêm lần 2 vào `scoped`/`dash` → 1 widget xuất hiện 2
+   lần trong layout. Lỗi này tồn tại từ trước (code có nhưng chưa ai chạy cross-scope thật như suy
+   đoán ở trên) — đã sửa: đổi `w.scope` TRƯỚC, lọc others/scoped theo `instance_id !== id`.
+2. **Giao diện kéo-thả (`bindPointerDrag`) trước đây KHÔNG nhận diện vùng Sidebar** — `getColumnAt()`
+   không đọc `clientX`/`clientY` để biết con trỏ đang ở trên Sidebar hay không, luôn trả về cột cố
+   định theo `dragScope` ban đầu (tức kéo từ Dashboard thả vào Sidebar vẫn bị tính là thả lại
+   Dashboard). Đã thêm: dò `sidebarCanvasEl.getBoundingClientRect()` khi đang kéo từ Dashboard, hiện
+   placeholder + highlight (`.is-drag-over`) khi hover Sidebar, gọi `moveWidget(..., SCOPES.sidebar)`
+   khi thả trong vùng đó.
+3. Thêm nút gỡ (×) cho widget không phải `WGT-PRF*` trong `renderSidebarStack` (Sidebar không có nút
+   "Tùy chỉnh" riêng như Dashboard nên phải gỡ ngay tại đây).
+4. `WGT-PRF-001/002` (Hồ sơ/Gói cước) hoá ra **không còn được trang nào render qua đường
+   widget-registry/dashboard-engine nữa** (cả `/tai-khoan` cũ và Cá nhân mới đều vẽ card Hồ sơ bằng
+   markup riêng + `profile-bind.js`) — bỏ phần `ensureSidebarDefaults` tự thêm mới 2 widget này (vẫn
+   giữ phần dọn dữ liệu cũ an toàn) và bỏ render chúng trong `renderSidebarStack`, tránh hiện trùng
+   2 nơi.
+
+Đã test bằng Playwright (local): kéo 1 widget từ Dashboard thả vào Sidebar trái → chuyển scope đúng,
+không trùng lặp, lưu `localStorage` đúng, còn nguyên sau reload; gỡ lại từ Sidebar hoạt động đúng;
+sắp xếp lại trong CÙNG Dashboard (tính năng cũ) vẫn đúng sau khi sửa `moveWidget` (không hồi quy).
 
 ## 5. Gap nghiệp vụ thật — chưa có Template "Promotion"
 
@@ -172,7 +201,31 @@ Admin Widget giờ do khung trang Cá nhân mới tự quản, không qua publis
 ## 10. Tiến độ
 
 - [x] Phase 1 — Routing + Nav (commit `cc74dd1`, đã test local đầy đủ, đợi xác nhận staging)
-- [ ] Phase 2 — Khung trang Cá nhân mới + kích hoạt Sidebar trái kéo-thả
+- [x] Phase 2 — Khung trang Cá nhân mới + kích hoạt Sidebar trái kéo-thả (test local Playwright đầy
+  đủ, chưa đẩy staging):
+  - `widgets/home-page/index.js` viết lại hoàn toàn: khung 3 cột (`buildPageFrame({rightSidebar:true})`),
+    Sidebar trái (Watchlist cố định + `[data-ifx-hub-sidebar-canvas]`), Main 5 tab (Dashboard gộp
+    chung hệ điều hướng tab với `accountProfile` registry — xem dưới), Sidebar phải (card Hồ sơ +
+    Hoạt động gần đây + host Admin `sidebar-right` cho Template Promotion — Phase 3).
+  - 4 tab Affiliate/Thanh toán/Riêng tư/Bảo mật + card Hồ sơ migrate **verbatim** từ
+    `User_Web/account/profile.html` (giữ nguyên id/data-attribute) — không viết lại nghiệp vụ.
+  - `account-feature-boot.js`: thêm `export function boot()` gọi lại được nhiều lần (trang composite
+    soft-nav rebuild DOM mỗi lần ghé); auto-boot ở module-level CHỈ còn chạy cho `/tai-khoan`
+    SHELL_ONLY (dò `[data-ifx-page-runtime]` để biết context); thêm hook `tab-dashboard` lazy-mount
+    qua `window.IfluxHomeDashboardTab`.
+  - `iflux-platform-boot.js`: thêm entry `dashboard`→`tab-dashboard` vào registry `accountProfile`
+    (cờ `homeOnly`, lọc theo URL — không dùng `__ifxPageRuntime.pageKey` vì giá trị đó set SAU khi
+    widget mount xong, quá trễ); `isAccountProfileRoute()` nhận thêm `/ca-nhan` (cho mobile bottom-nav
+    + tab resolver dùng đúng model `accountProfile`); `resolveActiveAccountTabId()` mặc định
+    `tab-dashboard` ở `/ca-nhan`, `tab-affiliate` ở `/tai-khoan`.
+  - `widget-registry.js`: bỏ Watchlist khỏi `DASHBOARD_DEFAULT`/`POPULAR_LAYOUT` (đã cố định ở
+    Sidebar trái, không cần Dashboard mặc định nữa — đúng yêu cầu owner).
+  - `dashboard-engine.js`: xem chi tiết 4 điểm đã sửa ở §4 (bug `moveWidget` trùng widget khi đổi
+    scope, thêm nhận diện kéo-thả chéo vùng, nút gỡ Sidebar, bỏ render trùng `WGT-PRF*`).
+  - `page-keys.js`: thêm `home: 1` vào `AUTH_PAGES` (khách bấm nav vào `/ca-nhan` được hỏi đăng nhập
+    trước, giống `/tai-khoan`).
+  - `widgets/home-page/index.js` (bản cũ, 2 trải nghiệm vãng lai/đăng nhập) **đã bị XOÁ hoàn toàn**,
+    không còn `mountGuest()` — đúng yêu cầu "loại bỏ phiên bản vãng lai".
 - [ ] Phase 3 — Template Promotion + Placement Sidebar phải
 - [ ] Phase 4 — Khung [+] rỗng + giới hạn theo tier
 - [ ] Phase 5 — Dọn rác

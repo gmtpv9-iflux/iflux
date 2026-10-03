@@ -14,7 +14,7 @@
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 
 var A = '/User_Web/iflux-web-ui/';
-var V = 'r20261001a';
+var V = 'r20261003g';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 
@@ -23,7 +23,7 @@ function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' 
 var BASE = [
   /* Nội dung mỗi widget = Template DS đã publish (dashboard-engine.js tự fetch artifact +
      mount qua IfxTemplateLoader/IfxTemplates — một đường DUY NHẤT, giống mọi trang khác). */
-  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261002d'),
+  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261003g'),
   dep('IfluxDashboardEngine', 'dashboard-engine.js'),
   /* Watchlist là widget tương tác (thêm/bớt mã) — chưa publish qua Template, dùng component
      riêng; nạp sẵn ở đây vì hầu như dashboard nào cũng có. */

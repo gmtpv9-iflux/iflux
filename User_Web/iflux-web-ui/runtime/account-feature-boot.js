@@ -149,6 +149,12 @@ function activateAccountProfilePanel(tabId) {
   document.querySelectorAll('.ix-tab-content').forEach(function (panel) {
     panel.classList.toggle('active', panel.id === tabId);
   });
+  /* Tab Dashboard (chỉ có ở trang Cá nhân mới) mount lazy qua cầu nối widgets/home-page —
+     không mount sẵn vì canvas dashboard-engine khá nặng (template loader, watchlist…). */
+  if (tabId === 'tab-dashboard' && window.IfluxHomeDashboardTab && window.IfluxHomeDashboardTab.ensureMounted) {
+    var panel = document.getElementById('tab-dashboard');
+    if (panel) window.IfluxHomeDashboardTab.ensureMounted(panel);
+  }
 }
 
 /** Mobile: sidebar chỉ trên tab Hồ sơ. Desktop: luôn hiện. */
@@ -275,7 +281,9 @@ function bootAccountPage() {
     var params = new URLSearchParams(location.search);
     var tab = params.get('tab');
     if (!tab) {
-      switchAccountProfileTab('tab-affiliate');
+      /* Không ?tab= → mặc định theo resolver (tab-dashboard ở trang Cá nhân mới /ca-nhan,
+         tab-affiliate ở /tai-khoan cũ — xem resolveActiveAccountTabId trong iflux-platform-boot.js). */
+      switchAccountProfileTab(getActiveAccountTabIdFromResolver());
       clearEarlyAccountShellHtmlState();
       return;
     }
@@ -343,7 +351,10 @@ function bootAccountPage() {
   if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
 }
 
-async function main() {
+/** Gọi lại được nhiều lần (export) — trang Cá nhân mới (composite, soft-nav) rebuild DOM mỗi lần
+ * ghé lại nên cần boot lại để bind đúng node mới; loadScriptsSequential tự cache theo src, gọi
+ * lại không tải/":chạy đôi" classic script. */
+export async function boot() {
   await waitShellReady(['account', 'home']);
   var scripts = CORE_SCRIPTS.slice();
   if (isPublicProfileBoot()) {
@@ -359,6 +370,12 @@ async function main() {
   }
 }
 
-main().catch(function (err) {
-  if (window.console && console.error) console.error('[Account Feature] boot failed', err);
-});
+/* /tai-khoan cũ (SHELL_ONLY, luôn hard-reload) → tự boot khi module nạp, như trước giờ.
+   Trang Cá nhân mới (composite, có [data-ifx-page-runtime]) soft-nav rebuild DOM mỗi lần ghé —
+   widgets/home-page/index.js tự gọi boot() lại sau khi dựng markup, KHÔNG tự boot ở đây (tránh
+   chạy 2 lần trên cùng 1 DOM lúc mới vào trang lần đầu). */
+if (!document.querySelector('[data-ifx-page-runtime]')) {
+  boot().catch(function (err) {
+    if (window.console && console.error) console.error('[Account Feature] boot failed', err);
+  });
+}

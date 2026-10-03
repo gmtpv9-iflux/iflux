@@ -34,7 +34,23 @@
 .ifx-hub-sidebar .ifx-widget__footer {
   display: none;
 }
-.ifx-hub-sidebar .ifx-widget__header {
+/* WGT-PRF* (Hồ sơ / Gói cước) = thành phần trang Admin đặt sẵn, không có tiêu đề/khung riêng.
+   Widget user tự kéo sang (khu vực [data-ifx-hub-sidebar-canvas]) giữ tiêu đề + nút gỡ gọn. */
+.ifx-hub-sidebar .ifx-widget[data-widget-type^="WGT-PRF"] .ifx-widget__header {
+  display: none;
+}
+.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ifx-space-8);
+  padding: 0 0 6px;
+}
+.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__header h3 {
+  font-size: var(--ifx-font-size-13);
+  margin: 0;
+}
+.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__subtitle {
   display: none;
 }
 .ifx-hub-sidebar .ifx-widget__body {
@@ -52,6 +68,33 @@
 }
 .ifx-hub-sidebar .ifx-widget[data-widget-type^="WGT-PRF"] .ifx-widget__body {
   padding: 0;
+}
+[data-ifx-hub-sidebar-canvas] .ifx-widget:not(:last-child) {
+  padding-bottom: var(--ifx-space-12);
+  border-bottom: 1px solid var(--ix-border);
+  margin-bottom: var(--ifx-space-12);
+}
+.ifx-hub-sidebar-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-12);
+  min-height: 48px;
+  border-radius: var(--ix-radius-lg);
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+.ifx-hub-sidebar-canvas.is-drag-over {
+  background: rgba(105, 108, 255, 0.06);
+  box-shadow: inset 0 0 0 1.5px var(--ix-accent);
+}
+.ifx-hub-sidebar-canvas:empty::before {
+  content: 'Kéo tiện ích từ Dashboard sang đây để đặt cố định ở Sidebar';
+  display: block;
+  font-size: var(--ifx-font-size-12);
+  color: var(--ix-text-muted);
+  padding: var(--ifx-space-12);
+  border: 1px dashed var(--ix-border);
+  border-radius: var(--ix-radius-lg);
+  text-align: center;
 }
 .ifx-hub-sidebar .ifx-com-topwl {
   margin-top: 0;

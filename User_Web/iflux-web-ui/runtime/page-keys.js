@@ -14,11 +14,12 @@ export var STATIC_PAGES = {
 
 /* Chỉ trang cá nhân cần đăng nhập — mọi trang khác khách xem tự do (quyền xem sâu hơn do widget quyết định).
  * Khách bấm vào trang này → hỏi xác nhận trước khi sang trang đăng nhập (IfluxAuth.promptLogin).
- * Trang chủ (home) KHÔNG còn ở đây — khách vào /trang-chu thấy landing phẳng (widgets/home-page). */
+ * home = trang Cá nhân mới (merge Trang chủ cũ + Tài khoản cũ, /ca-nhan) — không còn landing vãng lai riêng. */
 export var AUTH_PAGES = {
   account: 1, checkout: 1,
   watchlist: 1, messages: 1,
-  newsWrite: 1, stockComment: 1
+  newsWrite: 1, stockComment: 1,
+  home: 1
 };
 
 /* Không còn trang nào redirect-quiet-về-Tin-tức riêng cho khách — giữ export rỗng để khỏi vỡ import cũ. */

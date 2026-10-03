@@ -451,18 +451,18 @@
     { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} }
   ];
 
+  /* Watchlist (WGT-WAT-001) không còn mặc định trên Dashboard — trang Cá nhân mới gắn Watchlist
+     cố định ở Sidebar trái (ngoài hệ layout này), Dashboard chỉ còn chỗ cho widget thị trường tự chọn. */
   var DASHBOARD_DEFAULT = [
-    { widget_type: 'WGT-WAT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'full' } },
-    { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half' } },
-    { widget_type: 'WGT-MKT-007', scope: 'dashboard', column: 'grid', position: 2, config: { width: 'half', metric: 'volume' } }
+    { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'half' } },
+    { widget_type: 'WGT-MKT-007', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half', metric: 'volume' } }
   ];
 
   var DEFAULT_LAYOUT = SIDEBAR_DEFAULT.concat(DASHBOARD_DEFAULT);
 
   var POPULAR_LAYOUT = SIDEBAR_DEFAULT.concat([
-    { widget_type: 'WGT-WAT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'third' } },
-    { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'twothirds' } },
-    { widget_type: 'WGT-MKT-003', scope: 'dashboard', column: 'grid', position: 2, config: { width: 'half' } }
+    { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'twothirds' } },
+    { widget_type: 'WGT-MKT-003', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half' } }
   ]);
 
   function byType(type) {

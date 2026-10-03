@@ -597,8 +597,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     _default: { tabs: GROUP_TABS }
   };
 
-  /* accountProfile: single SoT — desktop tabs + mobile bottom (Slice 1 registry only). */
+  /* accountProfile: single SoT — desktop tabs + mobile bottom (Slice 1 registry only).
+     'dashboard' = tab đầu, CHỈ hiện trên trang Cá nhân mới (/ca-nhan, pageKey 'home') — trang
+     /tai-khoan cũ không có canvas Dashboard nên ẩn qua cờ homeOnly (lọc ở resolveNavigationItems). */
   var accountProfile = [
+    { key: 'dashboard',  tabId: 'tab-dashboard', label: 'Dashboard',   icon: 'ti-layout-dashboard', ownOnly: true, homeOnly: true },
     { key: 'affiliate', tabId: 'tab-affiliate', label: 'Affiliate',    icon: 'ti-affiliate',    ownOnly: true },
     { key: 'payment',   tabId: 'tab-payment',   label: 'Liên kết thẻ', icon: 'ti-credit-card',  ownOnly: true },
     { key: 'privacy',   tabId: 'tab-privacy',   label: 'Riêng tư',     icon: 'ti-shield-lock',  ownOnly: true },
@@ -643,17 +646,33 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     return LEGACY_HREF[routeKey] || '/';
   }
 
+  /* account = /tai-khoan (SHELL_ONLY cũ) · home = /ca-nhan (Cá nhân mới, merge Trang chủ cũ +
+     Tài khoản cũ) — cả 2 dùng chung model nav 'accountProfile' (resolveNavigationItems). */
   function isAccountProfileRoute() {
     var r = routes();
     if (r && r.detectRoute && r.pathname) {
       var rt = r.detectRoute(r.pathname());
-      if (rt && (rt.key === 'account' || (rt.file && rt.file.indexOf('/account/') >= 0))) return true;
+      if (rt && (rt.key === 'account' || rt.key === 'home' || (rt.file && rt.file.indexOf('/account/') >= 0))) return true;
     }
     var path = '';
     try { path = (global.location && global.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
-    if (/\/(tai-khoan|account)(\/|$)/.test(path)) return true;
+    if (/\/(tai-khoan|account|ca-nhan)(\/|$)/.test(path)) return true;
     if (/\/user_web\/account\/profile/.test(path)) return true;
     return false;
+  }
+
+  /* Dò theo URL (giống isAccountProfileRoute), KHÔNG dùng global.__ifxPageRuntime.pageKey —
+     giá trị đó chỉ được bootstrap.js gán SAU KHI widgets/home-page/index.js mount() xong, nên
+     lúc account-feature-boot.js chạy (TRONG mount()) nó luôn còn null/trang trước đó. */
+  function isHomeComposite() {
+    var r = routes();
+    if (r && r.detectRoute && r.pathname) {
+      var rt = r.detectRoute(r.pathname());
+      if (rt && rt.key === 'home') return true;
+    }
+    var path = '';
+    try { path = (global.location && global.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
+    return /\/(ca-nhan|trang-chu|nha-cua-toi)(\/|$)/.test(path);
   }
 
   function queryProfileUserId() {
@@ -679,9 +698,10 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 
   function resolveActiveAccountTabId() {
+    var fallback = isHomeComposite() ? 'tab-dashboard' : 'tab-affiliate';
     try {
       var tab = new URLSearchParams(global.location.search).get('tab');
-      if (!tab) return 'tab-affiliate';
+      if (!tab) return fallback;
       var map = {
         timeline: 'tab-affiliate',
         affiliate: 'tab-affiliate',
@@ -694,9 +714,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       };
       if (map[tab]) return map[tab];
       if (tab.indexOf('tab-') === 0) return tab;
-      return 'tab-affiliate';
+      return fallback;
     } catch (e) {
-      return 'tab-affiliate';
+      return fallback;
     }
   }
 
@@ -959,6 +979,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
           if (!own && d.ownOnly) return false;
           if (d.mobileOnly && !mobile) return false;
           if (d.desktopOnly && mobile) return false;
+          if (d.homeOnly && !isHomeComposite()) return false;
           return true;
         })
         .map(function (d) {
