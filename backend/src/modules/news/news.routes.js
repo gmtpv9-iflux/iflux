@@ -525,6 +525,12 @@ function createNewsRouter(deps) {
       await articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn', {
         requestUri: requestUri || undefined
       });
+      /* Nội dung bài viết (tiêu đề/thân/ảnh) gần như tĩnh sau khi đăng — payload đã loại
+         liked_by/favorited_by/comments (ARTICLE_DETAIL_PAYLOAD_SQL), không cá nhân hoá theo
+         người xem → cache công khai an toàn, giống cơ chế HTTP cache đang dùng cho JS/CSS
+         (4 tiếng, owner đã xác nhận). Feed/danh sách và thị giá/lượt tương tác KHÔNG đụng —
+         vẫn luôn tải động ở API riêng. */
+      res.set('Cache-Control', 'public, max-age=14400');
       return success(res, { article: item });
     } catch (err) {
       next(err);
