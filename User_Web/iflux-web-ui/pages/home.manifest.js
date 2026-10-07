@@ -8,7 +8,7 @@
  * Hoạt động gần đây + widget host Admin). Luôn cần đăng nhập, không còn phiên bản vãng lai.
  */
 
-var VER = '?v=r20261003d';
+var VER = '?v=r20261003e';
 
 export default {
   pageKey: 'home',

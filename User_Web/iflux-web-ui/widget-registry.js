@@ -412,6 +412,11 @@
       description: 'Danh sách mã đang theo dõi',
       tier: 'free',
       kind: 'list',
+      /* scope:'sidebar' — Watchlist thuộc Sidebar trái trang Cá nhân (Admin đặt vị trí mặc định
+         qua SIDEBAR_DEFAULT dưới), KHÔNG phải widget tự chọn cho lưới Dashboard giữa trang (trước
+         đây thiếu field này nên lọt vào picker "Thêm tiện ích" của Dashboard, gây hiện trùng 2 nơi
+         nếu user tự thêm — xem SIDEBAR_DEFAULT). */
+      scope: 'sidebar',
       popularity: 100,
       defaultConfig: { width: 'full' },
       footerHref: '../watchlist/index.html',
@@ -448,11 +453,15 @@
 
   var SIDEBAR_DEFAULT = [
     { widget_type: 'WGT-PRF-001', scope: 'sidebar', column: 'main', position: 0, config: {} },
-    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} }
+    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} },
+    { widget_type: 'WGT-WAT-001', scope: 'sidebar', column: 'main', position: 2, config: { width: 'full' } }
   ];
 
-  /* Watchlist (WGT-WAT-001) không còn mặc định trên Dashboard — trang Cá nhân mới gắn Watchlist
-     cố định ở Sidebar trái (ngoài hệ layout này), Dashboard chỉ còn chỗ cho widget thị trường tự chọn. */
+  /* Watchlist (WGT-WAT-001) nay đã vào ĐÚNG hệ Admin Widget Placement — mặc định ở Sidebar trái
+     (SIDEBAR_DEFAULT trên), user vẫn có thể gỡ/kéo đi nơi khác như mọi widget sidebar khác (xem
+     dashboard-engine.js renderSidebarStack). Trước 2026-10 widget này bị hardcode CỐ ĐỊNH ngoài
+     hệ layout trong widgets/home-page/index.js — đã gỡ bỏ, dọn theo yêu cầu Owner thống nhất 1
+     nguồn Template/DS duy nhất cho mọi Widget dù hiển thị ở Dashboard tự sắp xếp hay trang khác. */
   var DASHBOARD_DEFAULT = [
     { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'half' } },
     { widget_type: 'WGT-MKT-007', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half', metric: 'volume' } }
