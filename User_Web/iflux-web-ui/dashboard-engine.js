@@ -38,9 +38,14 @@
      xem buildWidgetNode), nên mount thẳng qua IfxTemplates với title/description rỗng để
      Template không vẽ header của nó nữa (widget.js: headHtml rỗng khi cả 3 đều rỗng). */
   function mountWidgetBody(bodyEl, widgetType, generation) {
-    /* Watchlist chưa publish qua Template (tương tác thêm/bớt mã, không phải hiển thị tĩnh)
-       — dùng component riêng, nạp sẵn cùng BASE của trang (xem widgets/home-dashboard/index.js). */
+    /* Watchlist chưa publish qua Template (tương tác thêm/bớt mã, không phải hiển thị tĩnh) —
+       dùng component riêng IfluxWatchlistBlock, nạp sẵn cùng SIDEBAR_DEPS của trang gọi
+       (xem widgets/home-page/index.js). Vị trí/quyền/entitlement vẫn qua đúng 1 hệ widget-registry
+       + dashboard-engine (buildWidgetNode) như mọi Widget khác — chỉ riêng THÂN (nội dung tương
+       tác) không qua IfxTemplates.mount được. Tự thêm class viền thẻ (ifx-wl-stock-panel/ifx-wl-block
+       — watchlist-block.js không tự vẽ khung) vì .ifx-widget__body generic không có viền này. */
     if (widgetType === 'WGT-WAT-001') {
+      bodyEl.classList.add('ifx-wl-stock-panel', 'ifx-wl-block');
       if (global.IfluxWatchlistBlock) global.IfluxWatchlistBlock.mount(bodyEl);
       else bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
       return;
@@ -75,6 +80,7 @@
   var SUBJ_WIDTH_MIGRATED_KEY = 'iflux_dash_subj_width_half_v1';
   var STAT_WIDTH_MIGRATED_KEY = 'iflux_dash_stat_width_full_v1';
   var STAT_DUO_MIGRATED_KEY = 'iflux_dash_stat_duo_v1';
+  var WATCHLIST_SIDEBAR_MIGRATED_KEY = 'iflux_dash_watchlist_sidebar_v1';
   var SUBJ_WIDGET_TYPES = {
     'WGT-FLW-SUBJ-STOCK': 1,
     'WGT-FLW-SUBJ-SECTOR': 1,
@@ -411,6 +417,40 @@
     else try { localStorage.setItem(STAT_DUO_MIGRATED_KEY, '1'); } catch (e) { /* ignore */ }
   }
 
+  function watchlistSidebarMigrated() {
+    var store = us();
+    if (store) return !!store.readJson(WATCHLIST_SIDEBAR_MIGRATED_KEY, null);
+    try { return localStorage.getItem(WATCHLIST_SIDEBAR_MIGRATED_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  function markWatchlistSidebarMigrated() {
+    var store = us();
+    if (store) store.writeJson(WATCHLIST_SIDEBAR_MIGRATED_KEY, { at: Date.now() });
+    else try { localStorage.setItem(WATCHLIST_SIDEBAR_MIGRATED_KEY, '1'); } catch (e) { /* ignore */ }
+  }
+
+  /** Watchlist (WGT-WAT-001) trước đây hiện CỐ ĐỊNH ngoài hệ layout (hardcode riêng trong
+   * widgets/home-page/index.js, không qua Admin Widget Placement) — nay đã vào đúng
+   * SIDEBAR_DEFAULT (widget-registry.js), cùng 1 nguồn Template/DS với mọi Widget khác (Owner
+   * chốt 2026-10). Lần đầu mỗi user sau khi đổi: nếu layout đã lưu từ trước CHƯA có WGT-WAT-001
+   * ở sidebar, chèn 1 lần vào cuối Sidebar trái để không ai mất Watchlist khỏi màn hình khi
+   * nâng cấp — từ lần sau user toàn quyền gỡ/kéo đi chỗ khác như mọi widget sidebar khác. */
+  function migrateWatchlistIntoSidebar(layout) {
+    if (watchlistSidebarMigrated() || !layout || !layout.widgets) return false;
+    markWatchlistSidebarMigrated();
+    var exists = layout.widgets.some(function (w) { return w && (w.widget_type === 'WGT-WAT-001' || w.type === 'WGT-WAT-001'); });
+    if (exists) return false;
+    layout.widgets.push({
+      instance_id: uid(),
+      widget_type: 'WGT-WAT-001',
+      scope: SCOPES.sidebar,
+      column: SIDEBAR_COL,
+      position: 999,
+      config: { width: 'full' }
+    });
+    return true;
+  }
+
   /** Gộp STAT_*_IN/OUT legacy → STAT_* duo (1 widget / entity), bỏ trùng. */
   function migrateStatDuoWidgets(layout) {
     if (!layout || !layout.widgets) return false;
@@ -632,6 +672,7 @@
     migrateSubjWidgetWidths(layout);
     migrateStatDuoWidgets(layout);
     migrateStatScoreWidgetWidths(layout);
+    migrateWatchlistIntoSidebar(layout);
     layout.widgets = layout.widgets.map(function (w, i) {
       return normalizeWidgetRecord(w, i);
     }).filter(Boolean).filter(isValidWidget);
