@@ -9,7 +9,7 @@
  * (interaction_likes entity_type='story' cho "Đồng tình", interaction_comments entity_type='story'
  * cho bình luận), cùng nguyên tắc đã áp dụng cho social_posts (STATS_SELECT, community-posts.service.js).
  * "Đồng tình" cố ý TÁI DÙNG bảng interaction_likes (không viết lại hệ Interaction riêng — SoT §5) —
- * phân biệt ngữ nghĩa với "Like" của Post chỉ nhờ entity_type khác nhau ('story' vs 'post'),
+ * phân biệt ngữ nghĩa với "Like" của Post chỉ nhờ entity_type khác nhau ('story' vs 'communitypost'),
  * nên 2 bộ số không bao giờ lẫn vào nhau dù dùng chung bảng lưu trữ (§7.3: "tách biệt khỏi Like").
  */
 const { query } = require('../../core/database/connection');

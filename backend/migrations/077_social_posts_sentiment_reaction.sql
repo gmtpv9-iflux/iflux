@@ -12,4 +12,4 @@ ALTER TABLE social_posts ADD COLUMN IF NOT EXISTS sentiment VARCHAR(10)
 ALTER TABLE interaction_likes ADD COLUMN IF NOT EXISTS value SMALLINT NOT NULL DEFAULT 1
   CHECK (value IN (1, -1));
 
-COMMENT ON COLUMN interaction_likes.value IS 'Owner 2026-10 — 1=like, -1=dislike. Chỉ Post Cộng đồng (entity_type=''post'') dùng Dislike; Like trên Stock/Sector/Family/Story (Đồng tình) giữ nguyên value=1.';
+COMMENT ON COLUMN interaction_likes.value IS 'Owner 2026-10 — 1=like, -1=dislike. Chỉ Post Cộng đồng (entity_type=''communitypost'') dùng Dislike; Like trên Stock/Sector/Family/Story (Đồng tình) giữ nguyên value=1. LƯU Ý: entity_type=''post'' luôn là bài Tin tức (news_posts), KHÔNG dùng interaction_likes.';

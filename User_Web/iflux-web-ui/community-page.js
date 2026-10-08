@@ -6,7 +6,7 @@
  *   - "Chủ đề HOT" đọc GET /api/community/stories?sort=trending&range=..., KHÔNG còn SEED_HOT_TOPICS.
  *   - Composer "Viết bài"/"Gắn thẻ" → modal thật → POST /api/community/posts.
  *   - "Tạo chủ đề" → modal thật → POST /api/community/stories.
- *   - Like bài viết → POST/DELETE /api/interaction/v1/post/:id/like (optimistic UI).
+ *   - Like bài viết → POST/DELETE /api/interaction/v1/communitypost/:id/like (optimistic UI).
  *   - Tab "Nổi bật" TẠM dùng chung mode=trending với "Thịnh hành" (FeedScore thật là Phase 3 riêng
  *     — SoT §9 — chưa đủ dữ liệu traffic để tách 2 bảng xếp hạng khác nhau).
  *   CHƯA làm (còn seed/coming-soon — không thuộc scope tối thiểu của lượt wiring này):
