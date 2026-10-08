@@ -15,7 +15,7 @@ var ALL = [
   ASSET + 'iflux-otp-input.js?v=20260708otp',
   ASSET + 'iflux-mail-deeplink.js?v=20260708otp',
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'iflux-web-ui.js?v=r20261003m',
+  ASSET + 'iflux-web-ui.js?v=r20261009c',
   ASSET + 'auth-otp-init.js?v=r20260928q'
 ];
 

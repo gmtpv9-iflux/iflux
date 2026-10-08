@@ -32,7 +32,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'watchlist-ui.js?v=r20260928q',
-    ASSET + 'alert-ui.js?v=r20260928q',
+    ASSET + 'alert-ui.js?v=r20261009c',
     ASSET + 'stock-mentions.js?v=r20260928n',
     ASSET + 'stock-scroll-feed.js'
   ],

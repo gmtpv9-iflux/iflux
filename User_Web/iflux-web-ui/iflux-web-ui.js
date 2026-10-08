@@ -492,7 +492,7 @@
           { global: 'IfluxVisitorId', file: 'visitor-id.js' },
           { global: 'IfluxTurnstile', file: 'turnstile-helper.js' },
           { global: 'IfluxFeatureSuggestionsStore', file: 'feature-suggestions-store.js' },
-          { global: 'IfluxFeatureSuggestionsUI', file: 'feature-suggestions-ui.js' }
+          { global: 'IfluxFeatureSuggestionsUI', file: 'feature-suggestions-ui.js?v=r20261009c' }
         ], function () {
           if (window.IfluxFeatureSuggestionsUI) {
             if (IfluxFeatureSuggestionsUI.init) IfluxFeatureSuggestionsUI.init();
@@ -508,7 +508,7 @@
         loadChainThen([
           { global: 'IfluxVisitorId', file: 'visitor-id.js' },
           { global: 'IfluxTurnstile', file: 'turnstile-helper.js' },
-          { global: 'IfluxBugReportsUI', file: 'bug-reports-ui.js' }
+          { global: 'IfluxBugReportsUI', file: 'bug-reports-ui.js?v=r20261009c' }
         ], function () {
           if (window.IfluxBugReportsUI) {
             if (IfluxBugReportsUI.init) IfluxBugReportsUI.init();

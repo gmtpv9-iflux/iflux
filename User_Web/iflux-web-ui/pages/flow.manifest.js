@@ -26,7 +26,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=r20261002d',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=r20261009c',
       css: [
         '/User_Web/iflux-web-ui/market-components.css',
         '/User_Web/iflux-web-ui/flow.css?v=r20260928n',

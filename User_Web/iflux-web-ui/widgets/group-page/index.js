@@ -47,7 +47,7 @@ var CORE_TIERS = [
     ASSET + 'iflux-market-quotes.js?v=r20260928n'
   ],
   [
-    ASSET + 'entity-detail-center.js?v=r20260928n',
+    ASSET + 'entity-detail-center.js?v=r20261009c',
     ASSET + 'group-page.js?v=r20260928n',
     ASSET + 'runtime/page-layout-engine.js?v=r20260928n'
   ]
