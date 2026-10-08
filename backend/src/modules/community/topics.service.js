@@ -349,9 +349,17 @@ function reactionSentimentFromStats(stats) {
  * KHÔNG gọi lại sau đó (xem getStoredRepresentativeStocks để đọc giá trị đã chốt). */
 async function getRepresentativeStocks(topicId) {
   const cfg = await getConfig('representative_stock', DEFAULT_REP_STOCK);
+  /* Tính TRỰC TIẾP từ social_posts/post_topics (toàn bộ lịch sử tới hiện tại) — KHÔNG đọc
+     topic_stock_mentions (chỉ được cron ghi theo ngày, 00:00). Nếu dùng bảng đó, Topic confirm
+     ngay trong ngày (trước khi cron chạy) sẽ luôn ra cổ phiếu đại diện rỗng — bug đã phát hiện
+     khi test thật trên Staging 2026-10-08. */
   const res = await query(
-    `SELECT ticker, SUM(mention_count)::int AS total
-     FROM topic_stock_mentions WHERE topic_id = $1 GROUP BY ticker ORDER BY total DESC`,
+    `SELECT st.ticker AS ticker, COUNT(*)::int AS total
+     FROM social_posts sp
+     JOIN post_topics pt ON pt.post_id = sp.id
+     JOIN LATERAL unnest(sp.stock_tags) AS st(ticker) ON true
+     WHERE pt.topic_id = $1 AND sp.status = 'published'
+     GROUP BY st.ticker ORDER BY total DESC`,
     [topicId]
   );
   const rows = res.rows;
