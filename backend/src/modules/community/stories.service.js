@@ -139,8 +139,10 @@ async function createStory(user, input) {
  * "Gắn vào Story có sẵn" (input.story_id). Mã CP = tính từ Topic (tỷ trọng cộng dồn ≥80%,
  * Topic_Engine V2), Admin xác nhận/ghi đè qua input.stock_tags nếu muốn.
  */
+/* Quyền Admin đã được chặn ở route (requireAdminPermission('community.topics.manage'),
+   stories.routes.js) qua Admin Portal RBAC — adminUser ở đây là req.admin, không phải req.user. */
 async function mapTopicToStory(topicId, input, adminUser) {
-  if (!isAdmin(adminUser)) throw AppError.forbidden('STORY_ADMIN_ONLY', 'Chỉ Admin được ánh xạ Topic sang Câu chuyện');
+  if (!adminUser || !adminUser.id) throw AppError.unauthorized('Cần đăng nhập Admin');
   input = input || {};
 
   const topicRes = await query('SELECT id FROM topics WHERE id = $1', [topicId]);

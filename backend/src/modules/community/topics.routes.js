@@ -1,26 +1,25 @@
 'use strict';
 
 /**
- * Admin — Danh sách Chủ đề (Topic) + Admin override lifecycle (Phase 3 dùng, viết sẵn API ở
- * Phase 2). Mount cùng prefix /community (cùng domain với posts/stories).
+ * Admin — Danh sách Chủ đề (Topic) + Admin override lifecycle (Phase 3). Mount cùng prefix
+ * /community. Dùng xác thực Admin Portal (JWT riêng qua IfluxAdminAuth + RBAC) — KHÁC User JWT
+ * thường — khớp đúng cơ chế trang Admin HTML (danh-sach-chu-de.html) đang dùng.
  */
 const express = require('express');
 const { success } = require('../../shared/response/api-response');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 const topics = require('./topics.service');
-
-function isAdmin(user) {
-  return !!(user && user.roles && user.roles.indexOf('admin') >= 0);
-}
 
 function createTopicsRouter(deps) {
   const router = express.Router();
+  const config = deps.config || {};
   const auth = deps.auth || {};
+  const perm = function () {
+    return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
+  };
 
-  router.get('/topics', auth.authenticate, async (req, res, next) => {
+  router.get('/topics', perm('community.topics.manage'), async (req, res, next) => {
     try {
-      if (!isAdmin(req.user)) {
-        return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Chỉ Admin được xem danh sách Chủ đề' } });
-      }
       const data = await topics.listTopicsAdmin({ range: req.query.range, limit: req.query.limit });
       return success(res, data);
     } catch (err) {
@@ -28,11 +27,8 @@ function createTopicsRouter(deps) {
     }
   });
 
-  router.get('/topics/:id/representative-stocks', auth.authenticate, async (req, res, next) => {
+  router.get('/topics/:id/representative-stocks', perm('community.topics.manage'), async (req, res, next) => {
     try {
-      if (!isAdmin(req.user)) {
-        return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Chỉ Admin được xem' } });
-      }
       const data = await topics.getRepresentativeStocks(req.params.id);
       return success(res, data);
     } catch (err) {
@@ -40,12 +36,9 @@ function createTopicsRouter(deps) {
     }
   });
 
-  router.post('/topics/:id/status-override', auth.authenticate, async (req, res, next) => {
+  router.post('/topics/:id/status-override', perm('community.topics.manage'), async (req, res, next) => {
     try {
-      if (!isAdmin(req.user)) {
-        return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Chỉ Admin được đổi trạng thái' } });
-      }
-      const data = await topics.setStatusOverride(req.params.id, (req.body && req.body.status) || null, req.user);
+      const data = await topics.setStatusOverride(req.params.id, (req.body && req.body.status) || null, req.admin);
       return success(res, data);
     } catch (err) {
       next(err);
