@@ -81,14 +81,15 @@
     return request('DELETE', apiBase() + '/community/posts/' + encodeURIComponent(id));
   }
 
-  /* Like dùng Interaction generic REGISTRY 'post' (Owner 2026-10: 'communitypost' vi phạm Thread
-     Target Registry IA-001 đã dọn — Post Tin tức và Post Cộng đồng dùng chung đúng 1 bucket). */
+  /* 'post' trong Interaction registry LUÔN nghĩa là bài Tin tức (rẽ nhánh riêng sang
+     news/interaction.service.js) — Post Cộng đồng dùng ĐÚNG entity_type riêng 'communitypost'
+     (đã sửa lại 2026-10 sau khi phát hiện đổi sang 'post' làm Like Cộng đồng 404). */
   function likePost(id) {
-    return request('POST', apiBase() + '/interaction/v1/post/' + encodeURIComponent(id) + '/like');
+    return request('POST', apiBase() + '/interaction/v1/communitypost/' + encodeURIComponent(id) + '/like');
   }
 
   function unlikePost(id) {
-    return request('DELETE', apiBase() + '/interaction/v1/post/' + encodeURIComponent(id) + '/like');
+    return request('DELETE', apiBase() + '/interaction/v1/communitypost/' + encodeURIComponent(id) + '/like');
   }
 
   /* ───────────────────────── Story/Chủ đề (§7) ───────────────────────── */

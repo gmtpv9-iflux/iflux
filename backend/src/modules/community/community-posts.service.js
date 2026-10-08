@@ -23,7 +23,10 @@ const MAX_HASHTAGS = 5;
 const MAX_ENTITY_REFS = 10;
 const POST_TYPES = ['status', 'stock_view', 'share', 'reply_as_post'];
 const SOURCE_TYPES = ['news', 'story', 'post', 'chart'];
-const ENTITY_REF_TYPES = ['stock', 'sector', 'family', 'story'];
+/* Owner 2026-10: bổ sung 'market_index' (Thị trường/Sàn/Chỉ số — VN-Index, HNX-Index, UPCoM-Index)
+   vào Entity Mention (II.1) — chỉ là tag trên Post, không cần trang/thread riêng (chưa đăng ký vào
+   Thread Target Registry IA-001). */
+const ENTITY_REF_TYPES = ['stock', 'sector', 'family', 'story', 'market_index'];
 
 function clampLimit(n, fallback) {
   const v = Number(n);
@@ -164,7 +167,7 @@ async function attachViewerLiked(result, viewer) {
   if (!viewer || !viewer.id || !result.items.length) return result;
   const ids = result.items.map((p) => p.id);
   const res = await query(
-    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'post' AND user_id = $1 AND entity_id = ANY($2::text[])`,
+    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'communitypost' AND user_id = $1 AND entity_id = ANY($2::text[])`,
     [viewer.id, ids]
   );
   const liked = {};
@@ -174,10 +177,12 @@ async function attachViewerLiked(result, viewer) {
 }
 
 const STATS_SELECT = `
-  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'post' AND il.entity_id = p.id::text) AS likes_count,
-  (SELECT COUNT(*)::int FROM interaction_comments ic WHERE ic.entity_type = 'post' AND ic.entity_id = p.id::text AND ic.deleted_at IS NULL) AS comments_count,
+  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'communitypost' AND il.entity_id = p.id::text) AS likes_count,
+  (SELECT COUNT(*)::int FROM interaction_comments ic WHERE ic.entity_type = 'communitypost' AND ic.entity_id = p.id::text AND ic.deleted_at IS NULL) AS comments_count,
   (SELECT COUNT(*)::int FROM social_posts sp2 WHERE sp2.source_type = 'post' AND sp2.source_id = p.id::text AND sp2.status = 'published') AS shares_count
 `;
+
+const SENTIMENTS = ['positive', 'negative', 'neutral'];
 
 async function createPost(user, input) {
   const authorId = user && user.id;
@@ -191,6 +196,9 @@ async function createPost(user, input) {
   const hashtags = normalizeHashtags(input && input.hashtags);
   const entityRefs = normalizeEntityRefs(input && input.entity_refs);
   const visibility = (input && input.visibility) === 'followers' ? 'followers' : 'public';
+  /* Sentiment TÁC GIẢ khai báo (II.1), mặc định KHÔNG chọn (Unspecified = NULL) — khác hẳn
+     Like/Dislike cộng đồng (II.3, Reaction Sentiment), không được đồng nhất. */
+  const sentiment = SENTIMENTS.indexOf(input && input.sentiment) >= 0 ? input.sentiment : null;
 
   if (!content && !sourceType) {
     throw AppError.badRequest('POST_EMPTY', 'Viết nội dung hoặc gắn nguồn chia sẻ trước khi đăng');
@@ -213,12 +221,17 @@ async function createPost(user, input) {
   }
 
   const res = await query(
-    `INSERT INTO social_posts (author_id, content, post_type, source_type, source_id, stock_tags, hashtags, entity_refs, visibility)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `INSERT INTO social_posts (author_id, content, post_type, source_type, source_id, stock_tags, hashtags, entity_refs, visibility, sentiment)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING id`,
-    [authorId, content, postType, sourceType, sourceId, stockTags, hashtags, JSON.stringify(entityRefs), visibility]
+    [authorId, content, postType, sourceType, sourceId, stockTags, hashtags, JSON.stringify(entityRefs), visibility, sentiment]
   );
-  return getPostById(res.rows[0].id, user);
+  const postId = res.rows[0].id;
+  /* Hashtag → Topic (III.1) — resolve-or-create, không chặn tạo bài nếu lỗi phụ trợ này. */
+  try {
+    await require('./topics.service').attachPostTopics(postId, hashtags);
+  } catch (e) { /* Topic formation là phụ trợ — không chặn flow tạo bài chính */ }
+  return getPostById(postId, user);
 }
 
 async function getPostById(id, viewer) {
@@ -233,7 +246,7 @@ async function getPostById(id, viewer) {
   const post = rowToPost(res.rows[0]);
   if (viewer && viewer.id) {
     const liked = await query(
-      `SELECT 1 FROM interaction_likes WHERE entity_type = 'post' AND entity_id = $1 AND user_id = $2`,
+      `SELECT 1 FROM interaction_likes WHERE entity_type = 'communitypost' AND entity_id = $1 AND user_id = $2`,
       [id, viewer.id]
     );
     post.viewer_liked = !!liked.rows[0];

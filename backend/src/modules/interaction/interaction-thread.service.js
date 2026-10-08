@@ -9,8 +9,16 @@ const newsComments = require('../news/news-comments.service');
   const newsInteraction = require('../news/interaction.service');
 const { resolveDisplayName } = require('../../shared/resolve-display-name');
 
+/* SỬA 2026-10 (đảo lại quyết định sai trước đó): 'post' ở registry này LUÔN nghĩa là bài TIN TỨC
+   (news_posts) — xem likeEntity/unlikeEntity/getSummary dưới, rẽ nhánh cứng `if (type === 'post')
+   return newsInteraction...`. Doc IA-001 ghi "post | Bài viết Cộng đồng" không khớp hành vi code
+   thật này (doc lỗi thời) — đã từng đổi entity_type Post Cộng đồng 'communitypost'→'post' theo
+   đúng văn bản doc, gây Like Cộng đồng 404 "Không tìm thấy bài viết" (lẫn sang newsInteraction tìm
+   nhầm bảng). Giữ 'communitypost' là tên RIÊNG cho Post Cộng đồng (bảng social_posts, qua
+   interaction_likes/interaction_comments chung) — không alias/trộn với 'post'. */
 const REGISTRY = {
   post: 1,
+  communitypost: 1,
   stock: 1,
   sector: 1,
   family: 1,
@@ -21,10 +29,6 @@ function normalizeType(raw) {
   var t = String(raw || 'post').toLowerCase().trim();
   if (t === 'article') t = 'post';
   if (t === 'ecosystem') t = 'family';
-  /* 'communitypost' từng là entity_type riêng cho Post Cộng đồng — vi phạm Thread Target Registry
-     IA-001 (chỉ post|stock|sector|family|story, 'article'→'post' alias y như trên). Đã dọn 2026-10:
-     mọi caller đổi sang 'post' thẳng (migration 079 migrate data cũ), không giữ alias — Post Tin
-     tức và Post Cộng đồng dùng chung đúng 1 bucket 'post', không còn 2 tên cho 1 khái niệm. */
   if (!REGISTRY[t]) {
     throw AppError.badRequest('IX_TARGET_UNSUPPORTED', 'entityType không thuộc Interaction v1 registry');
   }
