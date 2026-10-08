@@ -70,8 +70,7 @@
       icon: "ti-shield-check",
       urlSegment: "news",
       children: [
-        { type: 'item', key: "news-comments", routeKey: "news-comments", label: "Kiểm duyệt bình luận", icon: "ti-message", badge: "GĐ2", urlSegment: "comments" },
-        { type: 'item', key: "news-chu-de-moderation", routeKey: "news-chu-de-moderation", label: "Kiểm duyệt chủ đề", icon: "ti-news", badge: "GĐ2", urlSegment: "topic-moderation" }
+        { type: 'item', key: "news-comments", routeKey: "news-comments", label: "Kiểm duyệt bình luận", icon: "ti-message", badge: "GĐ2", urlSegment: "comments" }
       ]
     },
     { type: 'item', key: "news-reports", routeKey: "news-reports", label: "Trung tâm báo cáo", icon: "ti-flag", badge: "GĐ2", urlSegment: "news/reports" },
@@ -236,7 +235,6 @@
     { type: 'item', key: "metadata-sector-types", routeKey: "metadata-sector-types", label: "Loại ngành", icon: "ti-tags", badge: "···", urlSegment: "sector-types" },
     { type: 'item', key: "metadata-enums", routeKey: "metadata-enums", label: "Quản lý enum", icon: "ti-list", badge: "···", urlSegment: "enums" },
     { type: 'item', key: "metadata-themes", routeKey: "metadata-themes", label: "Kho giao diện", icon: "ti-palette", badge: "GĐ2", urlSegment: "themes" },
-    { type: 'item', key: "metadata-chu-de-lifecycle", routeKey: "metadata-chu-de-lifecycle", label: "Vòng đời câu chuyện", icon: "ti-timeline", badge: "GĐ2", urlSegment: "topic-lifecycle" },
     { type: 'group', label: "Marketing", urlSegment: "marketing" },
     {
       type: 'parent',
@@ -258,7 +256,6 @@
     { type: 'item', key: "ai-quality", routeKey: "ai-quality", label: "Đánh giá chất lượng", icon: "ti-star", badge: "GĐ2", urlSegment: "quality" },
     { type: 'group', label: "Phân tích", urlSegment: "analytics" },
     { type: 'item', key: "analytics-users", routeKey: "analytics-users", label: "Phân tích người dùng", icon: "ti-chart-bar", badge: "GĐ2", urlSegment: "users" },
-    { type: 'item', key: "analytics-chu-de", routeKey: "analytics-chu-de", label: "Phân tích chủ đề", icon: "ti-chart-area", badge: "GĐ2", urlSegment: "topics" },
     { type: 'item', key: "analytics-revenue", routeKey: "analytics-revenue", label: "Phân tích doanh thu", icon: "ti-chart-pie", badge: "GĐ2", urlSegment: "revenue" },
     { type: 'item', key: "analytics-funnel", routeKey: "analytics-funnel", label: "Phễu chuyển đổi", icon: "ti-filter", badge: "GĐ2", urlSegment: "funnel" },
   ];

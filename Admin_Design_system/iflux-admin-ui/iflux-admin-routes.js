@@ -47,7 +47,6 @@
     "metadata-sector-types": { key: "metadata-sector-types", slug: "/admin/tham-so/sector-types", file: "metadata/sector-types.html" },
     "metadata-enums": { key: "metadata-enums", slug: "/admin/tham-so/enums", file: "metadata/enums.html" },
     "metadata-themes": { key: "metadata-themes", slug: "/admin/tham-so/themes", file: "metadata/themes.html" },
-    "metadata-chu-de-lifecycle": { key: "metadata-chu-de-lifecycle", slug: "/admin/tham-so/chu-de-lifecycle", file: "metadata/chu-de-lifecycle.html" },
     /* Owner 2026-08-10: Nhận diện thương hiệu UI removed — SEO hệ thống owns name/logo/favicon.
        Keep key as alias → Thiết lập SEO hệ thống (bookmark/redirect). */
     "marketing-brand-identity": { key: "marketing-seo-system", slug: "/admin/tiep-thi/brand-identity", file: "marketing/thiet-lap-seo-he-thong.html", legacy: true },
@@ -79,7 +78,6 @@
     "news-chu-de-cong-thuc": { key: "news-chu-de-cong-thuc", slug: "/admin/news/topics/cong-thuc", file: "news/cong-thuc-tinh-diem.html" },
     "news-cover-regenerate": { key: "news-cover-regenerate", slug: "/admin/news/regenerate", file: "news/regenerate-anh-dai-dien.html" },
     "news-author-list": { key: "news-author-list", slug: "/admin/news/authors", file: "news/danh-sach-tac-gia.html", legacySlugs: ["/admin/cong-dong/danh-sach-tac-gia", "/admin/community/authors"] },
-    "news-chu-de-moderation": { key: "news-chu-de-moderation", slug: "/admin/news/topic-moderation", file: "news/chu-de-moderation.html", legacySlugs: ["/admin/cong-dong/chu-de-moderation", "/admin/community/chu-de-moderation", "/admin/community/topic-moderation"] },
     "news-comments": { key: "news-comments", slug: "/admin/news/comments", file: "news/comments.html", legacySlugs: ["/admin/cong-dong/comments", "/admin/community/comments"] },
     "news-reports": { key: "news-reports", slug: "/admin/news/reports", file: "news/reports.html", legacySlugs: ["/admin/cong-dong/reports", "/admin/community/reports"] },
     "news-experts": { key: "news-experts", slug: "/admin/news/experts", file: "news/experts.html", legacySlugs: ["/admin/cong-dong/experts", "/admin/community/experts"] },
@@ -98,7 +96,6 @@
     "ai-cost": { key: "ai-cost", slug: "/admin/trung-tam-ai/cost", file: "ai/cost.html" },
     "ai-quality": { key: "ai-quality", slug: "/admin/trung-tam-ai/quality", file: "ai/quality.html" },
     "analytics-users": { key: "analytics-users", slug: "/admin/phan-tich/users", file: "analytics/users.html" },
-    "analytics-chu-de": { key: "analytics-chu-de", slug: "/admin/phan-tich/chu-de", file: "analytics/chu-de.html" },
     "analytics-revenue": { key: "analytics-revenue", slug: "/admin/phan-tich/revenue", file: "analytics/revenue.html" },
     "analytics-funnel": { key: "analytics-funnel", slug: "/admin/phan-tich/funnel", file: "analytics/funnel.html" },
     "Admin-Design-system-patterns-table-list": { key: "Admin-Design-system-patterns-table-list", slug: "/Admin_Design_system/patterns/table-list.html", file: null },

@@ -277,20 +277,6 @@
         { title: 'Segment active', items: [{ label: 'Free', value: '118k' }, { label: 'Premium', value: '32k' }, { label: 'Elite', value: '6k' }] }
       ]
     },
-    'ADM-ANL-002': {
-      code: 'ADM-ANL-002', title: 'Phân tích story', layout: 'sections',
-      intro: 'Views, interactions, story growth rate.',
-      stats: [
-        { label: 'Views 7d', value: '1.2M', icon: 'ti ti-eye', iconCls: 'accent' },
-        { label: 'Interactions', value: '84k', icon: 'ti ti-heart', iconCls: 'info' },
-        { label: 'Story mới', value: '126', sub: 'tuần này', icon: 'ti ti-news', iconCls: 'success' },
-        { label: 'Growth rate', value: '+12%', icon: 'ti ti-trending-up', iconCls: 'warning' }
-      ],
-      sections: [
-        { title: 'Top story', items: [{ label: 'Điện khí VN', value: '42k views' }, { label: 'Họ thép Q3', value: '38k views' }] },
-        { title: 'Lifecycle mix', items: [{ label: 'trending', value: '18%' }, { label: 'growing', value: '34%' }, { label: 'emerging', value: '28%' }] }
-      ]
-    },
     'ADM-ANL-003': {
       code: 'ADM-ANL-003', title: 'Phân tích doanh thu', layout: 'sections',
       intro: 'MRR, ARR, Churn, LTV.',
