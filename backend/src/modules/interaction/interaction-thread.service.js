@@ -11,10 +11,6 @@ const { resolveDisplayName } = require('../../shared/resolve-display-name');
 
 const REGISTRY = {
   post: 1,
-  /* normalizeType() luôn lowercase input trước khi tra REGISTRY (dòng dưới) — key phải viết
-     thường, không phải 'communityPost' (camelCase sẽ không bao giờ khớp, API vẫn gọi được với
-     case bất kỳ vì được tự lowercase). */
-  communitypost: 1,
   stock: 1,
   sector: 1,
   family: 1,
@@ -25,6 +21,10 @@ function normalizeType(raw) {
   var t = String(raw || 'post').toLowerCase().trim();
   if (t === 'article') t = 'post';
   if (t === 'ecosystem') t = 'family';
+  /* 'communitypost' từng là entity_type riêng cho Post Cộng đồng — vi phạm Thread Target Registry
+     IA-001 (chỉ post|stock|sector|family|story, 'article'→'post' alias y như trên). Đã dọn 2026-10:
+     mọi caller đổi sang 'post' thẳng (migration 079 migrate data cũ), không giữ alias — Post Tin
+     tức và Post Cộng đồng dùng chung đúng 1 bucket 'post', không còn 2 tên cho 1 khái niệm. */
   if (!REGISTRY[t]) {
     throw AppError.badRequest('IX_TARGET_UNSUPPORTED', 'entityType không thuộc Interaction v1 registry');
   }

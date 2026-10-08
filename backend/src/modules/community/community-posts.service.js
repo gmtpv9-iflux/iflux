@@ -164,7 +164,7 @@ async function attachViewerLiked(result, viewer) {
   if (!viewer || !viewer.id || !result.items.length) return result;
   const ids = result.items.map((p) => p.id);
   const res = await query(
-    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'communitypost' AND user_id = $1 AND entity_id = ANY($2::text[])`,
+    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'post' AND user_id = $1 AND entity_id = ANY($2::text[])`,
     [viewer.id, ids]
   );
   const liked = {};
@@ -174,8 +174,8 @@ async function attachViewerLiked(result, viewer) {
 }
 
 const STATS_SELECT = `
-  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'communitypost' AND il.entity_id = p.id::text) AS likes_count,
-  (SELECT COUNT(*)::int FROM interaction_comments ic WHERE ic.entity_type = 'communitypost' AND ic.entity_id = p.id::text AND ic.deleted_at IS NULL) AS comments_count,
+  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'post' AND il.entity_id = p.id::text) AS likes_count,
+  (SELECT COUNT(*)::int FROM interaction_comments ic WHERE ic.entity_type = 'post' AND ic.entity_id = p.id::text AND ic.deleted_at IS NULL) AS comments_count,
   (SELECT COUNT(*)::int FROM social_posts sp2 WHERE sp2.source_type = 'post' AND sp2.source_id = p.id::text AND sp2.status = 'published') AS shares_count
 `;
 
@@ -233,7 +233,7 @@ async function getPostById(id, viewer) {
   const post = rowToPost(res.rows[0]);
   if (viewer && viewer.id) {
     const liked = await query(
-      `SELECT 1 FROM interaction_likes WHERE entity_type = 'communitypost' AND entity_id = $1 AND user_id = $2`,
+      `SELECT 1 FROM interaction_likes WHERE entity_type = 'post' AND entity_id = $1 AND user_id = $2`,
       [id, viewer.id]
     );
     post.viewer_liked = !!liked.rows[0];

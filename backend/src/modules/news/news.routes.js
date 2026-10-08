@@ -52,7 +52,7 @@ function createNewsRouter(deps) {
         offset: req.query.offset ? Number(req.query.offset) : 0,
         ticker: req.query.ticker || null,
         category_id: req.query.category_id || null,
-        chu_de_id: req.query.chu_de_id || null,
+        story_id: req.query.story_id || null,
         sector: req.query.sector || null,
         ecosystem: req.query.ecosystem || null,
         related_to: req.query.related_to || null
@@ -188,10 +188,7 @@ function createNewsRouter(deps) {
       slug: z.string().optional(),
       display_name: z.string().optional(),
       category_id: z.string().uuid().optional(),
-      chu_de_id: z.string().optional(),
-      chu_de_name: z.string().optional(),
-      chu_de_slug: z.string().optional(),
-      chu_de: z.any().optional(),
+      story_id: z.string().optional().nullable(),
       sectors: z.array(z.string()).optional(),
       ecosystems: z.array(z.string()).optional(),
       exchange: z.string().optional().nullable(),
@@ -206,8 +203,8 @@ function createNewsRouter(deps) {
     try {
       const b = req.validated.body;
       const user = req.user;
-      /* Nếu có category + chủ đề → dùng Article SoT */
-      if (b.category_id && (b.chu_de_id || b.chu_de_name || b.chu_de_slug || (b.chu_de && (b.chu_de.id || b.chu_de.name)))) {
+      /* Nếu có category → dùng Article SoT (story_id tuỳ chọn, gắn Story đã hình thành) */
+      if (b.category_id) {
         const item = await articles.createArticle(
           Object.assign({}, b, { status: b.status || 'pending' }),
           {
@@ -360,18 +357,7 @@ function createNewsRouter(deps) {
     content_type: z.string().optional().nullable(),
     category_id: z.string().uuid(),
     category_name: z.string().optional().nullable(),
-    chu_de_id: z.string().optional().nullable(),
-    chu_de_slug: z.string().optional().nullable(),
-    chu_de_name: z.string().optional().nullable(),
-    chu_de: z
-      .object({
-        id: z.string().optional(),
-        slug: z.string().optional(),
-        name: z.string().optional(),
-        label: z.string().optional()
-      })
-      .optional()
-      .nullable(),
+    story_id: z.string().optional().nullable(),
     tickers: z.array(z.string()).max(5).optional().nullable(),
     sectors: z.array(z.string()).max(3).optional().nullable(),
     ecosystems: z.array(z.string()).max(3).optional().nullable(),
@@ -417,7 +403,7 @@ function createNewsRouter(deps) {
         status: req.query.status || 'published',
         q: req.query.q,
         category_id: req.query.category_id,
-        chu_de_id: req.query.chu_de_id,
+        story_id: req.query.story_id,
         limit: req.query.limit ? Number(req.query.limit) : 50
       });
       return success(res, { articles: list, total: list.length });
@@ -537,24 +523,25 @@ function createNewsRouter(deps) {
     }
   });
 
+  /* Tin tức gắn Thực thể ĐÃ HÌNH THÀNH (Owner 2026-10) — gợi ý Story, không còn Topic/Chủ đề
+     tự tạo (content_chu_de đã dọn, xem migration 075). */
   router.get('/chu-de/suggest', async (req, res, next) => {
     try {
-      const list = await articles.suggestChuDe(req.query.q || req.query.title || '', req.query.limit);
+      const list = await articles.suggestStories(req.query.q || req.query.title || '', req.query.limit);
       return success(res, { suggestions: list, total: list.length });
     } catch (err) {
       next(err);
     }
   });
 
-  /* Public list — User Web /tin-tuc/chu-de */
+  /* Public list — User Web /tin-tuc/chu-de (duyệt bài theo Story đã hình thành) */
   router.get('/chu-de', async (req, res, next) => {
     try {
-      const list = await articles.listChuDeAdmin({
-        q: req.query.q,
-        status: req.query.status || undefined,
+      const stories = require('../community/stories.service');
+      const list = await stories.listStories({
         limit: req.query.limit ? Number(req.query.limit) : 200
       });
-      return success(res, { chu_de: list, total: list.length });
+      return success(res, { chu_de: list.items, total: list.items.length });
     } catch (err) {
       next(err);
     }
@@ -573,34 +560,6 @@ function createNewsRouter(deps) {
     }
   });
 
-  router.get('/chu-de/:idOrSlug/tickers', async (req, res, next) => {
-    try {
-      const list = await articles.suggestTickersForChuDe(req.params.idOrSlug, req.query.limit);
-      return success(res, { tickers: list, total: list.length });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  router.post('/chu-de', async (req, res, next) => {
-    /* User đã đăng nhập HOẶC admin có quyền stories.registry.create */
-    const hasBearer = String(req.headers.authorization || '').startsWith('Bearer ');
-    const run = async function () {
-      const item = await articles.createChuDeQuick(req.body && req.body.name);
-      return success(res, { chu_de: item }, 201);
-    };
-    if (hasBearer && deps.auth && deps.auth.authenticate) {
-      return deps.auth.authenticate(req, res, function (err) {
-        if (err) return next(err);
-        run().catch(next);
-      });
-    }
-    return perm('stories.registry.create')(req, res, function (err) {
-      if (err) return next(err);
-      run().catch(next);
-    });
-  });
-
   router.get('/admin/articles', perm('news.articles.view'), async (req, res, next) => {
     try {
       const page = Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -610,7 +569,7 @@ function createNewsRouter(deps) {
         status: req.query.status || undefined,
         q: req.query.q,
         category_id: req.query.category_id,
-        chu_de_id: req.query.chu_de_id,
+        story_id: req.query.story_id,
         page,
         limit,
         withTotal: true
@@ -624,19 +583,6 @@ function createNewsRouter(deps) {
         limit,
         totalPages: Math.ceil(total / limit) || 1
       });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  router.get('/admin/chu-de', perm('news.stories.view'), async (req, res, next) => {
-    try {
-      const list = await articles.listChuDeAdmin({
-        q: req.query.q,
-        status: req.query.status || undefined,
-        limit: req.query.limit ? Number(req.query.limit) : 200
-      });
-      return success(res, { chu_de: list, total: list.length });
     } catch (err) {
       next(err);
     }
@@ -745,7 +691,7 @@ function createNewsRouter(deps) {
         include_all: true,
         status: req.query.status || undefined,
         q: req.query.q,
-        chu_de_id: req.query.chu_de_id,
+        story_id: req.query.story_id,
         limit: req.query.limit ? Number(req.query.limit) : 100
       });
       return success(res, { posts: list, total: list.length });
