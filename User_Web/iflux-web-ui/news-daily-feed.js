@@ -156,8 +156,12 @@
     var q = {};
     if (filter.categoryId) q.category_id = filter.categoryId;
     if (filter.ticker) q.ticker = filter.ticker;
-    if (filter.taxSource === 'chu-de' && filter.taxGroupId) q.chu_de_id = filter.taxGroupId;
-    if (filter.chuDeId) q.chu_de_id = filter.chuDeId;
+    /* Owner 2026-10 (Phase 6) — backend đọc story_id (Story đã hình thành từ Topic), không còn
+       chu_de_id (content_chu_de đã dọn, xem migration 075) — đổi tên tham số gửi lên cho khớp,
+       tránh bị âm thầm bỏ qua ở news.routes.js's GET /feed. */
+    if (filter.taxSource === 'chu-de' && filter.taxGroupId) q.story_id = filter.taxGroupId;
+    if (filter.chuDeId) q.story_id = filter.chuDeId;
+    if (filter.storyId) q.story_id = filter.storyId;
     /* Trang thực thể Ngành / Hệ sinh thái: bài gắn mã thuộc nhóm (backend suy ra từ danh mục mã). */
     if (filter.taxSource === 'sector' && filter.taxGroupId) q.sector = filter.taxGroupId;
     if (filter.taxSource === 'family' && filter.taxGroupId) q.ecosystem = filter.taxGroupId;
@@ -284,7 +288,7 @@
       offset: reqOffset,
       category_id: q.category_id,
       ticker: q.ticker,
-      chu_de_id: q.chu_de_id,
+      story_id: q.story_id,
       related_to: q.related_to,
       sector: q.sector,
       ecosystem: q.ecosystem,
