@@ -102,8 +102,31 @@ const POST_COLS = `
   ) ELSE NULL END) AS source_preview
 `;
 
+/* Vài bài RSS cũ còn lưu nguyên HTML entity thô trong title (trước khi rss-ingest.service.js
+   decodeEntities được sửa — xem news-store.js decodeHtmlEntities FE, bản này cho source_preview
+   phía API) — decode lại ở đây để "Đăng lại" không hiện &#039; literal thay vì dấu nháy thật. */
+function decodeHtmlEntities(s) {
+  s = String(s == null ? '' : s);
+  if (s.indexOf('&') === -1) return s;
+  return s
+    .replace(/&amp;/g, '&')
+    .replace(/&#0*39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0*8216;|&lsquo;/g, '‘')
+    .replace(/&#0*8217;|&rsquo;/g, '’')
+    .replace(/&#0*8220;|&ldquo;/g, '“')
+    .replace(/&#0*8221;|&rdquo;/g, '”')
+    .replace(/&#0*8211;|&ndash;/g, '–')
+    .replace(/&#0*8212;|&mdash;/g, '—')
+    .replace(/&#0*8230;|&hellip;/g, '…')
+    .replace(/&nbsp;/g, ' ');
+}
+
 function rowToPost(row) {
   if (!row) return null;
+  if (row.source_preview && row.source_preview.title) {
+    row.source_preview.title = decodeHtmlEntities(row.source_preview.title);
+  }
   return {
     id: row.id,
     author: {
