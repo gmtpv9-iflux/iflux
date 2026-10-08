@@ -219,17 +219,15 @@
       ? '<div class="ifx-com2-hotcarousel">' + state.hotTopics.map(hotTopicCarouselItemHtml).join('') + '</div>'
       : '<p class="ifx-com2-empty">Chưa có chủ đề mới nổi trong khoảng thời gian này.</p>';
     return (
-      /* Owner: bỏ khung — nằm thẳng trên nền trang, không phải 1 card riêng. */
-      '<div class="ifx-card ifx-card-flush" data-ifx-com2-hot>' +
+      /* Owner: không phải 1 card — bỏ hẳn div khung (không chỉ bỏ viền), nằm thẳng trên nền trang. */
+      '<div data-ifx-com2-hot>' +
         sectionHeaderHtml('flame', 'Top chủ đề mới nổi', { noViewAll: true }) +
-        '<div class="ifx-card-body">' +
-          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
-            STORY_RANGES.map(function (r) {
-              return '<button type="button" class="ifx-tab' + (r.key === state.hotRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
-            }).join('') +
-          '</div>' +
-          body +
+        '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
+          STORY_RANGES.map(function (r) {
+            return '<button type="button" class="ifx-tab' + (r.key === state.hotRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
+          }).join('') +
         '</div>' +
+        body +
       '</div>'
     );
   }

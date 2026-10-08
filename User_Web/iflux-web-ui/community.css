@@ -32,7 +32,10 @@
   flex-shrink: 0;
 }
 
-/* ── Chủ đề HOT (main, phía trên Composer) ── */
+/* ── Chủ đề mới nổi (main, phía trên Composer) — không bọc .ifx-card/.ifx-card-body (Owner:
+   nằm thẳng trên nền trang), nên bù lại khoảng cách header↔nội dung mà .ifx-card-body vốn tạo
+   ra (padding-top 16px) ngay tại đây, không đụng token --ifx-inset-card-header chung. */
+[data-ifx-com2-hot] > .ifx-card-header { padding-bottom: var(--ifx-space-16); }
 .ifx-com2-period { margin-bottom: var(--ifx-space-12); width: 100%; }
 .ifx-com2-hotlist {
   list-style: none;
@@ -192,6 +195,11 @@
 .ifx-com2-feedfilter { width: 100%; }
 
 /* ── Post card ── */
+[data-ifx-com2-feedlist] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+}
 .ifx-com2-post__head {
   display: flex;
   align-items: center;
