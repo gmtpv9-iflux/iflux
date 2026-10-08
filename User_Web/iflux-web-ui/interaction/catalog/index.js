@@ -168,12 +168,13 @@
     var canonical = resolveCommunityCanonical(target);
     if (!canonical) return '';
     if (SF && SF.buildShareUrl) {
+      var isGuest = !(global.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn());
       try {
         return SF.buildShareUrl({
           entityType: 'community_post',
           entityId: target && (target.id || target.postId),
           canonicalUrl: canonical,
-          affiliate: true
+          affiliate: !isGuest
         }).shareUrl || canonical;
       } catch (err) {
         return canonical;
@@ -182,15 +183,14 @@
     return canonical;
   }
 
+  /**
+   * Chia sẻ — NGOẠI LỆ DUY NHẤT trong 4 tương tác: khách vẫn chia sẻ được link bài viết,
+   * không cần đăng nhập (Owner chốt 2026-10). Một luồng gate duy nhất cho Share: cờ
+   * allowGuest truyền vào Foundation executeShare (design_system/28_share/share.js) — không
+   * còn kiểm tra LoginRequired song song ở permission.js (đã dọn, tránh 2 nơi quyết định
+   * cùng 1 policy lệch nhau).
+   */
   function handleShareUrlClick(target) {
-    var r = perm() ? perm().resolve({ action: 'share_url', target: target }) : 'Allow';
-    if (r === 'LoginRequired') {
-      if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
-      else if (global.IfxToast) IfxToast.show('Đăng nhập để chia sẻ link của bạn.', 'warning');
-      return;
-    }
-    if (r !== 'Allow') return;
-
     var Share = global.IfluxShareAction || global.IfluxInsightShare;
     var canonical = resolveCommunityCanonical(target);
     if (!canonical) {
@@ -205,11 +205,12 @@
           canonicalUrl: canonical,
           entityType: 'community_post',
           entityId: target && (target.id || target.postId),
-          title: (target && (target.title || target.name)) || ''
+          title: (target && (target.title || target.name)) || '',
+          allowGuest: true
         });
         return;
       }
-      /* Fallback nếu Foundation UI chưa load — vẫn qua Store Self-only */
+      /* Fallback nếu Foundation UI chưa load — vẫn qua Store, khách = không affiliate ref */
       var SF = shareFoundation();
       var url = buildArticleShareUrl(target, SF);
       if (url) copyShareUrl(url);
@@ -280,6 +281,19 @@
     el.querySelectorAll('[data-ifx-ix-act]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var act = btn.getAttribute('data-ifx-ix-act');
+        /* Đồng bộ đăng nhập (Owner chốt 2026-10): TRỪ Chia sẻ, mọi tương tác khác (Thích/Bình
+           luận/Đăng lại) khi khách bấm vào đều hiện ĐÚNG 1 kiểu popup đăng nhập
+           (IfluxAuth.promptLogin — cùng kiểu Repost đã làm đúng từ đầu), không phải lúc thì toast
+           lúc thì điều hướng thẳng rồi mới hỏi bên trong trang đích. */
+        if (act === 'open' || act === 'like') {
+          var prAction = act === 'open' ? 'comment' : 'like';
+          var prGate = perm() ? perm().resolve({ action: prAction, target: target }) : 'LoginRequired';
+          if (prGate !== 'Allow') {
+            if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
+            else if (global.IfxToast) IfxToast.show('Đăng nhập để tiếp tục', 'warning');
+            return;
+          }
+        }
         if (act === 'open') {
           if (typeof ctx.onOpenInteractive === 'function') {
             ctx.onOpenInteractive(target);
@@ -303,11 +317,6 @@
           return;
         }
         if (act === 'like') {
-          var pr = perm() ? perm().resolve({ action: 'like', target: target }) : 'LoginRequired';
-          if (pr !== 'Allow') {
-            if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
-            return;
-          }
           if (btn.disabled) return;
           /* Toggle đúng chiều theo trạng thái HIỆN TẠI của nút — trước đây luôn gửi 'like' bất kể
              đã thích hay chưa, khiến bấm bao nhiêu lần cũng được (xem backend mutate() — đã sửa
@@ -388,7 +397,10 @@
       var body = (root.querySelector('[data-ifx-ix-body]') || {}).value || '';
       var pr = perm() ? perm().resolve({ action: 'comment', target: ctx.target }) : 'LoginRequired';
       if (pr !== 'Allow') {
-        if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
+        /* Đồng bộ popup đăng nhập — guest vào thẳng trang bình luận (không qua gate ở act==='open')
+           vẫn phải gặp đúng 1 kiểu popup khi bấm Gửi, không phải toast riêng ở đây. */
+        if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
+        else if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
         return;
       }
       if (!store() || !store().addComment) return;

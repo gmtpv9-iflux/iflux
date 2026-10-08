@@ -25,8 +25,12 @@
   }
 
   /**
-   * Matrix IP-001 — Phase 7 Owner LOCK: Guest share = LoginRequired (DQ-01 / Brief §6B).
-   * (Supersedes prior Q3 Guest share_url = Allow.)
+   * Matrix IP-001 — Owner chốt 2026-10: TRỪ Chia sẻ, mọi tương tác khác (like/comment/reply/
+   * bookmark/share_bump/reaction/favorite) luôn LoginRequired với khách qua popup
+   * IfluxAuth.promptLogin trước khi cho thao tác. Chia sẻ KHÔNG đi qua matrix này — chính sách
+   * guest-allowed của Share nằm riêng ở Foundation (design_system/28_share/share.js
+   * executeShare/requireShareLogin, cờ allowGuest) vì Share còn quyết định affiliate ref, không
+   * phải thuần Allow/LoginRequired — tránh 2 nơi cùng quyết định 1 policy mà lệch nhau.
    */
   function resolve(input) {
     input = input || {};
@@ -35,11 +39,6 @@
     /* entitlement reserved — Phase 3 wire tối thiểu */
 
     if (action === 'view_summary') {
-      return Allow;
-    }
-
-    if (action === 'share_url') {
-      if (actor === 'guest') return LoginRequired;
       return Allow;
     }
 
