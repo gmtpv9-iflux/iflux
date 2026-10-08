@@ -10,6 +10,7 @@ const express = require('express');
 const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
+const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 const stories = require('./stories.service');
 const thread = require('../interaction/interaction-thread.service');
 
@@ -24,7 +25,11 @@ const createStorySchema = z.object({
 
 function createStoriesRouter(deps) {
   const router = express.Router();
+  const config = deps.config || {};
   const auth = deps.auth || {};
+  const perm = function () {
+    return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
+  };
 
   router.post('/stories', auth.authenticate, validate(createStorySchema), async (req, res, next) => {
     try {
@@ -36,10 +41,11 @@ function createStoriesRouter(deps) {
   });
 
   /* Owner 2026-10 (VI.2) — Admin ánh xạ 1 Topic → 1 Story. story_id = gắn vào Story có sẵn;
-     thiếu story_id = tạo Story mới (cần title). stories.service.js tự chặn nếu không phải Admin. */
-  router.post('/topics/:topicId/map-to-story', auth.authenticate, async (req, res, next) => {
+     thiếu story_id = tạo Story mới (cần title). Admin Portal auth (khớp Admin Dashboard HTML gọi
+     qua chu-de-registry-store.js, KHÁC User JWT thường — xem topics.routes.js cùng lý do). */
+  router.post('/topics/:topicId/map-to-story', perm('community.topics.manage'), async (req, res, next) => {
     try {
-      const data = await stories.mapTopicToStory(req.params.topicId, req.body || {}, req.user);
+      const data = await stories.mapTopicToStory(req.params.topicId, req.body || {}, req.admin);
       return success(res, { story: data }, 201);
     } catch (err) {
       next(err);
