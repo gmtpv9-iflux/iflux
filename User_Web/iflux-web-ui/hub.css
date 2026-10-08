@@ -10,9 +10,6 @@
 .ifx-hub-main {
   min-width: 0;
 }
-.ifx-hub-tabs {
-  margin-bottom: var(--ifx-space-16);
-}
 .ifx-hub-profile-card {
   padding: 0;
 }
@@ -101,10 +98,6 @@
 }
 .ifx-hub-sidebar .ifx-com-topwl-user small {
   max-width: 120px;
-}
-.ifx-hub-sidebar .ifx-com-topwl-tab {
-  font-size: var(--ifx-font-size-10);
-  padding: 4px 8px;
 }
 #tab-dashboard .ifx-dash-toolbar {
   margin-bottom: var(--ifx-space-16);

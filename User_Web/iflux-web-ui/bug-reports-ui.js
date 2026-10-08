@@ -197,9 +197,9 @@
         '<button type="button" class="ix-modal-close" data-ifx-bug-close><i class="ti ti-x"></i></button>' +
         '<div class="ix-modal-title">Báo lỗi</div>' +
         '<div class="ix-modal-sub">Đồng tình với lỗi phổ biến hoặc gửi báo cáo mới để đội ngũ iFlux xử lý.</div>' +
-        '<div class="ix-tabs ifx-req-tabs" role="tablist" style="margin-top:var(--ifx-space-12)">' +
-          '<button type="button" class="ix-tab active" role="tab" aria-selected="true" data-ifx-bug-tab="list"><i class="ti ti-flame"></i> Danh sách nổi bật</button>' +
-          '<button type="button" class="ix-tab" role="tab" aria-selected="false" data-ifx-bug-tab="submit"><i class="ti ti-send"></i> Báo lỗi</button>' +
+        '<div class="ix-profile-tabs ifx-req-tabs" role="tablist" style="margin-top:var(--ifx-space-12)">' +
+          '<button type="button" class="ix-profile-tab active" role="tab" aria-selected="true" data-ifx-bug-tab="list"><i class="ti ti-flame"></i> Danh sách nổi bật</button>' +
+          '<button type="button" class="ix-profile-tab" role="tab" aria-selected="false" data-ifx-bug-tab="submit"><i class="ti ti-send"></i> Báo lỗi</button>' +
         '</div>' +
         '<div class="ifx-feat-modal__body">' +
           '<div class="ix-tab-content active" data-ifx-bug-panel="list">' +

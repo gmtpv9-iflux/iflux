@@ -660,10 +660,10 @@
           '</div>' +
           '<div class="ix-form-group">' +
             '<label class="ix-label">Quan điểm của bạn (không bắt buộc)</label>' +
-            '<div class="ix-tabs" data-ifx-com2-post-sentiment>' +
-              '<button type="button" class="ix-tab" data-value="positive">' + icon('trending-up') + ' Tích cực</button>' +
-              '<button type="button" class="ix-tab" data-value="negative">' + icon('trending-down') + ' Tiêu cực</button>' +
-              '<button type="button" class="ix-tab" data-value="neutral">' + icon('minus') + ' Trung lập</button>' +
+            '<div class="ifx-tabs ifx-tabs-segmented" data-ifx-com2-post-sentiment>' +
+              '<button type="button" class="ifx-tab" data-value="positive">Tích cực</button>' +
+              '<button type="button" class="ifx-tab" data-value="negative">Tiêu cực</button>' +
+              '<button type="button" class="ifx-tab" data-value="neutral">Trung lập</button>' +
             '</div>' +
             '<input type="hidden" name="sentiment" value="" />' +
           '</div>' +
@@ -702,13 +702,13 @@
     bindEntityPicker(form);
     /* Sentiment tác giả (II.1) — mặc định KHÔNG chọn, bấm lại nút đang active để bỏ chọn
        (Unspecified). Khác hẳn Like/Dislike cộng đồng — không đồng nhất 2 tín hiệu (II.3). */
-    form.querySelectorAll('[data-ifx-com2-post-sentiment] .ix-tab').forEach(function (btn) {
+    form.querySelectorAll('[data-ifx-com2-post-sentiment] .ifx-tab').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var input = form.querySelector('input[name=sentiment]');
-        var already = btn.classList.contains('active');
-        form.querySelectorAll('[data-ifx-com2-post-sentiment] .ix-tab').forEach(function (b) { b.classList.remove('active'); });
+        var already = btn.classList.contains('is-active');
+        form.querySelectorAll('[data-ifx-com2-post-sentiment] .ifx-tab').forEach(function (b) { b.classList.remove('is-active'); });
         if (already) { input.value = ''; return; }
-        btn.classList.add('active');
+        btn.classList.add('is-active');
         input.value = btn.getAttribute('data-value');
       });
     });

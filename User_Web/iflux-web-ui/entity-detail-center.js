@@ -157,11 +157,11 @@
       var countHtml = (t.key === 'comments')
         ? ' <span class="ifx-com-side-count" data-ec-comment-count>' + (opts.commentCount || 0) + '</span>'
         : '';
-      return '<button type="button" class="ix-tab' + (i === 0 ? ' active' : '') +
+      return '<button type="button" class="ix-profile-tab' + (i === 0 ? ' active' : '') +
         '" role="tab" aria-selected="' + (i === 0) + '" data-ec-tab="' + t.key + '">' +
         '<i class="ti ' + t.icon + '"></i> ' + esc(t.label) + countHtml + '</button>';
     }).join('');
-    return '<div class="ix-tabs" role="tablist" data-ec-tabs style="margin-bottom:var(--ifx-space-16)">' + btns + '</div>';
+    return '<div class="ix-profile-tabs" role="tablist" data-ec-tabs style="margin-bottom:var(--ifx-space-16)">' + btns + '</div>';
   }
 
   function panel(key, active, html) {

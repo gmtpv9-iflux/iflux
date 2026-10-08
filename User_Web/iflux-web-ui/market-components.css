@@ -211,12 +211,6 @@
 
 /* .ifx-dash-grid: Layout Primitive — owner DUY NHẤT là widget-shell.css (grid 12-col).
    Widget CSS KHÔNG được redefine (SoT: Layout Engine 1 owner). */
-.ifx-movers-tabs {
-  display: flex;
-  gap: var(--ifx-space-4);
-  margin-bottom: var(--ifx-space-12);
-}
-.ifx-movers-tabs .ix-tab { flex: 1; text-align: center; font-size: var(--ifx-font-size-12); padding: var(--ifx-space-8) 10px; }
 
 .ifx-degraded-banner {
   display: none;

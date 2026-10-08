@@ -15,4 +15,5 @@
 @import url('/design_system/02_foundation/typography.css');
 @import url('/design_system/02_foundation/layout.css');
 @import url('/design_system/02_foundation/02_icons/icons.css');
+@import url('/design_system/04_components/15_tabs/tabs.css');
 @import url('./legacy-bridge.css');

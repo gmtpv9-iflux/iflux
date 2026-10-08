@@ -1370,32 +1370,11 @@ body {
 .ix-widget-sep-sub { font-size: var(--ifx-font-size-12); color: var(--ix-text-muted); }
 
 /* -----------------------------------------------------------------
-   35. TABS (nav pills / horizontal tabs)
+   35. TABS — đã chuẩn hoá (Owner 2026-10): chỉ còn đúng 2 chuẩn Tab trên toàn hệ thống —
+   .ix-profile-tab (Tab lớn, có icon — dòng ~2135 dưới) và .ifx-tabs-segmented .ifx-tab
+   (Tab nhỏ, không icon — design_system/04_components/15_tabs/tabs.css). Base .ix-tab/.ix-tabs
+   cũ (chuẩn thứ 3 không ai chốt) đã xoá — mọi nơi từng dùng đã chuyển sang 1 trong 2 chuẩn trên.
    ----------------------------------------------------------------- */
-.ix-tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--ix-bg-input);
-  border-radius: var(--ix-radius);
-  padding: 3px;
-  width: fit-content;
-}
-.ix-tab {
-  padding: 6px 14px;
-  border-radius: calc(var(--ix-radius) - 2px);
-  font-size: var(--ifx-font-size-14); font-weight: var(--ifx-font-weight-medium);
-  color: var(--ix-text-muted);
-  cursor: pointer;
-  transition: all .15s;
-  border: none; background: none;
-  font-family: var(--ix-font);
-}
-.ix-tab:hover { color: var(--ix-text-primary); }
-.ix-tab.active {
-  background: var(--ix-accent-soft);
-  color: var(--ix-accent);
-  box-shadow: none;
-}
 
 .ix-nav-pills { display: flex; flex-direction: column; gap: 2px; }
 .ix-nav-pill {

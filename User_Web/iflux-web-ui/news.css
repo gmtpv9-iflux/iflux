@@ -455,7 +455,7 @@
   color: var(--ix-text-muted);
   font-weight: var(--ifx-font-weight-semibold);
 }
-.ix-tab.active .ifx-com-side-count {
+.ix-profile-tab.active .ifx-com-side-count {
   background: var(--ix-accent);
   color: #fff;
 }
@@ -515,30 +515,6 @@
 .ifx-com-side-card--comments {
   display: flex;
   flex-direction: column;
-}
-.ifx-com-cmt-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-space-4);
-  margin-bottom: var(--ifx-space-12);
-}
-.ifx-com-cmt-tab {
-  padding: 5px 10px;
-  border-radius: 16px;
-  border: 1px solid var(--ix-border);
-  background: transparent;
-  color: var(--ix-text-muted);
-  font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-semibold);
-  cursor: pointer;
-  font-family: var(--ifx-font-primary);
-  transition: all 0.12s;
-}
-.ifx-com-cmt-tab:hover { border-color: var(--ix-accent); color: var(--ix-accent); }
-.ifx-com-cmt-tab.is-active {
-  background: var(--ix-accent-soft);
-  border-color: var(--ix-accent);
-  color: var(--ix-accent);
 }
 .ifx-com-comment-form--side { margin-bottom: var(--ifx-space-12); }
 .ifx-com-comments__list--side {
@@ -878,27 +854,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 }
 .ifx-com-topwl > .ifx-widget__subtitle {
   margin: 0 0 var(--ifx-space-12);
-}
-.ifx-com-topwl-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-inline-sm);
-  margin-bottom: var(--ifx-space-12);
-}
-.ifx-com-topwl-tab {
-  border: 1px solid var(--ix-border);
-  background: transparent;
-  color: var(--ix-text-secondary);
-  font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-semibold);
-  padding: 5px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-.ifx-com-topwl-tab.is-active {
-  background: rgba(105, 108, 255, 0.12);
-  border-color: var(--ix-accent);
-  color: var(--ix-accent);
 }
 .ifx-com-topwl-list {
   display: flex;
@@ -1453,27 +1408,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 .ifx-com-pill:not(.is-active) .ifx-com-pill__n {
   background: var(--ix-bg-hover);
   color: var(--ix-text-muted);
-}
-.ifx-com-tax__tabs {
-  display: flex;
-  gap: var(--ifx-space-4);
-  margin-bottom: var(--ifx-space-8);
-}
-.ifx-com-tax-tab {
-  padding: 6px 14px;
-  border-radius: var(--ix-radius);
-  border: 1px solid var(--ix-border);
-  background: transparent;
-  color: var(--ix-text-secondary);
-  font-size: var(--ifx-font-size-12);
-  font-weight: var(--ifx-font-weight-semibold);
-  cursor: pointer;
-  font-family: var(--ifx-font-primary);
-}
-.ifx-com-tax-tab.is-active {
-  background: var(--ix-accent-soft);
-  border-color: var(--ix-accent);
-  color: var(--ix-accent);
 }
 .ifx-com-tax__pills {
   display: flex;

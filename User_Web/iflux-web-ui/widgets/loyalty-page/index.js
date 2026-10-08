@@ -35,9 +35,9 @@ var CORE_TIERS = [
 var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>
     <p class="ifx-page-intro">Chương trình thành viên iFlux — affiliate, insight card và quyền lợi khi biến tri thức đầu tư thành tài sản số.</p>
 
-    <div class="ifx-loyalty-tabs">
-      <button type="button" class="ifx-loyalty-tab active" data-ifx-loyalty-tab="tab-membership-intro"><i class="ti ti-sparkles"></i> Giới thiệu</button>
-      <button type="button" class="ifx-loyalty-tab" data-ifx-loyalty-goto="/trang-chu?tab=affiliate"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
+    <div class="ix-profile-tabs">
+      <button type="button" class="ix-profile-tab active" data-ifx-loyalty-tab="tab-membership-intro"><i class="ti ti-sparkles"></i> Giới thiệu</button>
+      <button type="button" class="ix-profile-tab" data-ifx-loyalty-goto="/trang-chu?tab=affiliate"><i class="ti ti-affiliate"></i> Đi đến Affiliate</button>
     </div>
 
     <div id="tab-membership-intro" class="ifx-loyalty-panel active">

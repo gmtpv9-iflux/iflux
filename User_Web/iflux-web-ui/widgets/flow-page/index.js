@@ -21,10 +21,10 @@ var HEAD_HTML =
 var MAIN_COL_HTML =
   '<div class="ifx-flow-main-col">' +
     '<div class="ifx-flow-score-wrap">' +
-      '<div class="ix-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
-        '<button type="button" class="ix-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê cơ bản</button>' +
-        '<button type="button" class="ix-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Thống kê nâng cao</button>' +
-        '<button type="button" class="ix-tab ifx-app-header-link-exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-app-header-link-stack"><span class="ifx-app-header-chip">Đột phá</span><span class="ifx-app-header-link-label">Độc quyền</span></span></button>' +
+      '<div class="ix-profile-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
+        '<button type="button" class="ix-profile-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê cơ bản</button>' +
+        '<button type="button" class="ix-profile-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Thống kê nâng cao</button>' +
+        '<button type="button" class="ix-profile-tab ifx-app-header-link-exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-app-header-link-stack"><span class="ifx-app-header-chip">Đột phá</span><span class="ifx-app-header-link-label">Độc quyền</span></span></button>' +
       '</div>' +
       '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
         '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +

@@ -616,10 +616,6 @@ Note: Phải bóc theo Owner trước khi cắt load
   gap: var(--ifx-space-16);
   min-width: 0;
 }
-.ifx-sr-hist__tabs {
-  width: 100%;
-  flex-wrap: wrap;
-}
 .ifx-sr-hist__panel {
   display: flex;
   flex-direction: column;

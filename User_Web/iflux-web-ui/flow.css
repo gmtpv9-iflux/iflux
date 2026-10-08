@@ -130,11 +130,6 @@
   margin-bottom: var(--ifx-space-16);
   flex-wrap: wrap;
 }
-.ifx-flow-score-tabs .ix-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ifx-inline-sm);
-}
 .ifx-flow-tab-panel {
   display: none;
 }

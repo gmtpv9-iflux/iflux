@@ -12,7 +12,7 @@
   }
 
   function switchTab(tabId) {
-    document.querySelectorAll('.ifx-loyalty-tab[data-ifx-loyalty-tab]').forEach(function (btn) {
+    document.querySelectorAll('.ix-profile-tab[data-ifx-loyalty-tab]').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-ifx-loyalty-tab') === tabId);
     });
     document.querySelectorAll('.ifx-loyalty-panel').forEach(function (panel) {

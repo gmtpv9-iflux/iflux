@@ -256,6 +256,12 @@ html.ifx-profile-host body {
 .ifx-layer-f1 { background: var(--ifx-success-soft); color: var(--ifx-success); }
 .ifx-layer-f2 { background: var(--ifx-warning-soft); color: var(--ifx-warning); }
 
+/* Owner 2026-10 (chuẩn hoá Tab) — NGUỒN CHUẨN THẬT của "Tab lớn có icon" là .ix-profile-tab
+   (Admin_Design_system/iflux-admin-ui/components.css), dùng ở mọi trang production (ví dụ
+   /ca-nhan). Bản .ifx-profile-tab ở đây CHỈ phục vụ showcase pattern cô lập
+   (patterns/user-profile/index.html) — trang đó chỉ load design_system/ thuần (token --ifx-*),
+   KHÔNG load Admin components.css (token --ix-*) — không đổi sang .ix-profile-tab được nếu
+   không load thêm CSS đó. Không dùng bản này ở bất kỳ trang thật nào khác. */
 .ifx-profile-tabs {
   display: flex;
   gap: var(--ifx-space-4);
@@ -282,6 +288,8 @@ html.ifx-profile-host body {
   background: var(--ifx-action-primary);
   color: var(--ifx-text-on-primary);
 }
+
+/* Panel toggle (không phải style nút Tab) */
 .ifx-profile-panel { display: none; }
 .ifx-profile-panel.is-active { display: block; }
 
