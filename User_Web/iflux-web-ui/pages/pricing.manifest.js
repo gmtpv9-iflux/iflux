@@ -19,6 +19,6 @@ export default {
     enabled: true,
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/pricing-page/index.js?v=r20260928q',
-    css: ['/User_Web/iflux-web-ui/pricing.css?v=r20260928n']
+    css: ['/User_Web/iflux-web-ui/pricing.css?v=r20261009c']
   }]
 };
