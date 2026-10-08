@@ -23,7 +23,7 @@ function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' 
 var BASE = [
   /* Nội dung mỗi widget = Template DS đã publish (dashboard-engine.js tự fetch artifact +
      mount qua IfxTemplateLoader/IfxTemplates — một đường DUY NHẤT, giống mọi trang khác). */
-  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261003h'),
+  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261009c'),
   dep('IfluxDashboardEngine', 'dashboard-engine.js'),
   /* Watchlist là widget tương tác (thêm/bớt mã) — chưa publish qua Template, dùng component
      riêng; nạp sẵn ở đây vì hầu như dashboard nào cũng có. */

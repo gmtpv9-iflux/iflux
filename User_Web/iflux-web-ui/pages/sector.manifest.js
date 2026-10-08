@@ -31,7 +31,7 @@ export default {
       '/User_Web/iflux-web-ui/news.css?v=r20261008b',
       '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
       '/User_Web/iflux-web-ui/stock.css?v=r20261009c',
-      '/User_Web/iflux-web-ui/community.css?v=r20261008a'
+      '/User_Web/iflux-web-ui/community.css?v=r20261009b'
     ]
   }]
 };

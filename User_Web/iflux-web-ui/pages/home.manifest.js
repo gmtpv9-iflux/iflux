@@ -15,7 +15,7 @@ export default {
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--hub',
   css: [
-    '/User_Web/iflux-web-ui/hub.css?v=r20261003a',
+    '/User_Web/iflux-web-ui/hub.css?v=r20261009c',
     '/User_Web/iflux-web-ui/profile.css?v=r20261003b',
     '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n',
     '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
