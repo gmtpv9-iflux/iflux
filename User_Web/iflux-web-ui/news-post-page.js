@@ -398,7 +398,8 @@
         presentation: 'bottom-bar',
         variant: 'bar',
         pageDefinition: { pageKey: 'article' },
-        onOpenInteractive: function () { openInteractiveFallback(); }
+        onOpenInteractive: function () { openInteractiveFallback(); },
+        repostMeta: { postId: post.id, title: post.title }
       });
       if (commentsCard) commentsCard.setAttribute('hidden', 'hidden');
     }
@@ -418,7 +419,8 @@
           if (composer) {
             try { composer.focus(); } catch (e) { /* ignore */ }
           }
-        }
+        },
+        repostMeta: { postId: post.id, title: post.title }
       });
     }
 

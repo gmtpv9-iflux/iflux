@@ -13,6 +13,12 @@ const createPostSchema = z.object({
     source_type: z.string().optional().nullable(),
     source_id: z.string().optional().nullable(),
     stock_tags: z.array(z.string()).optional().nullable(),
+    hashtags: z.array(z.string()).optional().nullable(),
+    entity_refs: z.array(z.object({
+      type: z.string(),
+      id: z.string(),
+      label: z.string().optional().nullable()
+    })).optional().nullable(),
     visibility: z.string().optional().nullable()
   })
 });
@@ -67,6 +73,16 @@ function createCommunityPostsRouter(deps) {
         cursor: req.query.cursor,
         limit: req.query.limit
       }, req.user);
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /* Gợi ý hashtag/chủ đề khi gõ vào ô hashtag Compose — chỉ gọi lúc user tương tác (lazy). */
+  router.get('/suggest', async (req, res, next) => {
+    try {
+      const data = await posts.getTrendingSuggestions(req.query.q);
       return success(res, data);
     } catch (err) {
       next(err);

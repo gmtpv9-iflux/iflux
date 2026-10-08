@@ -90,7 +90,9 @@
         comments: Number(data && data.comments) || 0,
         shares: Number(data && data.shares) || 0,
         favorites: Number(data && data.favorites) || 0,
-        views: data && data.views != null ? Number(data.views) || 0 : undefined
+        views: data && data.views != null ? Number(data.views) || 0 : undefined,
+        liked: !!(data && data.liked),
+        favorited: !!(data && data.favorited)
       };
     }).catch(function (err) {
       /* Alias post: fallback community summary nếu canonical lỗi mạng cũ */
@@ -102,7 +104,9 @@
           comments: Number(data && data.comments) || 0,
           shares: Number(data && data.shares) || 0,
           favorites: Number(data && data.favorites) || 0,
-          views: data && data.views != null ? Number(data.views) || 0 : undefined
+          views: data && data.views != null ? Number(data.views) || 0 : undefined,
+          liked: !!(data && data.liked),
+          favorited: !!(data && data.favorited)
         };
       });
     });

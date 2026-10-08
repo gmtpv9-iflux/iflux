@@ -1387,9 +1387,20 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 /* SYNC:mobile-shell → bp-lg Foundation layout.css --ifx-bp-lg = 1024px
    Mobile: icon trên chữ; desktop giữ icon ngang với text (inline mặc định). */
 @media (max-width: 1024px) {
+  /* .ifx-tabs[data-ifx-com-featured-cats] (không chỉ [data-ifx-com-featured-cats]) — phần tử này
+     có SẴN class .ifx-tabs (news-page.js), ghép thêm để độ ưu tiên > .ifx-tabs base (DS tabs.css)
+     CHẮC CHẮN bất kể thứ tự tải CSS (trang tải lazy nhiều widget khác nhau không cố định thứ
+     tự request .css giữa chúng, dù cùng specificity (0,1,0) với .ifx-tabs base thì ai load sau
+     thắng — không ổn định, nên tăng specificity thay vì phụ thuộc thứ tự). */
+  .ifx-tabs[data-ifx-com-featured-cats] {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+  }
   [data-ifx-com-featured-cats] .ifx-tab {
     display: inline-flex;
     flex-direction: column;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     gap: var(--ifx-space-4);
@@ -2371,13 +2382,12 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 .ifx-tabbar-ix .ifx-com-action {
   flex: 1 1 0;
   justify-content: center;
-  padding: var(--ifx-space-12) var(--ifx-space-8);
+  padding: var(--ifx-space-8) var(--ifx-space-8);
+  border: none;
   border-radius: var(--ix-radius-lg);
   background: var(--ix-bg-hover);
   color: var(--ix-text-primary);
   font-size: var(--ifx-font-size-14);
   white-space: nowrap;
 }
-.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-action { font-size: var(--ifx-font-size-16); }
-.ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-action .ti { font-size: var(--ifx-font-size-18); }
 .ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-side-count { font-size: var(--ifx-font-size-12); }

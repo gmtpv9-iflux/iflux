@@ -83,7 +83,8 @@
           target: target,
           projection: store() ? store().getProjection(target) : { likes: 0, comments: 0, shares: 0, favorites: 0 },
           onOpenInteractive: opts.onOpenInteractive,
-          variant: opts.variant
+          variant: opts.variant,
+          repostMeta: opts.repostMeta
         });
       }
       if (store() && store().refreshProjection) {
@@ -103,7 +104,8 @@
           target: target,
           projection: store() ? store().getProjection(target) : { likes: 0, comments: 0, shares: 0, favorites: 0 },
           variant: opts.variant,
-          onReply: opts.onReply
+          onReply: opts.onReply,
+          repostMeta: opts.repostMeta
         });
       }
       if (store() && store().refreshProjection) {

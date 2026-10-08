@@ -650,7 +650,7 @@
     if (ctx) return commentsPath(ctx.scope, ctx.id);
 
     var postId = parsePostRef(loc);
-    if (postId && /\/(?:cong-dong\/bai-viet|community\/posts)/i.test(loc.pathname || '')) {
+    if (postId && /\/(?:tin-tuc\/bai-viet|cong-dong\/bai-viet|community\/posts)/i.test(loc.pathname || '')) {
       return postCommentsPath(postId);
     }
     var ticker = parseStockTicker(loc);

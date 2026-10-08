@@ -7,7 +7,7 @@
   if (global.IfluxInteractionBoot) return;
 
   var BASE = '/User_Web/iflux-web-ui/interaction/';
-  var V = '?v=r20260928n';
+  var V = '?v=r20261008a';
   var SHARE_STORE = '/design_system/04_components/28_share/share-store.js?v=r20261002a';
 
   /* RC-IR-01: Summary — Persistence + Api + Store projection + Permission + Catalog + Host */
@@ -18,7 +18,8 @@
     BASE + 'interaction-store.js' + V,
     BASE + 'permission.js' + V,
     BASE + 'catalog/index.js' + V,
-    BASE + 'interaction-host.js' + V
+    BASE + 'interaction-host.js' + V,
+    BASE + 'repost-modal.js' + V
   ];
 
   /* Interactive thêm Resolver (presentation) */

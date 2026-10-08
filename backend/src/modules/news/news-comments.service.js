@@ -2,6 +2,7 @@
 
 const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
+const { resolveDisplayName } = require('../../shared/resolve-display-name');
 const articles = require('./news-articles.service');
 
 function rowToComment(row) {
@@ -97,7 +98,7 @@ async function createComment(idOrSlug, user, payload) {
   }
 
   const userId = user && user.id ? user.id : null;
-  const userName = (user && (user.display_name || user.name)) || 'Thành viên';
+  const userName = (user && (user.display_name || user.name)) || await resolveDisplayName(userId);
 
   const res = await query(
     `INSERT INTO news_comments

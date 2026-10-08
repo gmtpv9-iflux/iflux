@@ -113,6 +113,11 @@
     return request('DELETE', apiBase() + '/community/stories/' + encodeURIComponent(id) + '/agree');
   }
 
+  /* Gợi ý hashtag/chủ đề — chỉ gọi lazy khi user tương tác với ô hashtag (xem community-page.js). */
+  function suggestHashtags(q) {
+    return request('GET', apiBase() + '/community/suggest' + qs({ q: q }));
+  }
+
   global.IfluxCommunityStore = {
     getFeed: getFeed,
     getUserTimeline: getUserTimeline,
@@ -124,6 +129,7 @@
     createStory: createStory,
     archiveStory: archiveStory,
     agreeStory: agreeStory,
-    unagreeStory: unagreeStory
+    unagreeStory: unagreeStory,
+    suggestHashtags: suggestHashtags
   };
 })(window);

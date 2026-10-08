@@ -30,8 +30,8 @@ var CORE_TIERS = [
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
     ASSET + 'news-ui.js?v=r20260929a',
     ASSET + 'news-daily-feed.js?v=r20260928r',
-    ASSET + 'interaction/boot.js?v=r20260928n',
-    ASSET + 'news-post-page.js?v=r20261002s'
+    ASSET + 'interaction/boot.js?v=r20261008a',
+    ASSET + 'news-post-page.js?v=r20261008a'
   ]
 ];
 

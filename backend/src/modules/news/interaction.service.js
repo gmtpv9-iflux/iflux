@@ -8,6 +8,7 @@ const articles = require('./news-articles.service');
 const comments = require('./news-comments.service');
 const { AppError } = require('../../shared/exceptions/app-error');
 const { query } = require('../../core/database/connection');
+const { resolveDisplayName } = require('../../shared/resolve-display-name');
 
 function statsFromArticle(article) {
   const s = (article && article.stats) || {};
@@ -21,14 +22,17 @@ function statsFromArticle(article) {
 }
 
 /**
- * RC-API-01 counts-only
+ * RC-API-01 counts-only (+ liked/favorited của viewer hiện tại nếu có đăng nhập — cần cho nút
+ * Thích toggle đúng chiều trên UI, không gửi 'like' lặp lại gây cộng dồn sai — xem mutate()).
+ * Dùng getArticleForMutation (không redact liked_by/favorited_by) — response vẫn chỉ trả 2 boolean
+ * dẫn xuất, KHÔNG trả nguyên mảng liked_by/favorited_by ra ngoài (giữ đúng tinh thần redact cũ).
  */
-async function getSummary(type, idOrSlug) {
+async function getSummary(type, idOrSlug, viewer) {
   const t = String(type || 'post');
   if (t !== 'post' && t !== 'article') {
     throw AppError.badRequest('IX_TARGET_UNSUPPORTED', 'Phase 3 chỉ hỗ trợ target post/article');
   }
-  const article = await articles.getArticle(idOrSlug);
+  const article = await articles.getArticleForMutation(idOrSlug);
   if (!article) throw AppError.notFound('Không tìm thấy bài viết');
 
   const base = statsFromArticle(article);
@@ -40,14 +44,20 @@ async function getSummary(type, idOrSlug) {
     /* giữ stats.comments */
   }
 
-  /* Không trả comments[] */
+  const uid = viewer && viewer.id ? String(viewer.id) : null;
+  const likedBy = Array.isArray(article.liked_by) ? article.liked_by.map(String) : [];
+  const favoritedBy = Array.isArray(article.favorited_by) ? article.favorited_by.map(String) : [];
+
+  /* Không trả comments[] / liked_by / favorited_by nguyên mảng */
   return {
     target: { type: 'post', id: String(article.id), slug: article.slug || '' },
     likes: base.likes,
     comments: base.comments,
     shares: base.shares,
     favorites: base.favorites,
-    views: base.views
+    views: base.views,
+    liked: uid ? likedBy.indexOf(uid) !== -1 : false,
+    favorited: uid ? favoritedBy.indexOf(uid) !== -1 : false
   };
 }
 
@@ -78,7 +88,7 @@ async function persistStats(articleId, stats, likedBy, favoritedBy) {
  * RC-API-03 mutate: like | unlike | favorite | unfavorite | share_bump
  */
 async function mutate(idOrSlug, user, action) {
-  const article = await articles.getArticle(idOrSlug);
+  const article = await articles.getArticleForMutation(idOrSlug);
   if (!article) throw AppError.notFound('Không tìm thấy bài viết');
 
   const uid = user && user.id ? String(user.id) : null;
@@ -128,7 +138,7 @@ async function mutate(idOrSlug, user, action) {
         slug: article.slug,
         title: article.title,
         actorId: uid,
-        actorName: (user && (user.display_name || user.name)) || 'Thành viên',
+        actorName: (user && (user.display_name || user.name)) || await resolveDisplayName(uid),
         authorId: article.user_id || author.id || null
       });
     } catch (e) { /* ignore */ }

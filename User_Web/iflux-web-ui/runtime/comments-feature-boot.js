@@ -5,7 +5,7 @@ import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfi
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
-var V = '?v=ixP5s520260724';
+var V = '?v=r20261008a';
 
 var IX_FEATURE = [
   ASSET + 'iflux-user-data-sync.js?v=r20260928n',

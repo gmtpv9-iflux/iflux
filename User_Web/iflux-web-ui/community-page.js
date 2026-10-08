@@ -279,9 +279,33 @@
 
   function tagChipHtml(t) {
     var meta = ENTITY_TYPES[t.type] || ENTITY_TYPES.stock;
+    var code = t.code || t.id;
     return (
-      '<a href="' + meta.hrefBase + esc(t.code) + '" class="ifx-badge ifx-badge-soft ifx-com2-tagchip" data-ifx-href="soft">' +
-        icon(meta.icon) + ' ' + esc(t.label || t.code) +
+      '<a href="' + meta.hrefBase + esc(code) + '" class="ifx-badge ifx-badge-soft ifx-com2-tagchip" data-ifx-href="soft">' +
+        icon(meta.icon) + ' ' + esc(t.label || code) +
+      '</a>'
+    );
+  }
+
+  function hashtagChipHtml(tag) {
+    return '<span class="ifx-badge ifx-badge-soft ifx-com2-tagchip">#' + esc(tag) + '</span>';
+  }
+
+  /* Preview bài Tin tức khi post là "Đăng lại" (post_type=share, source_type=news) — hiển thị
+     hình đại diện + tiêu đề THẬT từ source_preview (API hydrate qua JOIN news_posts), không còn
+     mock data. Không có source_preview (bài gốc đã xoá…) thì ẩn khối, không hiện placeholder giả. */
+  function newsPreviewHtml(preview, sourceId) {
+    if (!preview || !preview.title) return '';
+    var href = preview.slug ? ('/tin-tuc/bai-viet/' + encodeURIComponent(preview.slug)) : '#';
+    return (
+      '<a href="' + esc(href) + '" class="ifx-com2-repost" data-ifx-href="soft">' +
+        (preview.cover_url
+          ? '<div class="ifx-com2-repost__media"><img src="' + esc(preview.cover_url) + '" alt="" loading="lazy" /></div>'
+          : '<div class="ifx-com2-repost__media" aria-hidden="true">' + icon('news') + '</div>') +
+        '<div class="ifx-com2-repost__body">' +
+          '<div class="ifx-com2-repost__meta">' + icon('repeat') + ' Tin tức iFlux</div>' +
+          '<div class="ifx-com2-repost__title">' + esc(preview.title) + '</div>' +
+        '</div>' +
       '</a>'
     );
   }
@@ -289,6 +313,8 @@
   /* Map 1 Post thật (GET /api/community/feed) → dữ liệu hiển thị postCardHtml cần. */
   function mapPost(p) {
     var name = p.author && p.author.display_name ? p.author.display_name : 'Thành viên';
+    var tags = (p.stock_tags || []).map(function (code) { return { type: 'stock', code: code }; })
+      .concat((p.entity_refs || []).map(function (r) { return { type: r.type, code: r.id, label: r.label }; }));
     return {
       id: p.id,
       initials: name.trim().charAt(0).toUpperCase() || 'U',
@@ -296,7 +322,10 @@
       badge: p.author && p.author.tier && p.author.tier !== 'free' ? p.author.tier.toUpperCase() : '',
       time: timeAgo(p.created_at),
       text: p.content || '',
-      tags: (p.stock_tags || []).map(function (code) { return { type: 'stock', code: code }; }),
+      tags: tags,
+      hashtags: p.hashtags || [],
+      sourcePreview: p.source_type === 'news' ? p.source_preview : null,
+      sourceId: p.source_id,
       likes: p.stats.likes, comments: p.stats.comments, shares: p.stats.shares,
       liked: !!p.viewer_liked,
       authorId: p.author && p.author.id
@@ -305,10 +334,11 @@
 
   function postCardHtml(p) {
     var badge = p.badge ? ' <span class="ifx-badge ifx-badge-soft">' + esc(p.badge) + '</span>' : '';
-    var tags = p.tags && p.tags.length
-      ? '<div class="ifx-com2-post__tags">' + p.tags.map(tagChipHtml).join('') + '</div>'
+    var tags = (p.tags && p.tags.length) || (p.hashtags && p.hashtags.length)
+      ? '<div class="ifx-com2-post__tags">' + (p.tags || []).map(tagChipHtml).join('') + (p.hashtags || []).map(hashtagChipHtml).join('') + '</div>'
       : '';
     var body = p.text ? '<p class="ifx-com2-post__text">' + esc(p.text) + '</p>' : '';
+    body += newsPreviewHtml(p.sourcePreview, p.sourceId);
     var stats =
       '<footer class="ifx-com2-post__stats">' +
         '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
@@ -423,8 +453,128 @@
     if (modalEl) modalEl.style.display = 'none';
   }
 
+  var ENTITY_TYPE_LABEL = { stock: 'Cổ phiếu', sector: 'Ngành', family: 'Hệ sinh thái', story: 'Câu chuyện' };
+  var composerHashtags = [];
+  var composerEntityRefs = [];
+
+  function renderComposerChips(form) {
+    var htBox = form.querySelector('[data-ifx-com2-hashtag-chips]');
+    if (htBox) {
+      htBox.innerHTML = composerHashtags.map(function (t, i) {
+        return '<span class="ix-chip ix-chip-primary" style="margin:0 6px 6px 0;display:inline-flex;align-items:center;gap:4px">#' + esc(t) +
+          '<button type="button" data-remove-hashtag="' + i + '" style="background:none;border:0;cursor:pointer;color:inherit;padding:0;line-height:1"><i class="ti ti-x" style="font-size:12px"></i></button></span>';
+      }).join('');
+      htBox.querySelectorAll('[data-remove-hashtag]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          composerHashtags.splice(Number(btn.getAttribute('data-remove-hashtag')), 1);
+          renderComposerChips(form);
+        });
+      });
+    }
+    var enBox = form.querySelector('[data-ifx-com2-entity-chips]');
+    if (enBox) {
+      enBox.innerHTML = composerEntityRefs.map(function (r, i) {
+        return '<span class="ix-chip ix-chip-secondary" style="margin:0 6px 6px 0;display:inline-flex;align-items:center;gap:4px">' +
+          esc(ENTITY_TYPE_LABEL[r.type] || r.type) + ': ' + esc(r.label) +
+          '<button type="button" data-remove-entity="' + i + '" style="background:none;border:0;cursor:pointer;color:inherit;padding:0;line-height:1"><i class="ti ti-x" style="font-size:12px"></i></button></span>';
+      }).join('');
+      enBox.querySelectorAll('[data-remove-entity]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          composerEntityRefs.splice(Number(btn.getAttribute('data-remove-entity')), 1);
+          renderComposerChips(form);
+        });
+      });
+    }
+  }
+
+  function addHashtag(form, raw) {
+    var t = String(raw || '').trim().replace(/^#+/, '').toLowerCase();
+    if (!t) return;
+    if (composerHashtags.length >= 5) { toast('Tối đa 5 hashtag/bài', 'warning'); return; }
+    if (composerHashtags.indexOf(t) >= 0) return;
+    composerHashtags.push(t);
+    renderComposerChips(form);
+  }
+
+  /* Gợi ý hashtag/chủ đề — CHỈ gọi khi user bấm vào ô (lazy, không tải sẵn khi mở modal — owner
+     yêu cầu nhẹ tải). Debounce 300ms khi gõ tiếp. */
+  var hashtagSuggestTimer = null;
+  function bindHashtagInput(form) {
+    var input = form.querySelector('[data-ifx-com2-hashtag-input]');
+    var suggestBox = form.querySelector('[data-ifx-com2-hashtag-suggest]');
+    if (!input || !suggestBox) return;
+    var loaded = false;
+    function runSuggest(q) {
+      store().suggestHashtags(q).then(function (data) {
+        var items = (data && data.items) || [];
+        if (!items.length) { suggestBox.innerHTML = ''; suggestBox.hidden = true; return; }
+        suggestBox.innerHTML = items.map(function (it) {
+          return '<button type="button" class="ifx-com2-suggest-item" data-suggest-value="' + esc(it.type === 'hashtag' ? it.value : it.label) + '">' +
+            esc(it.label) + (it.count ? ' <span style="opacity:.6">(' + it.count + ')</span>' : '') +
+          '</button>';
+        }).join('');
+        suggestBox.hidden = false;
+        suggestBox.querySelectorAll('[data-suggest-value]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addHashtag(form, btn.getAttribute('data-suggest-value'));
+            input.value = '';
+            suggestBox.hidden = true;
+          });
+        });
+      }).catch(function () { /* im lặng — gợi ý là phụ, không chặn đăng bài */ });
+    }
+    function onInteract() {
+      if (loaded) return;
+      loaded = true;
+    }
+    input.addEventListener('focus', onInteract);
+    input.addEventListener('input', function () {
+      onInteract();
+      clearTimeout(hashtagSuggestTimer);
+      var q = input.value.trim();
+      if (!q) { suggestBox.hidden = true; return; }
+      hashtagSuggestTimer = setTimeout(function () { runSuggest(q); }, 300);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addHashtag(form, input.value);
+        input.value = '';
+        suggestBox.hidden = true;
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (!form.contains(e.target)) return;
+      if (e.target === input || suggestBox.contains(e.target)) return;
+      suggestBox.hidden = true;
+    });
+  }
+
+  function bindEntityPicker(form) {
+    var typeSel = form.querySelector('[data-ifx-com2-entity-type]');
+    var input = form.querySelector('[data-ifx-com2-entity-input]');
+    var addBtn = form.querySelector('[data-ifx-com2-entity-add]');
+    if (!typeSel || !input || !addBtn) return;
+    addBtn.addEventListener('click', function () {
+      var type = typeSel.value;
+      var raw = String(input.value || '').trim();
+      if (!raw) return;
+      var id = type === 'stock' ? raw.toUpperCase() : raw;
+      if (composerEntityRefs.length >= 10) { toast('Tối đa 10 thẻ thực thể', 'warning'); return; }
+      if (composerEntityRefs.some(function (r) { return r.type === type && r.id === id; })) { input.value = ''; return; }
+      composerEntityRefs.push({ type: type, id: id, label: id });
+      input.value = '';
+      renderComposerChips(form);
+    });
+  }
+
+  /* Composer đủ 4 khả năng (Owner chốt 2026-10): Status (≤1000 từ) / Tin tức đính kèm (qua "Đăng
+     lại" trên trang Tin tức — composer này tự viết thì không đính tin) / Thực thể iFlux / Hashtag
+     (≤5, gợi ý lazy-load). */
   function openWritePostModal() {
     if (!requireAuth()) return;
+    composerHashtags = [];
+    composerEntityRefs = [];
     buildModal();
     modalEl.innerHTML =
       '<div class="ix-modal-box">' +
@@ -433,11 +583,31 @@
         '<div class="ix-modal-sub">Chia sẻ góc nhìn thị trường, phân tích cổ phiếu hoặc nhận định của bạn.</div>' +
         '<form data-ifx-com2-post-form>' +
           '<div class="ix-form-group">' +
-            '<textarea class="ix-input" name="content" rows="4" maxlength="4000" placeholder="Bạn đang nghĩ gì về thị trường?" required></textarea>' +
+            '<textarea class="ix-input" name="content" rows="4" maxlength="6000" placeholder="Bạn đang nghĩ gì về thị trường? (tối đa ~1000 từ)" required></textarea>' +
           '</div>' +
           '<div class="ix-form-group">' +
             '<label class="ix-label">Gắn mã cổ phiếu (không bắt buộc)</label>' +
             '<input type="text" class="ix-input" name="stock_tags" placeholder="VD: HPG, VIX (cách nhau bằng dấu phẩy)" />' +
+          '</div>' +
+          '<div class="ix-form-group">' +
+            '<label class="ix-label">Gắn thẻ thực thể iFlux (không bắt buộc)</label>' +
+            '<div style="display:flex;gap:8px">' +
+              '<select class="ix-input" data-ifx-com2-entity-type style="flex:0 0 140px">' +
+                '<option value="stock">Cổ phiếu</option>' +
+                '<option value="sector">Ngành</option>' +
+                '<option value="family">Hệ sinh thái</option>' +
+                '<option value="story">Câu chuyện</option>' +
+              '</select>' +
+              '<input type="text" class="ix-input" data-ifx-com2-entity-input placeholder="VD: HPG" />' +
+              '<button type="button" class="ix-btn ix-btn-outline" data-ifx-com2-entity-add>Thêm</button>' +
+            '</div>' +
+            '<div data-ifx-com2-entity-chips style="margin-top:8px"></div>' +
+          '</div>' +
+          '<div class="ix-form-group" style="position:relative">' +
+            '<label class="ix-label">Hashtag (tối đa 5 — là cơ sở xác định Chủ đề thịnh hành)</label>' +
+            '<input type="text" class="ix-input" data-ifx-com2-hashtag-input placeholder="Gõ rồi Enter, hoặc chọn gợi ý…" />' +
+            '<div class="ifx-com2-hashtag-suggest" data-ifx-com2-hashtag-suggest hidden></div>' +
+            '<div data-ifx-com2-hashtag-chips style="margin-top:8px"></div>' +
           '</div>' +
           '<div data-ifx-com2-form-error class="ix-alert ix-alert-danger" style="margin-bottom:var(--ifx-space-12);display:none"></div>' +
           '<button type="submit" class="ix-btn ix-btn-primary"><i class="ti ti-send"></i> Đăng bài</button>' +
@@ -445,6 +615,8 @@
       '</div>';
     modalEl.style.display = 'flex';
     var form = modalEl.querySelector('[data-ifx-com2-post-form]');
+    bindHashtagInput(form);
+    bindEntityPicker(form);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var fd = new FormData(form);
@@ -456,7 +628,9 @@
       store().createPost({
         content: content,
         post_type: tags.length ? 'stock_view' : 'status',
-        stock_tags: tags
+        stock_tags: tags,
+        hashtags: composerHashtags,
+        entity_refs: composerEntityRefs
       }).then(function (data) {
         closeModal();
         toast('Đăng bài thành công', 'success');

@@ -255,15 +255,23 @@
     ctx = ctx || {};
     var target = ctx.target || {};
     var p = ctx.projection || { likes: 0, comments: 0, shares: 0, favorites: 0 };
-    /* UI Ownership: Thích → Bình luận → Chia sẻ; badge số = ifx-com-side-count (DS). Chia sẻ không badge. */
+    /* "Đăng lại" CHỈ hiện cho target Tin tức (type=post) + có repostMeta (title bài) — không hiện
+       ở comment page Cổ phiếu/Ngành/Hệ sinh thái/Chủ đề vì không có khái niệm "đăng lại" ở đó. */
+    var repostBtn = (target.type === 'post' && ctx.repostMeta)
+      ? '<button type="button" class="ifx-com-action" data-ifx-ix-act="repost">' +
+          '<i class="ti ti-repeat"></i> Đăng lại' +
+        '</button>'
+      : '';
+    /* UI Ownership: Thích → Bình luận → Đăng lại → Chia sẻ; badge số = ifx-com-side-count (DS). */
     el.innerHTML =
       '<div class="ifx-ix-action-bar ifx-com-article__actions" data-ifx-ix-actions role="toolbar" aria-label="Tương tác">' +
-        '<button type="button" class="ifx-com-action" data-ifx-ix-act="like" data-ifx-com-like>' +
+        '<button type="button" class="ifx-com-action' + (p.liked ? ' is-active' : '') + '" data-ifx-ix-act="like" data-ifx-com-like>' +
           '<i class="ti ti-heart"></i> <span data-ifx-ix-like-label>Thích</span> ' + countBadge('data-ifx-ix-likes', p.likes) +
         '</button>' +
         '<button type="button" class="ifx-com-action" data-ifx-ix-act="open">' +
           '<i class="ti ti-message"></i> Bình luận ' + countBadge('data-ifx-ix-comments', p.comments) +
         '</button>' +
+        repostBtn +
         '<button type="button" class="ifx-com-action" data-ifx-ix-act="share_url" data-ifx-com-share>' +
           '<i class="ti ti-share"></i> Chia sẻ' +
         '</button>' +
@@ -288,15 +296,30 @@
           handleShareUrlClick(target);
           return;
         }
+        if (act === 'repost') {
+          if (global.IfluxRepostModal && global.IfluxRepostModal.open) {
+            global.IfluxRepostModal.open({ postId: target.id, title: ctx.repostMeta && ctx.repostMeta.title });
+          }
+          return;
+        }
         if (act === 'like') {
           var pr = perm() ? perm().resolve({ action: 'like', target: target }) : 'LoginRequired';
           if (pr !== 'Allow') {
             if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
             return;
           }
+          if (btn.disabled) return;
+          /* Toggle đúng chiều theo trạng thái HIỆN TẠI của nút — trước đây luôn gửi 'like' bất kể
+             đã thích hay chưa, khiến bấm bao nhiêu lần cũng được (xem backend mutate() — đã sửa
+             idempotency, nhưng UI vẫn phải tự biết lúc nào gửi 'unlike' thay vì luôn 'like'). */
+          var wasActive = btn.classList.contains('is-active');
+          var nextAction = wasActive ? 'unlike' : 'like';
+          btn.disabled = true;
+          btn.classList.toggle('is-active', !wasActive);
           /* RC-IA-01: Summary like không init Interactive Store — runMutation đủ */
           if (store() && store().runMutation) {
-            store().runMutation(target, 'like').then(function (out) {
+            store().runMutation(target, nextAction).then(function (out) {
+              btn.disabled = false;
               var host = el.closest('[data-ifx-ix-host]');
               if (host && out && out.projection) updateSummaryCounts(host, out.projection);
               try {
@@ -305,8 +328,12 @@
                 }));
               } catch (e) { /* ignore */ }
             }).catch(function (err) {
+              btn.disabled = false;
+              btn.classList.toggle('is-active', wasActive);
               if (global.IfxToast) IfxToast.show((err && err.message) || 'Không thích được', 'warning');
             });
+          } else {
+            btn.disabled = false;
           }
         }
       });
@@ -319,6 +346,8 @@
     var comments = root.querySelector('[data-ifx-ix-comments]');
     if (likes) likes.textContent = String(counts.likes || 0);
     if (comments) comments.textContent = String(counts.comments || 0);
+    var likeBtn = root.querySelector('[data-ifx-com-like]');
+    if (likeBtn && counts.liked != null) likeBtn.classList.toggle('is-active', !!counts.liked);
   }
 
   /** RC-IU-01 — không nhận/branch presentation */
@@ -332,7 +361,8 @@
         target: ctx.target,
         mode: 'summary',
         projection: p,
-        onOpenInteractive: ctx.onOpenInteractive
+        onOpenInteractive: ctx.onOpenInteractive,
+        repostMeta: ctx.repostMeta
       });
       return;
     }
@@ -345,7 +375,8 @@
       target: ctx.target,
       mode: 'summary',
       projection: p,
-      onOpenInteractive: ctx.onOpenInteractive
+      onOpenInteractive: ctx.onOpenInteractive,
+      repostMeta: ctx.repostMeta
     });
   }
 
@@ -394,7 +425,8 @@
     renderActionBar(root.querySelector('[data-ifx-ix-action-bar]'), {
       target: ctx.target,
       mode: 'interactive',
-      projection: p
+      projection: p,
+      repostMeta: ctx.repostMeta
     });
     bindComposerForm(root, ctx);
   }
