@@ -1,4 +1,6 @@
-/* ADM-TOPIC-001 — Danh sách Chủ đề (Topic, API community/topics) — Owner 2026-10 */
+/* ADM-TOPIC-001 — Danh sách Chủ đề (Topic, API community/topics) — Owner 2026-10, Phase 6 cuối
+ * ngày: Topic không còn lifecycle 5-trạng-thái (chuyển sang Story) — chỉ 2 trạng thái: đang
+ * tích lũy (usage_count < ngưỡng) / đã chính thức (confirmed). Bỏ hẳn modal "Đổi trạng thái". */
 (function (global) {
   'use strict';
 
@@ -17,17 +19,6 @@
     if (typeof global.ixToast === 'function') global.ixToast(msg, type || 'primary');
   }
 
-  function fmtDate(iso) {
-    if (!iso) return '—';
-    try { return new Date(iso).toLocaleString('vi-VN'); } catch (e) { return iso; }
-  }
-
-  function chip(meta, value) {
-    if (!meta || !meta[value]) return esc(value);
-    var m = meta[value];
-    return '<span class="ix-chip ix-chip-' + m.color + '">' + esc(m.label) + '</span>';
-  }
-
   function sentimentChip(label) {
     if (label === 'positive') return '<span class="ix-chip ix-chip-success">Tích cực</span>';
     if (label === 'negative') return '<span class="ix-chip ix-chip-danger">Tiêu cực</span>';
@@ -35,10 +26,24 @@
     return '<span class="ix-chip ix-chip-secondary">Chưa đủ dữ liệu</span>';
   }
 
+  function confirmedChip(t) {
+    if (t.confirmed) return '<span class="ix-chip ix-chip-success">Đã chính thức</span>';
+    return '<span class="ix-chip ix-chip-secondary">Đang tích lũy (' + t.usageCount + '/100)</span>';
+  }
+
+  function stocksCell(t) {
+    var rep = t.representativeStocks || {};
+    var stocks = rep.stocks || [];
+    if (!stocks.length) return '<span class="ix-caption">—</span>';
+    return stocks.slice(0, 5).map(function (s) {
+      return '<span class="ix-chip ix-chip-sm" style="margin:0 2px 2px 0">' + esc(s.ticker) + (s.ticker === rep.leader ? ' 👑' : '') + '</span>';
+    }).join('');
+  }
+
   function getFilters() {
     return {
       keyword: ((document.getElementById('adm-str-reg-search') || {}).value || '').trim().toLowerCase(),
-      status: (document.getElementById('adm-str-reg-status') || {}).value || ''
+      confirmed: (document.getElementById('adm-str-reg-status') || {}).value || ''
     };
   }
 
@@ -59,9 +64,9 @@
       var s = t.stats;
       return '<tr>' +
         '<td><span style="font-weight:600;color:var(--ix-text-primary)">#' + esc(t.name) + '</span>' +
-          (t.hotEligible ? ' <span class="ix-chip ix-chip-danger" style="margin-left:4px">HOT</span>' : '') +
           '<div style="font-size:11px;color:var(--ix-text-muted);margin-top:2px">' + esc(t.slug) + '</div></td>' +
-        '<td>' + chip(Store.STATUS_META, t.status) + (t.statusIsOverride ? ' <span class="ix-chip ix-chip-secondary" title="Admin đã ghi đè, không còn tự đánh giá">Admin</span>' : '') + '</td>' +
+        '<td>' + confirmedChip(t) + '</td>' +
+        '<td>' + stocksCell(t) + '</td>' +
         '<td style="font-size:12px">' + s.likes + ' / <span style="color:var(--ix-danger)">' + s.dislikes + '</span></td>' +
         '<td>' + s.comments + '</td>' +
         '<td>' + s.shares + '</td>' +
@@ -69,15 +74,11 @@
         '<td>' + sentimentChip(t.authorSentimentLabel) + '<div style="font-size:11px;color:var(--ix-text-muted)">' + (s.sentimentPos + s.sentimentNeg) + ' bài khai báo</div></td>' +
         '<td>' + (t.mappedStoryId
           ? '<a href="/admin/cau-chuyen/chi-tiet?id=' + encodeURIComponent(t.mappedStoryId) + '" class="ix-chip ix-chip-success" style="text-decoration:none">Đã ánh xạ</a>'
-          : '<span class="ix-chip ix-chip-secondary">Chưa</span>') + '</td>' +
-        '<td><div style="display:flex;gap:4px;flex-wrap:wrap">' +
-          (!t.mappedStoryId && canPerm('stories.registry.edit')
-            ? '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-map="' + esc(t.id) + '" title="Ánh xạ sang Câu chuyện"><i class="ti ti-books" style="font-size:14px"></i></button>'
-            : '') +
-          (canPerm('stories.registry.edit')
-            ? '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-override="' + esc(t.id) + '" title="Đổi trạng thái (ghi đè)"><i class="ti ti-adjustments" style="font-size:14px"></i></button>'
-            : '') +
-        '</div></td>' +
+          : (!t.confirmed
+            ? '<span class="ix-chip ix-chip-secondary" title="Chỉ ánh xạ Chủ đề đã chính thức">Chưa đủ 100 lần</span>'
+            : (canPerm('stories.registry.edit')
+              ? '<button type="button" class="ix-btn ix-btn-icon" data-str-reg-map="' + esc(t.id) + '" title="Ánh xạ sang Câu chuyện"><i class="ti ti-books" style="font-size:14px"></i></button>'
+              : '<span class="ix-chip ix-chip-secondary">Chưa</span>'))) + '</td>' +
       '</tr>';
     }).join('');
   }
@@ -87,61 +88,30 @@
     var t = Store.getTopic(topicId);
     if (!t) return;
     document.getElementById('adm-topic-map-name').textContent = '#' + t.name;
-    document.getElementById('adm-topic-map-title').value = '';
     document.getElementById('adm-topic-map-story-id').value = '';
     var box = document.getElementById('adm-topic-map-stocks');
-    box.innerHTML = '<span class="ix-caption">Đang tải mã cổ phiếu đại diện…</span>';
-    Store.getRepresentativeStocks(topicId).then(function (rep) {
-      if (!rep.stocks || !rep.stocks.length) {
-        box.innerHTML = '<span class="ix-caption">Chưa có mã cổ phiếu nào được nhắc đến trong Chủ đề này.</span>';
-        return;
-      }
-      box.innerHTML = '<div class="ix-caption ix-mb-8">Mã cổ phiếu đại diện (tỷ trọng cộng dồn ≥80%, Leader = ' + esc(rep.leader || '—') + '):</div>' +
+    var rep = t.representativeStocks || {};
+    if (!rep.stocks || !rep.stocks.length) {
+      box.innerHTML = '<span class="ix-caption">Chưa có mã cổ phiếu nào được nhắc đến trong Chủ đề này.</span>';
+    } else {
+      box.innerHTML = '<div class="ix-caption ix-mb-8">Mã cổ phiếu đại diện (đã chốt lúc Chủ đề chính thức, tỷ trọng cộng dồn ≥80%, Leader = ' + esc(rep.leader || '—') + '):</div>' +
         rep.stocks.map(function (s) {
           return '<span class="ix-chip ix-chip-primary" style="margin:0 4px 4px 0">' + esc(s.ticker) + ' (' + Math.round(s.weight * 100) + '%)</span>';
         }).join('');
-    }).catch(function () {
-      box.innerHTML = '<span class="ix-caption">Không tải được mã cổ phiếu đại diện.</span>';
-    });
+    }
     if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-topic-map');
   }
 
   function submitMap() {
     if (!mappingTopicId) return;
     var storyId = (document.getElementById('adm-topic-map-story-id').value || '').trim();
-    var title = (document.getElementById('adm-topic-map-title').value || '').trim();
-    if (!storyId && !title) {
-      toast('Nhập Story ID có sẵn hoặc Tên Câu chuyện mới', 'danger');
-      return;
-    }
-    var payload = storyId ? { story_id: storyId } : { title: title };
+    var payload = storyId ? { story_id: storyId } : {};
     Store.mapToStory(mappingTopicId, payload).then(function () {
       if (typeof global.ixCloseModal === 'function') global.ixCloseModal('modal-topic-map');
       renderTable();
       toast('Đã ánh xạ Chủ đề sang Câu chuyện', 'success');
     }).catch(function (err) {
       toast(err.message || 'Ánh xạ thất bại', 'danger');
-    });
-  }
-
-  function openOverrideModal(topicId) {
-    mappingTopicId = topicId;
-    var t = Store.getTopic(topicId);
-    if (!t) return;
-    document.getElementById('adm-topic-override-name').textContent = '#' + t.name;
-    document.getElementById('adm-topic-override-status').value = t.statusIsOverride ? t.status : '';
-    if (typeof global.ixOpenModal === 'function') global.ixOpenModal('modal-topic-override');
-  }
-
-  function submitOverride() {
-    if (!mappingTopicId) return;
-    var status = document.getElementById('adm-topic-override-status').value || null;
-    Store.setStatusOverride(mappingTopicId, status).then(function () {
-      if (typeof global.ixCloseModal === 'function') global.ixCloseModal('modal-topic-override');
-      renderTable();
-      toast(status ? 'Đã ghi đè trạng thái' : 'Đã gỡ ghi đè, quay lại tự động đánh giá', 'success');
-    }).catch(function (err) {
-      toast(err.message || 'Đổi trạng thái thất bại', 'danger');
     });
   }
 
@@ -162,14 +132,10 @@
 
     var mapSubmit = document.getElementById('btn-topic-map-submit');
     if (mapSubmit) mapSubmit.addEventListener('click', submitMap);
-    var overrideSubmit = document.getElementById('btn-topic-override-submit');
-    if (overrideSubmit) overrideSubmit.addEventListener('click', submitOverride);
 
     document.addEventListener('click', function (e) {
       var mapBtn = e.target.closest('[data-str-reg-map]');
-      if (mapBtn) { e.preventDefault(); openMapModal(mapBtn.getAttribute('data-str-reg-map')); return; }
-      var overrideBtn = e.target.closest('[data-str-reg-override]');
-      if (overrideBtn) { e.preventDefault(); openOverrideModal(overrideBtn.getAttribute('data-str-reg-override')); }
+      if (mapBtn) { e.preventDefault(); openMapModal(mapBtn.getAttribute('data-str-reg-map')); }
     });
   }
 

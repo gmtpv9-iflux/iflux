@@ -89,20 +89,31 @@ const AUTHOR_COLS = `
 `;
 
 /* Post cơ bản + hashtags/entity_refs (Owner yêu cầu 2026-10: Compose đủ khả năng gắn hashtag +
-   nhiều loại Thực thể) + source_preview — hydrate thật title/ảnh bài Tin tức khi source_type='news'
-   (trước đây FE phải tự mock vì chỉ có source_id trần, không đủ hiển thị). Không JOIN khi
-   source_type khác 'news' (CASE WHEN tránh query thừa). */
+   nhiều loại Thực thể) + source_preview — hydrate thật khi source_type='news' (title/ảnh bài Tin
+   tức) hoặc 'post' (Share = Repost 1 Post Cộng đồng khác, VII.7 — nội dung + tác giả bài gốc).
+   Không JOIN khi source_type khác (CASE WHEN tránh query thừa). */
 const POST_COLS = `
   p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.hashtags,
   p.entity_refs, p.visibility, p.sentiment, p.created_at, p.updated_at,
-  (CASE WHEN p.source_type = 'news' THEN (
-    SELECT jsonb_build_object(
-      'title', np.payload->>'title',
-      'slug', np.payload->>'slug',
-      'cover_url', COALESCE(np.payload->'cover'->'variants'->>'cover_thumb', np.payload->'cover'->>'url')
+  (CASE
+    WHEN p.source_type = 'news' THEN (
+      SELECT jsonb_build_object(
+        'title', np.payload->>'title',
+        'slug', np.payload->>'slug',
+        'cover_url', COALESCE(np.payload->'cover'->'variants'->>'cover_thumb', np.payload->'cover'->>'url')
+      )
+      FROM news_posts np WHERE np.id::text = p.source_id LIMIT 1
     )
-    FROM news_posts np WHERE np.id::text = p.source_id LIMIT 1
-  ) ELSE NULL END) AS source_preview
+    WHEN p.source_type = 'post' THEN (
+      SELECT jsonb_build_object(
+        'content', sp2.content,
+        'author_name', COALESCE(u2.display_name, u2.nickname, 'Thành viên')
+      )
+      FROM social_posts sp2 JOIN users u2 ON u2.id = sp2.author_id
+      WHERE sp2.id::text = p.source_id AND sp2.status = 'published' LIMIT 1
+    )
+    ELSE NULL
+  END) AS source_preview
 `;
 
 /* Vài bài RSS cũ còn lưu nguyên HTML entity thô trong title (trước khi rss-ingest.service.js

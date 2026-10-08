@@ -127,8 +127,10 @@
     posts: [],
     nextCursor: null,
     loadingFeed: false,
-    storyRange: 'day',
-    hotStories: []
+    trendingRange: 'day',
+    trendingTopics: [],
+    hotRange: 'week',
+    hotTopics: []
   };
 
   /* ───────────────────────── Helpers UI ───────────────────────── */
@@ -157,32 +159,72 @@
 
   /* ───────────────────────── Sidebar trái ───────────────────────── */
 
-  function hotTopicItemHtml(s, idx) {
-    var toneBadge = s.sentiment === 'bullish'
-      ? '<span class="ifx-badge ifx-badge-soft ifx-com2-tone-up">Tích cực</span>'
-      : '<span class="ifx-badge ifx-badge-soft ifx-com2-tone-down">Tiêu cực</span>';
+  /* Owner 2026-10 (Phase 6, cuối ngày) — tách "Chủ đề HOT" cũ thành 2 khối: "Chủ đề đang thịnh
+     hành" (Top 5, Engagement cao nhất — ổn định) và "Top chủ đề mới nổi" (Top 10, Hot Score —
+     biến động ngắn hạn). Cả 2 hiển thị Topic (chưa chắc đã có Story/trang chi tiết) nên KHÔNG
+     có link bấm — chỉ hiển thị thông tin đọc. */
+  function repStocksChipsHtml(representativeStocks) {
+    var rep = representativeStocks || {};
+    var stocks = rep.stocks || [];
+    if (!stocks.length) return '';
+    return '<div class="ifx-com2-hotitem__stocks">' + stocks.slice(0, 3).map(function (s) {
+      return '<span class="ifx-badge ifx-badge-soft">' + esc(s.ticker) + (s.ticker === rep.leader ? ' 👑' : '') + '</span>';
+    }).join(' ') + '</div>';
+  }
+
+  function trendingTopicItemHtml(t, idx) {
     return (
       '<li class="ifx-com2-hotitem">' +
         '<span class="ifx-com2-hotitem__rank">' + (idx + 1) + '</span>' +
-        '<span class="ifx-com2-hotitem__title">' + esc(s.title) + '</span>' +
-        toneBadge +
-        '<span class="ifx-com2-hotitem__count">' + icon('flame') + ' ' + s.stats.agree + ' đồng tình</span>' +
+        '<div class="ifx-com2-hotitem__body">' +
+          '<span class="ifx-com2-hotitem__title">' + esc(t.title) + '</span>' +
+          repStocksChipsHtml(t.representativeStocks) +
+        '</div>' +
+        '<span class="ifx-com2-hotitem__count">' + icon('chart-bar') + ' ' + Math.round(t.stats.engagement) + '</span>' +
       '</li>'
     );
   }
 
-  /* Chủ đề HOT — đặt ở MAIN, phía trên Composer (yêu cầu 2026-10-02). Dữ liệu thật §7.4. */
-  function hotTopicsCardHtml() {
-    var body = state.hotStories.length
-      ? '<ol class="ifx-com2-hotlist">' + state.hotStories.map(hotTopicItemHtml).join('') + '</ol>'
+  function trendingTopicsCardHtml() {
+    var body = state.trendingTopics.length
+      ? '<ol class="ifx-com2-hotlist">' + state.trendingTopics.map(trendingTopicItemHtml).join('') + '</ol>'
       : '<p class="ifx-com2-empty">Chưa có chủ đề nào trong khoảng thời gian này.</p>';
     return (
-      '<div class="ifx-card" data-ifx-com2-hottopics>' +
-        sectionHeaderHtml('flame', 'Chủ đề HOT', { noViewAll: true }) +
+      '<div class="ifx-card" data-ifx-com2-trending>' +
+        sectionHeaderHtml('trending-up', 'Chủ đề đang thịnh hành', { noViewAll: true }) +
         '<div class="ifx-card-body">' +
-          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-story-range>' +
+          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-trending-range>' +
             STORY_RANGES.map(function (r) {
-              return '<button type="button" class="ifx-tab' + (r.key === state.storyRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
+              return '<button type="button" class="ifx-tab' + (r.key === state.trendingRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
+            }).join('') +
+          '</div>' +
+          body +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function hotTopicCarouselItemHtml(t) {
+    return (
+      '<div class="ifx-com2-hotcarousel__item">' +
+        '<div class="ifx-com2-hotcarousel__title">' + icon('flame') + ' ' + esc(t.title) + '</div>' +
+        repStocksChipsHtml(t.representativeStocks) +
+        '<div class="ifx-com2-hotcarousel__score">' + Math.round(t.stats.engagement) + ' điểm</div>' +
+      '</div>'
+    );
+  }
+
+  function hotTopicsCarouselHtml() {
+    var body = state.hotTopics.length
+      ? '<div class="ifx-com2-hotcarousel">' + state.hotTopics.map(hotTopicCarouselItemHtml).join('') + '</div>'
+      : '<p class="ifx-com2-empty">Chưa có chủ đề mới nổi trong khoảng thời gian này.</p>';
+    return (
+      '<div class="ifx-card" data-ifx-com2-hot>' +
+        sectionHeaderHtml('flame', 'Top chủ đề mới nổi', { noViewAll: true }) +
+        '<div class="ifx-card-body">' +
+          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
+            STORY_RANGES.map(function (r) {
+              return '<button type="button" class="ifx-tab' + (r.key === state.hotRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
             }).join('') +
           '</div>' +
           body +
@@ -259,7 +301,6 @@
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="write">' + icon('edit') + ' Viết bài</button>' +
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="share">' + icon('repeat') + ' Chia sẻ tin</button>' +
             '<button type="button" class="ifx-com2-action" data-ifx-com2-action="tag">' + icon('tags') + ' Gắn thẻ</button>' +
-            '<button type="button" class="ifx-com2-action" data-ifx-com2-action="story">' + icon('tag') + ' Tạo chủ đề</button>' +
             '<button type="button" class="ifx-btn ifx-btn-primary ifx-com2-composer__submit" data-ifx-com2-action="write">Đăng bài</button>' +
           '</div>' +
         '</div>' +
@@ -291,11 +332,26 @@
     return '<span class="ifx-badge ifx-badge-soft ifx-com2-tagchip">#' + esc(tag) + '</span>';
   }
 
-  /* Preview bài Tin tức khi post là "Đăng lại" (post_type=share, source_type=news) — hiển thị
-     hình đại diện + tiêu đề THẬT từ source_preview (API hydrate qua JOIN news_posts), không còn
-     mock data. Không có source_preview (bài gốc đã xoá…) thì ẩn khối, không hiện placeholder giả. */
-  function newsPreviewHtml(preview, sourceId) {
-    if (!preview || !preview.title) return '';
+  /* Preview bài gốc khi post là "Đăng lại" (post_type=share) — hiển thị THẬT từ source_preview
+     (API hydrate), không còn mock data. Owner 2026-10 (VII.7): "Chia sẻ" trên Post Cộng đồng =
+     Repost (source_type='post', preview = content + tên tác giả) — khác hẳn "Đăng lại" Tin tức
+     (source_type='news', preview = title + ảnh). Không có source_preview (bài gốc đã xoá…) thì ẩn
+     khối, không hiện placeholder giả. */
+  function newsPreviewHtml(preview, sourceId, sourceType) {
+    if (!preview) return '';
+    if (sourceType === 'post') {
+      if (!preview.content) return '';
+      return (
+        '<div class="ifx-com2-repost">' +
+          '<div class="ifx-com2-repost__media" aria-hidden="true">' + icon('repeat') + '</div>' +
+          '<div class="ifx-com2-repost__body">' +
+            '<div class="ifx-com2-repost__meta">' + icon('user') + ' ' + esc(preview.author_name || 'Thành viên') + '</div>' +
+            '<div class="ifx-com2-repost__title">' + esc(preview.content) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+    if (!preview.title) return '';
     var href = preview.slug ? ('/tin-tuc/bai-viet/' + encodeURIComponent(preview.slug)) : '#';
     return (
       '<a href="' + esc(href) + '" class="ifx-com2-repost" data-ifx-href="soft">' +
@@ -324,10 +380,12 @@
       text: p.content || '',
       tags: tags,
       hashtags: p.hashtags || [],
-      sourcePreview: p.source_type === 'news' ? p.source_preview : null,
+      sourcePreview: (p.source_type === 'news' || p.source_type === 'post') ? p.source_preview : null,
+      sourceType: p.source_type,
       sourceId: p.source_id,
-      likes: p.stats.likes, comments: p.stats.comments, shares: p.stats.shares,
+      likes: p.stats.likes, dislikes: p.stats.dislikes || 0, comments: p.stats.comments, shares: p.stats.shares,
       liked: !!p.viewer_liked,
+      disliked: !!p.viewer_disliked,
       authorId: p.author && p.author.id
     };
   }
@@ -338,10 +396,11 @@
       ? '<div class="ifx-com2-post__tags">' + (p.tags || []).map(tagChipHtml).join('') + (p.hashtags || []).map(hashtagChipHtml).join('') + '</div>'
       : '';
     var body = p.text ? '<p class="ifx-com2-post__text">' + esc(p.text) + '</p>' : '';
-    body += newsPreviewHtml(p.sourcePreview, p.sourceId);
+    body += newsPreviewHtml(p.sourcePreview, p.sourceId, p.sourceType);
     var stats =
       '<footer class="ifx-com2-post__stats">' +
         '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
+        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-down') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
         '<button type="button" data-ifx-com2-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message-circle') + ' ' + p.comments + '</button>' +
         '<button type="button" data-ifx-com2-action="share" data-post-id="' + esc(p.id) + '">' + icon('share') + ' ' + p.shares + '</button>' +
       '</footer>';
@@ -397,17 +456,6 @@
 
   function rightSidebarHtml() {
     return (
-      '<div class="ifx-card ifx-com2-cta">' +
-        '<div class="ifx-card-body">' +
-          icon('plus', 'ifx-com2-cta__icon') +
-          '<div class="ifx-cta-title">' +
-            '<h4>Tạo chủ đề</h4>' +
-            '<p>Tạo chủ đề thị trường để cộng đồng bình chọn và thảo luận.</p>' +
-          '</div>' +
-          '<button type="button" class="ifx-btn ifx-btn-primary" data-ifx-com2-action="story">Tạo chủ đề ngay ' + icon('arrow-right') + '</button>' +
-        '</div>' +
-      '</div>' +
-
       '<div class="ifx-card">' +
         sectionHeaderHtml('bell', 'Hoạt động từ người bạn theo dõi') +
         '<div class="ifx-card-body"><ul class="ifx-com2-activitylist">' + SEED_ACTIVITIES.map(activityItemHtml).join('') + '</ul></div>' +
@@ -451,6 +499,31 @@
 
   function closeModal() {
     if (modalEl) modalEl.style.display = 'none';
+  }
+
+  /* Bình luận/Chia sẻ (Owner 2026-10) — nạp lazy hệ Interaction thật (interaction/boot.js) chỉ khi
+     user bấm, không tải sẵn khi vào trang Cộng đồng (nhẹ tải, cùng nguyên tắc hashtag suggest). */
+  var interactionReady = null;
+  function ensureInteractionReady() {
+    if (interactionReady) return interactionReady;
+    function loadScript(src) {
+      return new Promise(function (resolve, reject) {
+        if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = false;
+        s.onload = function () { resolve(); };
+        s.onerror = function () { reject(new Error('Không tải được script ' + src)); };
+        document.head.appendChild(s);
+      });
+    }
+    var ASSET = '/User_Web/iflux-web-ui/';
+    var V = '?v=r20261008c';
+    interactionReady = loadScript(ASSET + 'comment-composer.js' + V)
+      .then(function () { return loadScript(ASSET + 'interaction/boot.js' + V); })
+      .then(function () { return global.IfluxInteractionBoot.ensureForInteractive(); })
+      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js' + V); });
+    return interactionReady;
   }
 
   var ENTITY_TYPE_LABEL = { stock: 'Cổ phiếu', sector: 'Ngành', family: 'Hệ sinh thái', story: 'Câu chuyện' };
@@ -586,6 +659,15 @@
             '<textarea class="ix-input" name="content" rows="4" maxlength="6000" placeholder="Bạn đang nghĩ gì về thị trường? (tối đa ~1000 từ)" required></textarea>' +
           '</div>' +
           '<div class="ix-form-group">' +
+            '<label class="ix-label">Quan điểm của bạn (không bắt buộc)</label>' +
+            '<div class="ix-tabs" data-ifx-com2-post-sentiment>' +
+              '<button type="button" class="ix-tab" data-value="positive">' + icon('trending-up') + ' Tích cực</button>' +
+              '<button type="button" class="ix-tab" data-value="negative">' + icon('trending-down') + ' Tiêu cực</button>' +
+              '<button type="button" class="ix-tab" data-value="neutral">' + icon('minus') + ' Trung lập</button>' +
+            '</div>' +
+            '<input type="hidden" name="sentiment" value="" />' +
+          '</div>' +
+          '<div class="ix-form-group">' +
             '<label class="ix-label">Gắn mã cổ phiếu (không bắt buộc)</label>' +
             '<input type="text" class="ix-input" name="stock_tags" placeholder="VD: HPG, VIX (cách nhau bằng dấu phẩy)" />' +
           '</div>' +
@@ -597,6 +679,7 @@
                 '<option value="sector">Ngành</option>' +
                 '<option value="family">Hệ sinh thái</option>' +
                 '<option value="story">Câu chuyện</option>' +
+                '<option value="market_index">Sàn/Chỉ số</option>' +
               '</select>' +
               '<input type="text" class="ix-input" data-ifx-com2-entity-input placeholder="VD: HPG" />' +
               '<button type="button" class="ix-btn ix-btn-outline" data-ifx-com2-entity-add>Thêm</button>' +
@@ -617,6 +700,18 @@
     var form = modalEl.querySelector('[data-ifx-com2-post-form]');
     bindHashtagInput(form);
     bindEntityPicker(form);
+    /* Sentiment tác giả (II.1) — mặc định KHÔNG chọn, bấm lại nút đang active để bỏ chọn
+       (Unspecified). Khác hẳn Like/Dislike cộng đồng — không đồng nhất 2 tín hiệu (II.3). */
+    form.querySelectorAll('[data-ifx-com2-post-sentiment] .ix-tab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var input = form.querySelector('input[name=sentiment]');
+        var already = btn.classList.contains('active');
+        form.querySelectorAll('[data-ifx-com2-post-sentiment] .ix-tab').forEach(function (b) { b.classList.remove('active'); });
+        if (already) { input.value = ''; return; }
+        btn.classList.add('active');
+        input.value = btn.getAttribute('data-value');
+      });
+    });
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var fd = new FormData(form);
@@ -630,79 +725,13 @@
         post_type: tags.length ? 'stock_view' : 'status',
         stock_tags: tags,
         hashtags: composerHashtags,
-        entity_refs: composerEntityRefs
+        entity_refs: composerEntityRefs,
+        sentiment: String(fd.get('sentiment') || '').trim() || null
       }).then(function (data) {
         closeModal();
         toast('Đăng bài thành công', 'success');
         state.posts.unshift(data.post);
         renderFeedOnly();
-      }).catch(function (err) {
-        submitBtn.disabled = false;
-        var errEl = modalEl.querySelector('[data-ifx-com2-form-error]');
-        if (errEl) { errEl.textContent = err.message || 'Có lỗi xảy ra'; errEl.style.display = ''; }
-      });
-    });
-  }
-
-  function openCreateStoryModal() {
-    if (!requireAuth()) return;
-    buildModal();
-    modalEl.innerHTML =
-      '<div class="ix-modal-box">' +
-        '<button type="button" class="ix-modal-close" data-ifx-modal-close><i class="ti ti-x"></i></button>' +
-        '<div class="ix-modal-title">Tạo chủ đề</div>' +
-        '<div class="ix-modal-sub">Đặt ra 1 narrative thị trường để cộng đồng Đồng tình và thảo luận.</div>' +
-        '<form data-ifx-com2-story-form>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Tên chủ đề <span style="color:var(--ix-danger)">*</span></label>' +
-            '<input type="text" class="ix-input" name="title" maxlength="200" placeholder="VD: HPG vượt đỉnh quý 3" required />' +
-          '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Luận điểm</label>' +
-            '<textarea class="ix-input" name="description" rows="3" maxlength="4000" placeholder="Vì sao bạn nghĩ vậy?"></textarea>' +
-          '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Quan điểm <span style="color:var(--ix-danger)">*</span></label>' +
-            '<div class="ix-tabs" data-ifx-com2-sentiment>' +
-              '<button type="button" class="ix-tab active" data-value="bullish">' + icon('trending-up') + ' Tích cực</button>' +
-              '<button type="button" class="ix-tab" data-value="bearish">' + icon('trending-down') + ' Tiêu cực</button>' +
-            '</div>' +
-            '<input type="hidden" name="sentiment" value="bullish" />' +
-          '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Gắn mã cổ phiếu (không bắt buộc)</label>' +
-            '<input type="text" class="ix-input" name="stock_tags" placeholder="VD: HPG, VIX (cách nhau bằng dấu phẩy)" />' +
-          '</div>' +
-          '<div data-ifx-com2-form-error class="ix-alert ix-alert-danger" style="margin-bottom:var(--ifx-space-12);display:none"></div>' +
-          '<button type="submit" class="ix-btn ix-btn-primary"><i class="ti ti-send"></i> Tạo chủ đề</button>' +
-        '</form>' +
-      '</div>';
-    modalEl.style.display = 'flex';
-    var form = modalEl.querySelector('[data-ifx-com2-story-form]');
-    form.querySelectorAll('[data-ifx-com2-sentiment] .ix-tab').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        form.querySelectorAll('[data-ifx-com2-sentiment] .ix-tab').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        form.querySelector('input[name=sentiment]').value = btn.getAttribute('data-value');
-      });
-    });
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var fd = new FormData(form);
-      var title = String(fd.get('title') || '').trim();
-      if (!title) return;
-      var tags = String(fd.get('stock_tags') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-      var submitBtn = form.querySelector('button[type=submit]');
-      submitBtn.disabled = true;
-      store().createStory({
-        title: title,
-        description: String(fd.get('description') || '').trim(),
-        sentiment: fd.get('sentiment'),
-        stock_tags: tags
-      }).then(function () {
-        closeModal();
-        toast('Tạo chủ đề thành công', 'success');
-        loadHotStories();
       }).catch(function (err) {
         submitBtn.disabled = false;
         var errEl = modalEl.querySelector('[data-ifx-com2-form-error]');
@@ -729,11 +758,20 @@
     });
   }
 
-  function loadHotStories() {
-    return store().listStories({ sort: 'trending', range: state.storyRange, limit: 5 }).then(function (data) {
-      state.hotStories = data.items || [];
-      var card = document.querySelector('[data-ifx-com2-hottopics]');
-      if (card) card.outerHTML = hotTopicsCardHtml();
+  function loadTrendingTopics() {
+    return store().getTrendingTopics(state.trendingRange, 5).then(function (data) {
+      state.trendingTopics = data.items || [];
+      var card = document.querySelector('[data-ifx-com2-trending]');
+      if (card) card.outerHTML = trendingTopicsCardHtml();
+      bindHotTopics();
+    }).catch(function () { /* sidebar phụ — im lặng nếu lỗi, không chặn trang */ });
+  }
+
+  function loadHotTopics() {
+    return store().getHotTopics(state.hotRange, 10).then(function (data) {
+      state.hotTopics = data.items || [];
+      var card = document.querySelector('[data-ifx-com2-hot]');
+      if (card) card.outerHTML = hotTopicsCarouselHtml();
       bindHotTopics();
     }).catch(function () { /* sidebar phụ — im lặng nếu lỗi, không chặn trang */ });
   }
@@ -754,17 +792,70 @@
     var post = state.posts.find(function (p) { return String(p.id) === String(postId); });
     if (!post) return;
     var wasLiked = !!post.viewer_liked;
+    var wasDisliked = !!post.viewer_disliked;
     post.viewer_liked = !wasLiked;
+    post.viewer_disliked = false;
     post.stats.likes += wasLiked ? -1 : 1;
-    btn.classList.toggle('is-active', !wasLiked);
-    var countEl = btn.querySelector('[data-ifx-com2-like-count]');
-    if (countEl) countEl.textContent = post.stats.likes;
+    if (wasDisliked) post.stats.dislikes = Math.max(0, (post.stats.dislikes || 0) - 1);
+    renderFeedOnly();
     var call = wasLiked ? store().unlikePost(postId) : store().likePost(postId);
     call.catch(function (err) {
       post.viewer_liked = wasLiked;
+      post.viewer_disliked = wasDisliked;
       post.stats.likes += wasLiked ? 1 : -1;
+      if (wasDisliked) post.stats.dislikes = (post.stats.dislikes || 0) + 1;
       renderFeedOnly();
       toast(err.message || 'Không thực hiện được', 'danger');
+    });
+  }
+
+  /* Dislike (II.2) — loại trừ Like qua cùng 1 row interaction_likes (value=-1/1). */
+  function toggleDislike(postId) {
+    if (!requireAuth()) return;
+    var post = state.posts.find(function (p) { return String(p.id) === String(postId); });
+    if (!post) return;
+    var wasDisliked = !!post.viewer_disliked;
+    var wasLiked = !!post.viewer_liked;
+    post.viewer_disliked = !wasDisliked;
+    post.viewer_liked = false;
+    post.stats.dislikes = (post.stats.dislikes || 0) + (wasDisliked ? -1 : 1);
+    if (wasLiked) post.stats.likes = Math.max(0, post.stats.likes - 1);
+    renderFeedOnly();
+    var call = wasDisliked ? store().unlikePost(postId) : store().dislikePost(postId);
+    call.catch(function (err) {
+      post.viewer_disliked = wasDisliked;
+      post.viewer_liked = wasLiked;
+      post.stats.dislikes = (post.stats.dislikes || 0) + (wasDisliked ? 1 : -1);
+      if (wasLiked) post.stats.likes += 1;
+      renderFeedOnly();
+      toast(err.message || 'Không thực hiện được', 'danger');
+    });
+  }
+
+  /* Bình luận thật (Owner 2026-10) — IfluxCommentModal (interaction/comment-modal.js) dùng CHUNG
+     với Tab Bình luận Thực thể (entity-posts-panel.js), tránh viết UI mở Comment 2 nơi. */
+  function openCommentModal(postId) {
+    if (!requireAuth()) return;
+    ensureInteractionReady().then(function () {
+      global.IfluxCommentModal.open(postId);
+    }).catch(function () {
+      toast('Không tải được tính năng Bình luận', 'danger');
+    });
+  }
+
+  /* Chia sẻ = Repost (Owner 2026-10, VII.7) — tái dùng 100% IfluxRepostModal đã xây cho bài Tin
+     tức, chỉ đổi sourceType='post' (Social Post khác — SOURCE_TYPES backend, community-posts
+     .service.js) thay vì 'news'. */
+  function openShareModal(postId) {
+    if (!requireAuth()) return;
+    var post = state.posts.find(function (p) { return String(p.id) === String(postId); });
+    var previewTitle = post ? String(post.content || '').slice(0, 140) : '';
+    function doOpen() {
+      IfluxRepostModal.open({ postId: postId, title: previewTitle, sourceType: 'post' });
+    }
+    if (global.IfluxRepostModal) { doOpen(); return; }
+    ensureInteractionReady().then(doOpen).catch(function (err) {
+      toast(err.message || 'Không tải được tính năng Chia sẻ', 'danger');
     });
   }
 
@@ -773,37 +864,60 @@
     mainEl.querySelectorAll('[data-ifx-com2-action="like"]').forEach(function (btn) {
       btn.addEventListener('click', function () { toggleLike(btn.getAttribute('data-post-id'), btn); });
     });
+    mainEl.querySelectorAll('[data-ifx-com2-action="dislike"]').forEach(function (btn) {
+      btn.addEventListener('click', function () { toggleDislike(btn.getAttribute('data-post-id')); });
+    });
     mainEl.querySelectorAll('[data-ifx-com2-action="loadmore"]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var mode = FILTERS.find(function (f) { return f.key === state.filter; }).mode;
         loadFeed(mode, true);
       });
     });
-    mainEl.querySelectorAll('[data-ifx-com2-action="comment"], [data-ifx-com2-action="share"], [data-ifx-com2-action="follow"], [data-ifx-com2-action="more"]').forEach(function (btn) {
+    mainEl.querySelectorAll('[data-ifx-com2-action="comment"]').forEach(function (btn) {
+      if (btn.__bound) return;
+      btn.__bound = true;
+      btn.addEventListener('click', function () { openCommentModal(btn.getAttribute('data-post-id')); });
+    });
+    mainEl.querySelectorAll('[data-ifx-com2-action="share"]').forEach(function (btn) {
+      if (btn.__bound) return;
+      btn.__bound = true;
+      btn.addEventListener('click', function () { openShareModal(btn.getAttribute('data-post-id')); });
+    });
+    mainEl.querySelectorAll('[data-ifx-com2-action="follow"], [data-ifx-com2-action="more"]').forEach(function (btn) {
       if (btn.__bound) return;
       btn.__bound = true;
       btn.addEventListener('click', function () {
-        var labels = { comment: 'Bình luận', share: 'Chia sẻ', follow: 'Theo dõi', more: 'Tuỳ chọn' };
+        var labels = { follow: 'Theo dõi', more: 'Tuỳ chọn' };
         comingSoon(labels[btn.getAttribute('data-ifx-com2-action')] || '');
       });
     });
   }
 
   function bindHotTopics() {
-    var bar = document.querySelector('[data-ifx-com2-story-range]');
-    if (!bar) return;
-    bar.querySelectorAll('.ifx-tab').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        state.storyRange = btn.getAttribute('data-range');
-        loadHotStories();
+    var trendingBar = document.querySelector('[data-ifx-com2-trending-range]');
+    if (trendingBar) {
+      trendingBar.querySelectorAll('.ifx-tab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.trendingRange = btn.getAttribute('data-range');
+          loadTrendingTopics();
+        });
       });
-    });
+    }
+    var hotBar = document.querySelector('[data-ifx-com2-hot-range]');
+    if (hotBar) {
+      hotBar.querySelectorAll('.ifx-tab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.hotRange = btn.getAttribute('data-range');
+          loadHotTopics();
+        });
+      });
+    }
   }
 
   function bindActions(root) {
     root.querySelectorAll('[data-ifx-com2-action]').forEach(function (btn) {
       var action = btn.getAttribute('data-ifx-com2-action');
-      if (['write', 'story', 'like', 'comment', 'share', 'loadmore'].indexOf(action) >= 0) return;
+      if (['write', 'like', 'comment', 'share', 'loadmore'].indexOf(action) >= 0) return;
       btn.addEventListener('click', function () {
         var labels = {
           share: 'Chia sẻ tin', tag: 'Gắn thẻ',
@@ -816,9 +930,6 @@
     });
     root.querySelectorAll('[data-ifx-com2-action="write"]').forEach(function (btn) {
       btn.addEventListener('click', openWritePostModal);
-    });
-    root.querySelectorAll('[data-ifx-com2-action="story"]').forEach(function (btn) {
-      btn.addEventListener('click', openCreateStoryModal);
     });
     var openEl = root.querySelector('[data-ifx-com2-open-composer]');
     if (openEl) openEl.addEventListener('click', openWritePostModal);
@@ -842,7 +953,7 @@
   function render(frame) {
     mainEl = frame.mainContent;
     mainEl.innerHTML =
-      hotTopicsCardHtml() + composerHtml() + filterTabsHtml(state.filter) +
+      trendingTopicsCardHtml() + hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
       '<div data-ifx-com2-feedlist>' + feedHtml() + '</div>';
     if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
     if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
@@ -858,7 +969,8 @@
     if (!frame || !frame.mainContent) return;
     render(frame);
     loadFeed('latest', false);
-    loadHotStories();
+    loadTrendingTopics();
+    loadHotTopics();
   }
 
   function dispose() {

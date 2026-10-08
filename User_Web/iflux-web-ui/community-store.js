@@ -92,6 +92,11 @@
     return request('DELETE', apiBase() + '/interaction/v1/communitypost/' + encodeURIComponent(id) + '/like');
   }
 
+  /* Dislike (Owner 2026-10, II.2) — loại trừ Like qua cùng row interaction_likes. */
+  function dislikePost(id) {
+    return request('POST', apiBase() + '/interaction/v1/communitypost/' + encodeURIComponent(id) + '/dislike');
+  }
+
   /* ───────────────────────── Story/Chủ đề (§7) ───────────────────────── */
 
   function listStories(opts) {
@@ -107,17 +112,30 @@
     return request('DELETE', apiBase() + '/community/stories/' + encodeURIComponent(id));
   }
 
-  function agreeStory(id) {
-    return request('POST', apiBase() + '/community/stories/' + encodeURIComponent(id) + '/agree');
-  }
-
-  function unagreeStory(id) {
-    return request('DELETE', apiBase() + '/community/stories/' + encodeURIComponent(id) + '/agree');
-  }
-
   /* Gợi ý hashtag/chủ đề — chỉ gọi lazy khi user tương tác với ô hashtag (xem community-page.js). */
   function suggestHashtags(q) {
     return request('GET', apiBase() + '/community/suggest' + qs({ q: q }));
+  }
+
+  /* Owner 2026-10 (Phase 6) — "Chủ đề đang thịnh hành" (Top N Engagement cao nhất) và "Top chủ
+     đề mới nổi" (Top N Hot Score) — 2 khối tách biệt, thay "Chủ đề HOT" cũ (dựa Story). */
+  function getTrendingTopics(range, limit) {
+    return request('GET', apiBase() + '/community/topics/trending' + qs({ range: range, limit: limit }));
+  }
+
+  function getHotTopics(range, limit) {
+    return request('GET', apiBase() + '/community/topics/hot' + qs({ range: range, limit: limit }));
+  }
+
+  /* Owner 2026-10 — "Bình luận" trên trang chi tiết Thực thể (Stock/Sector/Family) = Post Cộng
+     đồng gắn thẻ Thực thể đó, "chỉ có 1, xuất hiện ở 2 nơi" (xem entity-posts-panel.js). */
+  function getEntityPosts(entityType, entityId, opts) {
+    opts = opts || {};
+    return request('GET', apiBase() + '/community/entities/' + encodeURIComponent(entityType) + '/' + encodeURIComponent(entityId) + '/posts' + qs({ cursor: opts.cursor, limit: opts.limit }));
+  }
+
+  function createEntityPost(entityType, entityId, content) {
+    return request('POST', apiBase() + '/community/entities/' + encodeURIComponent(entityType) + '/' + encodeURIComponent(entityId) + '/posts', { content: content });
   }
 
   global.IfluxCommunityStore = {
@@ -127,11 +145,14 @@
     deletePost: deletePost,
     likePost: likePost,
     unlikePost: unlikePost,
+    dislikePost: dislikePost,
     listStories: listStories,
     createStory: createStory,
     archiveStory: archiveStory,
-    agreeStory: agreeStory,
-    unagreeStory: unagreeStory,
-    suggestHashtags: suggestHashtags
+    suggestHashtags: suggestHashtags,
+    getEntityPosts: getEntityPosts,
+    createEntityPost: createEntityPost,
+    getTrendingTopics: getTrendingTopics,
+    getHotTopics: getHotTopics
   };
 })(window);

@@ -49,17 +49,29 @@ async function bootstrap() {
     });
   }
 
-  /* Topic lifecycle (Owner 2026-10, SoT "Community → Topic → Story" V.1) — 00:00 hàng ngày: tính
-     lại topic_daily_stats hôm nay + đánh giá lại lifecycle (percentile+window, Admin override
-     thắng). Tắt: TOPIC_LIFECYCLE_CRON=off. */
+  /* Topic/Story lifecycle (Owner 2026-10, Phase 6 cuối ngày) — 00:00 hàng ngày:
+     1) recomputeDailyStats — tính lại topic_daily_stats hôm nay.
+     2) confirmPendingTopics — quét Topic đạt ngưỡng 100 lần nhắc nhưng bị sót (phòng hờ).
+     3) cleanupInactiveTopics — xoá Topic không nhắc tới 90 ngày (CASCADE Story liên kết).
+     4) evaluateAllStoryLifecycles — lifecycle 5-trạng-thái (percentile+window) của Story, tính
+        trên Engagement Topic liên kết — Admin override thắng.
+     5) autoCreateFromTopTrendingWeekly — Topic lọt Top 5 Thịnh hành tuần chưa có Story -> tự tạo.
+     Tắt: TOPIC_LIFECYCLE_CRON=off. */
   const topicCron = process.env.TOPIC_LIFECYCLE_CRON || '0 0 * * *';
   if (topicCron !== 'off' && topicCron !== '0') {
     registerJob('topic-lifecycle-daily', topicCron, async () => {
       try {
         const topicsService = require('./modules/community/topics.service');
+        const storiesService = require('./modules/community/stories.service');
         await topicsService.recomputeDailyStats();
-        const out = await topicsService.evaluateAllLifecycles();
-        logger.info({ evaluated: out.evaluated, changed: out.changed }, 'topic-lifecycle-daily done');
+        await topicsService.confirmPendingTopics();
+        const cleanup = await topicsService.cleanupInactiveTopics();
+        const lifecycle = await storiesService.evaluateAllStoryLifecycles();
+        const autoCreate = await storiesService.autoCreateFromTopTrendingWeekly();
+        logger.info(
+          { deletedTopics: cleanup.deleted, storiesEvaluated: lifecycle.evaluated, storiesChanged: lifecycle.changed, storiesAutoCreated: autoCreate.created },
+          'topic-lifecycle-daily done'
+        );
       } catch (err) {
         logger.error({ err: err.message }, 'topic-lifecycle-daily failed');
       }

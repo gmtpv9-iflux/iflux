@@ -79,7 +79,9 @@
   }
 
   /**
-   * meta: { postId (news article id), title, coverUrl }
+   * meta: { postId, title, coverUrl, sourceType }
+   * sourceType (Owner 2026-10, VII.7) — 'news' (mặc định, bài Tin tức) | 'communitypost' (Share =
+   * Repost 1 Post Cộng đồng khác, cùng cơ chế, không viết action riêng).
    */
   function open(meta) {
     meta = meta || {};
@@ -152,7 +154,7 @@
         body: JSON.stringify({
           content: content,
           post_type: 'share',
-          source_type: 'news',
+          source_type: meta.sourceType || 'news',
           source_id: String(meta.postId || ''),
           entity_refs: entityRefs
         })

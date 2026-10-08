@@ -4,28 +4,41 @@
  * Topic service — Owner 2026-10: Topic hình thành từ Hashtag Post Cộng đồng (SoT "Community →
  * Topic → Story"). Tách khỏi Story — Admin ánh xạ thủ công (xem stories.service.js mapTopicToStory).
  *
+ * Phase 6 (2026-10-08, cuối ngày) — Owner đơn giản hoá lại:
+ *   - Topic KHÔNG còn lifecycle 5-trạng-thái (đã chuyển sang Story — xem stories.service.js).
+ *   - Topic "chính thức" (confirmed) khi hashtag được dùng (usage_count, all-time, KHÔNG tính
+ *     Like/Dislike) >= ngưỡng (topic_formation.confirm_usage_count, mặc định 100). Trước đó vẫn
+ *     đếm ngầm, không hiện trong gợi ý "chủ đề có sẵn".
+ *   - Cổ phiếu đại diện (tỷ trọng cộng dồn >=80%) CHỐT CỨNG 1 lần duy nhất đúng lúc confirmed_at
+ *     set (representative_stocks), KHÔNG tính lại sau đó.
+ *   - Topic không được nhắc tới (last_activity_at) trong N ngày (topic_formation
+ *     .inactive_delete_days, mặc định 90) -> xoá thật (cleanupInactiveTopics) -> Story liên kết
+ *     xoá CASCADE theo (FK đã đổi, xem migration 080).
+ *
  * Công thức Owner chốt (đáp ứng nguyên văn, chỉ xử lý chia-0/mẫu nhỏ — "giữ đơn giản, tối ưu sau"):
  *   Engagement = L*wL + D*wD + C*wC + S*wS (mặc định wL=wD=1, wC=3, wS=4 — xem topic_scoring_config)
- *   Author Sentiment = (P-N)/(P+N), chỉ tính trên bài ĐÃ khai báo (loại U khỏi tử/mẫu) — khác bản
- *     gốc Owner đưa (P-N)/(P+N+U) vì tự mâu thuẫn với "chỉ tính bài khai báo" (đã nêu trong audit).
+ *   Author Sentiment = (P-N)/(P+N), chỉ tính trên bài ĐÃ khai báo (loại U khỏi tử/mẫu).
  *   Reaction Sentiment = (L-D)/(L+D) — mức tán thành, KHÔNG phải sắc thái bài viết (II.3).
- *   Trending Score = ln(1+Engagement_Window) × (1+0.2×Normalized_Growth) — bỏ Quality Factor theo
- *     chỉ đạo "giữ đơn giản", chỉ kẹp Normalized_Growth [-1,3] + mẫu base >=1 để tránh chia-0/bùng nổ.
- *   Lifecycle (New/Rising/Trending/Declining/Archived): hồi sinh percentile+window Topic_Engine V2
- *     (window_days/sustain_days/archive_sustain_days/top_percentile), áp RIÊNG cho Topic — không
- *     còn gắn Story. Admin override (topics.status_override) luôn thắng tới khi gỡ.
- *   Representative Stocks: tỷ trọng cộng dồn ≥80%, Leader = cao nhất (Topic_Engine V2 §Xác định
- *     cổ phiếu đại diện) — SoT Community V1 §8 đã xác nhận "vẫn hữu ích, có thể tái dùng".
+ *   "Chủ đề đang thịnh hành" (getTrendingTopics) = Top N theo Engagement(kỳ) DESC, lọc Topic đã
+ *     confirmed + có cổ phiếu đại diện — KHÔNG áp Eligibility Gate.
+ *   "Top chủ đề mới nổi" (getHotTopics) = Eligibility Gate (Engagement/User/Recent Floor theo kỳ)
+ *     + Net Reaction Gate (Likes-Dislikes trong kỳ phải >=0) + Hot Score = (0.7*Velocity +
+ *     0.3*Growth) * (1 + 0.1*NetReactionNorm), Velocity/Growth/NetReaction chuẩn hoá percentile
+ *     rank trong nhóm đã qua Gate (ổn định hơn min-max).
+ *   Representative Stocks: tỷ trọng cộng dồn ≥80%, Leader = cao nhất (Topic_Engine V2).
  */
 const { query } = require('../../core/database/connection');
-const { AppError } = require('../../shared/exceptions/app-error');
 
 const DEFAULT_WEIGHTS = { like: 1, dislike: 1, comment: 3, share: 4 };
-const DEFAULT_LIFECYCLE = { window_days: 3, sustain_days: 3, archive_sustain_days: 7, top_percentile: 0.8 };
-const DEFAULT_HOT = { min_engagement: 20, min_sentiment_sample: 5 };
 const DEFAULT_REP_STOCK = { cumulative_weight_min: 0.8 };
+const DEFAULT_FORMATION = { confirm_usage_count: 100, inactive_delete_days: 90 };
+const DEFAULT_HOT_SCORE_WEIGHTS = { velocity: 0.7, growth: 0.3, net_reaction_bonus: 0.1 };
+const DEFAULT_HOT_ELIGIBILITY = {
+  day: { engagement_floor: 15, user_floor: 5, recent_floor: 8, recent_window_days: 1 },
+  week: { engagement_floor: 40, user_floor: 12, recent_floor: 15, recent_window_days: 2 },
+  month: { engagement_floor: 100, user_floor: 25, recent_floor: 30, recent_window_days: 5 }
+};
 const RANGE_DAYS = { day: 1, week: 7, month: 30 };
-const STATUSES = ['new', 'rising', 'trending', 'declining', 'archived'];
 
 function rangeToDays(range) {
   return RANGE_DAYS[range] || RANGE_DAYS.week;
@@ -87,21 +100,73 @@ async function resolveOrCreateTopic(hashtagRaw) {
   return topicId;
 }
 
-/** Ghi Post ↔ Topic đã resolve — gọi sau khi tạo Post có hashtags (community-posts.service.js). */
+/** Chốt cứng cổ phiếu đại diện + đánh dấu Topic "chính thức" — gọi ĐÚNG 1 LẦN khi usage_count
+ * vừa đạt ngưỡng. Tính trên TOÀN BỘ lịch sử topic_stock_mentions từ lúc hashtag xuất hiện lần đầu
+ * tới hiện tại (Owner: "nếu được nhắc nhiều hơn 100 lần từ lúc xuất hiện lần đầu"). */
+async function confirmTopic(topicId) {
+  const rep = await getRepresentativeStocks(topicId);
+  await query(
+    `UPDATE topics SET confirmed_at = NOW(), representative_stocks = $1, updated_at = NOW()
+     WHERE id = $2 AND confirmed_at IS NULL`,
+    [JSON.stringify(rep), topicId]
+  );
+  return rep;
+}
+
+/** Ghi Post ↔ Topic đã resolve — gọi sau khi tạo Post có hashtags (community-posts.service.js).
+ * Tăng usage_count CHỈ khi (post_id, topic_id) chưa từng tồn tại (bài mới dùng hashtag này lần
+ * đầu) — không tăng khi 1 bài được xử lý lại/trùng. Đạt ngưỡng lần đầu -> confirmTopic(). */
 async function attachPostTopics(postId, hashtags) {
   if (!postId || !Array.isArray(hashtags) || !hashtags.length) return [];
+  const formation = await getConfig('topic_formation', DEFAULT_FORMATION);
   const topicIds = [];
   for (let i = 0; i < hashtags.length; i++) {
     const topicId = await resolveOrCreateTopic(hashtags[i]);
     if (!topicId) continue;
     topicIds.push(topicId);
-    await query(
-      `INSERT INTO post_topics (post_id, topic_id) VALUES ($1, $2) ON CONFLICT (post_id, topic_id) DO NOTHING`,
+
+    const inserted = await query(
+      `INSERT INTO post_topics (post_id, topic_id) VALUES ($1, $2) ON CONFLICT (post_id, topic_id) DO NOTHING RETURNING post_id`,
       [postId, topicId]
     );
-    await query('UPDATE topics SET last_activity_at = NOW(), updated_at = NOW() WHERE id = $1', [topicId]);
+    if (!inserted.rows[0]) {
+      await query('UPDATE topics SET last_activity_at = NOW(), updated_at = NOW() WHERE id = $1', [topicId]);
+      continue;
+    }
+
+    const updated = await query(
+      `UPDATE topics SET usage_count = usage_count + 1, last_activity_at = NOW(), updated_at = NOW()
+       WHERE id = $1 RETURNING usage_count, confirmed_at`,
+      [topicId]
+    );
+    const row = updated.rows[0];
+    if (row && !row.confirmed_at && Number(row.usage_count) >= Number(formation.confirm_usage_count)) {
+      await confirmTopic(topicId);
+    }
   }
   return topicIds;
+}
+
+/** Quét toàn bộ Topic pending — phòng trường hợp bỏ sót (chạy trong cron, không chỉ lúc post mới). */
+async function confirmPendingTopics() {
+  const formation = await getConfig('topic_formation', DEFAULT_FORMATION);
+  const res = await query(
+    `SELECT id FROM topics WHERE confirmed_at IS NULL AND usage_count >= $1`,
+    [formation.confirm_usage_count]
+  );
+  for (const row of res.rows) await confirmTopic(row.id);
+  return { confirmed: res.rows.length };
+}
+
+/** Xoá Topic không được nhắc tới trong N ngày (topic_formation.inactive_delete_days) — xoá thật,
+ * CASCADE kéo theo topic_hashtags/post_topics/topic_daily_stats/topic_stock_mentions/stories. */
+async function cleanupInactiveTopics() {
+  const formation = await getConfig('topic_formation', DEFAULT_FORMATION);
+  const res = await query(
+    `DELETE FROM topics WHERE last_activity_at < NOW() - ($1 || ' days')::interval RETURNING id`,
+    [formation.inactive_delete_days]
+  );
+  return { deleted: res.rows.length, ids: res.rows.map((r) => r.id) };
 }
 
 /**
@@ -240,6 +305,29 @@ async function getTopicWindowStatsOffset(topicId, days, offsetDays) {
   return { engagement: Number(res.rows[0].engagement) || 0 };
 }
 
+/** Users duy nhất tương tác với Topic trong N ngày (viết bài / Like / Dislike / Bình luận) —
+ * dùng cho Eligibility Gate "Unique Interacting Users" (Top chủ đề mới nổi). */
+async function getTopicUniqueUsers(topicId, days) {
+  const res = await query(
+    `SELECT COUNT(DISTINCT user_id)::int AS n FROM (
+       SELECT sp.author_id AS user_id FROM social_posts sp
+         JOIN post_topics pt ON pt.post_id = sp.id
+         WHERE pt.topic_id = $1 AND sp.status = 'published' AND sp.created_at >= NOW() - ($2::int || ' days')::interval
+       UNION
+       SELECT il.user_id FROM interaction_likes il
+         JOIN post_topics pt ON pt.post_id::text = il.entity_id
+         WHERE pt.topic_id = $1 AND il.entity_type = 'communitypost' AND il.created_at >= NOW() - ($2::int || ' days')::interval
+       UNION
+       SELECT ic.user_id FROM interaction_comments ic
+         JOIN post_topics pt ON pt.post_id::text = ic.entity_id
+         WHERE pt.topic_id = $1 AND ic.entity_type = 'communitypost' AND ic.deleted_at IS NULL
+           AND ic.created_at >= NOW() - ($2::int || ' days')::interval
+     ) x`,
+    [topicId, days]
+  );
+  return Number(res.rows[0] && res.rows[0].n) || 0;
+}
+
 /** Author Sentiment = (P-N)/(P+N), chỉ tính trên bài ĐÃ khai báo — loại U khỏi tử/mẫu. */
 function authorSentimentFromStats(stats, minSample) {
   const sample = stats.sentimentPos + stats.sentimentNeg;
@@ -256,26 +344,22 @@ function reactionSentimentFromStats(stats) {
   return { ratio, label: ratio > 0 ? 'positive' : (ratio < 0 ? 'negative' : 'neutral') };
 }
 
-/** Trending Score — kẹp Normalized_Growth [-1,3] + mẫu base ≥1 để tránh chia-0/bùng nổ (mẫu mới). */
-async function trendingScore(topicId, windowDays) {
-  const [cur, prev] = await Promise.all([
-    getTopicWindowStats(topicId, windowDays),
-    getTopicWindowStatsOffset(topicId, windowDays, windowDays)
-  ]);
-  const growthBase = Math.max(prev.engagement, 1);
-  let growth = (cur.engagement - prev.engagement) / growthBase;
-  growth = Math.max(-1, Math.min(3, growth));
-  const score = Math.log(1 + cur.engagement) * (1 + 0.2 * growth);
-  return { score, engagement: cur.engagement, growth };
-}
-
 /** Owner: "cổ phiếu có trong Story có tỉ trọng xuất hiện trong top 80% tương tác" — tính TOÀN
- * THỜI GIAN của Topic (đại diện lâu dài, không phải trending ngắn hạn). */
+ * THỜI GIAN của Topic (đại diện lâu dài, không phải trending ngắn hạn). Gọi lúc confirmTopic() —
+ * KHÔNG gọi lại sau đó (xem getStoredRepresentativeStocks để đọc giá trị đã chốt). */
 async function getRepresentativeStocks(topicId) {
   const cfg = await getConfig('representative_stock', DEFAULT_REP_STOCK);
+  /* Tính TRỰC TIẾP từ social_posts/post_topics (toàn bộ lịch sử tới hiện tại) — KHÔNG đọc
+     topic_stock_mentions (chỉ được cron ghi theo ngày, 00:00). Nếu dùng bảng đó, Topic confirm
+     ngay trong ngày (trước khi cron chạy) sẽ luôn ra cổ phiếu đại diện rỗng — bug đã phát hiện
+     khi test thật trên Staging 2026-10-08. */
   const res = await query(
-    `SELECT ticker, SUM(mention_count)::int AS total
-     FROM topic_stock_mentions WHERE topic_id = $1 GROUP BY ticker ORDER BY total DESC`,
+    `SELECT st.ticker AS ticker, COUNT(*)::int AS total
+     FROM social_posts sp
+     JOIN post_topics pt ON pt.post_id = sp.id
+     JOIN LATERAL unnest(sp.stock_tags) AS st(ticker) ON true
+     WHERE pt.topic_id = $1 AND sp.status = 'published'
+     GROUP BY st.ticker ORDER BY total DESC`,
     [topicId]
   );
   const rows = res.rows;
@@ -293,74 +377,120 @@ async function getRepresentativeStocks(topicId) {
   return { leader: out[0] ? out[0].ticker : null, stocks: out };
 }
 
-/** VII — Hot Eligibility: đạt tương tác tối thiểu + đủ mẫu Sentiment + Author Sentiment tích cực. */
-async function hotEligibility(topicId, range) {
-  const hotCfg = await getConfig('hot_eligibility', DEFAULT_HOT);
-  const stats = await getTopicWindowStats(topicId, rangeToDays(range));
-  const sentiment = authorSentimentFromStats(stats, hotCfg.min_sentiment_sample);
-  const eligible = stats.engagement >= hotCfg.min_engagement && sentiment.label === 'positive';
-  return { eligible, stats, sentiment };
+/** Đọc snapshot CỐ ĐỊNH đã chốt lúc confirmTopic() — dùng cho mapTopicToStory/hiển thị, KHÔNG
+ * tính lại. Topic chưa confirmed trả rỗng. */
+async function getStoredRepresentativeStocks(topicId) {
+  const res = await query('SELECT representative_stocks FROM topics WHERE id = $1', [topicId]);
+  const row = res.rows[0];
+  if (!row || !row.representative_stocks) return { leader: null, stocks: [] };
+  return row.representative_stocks;
+}
+
+function percentileRank(values, value) {
+  if (!values.length) return 0;
+  const sorted = values.slice().sort((a, b) => a - b);
+  let countBelow = 0;
+  for (let i = 0; i < sorted.length; i++) { if (sorted[i] < value) countBelow++; }
+  if (sorted.length === 1) return 100;
+  return (countBelow / (sorted.length - 1)) * 100;
 }
 
 /**
- * Đánh giá lại Lifecycle cho TẤT CẢ Topic — chạy 1 lần (cron 00:00), vì percentile cần biết
- * phân phối toàn hệ thống. Admin override (status_override) luôn thắng, không bị ghi đè.
+ * "Chủ đề đang thịnh hành" — Top N theo Engagement(kỳ) DESC. Lọc: Topic đã confirmed VÀ có
+ * cổ phiếu đại diện (representative_stocks không rỗng) — nếu rỗng thì loại (Owner: "Nếu không có
+ * cổ phiếu nào đáp ứng điều kiện -> Chủ đề đó sẽ không xuất hiện"). KHÔNG áp Eligibility Gate.
  */
-async function evaluateAllLifecycles() {
-  const cfg = await getConfig('lifecycle_thresholds', DEFAULT_LIFECYCLE);
-  const windowDays = cfg.window_days;
-  const sustainDays = cfg.sustain_days;
-  const archiveSustainDays = cfg.archive_sustain_days;
-  const topPercentile = cfg.top_percentile;
-
+async function getTrendingTopics(range, limit) {
+  const days = rangeToDays(range);
+  const n = Math.min(Math.max(Number(limit) || 5, 1), 50);
   const res = await query(
-    `SELECT t.id, t.status, t.status_override, t.status_since, t.first_seen_at,
-            COALESCE(AVG(ds.engagement_score), 0) AS avg_engagement
+    `SELECT t.id, t.slug, t.display_name, t.representative_stocks,
+            COALESCE(SUM(ds.likes_count), 0) AS likes, COALESCE(SUM(ds.dislikes_count), 0) AS dislikes,
+            COALESCE(SUM(ds.comments_count), 0) AS comments, COALESCE(SUM(ds.shares_count), 0) AS shares,
+            COALESCE(SUM(ds.engagement_score), 0) AS engagement
      FROM topics t
-     LEFT JOIN topic_daily_stats ds ON ds.topic_id = t.id AND ds.day >= CURRENT_DATE - ($1::int - 1)
-     GROUP BY t.id`,
-    [windowDays]
+     JOIN topic_daily_stats ds ON ds.topic_id = t.id AND ds.day >= CURRENT_DATE - ($1::int - 1)
+     WHERE t.confirmed_at IS NOT NULL
+       AND t.representative_stocks IS NOT NULL
+       AND jsonb_array_length(t.representative_stocks->'stocks') > 0
+     GROUP BY t.id
+     HAVING COALESCE(SUM(ds.engagement_score), 0) > 0
+     ORDER BY engagement DESC
+     LIMIT $2`,
+    [days, n]
   );
-  const rows = res.rows;
-  if (!rows.length) return { evaluated: 0 };
-
-  const scores = rows.map((r) => Number(r.avg_engagement) || 0).filter((s) => s > 0).sort((a, b) => a - b);
-  const thresholdIdx = Math.floor(scores.length * (1 - topPercentile));
-  const topThreshold = scores.length ? scores[Math.min(thresholdIdx, scores.length - 1)] : 0;
-
-  let changed = 0;
-  for (const row of rows) {
-    if (row.status_override) continue;
-
-    const avgEngagement = Number(row.avg_engagement) || 0;
-    const isTop = avgEngagement > 0 && avgEngagement >= topThreshold;
-    const ageDays = Math.floor((Date.now() - new Date(row.first_seen_at).getTime()) / 86400000);
-    const daysSinceStatus = Math.floor((Date.now() - new Date(row.status_since).getTime()) / 86400000);
-
-    let nextStatus = row.status;
-    if (ageDays < windowDays) {
-      nextStatus = 'new';
-    } else if (isTop) {
-      if (row.status === 'new' || row.status === 'declining' || row.status === 'archived') {
-        nextStatus = 'rising';
-      } else if (row.status === 'rising' && daysSinceStatus >= sustainDays) {
-        nextStatus = 'trending';
-      }
-    } else if (row.status === 'trending' || row.status === 'rising') {
-      nextStatus = 'declining';
-    } else if (row.status === 'declining' && daysSinceStatus >= archiveSustainDays) {
-      nextStatus = 'archived';
+  return res.rows.map((r) => ({
+    id: r.id, slug: r.slug, title: r.display_name,
+    representativeStocks: r.representative_stocks,
+    stats: {
+      likes: Number(r.likes) || 0, dislikes: Number(r.dislikes) || 0,
+      comments: Number(r.comments) || 0, shares: Number(r.shares) || 0,
+      engagement: Number(r.engagement) || 0
     }
+  }));
+}
 
-    if (nextStatus !== row.status) {
-      await query(
-        'UPDATE topics SET status = $1, status_since = NOW(), updated_at = NOW() WHERE id = $2',
-        [nextStatus, row.id]
-      );
-      changed += 1;
-    }
+/**
+ * "Top chủ đề mới nổi" — Eligibility Gate + Net Reaction Gate + Hot Score (Velocity/Growth
+ * percentile rank trong nhóm đã qua Gate). Trả tối đa `limit`, có thể ít hơn nếu không đủ Topic
+ * qua Gate (Owner: "Không bắt buộc phải đủ 10 Topic nếu ít Topic đạt ngưỡng").
+ */
+async function getHotTopics(range, limit) {
+  const r = ['day', 'week', 'month'].indexOf(range) >= 0 ? range : 'week';
+  const days = rangeToDays(r);
+  const n = Math.min(Math.max(Number(limit) || 10, 1), 50);
+  const eligibilityCfg = await getConfig('hot_eligibility', DEFAULT_HOT_ELIGIBILITY);
+  const gate = Object.assign({}, DEFAULT_HOT_ELIGIBILITY[r], eligibilityCfg[r]);
+  const weights = await getConfig('hot_score_weights', DEFAULT_HOT_SCORE_WEIGHTS);
+
+  const candidates = await query(
+    `SELECT t.id, t.slug, t.display_name, t.representative_stocks
+     FROM topics t WHERE t.confirmed_at IS NOT NULL`
+  );
+  if (!candidates.rows.length) return [];
+
+  const evaluated = [];
+  for (const row of candidates.rows) {
+    const [cur, prev, recent, uniqueUsers] = await Promise.all([
+      getTopicWindowStats(row.id, days),
+      getTopicWindowStatsOffset(row.id, days, days),
+      getTopicWindowStatsOffset(row.id, gate.recent_window_days, 0),
+      getTopicUniqueUsers(row.id, days)
+    ]);
+    const netReaction = cur.likes - cur.dislikes;
+    const eligible =
+      cur.engagement >= gate.engagement_floor &&
+      uniqueUsers >= gate.user_floor &&
+      recent.engagement >= gate.recent_floor &&
+      netReaction >= 0;
+    if (!eligible) continue;
+
+    const growthBase = Math.max(prev.engagement, 1);
+    const growth = (cur.engagement - prev.engagement) / growthBase;
+    evaluated.push({
+      id: row.id, slug: row.slug, title: row.display_name, representativeStocks: row.representative_stocks,
+      stats: { likes: cur.likes, dislikes: cur.dislikes, comments: cur.comments, shares: cur.shares, engagement: cur.engagement },
+      recentEngagement: recent.engagement, growth, netReaction
+    });
   }
-  return { evaluated: rows.length, changed, topThreshold };
+  if (!evaluated.length) return [];
+
+  const recentValues = evaluated.map((e) => e.recentEngagement);
+  const growthValues = evaluated.map((e) => e.growth);
+  const netValues = evaluated.map((e) => e.netReaction);
+
+  evaluated.forEach((e) => {
+    const velocity = percentileRank(recentValues, e.recentEngagement);
+    const growthScore = percentileRank(growthValues, e.growth);
+    const netNorm = percentileRank(netValues, e.netReaction) / 100;
+    e.hotScore = (weights.velocity * velocity + weights.growth * growthScore) * (1 + weights.net_reaction_bonus * netNorm);
+  });
+
+  evaluated.sort((a, b) => b.hotScore - a.hotScore);
+  return evaluated.slice(0, n).map((e) => ({
+    id: e.id, slug: e.slug, title: e.title, representativeStocks: e.representativeStocks,
+    stats: e.stats, hotScore: e.hotScore
+  }));
 }
 
 /** Admin dashboard (Phase 3) — mọi biến công thức theo Topic, sort theo điểm giảm dần, filter
@@ -370,10 +500,10 @@ async function listTopicsAdmin(opts) {
   const range = ['day', 'week', 'month'].indexOf(opts.range) >= 0 ? opts.range : 'week';
   const days = rangeToDays(range);
   const limit = Math.min(Math.max(Number(opts.limit) || 50, 1), 200);
-  const hotCfg = await getConfig('hot_eligibility', DEFAULT_HOT);
 
   const res = await query(
-    `SELECT t.id, t.slug, t.display_name, t.status, t.status_override, t.first_seen_at, t.last_activity_at,
+    `SELECT t.id, t.slug, t.display_name, t.usage_count, t.confirmed_at, t.representative_stocks,
+            t.first_seen_at, t.last_activity_at,
             COALESCE(SUM(ds.posts_count), 0) AS posts, COALESCE(SUM(ds.likes_count), 0) AS likes,
             COALESCE(SUM(ds.dislikes_count), 0) AS dislikes, COALESCE(SUM(ds.comments_count), 0) AS comments,
             COALESCE(SUM(ds.shares_count), 0) AS shares, COALESCE(SUM(ds.sentiment_pos), 0) AS sentiment_pos,
@@ -398,47 +528,35 @@ async function listTopicsAdmin(opts) {
         sentimentPos: Number(r.sentiment_pos) || 0, sentimentNeg: Number(r.sentiment_neg) || 0,
         sentimentUnspecified: Number(r.sentiment_unspecified) || 0, engagement: Number(r.engagement) || 0
       };
-      const authorSentiment = authorSentimentFromStats(stats, hotCfg.min_sentiment_sample);
       return {
         id: r.id, slug: r.slug, displayName: r.display_name,
-        status: r.status_override || r.status, statusOverride: r.status_override,
+        usageCount: Number(r.usage_count) || 0, confirmed: !!r.confirmed_at, confirmedAt: r.confirmed_at,
+        representativeStocks: r.representative_stocks || { leader: null, stocks: [] },
         firstSeenAt: r.first_seen_at, lastActivityAt: r.last_activity_at,
         stats,
         reactionSentiment: reactionSentimentFromStats(stats),
-        authorSentiment,
-        hotEligible: stats.engagement >= hotCfg.min_engagement && authorSentiment.label === 'positive',
+        authorSentiment: authorSentimentFromStats(stats, 5),
         mappedStoryId: r.mapped_story_id
       };
     })
   };
 }
 
-async function setStatusOverride(topicId, status, adminUser) {
-  if (status != null && STATUSES.indexOf(status) < 0) {
-    throw AppError.badRequest('TOPIC_STATUS_INVALID', 'Trạng thái không hợp lệ');
-  }
-  const res = await query(
-    `UPDATE topics SET status_override = $1, status_override_by = $2, status_override_at = NOW(), updated_at = NOW()
-     WHERE id = $3 RETURNING id`,
-    [status || null, status ? (adminUser && adminUser.id) : null, topicId]
-  );
-  if (!res.rows[0]) throw AppError.notFound('Không tìm thấy Topic');
-  return { id: res.rows[0].id };
-}
-
 module.exports = {
   topicSlug,
   resolveOrCreateTopic,
   attachPostTopics,
+  confirmTopic,
+  confirmPendingTopics,
+  cleanupInactiveTopics,
   recomputeDailyStats,
   getTopicWindowStats,
+  getTopicUniqueUsers,
   authorSentimentFromStats,
   reactionSentimentFromStats,
-  trendingScore,
   getRepresentativeStocks,
-  hotEligibility,
-  evaluateAllLifecycles,
-  listTopicsAdmin,
-  setStatusOverride,
-  STATUSES
+  getStoredRepresentativeStocks,
+  getTrendingTopics,
+  getHotTopics,
+  listTopicsAdmin
 };

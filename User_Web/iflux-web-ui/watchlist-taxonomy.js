@@ -140,19 +140,9 @@ Note: requiresShell IfluxWatchlistTaxonomy
     return (GROUPS[source] || []).slice();
   }
 
-  function normalizeStoryStatus(raw, lifecycle) {
-    var s = String(raw || '').toLowerCase();
-    if (s === 'mature' || s === 'truong_thanh') return 'mature';
-    if (s === 'new' || s === 'moi') return 'new';
-    if (s === 'declining' || s === 'suy_yeu' || s === 'retired') return 'declining';
-    if (s === 'archived' || s === 'merged') return 'archived';
-    var lc = String(lifecycle || '').toLowerCase();
-    if (lc === 'archived') return 'archived';
-    if (lc === 'fading') return 'declining';
-    if (lc === 'peak' || lc === 'trending') return 'mature';
-    return 'new';
-  }
-
+  /* Owner 2026-10 — Story (bảng `stories`) là entity Câu chuyện duy nhất, thay Content Engine cũ
+     (content_chu_de*, đã retire Phase 0). Mã CP của Story đã được tính sẵn ở backend (Đại diện CP
+     từ Topic, Topic_Engine V2) — KHÔNG cần JOIN mapping riêng như trước. */
   function hydrateChuDeFromApi() {
     function unwrap(body) {
       if (!body) return {};
@@ -163,63 +153,38 @@ Note: requiresShell IfluxWatchlistTaxonomy
       return body.data != null ? body.data : body;
     }
 
-    /* Production User Web thường dataMode=sandbox → IfluxApi không fetch.
-       Chủ đề là SoT trên DB nên luôn đọc /api/content/* trực tiếp. */
-    function apiGet(path) {
-      if (global.IfluxApi && global.IfluxData && IfluxData.isApi && IfluxData.isApi() && global.IfluxApiConfig && IfluxApiConfig.isEnabled && IfluxApiConfig.isEnabled()) {
-        if (path.indexOf('/content/chu-de') === 0) {
-          return IfluxApi.listContentStories({ limit: 100 }).then(unwrap);
-        }
-        if (path.indexOf('/content/mappings') === 0) {
-          return IfluxApi.listContentMappings({ limit: 500 }).then(unwrap);
-        }
-      }
-      return fetch('/api' + path, { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
-        .then(function (res) {
-          return res.json().catch(function () { return {}; }).then(function (body) {
-            if (!res.ok) {
-              var e = body && body.error;
-              throw new Error((e && e.message) || body.message || ('HTTP ' + res.status));
-            }
-            return unwrap(body);
-          });
+    return fetch('/api/community/stories?sort=latest&limit=100', { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          if (!res.ok) {
+            var e = body && body.error;
+            throw new Error((e && e.message) || body.message || ('HTTP ' + res.status));
+          }
+          return unwrap(body);
         });
-    }
-
-    return Promise.all([
-      apiGet('/content/chu-de?limit=100'),
-      apiGet('/content/mappings?limit=500')
-    ]).then(function (parts) {
-      var list = parts[0]['chu-de'] || parts[0].stories || [];
-      var maps = parts[1].mappings || [];
-      var byId = {};
-      maps.forEach(function (m) {
-        if (m.status && m.status !== 'active') return;
-        var id = m.chu_de_id || m.story_id;
-        if (!id) return;
-        if (!byId[id]) byId[id] = [];
-        var tk = String(m.ticker || '').toUpperCase();
-        if (tk && byId[id].indexOf(tk) < 0) byId[id].push(tk);
+      })
+      .then(function (data) {
+        var list = (data && data.items) || [];
+        if (!list.length) return GROUPS['chu-de'].slice();
+        GROUPS['chu-de'] = list.map(function (s) {
+          return {
+            id: s.slug || s.id,
+            slug: s.slug || s.id,
+            name: s.title,
+            tickers: (s.stock_tags || []).slice(),
+            status: s.status || 'active',
+            lifecycle: '',
+            normalizedStatus: 'mature',
+            /* Owner 2026-10 (Phase 6) — Story hiển thị thẳng Like/Dislike/Comment/Share của
+               Topic gốc (không còn "Đồng tình" riêng) — xem group-page.js renderHeader. */
+            stats: s.stats || null
+          };
+        });
+        GROUPS.story = GROUPS['chu-de'];
+        return GROUPS['chu-de'].slice();
+      }).catch(function () {
+        return GROUPS['chu-de'].slice();
       });
-      if (!list.length) return GROUPS['chu-de'].slice();
-      GROUPS['chu-de'] = list.filter(function (s) {
-        return s.status !== 'archived' && s.status !== 'retired';
-      }).map(function (s) {
-        return {
-          id: s.slug || s.id,
-          slug: s.slug || s.id,
-          name: s.label || s.name,
-          tickers: byId[s.id] || [],
-          status: s.status || '',
-          lifecycle: s.lifecycle || '',
-          normalizedStatus: normalizeStoryStatus(s.status, s.lifecycle)
-        };
-      });
-      GROUPS.story = GROUPS['chu-de'];
-      return GROUPS['chu-de'].slice();
-    }).catch(function () {
-      return GROUPS['chu-de'].slice();
-    });
   }
 
   function slugifyLocal(text) {

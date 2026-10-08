@@ -19,7 +19,8 @@ const createPostSchema = z.object({
       id: z.string(),
       label: z.string().optional().nullable()
     })).optional().nullable(),
-    visibility: z.string().optional().nullable()
+    visibility: z.string().optional().nullable(),
+    sentiment: z.string().optional().nullable()
   })
 });
 
