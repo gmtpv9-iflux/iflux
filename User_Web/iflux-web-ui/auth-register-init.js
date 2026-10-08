@@ -125,7 +125,7 @@ function getEffectiveRefCode() {
 })();
 
 function getRegMode() {
-  var active = document.querySelector('[data-reg-tab].active');
+  var active = document.querySelector('[data-reg-tab].is-active');
   return (active && active.getAttribute('data-reg-tab')) || 'email';
 }
 
@@ -170,7 +170,7 @@ function restoreRegistrationDraft() {
   if (draft.terms_accepted) document.getElementById('reg-terms').checked = true;
   if (draft.registration_mode === 'phone') {
     document.querySelectorAll('[data-reg-tab]').forEach(function (t) {
-      t.classList.toggle('active', t.getAttribute('data-reg-tab') === 'phone');
+      t.classList.toggle('is-active', t.getAttribute('data-reg-tab') === 'phone');
     });
     document.getElementById('reg-panel-email').style.display = 'none';
     document.getElementById('reg-panel-phone').style.display = '';
@@ -186,8 +186,8 @@ restoreRegistrationDraft();
 
 document.querySelectorAll('[data-reg-tab]').forEach(function (tab) {
   tab.addEventListener('click', function () {
-    document.querySelectorAll('[data-reg-tab]').forEach(function (t) { t.classList.remove('active'); });
-    tab.classList.add('active');
+    document.querySelectorAll('[data-reg-tab]').forEach(function (t) { t.classList.remove('is-active'); });
+    tab.classList.add('is-active');
     var mode = tab.getAttribute('data-reg-tab');
     document.getElementById('reg-panel-email').style.display = mode === 'email' ? '' : 'none';
     document.getElementById('reg-panel-phone').style.display = mode === 'phone' ? '' : 'none';

@@ -6,6 +6,7 @@
   <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
 <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.css" />
+  <link rel="stylesheet" href="/design_system/04_components/15_tabs/tabs.css" />
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
 </head>
 <body data-ix-view-api="/admin/guides/patterns_charts">
@@ -54,18 +55,18 @@
                 <div class="ix-card-title">Block Top 10 mạnh nhất thị trường</div>
                 <div class="ix-card-subtitle" data-ix-top10-subtitle>Ngành · cường độ hiệu suất theo ngày (%)</div>
               </div>
-              <div class="ix-tabs" data-ix-top10-range>
-                <button type="button" class="ix-tab active" data-days="7">1 tuần</button>
-                <button type="button" class="ix-tab" data-days="30">1 tháng</button>
-                <button type="button" class="ix-tab" data-days="90">3 tháng</button>
-                <button type="button" class="ix-tab" data-days="180">6 tháng</button>
+              <div class="ifx-tabs ifx-tabs-segmented" data-ix-top10-range>
+                <button type="button" class="ifx-tab is-active" data-days="7">1 tuần</button>
+                <button type="button" class="ifx-tab" data-days="30">1 tháng</button>
+                <button type="button" class="ifx-tab" data-days="90">3 tháng</button>
+                <button type="button" class="ifx-tab" data-days="180">6 tháng</button>
               </div>
             </div>
             <div class="ix-card-body" style="padding-top:12px">
-              <div class="ix-tabs ix-mb-24" data-ix-top10-entity>
-                <button type="button" class="ix-tab active" data-type="sector">Ngành</button>
-                <button type="button" class="ix-tab" data-type="ecosystem">Họ CP</button>
-                <button type="button" class="ix-tab" data-type="story">Chủ đề</button>
+              <div class="ifx-tabs ifx-tabs-segmented ix-mb-24" data-ix-top10-entity>
+                <button type="button" class="ifx-tab is-active" data-type="sector">Ngành</button>
+                <button type="button" class="ifx-tab" data-type="ecosystem">Họ CP</button>
+                <button type="button" class="ifx-tab" data-type="story">Chủ đề</button>
               </div>
               <div class="ix-top10-market" data-ix-top10-market></div>
             </div>

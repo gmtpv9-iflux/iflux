@@ -1,8 +1,8 @@
 /* Phase A extracted from auth/forgot.html */
 document.querySelectorAll('[data-forgot-tab]').forEach(function (tab) {
   tab.addEventListener('click', function () {
-    document.querySelectorAll('#forgot-tabs .ix-tab').forEach(function (t) { t.classList.remove('active'); });
-    tab.classList.add('active');
+    document.querySelectorAll('#forgot-tabs .ifx-tab').forEach(function (t) { t.classList.remove('is-active'); });
+    tab.classList.add('is-active');
     var mode = tab.getAttribute('data-forgot-tab');
     document.getElementById('forgot-email').style.display = mode === 'email' ? '' : 'none';
     document.getElementById('forgot-phone').style.display = mode === 'phone' ? '' : 'none';

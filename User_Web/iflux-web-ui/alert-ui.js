@@ -85,9 +85,9 @@
         '<div class="ifx-alert-modal__head">' +
           '<div class="ix-modal-title">Cảnh báo</div>' +
           '<div class="ix-modal-sub ifx-alert-modal__sub" data-ifx-alert-sub>Mã —</div>' +
-          '<div class="ix-tabs ifx-alert-tabs" data-ifx-alert-tabs>' +
-            '<button type="button" class="ix-tab active" data-ifx-alert-tab="rank">Thứ hạng nhóm</button>' +
-            '<button type="button" class="ix-tab" data-ifx-alert-tab="sr">Hỗ trợ / KC</button>' +
+          '<div class="ifx-tabs ifx-tabs-segmented ifx-alert-tabs" data-ifx-alert-tabs>' +
+            '<button type="button" class="ifx-tab is-active" data-ifx-alert-tab="rank">Thứ hạng nhóm</button>' +
+            '<button type="button" class="ifx-tab" data-ifx-alert-tab="sr">Hỗ trợ / KC</button>' +
           '</div>' +
         '</div>' +
         '<div class="ifx-alert-modal__body">' +
@@ -164,7 +164,7 @@
   function switchTab(name) {
     var modal = ensureModal();
     modal.querySelectorAll('[data-ifx-alert-tab]').forEach(function (t) {
-      t.classList.toggle('active', t.getAttribute('data-ifx-alert-tab') === name);
+      t.classList.toggle('is-active', t.getAttribute('data-ifx-alert-tab') === name);
     });
     modal.querySelectorAll('[data-ifx-alert-panel]').forEach(function (p) {
       p.hidden = p.getAttribute('data-ifx-alert-panel') !== name;

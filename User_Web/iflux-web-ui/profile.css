@@ -596,35 +596,6 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   }
 }
 
-/* Hồ sơ — sub-tabs */
-.ifx-mine-subtabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ifx-space-8);
-  margin-bottom: 20px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--ix-border);
-}
-.ifx-mine-subtab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ifx-inline-sm);
-  padding: var(--ifx-space-8) 14px;
-  border: none;
-  border-radius: var(--ix-radius);
-  background: transparent;
-  color: var(--ix-text-muted);
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-semibold);
-  font-family: var(--ifx-font-primary);
-  cursor: pointer;
-  transition: background .15s, color .15s;
-}
-.ifx-mine-subtab:hover { color: var(--ix-text-primary); background: var(--ix-bg-input); }
-.ifx-mine-subtab.active {
-  color: var(--ix-accent);
-  background: rgba(105, 108, 255, .1);
-}
 .ifx-mine-panel { display: none; }
 .ifx-mine-panel.active { display: block; }
 .ifx-mine-grid {

@@ -637,10 +637,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     --ix-top10-rw: 120px;
     --ix-top10-yw: 44px;
   }
-  .ifx-top10-wgt__range .ix-tab {
-    font-size: var(--ifx-font-size-10);
-    padding: 4px 8px;
-  }
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="third"],
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="half"],
   .ifx-dash-grid__stack > .ifx-widget[data-ifx-widget-width="twothirds"] {

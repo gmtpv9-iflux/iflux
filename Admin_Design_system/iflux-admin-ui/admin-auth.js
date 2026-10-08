@@ -306,8 +306,8 @@
 
     function activateTab(name) {
       var isPw = name === 'password';
-      if (tabGmail) tabGmail.classList.toggle('active', !isPw);
-      if (tabPassword) tabPassword.classList.toggle('active', isPw);
+      if (tabGmail) tabGmail.classList.toggle('is-active', !isPw);
+      if (tabPassword) tabPassword.classList.toggle('is-active', isPw);
       if (panelGmail) panelGmail.style.display = isPw ? 'none' : '';
       if (panelPassword) panelPassword.style.display = isPw ? '' : 'none';
     }
