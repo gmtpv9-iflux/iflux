@@ -23,7 +23,10 @@ const MAX_HASHTAGS = 5;
 const MAX_ENTITY_REFS = 10;
 const POST_TYPES = ['status', 'stock_view', 'share', 'reply_as_post'];
 const SOURCE_TYPES = ['news', 'story', 'post', 'chart'];
-const ENTITY_REF_TYPES = ['stock', 'sector', 'family', 'story'];
+/* Owner 2026-10: bổ sung 'market_index' (Thị trường/Sàn/Chỉ số — VN-Index, HNX-Index, UPCoM-Index)
+   vào Entity Mention (II.1) — chỉ là tag trên Post, không cần trang/thread riêng (chưa đăng ký vào
+   Thread Target Registry IA-001). */
+const ENTITY_REF_TYPES = ['stock', 'sector', 'family', 'story', 'market_index'];
 
 function clampLimit(n, fallback) {
   const v = Number(n);
