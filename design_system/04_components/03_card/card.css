@@ -9,6 +9,8 @@
   box-shadow: var(--ifx-shadow-card);
 }
 .ifx-card-plain { box-shadow: none; }
+/* Bỏ hẳn khung (nền/viền/đổ bóng) — nội dung nằm thẳng trên nền trang, không phải 1 "hộp". */
+.ifx-card-flush { background: transparent; border: none; box-shadow: none; }
 /* Viền nhấn trên — màu/gradient đặt qua --ifx-card-accent (mặc định màu chính). */
 .ifx-card-accent { position: relative; overflow: hidden; }
 .ifx-card-accent::before {

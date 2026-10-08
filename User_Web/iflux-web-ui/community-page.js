@@ -219,7 +219,8 @@
       ? '<div class="ifx-com2-hotcarousel">' + state.hotTopics.map(hotTopicCarouselItemHtml).join('') + '</div>'
       : '<p class="ifx-com2-empty">Chưa có chủ đề mới nổi trong khoảng thời gian này.</p>';
     return (
-      '<div class="ifx-card" data-ifx-com2-hot>' +
+      /* Owner: bỏ khung — nằm thẳng trên nền trang, không phải 1 card riêng. */
+      '<div class="ifx-card ifx-card-flush" data-ifx-com2-hot>' +
         sectionHeaderHtml('flame', 'Top chủ đề mới nổi', { noViewAll: true }) +
         '<div class="ifx-card-body">' +
           '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
@@ -269,6 +270,9 @@
           '<div class="ifx-inline-sm">' + icon('users', 'ifx-com2-brand__icon') + '</div>' +
         '</header>' +
       '</div>' +
+
+      /* Owner: giao diện Widget (giống Tổng quan thị trường), ở Sidebar trái — không phải đầu main-content. */
+      trendingTopicsCardHtml() +
 
       '<div class="ifx-card">' +
         sectionHeaderHtml('flame', 'Mã được thảo luận nhiều') +
@@ -953,7 +957,7 @@
   function render(frame) {
     mainEl = frame.mainContent;
     mainEl.innerHTML =
-      trendingTopicsCardHtml() + hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
+      hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
       '<div data-ifx-com2-feedlist>' + feedHtml() + '</div>';
     if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
     if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
