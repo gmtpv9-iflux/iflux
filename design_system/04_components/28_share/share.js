@@ -23,14 +23,21 @@
     return global.IfluxInsightShareStore || global.IfluxShareFoundation || null;
   }
 
-  /** P7-DQ-01 — Guest không Share; yêu cầu Login. */
-  function requireShareLogin() {
+  /**
+   * P7-DQ-01 (Owner đổi quyết định 2026-10 — supersede): Guest vẫn Share được, chỉ KHÔNG
+   * có affiliate ref (cần Self Public ID của người đăng nhập). Consumer khai báo
+   * opts.allowGuest=true khi nghiệp vụ của họ (vd bài viết Tin tức/Cộng đồng) cho khách share.
+   * Không khai báo (mặc định) = giữ đúng hành vi P7-DQ-01 cũ, login required.
+   */
+  function requireShareLogin(opts) {
+    opts = opts || {};
     if (global.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn()) {
       var self = shareFoundation() && shareFoundation().getOutgoingAffiliateRef
         ? shareFoundation().getOutgoingAffiliateRef()
         : '';
       if (self) return true;
     }
+    if (opts.allowGuest) return true;
     if (global.IfluxAuth && IfluxAuth.requireAuth) {
       IfluxAuth.requireAuth();
       return false;
@@ -103,9 +110,10 @@
    */
   function executeShare(opts) {
     opts = opts || {};
-    if (!requireShareLogin()) {
+    if (!requireShareLogin(opts)) {
       return Promise.resolve({ ok: false, reason: 'SHARE_LOGIN_REQUIRED' });
     }
+    var isGuest = !(global.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn());
     var SF = shareFoundation();
     if (!SF || !SF.buildShareUrl) {
       if (global.ixToast) ixToast('Chức năng chia sẻ chưa sẵn sàng.', 'danger');
@@ -120,7 +128,8 @@
         image: opts.image,
         entityType: opts.entityType,
         entityId: opts.entityId,
-        affiliate: opts.affiliate !== false
+        /* Khách (allowGuest) không có Self Public ID → không decorate affiliate ref */
+        affiliate: isGuest ? false : (opts.affiliate !== false)
       });
     } catch (err) {
       if (err && err.code === 'SHARE_LOGIN_REQUIRED') {

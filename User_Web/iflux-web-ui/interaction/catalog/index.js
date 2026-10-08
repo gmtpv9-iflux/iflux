@@ -168,12 +168,13 @@
     var canonical = resolveCommunityCanonical(target);
     if (!canonical) return '';
     if (SF && SF.buildShareUrl) {
+      var isGuest = !(global.IfluxAuth && IfluxAuth.isLoggedIn && IfluxAuth.isLoggedIn());
       try {
         return SF.buildShareUrl({
           entityType: 'community_post',
           entityId: target && (target.id || target.postId),
           canonicalUrl: canonical,
-          affiliate: true
+          affiliate: !isGuest
         }).shareUrl || canonical;
       } catch (err) {
         return canonical;
@@ -182,15 +183,14 @@
     return canonical;
   }
 
+  /**
+   * Chia sẻ — NGOẠI LỆ DUY NHẤT trong 4 tương tác: khách vẫn chia sẻ được link bài viết,
+   * không cần đăng nhập (Owner chốt 2026-10). Một luồng gate duy nhất cho Share: cờ
+   * allowGuest truyền vào Foundation executeShare (design_system/28_share/share.js) — không
+   * còn kiểm tra LoginRequired song song ở permission.js (đã dọn, tránh 2 nơi quyết định
+   * cùng 1 policy lệch nhau).
+   */
   function handleShareUrlClick(target) {
-    var r = perm() ? perm().resolve({ action: 'share_url', target: target }) : 'Allow';
-    if (r === 'LoginRequired') {
-      if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
-      else if (global.IfxToast) IfxToast.show('Đăng nhập để chia sẻ link của bạn.', 'warning');
-      return;
-    }
-    if (r !== 'Allow') return;
-
     var Share = global.IfluxShareAction || global.IfluxInsightShare;
     var canonical = resolveCommunityCanonical(target);
     if (!canonical) {
@@ -205,11 +205,12 @@
           canonicalUrl: canonical,
           entityType: 'community_post',
           entityId: target && (target.id || target.postId),
-          title: (target && (target.title || target.name)) || ''
+          title: (target && (target.title || target.name)) || '',
+          allowGuest: true
         });
         return;
       }
-      /* Fallback nếu Foundation UI chưa load — vẫn qua Store Self-only */
+      /* Fallback nếu Foundation UI chưa load — vẫn qua Store, khách = không affiliate ref */
       var SF = shareFoundation();
       var url = buildArticleShareUrl(target, SF);
       if (url) copyShareUrl(url);
