@@ -412,10 +412,10 @@
       description: 'Danh sách mã đang theo dõi',
       tier: 'free',
       kind: 'list',
-      /* scope:'sidebar' — Watchlist thuộc Sidebar trái trang Cá nhân (Admin đặt vị trí mặc định
-         qua SIDEBAR_DEFAULT dưới), KHÔNG phải widget tự chọn cho lưới Dashboard giữa trang (trước
-         đây thiếu field này nên lọt vào picker "Thêm tiện ích" của Dashboard, gây hiện trùng 2 nơi
-         nếu user tự thêm — xem SIDEBAR_DEFAULT). */
+      /* Trang /ca-nhan KHÔNG còn đặt Watchlist mặc định ở Sidebar nữa (Owner chốt 2026-10:
+         Tùy chỉnh/Dashboard đã có Watchlist, Sidebar chỉ còn là Widget Host trung lập) — giữ
+         entry này cho các nơi khác (nếu có) dùng mountWidgetBody theo widget_type, không còn
+         nằm trong SIDEBAR_DEFAULT. */
       scope: 'sidebar',
       popularity: 100,
       defaultConfig: { width: 'full' },
@@ -453,15 +453,14 @@
 
   var SIDEBAR_DEFAULT = [
     { widget_type: 'WGT-PRF-001', scope: 'sidebar', column: 'main', position: 0, config: {} },
-    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} },
-    { widget_type: 'WGT-WAT-001', scope: 'sidebar', column: 'main', position: 2, config: { width: 'full' } }
+    { widget_type: 'WGT-PRF-002', scope: 'sidebar', column: 'main', position: 1, config: {} }
   ];
 
-  /* Watchlist (WGT-WAT-001) nay đã vào ĐÚNG hệ Admin Widget Placement — mặc định ở Sidebar trái
-     (SIDEBAR_DEFAULT trên), user vẫn có thể gỡ/kéo đi nơi khác như mọi widget sidebar khác (xem
-     dashboard-engine.js renderSidebarStack). Trước 2026-10 widget này bị hardcode CỐ ĐỊNH ngoài
-     hệ layout trong widgets/home-page/index.js — đã gỡ bỏ, dọn theo yêu cầu Owner thống nhất 1
-     nguồn Template/DS duy nhất cho mọi Widget dù hiển thị ở Dashboard tự sắp xếp hay trang khác. */
+  /* Watchlist (WGT-WAT-001) KHÔNG còn mặc định ở Sidebar trang Cá nhân (Owner chốt 2026-10:
+     Tùy chỉnh/Dashboard đã có Watchlist, Sidebar chỉ còn là Widget Host trung lập — không tự
+     thêm, không có tiện ích nào tự khoá gỡ ngay). Trước đó từng hardcode CỐ ĐỊNH ngoài hệ layout
+     (widgets/home-page/index.js), rồi có giai đoạn ngắn làm default trong SIDEBAR_DEFAULT (xem
+     dashboard-engine.js retireWatchlistFromSidebar để dọn layout đã lưu từ giai đoạn đó). */
   var DASHBOARD_DEFAULT = [
     { widget_type: 'WGT-MKT-001', scope: 'dashboard', column: 'grid', position: 0, config: { width: 'half' } },
     { widget_type: 'WGT-MKT-007', scope: 'dashboard', column: 'grid', position: 1, config: { width: 'half', metric: 'volume' } }
