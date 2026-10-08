@@ -31,7 +31,7 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
   { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=r20261009c' },
-  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261003j' },
+  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261009d' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=r20260928n' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=r20260928q' },
   { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },

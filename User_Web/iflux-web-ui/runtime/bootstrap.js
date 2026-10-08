@@ -29,13 +29,13 @@ import { pageKeyFromPath } from './page-keys.js?v=r20261003m';
 import { installSoftNavigation } from './soft-navigation.js?v=r20261003e';
 import { loadStyles } from './legacy-bridge.js?v=r20261002communityfix';
 
-var VER = '?v=r20261002a';
+var VER = '?v=r20261009d';
 var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
-var PF = '?v=r20261003c';
+var PF = '?v=r20261009d';
 
 var MANIFEST_MAP = {
-  home: function () { return import('../pages/home.manifest.js?v=r20261002d'); },
+  home: function () { return import('../pages/home.manifest.js?v=r20261009d'); },
   flow: function () { return import('../pages/flow.manifest.js' + PF); },
   news: function () { return import('../pages/news.manifest.js' + PF); },
   community: function () { return import('../pages/community.manifest.js' + PF); },

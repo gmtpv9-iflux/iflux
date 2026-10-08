@@ -14,7 +14,7 @@
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
 
 var A = '/User_Web/iflux-web-ui/';
-var V = 'r20261003i';
+var V = 'r20261009d';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 

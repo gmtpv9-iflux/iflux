@@ -29,7 +29,7 @@ function applyConsumerLinks(root) {
 }
 
 var CORE_TIERS = [
-  [ASSET + 'loyalty-page.js']
+  [ASSET + 'loyalty-page.js?v=r20261009d']
 ];
 
 var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>

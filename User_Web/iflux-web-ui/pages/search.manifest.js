@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/search-page/index.js?v=r20261002a',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/search-page/index.js?v=r20261009d',
     css: [
       '/User_Web/iflux-web-ui/hub.css?v=r20261009c',
       '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n'
