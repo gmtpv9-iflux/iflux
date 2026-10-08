@@ -75,7 +75,6 @@ body.ifx-user-web *::-webkit-scrollbar {
   flex-direction: column;
   background: var(--ix-bg-body);
   font-family: var(--ifx-font-primary);
-  overflow-x: hidden;
 }
 .ifx-main {
   /* Bề rộng / căn giữa / lề ngang = container Foundation DS (.ifx-container.ifx-container-max). Ở đây chỉ chừa chỗ cho header / bottom menu. */
