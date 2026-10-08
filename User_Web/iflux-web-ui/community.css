@@ -267,8 +267,9 @@
   text-decoration: none;
 }
 .ifx-com2-repost:hover { border-color: var(--ifx-action-primary); }
-/* Ảnh đại diện bài gốc — Phase 0 chưa có cover thật nên dùng khối gradient + icon làm chỗ
-   trống (đổi sang <img src="..."> thật khi Phase 1 có media). */
+/* Ảnh đại diện bài gốc (post_type=share, source_type=news) — <img> thật hydrate từ
+   source_preview.cover_url (community-posts.service.js POST_COLS). Gradient + icon chỉ còn làm
+   fallback khi bài Tin tức không có cover. */
 .ifx-com2-repost__media {
   flex: 0 0 96px;
   width: 96px;
@@ -280,6 +281,12 @@
   justify-content: center;
   color: var(--ifx-action-primary);
   font-size: 28px;
+}
+.ifx-com2-repost__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--ifx-radius-sm);
 }
 .ifx-com2-repost__body { flex: 1 1 auto; min-width: 0; }
 .ifx-com2-repost__meta {
@@ -421,3 +428,31 @@
   display: block;
   margin: var(--ifx-space-16) auto 0;
 }
+
+/* ── Gợi ý hashtag trong Composer (lazy-load khi user gõ — xem community-page.js bindHashtagInput) ── */
+.ifx-com2-hashtag-suggest {
+  position: absolute;
+  z-index: 5;
+  left: 0; right: 0;
+  margin-top: 4px;
+  background: var(--ifx-bg-surface);
+  border: 1px solid var(--ifx-border-default);
+  border-radius: var(--ifx-radius-md);
+  box-shadow: var(--ifx-shadow-card);
+  max-height: 220px;
+  overflow-y: auto;
+}
+.ifx-com2-suggest-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--ifx-space-8) var(--ifx-space-12);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--ifx-border-subtle);
+  color: var(--ifx-text-primary);
+  font-size: var(--ifx-font-size-sm);
+  cursor: pointer;
+}
+.ifx-com2-suggest-item:last-child { border-bottom: none; }
+.ifx-com2-suggest-item:hover { background: var(--ifx-bg-hover); }

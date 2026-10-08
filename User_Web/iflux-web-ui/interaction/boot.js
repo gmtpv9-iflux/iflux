@@ -18,7 +18,8 @@
     BASE + 'interaction-store.js' + V,
     BASE + 'permission.js' + V,
     BASE + 'catalog/index.js' + V,
-    BASE + 'interaction-host.js' + V
+    BASE + 'interaction-host.js' + V,
+    BASE + 'repost-modal.js' + V
   ];
 
   /* Interactive thêm Resolver (presentation) */

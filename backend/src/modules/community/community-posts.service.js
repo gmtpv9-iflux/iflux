@@ -16,10 +16,14 @@ const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 
 const MAX_LIMIT = 50;
-const MAX_CONTENT_LEN = 4000;
+/* ~1000 từ tiếng Việt (Owner chốt) — trung bình 5-6 ký tự/từ kể cả khoảng trắng, chừa biên an toàn. */
+const MAX_CONTENT_LEN = 6000;
 const MAX_STOCK_TAGS = 10;
+const MAX_HASHTAGS = 5;
+const MAX_ENTITY_REFS = 10;
 const POST_TYPES = ['status', 'stock_view', 'share', 'reply_as_post'];
 const SOURCE_TYPES = ['news', 'story', 'post', 'chart'];
+const ENTITY_REF_TYPES = ['stock', 'sector', 'family', 'story'];
 
 function clampLimit(n, fallback) {
   const v = Number(n);
@@ -40,11 +44,62 @@ function normalizeStockTags(raw) {
   return out;
 }
 
+/* Hashtag: chữ thường, không dấu #, chỉ [a-z0-9_] + chữ có dấu tiếng Việt (giữ nguyên để hiển thị
+   đúng tên chủ đề) — KHÔNG ép ASCII-only vì "chủ đề" tiếng Việt cần giữ dấu để đọc được. */
+function normalizeHashtags(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  const seen = {};
+  for (let i = 0; i < raw.length && out.length < MAX_HASHTAGS; i++) {
+    let t = String(raw[i] || '').trim().replace(/^#+/, '').toLowerCase();
+    t = t.replace(/\s+/g, '').slice(0, 60);
+    if (!t || seen[t]) continue;
+    seen[t] = true;
+    out.push(t);
+  }
+  return out;
+}
+
+function normalizeEntityRefs(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  const seen = {};
+  for (let i = 0; i < raw.length && out.length < MAX_ENTITY_REFS; i++) {
+    const r = raw[i];
+    if (!r || typeof r !== 'object') continue;
+    const type = ENTITY_REF_TYPES.indexOf(r.type) >= 0 ? r.type : null;
+    const id = String(r.id || '').trim();
+    if (!type || !id) continue;
+    const key = type + ':' + id;
+    if (seen[key]) continue;
+    seen[key] = true;
+    out.push({ type: type, id: id, label: String(r.label || id).slice(0, 200) });
+  }
+  return out;
+}
+
 const AUTHOR_COLS = `
   u.id AS author_id,
   u.display_name AS author_display_name,
   u.nickname AS author_nickname,
   u.subscription_tier AS author_tier
+`;
+
+/* Post cơ bản + hashtags/entity_refs (Owner yêu cầu 2026-10: Compose đủ khả năng gắn hashtag +
+   nhiều loại Thực thể) + source_preview — hydrate thật title/ảnh bài Tin tức khi source_type='news'
+   (trước đây FE phải tự mock vì chỉ có source_id trần, không đủ hiển thị). Không JOIN khi
+   source_type khác 'news' (CASE WHEN tránh query thừa). */
+const POST_COLS = `
+  p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.hashtags,
+  p.entity_refs, p.visibility, p.created_at, p.updated_at,
+  (CASE WHEN p.source_type = 'news' THEN (
+    SELECT jsonb_build_object(
+      'title', np.payload->>'title',
+      'slug', np.payload->>'slug',
+      'cover_url', COALESCE(np.payload->'cover'->'variants'->>'cover_thumb', np.payload->'cover'->>'url')
+    )
+    FROM news_posts np WHERE np.id::text = p.source_id LIMIT 1
+  ) ELSE NULL END) AS source_preview
 `;
 
 function rowToPost(row) {
@@ -60,7 +115,10 @@ function rowToPost(row) {
     post_type: row.post_type,
     source_type: row.source_type || null,
     source_id: row.source_id || null,
+    source_preview: row.source_preview || null,
     stock_tags: row.stock_tags || [],
+    hashtags: row.hashtags || [],
+    entity_refs: row.entity_refs || [],
     visibility: row.visibility,
     stats: {
       likes: Number(row.likes_count) || 0,
@@ -107,6 +165,8 @@ async function createPost(user, input) {
   const sourceType = input && input.source_type && SOURCE_TYPES.indexOf(input.source_type) >= 0 ? input.source_type : null;
   const sourceId = sourceType ? String((input && input.source_id) || '').trim() || null : null;
   const stockTags = normalizeStockTags(input && input.stock_tags);
+  const hashtags = normalizeHashtags(input && input.hashtags);
+  const entityRefs = normalizeEntityRefs(input && input.entity_refs);
   const visibility = (input && input.visibility) === 'followers' ? 'followers' : 'public';
 
   if (!content && !sourceType) {
@@ -122,20 +182,25 @@ async function createPost(user, input) {
     const origin = await query(`SELECT id FROM social_posts WHERE id = $1 AND status = 'published'`, [sourceId]);
     if (!origin.rows[0]) throw AppError.notFound('Không tìm thấy bài viết được chia sẻ');
   }
+  /* Đăng lại Tin tức (nút "Đăng lại" trên trang bài viết) — xác thực bài viết thật tồn tại trước
+     khi lưu source_id, để source_preview (POST_COLS) luôn hydrate được, không trỏ tới bài đã xoá. */
+  if (sourceType === 'news') {
+    const origin = await query(`SELECT id FROM news_posts WHERE id = $1 LIMIT 1`, [sourceId]);
+    if (!origin.rows[0]) throw AppError.notFound('Không tìm thấy bài viết Tin tức được chia sẻ');
+  }
 
   const res = await query(
-    `INSERT INTO social_posts (author_id, content, post_type, source_type, source_id, stock_tags, visibility)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO social_posts (author_id, content, post_type, source_type, source_id, stock_tags, hashtags, entity_refs, visibility)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING id`,
-    [authorId, content, postType, sourceType, sourceId, stockTags, visibility]
+    [authorId, content, postType, sourceType, sourceId, stockTags, hashtags, JSON.stringify(entityRefs), visibility]
   );
   return getPostById(res.rows[0].id, user);
 }
 
 async function getPostById(id, viewer) {
   const res = await query(
-    `SELECT p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.visibility,
-            p.created_at, p.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
+    `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
      FROM social_posts p
      JOIN users u ON u.id = p.author_id
      WHERE p.id = $1 AND p.status = 'published'`,
@@ -202,8 +267,7 @@ async function getFeed(opts, viewer) {
     }
     const params = [viewer.id];
     let sql =
-      `SELECT p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.visibility,
-              p.created_at, p.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
+      `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
        FROM social_posts p
        JOIN users u ON u.id = p.author_id
        WHERE p.status = 'published' AND p.visibility = 'public'
@@ -219,8 +283,7 @@ async function getFeed(opts, viewer) {
 
   const params = [];
   let sql =
-    `SELECT p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.visibility,
-            p.created_at, p.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
+    `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
      FROM social_posts p
      JOIN users u ON u.id = p.author_id
      WHERE p.status = 'published' AND p.visibility = 'public'`;
@@ -240,8 +303,7 @@ async function getUserTimeline(authorId, opts, viewer) {
   const isOwner = !!(viewer && viewer.id && String(viewer.id) === String(authorId));
   const params = [authorId];
   let sql =
-    `SELECT p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.visibility,
-            p.created_at, p.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
+    `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
      FROM social_posts p
      JOIN users u ON u.id = p.author_id
      WHERE p.status = 'published' AND p.author_id = $1`;
@@ -261,8 +323,7 @@ async function getStockPosts(ticker, opts) {
   if (!tk) throw AppError.badRequest('STOCK_TICKER_REQUIRED', 'Thiếu mã cổ phiếu');
   const params = [tk];
   let sql =
-    `SELECT p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.visibility,
-            p.created_at, p.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
+    `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
      FROM social_posts p
      JOIN users u ON u.id = p.author_id
      WHERE p.status = 'published' AND p.visibility = 'public' AND p.stock_tags @> ARRAY[$1]::text[]`;
@@ -273,6 +334,51 @@ async function getStockPosts(ticker, opts) {
   return paginate(res.rows, limit);
 }
 
+/**
+ * Gợi ý khi user gõ vào ô hashtag (Compose) — chỉ gọi khi user bấm vào ô (lazy, không tải sẵn —
+ * Owner yêu cầu nhẹ tải). Hợp nhất 2 nguồn, KHÔNG tạo thực thể hashtag riêng (SoT §4.1 — cấm
+ * nhân bản thực thể): (a) Story đang có (title khớp — chủ đề user/Admin đã tạo chính thức),
+ * (b) hashtag tự do đã dùng trên Post khác trong 30 ngày gần nhất, xếp theo tần suất — "cơ sở xác
+ * định chủ đề đang hot" đúng như Owner mô tả. Giới hạn 8 gợi ý, không phân trang (gõ thêm chữ để
+ * lọc tiếp, không cần "xem thêm").
+ */
+async function getTrendingSuggestions(q) {
+  const term = String(q || '').trim().toLowerCase().replace(/^#+/, '');
+  if (!term) return { items: [] };
+  const like = '%' + term.replace(/[%_]/g, '\\$&') + '%';
+
+  const storyRes = await query(
+    `SELECT id, title FROM stories
+     WHERE status = 'active' AND title ILIKE $1
+     ORDER BY created_at DESC LIMIT 5`,
+    [like]
+  );
+  const hashtagRes = await query(
+    `SELECT tag, COUNT(*)::int AS n
+     FROM social_posts, unnest(hashtags) AS tag
+     WHERE status = 'published' AND created_at >= NOW() - INTERVAL '30 days' AND tag ILIKE $1
+     GROUP BY tag
+     ORDER BY n DESC, tag ASC
+     LIMIT 8`,
+    [like]
+  );
+
+  const items = [];
+  const seen = {};
+  hashtagRes.rows.forEach((r) => {
+    if (seen[r.tag]) return;
+    seen[r.tag] = true;
+    items.push({ type: 'hashtag', value: r.tag, label: '#' + r.tag, count: r.n });
+  });
+  storyRes.rows.forEach((r) => {
+    const slugLike = String(r.title || '').toLowerCase().replace(/\s+/g, '');
+    if (seen[slugLike]) return;
+    seen[slugLike] = true;
+    items.push({ type: 'story', value: r.id, label: r.title });
+  });
+  return { items: items.slice(0, 8) };
+}
+
 module.exports = {
   createPost,
   getPostById,
@@ -280,6 +386,7 @@ module.exports = {
   getFeed,
   getUserTimeline,
   getStockPosts,
+  getTrendingSuggestions,
   POST_TYPES,
   SOURCE_TYPES
 };

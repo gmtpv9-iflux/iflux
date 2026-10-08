@@ -255,7 +255,14 @@
     ctx = ctx || {};
     var target = ctx.target || {};
     var p = ctx.projection || { likes: 0, comments: 0, shares: 0, favorites: 0 };
-    /* UI Ownership: Thích → Bình luận → Chia sẻ; badge số = ifx-com-side-count (DS). Chia sẻ không badge. */
+    /* "Đăng lại" CHỈ hiện cho target Tin tức (type=post) + có repostMeta (title bài) — không hiện
+       ở comment page Cổ phiếu/Ngành/Hệ sinh thái/Chủ đề vì không có khái niệm "đăng lại" ở đó. */
+    var repostBtn = (target.type === 'post' && ctx.repostMeta)
+      ? '<button type="button" class="ifx-com-action" data-ifx-ix-act="repost">' +
+          '<i class="ti ti-repeat"></i> Đăng lại' +
+        '</button>'
+      : '';
+    /* UI Ownership: Thích → Bình luận → Đăng lại → Chia sẻ; badge số = ifx-com-side-count (DS). */
     el.innerHTML =
       '<div class="ifx-ix-action-bar ifx-com-article__actions" data-ifx-ix-actions role="toolbar" aria-label="Tương tác">' +
         '<button type="button" class="ifx-com-action' + (p.liked ? ' is-active' : '') + '" data-ifx-ix-act="like" data-ifx-com-like>' +
@@ -264,6 +271,7 @@
         '<button type="button" class="ifx-com-action" data-ifx-ix-act="open">' +
           '<i class="ti ti-message"></i> Bình luận ' + countBadge('data-ifx-ix-comments', p.comments) +
         '</button>' +
+        repostBtn +
         '<button type="button" class="ifx-com-action" data-ifx-ix-act="share_url" data-ifx-com-share>' +
           '<i class="ti ti-share"></i> Chia sẻ' +
         '</button>' +
@@ -286,6 +294,12 @@
         }
         if (act === 'share_url') {
           handleShareUrlClick(target);
+          return;
+        }
+        if (act === 'repost') {
+          if (global.IfluxRepostModal && global.IfluxRepostModal.open) {
+            global.IfluxRepostModal.open({ postId: target.id, title: ctx.repostMeta && ctx.repostMeta.title });
+          }
           return;
         }
         if (act === 'like') {
@@ -347,7 +361,8 @@
         target: ctx.target,
         mode: 'summary',
         projection: p,
-        onOpenInteractive: ctx.onOpenInteractive
+        onOpenInteractive: ctx.onOpenInteractive,
+        repostMeta: ctx.repostMeta
       });
       return;
     }
@@ -360,7 +375,8 @@
       target: ctx.target,
       mode: 'summary',
       projection: p,
-      onOpenInteractive: ctx.onOpenInteractive
+      onOpenInteractive: ctx.onOpenInteractive,
+      repostMeta: ctx.repostMeta
     });
   }
 
@@ -409,7 +425,8 @@
     renderActionBar(root.querySelector('[data-ifx-ix-action-bar]'), {
       target: ctx.target,
       mode: 'interactive',
-      projection: p
+      projection: p,
+      repostMeta: ctx.repostMeta
     });
     bindComposerForm(root, ctx);
   }
