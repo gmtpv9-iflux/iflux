@@ -236,7 +236,7 @@
     { type: 'item', key: "metadata-sector-types", routeKey: "metadata-sector-types", label: "Loại ngành", icon: "ti-tags", badge: "···", urlSegment: "sector-types" },
     { type: 'item', key: "metadata-enums", routeKey: "metadata-enums", label: "Quản lý enum", icon: "ti-list", badge: "···", urlSegment: "enums" },
     { type: 'item', key: "metadata-themes", routeKey: "metadata-themes", label: "Kho giao diện", icon: "ti-palette", badge: "GĐ2", urlSegment: "themes" },
-    { type: 'item', key: "metadata-chu-de-lifecycle", routeKey: "metadata-chu-de-lifecycle", label: "Vòng đời chủ đề", icon: "ti-timeline", badge: "GĐ2", urlSegment: "topic-lifecycle" },
+    { type: 'item', key: "metadata-chu-de-lifecycle", routeKey: "metadata-chu-de-lifecycle", label: "Vòng đời câu chuyện", icon: "ti-timeline", badge: "GĐ2", urlSegment: "topic-lifecycle" },
     { type: 'group', label: "Marketing", urlSegment: "marketing" },
     {
       type: 'parent',

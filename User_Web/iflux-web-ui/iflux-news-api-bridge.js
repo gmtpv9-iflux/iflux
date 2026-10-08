@@ -105,7 +105,9 @@
       type: opts.type || undefined,
       ticker: opts.ticker || undefined,
       category_id: opts.category_id || undefined,
-      chu_de_id: opts.chu_de_id || undefined,
+      /* Owner 2026-10 (Phase 6) — backend đọc story_id, không còn chu_de_id (content_chu_de
+         đã dọn, migration 075) — khớp đúng tên tham số GET /news/feed. */
+      story_id: opts.story_id || opts.chu_de_id || undefined,
       related_to: opts.related_to || undefined,
       sector: opts.sector || undefined,
       ecosystem: opts.ecosystem || undefined
