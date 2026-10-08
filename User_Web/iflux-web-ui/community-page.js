@@ -310,7 +310,7 @@
 
   function filterTabsHtml(active) {
     return (
-      '<div class="ifx-tabs ifx-com2-feedfilter" data-ifx-com2-filters>' +
+      '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-feedfilter" data-ifx-com2-filters>' +
         FILTERS.map(function (f) {
           return '<button type="button" class="ifx-tab' + (f.key === active ? ' is-active' : '') + '" data-filter="' + f.key + '">' + esc(f.label) + '</button>';
         }).join('') +

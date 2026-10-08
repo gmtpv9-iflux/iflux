@@ -1339,29 +1339,9 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 [data-ifx-com-featured-cats] {
   margin-bottom: var(--ifx-space-16);
 }
-/* SYNC:mobile-shell → bp-lg Foundation layout.css --ifx-bp-lg = 1024px
-   Mobile: icon trên chữ; desktop giữ icon ngang với text (inline mặc định). */
-@media (max-width: 1024px) {
-  /* .ifx-tabs[data-ifx-com-featured-cats] (không chỉ [data-ifx-com-featured-cats]) — phần tử này
-     có SẴN class .ifx-tabs (news-page.js), ghép thêm để độ ưu tiên > .ifx-tabs base (DS tabs.css)
-     CHẮC CHẮN bất kể thứ tự tải CSS (trang tải lazy nhiều widget khác nhau không cố định thứ
-     tự request .css giữa chúng, dù cùng specificity (0,1,0) với .ifx-tabs base thì ai load sau
-     thắng — không ổn định, nên tăng specificity thay vì phụ thuộc thứ tự). */
-  .ifx-tabs[data-ifx-com-featured-cats] {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    width: 100%;
-  }
-  [data-ifx-com-featured-cats] .ifx-tab {
-    display: inline-flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    gap: var(--ifx-space-4);
-    text-align: center;
-  }
-}
+/* Owner 2026-10 (chuẩn hoá Tab) — bỏ icon + đổi sang .ifx-tabs-segmented (xem news-page.js
+   featuredCatsTabsHtml) — override responsive riêng (icon trên chữ) không còn cần, vì
+   .ifx-tabs-segmented base đã tự cuộn ngang (overflow-x:auto) trên mọi kích thước màn hình. */
 
 .ifx-com-pills {
   display: flex;

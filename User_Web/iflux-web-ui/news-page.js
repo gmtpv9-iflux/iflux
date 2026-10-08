@@ -267,14 +267,6 @@
     return {};
   }
 
-  function categoryIconClass(icon) {
-    var s = String(icon || '').trim();
-    if (!s) return 'ti ti-category';
-    if (/^ti\s+ti-/.test(s)) return s;
-    if (s.indexOf('ti-') === 0) return 'ti ' + s;
-    return 'ti ti-category';
-  }
-
   function fetchFeaturedCategories() {
     function unwrap(res) {
       var payload = (res && res.data) || res || {};
@@ -300,16 +292,16 @@
     return id;
   }
 
-  /** Tab Danh mục nổi bật + Tất cả — DS: .ifx-tabs / .ifx-tab / .is-active */
+  /** Tab Danh mục nổi bật + Tất cả — chuẩn Tab nhỏ (Owner 2026-10): .ifx-tabs
+     .ifx-tabs-segmented / .ifx-tab / .is-active, KHÔNG icon (giống hệt Cộng đồng → Chủ đề
+     đang thịnh hành — "chỉ có 2 chuẩn Tab trên toàn hệ thống"). */
   function featuredCatsTabsHtml(cats, activeId) {
     var activeTab = tabIdFromState(activeId);
     var allOn = activeTab === FILTER_ALL;
     var tabs =
       '<button type="button" class="ifx-tab' + (allOn ? ' is-active' : '') + '" role="tab"' +
         ' aria-selected="' + (allOn ? 'true' : 'false') + '"' +
-        ' data-ifx-com-cat-id="' + FILTER_ALL + '">' +
-        '<i class="ti ti-layout-grid" aria-hidden="true"></i> Tất cả' +
-      '</button>';
+        ' data-ifx-com-cat-id="' + FILTER_ALL + '">Tất cả</button>';
     (cats || []).forEach(function (c) {
       var id = String(c.id || '');
       if (!id) return;
@@ -318,12 +310,11 @@
         '<button type="button" class="ifx-tab' + (on ? ' is-active' : '') + '" role="tab"' +
           ' aria-selected="' + (on ? 'true' : 'false') + '"' +
           ' data-ifx-com-cat-id="' + esc(id) + '">' +
-          '<i class="' + esc(categoryIconClass(c.icon)) + '" aria-hidden="true"></i> ' +
           esc(c.name || c.label || c.slug || '') +
         '</button>';
     });
     return (
-      '<div class="ifx-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
+      '<div class="ifx-tabs ifx-tabs-segmented" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
         tabs +
       '</div>'
     );
