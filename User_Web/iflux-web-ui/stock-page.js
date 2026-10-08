@@ -42,7 +42,6 @@
     else removeLeftColumn(root);
   }
 
-  function cta() { return global.IfluxCommentsCta; }
   function stockSt() { return global.IfluxStockStore; }
   function wlUi() { return global.IfluxWatchlistUI; }
   function auth() { return global.IfluxAuth; }
@@ -254,20 +253,35 @@
     return 0;
   }
 
+  /* Owner 2026-10 — "Bình luận" trên Cổ phiếu = Post Cộng đồng gắn thẻ mã CP đó (entity-posts-
+     panel.js), KHÔNG dùng Comment Thread cũ (interaction_comments, comments-cta.js) nữa. */
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = false;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error('Không tải được script ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function mountEntityPostsPanel(root, ticker) {
+    var mountEl = root.querySelector('[data-ifx-entity-posts-root]');
+    if (!mountEl || mountEl.__ifxMounted) return;
+    mountEl.__ifxMounted = true;
+    function doMount() { global.IfluxEntityPostsPanel.mount(mountEl, { entityType: 'stock', entityId: String(ticker || '').toUpperCase() }); }
+    if (global.IfluxEntityPostsPanel) { doMount(); return; }
+    loadScript('/User_Web/iflux-web-ui/community-store.js?v=r20261008a')
+      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=r20261008a'); })
+      .then(doMount)
+      .catch(function () { mountEl.innerHTML = '<p class="ifx-com-empty" style="color:var(--ix-danger)">Không tải được Bình luận</p>'; });
+  }
+
   function renderCenter(ticker, detail, newsState) {
     newsState = newsState || {};
-    var target = { type: 'stock', id: String(ticker || '').toUpperCase() };
-    var commentsSectionHtml = cta()
-      ? cta().html({ target: target, count: null })
-      : '<div class="ifx-com-empty"><a class="ix-btn ix-btn-outline" href="' +
-          esc(global.IfluxHref
-            ? IfluxHref.forCanonical(global.IfluxSeoUrl && IfluxSeoUrl.stockCommentsPath
-              ? IfluxSeoUrl.stockCommentsPath(ticker)
-              : '/co-phieu/' + encodeURIComponent(ticker) + '/binh-luan')
-            : ((global.IfluxSeoUrl && IfluxSeoUrl.stockCommentsPath
-              ? IfluxSeoUrl.stockCommentsPath(ticker)
-              : '/co-phieu/' + encodeURIComponent(ticker) + '/binh-luan'))) +
-          '">Bình luận</a></div>';
+    var commentsSectionHtml = '<div data-ifx-entity-posts-root></div>';
 
     return IfluxEntityDetailCenter.render({
       kind: 'stock',
@@ -290,9 +304,7 @@
   }
 
   function bindEvents(root, ticker, detail, newsState) {
-    if (cta()) {
-      cta().mount(root, { type: 'stock', id: String(ticker || '').toUpperCase() });
-    }
+    mountEntityPostsPanel(root, ticker);
 
     if (wlUi() && wlUi().bindRowActions) wlUi().bindRowActions(root);
     else {
@@ -307,9 +319,6 @@
         storyBase: newsState && newsState.storyBase,
         onTab: function (key) {
           syncMobileLeftColumn(root, key, ticker, detail);
-          if (key === 'comments' && cta()) {
-            cta().mount(root, { type: 'stock', id: String(ticker || '').toUpperCase() });
-          }
         }
       });
     }

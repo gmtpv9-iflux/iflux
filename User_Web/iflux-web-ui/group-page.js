@@ -32,7 +32,6 @@
     else removeLeftColumn(root);
   }
 
-  function cta() { return global.IfluxCommentsCta; }
   function pageDef() { return global.IfluxPageDefinition; }
   function taxApi() { return global.IfluxWatchlistTaxonomy; }
 
@@ -78,8 +77,24 @@
       ticker: tickers[0] || '',
       member_count: tickers.length,
       change_pct: null,
-      price_state: 'ref'
+      price_state: 'ref',
+      /* Owner 2026-10 (Phase 6) — chỉ Story có (hydrateChuDeFromApi), Sector/Family không. */
+      stats: isChuDe ? group.stats : null
     };
+  }
+
+  /* Story "giống Topic" (Owner 2026-10, Phase 6) — hiển thị thẳng Like/Dislike/Comment/Share
+     của Topic gốc, không còn "Đồng tình" riêng. */
+  function statsRowHtml(stats) {
+    if (!stats) return '';
+    return (
+      '<div class="ifx-stock-head__co" style="display:flex;gap:12px;margin-top:4px">' +
+        '<span><i class="ti ti-heart" style="font-size:12px"></i> ' + (Number(stats.likes) || 0) + '</span>' +
+        '<span><i class="ti ti-thumb-down" style="font-size:12px"></i> ' + (Number(stats.dislikes) || 0) + '</span>' +
+        '<span><i class="ti ti-message-circle" style="font-size:12px"></i> ' + (Number(stats.comments) || 0) + '</span>' +
+        '<span><i class="ti ti-share" style="font-size:12px"></i> ' + (Number(stats.shares) || 0) + '</span>' +
+      '</div>'
+    );
   }
 
   function renderHeader(detail) {
@@ -91,6 +106,7 @@
             '<span class="ifx-stock-head__ex"><i class="ti ' + kindIcon(detail.kind) + '" style="font-size:12px"></i> ' + esc(detail.type_label) + '</span>' +
           '</div>' +
           '<div class="ifx-stock-head__co">' + detail.member_count + ' mã · hiệu suất nhóm</div>' +
+          statsRowHtml(detail.stats) +
         '</div>' +
         '<div class="ifx-stock-head__quote ' + quoteStateClass('ref') + '">' +
           '<div class="ifx-stock-head__price">' + fmtPct(null) + '</div>' +
@@ -123,15 +139,18 @@
     return detail.kind + ':' + detail.id;
   }
 
-  function interactionTarget(detail) {
+  /* Owner 2026-10 (Phase 6, cuối ngày) — bỏ hẳn "Đồng tình" + Comment Thread riêng của Story
+     (§7.3 cũ, đã gỡ route /stories/:id/agree ở backend) — Story giờ "giống Topic", Bình luận
+     trên Story/Ngành/Hệ sinh thái đều qua Entity Posts Panel (Post Cộng đồng gắn thẻ Thực thể). */
+  function entityPostsTarget(detail) {
     if (!detail) return null;
     var kind = String(detail.kind || '').toLowerCase();
+    if (kind === 'sector') return { entityType: 'sector', entityId: String(detail.id || '') };
+    if (kind === 'family' || kind === 'ecosystem') return { entityType: 'family', entityId: String(detail.id || '') };
     if (kind === 'cau-chuyen' || kind === 'chu-de' || kind === 'chu_de' || kind === 'story') {
-      return { type: 'story', id: String(detail.id || detail.slug || '') };
+      return { entityType: 'story', entityId: String(detail.id || '') };
     }
-    if (kind === 'sector') return { type: 'sector', id: String(detail.id || '') };
-    if (kind === 'family' || kind === 'ecosystem') return { type: 'family', id: String(detail.id || '') };
-    return { type: kind, id: String(detail.id || '') };
+    return null;
   }
 
   function commentCount() {
@@ -140,10 +159,8 @@
 
   function renderCenter(detail, newsState) {
     newsState = newsState || {};
-    var target = interactionTarget(detail);
-    var commentsSectionHtml = cta() && target
-      ? cta().html({ target: target, count: null })
-      : '<div class="ifx-com-empty">Bình luận</div>';
+    var epTarget = entityPostsTarget(detail);
+    var commentsSectionHtml = epTarget ? '<div data-ifx-entity-posts-root></div>' : '<div class="ifx-com-empty">Bình luận</div>';
 
     return IfluxEntityDetailCenter.render({
       kind: detail.kind,
@@ -153,6 +170,30 @@
       commentsSectionHtml: commentsSectionHtml,
       commentCount: commentCount()
     });
+  }
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = false;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error('Không tải được script ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function mountEntityPostsPanel(root, epTarget) {
+    var mountEl = root.querySelector('[data-ifx-entity-posts-root]');
+    if (!mountEl || mountEl.__ifxMounted) return;
+    mountEl.__ifxMounted = true;
+    function doMount() { global.IfluxEntityPostsPanel.mount(mountEl, epTarget); }
+    if (global.IfluxEntityPostsPanel) { doMount(); return; }
+    loadScript('/User_Web/iflux-web-ui/community-store.js?v=r20261008a')
+      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=r20261008a'); })
+      .then(doMount)
+      .catch(function () { mountEl.innerHTML = '<p class="ifx-com-empty" style="color:var(--ix-danger)">Không tải được Bình luận</p>'; });
   }
 
   function renderNotFound(source, id) {
@@ -169,8 +210,8 @@
   }
 
   function bindEvents(root, detail, newsState) {
-    var target = interactionTarget(detail);
-    if (cta() && target) cta().mount(root, target);
+    var epTarget = entityPostsTarget(detail);
+    if (epTarget) mountEntityPostsPanel(root, epTarget);
     if (global.IfluxEntityDetailCenter) {
       IfluxEntityDetailCenter.mount(root, {
         kind: detail.kind,
@@ -179,7 +220,6 @@
         storyBase: newsState && newsState.storyBase,
         onTab: function (key) {
           syncMobileLeftColumn(root, key, detail);
-          if (key === 'comments' && cta() && target) cta().mount(root, target);
         }
       });
     }

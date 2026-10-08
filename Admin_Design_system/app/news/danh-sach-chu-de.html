@@ -45,11 +45,8 @@
               <div><label class="ix-label">Trạng thái</label>
                 <select class="ix-select" id="adm-str-reg-status">
                   <option value="">Tất cả</option>
-                  <option value="new">Mới</option>
-                  <option value="rising">Đang nổi</option>
-                  <option value="trending">Đang thịnh hành</option>
-                  <option value="declining">Đang hạ nhiệt</option>
-                  <option value="archived">Lưu trữ</option>
+                  <option value="confirmed">Đã chính thức (≥100 lần)</option>
+                  <option value="pending">Đang tích lũy</option>
                 </select>
               </div>
             </div>
@@ -60,8 +57,8 @@
           <div class="ix-table-wrap">
             <table class="ix-table">
               <thead><tr>
-                <th>Chủ đề</th><th>Trạng thái</th><th>Like/Dislike</th><th>Comment</th><th>Share</th>
-                <th>Engagement</th><th>Sentiment tác giả</th><th>Câu chuyện</th><th>Thao tác</th>
+                <th>Chủ đề</th><th>Trạng thái</th><th>Cổ phiếu đại diện</th><th>Like/Dislike</th><th>Comment</th><th>Share</th>
+                <th>Engagement</th><th>Sentiment tác giả</th><th>Câu chuyện</th>
               </tr></thead>
               <tbody id="adm-str-reg-tbody"></tbody>
             </table>
@@ -80,39 +77,12 @@
     <p style="font-size:13px;color:var(--ix-text-muted);margin:4px 0 16px">Chủ đề: <strong id="adm-topic-map-name"></strong></p>
     <div id="adm-topic-map-stocks" style="margin-bottom:16px"></div>
     <div class="ix-form-group">
-      <label class="ix-label">Gắn vào Câu chuyện có sẵn (Story ID)</label>
+      <label class="ix-label">Gắn vào Câu chuyện có sẵn (Story ID) — để trống để tạo Câu chuyện mới (tên lấy từ Chủ đề)</label>
       <input class="ix-input" id="adm-topic-map-story-id" placeholder="Dán Story ID nếu đã có" />
-    </div>
-    <div class="ix-form-group">
-      <label class="ix-label">Hoặc tạo Câu chuyện mới (Tên)</label>
-      <input class="ix-input" id="adm-topic-map-title" placeholder="VD: Đầu tư công" />
     </div>
     <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
       <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
       <button type="button" class="ix-btn ix-btn-primary" id="btn-topic-map-submit">Ánh xạ</button>
-    </div>
-  </div>
-</div>
-
-<div class="ix-modal-overlay" id="modal-topic-override">
-  <div class="ix-modal-box" style="max-width:420px">
-    <button type="button" class="ix-modal-close" data-ix-dismiss="modal"><i class="ti ti-x"></i></button>
-    <div class="ix-modal-title">Đổi trạng thái (ghi đè)</div>
-    <p style="font-size:13px;color:var(--ix-text-muted);margin:4px 0 16px">Chủ đề: <strong id="adm-topic-override-name"></strong></p>
-    <div class="ix-form-group">
-      <label class="ix-label">Trạng thái ghi đè — để trống để quay lại tự động đánh giá</label>
-      <select class="ix-select" id="adm-topic-override-status">
-        <option value="">(Tự động — gỡ ghi đè)</option>
-        <option value="new">Mới</option>
-        <option value="rising">Đang nổi</option>
-        <option value="trending">Đang thịnh hành</option>
-        <option value="declining">Đang hạ nhiệt</option>
-        <option value="archived">Lưu trữ</option>
-      </select>
-    </div>
-    <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end">
-      <button type="button" class="ix-btn ix-btn-outline" data-ix-dismiss="modal">Huỷ</button>
-      <button type="button" class="ix-btn ix-btn-primary" id="btn-topic-override-submit">Lưu</button>
     </div>
   </div>
 </div>

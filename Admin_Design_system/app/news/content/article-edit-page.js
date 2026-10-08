@@ -24,8 +24,6 @@
       var el = $(bid);
       if (el) el.style.display = ok ? '' : 'none';
     });
-    var chuDeCreate = $('art-chude-create');
-    if (chuDeCreate) chuDeCreate.style.display = (loaded && canPerm('stories.registry.create')) ? '' : 'none';
     if (loaded && !ok) {
       toast(id ? 'Bạn không có quyền sửa bài viết.' : 'Bạn không có quyền tạo bài viết.', 'danger');
     }
@@ -159,63 +157,45 @@
     return out.slice(0, max || 99);
   }
 
+  /* Owner 2026-10 — "Chủ đề" cũ đổi thành gắn 1 Câu chuyện ĐÃ HÌNH THÀNH (Admin ánh xạ từ Topic ở
+     Cộng đồng) — không còn tạo nhanh từ đây (content_chu_de đã dọn, xem migration 075). */
   function setChuDe(item) {
     selectedChuDe = item || null;
     var box = $('art-chude-selected');
     if (!box) return;
     if (!selectedChuDe) {
-      box.innerHTML = '<span class="ix-caption">Chưa chọn chủ đề</span>';
-      $('art-ticker-suggest').innerHTML = '';
+      box.innerHTML = '<span class="ix-caption">Chưa chọn câu chuyện</span>';
       return;
     }
     box.innerHTML =
-      '<span class="ix-chip ix-chip-primary">' + esc(selectedChuDe.name) +
-      (selectedChuDe.post_count != null ? ' · ' + selectedChuDe.post_count + ' bài' : '') +
-      '</span> <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-chude-clear">Bỏ chọn</button>';
+      '<span class="ix-chip ix-chip-primary">' + esc(selectedChuDe.name) + '</span> ' +
+      '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-chude-clear">Bỏ chọn</button>';
     var clearBtn = $('art-chude-clear');
     if (clearBtn) {
       clearBtn.addEventListener('click', function () {
         setChuDe(null);
       });
     }
-    loadTickerSuggest();
   }
 
   function renderSuggest(list) {
     var el = $('art-chude-suggest');
     if (!el) return;
     if (!list || !list.length) {
-      var q = ($('art-chude-q') || {}).value || ($('fld-title') || {}).value || '';
-      el.innerHTML = q
-        ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-chude-create"><i class="ti ti-plus"></i> Tạo chủ đề mới: «' + esc(q.trim()) + '»</button>'
-        : '<span class="ix-caption">Nhập tiêu đề hoặc tìm chủ đề…</span>';
-      var createBtn = $('art-chude-create');
-      if (createBtn) {
-        createBtn.addEventListener('click', function () {
-          createChuDe(String(q).trim());
-        });
-      }
+      el.innerHTML = '<span class="ix-caption">Không tìm thấy câu chuyện phù hợp.</span>';
       return;
     }
     el.innerHTML = list.map(function (it, idx) {
       return '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-chude-idx="' + idx + '">' +
-        esc(it.name) + (it.post_count != null ? ' <span class="ix-caption">(' + it.post_count + ')</span>' : '') +
-        '</button>';
-    }).join(' ') +
-      '<div class="ix-mt-8"><button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="art-chude-create"><i class="ti ti-plus"></i> Tạo chủ đề mới</button></div>';
+        esc(it.name) + '</button>';
+    }).join(' ');
     el.querySelectorAll('[data-chude-idx]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var i = Number(btn.getAttribute('data-chude-idx'));
         setChuDe(list[i]);
+        el.innerHTML = '';
       });
     });
-    var createBtn2 = $('art-chude-create');
-    if (createBtn2) {
-      createBtn2.addEventListener('click', function () {
-        var name = ($('art-chude-q').value || $('fld-title').value || '').trim();
-        createChuDe(name);
-      });
-    }
   }
 
   function suggestChuDe(q) {
@@ -226,66 +206,6 @@
       .catch(function () {
         renderSuggest([]);
       });
-  }
-
-  function createChuDe(name) {
-    if (!name) {
-      toast('Nhập tên chủ đề', 'warning');
-      return;
-    }
-    request('/news/chu-de', { method: 'POST', body: { name: name } })
-      .then(function (data) {
-        var item = data.chu_de || data;
-        setChuDe({ id: item.id, slug: item.slug, name: item.name || item.label, post_count: item.post_count || 0 });
-        toast(item.created === false ? 'Đã chọn chủ đề có sẵn' : 'Đã tạo chủ đề mới', 'success');
-        $('art-chude-suggest').innerHTML = '';
-      })
-      .catch(function (err) {
-        toast(err.message || 'Không tạo được chủ đề', 'danger');
-      });
-  }
-
-  function loadTickerSuggest() {
-    var box = $('art-ticker-suggest');
-    if (!box || !selectedChuDe) return;
-    var ref = selectedChuDe.id || selectedChuDe.slug;
-    request('/news/chu-de/' + encodeURIComponent(ref) + '/tickers?limit=10')
-      .then(function (data) {
-        var list = data.tickers || [];
-        if (!list.length) {
-          box.innerHTML = '<span class="ix-caption">Chủ đề mới — hãy tự gắn mã cổ phiếu liên quan.</span>';
-          return;
-        }
-        box.innerHTML = '<div class="ix-caption ix-mb-8">Mã thường gắn với chủ đề này:</div>' +
-          list.map(function (t) {
-            return '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-add-ticker="' + esc(t.ticker) + '">' +
-              esc(t.ticker) + (t.mention_count ? ' (' + t.mention_count + ')' : '') + '</button>';
-          }).join(' ');
-        box.querySelectorAll('[data-add-ticker]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            addTicker(btn.getAttribute('data-add-ticker'));
-          });
-        });
-      })
-      .catch(function () {
-        box.innerHTML = '';
-      });
-  }
-
-  function addTicker(tk) {
-    var el = $('fld-tickers');
-    if (!el) return;
-    var cur = parseCsv(el.value, 5);
-    tk = String(tk || '').toUpperCase();
-    if (cur.indexOf(tk) < 0) {
-      if (cur.length >= 5) {
-        toast('Tối đa 5 mã cổ phiếu', 'warning');
-        return;
-      }
-      cur.push(tk);
-    }
-    el.value = cur.join(', ');
-    setEntityMode('tickers');
   }
 
   function setEntityMode(mode) {
@@ -342,9 +262,7 @@
         ? bodyEditor.getBodyHtml()
         : (($('fld-body') && $('fld-body').value) || '').trim(),
       category_id: categoryId,
-      chu_de_id: selectedChuDe ? selectedChuDe.id : null,
-      chu_de_slug: selectedChuDe ? (selectedChuDe.slug || '') : '',
-      chu_de_name: selectedChuDe ? (selectedChuDe.name || '') : '',
+      story_id: selectedChuDe ? selectedChuDe.id : null,
       tickers: tickers,
       sectors: sectors,
       ecosystems: ecosystems,
@@ -393,12 +311,15 @@
     if (bodyEditor) bodyEditor.setBodyHtml(item.body_html || '');
     else if ($('fld-body')) $('fld-body').value = item.body_html || '';
     if (item.category_id) $('fld-category').value = item.category_id;
-    if (item.chu_de || item.chu_de_id) {
-      setChuDe({
-        id: item.chu_de_id || (item.chu_de && item.chu_de.id),
-        slug: item.chu_de_slug || (item.chu_de && item.chu_de.slug),
-        name: item.chu_de_name || (item.chu_de && (item.chu_de.name || item.chu_de.label))
-      });
+    if (item.story_id) {
+      request('/community/stories/' + encodeURIComponent(item.story_id))
+        .then(function (data) {
+          var s = data.story || data;
+          setChuDe({ id: s.id, name: s.title });
+        })
+        .catch(function () {
+          setChuDe({ id: item.story_id, name: '(Câu chuyện #' + item.story_id + ')' });
+        });
     }
     var cover = item.cover || {};
     $('fld-cover-url').value = cover.url || '';

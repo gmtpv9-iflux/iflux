@@ -1,19 +1,10 @@
-/* Chủ đề (Topic) Registry — API-backed (community/topics), Owner 2026-10: Topic hình thành từ
- * Hashtag Cộng đồng, KHÔNG còn tạo/sửa tay — chỉ xem thống kê + Admin ánh xạ sang Câu chuyện
- * (Story) hoặc đổi trạng thái (override). Thay thế hoàn toàn content_chu_de cũ (đã dọn). */
+/* Chủ đề (Topic) Registry — API-backed (community/topics), Owner 2026-10 (Phase 6 cuối ngày):
+ * Topic hình thành từ Hashtag Cộng đồng, KHÔNG còn lifecycle 5-trạng-thái (chuyển sang Story) —
+ * chỉ 2 trạng thái: đang tích lũy (usage_count < 100) / đã chính thức (confirmed). Admin chỉ xem
+ * thống kê + ánh xạ sang Câu chuyện (Story). Thay thế hoàn toàn content_chu_de cũ (đã dọn). */
 (function (global) {
   'use strict';
 
-  /* 5 trạng thái lifecycle Topic (Owner 2026-10, hồi sinh percentile+window Topic_Engine V2,
-     áp riêng cho Topic — không còn gắn Story). */
-  var STATUS_META = {
-    new: { label: 'Mới', color: 'info' },
-    rising: { label: 'Đang nổi', color: 'primary' },
-    trending: { label: 'Đang thịnh hành', color: 'success' },
-    declining: { label: 'Đang hạ nhiệt', color: 'warning' },
-    archived: { label: 'Lưu trữ', color: 'secondary' }
-  };
-  var STATUS_ORDER = ['new', 'rising', 'trending', 'declining', 'archived'];
   var RANGE_META = { day: 'Ngày', week: 'Tuần', month: 'Tháng' };
 
   var cache = { topics: [], range: 'week', loaded: false, loading: null };
@@ -81,13 +72,12 @@
       id: row.id,
       name: row.displayName || row.slug,
       slug: row.slug,
-      status: row.statusOverride || row.status,
-      statusIsOverride: !!row.statusOverride,
-      rawStatus: row.status,
+      confirmed: !!row.confirmed,
+      usageCount: Number(row.usageCount) || 0,
+      representativeStocks: row.representativeStocks || { leader: null, stocks: [] },
       firstSeenAt: row.firstSeenAt,
       updatedAt: row.lastActivityAt,
       mappedStoryId: row.mappedStoryId || null,
-      hotEligible: !!row.hotEligible,
       stats: {
         posts: Number(stats.posts) || 0,
         likes: Number(stats.likes) || 0,
@@ -124,7 +114,8 @@
   function listTopics(filters) {
     filters = filters || {};
     return cache.topics.filter(function (t) {
-      if (filters.status && t.status !== filters.status) return false;
+      if (filters.confirmed === 'confirmed' && !t.confirmed) return false;
+      if (filters.confirmed === 'pending' && t.confirmed) return false;
       if (filters.keyword) {
         var q = filters.keyword.toLowerCase();
         if ((t.name + ' ' + t.slug).toLowerCase().indexOf(q) < 0) return false;
@@ -141,18 +132,12 @@
     return null;
   }
 
-  function setStatusOverride(id, status) {
-    return request('/community/topics/' + encodeURIComponent(id) + '/status-override', {
-      method: 'POST',
-      body: { status: status || null }
-    }).then(function () { return loadFromApi(cache.range); });
-  }
-
   function getRepresentativeStocks(id) {
     return request('/community/topics/' + encodeURIComponent(id) + '/representative-stocks');
   }
 
-  /** story_id = gắn vào Story có sẵn; thiếu story_id = tạo Story mới (cần title). */
+  /** Phase 6 — story_id = gắn vào Story có sẵn; thiếu story_id = tạo Story mới (title LUÔN lấy
+   * từ Topic, không gửi title). */
   function mapToStory(topicId, payload) {
     return request('/community/topics/' + encodeURIComponent(topicId) + '/map-to-story', {
       method: 'POST',
@@ -163,15 +148,12 @@
   }
 
   global.IfluxChuDeRegistryStore = {
-    STATUS_META: STATUS_META,
-    STATUS_ORDER: STATUS_ORDER,
     RANGE_META: RANGE_META,
     loadFromApi: loadFromApi,
     listTopics: listTopics,
     listStories: listTopics,
     getTopic: getTopic,
     getStory: getTopic,
-    setStatusOverride: setStatusOverride,
     getRepresentativeStocks: getRepresentativeStocks,
     mapToStory: mapToStory,
     getRange: function () { return cache.range; }

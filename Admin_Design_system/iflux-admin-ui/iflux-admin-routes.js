@@ -76,6 +76,7 @@
     "news-content-index": { key: "news-content-index", slug: "/admin/news/articles", file: "news/danh-sach-bai-viet.html", legacySlugs: ["/admin/cong-dong/danh-sach-bai-viet", "/admin/cong-dong/content", "/admin/cong-dong", "/admin/community/articles", "/admin/community"] },
     "news-categories": { key: "news-categories", slug: "/admin/news/categories", file: "news/categories.html", legacySlugs: ["/admin/cong-dong/categories", "/admin/community/categories"] },
     "news-chu-de-list": { key: "news-chu-de-list", slug: "/admin/news/topics", file: "news/danh-sach-chu-de.html", legacySlugs: ["/admin/cong-dong/danh-sach-chu-de", "/admin/chu-de/registry", "/admin/story/registry", "/admin/community/topics"] },
+    "news-chu-de-cong-thuc": { key: "news-chu-de-cong-thuc", slug: "/admin/news/topics/cong-thuc", file: "news/cong-thuc-tinh-diem.html" },
     "news-cover-regenerate": { key: "news-cover-regenerate", slug: "/admin/news/regenerate", file: "news/regenerate-anh-dai-dien.html" },
     "news-author-list": { key: "news-author-list", slug: "/admin/news/authors", file: "news/danh-sach-tac-gia.html", legacySlugs: ["/admin/cong-dong/danh-sach-tac-gia", "/admin/community/authors"] },
     "news-chu-de-moderation": { key: "news-chu-de-moderation", slug: "/admin/news/topic-moderation", file: "news/chu-de-moderation.html", legacySlugs: ["/admin/cong-dong/chu-de-moderation", "/admin/community/chu-de-moderation", "/admin/community/topic-moderation"] },
