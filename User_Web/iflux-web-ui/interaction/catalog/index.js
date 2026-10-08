@@ -258,7 +258,7 @@
     /* UI Ownership: Thích → Bình luận → Chia sẻ; badge số = ifx-com-side-count (DS). Chia sẻ không badge. */
     el.innerHTML =
       '<div class="ifx-ix-action-bar ifx-com-article__actions" data-ifx-ix-actions role="toolbar" aria-label="Tương tác">' +
-        '<button type="button" class="ifx-com-action" data-ifx-ix-act="like" data-ifx-com-like>' +
+        '<button type="button" class="ifx-com-action' + (p.liked ? ' is-active' : '') + '" data-ifx-ix-act="like" data-ifx-com-like>' +
           '<i class="ti ti-heart"></i> <span data-ifx-ix-like-label>Thích</span> ' + countBadge('data-ifx-ix-likes', p.likes) +
         '</button>' +
         '<button type="button" class="ifx-com-action" data-ifx-ix-act="open">' +
@@ -294,9 +294,18 @@
             if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
             return;
           }
+          if (btn.disabled) return;
+          /* Toggle đúng chiều theo trạng thái HIỆN TẠI của nút — trước đây luôn gửi 'like' bất kể
+             đã thích hay chưa, khiến bấm bao nhiêu lần cũng được (xem backend mutate() — đã sửa
+             idempotency, nhưng UI vẫn phải tự biết lúc nào gửi 'unlike' thay vì luôn 'like'). */
+          var wasActive = btn.classList.contains('is-active');
+          var nextAction = wasActive ? 'unlike' : 'like';
+          btn.disabled = true;
+          btn.classList.toggle('is-active', !wasActive);
           /* RC-IA-01: Summary like không init Interactive Store — runMutation đủ */
           if (store() && store().runMutation) {
-            store().runMutation(target, 'like').then(function (out) {
+            store().runMutation(target, nextAction).then(function (out) {
+              btn.disabled = false;
               var host = el.closest('[data-ifx-ix-host]');
               if (host && out && out.projection) updateSummaryCounts(host, out.projection);
               try {
@@ -305,8 +314,12 @@
                 }));
               } catch (e) { /* ignore */ }
             }).catch(function (err) {
+              btn.disabled = false;
+              btn.classList.toggle('is-active', wasActive);
               if (global.IfxToast) IfxToast.show((err && err.message) || 'Không thích được', 'warning');
             });
+          } else {
+            btn.disabled = false;
           }
         }
       });
@@ -319,6 +332,8 @@
     var comments = root.querySelector('[data-ifx-ix-comments]');
     if (likes) likes.textContent = String(counts.likes || 0);
     if (comments) comments.textContent = String(counts.comments || 0);
+    var likeBtn = root.querySelector('[data-ifx-com-like]');
+    if (likeBtn && counts.liked != null) likeBtn.classList.toggle('is-active', !!counts.liked);
   }
 
   /** RC-IU-01 — không nhận/branch presentation */

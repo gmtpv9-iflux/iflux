@@ -96,9 +96,9 @@ function createNewsRouter(deps) {
   });
 
   /* RC-API-01 — Interaction Summary counts-only (không comments[]) */
-  router.get('/interaction/summary', async (req, res, next) => {
+  router.get('/interaction/summary', deps.auth.optionalAuth, async (req, res, next) => {
     try {
-      const data = await interaction.getSummary(req.query.type, req.query.id);
+      const data = await interaction.getSummary(req.query.type, req.query.id, req.user);
       return success(res, data);
     } catch (err) {
       next(err);

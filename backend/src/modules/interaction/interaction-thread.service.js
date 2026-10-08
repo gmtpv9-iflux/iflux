@@ -7,6 +7,7 @@ const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 const newsComments = require('../news/news-comments.service');
   const newsInteraction = require('../news/interaction.service');
+const { resolveDisplayName } = require('../../shared/resolve-display-name');
 
 const REGISTRY = {
   post: 1,
@@ -99,7 +100,7 @@ async function createEntityComment(type, id, user, payload) {
     imageUrl = raw;
   }
   const userId = user && user.id ? user.id : null;
-  const userName = (user && (user.display_name || user.name)) || 'Thành viên';
+  const userName = (user && (user.display_name || user.name)) || await resolveDisplayName(userId);
 
   const res = await query(
     `INSERT INTO interaction_comments
@@ -276,20 +277,30 @@ async function unlikeEntity(entityType, entityId, user) {
   return { liked: false, likes: likes, target: { type: type, id: id } };
 }
 
-async function getSummary(entityType, entityId) {
+async function getSummary(entityType, entityId, viewer) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
   if (type === 'post') {
-    return newsInteraction.getSummary('post', id);
+    return newsInteraction.getSummary('post', id, viewer);
   }
   const comments = await countEntityComments(type, id);
   const likes = await countEntityLikes(type, id);
+  const uid = viewer && viewer.id ? viewer.id : null;
+  let liked = false;
+  if (uid) {
+    const res = await query(
+      `SELECT 1 FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND user_id = $3`,
+      [type, id, uid]
+    );
+    liked = !!res.rows[0];
+  }
   return {
     target: { type: type, id: id },
     likes: likes,
     comments: comments,
     shares: 0,
-    favorites: 0
+    favorites: 0,
+    liked: liked
   };
 }
 
@@ -317,7 +328,7 @@ async function likeComment(commentId, user) {
       commentId: commentId,
       ownerId: row.user_id,
       likerId: uid,
-      likerName: (user && (user.display_name || user.name)) || 'Thành viên',
+      likerName: (user && (user.display_name || user.name)) || await resolveDisplayName(uid),
       bodyPreview: row.body,
       entityType: row.entity_type,
       entityId: row.entity_id

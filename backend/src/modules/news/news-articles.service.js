@@ -325,6 +325,34 @@ async function getArticle(idOrSlug) {
   return rowToArticle(byFormer.rows[0]);
 }
 
+/**
+ * Bản KHÔNG redact liked_by/favorited_by — CHỈ dùng nội bộ cho interaction.service.js mutate()
+ * để kiểm tra đúng trạng thái đã like/favorite của user trước khi tăng/giảm đếm. getArticle()
+ * (public, dùng cho hiển thị bài viết) cố ý ẩn 2 field này (ARTICLE_DETAIL_PAYLOAD_SQL) để không
+ * lộ danh sách người đã like/favorite ra response công khai — mutate() lấy nhầm qua getArticle()
+ * trước đây khiến idempotency check luôn thấy liked_by rỗng, like bao nhiêu lần cũng cộng dồn.
+ */
+async function getArticleForMutation(idOrSlug) {
+  const cols = `id, user_id, content_type, status, created_at, updated_at, payload`;
+  const byId = await query(
+    `SELECT ${cols} FROM news_posts WHERE id = $1 LIMIT 1`,
+    [idOrSlug]
+  );
+  if (byId.rows[0]) return rowToArticle(byId.rows[0]);
+  const bySlug = await query(
+    `SELECT ${cols} FROM news_posts WHERE payload->>'slug' = $1 LIMIT 1`,
+    [idOrSlug]
+  );
+  if (bySlug.rows[0]) return rowToArticle(bySlug.rows[0]);
+  const byFormer = await query(
+    `SELECT ${cols} FROM news_posts
+     WHERE COALESCE(payload->'former_slugs', '[]'::jsonb) ? $1
+     LIMIT 1`,
+    [idOrSlug]
+  );
+  return rowToArticle(byFormer.rows[0]);
+}
+
 /** Đảm bảo slug không trùng bài khác (current slug). */
 async function ensureUniqueSlug(baseSlug, excludeId) {
   let slug = String(baseSlug || '').trim() || 'bai-viet';
@@ -960,6 +988,7 @@ module.exports = {
   slugify,
   listArticles,
   getArticle,
+  getArticleForMutation,
   createArticle,
   updateArticle,
   deleteArticle,

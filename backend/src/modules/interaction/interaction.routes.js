@@ -33,9 +33,9 @@ function createInteractionV1Router(deps) {
   const router = express.Router();
   const auth = deps.auth || {};
 
-  router.get('/summary', async (req, res, next) => {
+  router.get('/summary', auth.optionalAuth, async (req, res, next) => {
     try {
-      const data = await thread.getSummary(req.query.type, req.query.id);
+      const data = await thread.getSummary(req.query.type, req.query.id, req.user);
       return success(res, data);
     } catch (err) {
       next(err);
