@@ -25,8 +25,11 @@
   }
 
   /**
-   * Matrix IP-001 — Phase 7 Owner LOCK: Guest share = LoginRequired (DQ-01 / Brief §6B).
-   * (Supersedes prior Q3 Guest share_url = Allow.)
+   * Matrix IP-001 — Owner đổi quyết định 2026-10: Guest share_url = Allow (đồng bộ đăng nhập —
+   * TRỪ Chia sẻ, mọi tương tác khác luôn hỏi đăng nhập qua popup trước khi cho thao tác; Chia sẻ
+   * là ngoại lệ duy nhất, khách vẫn chia sẻ được link bài viết không cần đăng nhập).
+   * (Supersedes Phase 7 Owner LOCK trước đó: Guest share = LoginRequired / DQ-01 / Brief §6B —
+   * bản thân LOCK đó cũng đã supersede quyết định Q3 gốc là Allow, nay quay lại Allow.)
    */
   function resolve(input) {
     input = input || {};
@@ -39,7 +42,6 @@
     }
 
     if (action === 'share_url') {
-      if (actor === 'guest') return LoginRequired;
       return Allow;
     }
 

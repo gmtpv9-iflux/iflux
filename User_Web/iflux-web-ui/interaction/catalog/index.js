@@ -280,6 +280,19 @@
     el.querySelectorAll('[data-ifx-ix-act]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var act = btn.getAttribute('data-ifx-ix-act');
+        /* Đồng bộ đăng nhập (Owner chốt 2026-10): TRỪ Chia sẻ, mọi tương tác khác (Thích/Bình
+           luận/Đăng lại) khi khách bấm vào đều hiện ĐÚNG 1 kiểu popup đăng nhập
+           (IfluxAuth.promptLogin — cùng kiểu Repost đã làm đúng từ đầu), không phải lúc thì toast
+           lúc thì điều hướng thẳng rồi mới hỏi bên trong trang đích. */
+        if (act === 'open' || act === 'like') {
+          var prAction = act === 'open' ? 'comment' : 'like';
+          var prGate = perm() ? perm().resolve({ action: prAction, target: target }) : 'LoginRequired';
+          if (prGate !== 'Allow') {
+            if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
+            else if (global.IfxToast) IfxToast.show('Đăng nhập để tiếp tục', 'warning');
+            return;
+          }
+        }
         if (act === 'open') {
           if (typeof ctx.onOpenInteractive === 'function') {
             ctx.onOpenInteractive(target);
@@ -303,11 +316,6 @@
           return;
         }
         if (act === 'like') {
-          var pr = perm() ? perm().resolve({ action: 'like', target: target }) : 'LoginRequired';
-          if (pr !== 'Allow') {
-            if (global.IfxToast) IfxToast.show('Đăng nhập để thích', 'warning');
-            return;
-          }
           if (btn.disabled) return;
           /* Toggle đúng chiều theo trạng thái HIỆN TẠI của nút — trước đây luôn gửi 'like' bất kể
              đã thích hay chưa, khiến bấm bao nhiêu lần cũng được (xem backend mutate() — đã sửa
@@ -388,7 +396,10 @@
       var body = (root.querySelector('[data-ifx-ix-body]') || {}).value || '';
       var pr = perm() ? perm().resolve({ action: 'comment', target: ctx.target }) : 'LoginRequired';
       if (pr !== 'Allow') {
-        if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
+        /* Đồng bộ popup đăng nhập — guest vào thẳng trang bình luận (không qua gate ở act==='open')
+           vẫn phải gặp đúng 1 kiểu popup khi bấm Gửi, không phải toast riêng ở đây. */
+        if (global.IfluxAuth && IfluxAuth.promptLogin) IfluxAuth.promptLogin();
+        else if (global.IfxToast) IfxToast.show('Đăng nhập để bình luận', 'warning');
         return;
       }
       if (!store() || !store().addComment) return;
