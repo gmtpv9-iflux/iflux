@@ -127,12 +127,7 @@ function toFeedCard(raw) {
     content_type: p.content_type || 'news',
     status: p.status || 'published',
     tags: Array.isArray(p.tags) ? p.tags : [],
-    chu_de_id: p.chu_de_id || null,
-    chu_de_slug: p.chu_de_slug || null,
-    chu_de_name: p.chu_de_name || null,
-    chu_de: p.chu_de || null,
-    chu_de_tags: Array.isArray(p.chu_de_tags) ? p.chu_de_tags : undefined,
-    story_tags: Array.isArray(p.story_tags) ? p.story_tags : (Array.isArray(p.chu_de_tags) ? p.chu_de_tags : []),
+    story_id: p.story_id || null,
     sectors: Array.isArray(p.sectors) ? p.sectors : [],
     ecosystems: Array.isArray(p.ecosystems) ? p.ecosystems : [],
     content_origin: p.content_origin || null,
@@ -141,7 +136,6 @@ function toFeedCard(raw) {
     image_url: p.image_url || (p.cover && p.cover.url) || null
   };
 
-  if (!card.chu_de_tags && card.story_tags) card.chu_de_tags = card.story_tags;
   return card;
 }
 
@@ -186,12 +180,9 @@ async function fetchCommunityRows(filters) {
     )`;
   }
 
-  if (filters.chu_de_id) {
-    params.push(String(filters.chu_de_id));
-    sql += ` AND (
-      payload->>'chu_de_id' = $${params.length}
-      OR payload->'chu_de'->>'id' = $${params.length}
-    )`;
+  if (filters.story_id) {
+    params.push(String(filters.story_id));
+    sql += ` AND payload->>'story_id' = $${params.length}`;
   }
 
   /* Ngành / Hệ sinh thái (id, code hoặc slug): bài gắn trực tiếp, hoặc có mã CP thuộc nhóm đó. */
@@ -261,7 +252,7 @@ async function resolveRelatedSeed(relatedTo) {
         id: card.id,
         slug: card.slug,
         category_id: card.category_id,
-        chu_de_id: card.chu_de_id,
+        story_id: card.story_id,
         tickers: card.tickers || []
       }
     : null;
@@ -269,7 +260,7 @@ async function resolveRelatedSeed(relatedTo) {
 
 /**
  * GET /news/feed — FeedCard[] (trước đây dual-mount /community/feed — alias đã gỡ 2026-10-03, /community giờ là Post model thật, xem backend/src/modules/community/)
- * Query: limit, offset, ticker, category_id, chu_de_id, sector, ecosystem, related_to, type (content_type)
+ * Query: limit, offset, ticker, category_id, story_id, sector, ecosystem, related_to, type (content_type)
  */
 async function listFeed(filters) {
   filters = filters || {};
@@ -293,11 +284,11 @@ async function listFeed(filters) {
         exclude_id: seed.id
       });
     }
-    if (cards.length < want && seed.chu_de_id) {
+    if (cards.length < want && seed.story_id) {
       const more = await fetchCommunityRows({
         limit: want,
         offset: 0,
-        chu_de_id: seed.chu_de_id,
+        story_id: seed.story_id,
         exclude_id: seed.id
       });
       const seen = {};
@@ -351,7 +342,7 @@ async function listFeed(filters) {
     offset: offset,
     ticker: filters.ticker,
     category_id: filters.category_id,
-    chu_de_id: filters.chu_de_id,
+    story_id: filters.story_id,
     sector: filters.sector,
     ecosystem: filters.ecosystem,
     content_type: filters.content_type || filters.type || null

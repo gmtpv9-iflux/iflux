@@ -67,10 +67,10 @@ function normalizeArticleInput(input, actor) {
   const categoryId = input.category_id || null;
   if (!categoryId) throw AppError.badRequest('ARTICLE_CATEGORY_REQUIRED', 'Danh mục là bắt buộc (chọn đúng 1)');
 
-  const chuDeId = input.chu_de_id || (input.chu_de && input.chu_de.id) || null;
-  const chuDeSlug = input.chu_de_slug || (input.chu_de && input.chu_de.slug) || '';
-  const chuDeName = input.chu_de_name || (input.chu_de && (input.chu_de.name || input.chu_de.label)) || '';
-  /* Chủ đề tuỳ chọn — bài không gắn chủ đề không đóng góp Topic Engine / Story */
+  /* Tin tức chỉ gắn Thực thể ĐÃ HÌNH THÀNH (Owner 2026-10) — Story (đã Admin ánh xạ từ Topic),
+     không gắn Topic (đang hình thành). Field đơn giản story_id → stories.id, không còn
+     content_chu_de (đã dọn — xem migration 075). */
+  const storyId = input.story_id || null;
 
   /* WP-1 / Amd B: cho phép tickers ∪ ecosystems; Sector không gắn kèm multi-membership.
    * Exchange vẫn exclusive (không trộn với entity groups). */
@@ -124,9 +124,7 @@ function normalizeArticleInput(input, actor) {
     content_type: input.content_type || 'article',
     category_id: categoryId,
     category_name: String(input.category_name || '').trim(),
-    chu_de_id: chuDeId,
-    chu_de_slug: slugify(chuDeSlug || chuDeName),
-    chu_de_name: chuDeName || chuDeSlug,
+    story_id: storyId,
     tickers,
     sectors,
     ecosystems,
@@ -170,80 +168,6 @@ function normalizeArticleInput(input, actor) {
   };
 }
 
-async function ensureChuDe(normalized) {
-  const hasAny =
-    !!(normalized && (normalized.chu_de_id || normalized.chu_de_slug || normalized.chu_de_name));
-  if (!hasAny) return null;
-
-  if (normalized.chu_de_id) {
-    const byId = await query('SELECT id, slug, label FROM content_chu_de WHERE id = $1 LIMIT 1', [normalized.chu_de_id]);
-    if (byId.rows[0]) {
-      return {
-        id: byId.rows[0].id,
-        slug: byId.rows[0].slug,
-        name: byId.rows[0].label
-      };
-    }
-  }
-  const slug = normalized.chu_de_slug || slugify(normalized.chu_de_name);
-  if (!slug) return null;
-
-  const bySlug = await query('SELECT id, slug, label FROM content_chu_de WHERE slug = $1 LIMIT 1', [slug]);
-  if (bySlug.rows[0]) {
-    return {
-      id: bySlug.rows[0].id,
-      slug: bySlug.rows[0].slug,
-      name: bySlug.rows[0].label
-    };
-  }
-
-  const id = 'chu_de_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-  const label = normalized.chu_de_name || slug;
-  await query(
-    `INSERT INTO content_chu_de (id, slug, label, status, interest_score, meta, created_at, updated_at)
-     VALUES ($1,$2,$3,'active',1,'{}'::jsonb,NOW(),NOW())
-     ON CONFLICT (slug) DO UPDATE SET updated_at = NOW()
-     RETURNING id, slug, label`,
-    [id, slug, label]
-  );
-  const again = await query('SELECT id, slug, label FROM content_chu_de WHERE slug = $1 LIMIT 1', [slug]);
-  return {
-    id: again.rows[0].id,
-    slug: again.rows[0].slug,
-    name: again.rows[0].label
-  };
-}
-
-async function bumpChuDeStats(chuDe, tickers) {
-  if (!chuDe || !chuDe.id) return;
-  try {
-    await query(
-      `UPDATE content_chu_de SET
-         meta = COALESCE(meta, '{}'::jsonb) || jsonb_build_object(
-           'post_count', COALESCE((meta->>'post_count')::int, 0) + 1
-         ),
-         updated_at = NOW()
-       WHERE id = $1`,
-      [chuDe.id]
-    );
-  } catch (e) { /* optional column shape */ }
-
-  for (let i = 0; i < (tickers || []).length; i++) {
-    const ticker = tickers[i];
-    try {
-      await query(
-        `INSERT INTO content_chu_de_mappings (chu_de_id, ticker, entity_label, relevance_score, mention_count, status, method, meta)
-         VALUES ($1,$2,$2,1,1,'active','article','{}'::jsonb)
-         ON CONFLICT (chu_de_id, ticker) DO UPDATE SET
-           mention_count = content_chu_de_mappings.mention_count + 1,
-           relevance_score = content_chu_de_mappings.relevance_score + 1,
-           updated_at = NOW()`,
-        [chuDe.id, ticker]
-      );
-    } catch (e) { /* mapping table may differ */ }
-  }
-}
-
 async function listArticles(filters) {
   filters = filters || {};
   const params = [];
@@ -262,9 +186,9 @@ async function listArticles(filters) {
     params.push(filters.category_id);
     whereSql += ` AND payload->>'category_id' = $${params.length}`;
   }
-  if (filters.chu_de_id) {
-    params.push(filters.chu_de_id);
-    whereSql += ` AND payload->>'chu_de_id' = $${params.length}`;
+  if (filters.story_id) {
+    params.push(filters.story_id);
+    whereSql += ` AND payload->>'story_id' = $${params.length}`;
   }
 
   const countRes = await query(`SELECT COUNT(*)::int AS total FROM news_posts${whereSql}`, params);
@@ -391,25 +315,11 @@ async function createArticle(input, actor) {
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
 
-  const chuDe = await ensureChuDe(normalized);
-  if (chuDe) {
-    normalized.chu_de_id = chuDe.id;
-    normalized.chu_de_slug = chuDe.slug;
-    normalized.chu_de_name = chuDe.name;
-  } else {
-    normalized.chu_de_id = null;
-    normalized.chu_de_slug = '';
-    normalized.chu_de_name = '';
-  }
-
   const id = input.id || 'post_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
   const now = new Date().toISOString();
   const record = Object.assign({}, normalized, {
     id,
     former_slugs: [],
-    chu_de: chuDe,
-    chu_de_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
-    story_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
     created_at: now,
     updated_at: now,
     stats: { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 },
@@ -430,9 +340,6 @@ async function createArticle(input, actor) {
     ]
   );
 
-  if (isLivePublished(record.status) && chuDe) {
-    await bumpChuDeStats(chuDe, record.tickers);
-  }
   try {
     const bus = require('../../core/events/bus');
     if (isLivePublished(record.status)) {
@@ -458,13 +365,7 @@ async function updateArticle(id, input, actor) {
 
   const merged = Object.assign({}, current, input, {
     category_id: input.category_id != null ? input.category_id : current.category_id,
-    chu_de_id: Object.prototype.hasOwnProperty.call(input, 'chu_de_id') ? input.chu_de_id : current.chu_de_id,
-    chu_de_name: Object.prototype.hasOwnProperty.call(input, 'chu_de_name')
-      ? input.chu_de_name
-      : (current.chu_de_name || (current.chu_de && current.chu_de.name)),
-    chu_de_slug: Object.prototype.hasOwnProperty.call(input, 'chu_de_slug')
-      ? input.chu_de_slug
-      : (current.chu_de_slug || (current.chu_de && current.chu_de.slug)),
+    story_id: Object.prototype.hasOwnProperty.call(input, 'story_id') ? input.story_id : current.story_id,
     tickers: input.tickers != null ? input.tickers : current.tickers,
     sectors: input.sectors != null ? input.sectors : current.sectors,
     ecosystems: input.ecosystems != null ? input.ecosystems : current.ecosystems,
@@ -481,7 +382,6 @@ async function updateArticle(id, input, actor) {
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
 
-  const chuDe = await ensureChuDe(normalized);
   const now = new Date().toISOString();
   const wasPublished = isLivePublished(current.status);
   const oldSlug = String(current.slug || '').trim();
@@ -495,12 +395,6 @@ async function updateArticle(id, input, actor) {
   const record = Object.assign({}, current, normalized, {
     id: current.id,
     former_slugs: former,
-    chu_de: chuDe,
-    chu_de_id: chuDe ? chuDe.id : null,
-    chu_de_slug: chuDe ? chuDe.slug : '',
-    chu_de_name: chuDe ? chuDe.name : '',
-    chu_de_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
-    story_tags: chuDe ? [{ source: 'chu-de', sourceId: chuDe.slug, name: chuDe.name }] : [],
     updated_at: now,
     published_at: isLivePublished(normalized.status)
       ? (current.published_at || now)
@@ -517,9 +411,6 @@ async function updateArticle(id, input, actor) {
     [current.id, record.content_type, record.status, JSON.stringify(record)]
   );
 
-  if (!wasPublished && isLivePublished(record.status) && chuDe) {
-    await bumpChuDeStats(chuDe, record.tickers);
-  }
   try {
     const bus = require('../../core/events/bus');
     if (!wasPublished && isLivePublished(record.status)) {
@@ -593,144 +484,22 @@ async function editStoryPost(id, patch, actor) {
   return updateArticle(id, input, actor);
 }
 
-/** Gợi ý chủ đề từ tiêu đề / từ khóa tìm kiếm */
-async function suggestChuDe(q, limit) {
+/** Gợi ý Story (đã hình thành) để Tin tức gắn vào — thay content_chu_de cũ (đã dọn).
+ * Tin tức chỉ gắn Thực thể ĐÃ HÌNH THÀNH (Owner 2026-10): không tạo Story mới từ đây. */
+async function suggestStories(q, limit) {
   const term = String(q || '').trim();
   const lim = Math.min(Math.max(Number(limit) || 8, 1), 20);
-  if (!term) {
-    const top = await query(
-      `SELECT id, slug, label,
-              COALESCE((meta->>'post_count')::int, 0) AS post_count
-       FROM content_chu_de
-       WHERE status = 'active'
-       ORDER BY COALESCE((meta->>'post_count')::int, 0) DESC, interest_score DESC NULLS LAST
-       LIMIT $1`,
-      [lim]
-    );
-    return top.rows.map(function (r) {
-      return { id: r.id, slug: r.slug, name: r.label, post_count: Number(r.post_count) || 0 };
-    });
-  }
-
-  const tokens = term
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
-    .split(/[^a-z0-9]+/)
-    .filter(function (t) { return t.length >= 2; })
-    .slice(0, 6);
-
-  const likeRaw = '%' + term.toLowerCase() + '%';
-  const likeSlug = '%' + slugify(term).replace(/-/g, '%') + '%';
-  const tokenLikes = tokens.map(function (t) { return '%' + t + '%'; });
-  const res = await query(
-    `SELECT id, slug, label,
-            COALESCE((meta->>'post_count')::int, 0) AS post_count,
-            interest_score
-     FROM content_chu_de
-     WHERE status = 'active'
-       AND (
-         LOWER(label) LIKE $1
-         OR LOWER(slug) LIKE $1
-         OR LOWER(slug) LIKE $2
-         OR LOWER(slug) LIKE ANY($3::text[])
-       )
-     ORDER BY
-       CASE WHEN LOWER(slug) = $4 OR LOWER(label) = LOWER($5) THEN 0
-            WHEN LOWER(slug) LIKE $4 || '%' OR LOWER(label) LIKE LOWER($5) || '%' THEN 1
-            ELSE 2 END,
-       COALESCE((meta->>'post_count')::int, 0) DESC,
-       interest_score DESC NULLS LAST
-     LIMIT $6`,
-    [
-      likeRaw,
-      likeSlug,
-      tokenLikes.length ? tokenLikes : [likeSlug],
-      slugify(term),
-      term,
-      lim
-    ]
-  );
-  return res.rows.map(function (r) {
-    return { id: r.id, slug: r.slug, name: r.label, post_count: Number(r.post_count) || 0 };
-  });
-}
-
-async function suggestTickersForChuDe(chuDeRef, limit) {
-  const lim = Math.min(Math.max(Number(limit) || 10, 1), 30);
-  let chuDeId = chuDeRef;
-  if (chuDeRef && String(chuDeRef).indexOf('chu_de_') !== 0 && String(chuDeRef).indexOf('story_') !== 0) {
-    const bySlug = await query('SELECT id FROM content_chu_de WHERE slug = $1 LIMIT 1', [slugify(chuDeRef)]);
-    if (bySlug.rows[0]) chuDeId = bySlug.rows[0].id;
-  }
-  if (!chuDeId) return [];
-  const res = await query(
-    `SELECT ticker, mention_count, relevance_score
-     FROM content_chu_de_mappings
-     WHERE chu_de_id = $1 AND status = 'active'
-     ORDER BY mention_count DESC, relevance_score DESC
-     LIMIT $2`,
-    [chuDeId, lim]
-  );
-  return res.rows.map(function (r) {
-    return {
-      ticker: r.ticker,
-      mention_count: Number(r.mention_count) || 0,
-      relevance_score: Number(r.relevance_score) || 0
-    };
-  });
-}
-
-async function createChuDeQuick(name) {
-  const label = String(name || '').trim();
-  if (!label) throw AppError.badRequest('CHU_DE_NAME_REQUIRED', 'Tên chủ đề là bắt buộc');
-  const slug = slugify(label);
-  const existing = await query('SELECT id, slug, label FROM content_chu_de WHERE slug = $1 LIMIT 1', [slug]);
-  if (existing.rows[0]) {
-    return { id: existing.rows[0].id, slug: existing.rows[0].slug, name: existing.rows[0].label, created: false };
-  }
-  const id = 'chu_de_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-  await query(
-    `INSERT INTO content_chu_de (id, slug, label, status, interest_score, meta, created_at, updated_at)
-     VALUES ($1,$2,$3,'active',1, jsonb_build_object('post_count', 0), NOW(), NOW())`,
-    [id, slug, label]
-  );
-  return { id, slug, name: label, created: true, post_count: 0 };
-}
-
-async function listChuDeAdmin(filters) {
-  filters = filters || {};
-  const lim = Math.min(Math.max(Number(filters.limit) || 200, 1), 500);
   const params = [];
-  let sql =
-    `SELECT id, slug, label, status, interest_score, meta, created_at, updated_at
-     FROM content_chu_de WHERE 1=1`;
-  if (filters.q) {
-    params.push('%' + String(filters.q).trim().toLowerCase() + '%');
-    sql += ` AND (LOWER(label) LIKE $${params.length} OR LOWER(slug) LIKE $${params.length})`;
+  let sql = `SELECT id, title, stock_tags FROM stories WHERE status = 'active'`;
+  if (term) {
+    params.push('%' + term.toLowerCase() + '%');
+    sql += ` AND LOWER(title) LIKE $${params.length}`;
   }
-  if (filters.status) {
-    params.push(filters.status);
-    sql += ` AND status = $${params.length}`;
-  }
-  sql += ` ORDER BY COALESCE((meta->>'post_count')::int, 0) DESC, updated_at DESC NULLS LAST LIMIT $${params.length + 1}`;
   params.push(lim);
+  sql += ` ORDER BY created_at DESC LIMIT $${params.length}`;
   const res = await query(sql, params);
   return res.rows.map(function (r) {
-    const meta = r.meta || {};
-    return {
-      id: r.id,
-      slug: r.slug,
-      name: r.label,
-      label: r.label,
-      status: r.status,
-      interest_score: r.interest_score,
-      post_count: Number(meta.post_count) || 0,
-      meta: meta,
-      created_at: r.created_at,
-      updated_at: r.updated_at
-    };
+    return { id: r.id, name: r.title, stock_tags: r.stock_tags || [] };
   });
 }
 
@@ -994,8 +763,7 @@ module.exports = {
   deleteArticle,
   moderateStoryPost,
   editStoryPost,
-  suggestChuDe,
-  suggestTickersForChuDe,
+  suggestStories,
   resolveArticleMetadata,
   resolveOpenGraphMeta,
   attachArticleMetadata,
@@ -1003,8 +771,6 @@ module.exports = {
   renderOpenGraphHtml,
   renderArticleSpaHtml,
   PUBLIC_ORIGIN,
-  createChuDeQuick,
-  listChuDeAdmin,
   listAuthorsAdmin,
   STATUSES,
   isLivePublished,

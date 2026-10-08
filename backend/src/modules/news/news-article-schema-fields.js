@@ -23,10 +23,7 @@ const ARTICLE_SCHEMA_FIELDS = [
 
   { key: 'category_id', label: 'Danh mục (id)', group: 'taxonomy', cafef: 'Breadcrumb JSON-LD', vietstock: 'article:section', baodautu: 'Chuyên mục từ URL / breadcrumb', note: 'Map sang Danh mục iFlux qua Đồng bộ danh mục' },
   { key: 'category_name', label: 'Danh mục (tên)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Derived từ category_id' },
-  { key: 'chu_de_id', label: 'Chủ đề (id)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Nguồn không có — Admin / Cộng tác viên bổ sung sau' },
-  { key: 'chu_de_slug', label: 'Chủ đề (slug)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Derived' },
-  { key: 'chu_de_name', label: 'Chủ đề (tên)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Derived / hiển thị' },
-  { key: 'chu_de_tags', label: 'Chủ đề (tags)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Array sau ensureChuDe; User Web story_tags' },
+  { key: 'story_id', label: 'Câu chuyện (Story)', group: 'taxonomy', cafef: '', vietstock: '', baodautu: '', note: 'Nguồn không có — chỉ gắn Thực thể Story ĐÃ HÌNH THÀNH, Admin/Cộng tác viên bổ sung sau' },
 
   { key: 'tickers', label: 'Chủ thể — Mã cổ phiếu', group: 'entity', cafef: 'news:stock_tickers + keywords', vietstock: 'keywords + tag', baodautu: 'keywords + tag_detail_item', note: 'Map Entity iFlux' },
   { key: 'sectors', label: 'Chủ thể — Ngành', group: 'entity', cafef: '', vietstock: '', baodautu: '', note: 'XOR với tickers/ecosystems theo rule bài' },

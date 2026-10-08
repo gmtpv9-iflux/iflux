@@ -185,7 +185,7 @@ async function importArticle(config, articleId, actor) {
       sectors: article.sectors,
       ecosystems: article.ecosystems,
       exchange: article.exchange,
-      chu_de_id: article.chu_de_id,
+      story_id: article.story_id,
       display: article.display,
       published_at: article.published_at
     },

@@ -1,9 +1,21 @@
 # SoT — Community (Cộng đồng) Architecture V1
 
-**Ngày:** 2026-10-02
+**Ngày:** 2026-10-02 — **§1 dòng "Topic vs Story" và §7/§8 đã bị Owner đảo lại 2026-10-08, xem ghi chú ngay dưới.**
 **Trạng thái:** 🟢 Chốt kiến trúc nghiệp vụ — chờ thi công theo phase
-**Thay thế:** `Sot - Topic_Engine (V1).md`, `Sot - Topic_Engine (V2).md` (xem §8)
+**Thay thế:** `Sot - Topic_Engine (V1).md`, `Sot - Topic_Engine (V2).md` (2 file đã XOÁ 2026-10-08 — giống nhau 100%, đã supersede từ trước, không cần giữ lại tham khảo)
 **Tái dùng nguyên vẹn:** `SoT — Follow & Notification Domain.md`, hệ Interaction (IA-001…IU-001)
+
+> **⚠️ Cập nhật 2026-10-08 (Owner chốt lại):** Lịch sử Topic/Story đi qua 3 giai đoạn — (1) tách riêng
+> ban đầu (Story = nâng cấp của Topic), (2) tài liệu này (02/10) **gộp lại làm một**, (3) **hôm nay
+> Owner quyết định tách trở lại**, nhưng theo mô hình khác hẳn (1) và khác Topic_Engine V1/V2: Topic
+> hình thành từ Hashtag trên Post Cộng đồng (thực thể tập trung, có Engagement/Sentiment/Trending
+> Score + vòng đời 5 trạng thái tự động — hồi sinh percentile+window của Topic_Engine V2 nhưng KHÔNG
+> còn gắn với Story), Story vẫn giữ đúng hình dạng đơn giản mô tả ở §7.1 dưới (active/archived) nhưng
+> CHỈ được tạo qua Admin ánh xạ thủ công 1 Topic → 1 Story (`stories.topic_id`), không còn User tự
+> tạo Story trực tiếp. Dòng "Topic vs Story: Hợp nhất làm một" ở bảng §1 dưới **không còn đúng** —
+> xem `.claude/plans` phiên làm việc 2026-10-08 ("Community → Topic → Story: dọn sạch hệ cũ") để có
+> đầy đủ schema/migration mới. Phần còn lại của §7 (Entity fields, "Đồng tình" ≠ Like, 2 bảng xếp
+> hạng không gộp) vẫn đúng, không đổi.
 
 ---
 
@@ -156,7 +168,12 @@ Tất cả **cursor-based, limit mặc định 10** — khớp đúng yêu cầu
 
 ---
 
-## 7. Story / Chủ đề — thay thế Topic Engine
+## 7. Story / Chủ đề
+
+> **Cập nhật 2026-10-08:** Topic được tái lập làm entity riêng (xem banner đầu tài liệu) — Story
+> dưới đây CHỈ còn được tạo qua Admin ánh xạ 1 Topic → 1 Story (`stories.topic_id UNIQUE`), không
+> còn User tự tạo trực tiếp qua Composer như §7.2 mô tả ban đầu. Shape entity, "Đồng tình"≠Like, 2
+> bảng xếp hạng không gộp (§7.3, §7.4) vẫn giữ nguyên.
 
 ### 7.1 Entity
 

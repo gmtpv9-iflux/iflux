@@ -187,14 +187,6 @@ function createApp(config) {
     console.warn('[FN-001] subscriber register', e && e.message);
   }
 
-  const { createContentRouter } = require('./modules/content/content.routes');
-  app.use(
-    `${config.LEGACY_API_PREFIX}/content`,
-    createContentRouter({
-      auth: { authenticate: auth.authenticate, authenticateAdmin: adminAuthMw.authenticateAdmin },
-      config
-    })
-  );
   app.use(`${config.LEGACY_API_PREFIX}/onboarding`, createOnboardingRouter({ config, auth: userAndAdminAuth }));
   app.use(`${config.LEGACY_API_PREFIX}/plans`, createPlansRouter({ config, auth: adminAuthMw }));
 

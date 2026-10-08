@@ -152,15 +152,14 @@ async function loadEntitySeoContext(path) {
     var storyName = storyRef;
     var storySlug = storyRef;
     try {
+      /* content_chu_de đã dọn (migration 075) — /cau-chuyen phục vụ bởi bảng `stories` */
       var storyRes = await db.query(
-        `SELECT slug, label FROM content_chu_de
-         WHERE lower(slug) = lower($1) OR id::text = $1
-         LIMIT 1`,
+        `SELECT id, title FROM stories WHERE id::text = $1 LIMIT 1`,
         [storyRef]
       );
       if (storyRes.rows[0]) {
-        storySlug = storyRes.rows[0].slug || storyRef;
-        storyName = storyRes.rows[0].label || storySlug;
+        storySlug = storyRes.rows[0].id;
+        storyName = storyRes.rows[0].title || storySlug;
       }
     } catch (e) {
       /* keep ref fallback */
@@ -230,15 +229,14 @@ async function loadEntitySeoContext(path) {
     var topicName = topicRef;
     var topicSlug = topicRef;
     try {
+      /* content_chu_de đã dọn (migration 075) — Tin tức duyệt theo Story (Thực thể đã hình thành) */
       var topicRes = await db.query(
-        `SELECT slug, label FROM content_chu_de
-         WHERE lower(slug) = lower($1) OR id::text = $1
-         LIMIT 1`,
+        `SELECT id, title FROM stories WHERE id::text = $1 LIMIT 1`,
         [topicRef]
       );
       if (topicRes.rows[0]) {
-        topicSlug = topicRes.rows[0].slug || topicRef;
-        topicName = topicRes.rows[0].label || topicSlug;
+        topicSlug = topicRes.rows[0].id;
+        topicName = topicRes.rows[0].title || topicSlug;
       }
     } catch (e) {
       /* keep ref fallback */
@@ -389,7 +387,10 @@ async function resolveArticleContract(article, opts) {
     foundationEffective = {};
   }
   var seo = article.seo && typeof article.seo === 'object' ? article.seo : {};
-  var robots = seo.robots || seo.meta_robots || '';
+  /* Owner 2026-10: bài 'published_rss' (tự động RSS) không index — nội dung có thể bị sửa lại sau
+     khi đã index gây lỗi/bị Google phạt. Chỉ 'published' (Admin xuất bản tay) mới index. Admin set
+     tay seo.robots vẫn được tôn trọng (ưu tiên override thủ công hơn rule theo status). */
+  var robots = seo.robots || seo.meta_robots || (article.status === 'published_rss' ? 'noindex,nofollow' : '');
   var contract = contractBuilder.buildSeoContract({
     foundationEffective: foundationEffective,
     pageKey: 'news',
@@ -499,7 +500,8 @@ function articleOverridesFromCandidate(row) {
   }
   var slug = String((row && row.slug) || '').trim();
   var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
-  var robots = seo.robots || seo.meta_robots || '';
+  /* Owner 2026-10: bài 'published_rss' không index (xem resolveArticleContract) — cùng rule. */
+  var robots = seo.robots || seo.meta_robots || (row && row.status === 'published_rss' ? 'noindex,nofollow' : '');
   var entity = {
     title: row && row.title,
     excerpt: row && row.excerpt,
