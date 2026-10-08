@@ -157,19 +157,6 @@
         }
       });
     },
-    initLifecycle: function () {
-      crudPage({
-        listPath: '/admin/metadata/story-lifecycle', countId: 'adm-wd-count', tbodyId: 'adm-wd-tbody',
-        editPerm: 'metadata.story_lifecycle.edit',
-        buildEdit: function () {
-          var name = prompt('Tên giai đoạn:'); return name ? { name: name } : null;
-        },
-        rowHtml: function (r, actions) {
-          return '<tr><td>' + esc(r.sort_order) + '</td><td><strong>' + esc(r.name) + '</strong><div class="ix-caption">' +
-            esc(r.code) + '</div></td><td>' + actions + '</td></tr>';
-        }
-      });
-    },
     /* Owner 2026-08-10: UI Nhận diện thương hiệu removed — use initSeoSystem / Thiết lập SEO.
        Keep stub so old HTML script tags do not throw. */
     initBrand: function () {

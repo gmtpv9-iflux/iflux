@@ -120,16 +120,22 @@ export async function ensureGlobal(name, src) {
 }
 
 /**
- * Nạp danh sách <script> cổ điển theo đúng thứ tự (idempotent theo src).
+ * Nạp danh sách <script> cổ điển, THỰC THI đúng thứ tự (idempotent theo src).
  * W4: skip Shell platform globals đã có (giống loadScriptTiers).
+ *
+ * Owner 2026-10 (trang Cá nhân chậm) — tạo TẤT CẢ <script> tag ngay, KHÔNG await giữa từng
+ * lần tạo: trước đây for-loop await loadScript() khiến script thứ i+1 chỉ được thêm vào DOM
+ * sau khi script i tải+chạy xong → waterfall network thật (từng file chờ nhau qua round-trip),
+ * không chỉ là thứ tự thực thi. `el.async = false` (loadScript) đã đảm bảo browser THỰC THI
+ * đúng document order dù tải song song — tận dụng đúng hành vi chuẩn HTML5 cho classic script
+ * non-async, không cần đổi gì ở cách gọi (API giữ nguyên, áp dụng cho mọi nơi dùng hàm này).
  * @param {Array<string>} srcs
  */
 export async function loadScriptsSequential(srcs) {
-  for (var i = 0; i < (srcs || []).length; i++) {
-    if (!srcs[i]) continue;
-    if (shouldSkipShellPlatform(srcs[i])) continue;
-    await loadScript(srcs[i]);
-  }
+  var list = (srcs || []).filter(function (src) {
+    return src && !shouldSkipShellPlatform(src);
+  });
+  await Promise.all(list.map(loadScript));
 }
 
 /** Bare path → window global do Shell / Platform đã nạp — bỏ request trùng (W1–W4). */
