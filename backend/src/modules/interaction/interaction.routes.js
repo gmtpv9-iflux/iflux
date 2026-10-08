@@ -133,6 +133,34 @@ function createInteractionV1Router(deps) {
     }
   );
 
+  /* Dislike (Owner 2026-10) — CHỈ Post Cộng đồng (II.2, loại trừ Like). likeEntity tự chặn nếu
+     entityType khác 'communitypost' (DISLIKE_NOT_SUPPORTED). */
+  router.post(
+    '/:entityType/:entityId/dislike',
+    auth.authenticate,
+    async (req, res, next) => {
+      try {
+        const data = await thread.likeEntity(req.params.entityType, req.params.entityId, req.user, -1);
+        return success(res, data);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
+  router.delete(
+    '/:entityType/:entityId/dislike',
+    auth.authenticate,
+    async (req, res, next) => {
+      try {
+        const data = await thread.unlikeEntity(req.params.entityType, req.params.entityId, req.user);
+        return success(res, data);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
   return router;
 }
 

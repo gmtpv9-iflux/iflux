@@ -101,6 +101,34 @@ function createCommunityPostsRouter(deps) {
     }
   });
 
+  /* Owner 2026-10 — "Bình luận" trên trang chi tiết Thực thể (Stock/Sector/Family/Story) = Post
+     Cộng đồng gắn thẻ Thực thể đó, "chỉ có 1, xuất hiện ở 2 nơi" (Tab Bình luận Thực thể + trang
+     Cộng đồng). Route MỚI, KHÔNG đụng /interaction/v1/threads/:type/:id (hệ Comment Thread cũ) —
+     Frontend (Phase 4) sẽ đổi hẳn Stock/Sector/Family Detail page sang gọi route này. */
+  router.get('/entities/:entityType/:entityId/posts', async (req, res, next) => {
+    try {
+      const data = await posts.getEntityPosts(req.params.entityType, req.params.entityId, {
+        cursor: req.query.cursor,
+        limit: req.query.limit
+      });
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/entities/:entityType/:entityId/posts', auth.authenticate, async (req, res, next) => {
+    try {
+      const data = await posts.createEntityPost(
+        req.user, req.params.entityType, req.params.entityId,
+        req.body && req.body.content, { label: req.body && req.body.label }
+      );
+      return success(res, { post: data }, 201);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   return router;
 }
 

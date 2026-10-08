@@ -28,6 +28,32 @@ function clampLimit(n, fallback) {
   return Math.min(Math.floor(v), MAX_LIMIT);
 }
 
+function isAdmin(user) {
+  return !!(user && user.roles && user.roles.indexOf('admin') >= 0);
+}
+
+function slugifyTitle(title) {
+  return String(title || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 160) || 'cau-chuyen';
+}
+
+async function ensureUniqueSlug(base) {
+  let slug = base;
+  for (let i = 0; i < 5; i++) {
+    const res = await query('SELECT 1 FROM stories WHERE slug = $1', [slug]);
+    if (!res.rows[0]) return slug;
+    slug = base + '-' + Math.random().toString(36).slice(2, 6);
+  }
+  return base + '-' + Date.now().toString(36);
+}
+
 function normalizeStockTags(raw) {
   if (!Array.isArray(raw)) return [];
   const out = [];
@@ -58,6 +84,7 @@ function rowToStory(row) {
   return {
     id: row.id,
     title: row.title,
+    slug: row.slug || null,
     description: row.description || '',
     author: {
       id: row.author_id,
@@ -67,6 +94,7 @@ function rowToStory(row) {
     stock_tags: row.stock_tags || [],
     sentiment: row.sentiment,
     status: row.status,
+    topic_id: row.topic_id || null,
     stats: {
       agree: Number(row.agree_count) || 0,
       comments: Number(row.comment_count) || 0
@@ -76,9 +104,15 @@ function rowToStory(row) {
   };
 }
 
+/**
+ * Owner 2026-10 (VI.2, VII.1): Story CHỈ được tạo qua Admin ánh xạ Topic — không còn User tự
+ * tạo trực tiếp qua Composer. Giữ hàm này cho Admin tạo Story thủ công (hiếm, không qua Topic)
+ * — luồng chính là mapTopicToStory() dưới.
+ */
 async function createStory(user, input) {
   const authorId = user && user.id;
   if (!authorId) throw AppError.unauthorized('Cần đăng nhập');
+  if (!isAdmin(user)) throw AppError.forbidden('STORY_ADMIN_ONLY', 'Chỉ Admin được tạo Câu chuyện');
 
   const title = String((input && input.title) || '').trim();
   const description = String((input && input.description) || '').trim();
@@ -90,18 +124,66 @@ async function createStory(user, input) {
   if (description.length > MAX_DESC_LEN) throw AppError.badRequest('STORY_DESC_TOO_LONG', 'Luận điểm tối đa ' + MAX_DESC_LEN + ' ký tự');
   if (!sentiment) throw AppError.badRequest('STORY_SENTIMENT_REQUIRED', 'Thiếu quan điểm (bullish/bearish)');
 
+  const slug = await ensureUniqueSlug(slugifyTitle(title));
   const res = await query(
-    `INSERT INTO stories (title, description, author_id, stock_tags, sentiment)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO stories (title, description, author_id, stock_tags, sentiment, slug)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id`,
-    [title, description, authorId, stockTags, sentiment]
+    [title, description, authorId, stockTags, sentiment, slug]
   );
   return getStoryById(res.rows[0].id);
 }
 
+/**
+ * Owner 2026-10 (VI.2): Admin ánh xạ 1 Topic → 1 Story — "Tạo Story mới" (input.title) hoặc
+ * "Gắn vào Story có sẵn" (input.story_id). Mã CP = tính từ Topic (tỷ trọng cộng dồn ≥80%,
+ * Topic_Engine V2), Admin xác nhận/ghi đè qua input.stock_tags nếu muốn.
+ */
+async function mapTopicToStory(topicId, input, adminUser) {
+  if (!isAdmin(adminUser)) throw AppError.forbidden('STORY_ADMIN_ONLY', 'Chỉ Admin được ánh xạ Topic sang Câu chuyện');
+  input = input || {};
+
+  const topicRes = await query('SELECT id FROM topics WHERE id = $1', [topicId]);
+  if (!topicRes.rows[0]) throw AppError.notFound('Không tìm thấy Topic');
+
+  const topics = require('./topics.service');
+  const rep = await topics.getRepresentativeStocks(topicId);
+  const stockTags = Array.isArray(input.stock_tags) && input.stock_tags.length
+    ? normalizeStockTags(input.stock_tags)
+    : rep.stocks.map((s) => s.ticker);
+
+  if (input.story_id) {
+    const res = await query(
+      `UPDATE stories SET topic_id = $1, mapped_by = $2, mapped_at = NOW(), stock_tags = $3, updated_at = NOW()
+       WHERE id = $4 AND topic_id IS NULL AND status = 'active'
+       RETURNING id`,
+      [topicId, adminUser.id, stockTags, input.story_id]
+    );
+    if (!res.rows[0]) {
+      throw AppError.badRequest('STORY_ALREADY_MAPPED', 'Câu chuyện đã được ánh xạ với Topic khác, không tồn tại hoặc đã lưu trữ');
+    }
+    return getStoryById(res.rows[0].id);
+  }
+
+  const title = String(input.title || '').trim();
+  if (!title) throw AppError.badRequest('STORY_TITLE_REQUIRED', 'Thiếu tên Câu chuyện');
+  if (title.length > MAX_TITLE_LEN) throw AppError.badRequest('STORY_TITLE_TOO_LONG', 'Tên chủ đề tối đa ' + MAX_TITLE_LEN + ' ký tự');
+  const description = String(input.description || '').trim();
+  const sentiment = SENTIMENTS.indexOf(input.sentiment) >= 0 ? input.sentiment : 'bullish';
+  const slug = await ensureUniqueSlug(slugifyTitle(title));
+
+  const created = await query(
+    `INSERT INTO stories (title, description, author_id, stock_tags, sentiment, topic_id, mapped_by, mapped_at, slug)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), $8)
+     RETURNING id`,
+    [title, description, adminUser.id, stockTags, sentiment, topicId, adminUser.id, slug]
+  );
+  return getStoryById(created.rows[0].id);
+}
+
 async function getStoryById(id) {
   const res = await query(
-    `SELECT s.id, s.title, s.description, s.stock_tags, s.sentiment, s.status,
+    `SELECT s.id, s.title, s.slug, s.description, s.stock_tags, s.sentiment, s.status, s.topic_id,
             s.created_at, s.updated_at, ${AUTHOR_COLS}, ${STATS_SELECT}
      FROM stories s
      JOIN users u ON u.id = s.author_id
@@ -198,6 +280,7 @@ async function listStories(opts) {
 
 module.exports = {
   createStory,
+  mapTopicToStory,
   getStoryById,
   archiveStory,
   listStories,

@@ -94,7 +94,7 @@ const AUTHOR_COLS = `
    source_type khác 'news' (CASE WHEN tránh query thừa). */
 const POST_COLS = `
   p.id, p.content, p.post_type, p.source_type, p.source_id, p.stock_tags, p.hashtags,
-  p.entity_refs, p.visibility, p.created_at, p.updated_at,
+  p.entity_refs, p.visibility, p.sentiment, p.created_at, p.updated_at,
   (CASE WHEN p.source_type = 'news' THEN (
     SELECT jsonb_build_object(
       'title', np.payload->>'title',
@@ -146,12 +146,15 @@ function rowToPost(row) {
     hashtags: row.hashtags || [],
     entity_refs: row.entity_refs || [],
     visibility: row.visibility,
+    sentiment: row.sentiment || null,
     stats: {
       likes: Number(row.likes_count) || 0,
+      dislikes: Number(row.dislikes_count) || 0,
       comments: Number(row.comments_count) || 0,
       shares: Number(row.shares_count) || 0
     },
     viewer_liked: false,
+    viewer_disliked: false,
     created_at: row.created_at ? new Date(row.created_at).toISOString() : null,
     updated_at: row.updated_at ? new Date(row.updated_at).toISOString() : null
   };
@@ -167,17 +170,21 @@ async function attachViewerLiked(result, viewer) {
   if (!viewer || !viewer.id || !result.items.length) return result;
   const ids = result.items.map((p) => p.id);
   const res = await query(
-    `SELECT entity_id FROM interaction_likes WHERE entity_type = 'communitypost' AND user_id = $1 AND entity_id = ANY($2::text[])`,
+    `SELECT entity_id, value FROM interaction_likes WHERE entity_type = 'communitypost' AND user_id = $1 AND entity_id = ANY($2::text[])`,
     [viewer.id, ids]
   );
-  const liked = {};
-  res.rows.forEach((r) => { liked[r.entity_id] = true; });
-  result.items.forEach((p) => { p.viewer_liked = !!liked[p.id]; });
+  const reaction = {};
+  res.rows.forEach((r) => { reaction[r.entity_id] = r.value; });
+  result.items.forEach((p) => {
+    p.viewer_liked = reaction[p.id] === 1;
+    p.viewer_disliked = reaction[p.id] === -1;
+  });
   return result;
 }
 
 const STATS_SELECT = `
-  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'communitypost' AND il.entity_id = p.id::text) AS likes_count,
+  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'communitypost' AND il.entity_id = p.id::text AND il.value = 1) AS likes_count,
+  (SELECT COUNT(*)::int FROM interaction_likes il WHERE il.entity_type = 'communitypost' AND il.entity_id = p.id::text AND il.value = -1) AS dislikes_count,
   (SELECT COUNT(*)::int FROM interaction_comments ic WHERE ic.entity_type = 'communitypost' AND ic.entity_id = p.id::text AND ic.deleted_at IS NULL) AS comments_count,
   (SELECT COUNT(*)::int FROM social_posts sp2 WHERE sp2.source_type = 'post' AND sp2.source_id = p.id::text AND sp2.status = 'published') AS shares_count
 `;
@@ -245,11 +252,12 @@ async function getPostById(id, viewer) {
   if (!res.rows[0]) throw AppError.notFound('Không tìm thấy bài viết');
   const post = rowToPost(res.rows[0]);
   if (viewer && viewer.id) {
-    const liked = await query(
-      `SELECT 1 FROM interaction_likes WHERE entity_type = 'communitypost' AND entity_id = $1 AND user_id = $2`,
+    const reaction = await query(
+      `SELECT value FROM interaction_likes WHERE entity_type = 'communitypost' AND entity_id = $1 AND user_id = $2`,
       [id, viewer.id]
     );
-    post.viewer_liked = !!liked.rows[0];
+    post.viewer_liked = reaction.rows[0] ? reaction.rows[0].value === 1 : false;
+    post.viewer_disliked = reaction.rows[0] ? reaction.rows[0].value === -1 : false;
   }
   return post;
 }
@@ -370,6 +378,68 @@ async function getStockPosts(ticker, opts) {
   return paginate(res.rows, limit);
 }
 
+const ENTITY_KINDS = ['stock', 'sector', 'family', 'story'];
+
+/**
+ * Owner 2026-10 — Comment trên trang chi tiết Thực thể (Stock/Sector/Family/Story) VÀ Post Cộng
+ * đồng gắn thẻ Thực thể "chỉ có 1, xuất hiện ở 2 nơi, không phải 2 owner khác nhau": CẢ 2 đọc
+ * CÙNG 1 nguồn social_posts, lọc theo thẻ (stock_tags cho stock, entity_refs cho sector/family/
+ * story) — không phải interaction_comments (hệ Comment Thread cũ, giữ nguyên dữ liệu lịch sử,
+ * không migrate, chỉ không còn là nơi TẠO MỚI bình luận cho các entity này).
+ */
+async function getEntityPosts(entityType, entityId, opts) {
+  opts = opts || {};
+  const limit = clampLimit(opts.limit, 10);
+  const type = ENTITY_KINDS.indexOf(entityType) >= 0 ? entityType : null;
+  const id = String(entityId || '').trim();
+  if (!type || !id) throw AppError.badRequest('ENTITY_REQUIRED', 'Thiếu thực thể');
+
+  const params = [];
+  let whereExtra;
+  if (type === 'stock') {
+    params.push(id.toUpperCase());
+    whereExtra = `p.stock_tags @> ARRAY[$1]::text[]`;
+  } else {
+    params.push(JSON.stringify([{ type: type, id: id }]));
+    whereExtra = `p.entity_refs @> $1::jsonb`;
+  }
+  let sql =
+    `SELECT ${POST_COLS}, ${AUTHOR_COLS}, ${STATS_SELECT}
+     FROM social_posts p
+     JOIN users u ON u.id = p.author_id
+     WHERE p.status = 'published' AND p.visibility = 'public' AND ${whereExtra}`;
+  sql += buildCursorWhere(params, 'p.created_at', opts.cursor);
+  params.push(limit + 1);
+  sql += ` ORDER BY p.created_at DESC, p.id DESC LIMIT $${params.length}`;
+  const res = await query(sql, params);
+  return paginate(res.rows, limit);
+}
+
+/** Viết bình luận trực tiếp trên trang chi tiết Thực thể — tạo 1 Social Post gắn thẻ Thực thể
+ * đó, xuất hiện đồng thời ở Tab Bình luận Thực thể (getEntityPosts) VÀ trang Cộng đồng (getFeed).
+ * Mỗi bình luận là 1 Post độc lập — không hỗ trợ reply lồng nhau (giữ đơn giản, mở rộng sau nếu cần). */
+async function createEntityPost(user, entityType, entityId, content, extra) {
+  const authorId = user && user.id;
+  if (!authorId) throw AppError.unauthorized('Cần đăng nhập');
+  const type = ENTITY_KINDS.indexOf(entityType) >= 0 ? entityType : null;
+  const id = String(entityId || '').trim();
+  if (!type || !id) throw AppError.badRequest('ENTITY_REQUIRED', 'Thiếu thực thể');
+  const body = String(content || '').trim();
+  if (!body) throw AppError.badRequest('POST_EMPTY', 'Viết nội dung trước khi gửi');
+  if (body.length > MAX_CONTENT_LEN) throw AppError.badRequest('POST_TOO_LONG', 'Nội dung tối đa ' + MAX_CONTENT_LEN + ' ký tự');
+
+  const stockTags = type === 'stock' ? [id.toUpperCase()] : [];
+  const entityRefs = type === 'stock' ? [] : [{ type: type, id: id, label: (extra && extra.label) || id }];
+
+  const res = await query(
+    `INSERT INTO social_posts (author_id, content, post_type, stock_tags, entity_refs, visibility)
+     VALUES ($1, $2, 'status', $3, $4, 'public')
+     RETURNING id`,
+    [authorId, body, stockTags, JSON.stringify(entityRefs)]
+  );
+  return getPostById(res.rows[0].id, user);
+}
+
 /**
  * Gợi ý khi user gõ vào ô hashtag (Compose) — chỉ gọi khi user bấm vào ô (lazy, không tải sẵn —
  * Owner yêu cầu nhẹ tải). Hợp nhất 2 nguồn, KHÔNG tạo thực thể hashtag riêng (SoT §4.1 — cấm
@@ -422,6 +492,8 @@ module.exports = {
   getFeed,
   getUserTimeline,
   getStockPosts,
+  getEntityPosts,
+  createEntityPost,
   getTrendingSuggestions,
   POST_TYPES,
   SOURCE_TYPES

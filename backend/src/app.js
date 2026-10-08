@@ -177,6 +177,9 @@ function createApp(config) {
   const { createStoriesRouter } = require('./modules/community/stories.routes');
   app.use(`${config.LEGACY_API_PREFIX}/community`, createStoriesRouter({ auth: userAndAdminAuth }));
 
+  const { createTopicsRouter } = require('./modules/community/topics.routes');
+  app.use(`${config.LEGACY_API_PREFIX}/community`, createTopicsRouter({ auth: userAndAdminAuth }));
+
   const { createNotificationsRouter } = require('./modules/notifications/notifications.routes');
   app.use(`${config.LEGACY_API_PREFIX}/notifications`, createNotificationsRouter({ auth }));
 

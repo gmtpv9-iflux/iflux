@@ -243,15 +243,43 @@ async function createThreadComment(entityType, entityId, user, payload) {
 
 async function countEntityLikes(type, id) {
   const res = await query(
-    `SELECT COUNT(*)::int AS n FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2`,
+    `SELECT COUNT(*)::int AS n FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND value = 1`,
     [type, id]
   );
   return (res.rows[0] && res.rows[0].n) || 0;
 }
 
-async function likeEntity(entityType, entityId, user) {
+async function countEntityDislikes(type, id) {
+  const res = await query(
+    `SELECT COUNT(*)::int AS n FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND value = -1`,
+    [type, id]
+  );
+  return (res.rows[0] && res.rows[0].n) || 0;
+}
+
+/**
+ * value: 1 (like, mặc định) | -1 (dislike — CHỈ 'communitypost', loại trừ Like qua PK sẵn có
+ * entity_type+entity_id+user_id — Owner II.2). 'post' (bài Tin tức) không có Dislike.
+ */
+async function likeEntity(entityType, entityId, user, value) {
   const type = normalizeType(entityType);
   const id = normalizeId(type, entityId);
+  const v = value === -1 ? -1 : 1;
+  if (v === -1) {
+    if (type !== 'communitypost') {
+      throw AppError.badRequest('DISLIKE_NOT_SUPPORTED', 'Dislike chỉ áp dụng cho Post Cộng đồng');
+    }
+    const uid = user && user.id ? user.id : null;
+    if (!uid) throw AppError.unauthorized('Cần đăng nhập');
+    await query(
+      `INSERT INTO interaction_likes (entity_type, entity_id, user_id, value) VALUES ($1, $2, $3, -1)
+       ON CONFLICT (entity_type, entity_id, user_id) DO UPDATE SET value = -1, created_at = NOW()`,
+      [type, id, uid]
+    );
+    const likes = await countEntityLikes(type, id);
+    const dislikes = await countEntityDislikes(type, id);
+    return { liked: false, disliked: true, likes, dislikes, target: { type: type, id: id } };
+  }
   /* post (bài Tin tức) có hệ like/favorite RIÊNG — persist trong news_posts.payload.stats/
      liked_by (xem news/interaction.service.js persistStats), KHÔNG qua interaction_likes. Dùng
      chung bảng này cho 'post' sẽ tạo 2 nguồn đếm like lệch nhau cho cùng 1 bài. */
@@ -259,12 +287,13 @@ async function likeEntity(entityType, entityId, user) {
   const uid = user && user.id ? user.id : null;
   if (!uid) throw AppError.unauthorized('Cần đăng nhập');
   await query(
-    `INSERT INTO interaction_likes (entity_type, entity_id, user_id) VALUES ($1, $2, $3)
-     ON CONFLICT DO NOTHING`,
+    `INSERT INTO interaction_likes (entity_type, entity_id, user_id, value) VALUES ($1, $2, $3, 1)
+     ON CONFLICT (entity_type, entity_id, user_id) DO UPDATE SET value = 1, created_at = NOW()`,
     [type, id, uid]
   );
   const likes = await countEntityLikes(type, id);
-  return { liked: true, likes: likes, target: { type: type, id: id } };
+  const dislikes = type === 'communitypost' ? await countEntityDislikes(type, id) : 0;
+  return { liked: true, disliked: false, likes: likes, dislikes: dislikes, target: { type: type, id: id } };
 }
 
 async function unlikeEntity(entityType, entityId, user) {
@@ -278,7 +307,8 @@ async function unlikeEntity(entityType, entityId, user) {
     [type, id, uid]
   );
   const likes = await countEntityLikes(type, id);
-  return { liked: false, likes: likes, target: { type: type, id: id } };
+  const dislikes = type === 'communitypost' ? await countEntityDislikes(type, id) : 0;
+  return { liked: false, disliked: false, likes: likes, dislikes: dislikes, target: { type: type, id: id } };
 }
 
 async function getSummary(entityType, entityId, viewer) {
@@ -289,22 +319,29 @@ async function getSummary(entityType, entityId, viewer) {
   }
   const comments = await countEntityComments(type, id);
   const likes = await countEntityLikes(type, id);
+  const dislikes = type === 'communitypost' ? await countEntityDislikes(type, id) : 0;
   const uid = viewer && viewer.id ? viewer.id : null;
   let liked = false;
+  let disliked = false;
   if (uid) {
     const res = await query(
-      `SELECT 1 FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND user_id = $3`,
+      `SELECT value FROM interaction_likes WHERE entity_type = $1 AND entity_id = $2 AND user_id = $3`,
       [type, id, uid]
     );
-    liked = !!res.rows[0];
+    if (res.rows[0]) {
+      liked = res.rows[0].value === 1;
+      disliked = res.rows[0].value === -1;
+    }
   }
   return {
     target: { type: type, id: id },
     likes: likes,
+    dislikes: dislikes,
     comments: comments,
     shares: 0,
     favorites: 0,
-    liked: liked
+    liked: liked,
+    disliked: disliked
   };
 }
 
@@ -350,6 +387,7 @@ module.exports = {
   getSummary: getSummary,
   countEntityComments: countEntityComments,
   countEntityLikes: countEntityLikes,
+  countEntityDislikes: countEntityDislikes,
   likeComment: likeComment,
   likeEntity: likeEntity,
   unlikeEntity: unlikeEntity

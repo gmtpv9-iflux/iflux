@@ -35,6 +35,17 @@ function createStoriesRouter(deps) {
     }
   });
 
+  /* Owner 2026-10 (VI.2) — Admin ánh xạ 1 Topic → 1 Story. story_id = gắn vào Story có sẵn;
+     thiếu story_id = tạo Story mới (cần title). stories.service.js tự chặn nếu không phải Admin. */
+  router.post('/topics/:topicId/map-to-story', auth.authenticate, async (req, res, next) => {
+    try {
+      const data = await stories.mapTopicToStory(req.params.topicId, req.body || {}, req.user);
+      return success(res, { story: data }, 201);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/stories', async (req, res, next) => {
     try {
       const data = await stories.listStories({

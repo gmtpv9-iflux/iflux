@@ -49,6 +49,23 @@ async function bootstrap() {
     });
   }
 
+  /* Topic lifecycle (Owner 2026-10, SoT "Community → Topic → Story" V.1) — 00:00 hàng ngày: tính
+     lại topic_daily_stats hôm nay + đánh giá lại lifecycle (percentile+window, Admin override
+     thắng). Tắt: TOPIC_LIFECYCLE_CRON=off. */
+  const topicCron = process.env.TOPIC_LIFECYCLE_CRON || '0 0 * * *';
+  if (topicCron !== 'off' && topicCron !== '0') {
+    registerJob('topic-lifecycle-daily', topicCron, async () => {
+      try {
+        const topicsService = require('./modules/community/topics.service');
+        await topicsService.recomputeDailyStats();
+        const out = await topicsService.evaluateAllLifecycles();
+        logger.info({ evaluated: out.evaluated, changed: out.changed }, 'topic-lifecycle-daily done');
+      } catch (err) {
+        logger.error({ err: err.message }, 'topic-lifecycle-daily failed');
+      }
+    });
+  }
+
   /* Tự động hóa cơ chế kích hoạt Media Import (Task 270731_Automated_Media_Import_Trigger) */
   if (config.MEDIA_IMPORT_AUTO_ENABLED !== false) {
     const mediaCron = process.env.MEDIA_IMPORT_AUTO_CRON || '*/1 * * * *'; // mặc định quét mỗi phút
