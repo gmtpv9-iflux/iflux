@@ -1,23 +1,23 @@
 /**
  * Phase A — Feature Checkout sau App Shell Entry.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
+import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var FEATURE_SCRIPTS = [
-  ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'iflux-plans-catalog.js?v=r20260928n',
+  ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
+  ASSET + 'iflux-plans-catalog.js?v=58ef6c230e',
   /* W4: market stack = Shell MARKET_PLATFORM (checkout) */
-  ASSET + 'stock-mentions.js?v=r20260928n',
-  ASSET + 'loyalty-coupon-store.js',
-  ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
-  ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728',
-  ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728',
-  ASSET + 'subscription-orders-store.js?v=r20260928n',
+  ASSET + 'stock-mentions.js?v=63b1553d75',
+  ASSET + 'loyalty-coupon-store.js?v=7e19d32c79',
+  ASSET + 'loyalty-affiliate-store.js?v=b225fb0132',
+  ASSET + 'client-local-notification-types.js?v=32f1add69c',
+  ASSET + 'inapp-notifications.js?v=73382215b8',
+  ASSET + 'subscription-orders-store.js?v=c6beeaca9e',
   ADMIN + 'iflux-customers-store.js',
-  ASSET + 'checkout-page.js'
+  ASSET + 'checkout-page.js?v=7f856d90c2'
 ];
 
 function waitShellReady(pageKey) {

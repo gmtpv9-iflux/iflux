@@ -1,9 +1,9 @@
 /**
  * WGT-LOY-PAGE — Composite Chương trình thành viên (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -29,7 +29,7 @@ function applyConsumerLinks(root) {
 }
 
 var CORE_TIERS = [
-  [ASSET + 'loyalty-page.js']
+  [ASSET + 'loyalty-page.js?v=81e642f66a']
 ];
 
 var LAYOUT_HTML = `<h1 class="ix-page-title">Chương trình thành viên</h1>

@@ -16,8 +16,8 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function icon(name) {
-    return '<i class="ti ti-' + name + '" aria-hidden="true"></i>';
+  function icon(name, cls) {
+    return '<i class="ti ti-' + name + (cls ? ' ' + cls : '') + '" aria-hidden="true"></i>';
   }
 
   function toast(msg, type) {
@@ -64,11 +64,10 @@
       });
     }
     var ASSET = '/User_Web/iflux-web-ui/';
-    var V = '?v=r20261008c';
-    interactionReady = loadScript(ASSET + 'comment-composer.js' + V)
-      .then(function () { return loadScript(ASSET + 'interaction/boot.js' + V); })
+    interactionReady = loadScript(ASSET + 'comment-composer.js?v=6c56717875')
+      .then(function () { return loadScript(ASSET + 'interaction/boot.js?v=41e479c913'); })
       .then(function () { return global.IfluxInteractionBoot.ensureForInteractive(); })
-      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js' + V); });
+      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js?v=5798a6a6f8'); });
     return interactionReady;
   }
 
@@ -85,7 +84,7 @@
           (p.content ? '<p class="ifx-com2-post__text">' + esc(p.content) + '</p>' : '') +
           '<footer class="ifx-com2-post__stats">' +
             '<button type="button" class="' + (p.viewer_liked ? 'is-active' : '') + '" data-ep-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span>' + p.stats.likes + '</span></button>' +
-            '<button type="button" class="' + (p.viewer_disliked ? 'is-active' : '') + '" data-ep-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-down') + ' <span>' + p.stats.dislikes + '</span></button>' +
+            '<button type="button" class="' + (p.viewer_disliked ? 'is-active' : '') + '" data-ep-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-flip-v') + ' <span>' + p.stats.dislikes + '</span></button>' +
             '<button type="button" data-ep-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message-circle') + ' ' + p.stats.comments + '</button>' +
             '<button type="button" data-ep-action="share" data-post-id="' + esc(p.id) + '">' + icon('share') + ' ' + p.stats.shares + '</button>' +
           '</footer>' +

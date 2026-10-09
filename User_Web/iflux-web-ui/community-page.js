@@ -80,19 +80,6 @@
     story: { icon: 'bookmark', hrefBase: '/cau-chuyen/' }
   };
 
-  var SEED_TICKERS = [
-    { code: 'VIX', count: '1.2K thảo luận', pct: '+3.45%', up: true },
-    { code: 'FPT', count: '980 thảo luận', pct: '+1.82%', up: true },
-    { code: 'HPG', count: '760 thảo luận', pct: '+2.11%', up: true },
-    { code: 'VHM', count: '620 thảo luận', pct: '-0.35%', up: false }
-  ];
-
-  var SEED_INVESTORS = [
-    { initials: 'LI', name: 'Long Invest', badge: 'Nhà đầu tư nổi bật', desc: 'Phân tích vĩ mô & dòng tiền' },
-    { initials: 'MP', name: 'Mai Phương', badge: '', desc: 'Đầu tư giá trị' },
-    { initials: 'NH', name: 'Nguyễn Hoàng', badge: 'Top Contributor', desc: 'Phân tích kỹ thuật' }
-  ];
-
   var SEED_ACTIVITIES = [
     { name: 'Mai Phương', action: 'đã bình luận bài viết "MWG: Lợi nhuận Q1 tăng ấn tượng..."', time: '7 phút trước' },
     { name: 'Long Invest', action: 'đã đăng bài viết mới "Dòng tiền đang quay lại nhóm..."', time: '1 giờ trước' },
@@ -109,9 +96,9 @@
   ];
 
   var FILTERS = [
-    { key: 'latest', label: 'Mới nhất', mode: 'latest' },
-    { key: 'trending', label: 'Thịnh hành', mode: 'trending' },
-    { key: 'top', label: 'Nổi bật', mode: 'trending' }
+    { key: 'latest', label: 'Mới nhất', mode: 'latest', icon: 'clock' },
+    { key: 'trending', label: 'Thịnh hành', mode: 'trending', icon: 'trending-up' },
+    { key: 'top', label: 'Nổi bật', mode: 'trending', icon: 'star' }
   ];
 
   var STORY_RANGES = [
@@ -219,45 +206,23 @@
       ? '<div class="ifx-com2-hotcarousel">' + state.hotTopics.map(hotTopicCarouselItemHtml).join('') + '</div>'
       : '<p class="ifx-com2-empty">Chưa có chủ đề mới nổi trong khoảng thời gian này.</p>';
     return (
-      '<div class="ifx-card" data-ifx-com2-hot>' +
+      /* Owner: không phải 1 card — bỏ hẳn div khung (không chỉ bỏ viền), nằm thẳng trên nền trang. */
+      '<div data-ifx-com2-hot>' +
         sectionHeaderHtml('flame', 'Top chủ đề mới nổi', { noViewAll: true }) +
-        '<div class="ifx-card-body">' +
-          '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
-            STORY_RANGES.map(function (r) {
-              return '<button type="button" class="ifx-tab' + (r.key === state.hotRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
-            }).join('') +
-          '</div>' +
-          body +
+        '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-period" data-ifx-com2-hot-range>' +
+          STORY_RANGES.map(function (r) {
+            return '<button type="button" class="ifx-tab' + (r.key === state.hotRange ? ' is-active' : '') + '" data-range="' + r.key + '">' + esc(r.label) + '</button>';
+          }).join('') +
         '</div>' +
+        body +
       '</div>'
     );
   }
 
-  function tickerChipHtml(t) {
-    return (
-      '<div class="ifx-com2-ticker">' +
-        '<div class="ifx-com2-ticker__code">' + esc(t.code) + '</div>' +
-        '<div class="ifx-com2-ticker__count">' + esc(t.count) + '</div>' +
-        '<div class="ifx-com2-ticker__pct ' + (t.up ? 'is-up' : 'is-down') + '">' +
-          icon(t.up ? 'trending-up' : 'trending-down') + ' ' + esc(t.pct) +
-        '</div>' +
-      '</div>'
-    );
-  }
-
-  function investorItemHtml(u) {
-    return (
-      '<li class="ifx-com2-investor">' +
-        avatar(u.initials, 'sm') +
-        '<div class="ifx-com2-investor__who">' +
-          '<div class="name">' + esc(u.name) + (u.badge ? ' <span class="ifx-badge ifx-badge-soft">' + esc(u.badge) + '</span>' : '') + '</div>' +
-          '<div class="desc">' + esc(u.desc) + '</div>' +
-        '</div>' +
-        '<button type="button" class="ifx-btn ifx-btn-secondary ifx-btn-sm" data-ifx-com2-action="follow">' + icon('user-plus') + ' Theo dõi</button>' +
-      '</li>'
-    );
-  }
-
+  /* "Mã được thảo luận nhiều"/"Nhà đầu tư nên theo dõi" (seed Phase 5 chờ Widget thật) đã bỏ
+     2026-10 — Widget Host thật (widgets/community-page/index.js mountPageWidgets) apply đúng
+     Cài đặt trang > Widget Placement > Cộng đồng > Sidebar trái, nằm TRÊN khối này trong DOM
+     (xem runtime/app-shell.js aside() — Widget Host luôn trước .ifx-shell-sidebar-content). */
   function leftSidebarHtml() {
     return (
       '<div class="ifx-card ifx-com2-brand">' +
@@ -270,17 +235,9 @@
         '</header>' +
       '</div>' +
 
-      '<div class="ifx-card">' +
-        sectionHeaderHtml('flame', 'Mã được thảo luận nhiều') +
-        '<div class="ifx-card-body ifx-com2-tickergrid">' + SEED_TICKERS.map(tickerChipHtml).join('') + '</div>' +
-      '</div>' +
-
-      '<div class="ifx-card">' +
-        sectionHeaderHtml('users', 'Nhà đầu tư nên theo dõi') +
-        '<div class="ifx-card-body">' +
-          '<ul class="ifx-com2-investorlist">' + SEED_INVESTORS.map(investorItemHtml).join('') + '</ul>' +
-        '</div>' +
-      '</div>'
+      /* Owner: giao diện Widget (giống Tổng quan thị trường), ở Sidebar trái — không phải đầu
+         main-content, và không qua Widget Placement (Topic là dữ liệu riêng của Cộng đồng). */
+      trendingTopicsCardHtml()
     );
   }
 
@@ -308,11 +265,15 @@
     );
   }
 
+  /* Tab Mới nhất/Thịnh hành/Nổi bật — chuẩn Tab lớn (Owner 2026-10, điều chỉnh lại): có icon,
+     không phải Block/Widget nhỏ — dùng .ix-profile-tabs/.ix-profile-tab/.active, đúng mẫu
+     entity-detail-center.js tabsBar(), không tự code mới. */
   function filterTabsHtml(active) {
     return (
-      '<div class="ifx-tabs ifx-com2-feedfilter" data-ifx-com2-filters>' +
+      '<div class="ix-profile-tabs ifx-com2-feedfilter" data-ifx-com2-filters>' +
         FILTERS.map(function (f) {
-          return '<button type="button" class="ifx-tab' + (f.key === active ? ' is-active' : '') + '" data-filter="' + f.key + '">' + esc(f.label) + '</button>';
+          return '<button type="button" class="ix-profile-tab' + (f.key === active ? ' active' : '') + '" data-filter="' + f.key + '">' +
+            icon(f.icon) + ' ' + esc(f.label) + '</button>';
         }).join('') +
       '</div>'
     );
@@ -400,7 +361,7 @@
     var stats =
       '<footer class="ifx-com2-post__stats">' +
         '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
-        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-down') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
+        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-flip-v') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
         '<button type="button" data-ifx-com2-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message-circle') + ' ' + p.comments + '</button>' +
         '<button type="button" data-ifx-com2-action="share" data-post-id="' + esc(p.id) + '">' + icon('share') + ' ' + p.shares + '</button>' +
       '</footer>';
@@ -518,11 +479,10 @@
       });
     }
     var ASSET = '/User_Web/iflux-web-ui/';
-    var V = '?v=r20261008c';
-    interactionReady = loadScript(ASSET + 'comment-composer.js' + V)
-      .then(function () { return loadScript(ASSET + 'interaction/boot.js' + V); })
+    interactionReady = loadScript(ASSET + 'comment-composer.js?v=6c56717875')
+      .then(function () { return loadScript(ASSET + 'interaction/boot.js?v=41e479c913'); })
       .then(function () { return global.IfluxInteractionBoot.ensureForInteractive(); })
-      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js' + V); });
+      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js?v=5798a6a6f8'); });
     return interactionReady;
   }
 
@@ -938,10 +898,10 @@
   function bindFilters(root) {
     var bar = root.querySelector('[data-ifx-com2-filters]');
     if (!bar) return;
-    bar.querySelectorAll('.ifx-tab').forEach(function (btn) {
+    bar.querySelectorAll('.ix-profile-tab').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        bar.querySelectorAll('.ifx-tab').forEach(function (b) { b.classList.remove('is-active'); });
-        btn.classList.add('is-active');
+        bar.querySelectorAll('.ix-profile-tab').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
         var key = btn.getAttribute('data-filter');
         state.filter = key;
         var mode = FILTERS.find(function (f) { return f.key === key; }).mode;
@@ -953,7 +913,7 @@
   function render(frame) {
     mainEl = frame.mainContent;
     mainEl.innerHTML =
-      trendingTopicsCardHtml() + hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
+      hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
       '<div data-ifx-com2-feedlist>' + feedHtml() + '</div>';
     if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
     if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();

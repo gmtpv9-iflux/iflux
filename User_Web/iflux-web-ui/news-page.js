@@ -29,7 +29,7 @@
   /* Task5 — Heart = Foundation; Store = Watchlist data. Không tải watchlist-ui. */
   var heartLoadPromise = null;
   var HEART_JS = '/design_system/04_components/29_follow/follow.js?v=r20261002a';
-  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=r20260928n';
+  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=f604e76323';
 
   function ensureHeartLazy() {
     if (global.IfluxHeartAction && global.IfluxWatchlistStore) {
@@ -267,14 +267,6 @@
     return {};
   }
 
-  function categoryIconClass(icon) {
-    var s = String(icon || '').trim();
-    if (!s) return 'ti ti-category';
-    if (/^ti\s+ti-/.test(s)) return s;
-    if (s.indexOf('ti-') === 0) return 'ti ' + s;
-    return 'ti ti-category';
-  }
-
   function fetchFeaturedCategories() {
     function unwrap(res) {
       var payload = (res && res.data) || res || {};
@@ -300,30 +292,31 @@
     return id;
   }
 
-  /** Tab Danh mục nổi bật + Tất cả — DS: .ifx-tabs / .ifx-tab / .is-active */
+  /** Tab Danh mục nổi bật + Tất cả — chuẩn Tab lớn (Owner 2026-10, điều chỉnh lại): có icon +
+     text, không phải Block/Widget nhỏ nên dùng .ix-profile-tabs/.ix-profile-tab/.active — ĐÚNG
+     mẫu entity-detail-center.js tabsBar(), không tự code mới. Icon category lấy từ c.icon (admin
+     đặt, mặc định "ti ti-folder" — xem backend news-categories.service.js mapRow). */
   function featuredCatsTabsHtml(cats, activeId) {
     var activeTab = tabIdFromState(activeId);
     var allOn = activeTab === FILTER_ALL;
     var tabs =
-      '<button type="button" class="ifx-tab' + (allOn ? ' is-active' : '') + '" role="tab"' +
+      '<button type="button" class="ix-profile-tab' + (allOn ? ' active' : '') + '" role="tab"' +
         ' aria-selected="' + (allOn ? 'true' : 'false') + '"' +
-        ' data-ifx-com-cat-id="' + FILTER_ALL + '">' +
-        '<i class="ti ti-layout-grid" aria-hidden="true"></i> Tất cả' +
-      '</button>';
+        ' data-ifx-com-cat-id="' + FILTER_ALL + '"><i class="ti ti-apps"></i> Tất cả</button>';
     (cats || []).forEach(function (c) {
       var id = String(c.id || '');
       if (!id) return;
       var on = id === activeTab;
       tabs +=
-        '<button type="button" class="ifx-tab' + (on ? ' is-active' : '') + '" role="tab"' +
+        '<button type="button" class="ix-profile-tab' + (on ? ' active' : '') + '" role="tab"' +
           ' aria-selected="' + (on ? 'true' : 'false') + '"' +
           ' data-ifx-com-cat-id="' + esc(id) + '">' +
-          '<i class="' + esc(categoryIconClass(c.icon)) + '" aria-hidden="true"></i> ' +
+          '<i class="' + esc(c.icon || 'ti ti-folder') + '"></i> ' +
           esc(c.name || c.label || c.slug || '') +
         '</button>';
     });
     return (
-      '<div class="ifx-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
+      '<div class="ix-profile-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
         tabs +
       '</div>'
     );
@@ -333,9 +326,9 @@
     if (!root) return;
     state.featuredCategoryId = stateIdFromTab(tabId);
     var activeTab = tabIdFromState(state.featuredCategoryId);
-    root.querySelectorAll('[data-ifx-com-featured-cats] .ifx-tab').forEach(function (btn) {
+    root.querySelectorAll('[data-ifx-com-featured-cats] .ix-profile-tab').forEach(function (btn) {
       var on = btn.getAttribute('data-ifx-com-cat-id') === activeTab;
-      btn.classList.toggle('is-active', on);
+      btn.classList.toggle('active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     /* Acquisition = DailyFeed (WP-0) — không loadFeed ở page */

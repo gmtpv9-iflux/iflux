@@ -6,7 +6,7 @@
  * design_system/05_templates (IfxTemplates.mount). Tiêu đề/mô tả lấy từ widget; widget chưa có
  * dữ liệu → Template dùng dữ liệu mẫu của chính nó, nên host không bao giờ trống.
  */
-import { loadScript } from './legacy-bridge.js?v=r20261002communityfix';
+import { loadScript } from './legacy-bridge.js?v=dec30759da';
 
 var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
 
@@ -32,13 +32,15 @@ export async function mountPublishedWidgets(tree, opts) {
   if (!tree || !tree.length) return [];
   if (!window.IfxTemplateLoader) await loadScript(LOADER_SRC);
 
-  var loaded = [];
-  for (var i = 0; i < tree.length; i++) {
-    var entry = tree[i];
+  /* Tải SONG SONG (không await tuần tự từng widget) — mỗi widget host collapse về 0px rồi
+     "nở" tức thì khi dựng xong (không có skeleton), tải tuần tự kéo dài thời gian trang còn
+     nhảy chiều cao ra nhiều nhịp rời rạc, làm Sidebar sticky giật nhiều lần liên tiếp. Song
+     song dồn các lần nhảy đó lại gần nhau nhất có thể — không fetch chồng chéo dữ liệu nhau
+     (mỗi widget độc lập, chỉ còn phụ thuộc latency riêng của script template từng loại). */
+  var loaded = await Promise.all(tree.map(async function (entry) {
     var el = entry.host;
     if (!el || el.getAttribute('data-ifx-ent-access') === 'hidden') {
-      loaded.push({ id: entry.widgetId, host: el, skipped: true });
-      continue;
+      return { id: entry.widgetId, host: el, skipped: true };
     }
     var art = entry.artifact || {};
     var content = art.content || {};
@@ -54,11 +56,11 @@ export async function mountPublishedWidgets(tree, opts) {
       if (!templateId || !root) {
         if (window.console && console.warn) console.warn(prefix, entry.widgetId, 'Template không hợp lệ:', templateId);
       }
-      loaded.push({ id: entry.widgetId, host: el, templateId: templateId });
+      return { id: entry.widgetId, host: el, templateId: templateId };
     } catch (err) {
       if (window.console && console.error) console.error(prefix, entry.widgetId, err);
-      loaded.push({ id: entry.widgetId, host: el, error: err });
+      return { id: entry.widgetId, host: el, error: err };
     }
-  }
+  }));
   return loaded;
 }

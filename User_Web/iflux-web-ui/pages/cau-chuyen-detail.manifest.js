@@ -2,7 +2,6 @@
  * Page Manifest — Chi tiết câu chuyện (/cau-chuyen/:slug)
  * Giao diện tái dùng group-page (trước đây /chu-de/:slug).
  */
-var VER = '?v=r20261002af';
 
 export default {
   pageKey: 'cauChuyenDetail',
@@ -25,13 +24,13 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'cau-chuyen' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js' + VER,
+    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=723c3f57fb',
     css: [
-      '/User_Web/iflux-web-ui/market-components.css',
-      '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
-      '/User_Web/iflux-web-ui/news.css?v=r20261008b',
-      '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
-      '/User_Web/iflux-web-ui/stock.css?v=appHeader20260928'
+      '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
+      '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
+      '/User_Web/iflux-web-ui/news.css?v=76795c8d4e',
+      '/User_Web/iflux-web-ui/block-templates.css?v=483f2092fe',
+      '/User_Web/iflux-web-ui/stock.css?v=c07620f5e0'
     ]
   }]
 };

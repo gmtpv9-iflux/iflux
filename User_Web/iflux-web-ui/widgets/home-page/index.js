@@ -5,11 +5,10 @@
  *
  * Bố cục 3 cột (buildPageFrame rightSidebar:true):
  *  - Sidebar trái (3/12): card Hồ sơ (profile-bind.js, y nguyên profile.html, rút gọn — owner
- *    yêu cầu 2026-10-03: nhãn → icon, bỏ Vai trò/Quốc gia/Tham gia) + khu vực kéo-thả tiện ích
- *    ([data-ifx-hub-sidebar-canvas] — dashboard-engine.js). Watchlist (WGT-WAT-001) là 1 widget
- *    mặc định của canvas này (SIDEBAR_DEFAULT, widget-registry.js), KHÔNG còn mount cứng riêng —
- *    owner chốt 2026-10: mọi Widget (kể cả ở Dashboard cá nhân tự sắp xếp) phải cùng 1 nguồn
- *    data/UI/quyền qua Template/DS, chỉ vị trí mặc định do Admin đặt mới khác nhau theo trang.
+ *    yêu cầu 2026-10-03: nhãn → icon, bỏ Vai trò/Quốc gia/Tham gia) + Widget Host trung lập
+ *    ([data-ifx-hub-sidebar-canvas] — dashboard-engine.js renderSidebarStack): chỉ vẽ đúng
+ *    những gì layout đã lưu, không tự thêm widget nào mặc định — owner chốt 2026-10: Watchlist
+ *    đã có ở Tùy chỉnh/Dashboard, Sidebar không cần giữ bản riêng nào nữa.
  *  - Main (7/12): 5 tab — Dashboard | Affiliate | Liên kết thẻ | Riêng tư | Mật khẩu. 4 tab sau
  *    migrate VERBATIM từ User_Web/account/profile.html (giữ nguyên id/data-attribute), chạy qua
  *    CHÍNH runtime/account-feature-boot.js (đã tổng quát hoá cho context composite) — không viết
@@ -21,9 +20,9 @@
  * Trang luôn yêu cầu đăng nhập (AUTH_PAGES.home — runtime/page-keys.js) — không còn phiên bản
  * vãng lai riêng (trước đây mountGuest()).
  */
-import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
+import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
@@ -31,13 +30,13 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
 /* Deps Watchlist + dashboard-engine — cùng khai báo với widgets/home-dashboard/index.js
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
-  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=r20261003h' },
-  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261003j' },
-  { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=r20260928n' },
-  { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=r20260928q' },
+  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=d4967c9d0c' },
+  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=9f8c10127b' },
+  { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
+  { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
   { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
-  { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=r20260928q' },
-  { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=r20260928q' }
+  { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=7c1f5a3c0d' },
+  { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=02655cb8cf' }
 ];
 
 /* Card Hồ sơ — y nguyên profile.html (.ix-profile-sidebar), bind bởi profile-bind.js
@@ -114,11 +113,9 @@ var PROFILE_CARD_HTML = `
   </div>
 </div>`;
 
-/* Watchlist (WGT-WAT-001) KHÔNG còn 1 div hardcode riêng ở đây — nó là widget sidebar mặc định
-   (SIDEBAR_DEFAULT, widget-registry.js), do chính [data-ifx-hub-sidebar-canvas] vẽ ra cùng cơ chế
-   với mọi widget sidebar khác (xem mountSidebarCanvas + dashboard-engine.js). Card Hồ sơ đứng
-   TRÊN canvas (owner yêu cầu 2026-10-03) — canvas tự xếp Watchlist ngay dưới theo vị trí mặc định
-   Admin đặt, user có thể kéo đi chỗ khác hoặc gỡ như mọi widget sidebar khác. */
+/* Canvas dưới card Hồ sơ là Widget Host trung lập ([data-ifx-hub-sidebar-canvas] —
+   dashboard-engine.js renderSidebarStack): chỉ vẽ đúng layout đã lưu, không tự thêm widget nào
+   mặc định (Watchlist đã bỏ khỏi SIDEBAR_DEFAULT — owner chốt 2026-10, xem widget-registry.js). */
 var SIDEBAR_LEFT_HTML =
   PROFILE_CARD_HTML +
   '<div class="ifx-hub-sidebar-canvas" data-ifx-hub-sidebar-canvas></div>';
@@ -446,18 +443,14 @@ function mainHtml() {
 async function mountDashboardTab(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js?v=r20261002d');
+  var mod = await import('../home-dashboard/index.js?v=bbbc0d6af0');
   await mod.mount(panelEl);
 }
 
-/* Watchlist KHÔNG còn mount cứng riêng ở đây — nó là 1 widget sidebar bình thường
-   (WGT-WAT-001, SIDEBAR_DEFAULT trong widget-registry.js) do chính canvas kéo-thả dưới đây vẽ
-   ra (dashboard-engine.js renderSidebarStack → buildWidgetNode → mountWidgetBody), cùng 1 nguồn
-   Template/DS/quyền/vị trí với mọi Widget khác trên nền tảng — chỉ khác là user có thể tự kéo đi
-   chỗ khác trên chính trang này (Owner chốt 2026-10: "về vị trí có thể khác nhau... nhưng giao
-   diện/quyền/data vẫn là 1"). Trước đây mount thẳng IfluxWatchlistBlock vào 1 div riêng
-   [data-ifx-hub-watchlist] NGOÀI hệ layout — gây hiện trùng 2 Watchlist nếu user cũng tự thêm
-   WGT-WAT-001 vào canvas; đã gỡ div đó khỏi SIDEBAR_LEFT_HTML. */
+/* Watchlist KHÔNG mount cứng riêng ở đây và KHÔNG còn mặc định trong canvas Sidebar nữa (Owner
+   chốt 2026-10: Tùy chỉnh/Dashboard đã có Watchlist, Sidebar chỉ là Widget Host trung lập —
+   dashboard-engine.js retireWatchlistFromSidebar dọn layout cũ nếu còn sót). Trước đây mount
+   thẳng IfluxWatchlistBlock vào 1 div riêng [data-ifx-hub-watchlist] NGOÀI hệ layout — đã gỡ. */
 async function mountSidebarCanvas() {
   await ensureSequence(SIDEBAR_DEPS);
   if (window.IfluxWatchlistStore && IfluxWatchlistStore.ensureSeedFromDemo) {
@@ -474,8 +467,8 @@ async function mountActivity(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
   await ensureSequence([
-    { global: 'IfluxProfileActivityStore', src: ASSET + 'profile-activity-store.js' },
-    { global: 'IfluxProfileActivityPage', src: ASSET + 'profile-activity-page.js' }
+    { global: 'IfluxProfileActivityStore', src: ASSET + 'profile-activity-store.js?v=9de816eae4' },
+    { global: 'IfluxProfileActivityPage', src: ASSET + 'profile-activity-page.js?v=ab7cee155c' }
   ]);
   if (window.IfluxProfileActivityPage) IfluxProfileActivityPage.init();
 }
@@ -514,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=r20261003a');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=8b8e952b82');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

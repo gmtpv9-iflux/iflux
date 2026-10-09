@@ -11,10 +11,10 @@
  * User override lưu IfluxUserStorage (dashboard-engine).
  */
 
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var A = '/User_Web/iflux-web-ui/';
-var V = 'r20261003i';
+var V = 'r20261009d';
 
 export const meta = { id: 'WGT-HOME-DASH', title: 'Bảng điều khiển' };
 
@@ -23,7 +23,7 @@ function dep(g, s) { return { global: g, src: A + s + (s.indexOf('?') >= 0 ? '' 
 var BASE = [
   /* Nội dung mỗi widget = Template DS đã publish (dashboard-engine.js tự fetch artifact +
      mount qua IfxTemplateLoader/IfxTemplates — một đường DUY NHẤT, giống mọi trang khác). */
-  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261003h'),
+  dep('IfluxWidgetRegistry', 'widget-registry.js?v=r20261009c'),
   dep('IfluxDashboardEngine', 'dashboard-engine.js'),
   /* Watchlist là widget tương tác (thêm/bớt mã) — chưa publish qua Template, dùng component
      riêng; nạp sẵn ở đây vì hầu như dashboard nào cũng có. */

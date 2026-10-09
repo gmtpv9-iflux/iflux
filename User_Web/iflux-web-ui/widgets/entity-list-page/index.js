@@ -1,9 +1,9 @@
 /**
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -22,24 +22,24 @@ var KIND_BY_PAGE = {
 /* W4: taxonomy/seeds/mock/registry/seo = Shell MARKET_PLATFORM */
 var CORE_TIERS = [
   [
-    ASSET + 'iflux-user-data-sync.js?v=r20260928n'
+    ASSET + 'iflux-user-data-sync.js?v=c4488ad741'
   ],
   [
-    ASSET + 'iflux-market-quotes.js?v=r20260928n',
-    ASSET + 'watchlist-store.js?v=r20260928n',
-    ASSET + 'alert-store.js',
+    ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
+    ASSET + 'watchlist-store.js?v=f604e76323',
+    ASSET + 'alert-store.js?v=d341795091',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a'
   ],
   [
-    ASSET + 'watchlist-ui.js?v=r20260928q',
-    ASSET + 'alert-ui.js?v=r20260928q',
-    ASSET + 'stock-mentions.js?v=r20260928n',
-    ASSET + 'stock-scroll-feed.js'
+    ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
+    ASSET + 'alert-ui.js?v=559259d072',
+    ASSET + 'stock-mentions.js?v=63b1553d75',
+    ASSET + 'stock-scroll-feed.js?v=a15dedab89'
   ],
   [
-    ASSET + 'alert-page.js?v=r20260928n',
-    ASSET + 'entity-list-page.js?v=' + ELP_VER,
-    ASSET + 'runtime/page-layout-engine.js?v=r20260928n'
+    ASSET + 'alert-page.js?v=108f7707b5',
+    ASSET + 'entity-list-page.js?v=75bc8e27c5' + ELP_VER,
+    ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8'
   ]
 ];
 

@@ -1,9 +1,9 @@
 /**
  * WGT-NEWS-POST-PAGE — Composite Bài viết cộng đồng (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -19,19 +19,19 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
  * song toàn bộ giống đúng cách trang danh sách tin tức đang làm (nhanh hơn). */
 var CORE_TIERS = [
   [
-    ASSET + 'runtime/page-layout-engine.js?v=r20260928n',
-    ASSET + 'stock-mentions.js?v=r20260928n',
-    ASSET + 'news-store.js?v=r20261002x',
-    ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
-    ASSET + 'profile-users-store.js',
-    ASSET + 'profile-links.js',
-    ASSET + 'iflux-market-quotes.js?v=r20260928n',
-    ASSET + 'watchlist-store.js?v=r20260928n',
+    ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8',
+    ASSET + 'stock-mentions.js?v=63b1553d75',
+    ASSET + 'news-store.js?v=84bb9b875c',
+    ASSET + 'iflux-news-api-bridge.js?v=70487a5208',
+    ASSET + 'profile-users-store.js?v=4fb82084de',
+    ASSET + 'profile-links.js?v=31f14c2ed9',
+    ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
+    ASSET + 'watchlist-store.js?v=f604e76323',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
-    ASSET + 'news-ui.js?v=r20260929a',
-    ASSET + 'news-daily-feed.js?v=r20260928r',
-    ASSET + 'interaction/boot.js?v=r20261008c',
-    ASSET + 'news-post-page.js?v=r20261008a'
+    ASSET + 'news-ui.js?v=8bd1108a4b',
+    ASSET + 'news-daily-feed.js?v=407fadedc0',
+    ASSET + 'interaction/boot.js?v=41e479c913',
+    ASSET + 'news-post-page.js?v=72531d9593'
   ]
 ];
 

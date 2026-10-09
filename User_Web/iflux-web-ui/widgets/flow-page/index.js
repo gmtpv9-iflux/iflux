@@ -2,10 +2,10 @@
  * WGT-FLW-PAGE — Composite Dòng tiền
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
-import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=r20260928q';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import featureManifest from '../../features/flow.manifest.js?v=r20261002d';
+import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
+import featureManifest from '../../features/flow.manifest.js?v=9e9cf6e91d';
 
 var featureRt = null;
 

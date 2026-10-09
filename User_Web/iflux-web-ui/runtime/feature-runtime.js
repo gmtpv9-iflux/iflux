@@ -18,7 +18,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG tải Shell deps · KHÔNG apply Definition · KHÔNG preload lazyChildren.
  */
 
-import { loadScript, loadStyle } from './legacy-bridge.js?v=r20261002communityfix';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=dec30759da';
 
 var STATES = {
   NOT_LOADED: 'NOT_LOADED',

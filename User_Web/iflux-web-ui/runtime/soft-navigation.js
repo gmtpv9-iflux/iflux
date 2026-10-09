@@ -3,8 +3,8 @@
  * Mọi trang dựng bằng runtime (page-keys.js); trang HTML tĩnh / modifier-click / lỗi → tải đầy đủ.
  * Class <main> và CSS riêng của trang do manifest trang khai báo (page-runtime áp dụng).
  */
-import { unloadWidget } from './widget-loader.js?v=r20260928q';
-import { pageKeyFromPath, isSoftPage, AUTH_PAGES } from './page-keys.js?v=r20261003m';
+import { unloadWidget } from './widget-loader.js?v=44321f3f09';
+import { pageKeyFromPath, isSoftPage, AUTH_PAGES } from './page-keys.js?v=43da030e2b';
 
 var SOFT_VER = 'softAll_20260928';
 

@@ -1,10 +1,9 @@
 /**
  * Slice 4.5 — stock-comment URL cũ: chỉ redirect → /binh-luan (không nạp LS UI).
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
+import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
-var V = '?v=b4w3_20260727';
 
 function waitShell(pageKey) {
   if (window.__IFLUX_SHELL_READY === pageKey) return Promise.resolve();
@@ -21,7 +20,7 @@ function waitShell(pageKey) {
 
 async function main() {
   await waitShell('stockComment');
-  await loadScriptsSequential([ASSET + 'stock-comment-page.js' + V]);
+  await loadScriptsSequential([ASSET + 'stock-comment-page.js?v=716182cbbb']);
 }
 
 main().catch(function (err) {

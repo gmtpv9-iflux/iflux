@@ -1255,18 +1255,18 @@
   /* Widget → trang User (pages) + block HTML trên trang (blocks, data-ifx-ent-block).
      Không khai báo = { pages: ['dashboard'] }. */
   var WGT_DEPLOY = {
-    'WGT-MKT-001': { pages: ['market', 'news', 'dashboard'] },
-    'WGT-MKT-002': { pages: ['market', 'news', 'dashboard'] },
+    'WGT-MKT-001': { pages: ['news', 'dashboard'] },
+    'WGT-MKT-002': { pages: ['news', 'dashboard'] },
     'WGT-MKT-RISK': { pages: ['flow', 'dashboard'] },
     'WGT-MKT-003': { pages: ['dashboard'] },
-    'WGT-MKT-004': { pages: ['market', 'dashboard'] },
-    'WGT-MKT-005': { pages: ['market', 'dashboard'] },
-    'WGT-MKT-006': { pages: ['market', 'community', 'dashboard'] },
-    'WGT-MKT-007': { pages: ['market', 'dashboard'] },
-    'WGT-MKT-008': { pages: ['market', 'dashboard'] },
-    'WGT-TOP-001': { pages: ['market', 'dashboard'] },
-    'WGT-TOP-002': { pages: ['market', 'dashboard'] },
-    'WGT-TOP-003': { pages: ['market', 'dashboard'] },
+    'WGT-MKT-004': { pages: ['dashboard'] },
+    'WGT-MKT-005': { pages: ['dashboard'] },
+    'WGT-MKT-006': { pages: ['community', 'dashboard'] },
+    'WGT-MKT-007': { pages: ['dashboard'] },
+    'WGT-MKT-008': { pages: ['dashboard'] },
+    'WGT-TOP-001': { pages: ['dashboard'] },
+    'WGT-TOP-002': { pages: ['dashboard'] },
+    'WGT-TOP-003': { pages: ['dashboard'] },
     'WGT-SEC-001': { pages: ['dashboard'] },
     'WGT-FLW-001': { pages: ['dashboard'] },
     'WGT-FLW-SUBJ-STOCK': { pages: ['flow', 'dashboard'] },
@@ -1327,7 +1327,7 @@
     domain: 'Tùy chỉnh',
     category: 'unclassified'
   };
-  var CUSTOM_DEPLOY_PAGES = ['dashboard', 'market', 'community', 'flow'];
+  var CUSTOM_DEPLOY_PAGES = ['dashboard', 'community', 'flow'];
 
   function widgetTier(id) { return WGT_TIER[id] || 'free'; }
   function widgetDeploy(id) {

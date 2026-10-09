@@ -357,6 +357,37 @@ Removed:
 
 ---
 
+## CG-022 — Page Removal Must Sync Admin Catalog
+
+Nguyên nhân gốc đã xác nhận (case "Thị trường" xóa trang User Web 2026-10 nhưng vẫn còn trong
+Widget Placement): Admin catalog trang (`Admin_Design_system/app/system/page-settings-catalog.js`
+`DEFAULT_PAGES`) là danh sách **hardcode tĩnh, độc lập**, không đọc từ route table thật
+(`iflux-platform-boot.js` `ROUTES`) — xóa 1 route không tự động xóa entry catalog tương ứng.
+Đây là 2 hệ thống tách biệt có chủ đích (không phải mọi "trang" Admin cho phép đặt Widget đều
+cần là 1 route User Web sống, và ngược lại) nên auto-sync bằng code (đọc catalog từ ROUTES) là
+over-engineering — **solution là checklist bắt buộc**, không phải cơ chế tự động.
+
+Khi xóa 1 trang User Web, phải rà và xóa theo `key` của trang đó ở **toàn bộ** các vị trí sau
+(đã audit đủ qua case "market" — đây chính là danh sách mọi nơi 1 page key User Web có thể bị
+tham chiếu, ngoài route table):
+
+```
+1. page-settings-catalog.js        — DEFAULT_PAGES entry (key trùng page key)
+2. platform-layers-widgets.js      — WGT_DEPLOY[...].pages[] có chứa key
+                                      CUSTOM_DEPLOY_PAGES[] có chứa key
+3. app/marketing/onboarding-page.js — WEB_TARGETS[] có id trùng key
+```
+
+Không xóa đồng thời 4 chỗ trên khi xóa 1 trang → **FAIL** (lặp lại chính xác lỗi "Thị trường").
+
+Phân biệt: các chỗ dùng chuỗi `'market'`/tên trang tương tự nhưng KHÔNG phải page key User Web
+(VD: nhóm quyền hạn Admin `system-roles-store.js`, nav "Quản lý Market Data" nội bộ Admin
+`iflux-admin-nav-registry.js`, slug-dir Admin routes `iflux-admin-routes.js` `VI_DIR`, domain
+phân loại widget/template/content) là khái niệm khác, **không thuộc phạm vi checklist này** — chỉ
+xóa đúng entry ứng với page key của trang User Web đã bị gỡ.
+
+---
+
 # 6. Search Before Implementation
 
 Trước khi thêm feature phải audit:

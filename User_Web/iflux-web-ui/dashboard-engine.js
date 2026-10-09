@@ -80,7 +80,6 @@
   var SUBJ_WIDTH_MIGRATED_KEY = 'iflux_dash_subj_width_half_v1';
   var STAT_WIDTH_MIGRATED_KEY = 'iflux_dash_stat_width_full_v1';
   var STAT_DUO_MIGRATED_KEY = 'iflux_dash_stat_duo_v1';
-  var WATCHLIST_SIDEBAR_MIGRATED_KEY = 'iflux_dash_watchlist_sidebar_v1';
   var SUBJ_WIDGET_TYPES = {
     'WGT-FLW-SUBJ-STOCK': 1,
     'WGT-FLW-SUBJ-SECTOR': 1,
@@ -417,38 +416,17 @@
     else try { localStorage.setItem(STAT_DUO_MIGRATED_KEY, '1'); } catch (e) { /* ignore */ }
   }
 
-  function watchlistSidebarMigrated() {
-    var store = us();
-    if (store) return !!store.readJson(WATCHLIST_SIDEBAR_MIGRATED_KEY, null);
-    try { return localStorage.getItem(WATCHLIST_SIDEBAR_MIGRATED_KEY) === '1'; } catch (e) { return false; }
-  }
-
-  function markWatchlistSidebarMigrated() {
-    var store = us();
-    if (store) store.writeJson(WATCHLIST_SIDEBAR_MIGRATED_KEY, { at: Date.now() });
-    else try { localStorage.setItem(WATCHLIST_SIDEBAR_MIGRATED_KEY, '1'); } catch (e) { /* ignore */ }
-  }
-
-  /** Watchlist (WGT-WAT-001) trước đây hiện CỐ ĐỊNH ngoài hệ layout (hardcode riêng trong
-   * widgets/home-page/index.js, không qua Admin Widget Placement) — nay đã vào đúng
-   * SIDEBAR_DEFAULT (widget-registry.js), cùng 1 nguồn Template/DS với mọi Widget khác (Owner
-   * chốt 2026-10). Lần đầu mỗi user sau khi đổi: nếu layout đã lưu từ trước CHƯA có WGT-WAT-001
-   * ở sidebar, chèn 1 lần vào cuối Sidebar trái để không ai mất Watchlist khỏi màn hình khi
-   * nâng cấp — từ lần sau user toàn quyền gỡ/kéo đi chỗ khác như mọi widget sidebar khác. */
-  function migrateWatchlistIntoSidebar(layout) {
-    if (watchlistSidebarMigrated() || !layout || !layout.widgets) return false;
-    markWatchlistSidebarMigrated();
-    var exists = layout.widgets.some(function (w) { return w && (w.widget_type === 'WGT-WAT-001' || w.type === 'WGT-WAT-001'); });
-    if (exists) return false;
-    layout.widgets.push({
-      instance_id: uid(),
-      widget_type: 'WGT-WAT-001',
-      scope: SCOPES.sidebar,
-      column: SIDEBAR_COL,
-      position: 999,
-      config: { width: 'full' }
+  /** Watchlist (WGT-WAT-001) không còn ở Sidebar trang Cá nhân (Owner chốt 2026-10: Tùy chỉnh/
+   * Dashboard đã có Watchlist, Sidebar chỉ còn là Widget Host trung lập, không có tiện ích nào
+   * tự mặc định hay tự khoá được gỡ ngay). Dọn active cho cả user đã bị 1 lần migrate-vào trước
+   * đây (SIDEBAR_DEFAULT cũ) — nếu layout đã lưu còn WGT-WAT-001 ở scope sidebar, gỡ hẳn. */
+  function retireWatchlistFromSidebar(layout) {
+    if (!layout || !layout.widgets) return false;
+    var before = layout.widgets.length;
+    layout.widgets = layout.widgets.filter(function (w) {
+      return !(w && w.widget_type === 'WGT-WAT-001' && widgetScope(w) === SCOPES.sidebar);
     });
-    return true;
+    return layout.widgets.length !== before;
   }
 
   /** Gộp STAT_*_IN/OUT legacy → STAT_* duo (1 widget / entity), bỏ trùng. */
@@ -672,7 +650,7 @@
     migrateSubjWidgetWidths(layout);
     migrateStatDuoWidgets(layout);
     migrateStatScoreWidgetWidths(layout);
-    migrateWatchlistIntoSidebar(layout);
+    retireWatchlistFromSidebar(layout);
     layout.widgets = layout.widgets.map(function (w, i) {
       return normalizeWidgetRecord(w, i);
     }).filter(Boolean).filter(isValidWidget);
@@ -979,34 +957,17 @@
     if (!canvas) return;
     canvas.innerHTML = '';
 
+    /* Widget Host trung lập: chỉ hiển thị đúng những gì layout đã lưu (Admin đặt vị trí/ Tùy
+       chỉnh Dashboard), không tự thêm, không tự khoá gỡ ngay tại đây — quản lý gỡ/sắp xếp qua
+       đúng 1 nguồn Tùy chỉnh, giống Dashboard. */
     widgetsInColumn(layout, SIDEBAR_COL, SCOPES.sidebar).forEach(function (inst) {
       /* WGT-PRF* (Hồ sơ/Gói cước) đã có card riêng (markup + profile-bind.js) ở Sidebar phải —
          bỏ qua ở đây để không hiện trùng 2 nơi (xem ghi chú ensureSidebarDefaults). */
       if (inst.widget_type && inst.widget_type.indexOf('WGT-PRF') === 0) return;
       var node = buildWidgetNode(inst, false);
       if (!node) return;
-      /* Widget user kéo từ Dashboard sang — cho gỡ lại ngay tại đây, vì khu vực này không có
-         nút "Tùy chỉnh" riêng như Dashboard. */
-      var actions = node.querySelector('.ifx-widget__actions');
-      if (actions) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'ix-btn ix-btn-outline ix-btn-sm ifx-widget-remove';
-        btn.title = 'Gỡ tiện ích';
-        btn.innerHTML = '<i class="ti ti-x"></i>';
-        btn.addEventListener('click', function () {
-          layout.widgets = layout.widgets.filter(function (w) { return w.instance_id !== inst.instance_id; });
-          saveLayout(layout);
-          renderSidebarStack(canvas, layout);
-          if (global.IfxToast) IfxToast.show('Đã gỡ tiện ích', 'info');
-        });
-        actions.appendChild(btn);
-      }
       canvas.appendChild(node);
     });
-
-    // Top Watchlist (WGT-COM-004) là shared/custom — không hardcode khi Widget tùy chỉnh tắt.
-    // User thêm qua Tùy chỉnh nếu Admin bật shared cho trang dashboard.
 
     if (global.ProfileBind) ProfileBind.init();
   }

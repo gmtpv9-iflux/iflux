@@ -32,7 +32,10 @@
   flex-shrink: 0;
 }
 
-/* ── Chủ đề HOT (main, phía trên Composer) ── */
+/* ── Chủ đề mới nổi (main, phía trên Composer) — không bọc .ifx-card/.ifx-card-body (Owner:
+   nằm thẳng trên nền trang), nên bù lại khoảng cách header↔nội dung mà .ifx-card-body vốn tạo
+   ra (padding-top 16px) ngay tại đây, không đụng token --ifx-inset-card-header chung. */
+[data-ifx-com2-hot] > .ifx-card-header { padding-bottom: var(--ifx-space-16); }
 .ifx-com2-period { margin-bottom: var(--ifx-space-12); width: 100%; }
 .ifx-com2-hotlist {
   list-style: none;
@@ -86,64 +89,6 @@
 .ifx-com2-tone-up { color: var(--ifx-success); white-space: nowrap; flex-shrink: 0; }
 .ifx-com2-tone-down { color: var(--ifx-danger); white-space: nowrap; flex-shrink: 0; }
 
-/* ── Mã được thảo luận nhiều (sidebar trái) ── */
-.ifx-com2-tickergrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--ifx-space-8);
-}
-.ifx-com2-ticker {
-  padding: var(--ifx-space-12);
-  border-radius: var(--ifx-radius-md);
-  background: var(--ifx-bg-subtle);
-  text-align: center;
-}
-.ifx-com2-ticker__code {
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-bold);
-  color: var(--ifx-text-primary);
-}
-.ifx-com2-ticker__count {
-  font-size: var(--ifx-font-size-2xs);
-  color: var(--ifx-text-muted);
-  margin: var(--ifx-space-2) 0;
-}
-.ifx-com2-ticker__pct {
-  font-size: var(--ifx-font-size-xs);
-  font-weight: var(--ifx-font-weight-semibold);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ifx-space-2);
-}
-.ifx-com2-ticker__pct.is-up { color: var(--ifx-success); }
-.ifx-com2-ticker__pct.is-down { color: var(--ifx-danger); }
-
-/* ── Nhà đầu tư nên theo dõi (sidebar trái) ── */
-.ifx-com2-investorlist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ifx-space-12);
-}
-.ifx-com2-investor {
-  display: flex;
-  align-items: center;
-  gap: var(--ifx-space-8);
-  flex-wrap: wrap;
-}
-.ifx-com2-investor__who { flex: 1 1 auto; min-width: 0; }
-.ifx-com2-investor__who .name {
-  font-size: var(--ifx-font-size-sm);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-text-primary);
-}
-.ifx-com2-investor__who .desc {
-  font-size: var(--ifx-font-size-2xs);
-  color: var(--ifx-text-muted);
-}
-
 /* ── Composer (nằm trong .ifx-card) ── */
 .ifx-com2-composer__row {
   display: flex;
@@ -192,6 +137,11 @@
 .ifx-com2-feedfilter { width: 100%; }
 
 /* ── Post card ── */
+[data-ifx-com2-feedlist] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-16);
+}
 .ifx-com2-post__head {
   display: flex;
   align-items: center;

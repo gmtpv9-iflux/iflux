@@ -1,9 +1,9 @@
 /**
  * WGT-MSG-PAGE — Composite Tin nhắn (Blueprint Phase D)
  */
-import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
-import { buildPageFrame } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
+import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
+import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -26,11 +26,11 @@ function applyConsumerLinks(root) {
 
 var CORE_TIERS = [
   /* RC-IR-05: Tin nhắn không phải Interactive comment surface — không kéo stock-comments-ui */
-  [ASSET + 'news-store.js?v=r20261002x', ASSET + 'news-ui.js?v=r20260929a', ASSET + 'profile-users-store.js', ASSET + 'profile-links.js'],
-  [ASSET + 'profile-follow-store.js?v=fn00120260724', ASSET + 'profile-friend-store.js?v=chatGate20260708', ASSET + 'profile-block-store.js'],
-  [ASSET + 'profile-chat-access.js?v=chatGate20260708', ASSET + 'profile-chat-store.js?v=r20260928n', ASSET + 'profile-chat-page.js?v=r20260928q'],
-  [ASSET + 'profile-avatar.js', ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728', ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728'],
-  [ASSET + 'profile-page.js', ASSET + 'profile-bind.js?v=r20260928q']
+  [ASSET + 'news-store.js?v=84bb9b875c', ASSET + 'news-ui.js?v=8bd1108a4b', ASSET + 'profile-users-store.js?v=4fb82084de', ASSET + 'profile-links.js?v=31f14c2ed9'],
+  [ASSET + 'profile-follow-store.js?v=7a97f86263', ASSET + 'profile-friend-store.js?v=8a4ea4af6d', ASSET + 'profile-block-store.js?v=901ca0d67c'],
+  [ASSET + 'profile-chat-access.js?v=bedda7bf40', ASSET + 'profile-chat-store.js?v=d551f20f1b', ASSET + 'profile-chat-page.js?v=ea50d1b30a'],
+  [ASSET + 'profile-avatar.js?v=8eb9a8b60d', ASSET + 'client-local-notification-types.js?v=32f1add69c', ASSET + 'inapp-notifications.js?v=73382215b8'],
+  [ASSET + 'profile-page.js?v=5a969de78b', ASSET + 'profile-bind.js?v=4bc9f42545']
 ];
 
 function renderLayout(manifest) {

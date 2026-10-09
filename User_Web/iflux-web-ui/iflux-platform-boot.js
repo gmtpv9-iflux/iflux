@@ -233,7 +233,14 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     ],
     defaults: {
       production: { dataMode: 'api', apiBaseUrl: 'https://iflux.vn/api' },
-      staging: { dataMode: 'sandbox' },
+      /* Staging có backend thật (đã xác nhận qua test thật, PM2 iflux-api-staging) — luôn
+         dùng 'api' giống Production. Trước đây mặc định 'sandbox', còn sót từ giai đoạn
+         Staging chưa có backend — khiến đăng nhập/đăng ký rơi vào luồng demo giả (sinh token
+         "mock_jwt_...", không phải JWT thật), trong khi request KHÁC (feed/bình luận/đăng bài
+         qua community-store.js, có apiBase() riêng không phụ thuộc IfluxRuntime) vẫn gọi đúng
+         /api thật — 2 nhóm "lệch pha" khiến Like/Dislike (qua IfluxAuth.getToken() đọc token
+         giả) báo "Invalid token" dù bình luận/đăng bài vẫn ổn. */
+      staging: { dataMode: 'api', apiBaseUrl: 'https://staging.iflux.vn/api' },
       development: { dataMode: 'mock', apiBaseUrl: 'http://localhost:3001/api' }
     },
     dataModes: {
@@ -317,8 +324,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     try {
       var stored = normalizeMode(global.localStorage.getItem('iflux_data_mode'));
       if (stored) {
-        // Production dùng API thật — không để sandbox cũ trong localStorage chặn đăng nhập
-        if (environment !== 'production' || stored !== 'sandbox') return stored;
+        // Production/Staging dùng API thật — không để sandbox cũ trong localStorage chặn đăng nhập
+        if ((environment !== 'production' && environment !== 'staging') || stored !== 'sandbox') return stored;
       }
     } catch (e2) { /* ignore */ }
 
@@ -500,7 +507,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     if (global.IfluxMarketStatusBar) return;
     if (!document.querySelector('.ifx-app-header')) return;
     var s = document.createElement('script');
-    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=appHeader20260928';
+    s.src = '/User_Web/iflux-web-ui/market-status-bar.js?v=e766d00304';
     s.async = true;
     document.head.appendChild(s);
   }

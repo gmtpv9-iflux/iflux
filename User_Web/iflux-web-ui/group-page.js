@@ -90,7 +90,7 @@
     return (
       '<div class="ifx-stock-head__co" style="display:flex;gap:12px;margin-top:4px">' +
         '<span><i class="ti ti-heart" style="font-size:12px"></i> ' + (Number(stats.likes) || 0) + '</span>' +
-        '<span><i class="ti ti-thumb-down" style="font-size:12px"></i> ' + (Number(stats.dislikes) || 0) + '</span>' +
+        '<span><i class="ti ti-thumb-up ifx-icon-flip-v" style="font-size:12px"></i> ' + (Number(stats.dislikes) || 0) + '</span>' +
         '<span><i class="ti ti-message-circle" style="font-size:12px"></i> ' + (Number(stats.comments) || 0) + '</span>' +
         '<span><i class="ti ti-share" style="font-size:12px"></i> ' + (Number(stats.shares) || 0) + '</span>' +
       '</div>'
@@ -190,8 +190,8 @@
     mountEl.__ifxMounted = true;
     function doMount() { global.IfluxEntityPostsPanel.mount(mountEl, epTarget); }
     if (global.IfluxEntityPostsPanel) { doMount(); return; }
-    loadScript('/User_Web/iflux-web-ui/community-store.js?v=r20261008a')
-      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=r20261008a'); })
+    loadScript('/User_Web/iflux-web-ui/community-store.js?v=17b421d80c')
+      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=488889e79f'); })
       .then(doMount)
       .catch(function () { mountEl.innerHTML = '<p class="ifx-com-empty" style="color:var(--ix-danger)">Không tải được Bình luận</p>'; });
   }
