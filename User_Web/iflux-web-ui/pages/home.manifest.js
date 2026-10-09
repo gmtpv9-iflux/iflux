@@ -16,7 +16,7 @@ export default {
   css: [
     '/User_Web/iflux-web-ui/hub.css?v=08dbf09ff6',
     '/User_Web/iflux-web-ui/profile.css?v=d906d1d30f',
-    '/User_Web/iflux-web-ui/widget-shell.css?v=8397a86573',
+    '/User_Web/iflux-web-ui/widget-shell.css?v=38f9ccdd8f',
     '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
     '/User_Web/iflux-web-ui/block-templates.css?v=483f2092fe',
     '/User_Web/iflux-web-ui/feature-suggestions.css?v=1238c3b539'
@@ -39,7 +39,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js?v=07db9c0e55'
+      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js?v=ffb219d9b2'
     }
   ]
 };

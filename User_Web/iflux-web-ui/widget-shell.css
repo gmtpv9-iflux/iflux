@@ -199,7 +199,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 .ifx-widget__surface:has(.ifx-com-topwl),
 .ifx-widget__surface:has(.ifx-com-active-members),
 .ifx-widget__surface:has(.ifx-com-experts-leaders),
-.ifx-widget__surface:has(.ifx-mcmp) {
+.ifx-widget__surface:has(.ifx-mcmp),
+/* IfxTemplates.mount (design_system/05_templates) tự vẽ .ifx-card riêng (Card Owner thật) —
+   Dashboard gọi mount với title/description rỗng (không render Header trùng, xem
+   dashboard-engine.js mountWidgetBody) nên chỉ cần demote khung ngoài, không đụng header. */
+.ifx-widget__surface:has(.ifx-card) {
   background: transparent;
   border: none;
   border-radius: 0;
@@ -353,7 +357,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 .ifx-widget__surface:has(.ifx-com-topwl) > .ifx-widget__body,
 .ifx-widget__surface:has(.ifx-com-active-members) > .ifx-widget__body,
 .ifx-widget__surface:has(.ifx-com-experts-leaders) > .ifx-widget__body,
-.ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__body {
+.ifx-widget__surface:has(.ifx-mcmp) > .ifx-widget__body,
+/* .ifx-card tự có inset riêng (--ifx-inset-card-body) — bỏ pad ngoài, tránh pad lần 2. */
+.ifx-widget__surface:has(.ifx-card) > .ifx-widget__body {
   padding: 0;
 }
 

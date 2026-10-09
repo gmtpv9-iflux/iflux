@@ -3,7 +3,7 @@
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=4460ae8318';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 
 var ASSET = '/User_Web/iflux-web-ui/';

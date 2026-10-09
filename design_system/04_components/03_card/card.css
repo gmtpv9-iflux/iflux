@@ -27,10 +27,36 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--ifx-gap-sm);
+  border-bottom: 1px solid var(--ifx-border-subtle);
 }
-.ifx-card-body { padding: var(--ifx-inset-card-body); }
+/* Body tối hơn 1 chút so với Header (cùng tông --ifx-bg-subtle mọi theme) — tiêu đề nổi rõ,
+   không chỉ dựa vào đường viền. Card không có Header riêng (def.head === false) → Body là
+   phần tử đầu, cần tự bo góc trên; không có Footer → Body là phần tử cuối, tự bo góc dưới
+   (Card cha không overflow:hidden, phải tự khớp góc bo tương ứng vị trí). */
+.ifx-card-body {
+  padding: var(--ifx-inset-card-body);
+  background: var(--ifx-bg-subtle);
+}
+.ifx-card-body:first-child {
+  border-top-left-radius: var(--ifx-radius-card);
+  border-top-right-radius: var(--ifx-radius-card);
+}
+.ifx-card-body:last-child {
+  border-bottom-left-radius: var(--ifx-radius-card);
+  border-bottom-right-radius: var(--ifx-radius-card);
+}
 .ifx-card-body p { font-size: var(--ifx-text-body-sm-size); }
 .ifx-card-footer {
   padding: var(--ifx-inset-card-footer);
   border-top: 1px solid var(--ifx-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--ifx-text-body-sm-size);
+  color: var(--ifx-text-muted);
+}
+.ifx-card-footer a {
+  color: var(--ifx-action-primary);
+  text-decoration: none;
+  font-weight: var(--ifx-font-weight-semibold);
 }

@@ -24,7 +24,7 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'stocks' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=c55914bd45',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=60f05ac474',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/block-templates.css?v=483f2092fe',

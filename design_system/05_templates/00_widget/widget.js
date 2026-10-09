@@ -87,6 +87,14 @@
       '</header>';
   }
 
+  /** ctx.footerHref — Widget (không phải Template) biết nên dẫn tới trang nào; thiếu → không
+   * vẽ Footer (Template không tự bịa đích đến). ctx.footerLabel thiếu → nhãn mặc định 'Xem thêm'. */
+  function footerHtml(ctx) {
+    if (!ctx.footerHref) return '';
+    var label = ctx.footerLabel || 'Xem thêm';
+    return '<footer class="ifx-card-footer"><a href="' + esc(ctx.footerHref) + '">' + esc(label) + ' →</a></footer>';
+  }
+
   function mount(host, id, ctx) {
     ctx = ctx || {};
     var def = REG[id];
@@ -103,6 +111,7 @@
     host.innerHTML = '<article class="ifx-card' + frame + '" data-ifx-template="' + esc(id) + '">' +
       (def.head === false ? '' : headHtml(ctx, aside)) +
       (def.head === false ? body : '<div class="ifx-card-body">' + body + '</div>') +
+      footerHtml(ctx) +
       '</article>';
     var root = host.firstElementChild;
     if (def.bind) def.bind(root, input, ctx);

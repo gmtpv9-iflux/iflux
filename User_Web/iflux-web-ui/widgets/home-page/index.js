@@ -21,7 +21,7 @@
  * vãng lai riêng (trước đây mountGuest()).
  */
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=4460ae8318';
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -30,7 +30,7 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
 /* Deps Watchlist + dashboard-engine — cùng khai báo với widgets/home-dashboard/index.js
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
-  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=d4967c9d0c' },
+  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=90088910d4' },
   { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=9f8c10127b' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
@@ -443,7 +443,7 @@ function mainHtml() {
 async function mountDashboardTab(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js?v=bbbc0d6af0');
+  var mod = await import('../home-dashboard/index.js?v=c00e891045');
   await mod.mount(panelEl);
 }
 
@@ -507,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=8b8e952b82');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=3452b36529');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

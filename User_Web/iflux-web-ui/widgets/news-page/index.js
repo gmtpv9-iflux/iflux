@@ -5,7 +5,7 @@
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=4460ae8318';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 import featureManifest from '../../features/news.manifest.js?v=f84f6e59a8';
 
