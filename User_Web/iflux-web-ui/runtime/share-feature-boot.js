@@ -2,12 +2,12 @@
  * Phase A — Feature /chia-se sau Shell bootstrap.
  * P5 — path-only affiliate; không parse query ref/r.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
+import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
 var FEATURE = [
-  ASSET + 'loyalty-affiliate-store.js?v=r20260928n',
+  ASSET + 'loyalty-affiliate-store.js?v=b225fb0132',
   '/design_system/04_components/28_share/share-store.js?v=r20261002a'
 ];
 

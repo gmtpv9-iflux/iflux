@@ -5,7 +5,7 @@ export default {
   pageKey: 'loyalty',
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--membership',
-  css: ['/User_Web/iflux-web-ui/loyalty.css?v=r20260928n'],
+  css: ['/User_Web/iflux-web-ui/loyalty.css?v=673ce6dcdd'],
   path: '/thanh-vien',
   title: 'Chương trình thành viên',
   documentTitle: '',
@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/loyalty-page/index.js?v=r20261009c',
-    css: ['/User_Web/iflux-web-ui/loyalty.css?v=r20260928n']
+    lazyModule: '/User_Web/iflux-web-ui/widgets/loyalty-page/index.js?v=60b6bc9d08',
+    css: ['/User_Web/iflux-web-ui/loyalty.css?v=673ce6dcdd']
   }]
 };

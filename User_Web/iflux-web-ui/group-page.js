@@ -190,8 +190,8 @@
     mountEl.__ifxMounted = true;
     function doMount() { global.IfluxEntityPostsPanel.mount(mountEl, epTarget); }
     if (global.IfluxEntityPostsPanel) { doMount(); return; }
-    loadScript('/User_Web/iflux-web-ui/community-store.js?v=r20261008a')
-      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=r20261009i'); })
+    loadScript('/User_Web/iflux-web-ui/community-store.js?v=17b421d80c')
+      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=488889e79f'); })
       .then(doMount)
       .catch(function () { mountEl.innerHTML = '<p class="ifx-com-empty" style="color:var(--ix-danger)">Không tải được Bình luận</p>'; });
   }

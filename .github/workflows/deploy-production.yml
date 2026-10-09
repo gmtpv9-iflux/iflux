@@ -29,6 +29,12 @@ jobs:
       - name: Kiểm tra gói CSS global
         run: node ui_tooling/scripts/build-web-bundle.mjs --check
 
+      # Version query (?v=<hash>) của mọi JS/CSS riêng User Web phải khớp nội dung hiện tại —
+      # xem docs/SoT — Runtime Loading & Caching Governance.md §5. Quên chạy sync-js-versions.mjs
+      # sau khi sửa 1 file = cache cứng đầu, không phải lỗi logic — chặn deploy ngay tại đây.
+      - name: Kiểm tra version JS/CSS User Web
+        run: node ui_tooling/scripts/sync-js-versions.mjs --check
+
       - name: Xác định release id
         id: rel
         run: echo "id=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"

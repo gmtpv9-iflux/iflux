@@ -20,9 +20,9 @@
  * Trang luôn yêu cầu đăng nhập (AUTH_PAGES.home — runtime/page-keys.js) — không còn phiên bản
  * vãng lai riêng (trước đây mountGuest()).
  */
-import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=appHeader20260928';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=r20260929e';
-import { ensureSequence } from '../../runtime/legacy-bridge.js?v=r20261002communityfix';
+import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
@@ -30,13 +30,13 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
 /* Deps Watchlist + dashboard-engine — cùng khai báo với widgets/home-dashboard/index.js
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
-  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=r20261009c' },
-  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=r20261009d' },
-  { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=r20260928n' },
-  { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=r20260928q' },
+  { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=d4967c9d0c' },
+  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=9f8c10127b' },
+  { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
+  { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
   { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
-  { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=r20260928q' },
-  { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=r20260928q' }
+  { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=7c1f5a3c0d' },
+  { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=02655cb8cf' }
 ];
 
 /* Card Hồ sơ — y nguyên profile.html (.ix-profile-sidebar), bind bởi profile-bind.js
@@ -443,7 +443,7 @@ function mainHtml() {
 async function mountDashboardTab(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js?v=r20261002d');
+  var mod = await import('../home-dashboard/index.js?v=bbbc0d6af0');
   await mod.mount(panelEl);
 }
 
@@ -467,8 +467,8 @@ async function mountActivity(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
   await ensureSequence([
-    { global: 'IfluxProfileActivityStore', src: ASSET + 'profile-activity-store.js' },
-    { global: 'IfluxProfileActivityPage', src: ASSET + 'profile-activity-page.js' }
+    { global: 'IfluxProfileActivityStore', src: ASSET + 'profile-activity-store.js?v=9de816eae4' },
+    { global: 'IfluxProfileActivityPage', src: ASSET + 'profile-activity-page.js?v=ab7cee155c' }
   ]);
   if (window.IfluxProfileActivityPage) IfluxProfileActivityPage.init();
 }
@@ -507,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=r20261003a');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=8b8e952b82');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

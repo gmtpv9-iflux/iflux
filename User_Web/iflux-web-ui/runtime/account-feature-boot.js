@@ -2,8 +2,8 @@
  * Phase A — Feature Tài khoản (sau App Shell Entry).
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
-import { loadScriptsSequential } from './legacy-bridge.js?v=r20261002communityfix';
-import { mountPageWidgets } from './page-widgets.js?v=r20260929e';
+import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
+import { mountPageWidgets } from './page-widgets.js?v=e4c886756c';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -11,42 +11,42 @@ var VER = 'pageFrame20260928';
 
 /** Own account — tab Affiliate · Thanh toán · Quyền riêng tư · Mật khẩu · sidebar */
 var CORE_SCRIPTS = [
-  ASSET + 'profile-local-scope.js?v=' + VER,
-  ASSET + 'iflux-user-data-sync.js?v=r20260928n',
-  ASSET + 'profile-users-store.js',
-  ASSET + 'profile-links.js',
-  ASSET + 'profile-follow-store.js?v=' + VER,
-  ASSET + 'profile-avatar.js',
-  ASSET + 'profile-view.js?v=' + VER,
-  ASSET + 'iflux-plans-catalog.js?v=r20260928n',
-  ASSET + 'profile-bind.js?v=' + VER,
-  ASSET + 'loyalty-affiliate-store.js?v=' + VER,
-  ASSET + 'affiliate-payout-store.js?v=affP3_20260728',
-  ASSET + 'affiliate-payout-ui.js?v=r20260928q',
-  ASSET + 'profile-affiliate.js?v=' + VER,
-  ASSET + 'subscription-orders-store.js?v=r20260928n',
-  ASSET + 'profile-payment-store.js',
-  ASSET + 'profile-payment-page.js?v=r20260928q',
-  ASSET + 'profile-privacy-store.js?v=chatGate20260708',
-  ASSET + 'notification-preference-store.js?v=notifD1rev_20260728',
-  ASSET + 'profile-privacy-page.js?v=r20260928q',
-  ASSET + 'client-local-notification-types.js?v=notifPhaseD4_20260728',
-  ASSET + 'inapp-notifications.js?v=notifPhaseD4_20260728',
-  ASSET + 'profile-security-page.js?v=r20260928q'
+  ASSET + 'profile-local-scope.js?v=b96a094057' + VER,
+  ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
+  ASSET + 'profile-users-store.js?v=4fb82084de',
+  ASSET + 'profile-links.js?v=31f14c2ed9',
+  ASSET + 'profile-follow-store.js?v=7a97f86263' + VER,
+  ASSET + 'profile-avatar.js?v=8eb9a8b60d',
+  ASSET + 'profile-view.js?v=b38bbd490a' + VER,
+  ASSET + 'iflux-plans-catalog.js?v=58ef6c230e',
+  ASSET + 'profile-bind.js?v=4bc9f42545' + VER,
+  ASSET + 'loyalty-affiliate-store.js?v=b225fb0132' + VER,
+  ASSET + 'affiliate-payout-store.js?v=c3c0f9375b',
+  ASSET + 'affiliate-payout-ui.js?v=995d3eec51',
+  ASSET + 'profile-affiliate.js?v=fb3477ca1e' + VER,
+  ASSET + 'subscription-orders-store.js?v=c6beeaca9e',
+  ASSET + 'profile-payment-store.js?v=3e1d3b162b',
+  ASSET + 'profile-payment-page.js?v=01104c12a0',
+  ASSET + 'profile-privacy-store.js?v=d206957542',
+  ASSET + 'notification-preference-store.js?v=16ff7f1479',
+  ASSET + 'profile-privacy-page.js?v=f77d2a4f93',
+  ASSET + 'client-local-notification-types.js?v=32f1add69c',
+  ASSET + 'inapp-notifications.js?v=73382215b8',
+  ASSET + 'profile-security-page.js?v=0b0607149c'
 ];
 
 /** Public profile (?user=) — follow · block · chat gate · timeline */
 var PUBLIC_PROFILE_SCRIPTS = [
   ADMIN + 'iflux-customers-store.js',
-  ASSET + 'profile-friend-store.js?v=chatGate20260708',
-  ASSET + 'profile-block-store.js',
-  ASSET + 'profile-chat-access.js?v=chatGate20260708',
-  ASSET + 'profile-chat-store.js?v=r20260928n',
-  ASSET + 'stock-mentions.js?v=r20260928n',
-  ASSET + 'stock-store.js?v=r20260928n',
-  ASSET + 'news-store.js?v=r20261002x',
-  ASSET + 'news-ui.js?v=r20260929a',
-  ASSET + 'profile-page.js'
+  ASSET + 'profile-friend-store.js?v=8a4ea4af6d',
+  ASSET + 'profile-block-store.js?v=901ca0d67c',
+  ASSET + 'profile-chat-access.js?v=bedda7bf40',
+  ASSET + 'profile-chat-store.js?v=d551f20f1b',
+  ASSET + 'stock-mentions.js?v=63b1553d75',
+  ASSET + 'stock-store.js?v=4dc55126ff',
+  ASSET + 'news-store.js?v=84bb9b875c',
+  ASSET + 'news-ui.js?v=8bd1108a4b',
+  ASSET + 'profile-page.js?v=5a969de78b'
 ];
 
 /* Chờ Shell sẵn sàng — tổng quát theo pageKey (mảng chấp nhận nhiều key), vì script này giờ

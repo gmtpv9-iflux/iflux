@@ -95,3 +95,79 @@ cho layout widget cá nhân) — KHÔNG phải để cache JS/CSS/HTML tĩnh, vi
 - RELOAD THẬT (F5, mở tab mới, gõ URL) vẫn hiện core runtime trong Network panel — **đây là BÌNH
   THƯỜNG** (module cache theo document, F5 luôn tạo document mới) — chỉ bất thường nếu KHÔNG phải
   cache-hit (status không phải from-cache/304 dù còn hạn `?v=`).
+
+## 5. Version hash tự động cho JS/CSS User Web (`sync-js-versions.mjs`) — bắt buộc dùng, không
+   gõ tay `?v=` nữa (2026-10-09)
+
+**Case study dẫn tới công cụ này**: 1 bug "Invalid token" khi Like/Dislike (nguyên nhân thật —
+`iflux-platform-boot.js` có `dataMode` Staging sai, xem commit cùng ngày) mất cả buổi để fix dứt
+điểm, không phải vì bug chính khó — vì **mỗi lần sửa 1 file, phải nhớ bump `?v=` tay ở TẤT CẢ nơi
+tham chiếu file đó**, và chuỗi loader nhiều lớp (file lá → widget wrapper → page manifest →
+`bootstrap.js` → `shell-boot.js`) khiến rất dễ sót 1 lớp — mỗi lần sót là 1 vòng
+sửa-deploy-test-lại tốn ~10-15 phút. Sót xảy ra **nhiều lần liên tiếp trong cùng 1 buổi**, kể cả
+sau khi đã "quét kỹ" bằng tay — chứng minh gõ tay version là KHÔNG BỀN, không phải lỗi cẩn thận.
+
+**Giải pháp — tự động hoá hoàn toàn, theo đúng mô hình `build-web-bundle.mjs` đã dùng cho
+`platform/web/generated/web.css`** (hash nội dung, không ai gõ tay): mọi `.js`/`.css` riêng của
+User Web (`User_Web/iflux-web-ui/**`, KHÔNG gồm `platform/web/generated/web.css` — đã có cơ chế
+hash riêng, và KHÔNG gồm `design_system/`/`Admin_Design_system/` — hệ version riêng chia sẻ với
+Admin, ngoài phạm vi case study này) được tính `sha256(nội_dung).slice(0,10)` làm version, và
+**mọi nơi tham chiếu được tool tự rewrite** — không còn version gõ tay nào trong phạm vi này.
+
+### 5.1 Dùng thế nào
+
+```bash
+node ui_tooling/scripts/sync-js-versions.mjs          # rewrite tại chỗ — chạy sau khi sửa BẤT KỲ
+                                                        # file .js/.css nào dưới User_Web/iflux-web-ui/
+node ui_tooling/scripts/sync-js-versions.mjs --check   # chỉ kiểm tra, exit 1 nếu lệch — CI đã gắn
+                                                        # vào deploy-staging.yml/deploy-production.yml
+                                                        # (ngay sau bước kiểm tra gói CSS global)
+```
+
+**Quy tắc từ nay**: sau khi sửa nội dung bất kỳ file `.js`/`.css` nào dưới `User_Web/iflux-web-ui/`
+(hoặc thêm 1 tham chiếu MỚI tới 1 file đã có — viết path có `?v=` hay không đều được, tool tự
+chèn/sửa đúng hash), **luôn chạy `sync-js-versions.mjs` trước khi commit** — đừng tự gõ `?v=xxx`
+tay nữa, CI sẽ chặn deploy nếu quên (`--check` fail). Không cần nhớ "file này có bao nhiêu nơi
+tham chiếu" — tool tự tìm hết.
+
+### 5.2 Cách viết tham chiếu để tool nhận ra được (4 dạng, khớp mọi pattern hiện có trong repo)
+
+| Dạng | Ví dụ | Khi nào dùng |
+|---|---|---|
+| Path có tiền tố rõ (`/`, `./`, `../`) | `import('../pages/x.manifest.js?v=...')`, `lazyModule: '/User_Web/iflux-web-ui/widgets/x/index.js?v=...'` | ESM import, `lazyModule`, `loadScript('/User_Web/...')` — đa số trường hợp |
+| Path có tiền tố + nối biến cũ | `import('../pages/x.manifest.js' + PF)` | Code CŨ còn kiểu `+ VER`/`+ PF` — tool tự gộp về `?v=<hash>` **và xoá luôn khai báo biến nếu không còn ai dùng** |
+| Bare (không tiền tố) sau `ASSET +` / `A +` | `ASSET + 'runtime/x.js?v=...'` | Quy ước loader dùng chung (`var ASSET = '/User_Web/iflux-web-ui/';`) — **chỉ nhận đúng 2 tên biến `ASSET`/`A`**, KHÔNG nhận `BASE` (giá trị `BASE` không cố định giữa các file, tool không tự đoán) |
+| Bare sau `file:` | `{ file: 'feature-suggestions-ui.js?v=...' }` | Object property kiểu `loadChainThen()` (`iflux-web-ui.js`) |
+
+Viết tham chiếu theo **đúng 1 trong 4 dạng trên** (path tuyệt đối từ `/User_Web/...` luôn là lựa
+chọn an toàn nhất, không phụ thuộc biến nào) — path bare đứng 1 mình (không `ASSET +`/`A +`/
+`file:`) sẽ **không** được tool nhận diện, tự thêm 1 trong 2 biến quy ước đó thay vì bịa pattern
+mới.
+
+### 5.3 Vì sao KHÔNG đơn giản là "hash 1 lần, rewrite 1 lần" — fixed point
+
+Một file vừa là **target** (được file khác tham chiếu, cần hash) vừa là **referrer** (tự nó tham
+chiếu file khác, nội dung bị rewrite) — ví dụ `bootstrap.js` tham chiếu `shell-boot.js` (referrer),
+và 25 trang HTML tham chiếu `bootstrap.js` (target). Rewrite nội dung `bootstrap.js` (vì
+`shell-boot.js` đổi hash) làm **hash của chính `bootstrap.js` đổi theo** — nên phải tính hash lại,
+rewrite lại, lặp tới khi 1 lượt không còn gì đổi (fixed point — thường hội tụ trong 2-9 lượt tuỳ
+độ sâu chuỗi loader). Dependency trong repo là DAG (không có chu trình A→B→A thật), nên luôn hội
+tụ; nếu 1 ngày nào đó không hội tụ sau `MAX_ITERATIONS` (20 lượt) — tool tự dừng + báo lỗi rõ,
+**không treo vô hạn** — nghĩa là có chu trình tham chiếu thật mới xuất hiện, cần tách vòng lặp đó
+ra (1 trong 2 file không nên tham chiếu phiên bản đã-hash của file kia nữa).
+
+### 5.4 Bài học khi TỰ sửa tool này (không phải chỉ dùng) — 2 cái bẫy đã gặp, tránh lặp lại
+
+1. **Regex path tuyệt đối** (`/User_Web/...`) dễ viết thiếu — `(?:\.\.?\/)*` (0 hoặc nhiều `./`
+   hay `../`) KHÔNG khớp 1 dấu `/` đơn lẻ ở đầu; phải dùng `(?:\.{0,2}\/)+` (**bắt buộc ít nhất 1
+   lần**, cho phép 0 dấu chấm + 1 gạch chéo = path tuyệt đối). Thiếu chữ này, tool "chạy được"
+   nhưng IM LẶNG bỏ qua toàn bộ path tuyệt đối — nguy hiểm hơn lỗi crash vì không ai biết.
+2. **Quét quá rộng "bất kỳ chuỗi trong dấu nháy kết thúc bằng .js/.css"** sẽ bắt nhầm chuỗi KHÔNG
+   phải đường dẫn tải file — ví dụ `src.indexOf('iflux-web-ui.js')` (kiểm tra substring) hay
+   `querySelector('script[src*="iflux-web-ui.js"]')` (CSS attribute selector) — tool hiểu nhầm
+   thành tham chiếu, tự chèn `?v=<hash của chính file đó>` → file tự tham chiếu hash của mình →
+   **dao động vô hạn, không bao giờ hội tụ** (phát hiện qua việc số file "còn đổi" mỗi lượt lặp
+   tự ổn định ở 1 số dương thay vì giảm về 0 — dấu hiệu chắc chắn của chu trình, không phải bug
+   vặt). Fix: path KHÔNG có tiền tố (`/`, `./`, `../`) chỉ được coi là tham chiếu hợp lệ khi đứng
+   ngay sau 1 trong các ngữ cảnh đã biết chắc là loader (`ASSET +`, `A +`, `file:`) — không quét
+   "bare path" đứng 1 mình, dù trông giống tên file thật.

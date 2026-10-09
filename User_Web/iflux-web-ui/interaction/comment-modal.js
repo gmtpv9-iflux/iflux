@@ -48,8 +48,8 @@
     }
     var ASSET = '/User_Web/iflux-web-ui/';
     var V = '?v=r20261008c';
-    interactionReady = loadScript(ASSET + 'comment-composer.js' + V)
-      .then(function () { return loadScript(ASSET + 'interaction/boot.js' + V); })
+    interactionReady = loadScript(ASSET + 'comment-composer.js?v=6c56717875')
+      .then(function () { return loadScript(ASSET + 'interaction/boot.js?v=41e479c913'); })
       .then(function () { return global.IfluxInteractionBoot.ensureForInteractive(); });
     return interactionReady;
   }

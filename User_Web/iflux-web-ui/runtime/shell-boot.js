@@ -17,8 +17,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  * KHÔNG nạp widget implementation.
  */
 
-import { loadScript, loadStyle } from './legacy-bridge.js?v=r20261002communityfix';
-import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=r20261003m';
+import { loadScript, loadStyle } from './legacy-bridge.js?v=dec30759da';
+import { AUTH_PAGES, HOME_PAGES } from './page-keys.js?v=43da030e2b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/';
@@ -151,9 +151,9 @@ function installHeaderSearchLazy(scriptSrc) {
 async function ensureMarketLibs(pageKey) {
   if (MARKET_PLATFORM_PAGES[pageKey]) {
     var marketPlatformLibs = [
-      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=r20261008a' }
+      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
+      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
     ];
     await ensureParallel(marketPlatformLibs);
     /* Danh mục đầy đủ (~0.5MB) chỉ cho trang liệt kê / thành viên nhóm / tìm kiếm / theo dõi.
@@ -162,9 +162,9 @@ async function ensureMarketLibs(pageKey) {
   } else if (MARKET_CORE_PAGES[pageKey]) {
     /* Tin tức / bài viết: không tải danh mục mã (bài đã có ngành / HST từ API; gợi ý @mã tải khi gõ). */
     await ensureParallel([
-      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=r20261008a' }
+      { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
+      { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
     ]);
   }
 }
@@ -213,9 +213,9 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=r20261009f' },
-    { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20261002g' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=9623ca3514' },
+    { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js?v=aacd7e48c9' },
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=f9a8ae35e7' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
     { global: 'IfxToast', src: '/design_system/04_components/17_toast/toast.js?v=r20260928q' },
     /* Dropdown DS — menu người dùng / thông báo / tin nhắn trong header (App Shell) */
@@ -233,13 +233,13 @@ export async function bootShell(pageKey, opts) {
   // Phần còn lại App Shell — không chặn chrome đã paint.
   // ABH E4/E5 — Runtime readers + pure normalize (no Admin subscription on shell)
   await ensureParallel([
-    { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=abhE620260727' },
-    { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=r20261001a' },
-    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=r20261002c' },
-    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=r20260929e' },
+    { global: 'PlansRuntimeReader', src: ASSET + 'readers/plans-runtime-reader.js?v=1e27cac24b' },
+    { global: 'L4RuntimeReader', src: ASSET + 'readers/l4-runtime-reader.js?v=7b8fc697b2' },
+    { global: 'IfluxEntitlements', src: ASSET + 'iflux-entitlements.js?v=7932ecefd2' },
+    { global: 'IfluxBlockTemplates', src: ASSET + 'block-templates.js?v=950273b15e' },
     /* Gate chỉ quyết định khoá; lớp phủ (platform/web/lock) do Gate nạp khi có vùng bị khoá. */
-    { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=r20260928n' },
-    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=r20260928q' }
+    { global: 'IfluxBlockGate', src: ASSET + 'iflux-block-gate.js?v=a0c993e5cc' },
+    { global: 'IfluxGuestShell', src: ASSET + 'iflux-guest-shell.js?v=f505ef4add' }
   ]);
   /* Legacy ABH E4/E5 removed — không boot Admin Store / EntitlementCatalog trên User Web shell:
   { global: 'EntitlementCatalog', src: ADMIN + 'app/subscription/entitlement-catalog.js' },
@@ -251,12 +251,12 @@ export async function bootShell(pageKey, opts) {
 
   /* AS-SEARCH — Task5 Lazy L07 */
   if (document.querySelector('[data-ifx-header-search]')) {
-    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=r20260928q');
+    installHeaderSearchLazy(ASSET + 'iflux-header-search.js?v=c70ba2c1df');
   }
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=r20261009c' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=04336eb4aa' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

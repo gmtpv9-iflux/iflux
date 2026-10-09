@@ -489,10 +489,10 @@
         e.preventDefault();
         ensureCss('feature-suggestions.css');
         loadChainThen([
-          { global: 'IfluxVisitorId', file: 'visitor-id.js' },
-          { global: 'IfluxTurnstile', file: 'turnstile-helper.js' },
-          { global: 'IfluxFeatureSuggestionsStore', file: 'feature-suggestions-store.js' },
-          { global: 'IfluxFeatureSuggestionsUI', file: 'feature-suggestions-ui.js?v=r20261009c' }
+          { global: 'IfluxVisitorId', file: 'visitor-id.js?v=66facca63e' },
+          { global: 'IfluxTurnstile', file: 'turnstile-helper.js?v=e205a34729' },
+          { global: 'IfluxFeatureSuggestionsStore', file: 'feature-suggestions-store.js?v=82cd25e933' },
+          { global: 'IfluxFeatureSuggestionsUI', file: 'feature-suggestions-ui.js?v=eb5767c598' }
         ], function () {
           if (window.IfluxFeatureSuggestionsUI) {
             if (IfluxFeatureSuggestionsUI.init) IfluxFeatureSuggestionsUI.init();
@@ -506,9 +506,9 @@
         e.preventDefault();
         ensureCss('feature-suggestions.css');
         loadChainThen([
-          { global: 'IfluxVisitorId', file: 'visitor-id.js' },
-          { global: 'IfluxTurnstile', file: 'turnstile-helper.js' },
-          { global: 'IfluxBugReportsUI', file: 'bug-reports-ui.js?v=r20261009c' }
+          { global: 'IfluxVisitorId', file: 'visitor-id.js?v=66facca63e' },
+          { global: 'IfluxTurnstile', file: 'turnstile-helper.js?v=e205a34729' },
+          { global: 'IfluxBugReportsUI', file: 'bug-reports-ui.js?v=95d4859d0f' }
         ], function () {
           if (window.IfluxBugReportsUI) {
             if (IfluxBugReportsUI.init) IfluxBugReportsUI.init();

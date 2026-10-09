@@ -26,11 +26,11 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=r20261009c',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/flow-page/index.js?v=64b73c91fb',
       css: [
-        '/User_Web/iflux-web-ui/market-components.css',
-        '/User_Web/iflux-web-ui/flow.css?v=r20260928n',
-        '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n'
+        '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
+        '/User_Web/iflux-web-ui/flow.css?v=12a9aea56c',
+        '/User_Web/iflux-web-ui/block-templates.css?v=483f2092fe'
       ]
     }
   ]

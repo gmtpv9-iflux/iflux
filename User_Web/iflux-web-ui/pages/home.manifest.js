@@ -8,19 +8,18 @@
  * Hoạt động gần đây + widget host Admin). Luôn cần đăng nhập, không còn phiên bản vãng lai.
  */
 
-var VER = '?v=r20261009d';
 
 export default {
   pageKey: 'home',
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--hub',
   css: [
-    '/User_Web/iflux-web-ui/hub.css?v=r20261009c',
-    '/User_Web/iflux-web-ui/profile.css?v=r20261003b',
-    '/User_Web/iflux-web-ui/widget-shell.css?v=r20260928n',
-    '/User_Web/iflux-web-ui/watchlist.css?v=r20260928n',
-    '/User_Web/iflux-web-ui/block-templates.css?v=r20260928n',
-    '/User_Web/iflux-web-ui/feature-suggestions.css'
+    '/User_Web/iflux-web-ui/hub.css?v=08dbf09ff6',
+    '/User_Web/iflux-web-ui/profile.css?v=d906d1d30f',
+    '/User_Web/iflux-web-ui/widget-shell.css?v=8397a86573',
+    '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
+    '/User_Web/iflux-web-ui/block-templates.css?v=483f2092fe',
+    '/User_Web/iflux-web-ui/feature-suggestions.css?v=1238c3b539'
   ],
   path: '/ca-nhan',
   title: 'Cá nhân',
@@ -40,7 +39,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js' + VER
+      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js?v=07db9c0e55'
     }
   ]
 };
