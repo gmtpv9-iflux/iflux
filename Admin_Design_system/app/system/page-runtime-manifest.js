@@ -58,6 +58,10 @@
              mọi widget publish qua Cài đặt trang đều rỗng description dù Tầng 4 đã set. */
           description: copy.description || '',
           iconKey: copy.iconKey || null,
+          /* Fix 2026-10: thiếu dòng này → Output Contract (Tầng 4 > Tầng hiển thị > Dữ liệu đầu
+             ra) không bao giờ tới được Publish — Template luôn rơi về demo riêng của chính nó
+             thay vì dữ liệu Widget đã khai, mọi widget publish qua Cài đặt trang đều bị vậy. */
+          outputs: copy.outputs || [],
           section: slot.section || 'main',
           position: slot.position,
           span: slot.span,

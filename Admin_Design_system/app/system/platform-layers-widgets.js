@@ -1417,8 +1417,11 @@
   /* —— Compatibility surface (thay WidgetLibraryCatalog) —— */
   function resolveWidgetCopy(id) {
     var w = getWidget(id);
-    if (!w) return { title: id, description: '', iconKey: null };
-    return { title: w.title, description: w.description || w.title, iconKey: w.iconKey || null };
+    if (!w) return { title: id, description: '', iconKey: null, outputs: [] };
+    /* outputs — Output Contract thật (Tầng 4) — BẮT BUỘC mang theo khi Publish, nếu không
+       Template luôn rơi về demo riêng của chính nó (resolveInput fallback), không bao giờ
+       hiện đúng dữ liệu Widget đã khai. */
+    return { title: w.title, description: w.description || w.title, iconKey: w.iconKey || null, outputs: (w.outputs || []).slice() };
   }
   function widgetDefaults(id) {
     var m = entitlementMeta(id);

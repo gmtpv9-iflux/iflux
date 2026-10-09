@@ -70,6 +70,10 @@
         description: w.description || '',
         iconKey: w.iconKey || null,
         template: templateId,
+        /* Output Contract thật (Tầng 4) — thiếu field này thì Template luôn rơi về demo riêng
+           của chính nó, không bao giờ hiện đúng dữ liệu Widget đã khai (backend field tên
+           dataDefinition — xem publish-pipeline.js). */
+        dataDefinition: Array.isArray(w.outputs) ? w.outputs.slice() : [],
         blocks: Array.isArray(w.blocks) ? w.blocks.slice() : [],
         minTier: w.minTier || 'free',
         metadata: { config: w.config || {} }
