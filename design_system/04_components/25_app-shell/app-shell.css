@@ -29,7 +29,7 @@
     flex: 0 0 max(var(--ifx-size-panel-sm), calc((100% - var(--ifx-space-20)) * 3 / 12));
     width: auto;
     position: sticky;
-    top: calc(var(--ifx-size-app-header-h) + var(--ifx-space-12));
+    top: calc(var(--ifx-size-app-header-h) + var(--ifx-space-16));
     bottom: var(--ifx-space-16);
   }
   .ifx-shell-layout > .ifx-shell-sidebar-right { flex-basis: calc((100% - 2 * var(--ifx-space-20)) * 2 / 12); }

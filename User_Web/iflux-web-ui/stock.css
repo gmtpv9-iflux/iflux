@@ -10,7 +10,7 @@
 
 .ifx-stock-col--left {
   position: sticky;
-  top: calc(var(--ifx-size-app-header-h) + 12px);
+  top: calc(var(--ifx-size-app-header-h) + 16px);
   bottom: 16px;
 }
 

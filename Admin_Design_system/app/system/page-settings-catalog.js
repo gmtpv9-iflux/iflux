@@ -104,22 +104,6 @@
       ])
     },
     {
-      id: 'PAGE-MKT',
-      key: 'market',
-      title: 'Thị trường',
-      slug: 'thi-truong',
-      path: '/thi-truong',
-      order: 2,
-      navVisible: true,
-      status: 'active',
-      userCustomizable: false,
-      description: 'Cấu hình Widget hiển thị tại Sidebar và Main content.',
-      sections: cloneSections([
-        { key: 'sidebar', visible: true, label: 'Sidebar thị trường' },
-        { key: 'main', visible: true, layout: 'grid-12' }
-      ])
-    },
-    {
       id: 'PAGE-NEWS',
       key: 'news',
       title: 'Tin tức',

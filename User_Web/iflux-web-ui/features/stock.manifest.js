@@ -52,7 +52,7 @@ var manifest = {
     m('entity-detail-center', 'js', ASSET + 'entity-detail-center.js?v=57d506954b', 'IfluxEntityDetailCenter'),
     m('stock-page', 'js', ASSET + 'stock-page.js?v=df7184eb95', 'IfluxStockPage'),
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
-    m('stock-css', 'css', ASSET + 'stock.css?v=eab675e4cc', null)
+    m('stock-css', 'css', ASSET + 'stock.css?v=c07620f5e0', null)
   ],
   lazyChildren: [],
   lifecycle: {

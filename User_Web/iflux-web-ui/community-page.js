@@ -80,19 +80,6 @@
     story: { icon: 'bookmark', hrefBase: '/cau-chuyen/' }
   };
 
-  var SEED_TICKERS = [
-    { code: 'VIX', count: '1.2K thảo luận', pct: '+3.45%', up: true },
-    { code: 'FPT', count: '980 thảo luận', pct: '+1.82%', up: true },
-    { code: 'HPG', count: '760 thảo luận', pct: '+2.11%', up: true },
-    { code: 'VHM', count: '620 thảo luận', pct: '-0.35%', up: false }
-  ];
-
-  var SEED_INVESTORS = [
-    { initials: 'LI', name: 'Long Invest', badge: 'Nhà đầu tư nổi bật', desc: 'Phân tích vĩ mô & dòng tiền' },
-    { initials: 'MP', name: 'Mai Phương', badge: '', desc: 'Đầu tư giá trị' },
-    { initials: 'NH', name: 'Nguyễn Hoàng', badge: 'Top Contributor', desc: 'Phân tích kỹ thuật' }
-  ];
-
   var SEED_ACTIVITIES = [
     { name: 'Mai Phương', action: 'đã bình luận bài viết "MWG: Lợi nhuận Q1 tăng ấn tượng..."', time: '7 phút trước' },
     { name: 'Long Invest', action: 'đã đăng bài viết mới "Dòng tiền đang quay lại nhóm..."', time: '1 giờ trước' },
@@ -232,31 +219,10 @@
     );
   }
 
-  function tickerChipHtml(t) {
-    return (
-      '<div class="ifx-com2-ticker">' +
-        '<div class="ifx-com2-ticker__code">' + esc(t.code) + '</div>' +
-        '<div class="ifx-com2-ticker__count">' + esc(t.count) + '</div>' +
-        '<div class="ifx-com2-ticker__pct ' + (t.up ? 'is-up' : 'is-down') + '">' +
-          icon(t.up ? 'trending-up' : 'trending-down') + ' ' + esc(t.pct) +
-        '</div>' +
-      '</div>'
-    );
-  }
-
-  function investorItemHtml(u) {
-    return (
-      '<li class="ifx-com2-investor">' +
-        avatar(u.initials, 'sm') +
-        '<div class="ifx-com2-investor__who">' +
-          '<div class="name">' + esc(u.name) + (u.badge ? ' <span class="ifx-badge ifx-badge-soft">' + esc(u.badge) + '</span>' : '') + '</div>' +
-          '<div class="desc">' + esc(u.desc) + '</div>' +
-        '</div>' +
-        '<button type="button" class="ifx-btn ifx-btn-secondary ifx-btn-sm" data-ifx-com2-action="follow">' + icon('user-plus') + ' Theo dõi</button>' +
-      '</li>'
-    );
-  }
-
+  /* "Mã được thảo luận nhiều"/"Nhà đầu tư nên theo dõi" (seed Phase 5 chờ Widget thật) đã bỏ
+     2026-10 — Widget Host thật (widgets/community-page/index.js mountPageWidgets) apply đúng
+     Cài đặt trang > Widget Placement > Cộng đồng > Sidebar trái, nằm TRÊN khối này trong DOM
+     (xem runtime/app-shell.js aside() — Widget Host luôn trước .ifx-shell-sidebar-content). */
   function leftSidebarHtml() {
     return (
       '<div class="ifx-card ifx-com2-brand">' +
@@ -269,20 +235,9 @@
         '</header>' +
       '</div>' +
 
-      /* Owner: giao diện Widget (giống Tổng quan thị trường), ở Sidebar trái — không phải đầu main-content. */
-      trendingTopicsCardHtml() +
-
-      '<div class="ifx-card">' +
-        sectionHeaderHtml('flame', 'Mã được thảo luận nhiều') +
-        '<div class="ifx-card-body ifx-com2-tickergrid">' + SEED_TICKERS.map(tickerChipHtml).join('') + '</div>' +
-      '</div>' +
-
-      '<div class="ifx-card">' +
-        sectionHeaderHtml('users', 'Nhà đầu tư nên theo dõi') +
-        '<div class="ifx-card-body">' +
-          '<ul class="ifx-com2-investorlist">' + SEED_INVESTORS.map(investorItemHtml).join('') + '</ul>' +
-        '</div>' +
-      '</div>'
+      /* Owner: giao diện Widget (giống Tổng quan thị trường), ở Sidebar trái — không phải đầu
+         main-content, và không qua Widget Placement (Topic là dữ liệu riêng của Cộng đồng). */
+      trendingTopicsCardHtml()
     );
   }
 
