@@ -526,12 +526,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ifx-inline-sm);
-  padding: var(--ifx-space-8) 14px;
-  border-radius: var(--ix-radius);
-  border: 1px solid var(--ix-border);
   background: transparent;
-  color: var(--ix-text-secondary);
-  font-size: var(--ifx-font-size-14);
   font-weight: var(--ifx-font-weight-semibold);
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
@@ -2236,23 +2231,17 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 .ifx-tabbar-ix .ifx-ix-action-bar {
   display: flex;
   flex: 1;
-  gap: var(--ifx-space-8);
   width: 100%;
   min-width: 0;
   margin: 0;
-  /* Owner 2026-10: nút giữ nguyên padding cũ (space-8) — tăng chiều cao KHUNG BAO NGOÀI (không
-     phải nút) 2 nhịp token (0 → space-8 mỗi bên) cho đỡ sát mép trên/dưới. */
-  padding: var(--ifx-space-8) 0;
+  padding: var(--ifx-space-4) 0;
   border: none;
   background: transparent;
 }
 .ifx-tabbar-ix .ifx-com-action {
   flex: 1 1 0;
   justify-content: center;
-  padding: var(--ifx-space-8) var(--ifx-space-8);
   border: none;
-  border-radius: var(--ix-radius-lg);
-  background: var(--ix-bg-hover);
   color: var(--ix-text-primary);
   font-size: var(--ifx-font-size-14);
   white-space: nowrap;
