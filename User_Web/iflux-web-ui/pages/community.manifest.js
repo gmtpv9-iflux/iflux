@@ -22,7 +22,7 @@ export default {
   mainClass: 'ifx-main--community-social',
   css: [
     '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
-    '/design_system/03_primitives/08_title/title.css?v=r20261009b',
+    '/design_system/03_primitives/08_title/title.css?v=r20261009c',
     '/design_system/04_components/03_card/card.css?v=r20261009d',
     '/User_Web/iflux-web-ui/community.css?v=5dc2a24e5d'
   ],
@@ -48,7 +48,7 @@ export default {
       lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=7bf9e11c15',
       css: [
         '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
-        '/design_system/03_primitives/08_title/title.css?v=r20261009b',
+        '/design_system/03_primitives/08_title/title.css?v=r20261009c',
         '/design_system/04_components/03_card/card.css?v=r20261009d',
         '/User_Web/iflux-web-ui/community.css?v=5dc2a24e5d'
       ]

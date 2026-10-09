@@ -22,7 +22,7 @@
 .ifx-widget-title {
   display: flex;
   flex-direction: column;
-  gap: var(--ifx-space-4);
+  gap: var(--ifx-gap-xs);
   flex: 1 1 auto;
   min-width: 0;
 }

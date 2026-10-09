@@ -68,7 +68,9 @@
 /* Hide only. Active display stays with Stack (flex+gap) or UA block. */
 .ifx-wizard-panel:not(.is-active) { display: none; }
 .ifx-wizard-panel-title {
-  margin: 0;
+  /* Trailing-margin (xem nguyên tắc chung ở typography.css h1-h6) — .ifx-wizard-panel không phải
+     flex container nên không dùng gap được, phải tự mang khoảng cách của chính nó. */
+  margin: 0 0 var(--ifx-gap-xs);
   font-size: var(--ifx-font-size-lg);
   font-weight: var(--ifx-font-weight-semibold);
   color: var(--ifx-text-primary);
