@@ -475,11 +475,18 @@
     if (!el) return;
     ctx = ctx || {};
     var list = (thread && thread.comments) || [];
+    var total = thread && thread.total != null ? thread.total : list.length;
     if (!list.length) {
       el.innerHTML = '<div class="ifx-com-comments__empty">Chưa có bình luận.</div>';
       return;
     }
-    /* 2A: không nút Thích comment — chỉ Trả lời + thời gian */
+    /* 2A: không nút Thích comment — chỉ Trả lời + thời gian.
+     * Lazy-load: còn total > đã tải → thêm nút "Tải thêm", bấm nối thêm 20 (không ghi đè). */
+    var moreHtml = total > list.length
+      ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm ifx-com-comments__more" data-ifx-ix-load-more>' +
+          'Tải thêm bình luận (' + (total - list.length) + ')' +
+        '</button>'
+      : '';
     el.innerHTML = list.map(function (c) {
       var name = c.user_name || 'Thành viên';
       var time = relativeTime(c.created_at);
@@ -495,7 +502,7 @@
           '</div>' +
         '</div>'
       );
-    }).join('');
+    }).join('') + moreHtml;
 
     el.querySelectorAll('[data-ifx-ix-reply]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -508,6 +515,21 @@
         if (typeof ctx.onReply === 'function') ctx.onReply({ name: name });
       });
     });
+
+    var moreBtn = el.querySelector('[data-ifx-ix-load-more]');
+    if (moreBtn) {
+      moreBtn.addEventListener('click', function () {
+        if (!global.IfluxInteractionStore || !IfluxInteractionStore.loadMoreThread) return;
+        moreBtn.disabled = true;
+        moreBtn.textContent = 'Đang tải…';
+        IfluxInteractionStore.loadMoreThread(ctx.target).then(function (nextThread) {
+          renderThread(root, nextThread, ctx);
+        }).catch(function () {
+          moreBtn.disabled = false;
+          moreBtn.textContent = 'Tải thêm bình luận';
+        });
+      });
+    }
   }
 
   global.IfluxInteractionCatalog = {

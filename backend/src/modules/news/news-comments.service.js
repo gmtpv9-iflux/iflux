@@ -49,20 +49,22 @@ async function listComments(idOrSlug, opts) {
   opts = opts || {};
   const post = await resolvePost(idOrSlug);
   const limit = Math.min(Math.max(Number(opts.limit) || 100, 1), 200);
+  const offset = Math.max(Number(opts.offset) || 0, 0);
   const res = await query(
     `SELECT id, post_id, post_slug, user_id, user_name, body, image_url, created_at
      FROM news_comments
      WHERE deleted_at IS NULL
        AND (post_id = $1 OR ($2 <> '' AND post_slug = $2))
      ORDER BY created_at DESC
-     LIMIT $3`,
-    [post.id, post.slug, limit]
+     LIMIT $3 OFFSET $4`,
+    [post.id, post.slug, limit, offset]
   );
+  const total = await countComments(post.id, post.slug);
   return {
     post_id: post.id,
     post_slug: post.slug,
     comments: res.rows.map(rowToComment),
-    total: res.rows.length
+    total: total
   };
 }
 

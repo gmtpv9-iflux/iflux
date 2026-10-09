@@ -50,7 +50,7 @@ var manifest = {
     m('comments-cta', 'js', ASSET + 'comments-cta.js?v=5537ba40da', 'IfluxCommentsCta'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=407fadedc0', 'IfluxDailyFeed'),
     m('entity-detail-center', 'js', ASSET + 'entity-detail-center.js?v=57d506954b', 'IfluxEntityDetailCenter'),
-    m('stock-page', 'js', ASSET + 'stock-page.js?v=ab20c3e154', 'IfluxStockPage'),
+    m('stock-page', 'js', ASSET + 'stock-page.js?v=665b84d07e', 'IfluxStockPage'),
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
     m('stock-css', 'css', ASSET + 'stock.css?v=c07620f5e0', null)
   ],

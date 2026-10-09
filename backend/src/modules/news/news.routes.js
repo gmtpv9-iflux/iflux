@@ -87,7 +87,8 @@ function createNewsRouter(deps) {
   router.get('/posts/:idOrSlug/comments', async (req, res, next) => {
     try {
       const data = await comments.listComments(req.params.idOrSlug, {
-        limit: req.query.limit ? Number(req.query.limit) : 100
+        limit: req.query.limit ? Number(req.query.limit) : 100,
+        offset: req.query.offset ? Number(req.query.offset) : 0
       });
       return success(res, data);
     } catch (err) {
@@ -156,7 +157,8 @@ function createNewsRouter(deps) {
   router.get('/articles/:idOrSlug/comments', async (req, res, next) => {
     try {
       const data = await comments.listComments(req.params.idOrSlug, {
-        limit: req.query.limit ? Number(req.query.limit) : 100
+        limit: req.query.limit ? Number(req.query.limit) : 100,
+        offset: req.query.offset ? Number(req.query.offset) : 0
       });
       return success(res, data);
     } catch (err) {

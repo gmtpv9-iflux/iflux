@@ -360,6 +360,17 @@
   color: var(--ifx-text-primary);
   margin-bottom: var(--ifx-gap-xs);
 }
+/* "Bình luận gần nhất" — CHỈ mobile (xem mountCommentsPreview ở news-post-page.js): sidebar
+ * đầy đủ đã ẩn ở viewport này nên cần preview ngay trong luồng đọc; desktop ẩn hẳn (sidebar
+ * đã có danh sách đầy đủ, không lặp lại) qua rule @media (min-width:1025px) dưới cùng. */
+.ifx-com-article__comments-preview {
+  margin: var(--ifx-space-24) 0;
+  padding: var(--ifx-space-16) var(--ifx-space-20);
+}
+.ifx-com-article__comments-preview-more {
+  margin-top: var(--ifx-space-12);
+  width: 100%;
+}
 .ifx-com-article .ifx-com-faq {
   margin: 0;
   padding: var(--ifx-space-container) 32px 32px;
@@ -1830,6 +1841,13 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 @media (max-width: 1024px) {
   .ifx-main.ifx-main--community-post .ifx-shell-sidebar {
     display: none !important;
+  }
+}
+/* Ngược lại: ≥1025 (desktop) — sidebar vẫn có bình luận đầy đủ, ẩn khối preview trong main
+ * content (tránh lặp UI, đỡ 1 request thừa — mountCommentsPreview() tự return sớm nữa). */
+@media (min-width: 1025px) {
+  .ifx-main.ifx-main--community-post .ifx-com-article__comments-preview {
+    display: none;
   }
 }
 

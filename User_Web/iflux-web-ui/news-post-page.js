@@ -137,8 +137,85 @@
         '<div class="ifx-com-article__body" itemprop="articleBody">' + bodyHtml + '</div>' +
 
         ui().articleAuthorInfoHtml(post, published) +
+        commentsPreviewHtml() +
       '</article>'
     );
+  }
+
+  /* "Bình luận gần nhất" — CHỈ mobile (sidebar đầy đủ đã ẩn ở viewport này, user không còn chỗ
+   * đọc bình luận). Desktop: sidebar vẫn giữ danh sách đầy đủ như cũ — khối này ẩn qua CSS,
+   * mountCommentsPreview() cũng không gọi API (tránh phí request). */
+  function commentsPreviewHtml() {
+    return (
+      '<section class="ifx-card ifx-com-article__comments-preview" data-ifx-com-comments-preview aria-label="Bình luận gần nhất">' +
+        '<h2 class="ifx-com-side-card__title"><i class="ti ti-message"></i> Bình luận</h2>' +
+        '<div class="ifx-com-comments__list" data-ifx-com-comments-preview-list>' +
+          '<p class="ifx-com-empty">Đang tải bình luận…</p>' +
+        '</div>' +
+        '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm ifx-com-article__comments-preview-more" ' +
+          'data-ifx-com-comments-preview-more hidden>Xem thêm bình luận</button>' +
+      '</section>'
+    );
+  }
+
+  function commentPreviewRowHtml(c) {
+    var name = (c && c.user_name) || 'Thành viên';
+    var initials = String(name).trim().charAt(0).toUpperCase() || 'U';
+    var time = ui().fmtRelative ? ui().fmtRelative(c.created_at) : '';
+    return (
+      '<div class="ifx-com-comment">' +
+        '<span class="ifx-com-comment__author">' +
+          '<span class="ifx-avatar ifx-avatar-sm ifx-avatar-accent">' + esc(initials) + '</span>' +
+          '<strong class="ifx-com-comment__name">' + esc(name) + '</strong>' +
+        '</span>' +
+        '<p class="ifx-com-comment__body">' + esc(c.body || '') + '</p>' +
+        (time ? '<div class="ifx-com-comment__meta"><span class="ifx-com-comment__time">' + esc(time) + '</span></div>' : '') +
+      '</div>'
+    );
+  }
+
+  function mountCommentsPreview(root, post) {
+    var section = root.querySelector('[data-ifx-com-comments-preview]');
+    if (!section) return;
+    if (!useBottomIxSurface()) {
+      /* Desktop: sidebar đã có danh sách đầy đủ — không lặp lại, không gọi API thừa. */
+      section.setAttribute('hidden', 'hidden');
+      return;
+    }
+    section.removeAttribute('hidden');
+    var list = section.querySelector('[data-ifx-com-comments-preview-list]');
+    var more = section.querySelector('[data-ifx-com-comments-preview-more]');
+    var target = { type: 'post', id: String(post.id || post.slug || '') };
+    var href = global.IfluxSeoUrl && IfluxSeoUrl.commentsHrefFromLocation
+      ? IfluxSeoUrl.commentsHrefFromLocation()
+      : '';
+
+    if (more && href) {
+      more.addEventListener('click', function () { consumerNavigate(href); });
+    }
+
+    function run() {
+      if (!list || !global.IfluxInteractionStore || !IfluxInteractionStore.loadThread) return;
+      IfluxInteractionStore.loadThread(target, { limit: 10 }).then(function (thread) {
+        if (!root.isConnected) return;
+        var comments = (thread && thread.comments) || [];
+        if (!comments.length) {
+          list.innerHTML = '<p class="ifx-com-empty">Chưa có bình luận.</p>';
+          if (more) more.hidden = true;
+          return;
+        }
+        list.innerHTML = comments.map(commentPreviewRowHtml).join('');
+        if (more) more.hidden = false;
+      }).catch(function () {
+        if (list) list.innerHTML = '<p class="ifx-com-empty">Không tải được bình luận.</p>';
+      });
+    }
+
+    if (global.IfluxInteractionBoot && IfluxInteractionBoot.ensureForSummary) {
+      IfluxInteractionBoot.ensureForSummary().then(run).catch(run);
+    } else {
+      run();
+    }
   }
 
   function renderTocHtml(headings) {
@@ -444,7 +521,10 @@
           var next = useBottomIxSurface() ? 'bottom-bar' : 'sidebar';
           if (next === _ixLastSurface) return;
           var p = st() && currentSlug ? (st().getPostBySlug(currentSlug) || st().getPostById(currentSlug)) : post;
-          if (p) mountInteractionHosts(root, p);
+          if (p) {
+            mountInteractionHosts(root, p);
+            mountCommentsPreview(root, p);
+          }
         }, 120);
       });
       document.addEventListener('iflux-ix-bottom-slot-ready', function () {
@@ -524,6 +604,7 @@
     bindTocLinks(root);
     mountRelatedFeed(root, post);
     mountInteractionHosts(root, post);
+    mountCommentsPreview(root, post);
     if (ui() && typeof ui().hydrateTickerQuotes === 'function') {
       ui().hydrateTickerQuotes(root, [post]);
     }

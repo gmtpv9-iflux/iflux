@@ -58,20 +58,22 @@ function rowToComment(row) {
 async function listEntityComments(type, id, opts) {
   opts = opts || {};
   const limit = Math.min(Math.max(Number(opts.limit) || 100, 1), 200);
+  const offset = Math.max(Number(opts.offset) || 0, 0);
   const res = await query(
     `SELECT id, user_id, user_name, body, image_url, parent_id, created_at
      FROM interaction_comments
      WHERE deleted_at IS NULL
        AND entity_type = $1 AND entity_id = $2
      ORDER BY created_at DESC
-     LIMIT $3`,
-    [type, id, limit]
+     LIMIT $3 OFFSET $4`,
+    [type, id, limit, offset]
   );
   const comments = res.rows.map(rowToComment);
+  const total = await countEntityComments(type, id);
   return {
     target: { type: type, id: id },
     comments: comments,
-    total: comments.length
+    total: total
   };
 }
 
