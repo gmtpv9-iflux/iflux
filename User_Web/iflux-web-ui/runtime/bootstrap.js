@@ -24,7 +24,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=dfa1d4e027';
 import { applyDefinitionToDocument } from './page-definition.js?v=432eed525b';
-import { bootShell } from './shell-boot.js?v=2b0348fedb';
+import { bootShell } from './shell-boot.js?v=dba2bf3a80';
 import { pageKeyFromPath } from './page-keys.js?v=43da030e2b';
 import { installSoftNavigation } from './soft-navigation.js?v=c2f051e9d8';
 import { loadStyles } from './legacy-bridge.js?v=dec30759da';
@@ -53,7 +53,7 @@ var MANIFEST_MAP = {
   watchlist: function () { return import('../pages/watchlist.manifest.js?v=ab7d3546da'); },
   search: function () { return import('../pages/search.manifest.js?v=51ba8bb832'); },
   messages: function () { return import('../pages/messages.manifest.js?v=ed714e6c6c'); },
-  article: function () { return import('../pages/news-post.manifest.js?v=a2ab7860fe'); },
+  article: function () { return import('../pages/news-post.manifest.js?v=6d095e2a52'); },
   account: function () { return import('../pages/account.manifest.js?v=c65d2531de'); },
   checkout: function () { return import('../pages/checkout.manifest.js?v=700d74d3d0'); },
   newsWrite: function () { return import('../pages/news-write.manifest.js?v=a50f9859bc'); },

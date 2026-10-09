@@ -588,6 +588,13 @@
     if (global.IfluxInteractionHost && IfluxInteractionHost.unmountAll) {
       try { IfluxInteractionHost.unmountAll(); } catch (e) { /* ignore */ }
     }
+    /* Bài MỚI bắt đầu paint — xoá ngay thực thể của bài TRƯỚC (ô bottom-bar dùng chung, không
+       tạo lại qua soft-nav) kẻo lộ ra 1 nhịp "mã của bài cũ" trước khi fillArticleEntityStrip
+       (gọi sau, trong mountInteractionHosts) điền đúng mã bài này. Chỉ xoá ở ĐÚNG lifecycle
+       "đổi bài" — không xoá trong ensureArticleIxBottomSlot() (mobile-nav.js) vì hàm đó còn bị
+       gọi lại bởi resize bất kỳ (kể cả khi URL bar mobile co/giãn lúc scroll, không đổi bài) —
+       xoá ở đó mà không có bước điền lại tương ứng sẽ làm mã biến mất vĩnh viễn sau khi scroll. */
+    clearArticleEntityStrip();
 
     root.innerHTML =
       '<nav class="ifx-com-breadcrumb" aria-label="Đường dẫn">' +

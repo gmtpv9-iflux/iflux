@@ -256,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=36db72f0c8' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=e5768ce7d6' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

@@ -272,19 +272,17 @@
       bar.setAttribute('aria-label', 'Tương tác bài viết');
       bar.setAttribute('data-ifx-tabbar-mode', 'article');
 
+      /* Idempotent — chỉ DỰNG ô nếu chưa có, không đụng nội dung ô đã có. Hàm này còn bị gọi lại
+       * bởi listener resize chung (syncMobileTabbar, không riêng bài viết) mỗi khi viewport đổi
+       * (kể cả URL bar mobile co/giãn lúc scroll, không phải đổi bài) — xoá nội dung ở ĐÂY mà
+       * không có bước điền lại tương ứng sẽ làm mã gắn kèm biến mất vĩnh viễn sau khi cuộn.
+       * Xoá đúng lúc "đổi bài" (paintPost → clearArticleEntityStrip) nằm ở news-post-page.js. */
       var entities = bar.querySelector('[data-ifx-ix-article-entities]');
       if (!entities) {
         entities = document.createElement('div');
         entities.setAttribute('data-ifx-ix-article-entities', '');
         entities.className = 'ifx-com-article__entities';
         entities.setAttribute('aria-label', 'Gắn kèm bài viết');
-        entities.setAttribute('hidden', 'hidden');
-      } else {
-        /* Ô này dùng chung cho mọi bài (App Shell, không tạo lại mỗi lần chuyển bài) — nếu còn
-           HTML của bài TRƯỚC, phải xoá ngay tại đây (đồng bộ, trước khi dữ liệu bài MỚI tới) kẻo
-           lộ ra đúng 1 nhịp "thực thể bài cũ" cho tới khi fillArticleEntityStrip(bài mới) chạy
-           xong — nhìn như hardcode/mock dữ liệu dù thực chất là dữ liệu CŨ chưa kịp xoá. */
-        entities.innerHTML = '';
         entities.setAttribute('hidden', 'hidden');
       }
 
