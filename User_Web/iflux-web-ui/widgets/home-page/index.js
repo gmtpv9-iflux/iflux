@@ -507,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=054f75a183');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=e44c1ad657');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

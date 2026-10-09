@@ -166,7 +166,10 @@
         id: post.author.id || null,
         display_name: post.author.display_name,
         tier: post.author.tier || null,
-        tier_label: post.author.tier_label || null
+        tier_label: post.author.tier_label || null,
+        /* Khối "Thông tin người viết" (Chi tiết bài viết) cần Avatar — API đã trả field này
+           (xem backend news-feed.service.js) nhưng chuẩn hoá cũ bỏ qua, không giữ lại. */
+        avatar: post.author.avatar || post.author.avatar_url || null
       };
     }
     /* Không dùng publisher/provider/vendor làm tên hiển thị */

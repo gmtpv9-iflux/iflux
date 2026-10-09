@@ -21,17 +21,17 @@ var CORE_TIERS = [
   [
     ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8',
     ASSET + 'stock-mentions.js?v=63b1553d75',
-    ASSET + 'news-store.js?v=84bb9b875c',
+    ASSET + 'news-store.js?v=41bb32b4bc',
     ASSET + 'iflux-news-api-bridge.js?v=70487a5208',
     ASSET + 'profile-users-store.js?v=4fb82084de',
     ASSET + 'profile-links.js?v=31f14c2ed9',
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
-    ASSET + 'news-ui.js?v=d50b4a27fe',
+    ASSET + 'news-ui.js?v=0654c01137',
     ASSET + 'news-daily-feed.js?v=407fadedc0',
     ASSET + 'interaction/boot.js?v=41e479c913',
-    ASSET + 'news-post-page.js?v=72531d9593'
+    ASSET + 'news-post-page.js?v=2ed7342b39'
   ]
 ];
 

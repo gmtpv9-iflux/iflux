@@ -23,11 +23,11 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'sector' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=0fdf748611',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=c8a8a4e40b',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
-      '/User_Web/iflux-web-ui/news.css?v=ff9894f428',
+      '/User_Web/iflux-web-ui/news.css?v=f0b8282b62',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd',
       '/User_Web/iflux-web-ui/stock.css?v=c07620f5e0',
       '/User_Web/iflux-web-ui/community.css?v=5dc2a24e5d'

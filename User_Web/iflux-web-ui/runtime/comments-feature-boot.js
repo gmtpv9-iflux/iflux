@@ -9,7 +9,7 @@ var V = '?v=r20261008c';
 
 var IX_FEATURE = [
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
-  ASSET + 'news-store.js?v=84bb9b875c' + V,
+  ASSET + 'news-store.js?v=41bb32b4bc' + V,
   ASSET + 'comment-composer.js?v=6c56717875',
   ASSET + 'interaction/boot.js?v=41e479c913',
   ASSET + 'comments-page.js?v=0bc42a108d'

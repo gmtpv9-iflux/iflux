@@ -213,24 +213,6 @@
   margin: 0 0 20px;
   font-weight: var(--ifx-font-weight-regular);
 }
-.ifx-com-article__figure {
-  margin: 0 0 20px;
-  border-radius: var(--ifx-radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--ifx-border-default);
-}
-.ifx-com-article__figure img {
-  width: 100%;
-  display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-.ifx-com-article__figure figcaption {
-  font-size: var(--ifx-font-size-12);
-  color: var(--ifx-text-muted);
-  padding: var(--ifx-space-8) 12px;
-  background: var(--ifx-bg-subtle);
-}
 .ifx-com-article__byline {
   display: flex;
   align-items: center;
@@ -357,28 +339,26 @@
 .ifx-com-article__body ol {
   margin: 0 0 16px 20px;
 }
-.ifx-com-article__geo {
-  margin: 0;
-  padding: var(--ifx-space-16) 32px 24px;
-  border-top: 1px solid var(--ix-border);
-  background: var(--ix-bg-body);
+/* "Thông tin người viết" — khung riêng (.ifx-card đã có border/radius/shadow), tự thêm padding
+   vì không dùng cấu trúc Header/Body/Footer của Template (card đứng 1 mình giữa luồng bài). */
+.ifx-com-article__author {
+  margin: var(--ifx-space-24) 0;
+  padding: var(--ifx-space-16) var(--ifx-space-20);
 }
-.ifx-com-article__geo-label {
+.ifx-com-article__author-head {
   display: flex;
-  align-items: center;
-  gap: var(--ifx-inline-sm);
-  font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ix-text-muted);
-  margin-bottom: 6px;
+  align-items: flex-start;
+  gap: var(--ifx-space-12);
+  padding-bottom: var(--ifx-space-16);
+  margin-bottom: var(--ifx-space-16);
+  border-bottom: 1px solid var(--ifx-border-subtle);
 }
-.ifx-com-article__geo p {
-  margin: 0;
-  font-size: var(--ifx-font-size-12);
-  color: var(--ix-text-secondary);
-  line-height: 1.5;
+.ifx-com-article__author-who { flex: 1 1 auto; min-width: 0; }
+.ifx-com-article__author-name {
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  margin-bottom: var(--ifx-gap-xs);
 }
 .ifx-com-article .ifx-com-faq {
   margin: 0;

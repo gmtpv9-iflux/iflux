@@ -116,8 +116,6 @@
           '<h1 class="ifx-com-article__title" itemprop="headline">' + esc(post.title) + '</h1>' +
           '<p class="ifx-com-article__lead" itemprop="description">' + esc(post.excerpt || '') + '</p>' +
 
-          ui().articleHeroImageHtml(post) +
-
           /* Nguồn/ngày/mã cổ phiếu: đã có ở sidebar — không lặp lại trong main content.
              Giữ microdata (ẩn, chỉ phục vụ SEO schema.org) cho author/datePublished/dateModified. */
           (function () {
@@ -138,9 +136,7 @@
 
         '<div class="ifx-com-article__body" itemprop="articleBody">' + bodyHtml + '</div>' +
 
-        (global.IfluxCommunityGeoAi ? IfluxCommunityGeoAi.renderArticleHtml(post) : '') +
-
-        ui().articleGeoFooterHtml(post) +
+        ui().articleAuthorInfoHtml(post, published) +
       '</article>'
     );
   }
