@@ -41,14 +41,14 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
-    ASSET + 'news-ui.js?v=8bd1108a4b',
+    ASSET + 'news-ui.js?v=d50b4a27fe',
     ASSET + 'comments-cta.js?v=5537ba40da',
     ASSET + 'news-daily-feed.js?v=407fadedc0',
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74'
   ],
   [
     ASSET + 'entity-detail-center.js?v=57d506954b',
-    ASSET + 'group-page.js?v=b0e55948d8',
+    ASSET + 'group-page.js?v=c799efa11e',
     ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8'
   ]
 ];

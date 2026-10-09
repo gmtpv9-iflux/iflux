@@ -5,7 +5,7 @@ export default {
   pageKey: 'article',
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--community-post',
-  css: ['/User_Web/iflux-web-ui/news.css?v=07112d43ed', '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd'],
+  css: ['/User_Web/iflux-web-ui/news.css?v=ff9894f428', '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd'],
   path: '/tin-tuc/bai-viet',
   title: 'Bài viết cộng đồng',
   documentTitle: '',
@@ -19,9 +19,9 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/news-post-page/index.js?v=2fb8b9c167',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/news-post-page/index.js?v=596de955d7',
     css: [
-      '/User_Web/iflux-web-ui/news.css?v=07112d43ed',
+      '/User_Web/iflux-web-ui/news.css?v=ff9894f428',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd'
     ]
   }]

@@ -45,7 +45,7 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'stock-mentions.js?v=63b1553d75',
   ASSET + 'stock-store.js?v=4dc55126ff',
   ASSET + 'news-store.js?v=84bb9b875c',
-  ASSET + 'news-ui.js?v=8bd1108a4b',
+  ASSET + 'news-ui.js?v=d50b4a27fe',
   ASSET + 'profile-page.js?v=5a969de78b'
 ];
 

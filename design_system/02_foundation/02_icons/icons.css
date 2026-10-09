@@ -34,7 +34,10 @@
 }
 .ifx-icon-interactive:hover::before,
 .ifx-icon-interactive:focus-visible::before,
-.ifx-icon-interactive.is-active::before {
+.ifx-icon-interactive.is-active::before,
+/* Nút Like/Dislike/Follow… toggle .is-active trên chính <button>, không phải icon bên trong —
+   nhận luôn dạng này để không phải sửa JS đổi chỗ gắn class ở từng nơi. */
+.is-active .ifx-icon-interactive::before {
   -webkit-mask-image: var(--ti-svg-filled, var(--ti-svg));
   mask-image: var(--ti-svg-filled, var(--ti-svg));
 }

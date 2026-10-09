@@ -92,7 +92,14 @@
       ticker: t,
       name: rq.name || null,
       price: quotePrice(rq),
-      change_pct: quoteChangePct(rq)
+      change_pct: quoteChangePct(rq),
+      /* ref/ceiling/floor — thiếu 3 field này thì không phân biệt được Tham chiếu/Trần/Sàn với
+         Tăng/Giảm thường (chỉ còn so dấu %, luôn rơi về is-up/is-down hoặc rỗng — xem
+         tickerTagHtml). IfluxMarketQuotes.priceState() (SoT, đã đúng ở entity-list-page.js)
+         cần đủ 4 giá trị close/ref/ceiling/floor mới phân loại đúng 5 trạng thái. */
+      ref: rq.ref != null ? Number(rq.ref) : null,
+      ceiling: rq.ceiling != null ? Number(rq.ceiling) : null,
+      floor: rq.floor != null ? Number(rq.floor) : null
     };
   }
 
@@ -187,11 +194,19 @@
     return idHref(c);
   }
 
-  /* Chip mã: chỉ mã + % thay đổi; màu + dấu thể hiện tăng/giảm (không mũi tên). */
+  /* Chip mã: chỉ mã + % thay đổi; màu + dấu thể hiện đủ 5 trạng thái (Trần/Tăng/Tham chiếu/Giảm/
+     Sàn) qua IfluxMarketQuotes.priceState() (SoT — đã đúng ở entity-list-page.js). Trước đây chỉ
+     so dấu % (chỉ ra is-up/is-down hoặc rỗng) — Tham chiếu/Trần/Sàn không có class nào, rơi về
+     màu mặc định của chip (xám), sai bản chất. */
   function tickerTagHtml(ticker) {
-    var chg = quoteChangePct(getStockQuote(ticker));
+    var q = getStockQuote(ticker);
+    var chg = quoteChangePct(q);
     var has = chg != null && !isNaN(chg);
-    var dir = has ? (chg > 0 ? ' is-up' : (chg < 0 ? ' is-down' : '')) : '';
+    var mq = global.IfluxMarketQuotes;
+    var state = (q && mq && typeof mq.priceState === 'function')
+      ? mq.priceState(q.price, q.ref, q.ceiling, q.floor)
+      : (has ? (chg > 0 ? 'up' : (chg < 0 ? 'down' : 'ref')) : null);
+    var dir = state ? ' is-' + state : '';
     return (
       '<a class="ix-chip ix-chip-sm ix-chip-outline ifx-com-tick' + dir + '" href="' + tickerArchiveUrl(ticker) + '">' +
         ticker +

@@ -1733,6 +1733,9 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 .ifx-com-tick__chg { font-weight: var(--ifx-font-weight-semibold); }
 .ifx-com-tick.is-up { color: var(--ifx-market-up); }
 .ifx-com-tick.is-down { color: var(--ifx-market-down); }
+.ifx-com-tick.is-ref { color: var(--ix-warning); }
+.ifx-com-tick.is-ceiling { color: var(--ifx-market-ceiling); }
+.ifx-com-tick.is-floor { color: var(--ifx-market-floor); }
 .ifx-com-post__footer {
   display: flex;
   align-items: center;

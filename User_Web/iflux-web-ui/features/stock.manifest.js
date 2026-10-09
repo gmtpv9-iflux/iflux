@@ -46,11 +46,11 @@ var manifest = {
     m('community-store', 'store', ASSET + 'news-store.js?v=84bb9b875c', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=70487a5208', 'IfluxNewsApiBridge'),
     m('watchlist-ui', 'js', ASSET + 'watchlist-ui.js?v=7c1f5a3c0d', 'IfluxWatchlistUI'),
-    m('community-ui', 'js', ASSET + 'news-ui.js?v=8bd1108a4b', 'IfluxNewsUI'),
+    m('community-ui', 'js', ASSET + 'news-ui.js?v=d50b4a27fe', 'IfluxNewsUI'),
     m('comments-cta', 'js', ASSET + 'comments-cta.js?v=5537ba40da', 'IfluxCommentsCta'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=407fadedc0', 'IfluxDailyFeed'),
     m('entity-detail-center', 'js', ASSET + 'entity-detail-center.js?v=57d506954b', 'IfluxEntityDetailCenter'),
-    m('stock-page', 'js', ASSET + 'stock-page.js?v=df7184eb95', 'IfluxStockPage'),
+    m('stock-page', 'js', ASSET + 'stock-page.js?v=ab20c3e154', 'IfluxStockPage'),
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
     m('stock-css', 'css', ASSET + 'stock.css?v=c07620f5e0', null)
   ],

@@ -274,7 +274,7 @@
     function doMount() { global.IfluxEntityPostsPanel.mount(mountEl, { entityType: 'stock', entityId: String(ticker || '').toUpperCase() }); }
     if (global.IfluxEntityPostsPanel) { doMount(); return; }
     loadScript('/User_Web/iflux-web-ui/community-store.js?v=17b421d80c')
-      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=488889e79f'); })
+      .then(function () { return loadScript('/User_Web/iflux-web-ui/entity-posts-panel.js?v=2bdd872220'); })
       .then(doMount)
       .catch(function () { mountEl.innerHTML = '<p class="ifx-com-empty" style="color:var(--ix-danger)">Không tải được Bình luận</p>'; });
   }
