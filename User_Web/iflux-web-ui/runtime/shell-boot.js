@@ -213,7 +213,7 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=r20261003l' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=r20261009f' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js' },
     { global: 'IfluxAuth', src: ASSET + 'auth.js?v=r20261002g' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */

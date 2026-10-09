@@ -292,29 +292,31 @@
     return id;
   }
 
-  /** Tab Danh mục nổi bật + Tất cả — chuẩn Tab nhỏ (Owner 2026-10): .ifx-tabs
-     .ifx-tabs-segmented / .ifx-tab / .is-active, KHÔNG icon (giống hệt Cộng đồng → Chủ đề
-     đang thịnh hành — "chỉ có 2 chuẩn Tab trên toàn hệ thống"). */
+  /** Tab Danh mục nổi bật + Tất cả — chuẩn Tab lớn (Owner 2026-10, điều chỉnh lại): có icon +
+     text, không phải Block/Widget nhỏ nên dùng .ix-profile-tabs/.ix-profile-tab/.active — ĐÚNG
+     mẫu entity-detail-center.js tabsBar(), không tự code mới. Icon category lấy từ c.icon (admin
+     đặt, mặc định "ti ti-folder" — xem backend news-categories.service.js mapRow). */
   function featuredCatsTabsHtml(cats, activeId) {
     var activeTab = tabIdFromState(activeId);
     var allOn = activeTab === FILTER_ALL;
     var tabs =
-      '<button type="button" class="ifx-tab' + (allOn ? ' is-active' : '') + '" role="tab"' +
+      '<button type="button" class="ix-profile-tab' + (allOn ? ' active' : '') + '" role="tab"' +
         ' aria-selected="' + (allOn ? 'true' : 'false') + '"' +
-        ' data-ifx-com-cat-id="' + FILTER_ALL + '">Tất cả</button>';
+        ' data-ifx-com-cat-id="' + FILTER_ALL + '"><i class="ti ti-apps"></i> Tất cả</button>';
     (cats || []).forEach(function (c) {
       var id = String(c.id || '');
       if (!id) return;
       var on = id === activeTab;
       tabs +=
-        '<button type="button" class="ifx-tab' + (on ? ' is-active' : '') + '" role="tab"' +
+        '<button type="button" class="ix-profile-tab' + (on ? ' active' : '') + '" role="tab"' +
           ' aria-selected="' + (on ? 'true' : 'false') + '"' +
           ' data-ifx-com-cat-id="' + esc(id) + '">' +
+          '<i class="' + esc(c.icon || 'ti ti-folder') + '"></i> ' +
           esc(c.name || c.label || c.slug || '') +
         '</button>';
     });
     return (
-      '<div class="ifx-tabs ifx-tabs-segmented" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
+      '<div class="ix-profile-tabs" role="tablist" aria-label="Danh mục chính" data-ifx-com-featured-cats>' +
         tabs +
       '</div>'
     );
@@ -324,9 +326,9 @@
     if (!root) return;
     state.featuredCategoryId = stateIdFromTab(tabId);
     var activeTab = tabIdFromState(state.featuredCategoryId);
-    root.querySelectorAll('[data-ifx-com-featured-cats] .ifx-tab').forEach(function (btn) {
+    root.querySelectorAll('[data-ifx-com-featured-cats] .ix-profile-tab').forEach(function (btn) {
       var on = btn.getAttribute('data-ifx-com-cat-id') === activeTab;
-      btn.classList.toggle('is-active', on);
+      btn.classList.toggle('active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     /* Acquisition = DailyFeed (WP-0) — không loadFeed ở page */

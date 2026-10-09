@@ -109,9 +109,9 @@
   ];
 
   var FILTERS = [
-    { key: 'latest', label: 'Mới nhất', mode: 'latest' },
-    { key: 'trending', label: 'Thịnh hành', mode: 'trending' },
-    { key: 'top', label: 'Nổi bật', mode: 'trending' }
+    { key: 'latest', label: 'Mới nhất', mode: 'latest', icon: 'clock' },
+    { key: 'trending', label: 'Thịnh hành', mode: 'trending', icon: 'trending-up' },
+    { key: 'top', label: 'Nổi bật', mode: 'trending', icon: 'star' }
   ];
 
   var STORY_RANGES = [
@@ -310,11 +310,15 @@
     );
   }
 
+  /* Tab Mới nhất/Thịnh hành/Nổi bật — chuẩn Tab lớn (Owner 2026-10, điều chỉnh lại): có icon,
+     không phải Block/Widget nhỏ — dùng .ix-profile-tabs/.ix-profile-tab/.active, đúng mẫu
+     entity-detail-center.js tabsBar(), không tự code mới. */
   function filterTabsHtml(active) {
     return (
-      '<div class="ifx-tabs ifx-tabs-segmented ifx-com2-feedfilter" data-ifx-com2-filters>' +
+      '<div class="ix-profile-tabs ifx-com2-feedfilter" data-ifx-com2-filters>' +
         FILTERS.map(function (f) {
-          return '<button type="button" class="ifx-tab' + (f.key === active ? ' is-active' : '') + '" data-filter="' + f.key + '">' + esc(f.label) + '</button>';
+          return '<button type="button" class="ix-profile-tab' + (f.key === active ? ' active' : '') + '" data-filter="' + f.key + '">' +
+            icon(f.icon) + ' ' + esc(f.label) + '</button>';
         }).join('') +
       '</div>'
     );
@@ -402,7 +406,7 @@
     var stats =
       '<footer class="ifx-com2-post__stats">' +
         '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
-        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-down') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
+        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-flip-v') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
         '<button type="button" data-ifx-com2-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message-circle') + ' ' + p.comments + '</button>' +
         '<button type="button" data-ifx-com2-action="share" data-post-id="' + esc(p.id) + '">' + icon('share') + ' ' + p.shares + '</button>' +
       '</footer>';
@@ -940,10 +944,10 @@
   function bindFilters(root) {
     var bar = root.querySelector('[data-ifx-com2-filters]');
     if (!bar) return;
-    bar.querySelectorAll('.ifx-tab').forEach(function (btn) {
+    bar.querySelectorAll('.ix-profile-tab').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        bar.querySelectorAll('.ifx-tab').forEach(function (b) { b.classList.remove('is-active'); });
-        btn.classList.add('is-active');
+        bar.querySelectorAll('.ix-profile-tab').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
         var key = btn.getAttribute('data-filter');
         state.filter = key;
         var mode = FILTERS.find(function (f) { return f.key === key; }).mode;

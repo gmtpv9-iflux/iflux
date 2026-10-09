@@ -1339,9 +1339,8 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 [data-ifx-com-featured-cats] {
   margin-bottom: var(--ifx-space-16);
 }
-/* Owner 2026-10 (chuẩn hoá Tab) — bỏ icon + đổi sang .ifx-tabs-segmented (xem news-page.js
-   featuredCatsTabsHtml) — override responsive riêng (icon trên chữ) không còn cần, vì
-   .ifx-tabs-segmented base đã tự cuộn ngang (overflow-x:auto) trên mọi kích thước màn hình. */
+/* Owner 2026-10 (điều chỉnh lại) — Tab Danh mục là Tab LỚN (.ix-profile-tabs/.ix-profile-tab,
+   có icon), không phải Block/Widget nhỏ — xem news-page.js featuredCatsTabsHtml(). */
 
 .ifx-com-pills {
   display: flex;

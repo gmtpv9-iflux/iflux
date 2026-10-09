@@ -15,7 +15,14 @@
     ],
     defaults: {
       production: { dataMode: 'api', apiBaseUrl: 'https://iflux.vn/api' },
-      staging: { dataMode: 'sandbox' },
+      /* Staging có backend thật, luôn phải dùng 'api' giống Production (đã xác nhận qua test
+         thật — xem backend-staging, PM2 iflux-api-staging). Trước đây mặc định 'sandbox' —
+         còn sót từ giai đoạn Staging chưa có backend — khiến đăng nhập/đăng ký rơi vào luồng
+         demo giả (sinh token "mock_jwt_...", không phải JWT thật), trong khi các request KHÁC
+         (feed/bình luận/đăng bài qua community-store.js, có apiBase() riêng không phụ thuộc
+         IfluxRuntime) vẫn gọi đúng /api thật — 2 nhóm "lệch pha" khiến Like/Dislike (qua
+         IfluxAuth.getToken() đọc token giả) báo "Invalid token" dù bình luận/đăng bài vẫn ổn. */
+      staging: { dataMode: 'api', apiBaseUrl: 'https://staging.iflux.vn/api' },
       development: { dataMode: 'mock', apiBaseUrl: 'http://localhost:3001/api' }
     },
     dataModes: {

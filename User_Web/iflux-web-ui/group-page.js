@@ -90,7 +90,7 @@
     return (
       '<div class="ifx-stock-head__co" style="display:flex;gap:12px;margin-top:4px">' +
         '<span><i class="ti ti-heart" style="font-size:12px"></i> ' + (Number(stats.likes) || 0) + '</span>' +
-        '<span><i class="ti ti-thumb-down" style="font-size:12px"></i> ' + (Number(stats.dislikes) || 0) + '</span>' +
+        '<span><i class="ti ti-thumb-up ifx-icon-flip-v" style="font-size:12px"></i> ' + (Number(stats.dislikes) || 0) + '</span>' +
         '<span><i class="ti ti-message-circle" style="font-size:12px"></i> ' + (Number(stats.comments) || 0) + '</span>' +
         '<span><i class="ti ti-share" style="font-size:12px"></i> ' + (Number(stats.shares) || 0) + '</span>' +
       '</div>'
