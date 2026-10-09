@@ -29,9 +29,10 @@
   gap: var(--ifx-gap-sm);
   border-bottom: 1px solid var(--ifx-border-subtle);
 }
+/* Căn giữa theo hàng Icon+Tiêu đề (.ifx-widget-title__head align-items:center) — không còn
+   align-self riêng, icon nay là con của hàng đó, không phải con trực tiếp .ifx-card-header. */
 .ifx-card-header__icon {
   flex: 0 0 auto;
-  align-self: center;
   font-size: var(--ifx-font-size-18);
   color: var(--ifx-action-primary);
 }

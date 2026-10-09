@@ -90,8 +90,11 @@
     if (!ctx.title && !ctx.description && !actions && !ctx.icon) return '';
     var icon = ctx.icon ? '<i class="ti ti-' + esc(ctx.icon) + ' ifx-card-header__icon" aria-hidden="true"></i>' : '';
     var status = ctx.statusHtml ? ' ' + ctx.statusHtml : '';
-    return '<header class="ifx-card-header ifx-widget__header">' + icon + '<div class="ifx-widget-title">' +
-      (ctx.title ? '<h3>' + esc(ctx.title) + status + '</h3>' : '') +
+    /* Icon + Tiêu đề cùng 1 hàng (.ifx-widget-title__head); Mô tả hàng dưới, full-width — không
+       còn Icon 1 bên riêng biệt với khối Tiêu đề+Mô tả. */
+    var head = (icon || ctx.title) ? '<div class="ifx-widget-title__head">' + icon +
+      (ctx.title ? '<h3>' + esc(ctx.title) + status + '</h3>' : '') + '</div>' : '';
+    return '<header class="ifx-card-header ifx-widget__header"><div class="ifx-widget-title">' + head +
       (ctx.description ? '<p class="ifx-widget__subtitle">' + esc(ctx.description) + '</p>' : '') +
       '</div>' + (actions ? '<div class="ifx-inline-sm ifx-widget__actions">' + actions + '</div>' : '') +
       '</header>';

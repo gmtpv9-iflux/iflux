@@ -16,17 +16,30 @@
 
 /* .ifx-widget-title luôn nằm cạnh icon/actions trong 1 hàng flex (vd .ifx-card-header) — thiếu
    flex-basis + min-width:0 thì khối này không co lại được, chữ dài (mô tả) tràn ngang ra ngoài
-   card thay vì xuống dòng (flex item mặc định min-width:auto, không phải 0). */
+   card thay vì xuống dòng (flex item mặc định min-width:auto, không phải 0).
+   Cột dọc: hàng Icon+Tiêu đề (.ifx-widget-title__head) trước, Mô tả full-width ngay dưới —
+   gap cố định duy nhất giữa 2 hàng (giãn cách đồng bộ mọi Widget, không lệch tuỳ nơi). */
 .ifx-widget-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-space-4);
   flex: 1 1 auto;
+  min-width: 0;
+}
+.ifx-widget-title__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-space-8);
   min-width: 0;
 }
 
 /* Widget title — ĐÚNG style dùng chung cho mọi Widget trên nền tảng, 1 nguồn duy nhất
- * (design_system/05_templates/00_widget/widget.js headHtml()). */
-.ifx-widget-title > h3 {
+ * (design_system/05_templates/00_widget/widget.js headHtml()). Descendant (không chỉ "> h3")
+ * vì h3 nay nằm trong .ifx-widget-title__head, không còn là con trực tiếp của .ifx-widget-title. */
+.ifx-widget-title h3 {
   margin: 0;
   width: 100%;
+  min-width: 0;
   font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-16);
   font-weight: var(--ifx-font-weight-bold);
