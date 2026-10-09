@@ -3,9 +3,9 @@
  * Mọi trang (runtime chung hoặc module trang) dùng hàm này; trang chỉ cần có khung buildPageFrame.
  */
 import { loadScript } from './legacy-bridge.js?v=r20261002communityfix';
-import { mountPublishedWidgets } from './mount-published-widgets.js?v=r20260929e';
+import { mountPublishedWidgets } from './mount-published-widgets.js?v=r20261009e';
 
-var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=r20260928n';
+var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=r20261009e';
 
 /**
  * @param {Element} root — phần tử chứa khung trang

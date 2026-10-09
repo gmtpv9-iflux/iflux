@@ -160,6 +160,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         host.className = 'ifx-rt-widget';
         host.setAttribute('data-widget-id', p.widgetId);
         applySpan(host, p.span);
+        /* Giữ chỗ chiều cao ước lượng trong lúc chờ mountPublishedWidgets() dựng Template thật
+           (IfxTemplates.mount thay host.innerHTML, tự xoá khung này) — không có khung này, host
+           rỗng bị CSS .ifx-rt-widget:empty/.ifx-shell-host:empty ẩn hẳn (0px) rồi "nở" đột ngột
+           khi nội dung về, làm Sidebar sticky (đang dính) bị tính lại và giật theo. */
+        host.innerHTML = '<div class="ifx-rt-widget-skeleton" aria-hidden="true"></div>';
         sectionEl.appendChild(host);
 
         tree.push({

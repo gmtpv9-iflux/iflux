@@ -39,7 +39,7 @@ var CORE_TIERS = [
   [
     ASSET + 'alert-page.js?v=r20260928n',
     ASSET + 'entity-list-page.js?v=' + ELP_VER,
-    ASSET + 'runtime/page-layout-engine.js?v=r20260928n'
+    ASSET + 'runtime/page-layout-engine.js?v=r20261009e'
   ]
 ];
 

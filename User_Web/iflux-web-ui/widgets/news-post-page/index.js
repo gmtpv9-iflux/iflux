@@ -19,7 +19,7 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
  * song toàn bộ giống đúng cách trang danh sách tin tức đang làm (nhanh hơn). */
 var CORE_TIERS = [
   [
-    ASSET + 'runtime/page-layout-engine.js?v=r20260928n',
+    ASSET + 'runtime/page-layout-engine.js?v=r20261009e',
     ASSET + 'stock-mentions.js?v=r20260928n',
     ASSET + 'news-store.js?v=r20261002x',
     ASSET + 'iflux-news-api-bridge.js?v=r20260928n',
