@@ -30,7 +30,13 @@
     width: auto;
     position: sticky;
     top: calc(var(--ifx-size-app-header-h) + var(--ifx-space-16));
-    bottom: var(--ifx-space-16);
+    /* Owner 2026-10-09: bỏ `bottom` — 2 ràng buộc top+bottom cùng lúc là gốc bug "sidebar giật
+       lên đầu" khi Main lazy-load thêm section (container cao thêm → trình duyệt phải tính lại
+       điểm "stick theo bottom", đổi NGAY, không animate → nhìn như giật). Không cần `bottom` để
+       có hiệu ứng "dừng lại trước khi hết Main" — .ifx-shell-layout align-items:flex-start +
+       sticky top-only đã tự cho đúng hiệu ứng đó (sidebar không thể vượt khỏi containing block
+       của nó dù không khai báo bottom), không phụ thuộc chiều cao Main nữa nên lazy-load phía
+       dưới không còn kích hoạt tính lại vị trí sidebar. */
   }
   .ifx-shell-layout > .ifx-shell-sidebar-right { flex-basis: calc((100% - 2 * var(--ifx-space-20)) * 2 / 12); }
   .ifx-shell-layout > .ifx-shell-main { flex: 1 1 0; width: auto; }
