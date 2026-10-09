@@ -48,7 +48,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'entity-detail-center.js?v=r20261009c',
-    ASSET + 'group-page.js?v=r20260928n',
+    ASSET + 'group-page.js?v=r20261009i',
     ASSET + 'runtime/page-layout-engine.js?v=r20261009e'
   ]
 ];

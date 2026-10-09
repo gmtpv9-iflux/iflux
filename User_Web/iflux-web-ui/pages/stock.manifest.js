@@ -1,7 +1,7 @@
 /**
  * Page Manifest — Chi tiết cổ phiếu (/co-phieu/:ticker)
  */
-var VER = '?v=r20261002am';
+var VER = '?v=r20261009i';
 
 export default {
   pageKey: 'stock',
