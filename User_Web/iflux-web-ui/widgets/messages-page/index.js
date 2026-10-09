@@ -26,7 +26,7 @@ function applyConsumerLinks(root) {
 
 var CORE_TIERS = [
   /* RC-IR-05: Tin nhắn không phải Interactive comment surface — không kéo stock-comments-ui */
-  [ASSET + 'news-store.js?v=41bb32b4bc', ASSET + 'news-ui.js?v=0654c01137', ASSET + 'profile-users-store.js?v=4fb82084de', ASSET + 'profile-links.js?v=31f14c2ed9'],
+  [ASSET + 'news-store.js?v=41bb32b4bc', ASSET + 'news-ui.js?v=e79178639a', ASSET + 'profile-users-store.js?v=4fb82084de', ASSET + 'profile-links.js?v=31f14c2ed9'],
   [ASSET + 'profile-follow-store.js?v=7a97f86263', ASSET + 'profile-friend-store.js?v=8a4ea4af6d', ASSET + 'profile-block-store.js?v=901ca0d67c'],
   [ASSET + 'profile-chat-access.js?v=bedda7bf40', ASSET + 'profile-chat-store.js?v=d551f20f1b', ASSET + 'profile-chat-page.js?v=ea50d1b30a'],
   [ASSET + 'profile-avatar.js?v=8eb9a8b60d', ASSET + 'client-local-notification-types.js?v=32f1add69c', ASSET + 'inapp-notifications.js?v=73382215b8'],

@@ -688,8 +688,8 @@
     var avatarUrl = (author && (author.avatar || author.avatar_url)) || '';
     var initials = name.trim().charAt(0).toUpperCase() || 'I';
     var avatarHtml = avatarUrl
-      ? '<img class="ifx-avatar ifx-avatar-lg" src="' + esc(avatarUrl) + '" alt="' + esc(name) + '" />'
-      : '<span class="ifx-avatar ifx-avatar-lg ifx-avatar-accent">' + esc(initials) + '</span>';
+      ? '<img class="ifx-avatar ifx-avatar-lg" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
+      : '<span class="ifx-avatar ifx-avatar-lg ifx-avatar-accent">' + escHtml(initials) + '</span>';
 
     var credRows =
       '<div class="ifx-icon-list-item"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</div>' +
@@ -698,11 +698,11 @@
 
     var metaRows = [];
     if (publishedIso) {
-      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-calendar"></i> ' + esc(fmtDate(publishedIso)) + '</div>');
+      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-calendar"></i> ' + escHtml(fmtDate(publishedIso)) + '</div>');
     }
     var sourceName = post.source_name || (post.source && post.source.name) || '';
     if (sourceName) {
-      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-link"></i> Nguồn tham khảo: ' + esc(sourceName) + '</div>');
+      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-link"></i> Nguồn tham khảo: ' + escHtml(sourceName) + '</div>');
     }
     metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-robot"></i> Hỗ trợ biên soạn: AI</div>');
 
@@ -711,7 +711,7 @@
         '<div class="ifx-com-article__author-head">' +
           avatarHtml +
           '<div class="ifx-com-article__author-who">' +
-            '<div class="ifx-com-article__author-name">' + esc(name) + '</div>' +
+            '<div class="ifx-com-article__author-name">' + escHtml(name) + '</div>' +
             '<div class="ifx-icon-list">' + credRows + '</div>' +
           '</div>' +
         '</div>' +
