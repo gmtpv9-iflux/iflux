@@ -12,7 +12,7 @@
  */
 import { loadScript } from './legacy-bridge.js?v=dec30759da';
 
-var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
+var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=r20261009a';
 var REGISTRY_SRC = '/User_Web/iflux-web-ui/widget-registry.js?v=90088910d4';
 
 function templateIdOf(art) {

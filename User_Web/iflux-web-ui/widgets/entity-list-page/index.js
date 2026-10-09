@@ -2,7 +2,7 @@
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=b515a6101c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 
 var ASSET = '/User_Web/iflux-web-ui/';

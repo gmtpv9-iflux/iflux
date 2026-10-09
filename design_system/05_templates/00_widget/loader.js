@@ -30,7 +30,15 @@
       if (isCss) { el.rel = 'stylesheet'; el.href = path + '?v=' + ver; }
       else { el.src = path + '?v=' + ver; el.async = false; }
       el.onload = function () { resolve(); };
-      el.onerror = function () { delete loaded[path]; reject(new Error('Không nạp được ' + path)); };
+      /* Xoá thẳng thẻ <link>/<script> lỗi khỏi DOM — không chỉ xoá cache Promise. present()
+         chỉ so khớp theo path, không biết thẻ cũ có load thành công hay không; để thẻ lỗi
+         nằm lại sẽ khiến mọi lần gọi load() sau cho path này tưởng "đã có", bỏ qua vĩnh viễn,
+         không bao giờ thử lại — CSS/JS của Template coi như mất hẳn cho tới khi tải lại trang. */
+      el.onerror = function () {
+        delete loaded[path];
+        if (el.parentNode) el.parentNode.removeChild(el);
+        reject(new Error('Không nạp được ' + path));
+      };
       document.head.appendChild(el);
     });
     return loaded[path];

@@ -21,7 +21,7 @@
     return _artifactCache[id];
   }
 
-  var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=20260928';
+  var LOADER_SRC = '/design_system/05_templates/00_widget/loader.js?v=r20261009a';
   function ensureTemplateLoader() {
     if (global.IfxTemplateLoader) return Promise.resolve();
     return new Promise(function (resolve, reject) {

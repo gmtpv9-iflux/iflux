@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/news-post-page/index.js?v=60c521508e',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/news-post-page/index.js?v=2fb8b9c167',
     css: [
       '/User_Web/iflux-web-ui/news.css?v=07112d43ed',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd'

@@ -21,7 +21,7 @@
  * vãng lai riêng (trước đây mountGuest()).
  */
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=b515a6101c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -31,7 +31,7 @@ export const meta = { id: 'WGT-HOME-PAGE', title: 'Cá nhân' };
    (ensureSequence bỏ qua script đã có global, không tải đôi khi user mở tab Dashboard). */
 var SIDEBAR_DEPS = [
   { global: 'IfluxWidgetRegistry', src: ASSET + 'widget-registry.js?v=90088910d4' },
-  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=7aba0542e3' },
+  { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=f338081af6' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
   { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
@@ -507,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=79459f3fa2');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=220f0529fd');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

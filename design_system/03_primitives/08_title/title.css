@@ -14,6 +14,14 @@
   color: var(--ifx-text-muted);
 }
 
+/* .ifx-widget-title luôn nằm cạnh icon/actions trong 1 hàng flex (vd .ifx-card-header) — thiếu
+   flex-basis + min-width:0 thì khối này không co lại được, chữ dài (mô tả) tràn ngang ra ngoài
+   card thay vì xuống dòng (flex item mặc định min-width:auto, không phải 0). */
+.ifx-widget-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* Widget title — ĐÚNG style dùng chung cho mọi Widget trên nền tảng, 1 nguồn duy nhất
  * (design_system/05_templates/00_widget/widget.js headHtml()). */
 .ifx-widget-title > h3 {
