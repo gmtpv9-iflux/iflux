@@ -1821,10 +1821,14 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 }
 @keyframes ifx-com-spin { to { transform: rotate(360deg); } }
 
-/* Post detail mobile: IX + entity chips đã ở bottom → ẩn cả aside (kể cả title section trống).
+/* Post detail mobile: IX + entity chips đã ở bottom → ẩn cả cụm Sidebar (AppShell), không chỉ
+ * nội dung aside bên trong — .ifx-com-story-aside display:none không khiến .ifx-shell-sidebar/
+ * -content tự thu gọn (CSS :empty ở app-shell.css chỉ xét DOM rỗng, không xét display:none),
+ * để lại khoảng trống/khung rác. Ẩn thẳng .ifx-shell-sidebar (khoanh vùng CHỈ trang này qua
+ * .ifx-main--community-post, không đụng app-shell.css dùng chung toàn hệ thống).
  * Breakpoint khớp IX bottom surface (≤1024), không chỉ 768. */
 @media (max-width: 1024px) {
-  .ifx-main.ifx-main--community-post .ifx-com-story-aside {
+  .ifx-main.ifx-main--community-post .ifx-shell-sidebar {
     display: none !important;
   }
 }
@@ -2225,7 +2229,8 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 .ifx-tabbar-ix .ifx-com-action {
   flex: 1 1 0;
   justify-content: center;
-  padding: var(--ifx-space-8) var(--ifx-space-8);
+  /* Owner 2026-10: tăng 1 nhịp token (8→12) — khung đang thấp quá, chật tay bấm. */
+  padding: var(--ifx-space-12) var(--ifx-space-8);
   border: none;
   border-radius: var(--ix-radius-lg);
   background: var(--ix-bg-hover);

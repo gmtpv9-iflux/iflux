@@ -115,12 +115,15 @@
 .ifx-tabbar-count.is-active { color: var(--ifx-text-on-primary); background: var(--ifx-action-primary); }
 
 /* Chế độ bài viết: thanh xếp dọc (thực thể + hàng hành động). Nội dung bên trong thuộc trang Tin tức. */
+/* Owner 2026-10: bỏ padding ngang ở khung ngoài — khung Thực thể + khung nút tương tác (bên
+   trong) đã tự có inset riêng, chỉ cần khung ngoài không chừa viền nữa là cả cụm sát mép màn
+   hình 2 bên (padding dọc giữ nguyên, không đụng). */
 .ifx-tabbar[data-ifx-tabbar-mode="article"] {
   flex-direction: column;
   align-items: stretch;
   gap: var(--ifx-space-4);
   max-height: none;
-  padding: var(--ifx-space-4) var(--ifx-space-12) calc(var(--ifx-space-4) + env(safe-area-inset-bottom, 0px));
+  padding: var(--ifx-space-4) 0 calc(var(--ifx-space-4) + env(safe-area-inset-bottom, 0px));
 }
 .ifx-tabbar-ix { display: flex; width: 100%; min-width: 0; }
 .ifx-tabbar-item-article {
