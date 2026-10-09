@@ -196,6 +196,9 @@
 
     function run() {
       if (!list || !global.IfluxInteractionStore || !IfluxInteractionStore.loadThread) return;
+      /* Mobile chỉ mount Host mode:'summary' (RC-IR-01) — Store không tự initInteractive().
+       * loadThread() đòi _inited=true (RC-IA-01) nên tự init ở đây, không phụ thuộc nhánh khác. */
+      if (IfluxInteractionStore.initInteractive) IfluxInteractionStore.initInteractive();
       IfluxInteractionStore.loadThread(target, { limit: 10 }).then(function (thread) {
         if (!root.isConnected) return;
         var comments = (thread && thread.comments) || [];
