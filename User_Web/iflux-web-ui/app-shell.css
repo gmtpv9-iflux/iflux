@@ -17,26 +17,33 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  */
 @import url('./onboarding.css');
 
-/* Admin ix-layout dùng overflow:hidden trên body; User Web scroll cả trang */
+/* Admin ix-layout dùng overflow:hidden trên body; User Web scroll cả trang.
+ * overflow khác "visible" ở BẤT KỲ trục nào trên html/body sẽ biến nó thành
+ * khung tham chiếu cuộn riêng — làm hỏng position:sticky cho MỌI phần tử lồng
+ * bên trong (Sidebar...), vì sticky luôn cần viewport thật làm mốc. Dùng
+ * "visible" (không phải "auto") để vẫn override đúng overflow:hidden của Admin
+ * mà không tạo khung tham chiếu mới. Hết tràn ngang phải xử lý tại nguồn (phần
+ * tử cụ thể gây tràn), không dùng overflow-x:hidden ở tầng html/body nữa. */
 html:has(.ifx-app):not(.ifx-onboard-active),
 body:has(.ifx-app):not(.ifx-onboard-active),
 html.ifx-user-web:not(.ifx-onboard-active),
 body.ifx-user-web:not(.ifx-onboard-active) {
   height: auto !important;
   min-height: 100%;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
 }
 
-/* Auth pages — Admin đặt overflow:hidden trên body; form dài cần scroll */
+/* Auth pages — Admin đặt overflow:hidden trên body; form dài cần scroll.
+ * Cùng lý do trên: "visible", không phải "auto"/"hidden". */
 html:has(.ifx-auth-page),
 body:has(.ifx-auth-page),
 html.ifx-auth-page,
 body.ifx-auth-page {
   height: auto !important;
   min-height: 100%;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
   -webkit-overflow-scrolling: touch;
 }
 
