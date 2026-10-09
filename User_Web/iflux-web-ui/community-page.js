@@ -360,10 +360,10 @@
     body += newsPreviewHtml(p.sourcePreview, p.sourceId, p.sourceType);
     var stats =
       '<footer class="ifx-com2-post__stats">' +
-        '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('heart') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
-        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-flip-v') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
-        '<button type="button" data-ifx-com2-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message-circle') + ' ' + p.comments + '</button>' +
-        '<button type="button" data-ifx-com2-action="share" data-post-id="' + esc(p.id) + '">' + icon('share') + ' ' + p.shares + '</button>' +
+        '<button type="button" class="' + (p.liked ? 'is-active' : '') + '" data-ifx-com2-action="like" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-interactive') + ' <span data-ifx-com2-like-count>' + p.likes + '</span></button>' +
+        '<button type="button" class="' + (p.disliked ? 'is-active' : '') + '" data-ifx-com2-action="dislike" data-post-id="' + esc(p.id) + '">' + icon('thumb-up', 'ifx-icon-flip-v ifx-icon-interactive') + ' <span data-ifx-com2-dislike-count>' + p.dislikes + '</span></button>' +
+        '<button type="button" data-ifx-com2-action="comment" data-post-id="' + esc(p.id) + '">' + icon('message') + ' ' + p.comments + '</button>' +
+        '<button type="button" data-ifx-com2-action="share" data-post-id="' + esc(p.id) + '">' + icon('share-3', 'ifx-icon-interactive') + ' ' + p.shares + '</button>' +
       '</footer>';
     return (
       '<article class="ifx-card ifx-com2-post" data-post-id="' + esc(p.id) + '">' +
@@ -480,9 +480,9 @@
     }
     var ASSET = '/User_Web/iflux-web-ui/';
     interactionReady = loadScript(ASSET + 'comment-composer.js?v=6c56717875')
-      .then(function () { return loadScript(ASSET + 'interaction/boot.js?v=41e479c913'); })
+      .then(function () { return loadScript(ASSET + 'interaction/boot.js?v=b13165436a'); })
       .then(function () { return global.IfluxInteractionBoot.ensureForInteractive(); })
-      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js?v=5798a6a6f8'); });
+      .then(function () { return loadScript(ASSET + 'interaction/comment-modal.js?v=4ae4ce5469'); });
     return interactionReady;
   }
 

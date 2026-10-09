@@ -213,24 +213,6 @@
   margin: 0 0 20px;
   font-weight: var(--ifx-font-weight-regular);
 }
-.ifx-com-article__figure {
-  margin: 0 0 20px;
-  border-radius: var(--ifx-radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--ifx-border-default);
-}
-.ifx-com-article__figure img {
-  width: 100%;
-  display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-.ifx-com-article__figure figcaption {
-  font-size: var(--ifx-font-size-12);
-  color: var(--ifx-text-muted);
-  padding: var(--ifx-space-8) 12px;
-  background: var(--ifx-bg-subtle);
-}
 .ifx-com-article__byline {
   display: flex;
   align-items: center;
@@ -357,28 +339,37 @@
 .ifx-com-article__body ol {
   margin: 0 0 16px 20px;
 }
-.ifx-com-article__geo {
-  margin: 0;
-  padding: var(--ifx-space-16) 32px 24px;
-  border-top: 1px solid var(--ix-border);
-  background: var(--ix-bg-body);
+/* "Thông tin người viết" — khung riêng (.ifx-card đã có border/radius/shadow), tự thêm padding
+   vì không dùng cấu trúc Header/Body/Footer của Template (card đứng 1 mình giữa luồng bài). */
+.ifx-com-article__author {
+  margin: var(--ifx-space-24) 0;
+  padding: var(--ifx-space-16) var(--ifx-space-20);
 }
-.ifx-com-article__geo-label {
+.ifx-com-article__author-head {
   display: flex;
-  align-items: center;
-  gap: var(--ifx-inline-sm);
-  font-size: var(--ifx-font-size-10);
-  font-weight: var(--ifx-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ix-text-muted);
-  margin-bottom: 6px;
+  align-items: flex-start;
+  gap: var(--ifx-space-12);
+  padding-bottom: var(--ifx-space-16);
+  margin-bottom: var(--ifx-space-16);
+  border-bottom: 1px solid var(--ifx-border-subtle);
 }
-.ifx-com-article__geo p {
-  margin: 0;
-  font-size: var(--ifx-font-size-12);
-  color: var(--ix-text-secondary);
-  line-height: 1.5;
+.ifx-com-article__author-who { flex: 1 1 auto; min-width: 0; }
+.ifx-com-article__author-name {
+  font-size: var(--ifx-font-size-16);
+  font-weight: var(--ifx-font-weight-bold);
+  color: var(--ifx-text-primary);
+  margin-bottom: var(--ifx-gap-xs);
+}
+/* "Bình luận gần nhất" — CHỈ mobile (xem mountCommentsPreview ở news-post-page.js): sidebar
+ * đầy đủ đã ẩn ở viewport này nên cần preview ngay trong luồng đọc; desktop ẩn hẳn (sidebar
+ * đã có danh sách đầy đủ, không lặp lại) qua rule @media (min-width:1025px) dưới cùng. */
+.ifx-com-article__comments-preview {
+  margin: var(--ifx-space-24) 0;
+  padding: var(--ifx-space-16) var(--ifx-space-20);
+}
+.ifx-com-article__comments-preview-more {
+  margin-top: var(--ifx-space-12);
+  width: 100%;
 }
 .ifx-com-article .ifx-com-faq {
   margin: 0;
@@ -769,10 +760,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 .ifx-com-overview--sidebar {
   padding: var(--ifx-space-16);
 }
-.ifx-com-overview--sidebar .ifx-widget__header {
-  flex-wrap: wrap;
-  margin-bottom: var(--ifx-space-12);
-}
 .ifx-com-overview--sidebar .ifx-com-overview__indices {
   margin-bottom: 0;
 }
@@ -781,32 +768,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   border: 1px solid var(--ix-border);
   border-radius: var(--ix-radius-lg);
   padding: var(--ifx-space-16);
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-8);
-  margin-bottom: var(--ifx-space-12);
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) {
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > h3 {
-  flex: 1 1 auto;
-  min-width: 0;
-  order: 1;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > .ifx-block-share-actions {
-  flex: 0 0 auto;
-  margin-left: auto;
-  order: 2;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > .ifx-widget__subtitle {
-  flex: 1 0 100%;
-  order: 3;
 }
 .ifx-com-breadth-sidebar .ifx-breadth-visual--6 {
   grid-template-columns: repeat(2, 1fr);
@@ -845,15 +806,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   padding: var(--ifx-space-16);
   margin-top: var(--ifx-space-16);
   overflow: hidden;
-}
-.ifx-com-topwl > .ifx-widget__header {
-  margin-bottom: var(--ifx-space-4);
-  padding: 0;
-  border-bottom: none;
-  min-height: 0;
-}
-.ifx-com-topwl > .ifx-widget__subtitle {
-  margin: 0 0 var(--ifx-space-12);
 }
 .ifx-com-topwl-list {
   display: flex;
@@ -946,15 +898,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   color: var(--ix-text-muted);
   margin: 0 0 12px;
   line-height: 1.45;
-}
-.ifx-com-overview > .ifx-widget__header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-12);
-  margin-bottom: var(--ifx-space-16);
 }
 .ifx-com-overview__status {
   font-size: var(--ifx-font-size-10);
@@ -1781,6 +1724,9 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 .ifx-com-tick__chg { font-weight: var(--ifx-font-weight-semibold); }
 .ifx-com-tick.is-up { color: var(--ifx-market-up); }
 .ifx-com-tick.is-down { color: var(--ifx-market-down); }
+.ifx-com-tick.is-ref { color: var(--ix-warning); }
+.ifx-com-tick.is-ceiling { color: var(--ifx-market-ceiling); }
+.ifx-com-tick.is-floor { color: var(--ifx-market-floor); }
 .ifx-com-post__footer {
   display: flex;
   align-items: center;
@@ -1886,11 +1832,22 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 }
 @keyframes ifx-com-spin { to { transform: rotate(360deg); } }
 
-/* Post detail mobile: IX + entity chips đã ở bottom → ẩn cả aside (kể cả title section trống).
+/* Post detail mobile: IX + entity chips đã ở bottom → ẩn cả cụm Sidebar (AppShell), không chỉ
+ * nội dung aside bên trong — .ifx-com-story-aside display:none không khiến .ifx-shell-sidebar/
+ * -content tự thu gọn (CSS :empty ở app-shell.css chỉ xét DOM rỗng, không xét display:none),
+ * để lại khoảng trống/khung rác. Ẩn thẳng .ifx-shell-sidebar (khoanh vùng CHỈ trang này qua
+ * .ifx-main--community-post, không đụng app-shell.css dùng chung toàn hệ thống).
  * Breakpoint khớp IX bottom surface (≤1024), không chỉ 768. */
 @media (max-width: 1024px) {
-  .ifx-main.ifx-main--community-post .ifx-com-story-aside {
+  .ifx-main.ifx-main--community-post .ifx-shell-sidebar {
     display: none !important;
+  }
+}
+/* Ngược lại: ≥1025 (desktop) — sidebar vẫn có bình luận đầy đủ, ẩn khối preview trong main
+ * content (tránh lặp UI, đỡ 1 request thừa — mountCommentsPreview() tự return sớm nữa). */
+@media (min-width: 1025px) {
+  .ifx-main.ifx-main--community-post .ifx-com-article__comments-preview {
+    display: none;
   }
 }
 
@@ -2160,11 +2117,6 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
   display: flex;
   flex-direction: column;
 }
-.ifx-com-breadth-sidebar > .ifx-widget__subtitle {
-  padding: 0 var(--ifx-inset-widget);
-  margin: 0;
-  border-bottom: 1px solid var(--ix-border);
-}
 .ifx-com-breadth-sidebar > .ifx-mkt-sidebar-widget__body {
   flex: 1;
   min-width: 0;
@@ -2295,7 +2247,8 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 .ifx-tabbar-ix .ifx-com-action {
   flex: 1 1 0;
   justify-content: center;
-  padding: var(--ifx-space-8) var(--ifx-space-8);
+  /* Owner 2026-10: tăng 1 nhịp token (8→12) — khung đang thấp quá, chật tay bấm. */
+  padding: var(--ifx-space-12) var(--ifx-space-8);
   border: none;
   border-radius: var(--ix-radius-lg);
   background: var(--ix-bg-hover);

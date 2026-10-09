@@ -45,7 +45,8 @@ function createInteractionV1Router(deps) {
   router.get('/threads/:entityType/:entityId/comments', async (req, res, next) => {
     try {
       const data = await thread.listThread(req.params.entityType, req.params.entityId, {
-        limit: req.query.limit ? Number(req.query.limit) : 100
+        limit: req.query.limit ? Number(req.query.limit) : 100,
+        offset: req.query.offset ? Number(req.query.offset) : 0
       });
       return success(res, data);
     } catch (err) {

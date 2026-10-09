@@ -3,7 +3,7 @@
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
 import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from './page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from './page-widgets.js?v=f23703a85b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -44,8 +44,8 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'profile-chat-store.js?v=d551f20f1b',
   ASSET + 'stock-mentions.js?v=63b1553d75',
   ASSET + 'stock-store.js?v=4dc55126ff',
-  ASSET + 'news-store.js?v=84bb9b875c',
-  ASSET + 'news-ui.js?v=8bd1108a4b',
+  ASSET + 'news-store.js?v=41bb32b4bc',
+  ASSET + 'news-ui.js?v=e79178639a',
   ASSET + 'profile-page.js?v=5a969de78b'
 ];
 

@@ -5,7 +5,7 @@
     "format": "CSS mask + data:image/svg+xml (không webfont, không file font)",
     "note": "Giữ nguyên tên class Tabler (.ti .ti-*). Custom iFlux icon tách riêng icons/custom/."
   },
-  "count": 334,
+  "count": 339,
   "icons": [
     {
       "name": "accessible",
@@ -252,6 +252,10 @@
       "className": "ti ti-bulb"
     },
     {
+      "name": "calculator",
+      "className": "ti ti-calculator"
+    },
+    {
       "name": "calendar",
       "className": "ti ti-calendar"
     },
@@ -370,6 +374,10 @@
     {
       "name": "chevron-up",
       "className": "ti ti-chevron-up"
+    },
+    {
+      "name": "circle",
+      "className": "ti ti-circle"
     },
     {
       "name": "circle-check",
@@ -592,6 +600,10 @@
       "className": "ti ti-flame"
     },
     {
+      "name": "flask",
+      "className": "ti ti-flask"
+    },
+    {
       "name": "focus",
       "className": "ti ti-focus"
     },
@@ -764,6 +776,10 @@
       "className": "ti ti-layout"
     },
     {
+      "name": "layout-2",
+      "className": "ti ti-layout-2"
+    },
+    {
       "name": "layout-board",
       "className": "ti ti-layout-board"
     },
@@ -794,6 +810,10 @@
     {
       "name": "layout-sidebar",
       "className": "ti ti-layout-sidebar"
+    },
+    {
+      "name": "layout-sidebar-right",
+      "className": "ti ti-layout-sidebar-right"
     },
     {
       "name": "letter-case",

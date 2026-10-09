@@ -3,7 +3,7 @@
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';

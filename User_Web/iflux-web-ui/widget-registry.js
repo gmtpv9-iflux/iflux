@@ -66,8 +66,8 @@
       kind: 'chart',
       popularity: 98,
       defaultConfig: { width: 'half' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-002',
@@ -79,8 +79,8 @@
       kind: 'chart',
       popularity: 92,
       defaultConfig: { width: 'half' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-RISK',
@@ -107,8 +107,8 @@
       kind: 'list',
       popularity: 88,
       defaultConfig: { width: 'half' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-004',
@@ -121,8 +121,8 @@
       kind: 'chart',
       popularity: 84,
       defaultConfig: { source: 'sector', width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-005',
@@ -135,8 +135,8 @@
       kind: 'chart',
       popularity: 80,
       defaultConfig: { source: 'family', width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-006',
@@ -149,8 +149,8 @@
       kind: 'chart',
       popularity: 74,
       defaultConfig: { source: 'chu-de', width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-007',
@@ -163,8 +163,8 @@
       kind: 'chart',
       popularity: 78,
       defaultConfig: { metric: 'volume', width: 'half' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-MKT-008',
@@ -177,8 +177,8 @@
       kind: 'chart',
       popularity: 76,
       defaultConfig: { metric: 'value', width: 'half' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-TOP-001',
@@ -190,8 +190,8 @@
       kind: 'chart',
       popularity: 72,
       defaultConfig: { width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-TOP-002',
@@ -203,8 +203,8 @@
       kind: 'chart',
       popularity: 68,
       defaultConfig: { width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-TOP-003',
@@ -216,8 +216,8 @@
       kind: 'chart',
       popularity: 61,
       defaultConfig: { width: 'third' },
-      footerHref: '../market/index.html',
-      footerLabel: 'Mở Thị trường'
+      footerHref: '/dong-tien',
+      footerLabel: 'Mở Dòng tiền'
     },
     {
       type: 'WGT-SEC-001',
@@ -229,7 +229,7 @@
       kind: 'chart',
       popularity: 70,
       defaultConfig: { width: 'half' },
-      footerHref: '../sector/index.html',
+      footerHref: '/nganh',
       footerLabel: 'Chi tiết ngành'
     },
 
@@ -419,7 +419,7 @@
       scope: 'sidebar',
       popularity: 100,
       defaultConfig: { width: 'full' },
-      footerHref: '../watchlist/index.html',
+      footerHref: '/theo-doi',
       footerLabel: 'Mở danh sách theo dõi đầy đủ'
     }
   ];

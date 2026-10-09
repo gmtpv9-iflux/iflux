@@ -104,6 +104,27 @@
     return _threads[keyOf(target)] || null;
   }
 
+  /** Lazy-load tiếp — nối vào thread đã có (offset = số dòng đang có), không ghi đè. */
+  function loadMoreThread(target, opts) {
+    opts = opts || {};
+    if (!_inited) {
+      return Promise.reject(new Error('RC-IA-01: Store chưa init Interactive'));
+    }
+    if (!api()) return Promise.reject(new Error('IfluxInteractionApi missing'));
+    var k = keyOf(target);
+    var cur = _threads[k] || { comments: [], total: 0 };
+    var limit = opts.limit || 20;
+    return api().fetchThread(target, { limit: limit, offset: cur.comments.length }).then(function (data) {
+      var more = (data && data.comments) || [];
+      _threads[k] = {
+        comments: cur.comments.concat(more),
+        total: data && data.total != null ? data.total : cur.comments.length + more.length
+      };
+      emit();
+      return _threads[k];
+    });
+  }
+
   function runMutation(target, action) {
     if (!api()) return Promise.reject(new Error('IfluxInteractionApi missing'));
     return api().mutate(target, action).then(function (res) {
@@ -134,6 +155,7 @@
     getProjection: getProjection,
     refreshProjection: refreshProjection,
     loadThread: loadThread,
+    loadMoreThread: loadMoreThread,
     getThread: getThread,
     runMutation: runMutation,
     addComment: addComment,

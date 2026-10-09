@@ -259,22 +259,26 @@
     /* "Đăng lại" CHỈ hiện cho target Tin tức (type=post) + có repostMeta (title bài) — không hiện
        ở comment page Cổ phiếu/Ngành/Hệ sinh thái/Chủ đề vì không có khái niệm "đăng lại" ở đó. */
     var repostBtn = (target.type === 'post' && ctx.repostMeta)
-      ? '<button type="button" class="ifx-com-action" data-ifx-ix-act="repost">' +
-          '<i class="ti ti-repeat"></i> Đăng lại' +
+      ? '<button type="button" class="ifx-com-action" data-ifx-ix-act="repost" title="Đăng lại" aria-label="Đăng lại">' +
+          '<i class="ti ti-repeat"></i>' +
         '</button>'
       : '';
-    /* UI Ownership: Thích → Bình luận → Đăng lại → Chia sẻ; badge số = ifx-com-side-count (DS). */
+    /* UI Ownership: Thích → Bình luận → Đăng lại → Chia sẻ; badge số = ifx-com-side-count (DS).
+       Chỉ còn icon + thống kê — bỏ nhãn chữ (Owner chốt 2026-10), nhưng title/aria-label giữ
+       nguyên tên đầy đủ cho a11y. Icon Like/Share đồng bộ đúng icon Cộng đồng/Widget dùng
+       (thumb-up/share-3) — xem design_system/02_foundation/02_icons/icons.css
+       .ifx-icon-interactive (outline→fill khi hover/focus/active, màu primary cả 2 trạng thái). */
     el.innerHTML =
       '<div class="ifx-ix-action-bar ifx-com-article__actions" data-ifx-ix-actions role="toolbar" aria-label="Tương tác">' +
-        '<button type="button" class="ifx-com-action' + (p.liked ? ' is-active' : '') + '" data-ifx-ix-act="like" data-ifx-com-like>' +
-          '<i class="ti ti-heart"></i> <span data-ifx-ix-like-label>Thích</span> ' + countBadge('data-ifx-ix-likes', p.likes) +
+        '<button type="button" class="ifx-com-action' + (p.liked ? ' is-active' : '') + '" data-ifx-ix-act="like" data-ifx-com-like title="Thích" aria-label="Thích">' +
+          '<i class="ti ti-thumb-up ifx-icon-interactive"></i> ' + countBadge('data-ifx-ix-likes', p.likes) +
         '</button>' +
-        '<button type="button" class="ifx-com-action" data-ifx-ix-act="open">' +
-          '<i class="ti ti-message"></i> Bình luận ' + countBadge('data-ifx-ix-comments', p.comments) +
+        '<button type="button" class="ifx-com-action" data-ifx-ix-act="open" title="Bình luận" aria-label="Bình luận">' +
+          '<i class="ti ti-message"></i> ' + countBadge('data-ifx-ix-comments', p.comments) +
         '</button>' +
         repostBtn +
-        '<button type="button" class="ifx-com-action" data-ifx-ix-act="share_url" data-ifx-com-share>' +
-          '<i class="ti ti-share"></i> Chia sẻ' +
+        '<button type="button" class="ifx-com-action" data-ifx-ix-act="share_url" data-ifx-com-share title="Chia sẻ" aria-label="Chia sẻ">' +
+          '<i class="ti ti-share-3 ifx-icon-interactive"></i> ' + countBadge('data-ifx-ix-shares', p.shares) +
         '</button>' +
       '</div>';
 
@@ -353,8 +357,10 @@
     if (!root || !counts) return;
     var likes = root.querySelector('[data-ifx-ix-likes]');
     var comments = root.querySelector('[data-ifx-ix-comments]');
+    var shares = root.querySelector('[data-ifx-ix-shares]');
     if (likes) likes.textContent = String(counts.likes || 0);
     if (comments) comments.textContent = String(counts.comments || 0);
+    if (shares && counts.shares != null) shares.textContent = String(counts.shares || 0);
     var likeBtn = root.querySelector('[data-ifx-com-like]');
     if (likeBtn && counts.liked != null) likeBtn.classList.toggle('is-active', !!counts.liked);
   }
@@ -469,11 +475,18 @@
     if (!el) return;
     ctx = ctx || {};
     var list = (thread && thread.comments) || [];
+    var total = thread && thread.total != null ? thread.total : list.length;
     if (!list.length) {
       el.innerHTML = '<div class="ifx-com-comments__empty">Chưa có bình luận.</div>';
       return;
     }
-    /* 2A: không nút Thích comment — chỉ Trả lời + thời gian */
+    /* 2A: không nút Thích comment — chỉ Trả lời + thời gian.
+     * Lazy-load: còn total > đã tải → thêm nút "Tải thêm", bấm nối thêm 20 (không ghi đè). */
+    var moreHtml = total > list.length
+      ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm ifx-com-comments__more" data-ifx-ix-load-more>' +
+          'Tải thêm bình luận (' + (total - list.length) + ')' +
+        '</button>'
+      : '';
     el.innerHTML = list.map(function (c) {
       var name = c.user_name || 'Thành viên';
       var time = relativeTime(c.created_at);
@@ -489,7 +502,7 @@
           '</div>' +
         '</div>'
       );
-    }).join('');
+    }).join('') + moreHtml;
 
     el.querySelectorAll('[data-ifx-ix-reply]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -502,6 +515,21 @@
         if (typeof ctx.onReply === 'function') ctx.onReply({ name: name });
       });
     });
+
+    var moreBtn = el.querySelector('[data-ifx-ix-load-more]');
+    if (moreBtn) {
+      moreBtn.addEventListener('click', function () {
+        if (!global.IfluxInteractionStore || !IfluxInteractionStore.loadMoreThread) return;
+        moreBtn.disabled = true;
+        moreBtn.textContent = 'Đang tải…';
+        IfluxInteractionStore.loadMoreThread(ctx.target).then(function (nextThread) {
+          renderThread(root, nextThread, ctx);
+        }).catch(function () {
+          moreBtn.disabled = false;
+          moreBtn.textContent = 'Tải thêm bình luận';
+        });
+      });
+    }
   }
 
   global.IfluxInteractionCatalog = {

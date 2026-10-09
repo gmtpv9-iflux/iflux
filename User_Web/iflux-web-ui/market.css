@@ -33,10 +33,6 @@
   padding: var(--ifx-space-16);
   margin-bottom: 0;
 }
-.ifx-com-overview--market-sidebar .ifx-widget__header {
-  flex-wrap: wrap;
-  margin-bottom: var(--ifx-space-12);
-}
 .ifx-com-overview--market-sidebar .ifx-com-ex-grid {
   grid-template-columns: repeat(2, 1fr);
   gap: var(--ifx-inline-md);

@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/loyalty-page/index.js?v=60b6bc9d08',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/loyalty-page/index.js?v=c9172a5bf4',
     css: ['/User_Web/iflux-web-ui/loyalty.css?v=673ce6dcdd']
   }]
 };

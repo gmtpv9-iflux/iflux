@@ -28,6 +28,21 @@
  * Global DS → Platform → Module → Page → Widget
  *
  * P6a 2026-08-27 — Owner allocation. See gates/.../css-normalization/01c_typography_execution.md
+ *
+ * NGUYÊN TẮC GIÃN CÁCH (2026-10, Owner chốt) — 2 cách, chọn theo bối cảnh, không trộn lẫn:
+ *  1) TRAILING MARGIN (margin-bottom, margin-top luôn 0) — mặc định cho văn bản tự do (prose):
+ *     h1-h6/p/ul/ol/pre dưới đây. Không dùng margin-top: tránh margin-collapse khó đoán, luôn
+ *     chỉ 1 chiều "khoảng cách SAU tôi" — khớp cách đọc trên→dưới, khớp Apple HIG / Material /
+ *     GitHub Markdown / Tailwind Typography. Thang theo --ifx-stack-* (xs 8 · sm 12 · md 16 ·
+ *     lg 24 · xl 30, bảng semantic.css) — không gõ --ifx-space-N thẳng cho khoảng cách dọc.
+ *  2) GAP trên flex/grid container — khi 2 phần tử là 1 CẶP cố định gắn chặt (tiêu đề+mô tả,
+ *     icon+nhãn) thuộc 1 Component có khung riêng (vd .ifx-widget-title, 03_primitives/08_title):
+ *     đặt gap ở container, margin trong con = 0 cả 2 chiều. Rõ ràng hơn trailing margin khi có
+ *     icon/action xen giữa — khoảng cách nằm đúng 1 chỗ (container), không rải rác qua nhiều
+ *     con. Thang theo --ifx-gap-* (cùng giá trị --ifx-stack-*, tên khác cho ngữ cảnh layout).
+ *  KHÔNG dùng margin-top (trừ khi khối rõ ràng cần tách biệt với nội dung KHÔNG LIÊN QUAN đứng
+ *  trước — hiếm, cân nhắc kỹ) và KHÔNG để 1 cặp tiêu đề/mô tả vừa margin:0 vừa không gap ở đâu
+ *  cả — đó là bug giãn cách (đã gặp ở .ifx-widget-title, .ifx-wizard-panel-title).
  */
 :root {
   /* ── Heading ──

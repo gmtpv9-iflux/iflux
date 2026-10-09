@@ -28,7 +28,12 @@
       template.headers || {};
     function draw() {
       try {
-        IfxTemplates.mount(host, template.id, { title: raw[0], description: raw[1], input: raw.slice(HEAD_N), headers: hdr });
+        IfxTemplates.mount(host, template.id, {
+          title: raw[0], description: raw[1], input: raw.slice(HEAD_N), headers: hdr,
+          icon: overrides && overrides.icon,
+          footerHref: overrides && overrides.footerHref,
+          footerLabel: overrides && overrides.footerLabel
+        });
       } catch (err) {
         host.innerHTML = '<p class="tpl-pv-hint">Không dựng được preview: ' + esc(err && err.message) + '</p>';
       }

@@ -47,6 +47,7 @@ function buildWidgetPublished(draft, version, placement) {
     content: {
       title: draft.title,
       description: draft.description || '',
+      icon: draft.iconKey || draft.icon || '',
       problem: draft.problem || '',
       dataDefinition: draft.dataDefinition || draft.outputs || [],
       demoData: draft.demoData || {},

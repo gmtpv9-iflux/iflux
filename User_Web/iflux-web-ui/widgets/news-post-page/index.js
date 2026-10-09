@@ -3,7 +3,7 @@
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -21,17 +21,17 @@ var CORE_TIERS = [
   [
     ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8',
     ASSET + 'stock-mentions.js?v=63b1553d75',
-    ASSET + 'news-store.js?v=84bb9b875c',
+    ASSET + 'news-store.js?v=41bb32b4bc',
     ASSET + 'iflux-news-api-bridge.js?v=70487a5208',
     ASSET + 'profile-users-store.js?v=4fb82084de',
     ASSET + 'profile-links.js?v=31f14c2ed9',
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
-    ASSET + 'news-ui.js?v=8bd1108a4b',
+    ASSET + 'news-ui.js?v=e79178639a',
     ASSET + 'news-daily-feed.js?v=407fadedc0',
-    ASSET + 'interaction/boot.js?v=41e479c913',
-    ASSET + 'news-post-page.js?v=72531d9593'
+    ASSET + 'interaction/boot.js?v=b13165436a',
+    ASSET + 'news-post-page.js?v=d351f9681a'
   ]
 ];
 

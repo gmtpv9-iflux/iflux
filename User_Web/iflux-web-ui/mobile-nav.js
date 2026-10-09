@@ -279,6 +279,13 @@
         entities.className = 'ifx-com-article__entities';
         entities.setAttribute('aria-label', 'Gắn kèm bài viết');
         entities.setAttribute('hidden', 'hidden');
+      } else {
+        /* Ô này dùng chung cho mọi bài (App Shell, không tạo lại mỗi lần chuyển bài) — nếu còn
+           HTML của bài TRƯỚC, phải xoá ngay tại đây (đồng bộ, trước khi dữ liệu bài MỚI tới) kẻo
+           lộ ra đúng 1 nhịp "thực thể bài cũ" cho tới khi fillArticleEntityStrip(bài mới) chạy
+           xong — nhìn như hardcode/mock dữ liệu dù thực chất là dữ liệu CŨ chưa kịp xoá. */
+        entities.innerHTML = '';
+        entities.setAttribute('hidden', 'hidden');
       }
 
       var slot = bar.querySelector('[data-ifx-ix-article-bottom-root]');

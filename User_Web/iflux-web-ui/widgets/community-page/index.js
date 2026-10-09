@@ -14,7 +14,7 @@
  * 2026-10 chốt vị trí ở Sidebar trái — không qua Widget Placement). */
 import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=e4c886756c';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
@@ -24,7 +24,7 @@ export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
    community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
   [ASSET + 'community-store.js?v=17b421d80c'],
-  [ASSET + 'community-page.js?v=8fdba340ea']
+  [ASSET + 'community-page.js?v=943902098f']
 ];
 
 export async function mount(el) {

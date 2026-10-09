@@ -400,7 +400,7 @@
     function fv(f) { var el = card.querySelector('[data-l4-f="' + f + '"]'); return el ? el.value : ''; }
     /* Head Preview = Tiêu đề + Mô tả của WIDGET (working copy) — Template DS tự dựng header từ 2 giá trị này. */
     var demo = [fv('title'), fv('description')].concat(outputs.map(function (out) { return out.demo; }));
-    global.TemplatesPreview.render(mount, template, demo, null, function () {
+    global.TemplatesPreview.render(mount, template, demo, { icon: fv('iconKey') }, function () {
       /* Cột Preview Tầng 4 chỉ hiện Widget thật — bỏ dòng kỹ thuật của Template Preview (TMP-* · "Giao diện thật…"). */
       var techHead = mount.querySelector('.tpl-pv-head');
       if (techHead) techHead.remove();

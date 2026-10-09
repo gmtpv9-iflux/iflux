@@ -28,28 +28,6 @@
   background: rgba(105, 108, 255, 0.04);
   padding: var(--ifx-space-16);
 }
-.ifx-hub-sidebar .ifx-widget__footer {
-  display: none;
-}
-/* WGT-PRF* (Hồ sơ / Gói cước) = thành phần trang Admin đặt sẵn, không có tiêu đề/khung riêng.
-   Widget user tự kéo sang (khu vực [data-ifx-hub-sidebar-canvas]) giữ tiêu đề + nút gỡ gọn. */
-.ifx-hub-sidebar .ifx-widget[data-widget-type^="WGT-PRF"] .ifx-widget__header {
-  display: none;
-}
-.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-8);
-  padding: 0 0 6px;
-}
-.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__header h3 {
-  font-size: var(--ifx-font-size-13);
-  margin: 0;
-}
-.ifx-hub-sidebar .ifx-widget:not([data-widget-type^="WGT-PRF"]) .ifx-widget__subtitle {
-  display: none;
-}
 .ifx-hub-sidebar .ifx-widget__body {
   padding: 0;
 }

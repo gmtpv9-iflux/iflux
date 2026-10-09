@@ -92,7 +92,14 @@
       ticker: t,
       name: rq.name || null,
       price: quotePrice(rq),
-      change_pct: quoteChangePct(rq)
+      change_pct: quoteChangePct(rq),
+      /* ref/ceiling/floor — thiếu 3 field này thì không phân biệt được Tham chiếu/Trần/Sàn với
+         Tăng/Giảm thường (chỉ còn so dấu %, luôn rơi về is-up/is-down hoặc rỗng — xem
+         tickerTagHtml). IfluxMarketQuotes.priceState() (SoT, đã đúng ở entity-list-page.js)
+         cần đủ 4 giá trị close/ref/ceiling/floor mới phân loại đúng 5 trạng thái. */
+      ref: rq.ref != null ? Number(rq.ref) : null,
+      ceiling: rq.ceiling != null ? Number(rq.ceiling) : null,
+      floor: rq.floor != null ? Number(rq.floor) : null
     };
   }
 
@@ -187,11 +194,19 @@
     return idHref(c);
   }
 
-  /* Chip mã: chỉ mã + % thay đổi; màu + dấu thể hiện tăng/giảm (không mũi tên). */
+  /* Chip mã: chỉ mã + % thay đổi; màu + dấu thể hiện đủ 5 trạng thái (Trần/Tăng/Tham chiếu/Giảm/
+     Sàn) qua IfluxMarketQuotes.priceState() (SoT — đã đúng ở entity-list-page.js). Trước đây chỉ
+     so dấu % (chỉ ra is-up/is-down hoặc rỗng) — Tham chiếu/Trần/Sàn không có class nào, rơi về
+     màu mặc định của chip (xám), sai bản chất. */
   function tickerTagHtml(ticker) {
-    var chg = quoteChangePct(getStockQuote(ticker));
+    var q = getStockQuote(ticker);
+    var chg = quoteChangePct(q);
     var has = chg != null && !isNaN(chg);
-    var dir = has ? (chg > 0 ? ' is-up' : (chg < 0 ? ' is-down' : '')) : '';
+    var mq = global.IfluxMarketQuotes;
+    var state = (q && mq && typeof mq.priceState === 'function')
+      ? mq.priceState(q.price, q.ref, q.ceiling, q.floor)
+      : (has ? (chg > 0 ? 'up' : (chg < 0 ? 'down' : 'ref')) : null);
+    var dir = state ? ' is-' + state : '';
     return (
       '<a class="ix-chip ix-chip-sm ix-chip-outline ifx-com-tick' + dir + '" href="' + tickerArchiveUrl(ticker) + '">' +
         ticker +
@@ -657,32 +672,51 @@
     }
   }
 
-  function articleHeroImageHtml(post) {
-    var img = resolvePostDisplayImage(post, 'cover_detail');
-    if (!img.src) return '';
-    /* Ảnh đại diện = ưu tiên tải đầu tiên (LCP) — eager + fetchpriority=high, KHÔNG lazy.
-       Ảnh thân bài và "Bài viết liên quan" đều loading="lazy" nên luôn tải sau ảnh này. */
-    return (
-      '<figure class="ifx-com-article__figure" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">' +
-        '<img src="' + img.src + '" alt="' + (img.alt || '') + '" itemprop="url" loading="eager" fetchpriority="high" decoding="async" />' +
-        (img.alt ? '<figcaption itemprop="caption">' + img.alt + '</figcaption>' : '') +
-      '</figure>'
-    );
-  }
+  /**
+   * Khối "Thông tin người viết" — Owner 2026-10: đứng sau Nội dung chi tiết, khung riêng tách
+   * biệt nội dung bài. Mỗi dòng có icon. Field nào khuyết dữ liệu thì bỏ qua, không hiện placeholder
+   * giả (vd Chứng nhận — chưa có nguồn dữ liệu, không in dòng này cho tới khi có).
+   * Avatar/Tên: tác giả Admin/Sub-admin thật nếu có; RSS (không có author) → fallback "Đội ngũ
+   * iFlux" tạm thời (CHƯA có Cài đặt "Tác giả mặc định" ở Admin — khi có, đổi fallback này sang
+   * đọc đúng cấu hình đó, không sửa lại khung HTML).
+   * Chuyên môn/Năm kinh nghiệm/Hỗ trợ biên soạn: hardcode tạm theo yêu cầu Owner.
+   */
+  function articleAuthorInfoHtml(post, publishedIso) {
+    post = post || {};
+    var author = post.author || null;
+    var name = (author && author.display_name) ? author.display_name : 'Đội ngũ iFlux';
+    var avatarUrl = (author && (author.avatar || author.avatar_url)) || '';
+    var initials = name.trim().charAt(0).toUpperCase() || 'I';
+    var avatarHtml = avatarUrl
+      ? '<img class="ifx-avatar ifx-avatar-lg" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
+      : '<span class="ifx-avatar ifx-avatar-lg ifx-avatar-accent">' + escHtml(initials) + '</span>';
 
-  function articleGeoFooterHtml(post) {
-    var geo = post.geo || {};
-    var seo = post.seo || {};
-    var parts = [];
-    if (geo.language) parts.push('Ngôn ngữ: ' + geo.language);
-    if (geo.region || geo.country) parts.push('Khu vực: ' + (geo.region || geo.country));
-    if (seo.focus_keyword) parts.push('Từ khóa: ' + seo.focus_keyword);
-    if (!parts.length) return '';
+    var credRows =
+      '<div class="ifx-icon-list-item"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</div>' +
+      '<div class="ifx-icon-list-item"><i class="ti ti-award"></i> 5+ năm kinh nghiệm</div>';
+    /* Chứng nhận — chưa có field dữ liệu, bỏ qua đến khi có (không hiển thị placeholder). */
+
+    var metaRows = [];
+    if (publishedIso) {
+      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-calendar"></i> ' + escHtml(fmtDate(publishedIso)) + '</div>');
+    }
+    var sourceName = post.source_name || (post.source && post.source.name) || '';
+    if (sourceName) {
+      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-link"></i> Nguồn tham khảo: ' + escHtml(sourceName) + '</div>');
+    }
+    metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-robot"></i> Hỗ trợ biên soạn: AI</div>');
+
     return (
-      '<footer class="ifx-com-article__geo">' +
-        '<span class="ifx-com-article__geo-label"><i class="ti ti-map-pin"></i> GEO / SEO</span>' +
-        '<p>' + parts.join(' · ') + '</p>' +
-      '</footer>'
+      '<section class="ifx-card ifx-com-article__author">' +
+        '<div class="ifx-com-article__author-head">' +
+          avatarHtml +
+          '<div class="ifx-com-article__author-who">' +
+            '<div class="ifx-com-article__author-name">' + escHtml(name) + '</div>' +
+            '<div class="ifx-icon-list">' + credRows + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ifx-icon-list ifx-com-article__author-meta">' + metaRows.join('') + '</div>' +
+      '</section>'
     );
   }
 
@@ -707,8 +741,7 @@
     prefetchTickerQuotes: prefetchTickerQuotes,
     applySeoToDocument: applySeoToDocument,
     applyStorySeoExtras: applyStorySeoExtras,
-    articleHeroImageHtml: articleHeroImageHtml,
-    articleGeoFooterHtml: articleGeoFooterHtml,
+    articleAuthorInfoHtml: articleAuthorInfoHtml,
     currentUserId: currentUserId
   };
 })(window);

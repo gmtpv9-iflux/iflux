@@ -116,11 +116,13 @@
     opts = opts || {};
     var t = normalizeTarget(target);
     var lim = opts.limit != null ? Number(opts.limit) : 50;
+    var off = opts.offset != null ? Number(opts.offset) : 0;
+    var qs = 'limit=' + lim + (off ? '&offset=' + off : '');
     var url = ixBase() + '/threads/' + encodeURIComponent(t.type) + '/' + encodeURIComponent(t.id) +
-      '/comments?limit=' + lim;
+      '/comments?' + qs;
     return fetch(url, { headers: authHeaders(), credentials: 'same-origin' }).then(unwrap).catch(function (err) {
       if (t.type !== 'post') throw err;
-      var url2 = newsBase() + '/articles/' + encodeURIComponent(t.id) + '/comments?limit=' + lim;
+      var url2 = newsBase() + '/articles/' + encodeURIComponent(t.id) + '/comments?' + qs;
       return fetch(url2, { headers: authHeaders(), credentials: 'same-origin' }).then(unwrap);
     });
   }

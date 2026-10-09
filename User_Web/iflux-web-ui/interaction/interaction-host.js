@@ -119,7 +119,8 @@
         }).catch(function () { /* ignore */ });
       }
       if (store() && store().loadThread) {
-        store().loadThread(target, { limit: 50 }).then(function (thread) {
+        /* Lazy-load 20/lượt — renderThread tự thêm nút "Tải thêm" khi total > đã tải. */
+        store().loadThread(target, { limit: 20 }).then(function (thread) {
           if (catalog() && catalog().renderThread) {
             catalog().renderThread(root, thread, {
               target: target,

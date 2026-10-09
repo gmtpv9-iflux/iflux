@@ -77,14 +77,37 @@
     });
   }
 
+  /** ctx.icon — mã icon Tabler (vd 'flame', 'chart-line', khớp iconKey Widget Definition Tầng 4),
+   * vẽ trước khối Tiêu đề. ctx.statusHtml — slot trạng thái (HTML tin cậy từ caller, như
+   * ctx.actions), đặt ngay sau Tiêu đề — chỗ trống cho Widget tương lai cần hiện badge/trạng
+   * thái mà không phải sửa khung dùng chung này lần nữa. */
+  /* .ifx-widget__header/__subtitle/__actions/__footer — alias tương thích (không còn CSS riêng,
+     xem widget-shell.css) — chỉ để code cũ còn querySelector theo tên cũ (vd design_system/
+     04_components/28_share/share.js — Insight Share) vẫn tìm đúng phần tử, không cần sửa lại
+     từng nơi. Style thật luôn là .ifx-card-header/.ifx-card-footer (card.css). */
   function headHtml(ctx, aside) {
     var actions = (aside || '') + (ctx.actions || '');
-    if (!ctx.title && !ctx.description && !actions) return '';
-    return '<header class="ifx-card-header"><div class="ifx-widget-title">' +
-      (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') +
-      (ctx.description ? '<p>' + esc(ctx.description) + '</p>' : '') +
-      '</div>' + (actions ? '<div class="ifx-inline-sm">' + actions + '</div>' : '') +
-      '</header>';
+    if (!ctx.title && !ctx.description && !actions && !ctx.icon && !ctx.statusHtml) return '';
+    var icon = ctx.icon ? '<i class="ti ti-' + esc(ctx.icon) + ' ifx-card-header__icon" aria-hidden="true"></i>' : '';
+    var status = ctx.statusHtml || '';
+    /* Icon + Tiêu đề + Badge trạng thái + nút hành động (share…) cùng 1 hàng
+       (.ifx-widget-title__head); Mô tả hàng dưới, full-width. Owner chốt 2026-10: không còn
+       Icon/Actions đứng tách biệt với khối Tiêu đề nữa — mọi thứ "nổi" cùng 1 hàng duy nhất. */
+    var head = (icon || ctx.title || status || actions) ? '<div class="ifx-widget-title__head">' + icon +
+      (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') + status +
+      (actions ? '<div class="ifx-inline-sm ifx-widget__actions">' + actions + '</div>' : '') +
+      '</div>' : '';
+    return '<header class="ifx-card-header ifx-widget__header"><div class="ifx-widget-title">' + head +
+      (ctx.description ? '<p class="ifx-widget__subtitle">' + esc(ctx.description) + '</p>' : '') +
+      '</div></header>';
+  }
+
+  /** ctx.footerHref — Widget (không phải Template) biết nên dẫn tới trang nào; thiếu → không
+   * vẽ Footer (Template không tự bịa đích đến). ctx.footerLabel thiếu → nhãn mặc định 'Xem thêm'. */
+  function footerHtml(ctx) {
+    if (!ctx.footerHref) return '';
+    var label = ctx.footerLabel || 'Xem thêm';
+    return '<footer class="ifx-card-footer ifx-widget__footer"><a href="' + esc(ctx.footerHref) + '">' + esc(label) + ' →</a></footer>';
   }
 
   function mount(host, id, ctx) {
@@ -103,6 +126,7 @@
     host.innerHTML = '<article class="ifx-card' + frame + '" data-ifx-template="' + esc(id) + '">' +
       (def.head === false ? '' : headHtml(ctx, aside)) +
       (def.head === false ? body : '<div class="ifx-card-body">' + body + '</div>') +
+      footerHtml(ctx) +
       '</article>';
     var root = host.firstElementChild;
     if (def.bind) def.bind(root, input, ctx);

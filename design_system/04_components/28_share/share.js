@@ -1275,7 +1275,7 @@
     if (btn.className.indexOf('ifx-insight-share-btn') < 0) btn.className = 'ifx-insight-share-btn';
     if (!btn.title) btn.title = 'Chia sẻ Insight Card';
     if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', 'Chia sẻ Insight Card');
-    if (!btn.querySelector('i')) btn.innerHTML = '<i class="ti ti-share-3"></i>';
+    if (!btn.querySelector('i')) btn.innerHTML = '<i class="ti ti-share-3 ifx-icon-interactive"></i>';
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();

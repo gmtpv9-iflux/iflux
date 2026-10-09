@@ -2,10 +2,9 @@
  * Primitive — Title
  * Context: heading + optional description.
  * Heading style = Foundation semantic h1/h2/h3. Không redefine — NGOẠI LỆ .ifx-widget-title > h3
- * ngay dưới (Owner chốt 2026-10-03: mọi Widget title trên toàn nền tảng — dù qua Admin Widget
- * Placement/Template system ở đây hay qua IfluxDashboardEngine ở User_Web/iflux-web-ui/widget-shell.css
- * .ifx-widget__title/.ifx-widget__header > h3 — PHẢI cùng 1 kiểu chữ, không để Foundation h3 mặc
- * định (to hơn, weight khác) làm 2 hệ Widget lệch nhau).
+ * ngay dưới (Owner chốt 2026-10: mọi Widget title trên toàn nền tảng — Admin Widget Placement,
+ * Dashboard cá nhân, Kiến trúc 4 tầng — đều qua đúng 1 hàm IfxTemplates.mount() ở
+ * design_system/05_templates/00_widget/widget.js, không còn hệ riêng của Dashboard).
  */
 .ifx-page-title > p,
 .ifx-section-title > p,
@@ -15,13 +14,35 @@
   color: var(--ifx-text-muted);
 }
 
-/* Widget title — ĐÚNG style dùng chung cho mọi Widget trên nền tảng (khớp byte-for-byte với
- * .ifx-widget__title/.ifx-widget__header > h3 ở widget-shell.css — 2 file khác nhau vì 2 pipeline
- * Widget khác nhau (Admin Widget Placement vs Dashboard cá nhân), KHÔNG gộp chung selector được vì
- * widget-shell.css tự cấm thêm alias mới — nhưng giá trị phải giữ giống hệt nhau). */
-.ifx-widget-title > h3 {
+/* .ifx-widget-title luôn nằm cạnh icon/actions trong 1 hàng flex (vd .ifx-card-header) — thiếu
+   flex-basis + min-width:0 thì khối này không co lại được, chữ dài (mô tả) tràn ngang ra ngoài
+   card thay vì xuống dòng (flex item mặc định min-width:auto, không phải 0).
+   Cột dọc: hàng Icon+Tiêu đề (.ifx-widget-title__head) trước, Mô tả full-width ngay dưới —
+   gap cố định duy nhất giữa 2 hàng (giãn cách đồng bộ mọi Widget, không lệch tuỳ nơi). */
+.ifx-widget-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ifx-gap-xs);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* Icon · Tiêu đề · Badge trạng thái · nút hành động (share…) cùng 1 hàng — h3 flex:1 1 auto tự
+   giãn chiếm hết chỗ trống, đẩy badge/actions (flex:0 0 auto mặc định) về mép phải, không cần
+   margin-left:auto riêng. */
+.ifx-widget-title__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ifx-gap-xs);
+  min-width: 0;
+}
+
+/* Widget title — ĐÚNG style dùng chung cho mọi Widget trên nền tảng, 1 nguồn duy nhất
+ * (design_system/05_templates/00_widget/widget.js headHtml()). Descendant (không chỉ "> h3")
+ * vì h3 nay nằm trong .ifx-widget-title__head, không còn là con trực tiếp của .ifx-widget-title. */
+.ifx-widget-title h3 {
   margin: 0;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-16);
   font-weight: var(--ifx-font-weight-bold);
