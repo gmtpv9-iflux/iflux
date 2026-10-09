@@ -759,7 +759,7 @@
     var shareInHeader = !editMode
       ? '<span class="ifx-block-share-actions">' +
           '<button type="button" class="ifx-insight-share-btn" title="Chia sẻ Insight" aria-label="Chia sẻ Insight">' +
-            '<i class="ti ti-share-3"></i></button></span>'
+            '<i class="ti ti-share-3 ifx-icon-interactive"></i></button></span>'
       : '';
 
     var dragHandle = editMode

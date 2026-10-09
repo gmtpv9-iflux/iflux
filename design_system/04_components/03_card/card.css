@@ -21,12 +21,11 @@
   background: var(--ifx-card-accent, var(--ifx-action-primary));
   pointer-events: none;
 }
+/* Luôn đúng 1 con duy nhất (.ifx-widget-title — gồm hàng Icon+Tiêu đề+Badge+Actions, rồi Mô tả
+   dưới) — display:flex chỉ để .ifx-widget-title (flex:1 1 auto) chiếm hết bề rộng Header. */
 .ifx-card-header {
   padding: var(--ifx-inset-card-header);
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ifx-gap-sm);
   border-bottom: 1px solid var(--ifx-border-subtle);
 }
 /* Căn giữa theo hàng Icon+Tiêu đề (.ifx-widget-title__head align-items:center) — không còn

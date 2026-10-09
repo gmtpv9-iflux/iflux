@@ -228,7 +228,7 @@ export async function bootShell(pageKey, opts) {
   /* Nút chia sẻ Insight trong header widget là global (mọi trang có widget) — nạp sẵn CSS
      ngay từ đầu để nút đúng style ngay, không chờ click đầu tiên mới nạp (JS vẫn lazy khi
      click, xem ensureShareAction trong iflux-web-ui.js — chỉ CSS tải trước). */
-  loadStyle('/design_system/04_components/28_share/share.css?v=r20261002a');
+  loadStyle('/design_system/04_components/28_share/share.css?v=r20261009a');
 
   // Phần còn lại App Shell — không chặn chrome đã paint.
   // ABH E4/E5 — Runtime readers + pure normalize (no Admin subscription on shell)
@@ -256,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=04336eb4aa' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=36db72f0c8' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

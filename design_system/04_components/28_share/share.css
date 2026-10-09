@@ -48,6 +48,9 @@
   align-items: center;
   gap: var(--ifx-space-4);
 }
+/* Owner chốt 2026-10: bỏ khung viền/nền nút — trạng thái tương tác do icon tự đổi kiểu
+   (outline→fill, xem .ifx-icon-interactive ở 02_foundation/02_icons/icons.css), không phải màu
+   nền/viền của nút nữa. */
 .ifx-insight-share-btn {
   display: inline-flex;
   align-items: center;
@@ -55,21 +58,14 @@
   width: 30px;
   height: 30px;
   padding: 0;
-  border: 1px solid var(--ifx-border-default);
-  border-radius: var(--ifx-radius-md);
-  background: var(--ifx-bg-surface);
-  color: var(--ifx-text-secondary);
+  border: none;
+  background: transparent;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-.ifx-insight-share-btn:hover {
-  background: var(--ifx-action-primary-soft);
-  border-color: rgba(105, 108, 255, 0.35);
-  color: var(--ifx-action-primary);
 }
 .ifx-insight-share-btn:focus-visible {
   outline: 2px solid var(--ifx-action-primary);
   outline-offset: 2px;
+  border-radius: var(--ifx-radius-md);
 }
 .ifx-widget__header .ifx-insight-share-btn {
   width: 28px;

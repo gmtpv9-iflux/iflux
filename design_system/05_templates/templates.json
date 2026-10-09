@@ -1,6 +1,6 @@
 {
   "_doc": "Danh mục Template → file DS cần nạp (đường dẫn tính từ /design_system/). Nền tảng nạp qua 00_widget/loader.js; chỉ nạp Template trang dùng.",
-  "version": "20261009d",
+  "version": "20261009e",
   "base": {
     "css": [
       "03_primitives/08_title/title.css",

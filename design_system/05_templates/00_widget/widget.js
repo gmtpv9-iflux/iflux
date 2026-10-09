@@ -87,17 +87,19 @@
      từng nơi. Style thật luôn là .ifx-card-header/.ifx-card-footer (card.css). */
   function headHtml(ctx, aside) {
     var actions = (aside || '') + (ctx.actions || '');
-    if (!ctx.title && !ctx.description && !actions && !ctx.icon) return '';
+    if (!ctx.title && !ctx.description && !actions && !ctx.icon && !ctx.statusHtml) return '';
     var icon = ctx.icon ? '<i class="ti ti-' + esc(ctx.icon) + ' ifx-card-header__icon" aria-hidden="true"></i>' : '';
-    var status = ctx.statusHtml ? ' ' + ctx.statusHtml : '';
-    /* Icon + Tiêu đề cùng 1 hàng (.ifx-widget-title__head); Mô tả hàng dưới, full-width — không
-       còn Icon 1 bên riêng biệt với khối Tiêu đề+Mô tả. */
-    var head = (icon || ctx.title) ? '<div class="ifx-widget-title__head">' + icon +
-      (ctx.title ? '<h3>' + esc(ctx.title) + status + '</h3>' : '') + '</div>' : '';
+    var status = ctx.statusHtml || '';
+    /* Icon + Tiêu đề + Badge trạng thái + nút hành động (share…) cùng 1 hàng
+       (.ifx-widget-title__head); Mô tả hàng dưới, full-width. Owner chốt 2026-10: không còn
+       Icon/Actions đứng tách biệt với khối Tiêu đề nữa — mọi thứ "nổi" cùng 1 hàng duy nhất. */
+    var head = (icon || ctx.title || status || actions) ? '<div class="ifx-widget-title__head">' + icon +
+      (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') + status +
+      (actions ? '<div class="ifx-inline-sm ifx-widget__actions">' + actions + '</div>' : '') +
+      '</div>' : '';
     return '<header class="ifx-card-header ifx-widget__header"><div class="ifx-widget-title">' + head +
       (ctx.description ? '<p class="ifx-widget__subtitle">' + esc(ctx.description) + '</p>' : '') +
-      '</div>' + (actions ? '<div class="ifx-inline-sm ifx-widget__actions">' + actions + '</div>' : '') +
-      '</header>';
+      '</div></header>';
   }
 
   /** ctx.footerHref — Widget (không phải Template) biết nên dẫn tới trang nào; thiếu → không

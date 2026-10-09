@@ -26,10 +26,13 @@
   flex: 1 1 auto;
   min-width: 0;
 }
+/* Icon · Tiêu đề · Badge trạng thái · nút hành động (share…) cùng 1 hàng — h3 flex:1 1 auto tự
+   giãn chiếm hết chỗ trống, đẩy badge/actions (flex:0 0 auto mặc định) về mép phải, không cần
+   margin-left:auto riêng. */
 .ifx-widget-title__head {
   display: flex;
   align-items: center;
-  gap: var(--ifx-space-8);
+  gap: var(--ifx-gap-xs);
   min-width: 0;
 }
 
@@ -38,7 +41,7 @@
  * vì h3 nay nằm trong .ifx-widget-title__head, không còn là con trực tiếp của .ifx-widget-title. */
 .ifx-widget-title h3 {
   margin: 0;
-  width: 100%;
+  flex: 1 1 auto;
   min-width: 0;
   font-family: var(--ifx-font-primary);
   font-size: var(--ifx-font-size-16);
