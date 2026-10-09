@@ -5,7 +5,7 @@
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import featureManifest from '../../features/stock.manifest.js?v=9d9d54a9b6';
+import featureManifest from '../../features/stock.manifest.js?v=0b9f6a9ad8';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;

@@ -39,7 +39,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js?v=803a8e6783'
+      lazyModule: '/User_Web/iflux-web-ui/widgets/home-page/index.js?v=99bce94c7b'
     }
   ]
 };

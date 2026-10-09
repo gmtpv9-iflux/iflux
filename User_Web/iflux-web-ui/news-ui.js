@@ -688,12 +688,14 @@
     var avatarUrl = (author && (author.avatar || author.avatar_url)) || '';
     var initials = name.trim().charAt(0).toUpperCase() || 'I';
     var avatarHtml = avatarUrl
-      ? '<img class="ifx-avatar ifx-avatar-lg" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
-      : '<span class="ifx-avatar ifx-avatar-lg ifx-avatar-accent">' + escHtml(initials) + '</span>';
+      ? '<img class="ifx-avatar ifx-avatar-xl ifx-avatar-ring" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
+      : '<span class="ifx-avatar ifx-avatar-xl ifx-avatar-ring ifx-avatar-accent">' + escHtml(initials) + '</span>';
 
-    var credRows =
-      '<div class="ifx-icon-list-item"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</div>' +
-      '<div class="ifx-icon-list-item"><i class="ti ti-award"></i> 5+ năm kinh nghiệm</div>';
+    /* Credential = badge soft cạnh Tên (nhận diện nhanh, không lẫn vào Meta sự kiện bên dưới —
+       2 nhóm thông tin khác bản chất: "author LÀ ai" vs "bài viết có gì"). */
+    var badges =
+      '<span class="ifx-badge ifx-badge-soft ifx-badge-primary"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</span>' +
+      '<span class="ifx-badge ifx-badge-soft ifx-badge-primary"><i class="ti ti-award"></i> 5+ năm kinh nghiệm</span>';
     /* Chứng nhận — chưa có field dữ liệu, bỏ qua đến khi có (không hiển thị placeholder). */
 
     var metaRows = [];
@@ -707,12 +709,13 @@
     metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-robot"></i> Hỗ trợ biên soạn: AI</div>');
 
     return (
-      '<section class="ifx-card ifx-com-article__author">' +
+      '<section class="ifx-card ifx-card-accent ifx-com-article__author">' +
+        '<p class="ifx-com-article__author-kicker"><i class="ti ti-user-check"></i> Thông tin người viết</p>' +
         '<div class="ifx-com-article__author-head">' +
           avatarHtml +
           '<div class="ifx-com-article__author-who">' +
             '<div class="ifx-com-article__author-name">' + escHtml(name) + '</div>' +
-            '<div class="ifx-icon-list">' + credRows + '</div>' +
+            '<div class="ifx-com-article__author-badges">' + badges + '</div>' +
           '</div>' +
         '</div>' +
         '<div class="ifx-icon-list ifx-com-article__author-meta">' + metaRows.join('') + '</div>' +
