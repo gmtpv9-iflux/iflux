@@ -77,13 +77,23 @@
     });
   }
 
+  /** ctx.icon — mã icon Tabler (vd 'flame', 'chart-line', khớp iconKey Widget Definition Tầng 4),
+   * vẽ trước khối Tiêu đề. ctx.statusHtml — slot trạng thái (HTML tin cậy từ caller, như
+   * ctx.actions), đặt ngay sau Tiêu đề — chỗ trống cho Widget tương lai cần hiện badge/trạng
+   * thái mà không phải sửa khung dùng chung này lần nữa. */
+  /* .ifx-widget__header/__subtitle/__actions/__footer — alias tương thích (không còn CSS riêng,
+     xem widget-shell.css) — chỉ để code cũ còn querySelector theo tên cũ (vd design_system/
+     04_components/28_share/share.js — Insight Share) vẫn tìm đúng phần tử, không cần sửa lại
+     từng nơi. Style thật luôn là .ifx-card-header/.ifx-card-footer (card.css). */
   function headHtml(ctx, aside) {
     var actions = (aside || '') + (ctx.actions || '');
-    if (!ctx.title && !ctx.description && !actions) return '';
-    return '<header class="ifx-card-header"><div class="ifx-widget-title">' +
-      (ctx.title ? '<h3>' + esc(ctx.title) + '</h3>' : '') +
-      (ctx.description ? '<p>' + esc(ctx.description) + '</p>' : '') +
-      '</div>' + (actions ? '<div class="ifx-inline-sm">' + actions + '</div>' : '') +
+    if (!ctx.title && !ctx.description && !actions && !ctx.icon) return '';
+    var icon = ctx.icon ? '<i class="ti ti-' + esc(ctx.icon) + ' ifx-card-header__icon" aria-hidden="true"></i>' : '';
+    var status = ctx.statusHtml ? ' ' + ctx.statusHtml : '';
+    return '<header class="ifx-card-header ifx-widget__header">' + icon + '<div class="ifx-widget-title">' +
+      (ctx.title ? '<h3>' + esc(ctx.title) + status + '</h3>' : '') +
+      (ctx.description ? '<p class="ifx-widget__subtitle">' + esc(ctx.description) + '</p>' : '') +
+      '</div>' + (actions ? '<div class="ifx-inline-sm ifx-widget__actions">' + actions + '</div>' : '') +
       '</header>';
   }
 
@@ -92,7 +102,7 @@
   function footerHtml(ctx) {
     if (!ctx.footerHref) return '';
     var label = ctx.footerLabel || 'Xem thêm';
-    return '<footer class="ifx-card-footer"><a href="' + esc(ctx.footerHref) + '">' + esc(label) + ' →</a></footer>';
+    return '<footer class="ifx-card-footer ifx-widget__footer"><a href="' + esc(ctx.footerHref) + '">' + esc(label) + ' →</a></footer>';
   }
 
   function mount(host, id, ctx) {

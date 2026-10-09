@@ -769,10 +769,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 .ifx-com-overview--sidebar {
   padding: var(--ifx-space-16);
 }
-.ifx-com-overview--sidebar .ifx-widget__header {
-  flex-wrap: wrap;
-  margin-bottom: var(--ifx-space-12);
-}
 .ifx-com-overview--sidebar .ifx-com-overview__indices {
   margin-bottom: 0;
 }
@@ -781,32 +777,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   border: 1px solid var(--ix-border);
   border-radius: var(--ix-radius-lg);
   padding: var(--ifx-space-16);
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-8);
-  margin-bottom: var(--ifx-space-12);
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) {
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > h3 {
-  flex: 1 1 auto;
-  min-width: 0;
-  order: 1;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > .ifx-block-share-actions {
-  flex: 0 0 auto;
-  margin-left: auto;
-  order: 2;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__header:has(> .ifx-block-share-actions) > .ifx-widget__subtitle {
-  flex: 1 0 100%;
-  order: 3;
 }
 .ifx-com-breadth-sidebar .ifx-breadth-visual--6 {
   grid-template-columns: repeat(2, 1fr);
@@ -845,15 +815,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   padding: var(--ifx-space-16);
   margin-top: var(--ifx-space-16);
   overflow: hidden;
-}
-.ifx-com-topwl > .ifx-widget__header {
-  margin-bottom: var(--ifx-space-4);
-  padding: 0;
-  border-bottom: none;
-  min-height: 0;
-}
-.ifx-com-topwl > .ifx-widget__subtitle {
-  margin: 0 0 var(--ifx-space-12);
 }
 .ifx-com-topwl-list {
   display: flex;
@@ -946,15 +907,6 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
   color: var(--ix-text-muted);
   margin: 0 0 12px;
   line-height: 1.45;
-}
-.ifx-com-overview > .ifx-widget__header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ifx-space-12);
-  margin-bottom: var(--ifx-space-16);
 }
 .ifx-com-overview__status {
   font-size: var(--ifx-font-size-10);
@@ -2159,11 +2111,6 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
 .ifx-com-breadth-sidebar {
   display: flex;
   flex-direction: column;
-}
-.ifx-com-breadth-sidebar > .ifx-widget__subtitle {
-  padding: 0 var(--ifx-inset-widget);
-  margin: 0;
-  border-bottom: 1px solid var(--ix-border);
 }
 .ifx-com-breadth-sidebar > .ifx-mkt-sidebar-widget__body {
   flex: 1;

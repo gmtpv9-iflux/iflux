@@ -33,21 +33,28 @@
     });
   }
 
-  /* Không gọi runtime/mount-published-widgets.js (dùng chung cho mọi trang, luôn tự vẽ
-     header theo title/description) — thẻ dashboard đã có header riêng (registry + L4 copy,
-     xem buildWidgetNode), nên mount thẳng qua IfxTemplates với title/description rỗng để
-     Template không vẽ header của nó nữa (widget.js: headHtml rỗng khi cả 3 đều rỗng). */
-  function mountWidgetBody(bodyEl, widgetType, generation) {
-    /* Watchlist chưa publish qua Template (tương tác thêm/bớt mã, không phải hiển thị tĩnh) —
-       dùng component riêng IfluxWatchlistBlock, nạp sẵn cùng SIDEBAR_DEPS của trang gọi
-       (xem widgets/home-page/index.js). Vị trí/quyền/entitlement vẫn qua đúng 1 hệ widget-registry
-       + dashboard-engine (buildWidgetNode) như mọi Widget khác — chỉ riêng THÂN (nội dung tương
-       tác) không qua IfxTemplates.mount được. Tự thêm class viền thẻ (ifx-wl-stock-panel/ifx-wl-block
-       — watchlist-block.js không tự vẽ khung) vì .ifx-widget__body generic không có viền này. */
+  /* Header/Body/Footer đều do IfxTemplates.mount() (design_system/05_templates) vẽ — 1 nguồn
+     duy nhất, giống tuyệt đối Admin Template/Widget Host mọi trang khác (Owner chốt 2026-10:
+     bỏ khung Header/Footer riêng của Dashboard). actionsHtml (kéo-thả/thu-giãn/share/gỡ — chỉ
+     Dashboard mới có) truyền vào đúng slot actions có sẵn của Template (widget.js ctx.actions). */
+  function mountWidgetBody(bodyEl, widgetType, generation, meta, actionsHtml) {
+    /* Watchlist tương tác thêm/bớt mã, không publish qua Template (không có render() tĩnh) —
+       THÂN dùng component riêng IfluxWatchlistBlock, nhưng khung vẫn dựng bằng đúng class DS
+       (.ifx-card/.ifx-card-header/.ifx-card-footer) để giống mọi Widget khác về hình thức. */
     if (widgetType === 'WGT-WAT-001') {
-      bodyEl.classList.add('ifx-wl-stock-panel', 'ifx-wl-block');
-      if (global.IfluxWatchlistBlock) global.IfluxWatchlistBlock.mount(bodyEl);
-      else bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
+      bodyEl.innerHTML =
+        '<article class="ifx-card">' +
+          '<header class="ifx-card-header ifx-widget__header"><div class="ifx-widget-title"><h3>Theo dõi</h3></div>' +
+          (actionsHtml ? '<div class="ifx-inline-sm ifx-widget__actions">' + actionsHtml + '</div>' : '') +
+          '</header>' +
+          '<div class="ifx-card-body ifx-wl-stock-panel ifx-wl-block"></div>' +
+          (meta.footerHref
+            ? '<footer class="ifx-card-footer ifx-widget__footer"><a href="' + meta.footerHref + '">Mở danh sách theo dõi đầy đủ →</a></footer>'
+            : '') +
+        '</article>';
+      var wlBody = bodyEl.querySelector('.ifx-card-body');
+      if (global.IfluxWatchlistBlock) global.IfluxWatchlistBlock.mount(wlBody);
+      else wlBody.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
       return;
     }
     bodyEl.innerHTML = '<div class="ifx-wl-empty">Đang tải tiện ích…</div>';
@@ -63,9 +70,18 @@
       }
       return IfxTemplateLoader.ensure(templateId).then(function () {
         if (bodyEl._ifxGen !== generation || !bodyEl.isConnected) return;
-        var defs = art.content && Array.isArray(art.content.dataDefinition) ? art.content.dataDefinition : null;
+        var content = art.content || {};
+        var defs = Array.isArray(content.dataDefinition) ? content.dataDefinition : null;
         var input = defs && defs.length ? defs.map(function (d) { return (d && d.demo) || ''; }) : undefined;
-        var root = global.IfxTemplates && IfxTemplates.mount(bodyEl, templateId, { title: '', description: '', input: input });
+        var root = global.IfxTemplates && IfxTemplates.mount(bodyEl, templateId, {
+          title: content.title || meta.title,
+          description: content.description || meta.description || '',
+          icon: content.icon || '',
+          input: input,
+          actions: actionsHtml,
+          footerHref: meta.footerHref,
+          footerLabel: meta.footerLabel || ''
+        });
         if (!root) bodyEl.innerHTML = '<div class="ifx-wl-empty">Không tải được tiện ích</div>';
       });
     }).catch(function (err) {
@@ -730,18 +746,6 @@
     var meta = IfluxWidgetRegistry.byType(instance.widget_type);
     if (!meta) return null;
 
-    /* Tiêu đề/mô tả = cùng 1 nguồn duy nhất với body (artifact widget đã publish), không qua
-       L4RuntimeReader riêng — tránh 2 đường lấy dữ liệu khác nhau cho cùng 1 widget. Hiện
-       Danh mục tiện ích (widget-registry, do Admin đặt sẵn) ngay khi dựng node — đã là tên
-       người dùng đọc được, không phải mã — rồi nâng cấp đúng theo artifact khi fetch xong. */
-    var displayTitle = meta.title;
-    var displayDescription = meta.description || '';
-    if (meta.type === 'WGT-WAT-001' && displayTitle === 'Watchlist') displayTitle = 'Theo dõi';
-    var footerLabel = meta.footerLabel || '';
-    if (meta.type === 'WGT-WAT-001' && /Watchlist/i.test(footerLabel)) {
-      footerLabel = 'Mở danh sách theo dõi đầy đủ';
-    }
-
     var node = document.createElement('div');
     node.className = 'ifx-widget';
     node.setAttribute('data-instance-id', instance.instance_id);
@@ -766,23 +770,14 @@
       ? widthToggleHtml(getWidgetWidth(instance), instance.instance_id)
       : '';
 
-    /* UI-001: .ifx-widget = host layout; .ifx-widget__surface = TPL-SHELL-CARD fallback (không gắn .ifx-mkt-card để tránh block-templates ghi đè khi demote) */
-    node.innerHTML =
-      '<div class="ifx-widget__surface">' +
-        '<div class="ifx-widget__header">' +
-          dragHandle +
-          '<h3>' + displayTitle + '</h3>' +
-          (displayDescription ? '<p class="ifx-widget__subtitle">' + displayDescription + '</p>' : '') +
-          '<div class="ifx-widget__actions">' +
-            widthToggle +
-            shareInHeader +
-            removeBtn + '</div>' +
-        '</div>' +
-        '<div class="ifx-widget__body"></div>' +
-        (meta.footerHref
-          ? '<div class="ifx-widget__footer"><a href="' + meta.footerHref + '">' + footerLabel + ' →</a></div>'
-          : '') +
-      '</div>';
+    /* Dashboard chỉ thêm các nút tương tác (kéo-thả/thu-giãn/share/gỡ) — không tự vẽ Header/
+       Footer riêng nữa. Các nút này truyền vào ctx.actions của IfxTemplates.mount(), rơi vào
+       đúng slot actions có sẵn trong Header dùng chung (widget.js). */
+    var actionsHtml = dragHandle + widthToggle + shareInHeader + removeBtn;
+
+    /* UI-001: .ifx-widget = host layout; .ifx-widget__surface = khung ngoài (margin/outline khi
+       Edit mode) — Card Owner thật = IfxTemplates.mount() trong .ifx-widget__body. */
+    node.innerHTML = '<div class="ifx-widget__surface"><div class="ifx-widget__body"></div></div>';
 
     var body = node.querySelector('.ifx-widget__body');
     if (!canAccessWidget(meta)) {
@@ -795,28 +790,7 @@
       });
     } else {
       body._ifxGen = (body._ifxGen || 0) + 1;
-      mountWidgetBody(body, instance.widget_type, body._ifxGen);
-      /* Cùng 1 lần fetch artifact mà mountWidgetBody vừa gọi (cache theo id) — chỉ nâng cấp
-         tiêu đề/mô tả header lên đúng bản Kiến trúc 4 tầng nếu khác với registry tĩnh ở trên;
-         KHÔNG fetch riêng, không có giai đoạn hiện mã rồi tự sửa. */
-      if (instance.widget_type !== 'WGT-WAT-001') {
-        fetchWidgetArtifact(instance.widget_type).then(function (res) {
-          if (!node.isConnected) return;
-          var c = res.data && res.data.content;
-          if (!c) return;
-          var h3 = node.querySelector('.ifx-widget__header > h3');
-          if (c.title && h3 && h3.textContent !== c.title) h3.textContent = c.title;
-          if (c.description) {
-            var sub = node.querySelector('.ifx-widget__subtitle');
-            if (!sub) {
-              sub = document.createElement('p');
-              sub.className = 'ifx-widget__subtitle';
-              if (h3) h3.insertAdjacentElement('afterend', sub);
-            }
-            if (sub.textContent !== c.description) sub.textContent = c.description;
-          }
-        });
-      }
+      mountWidgetBody(body, instance.widget_type, body._ifxGen, meta, actionsHtml);
     }
 
     if (widgetScope(instance) === SCOPES.dashboard) {

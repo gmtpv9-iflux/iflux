@@ -22,7 +22,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
  *  - home ↔ dashboard: Publish key = dashboard; runtime pageKey = home (widgets/home-page tự mountPageWidgets).
  */
 
-import { bootPage } from './page-runtime.js?v=169b821c5e';
+import { bootPage } from './page-runtime.js?v=16474e4991';
 import { applyDefinitionToDocument } from './page-definition.js?v=432eed525b';
 import { bootShell } from './shell-boot.js?v=0751120c25';
 import { pageKeyFromPath } from './page-keys.js?v=43da030e2b';
@@ -33,27 +33,27 @@ var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
 
 var MANIFEST_MAP = {
-  home: function () { return import('../pages/home.manifest.js?v=549b97374d'); },
-  flow: function () { return import('../pages/flow.manifest.js?v=0d5c969ef0'); },
-  news: function () { return import('../pages/news.manifest.js?v=f14ebe8c5d'); },
-  community: function () { return import('../pages/community.manifest.js?v=bb78c05302'); },
+  home: function () { return import('../pages/home.manifest.js?v=55e62e1272'); },
+  flow: function () { return import('../pages/flow.manifest.js?v=29fbe20d29'); },
+  news: function () { return import('../pages/news.manifest.js?v=aad6e9d8b7'); },
+  community: function () { return import('../pages/community.manifest.js?v=b848fd976f'); },
   pricing: function () { return import('../pages/pricing.manifest.js?v=4cd6ca6119'); },
-  stocks: function () { return import('../pages/stocks.manifest.js?v=f80727c254'); },
-  sectors: function () { return import('../pages/sectors.manifest.js?v=da282e69b8'); },
-  ecosystems: function () { return import('../pages/ecosystems.manifest.js?v=6ff01f4e1d'); },
-  chuDe: function () { return import('../pages/cau-chuyen.manifest.js?v=cbdee05200'); },
-  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js?v=cbdee05200'); },
-  stock: function () { return import('../pages/stock.manifest.js?v=080c37cf01'); },
-  sector: function () { return import('../pages/sector.manifest.js?v=0470c1edf7'); },
-  family: function () { return import('../pages/family.manifest.js?v=bdf768046b'); },
-  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=d56787dc5c'); },
-  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=d56787dc5c'); },
-  faq: function () { return import('../pages/faq.manifest.js?v=c9bbe17099'); },
-  loyalty: function () { return import('../pages/loyalty.manifest.js?v=662e4729e8'); },
-  watchlist: function () { return import('../pages/watchlist.manifest.js?v=526934b955'); },
-  search: function () { return import('../pages/search.manifest.js?v=5dbd313bd7'); },
-  messages: function () { return import('../pages/messages.manifest.js?v=50f3e8b059'); },
-  article: function () { return import('../pages/news-post.manifest.js?v=d0e4701556'); },
+  stocks: function () { return import('../pages/stocks.manifest.js?v=bb9e6e5bd4'); },
+  sectors: function () { return import('../pages/sectors.manifest.js?v=82fc375113'); },
+  ecosystems: function () { return import('../pages/ecosystems.manifest.js?v=e1d0ff4b58'); },
+  chuDe: function () { return import('../pages/cau-chuyen.manifest.js?v=d19da740ad'); },
+  cauChuyen: function () { return import('../pages/cau-chuyen.manifest.js?v=d19da740ad'); },
+  stock: function () { return import('../pages/stock.manifest.js?v=e73d745da4'); },
+  sector: function () { return import('../pages/sector.manifest.js?v=0d6030287b'); },
+  family: function () { return import('../pages/family.manifest.js?v=f8e7950aa6'); },
+  chuDeDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=168cd13fc5'); },
+  cauChuyenDetail: function () { return import('../pages/cau-chuyen-detail.manifest.js?v=168cd13fc5'); },
+  faq: function () { return import('../pages/faq.manifest.js?v=13135c2940'); },
+  loyalty: function () { return import('../pages/loyalty.manifest.js?v=8165da98c4'); },
+  watchlist: function () { return import('../pages/watchlist.manifest.js?v=ab7d3546da'); },
+  search: function () { return import('../pages/search.manifest.js?v=51ba8bb832'); },
+  messages: function () { return import('../pages/messages.manifest.js?v=297503c8b8'); },
+  article: function () { return import('../pages/news-post.manifest.js?v=10e1ce1fb7'); },
   account: function () { return import('../pages/account.manifest.js?v=c65d2531de'); },
   checkout: function () { return import('../pages/checkout.manifest.js?v=700d74d3d0'); },
   newsWrite: function () { return import('../pages/news-write.manifest.js?v=a50f9859bc'); },

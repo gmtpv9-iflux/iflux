@@ -5,9 +5,9 @@
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=4460ae8318';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=b515a6101c';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import featureManifest from '../../features/news.manifest.js?v=f84f6e59a8';
+import featureManifest from '../../features/news.manifest.js?v=3b4e384d5c';
 
 export const meta = { id: 'WGT-NEWS-PAGE', title: 'Tin tức' };
 

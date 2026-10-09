@@ -1417,8 +1417,8 @@
   /* —— Compatibility surface (thay WidgetLibraryCatalog) —— */
   function resolveWidgetCopy(id) {
     var w = getWidget(id);
-    if (!w) return { title: id, description: '' };
-    return { title: w.title, description: w.description || w.title };
+    if (!w) return { title: id, description: '', iconKey: null };
+    return { title: w.title, description: w.description || w.title, iconKey: w.iconKey || null };
   }
   function widgetDefaults(id) {
     var m = entitlementMeta(id);

@@ -65,6 +65,7 @@ export async function mountPublishedWidgets(tree, opts) {
       var root = window.IfxTemplates.mount(el, templateId, {
         title: content.title || entry.widgetId,
         description: content.description || '',
+        icon: content.icon || '',
         input: inputOf(content),
         footerHref: footer.footerHref,
         footerLabel: footer.footerLabel

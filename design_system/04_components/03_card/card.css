@@ -29,6 +29,12 @@
   gap: var(--ifx-gap-sm);
   border-bottom: 1px solid var(--ifx-border-subtle);
 }
+.ifx-card-header__icon {
+  flex: 0 0 auto;
+  align-self: center;
+  font-size: var(--ifx-font-size-18);
+  color: var(--ifx-action-primary);
+}
 /* Body tối hơn 1 chút so với Header (cùng tông --ifx-bg-subtle mọi theme) — tiêu đề nổi rõ,
    không chỉ dựa vào đường viền. Card không có Header riêng (def.head === false) → Body là
    phần tử đầu, cần tự bo góc trên; không có Footer → Body là phần tử cuối, tự bo góc dưới

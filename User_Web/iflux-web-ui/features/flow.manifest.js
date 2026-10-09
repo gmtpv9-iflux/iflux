@@ -39,7 +39,7 @@ var manifest = {
     m('stock-mentions', 'js', ASSET + 'stock-mentions.js?v=63b1553d75', 'IfluxStockMentions'),
     m('widget-registry', 'js', ASSET + 'widget-registry.js?v=90088910d4', 'IfluxWidgetRegistry'),
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
-    m('flow-css', 'css', ASSET + 'flow.css?v=12a9aea56c', null)
+    m('flow-css', 'css', ASSET + 'flow.css?v=767dd32197', null)
   ],
   lazyChildren: [],
   lifecycle: {

@@ -5,7 +5,7 @@ export default {
   pageKey: 'search',
   /* App Shell: class <main> + CSS riêng của trang (nạp khi vào trang — tải đầy đủ lẫn điều hướng mềm). */
   mainClass: 'ifx-main--search',
-  css: ['/User_Web/iflux-web-ui/hub.css?v=08dbf09ff6', '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e'],
+  css: ['/User_Web/iflux-web-ui/hub.css?v=dfca1bcfb4', '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e'],
   path: '/tim-kiem',
   title: 'Tìm kiếm',
   documentTitle: '',
@@ -21,7 +21,7 @@ export default {
     locked: true,
     lazyModule: '/User_Web/iflux-web-ui/widgets/search-page/index.js?v=42c84240af',
     css: [
-      '/User_Web/iflux-web-ui/hub.css?v=08dbf09ff6',
+      '/User_Web/iflux-web-ui/hub.css?v=dfca1bcfb4',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e'
     ]
   }]

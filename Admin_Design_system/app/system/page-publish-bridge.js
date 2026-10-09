@@ -68,6 +68,7 @@
         id: w.id,
         title: w.title || w.id,
         description: w.description || '',
+        iconKey: w.iconKey || null,
         template: templateId,
         blocks: Array.isArray(w.blocks) ? w.blocks.slice() : [],
         minTier: w.minTier || 'free',

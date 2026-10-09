@@ -54,6 +54,10 @@
         return {
           id: slot.widgetId,
           title: copy.title || slot.widgetId,
+          /* Fix 2026-10: thiếu dòng này → description Tầng 4 không bao giờ tới được Publish,
+             mọi widget publish qua Cài đặt trang đều rỗng description dù Tầng 4 đã set. */
+          description: copy.description || '',
+          iconKey: copy.iconKey || null,
           section: slot.section || 'main',
           position: slot.position,
           span: slot.span,

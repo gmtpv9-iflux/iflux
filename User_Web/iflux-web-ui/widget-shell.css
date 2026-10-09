@@ -243,85 +243,11 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   overflow: hidden;
 }
 
-/* WIDGET HEADER BLOCK — CSS Source of Truth (Phase A: PASS).
- * HTML Contract (immutable DOM order — SoT, kể cả khi Runtime → Phase B):
- *   1. .ifx-widget__icon
- *   2. .ifx-widget__identity  (title + subtitle)
- *   3. .ifx-widget__actions
- * CẤM đổi thứ tự (Icon↔Actions, Identity trước Icon, …). Mở rộng chỉ qua 3 slot trên.
- */
-.ifx-widget__header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--ifx-space-4);
-  padding: var(--ifx-inset-widget);
-  border-bottom: 1px solid var(--ix-border);
-  border-radius: var(--ix-radius) var(--ix-radius) 0 0;
-  background: var(--ix-bg-card);
-  margin-bottom: var(--ifx-space-16);
-  min-height: 48px;
-  text-align: left;
-  box-sizing: border-box;
-}
-.ifx-widget__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  color: var(--ix-accent);
-  font-size: var(--ifx-font-size-18);
-}
-.ifx-widget__identity {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--ifx-space-4);
-}
-.ifx-widget__title,
-/*
- * Technical Debt (Phase A) — ALIAS TƯƠNG THÍCH DUY NHẤT được phép tồn tại:
- *   .ifx-widget__header > h3
- * Chỉ để Runtime legacy (title nằm trực tiếp trong header) vẫn nhận typography.
- * CẤM thêm alias mới sau Phase A (ví dụ > h2, > span, .title, …).
- * Gỡ alias này ở Phase B khi toàn bộ consumer đã migrate HTML Contract.
- */
-.ifx-widget__header > h3 {
-  margin: 0;
-  width: 100%;
-  font-family: var(--ifx-font-primary);
-  font-size: var(--ifx-font-size-16);
-  font-weight: var(--ifx-font-weight-bold);
-  line-height: 1.35;
-  color: var(--ix-text-primary);
-  text-align: left;
-}
-.ifx-widget__subtitle {
-  margin: 0;
-  width: 100%;
-  font-family: var(--ifx-font-primary);
-  font-size: var(--ifx-font-size-14);
-  color: var(--ix-text-muted);
-  line-height: 1.45;
-  text-align: left;
-}
-.ifx-widget__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--ifx-space-4);
-  flex: 0 0 auto;
-  margin-left: auto;
-}
-/* Runtime legacy chưa migrate HTML ở Phase A: giữ visual cũ, không đổi consumer. */
-.ifx-widget__header:not(:has(> .ifx-widget__identity)) {
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 0;
-  border-radius: 0;
-  background: transparent;
-}
+/* Header/Body/Footer Widget nay do IfxTemplates.mount() (design_system/05_templates) vẽ
+   DUY NHẤT — .ifx-card-header/.ifx-card-body/.ifx-card-footer (card.css), giống tuyệt đối
+   Admin Template/Widget Host mọi trang khác (Owner chốt 2026-10: bỏ hệ Header/Footer riêng
+   .ifx-widget__header/__footer — xem dashboard-engine.js buildWidgetNode/mountWidgetBody).
+   .ifx-widget__drag (nút kéo-thả) vẫn còn — nay nằm trong slot actions của Header dùng chung. */
 .ifx-widget__drag {
   display: none;
   align-items: center;
@@ -340,9 +266,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 /* Inset UI-002: khi surface là Card Owner, body giữ một lớp inset */
 .ifx-widget__surface > .ifx-widget__body {
   padding: var(--ifx-space-16);
-}
-.ifx-widget__surface > .ifx-widget__header {
-  margin-bottom: 0;
 }
 /* Feature shell đã có inset riêng → body không pad thêm */
 .ifx-widget__surface:has(.ifx-mkt-liq-block) > .ifx-widget__body,
@@ -371,48 +294,9 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   padding: 0;
 }
 
-/* Nhà của tôi — header có actions/drag: hàng ngang, title+subtitle cột trái */
-.ifx-widget__surface > .ifx-widget__header,
-.ifx-widget > .ifx-widget__header {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.ifx-widget__surface > .ifx-widget__header > h3,
-.ifx-widget > .ifx-widget__header > h3 {
-  flex: 1 1 auto;
-  width: auto;
-  min-width: 0;
-}
-.ifx-widget__surface > .ifx-widget__header > .ifx-widget__subtitle,
-.ifx-widget > .ifx-widget__header > .ifx-widget__subtitle {
-  flex: 1 0 100%;
-  order: 3;
-  padding-left: 0;
-}
-.ifx-widget__surface > .ifx-widget__header > .ifx-widget__actions,
-.ifx-widget > .ifx-widget__header > .ifx-widget__actions {
-  margin-left: auto;
-}
-.ifx-widget.is-edit .ifx-widget__header > .ifx-widget__drag {
+/* Nút kéo-thả (chỉ hiện ở Edit mode) nay nằm trong slot actions của .ifx-card-header. */
+.ifx-widget.is-edit .ifx-card-header .ifx-widget__drag {
   display: flex;
-}
-
-/* WGT-* không whitelist chrome — UI-001: Template/Feature shell owns card; host surface :has() demote */
-
-.ifx-widget__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  border-top: 1px solid var(--ix-border);
-  font-size: var(--ifx-font-size-12);
-  color: var(--ix-text-muted);
-}
-.ifx-widget__footer a {
-  color: var(--ix-accent);
-  text-decoration: none;
-  font-weight: var(--ifx-font-weight-semibold);
 }
 
 .ifx-widget__body .ifx-wl-block .ifx-stock-row-wrap .ifx-stock-row {
@@ -637,7 +521,6 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   --ix-top10-rw: 148px;
 }
 @media (max-width: 768px) {
-  .ifx-widget__icon { display: none; }
   .ifx-widget__body .ix-top10-market {
     --ix-top10-h: 280px;
     --ix-top10-rw: 120px;
@@ -650,7 +533,3 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   }
 }
 
-/* Preview/host có container context: áp dụng cùng contract mobile theo bề rộng shell. */
-@container (max-width: 768px) {
-  .ifx-widget__icon { display: none; }
-}

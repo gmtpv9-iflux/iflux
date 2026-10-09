@@ -45,12 +45,6 @@ Note: Phải bóc theo Owner trước khi cắt load
   flex-direction: column;
 }
 
-/* Widget Header Block do widget-shell.css sở hữu. */
-.ifx-com-breadth-sidebar > .ifx-widget__subtitle {
-  padding: 0 var(--ifx-inset-widget);
-  margin: 0;
-  border-bottom: 1px solid var(--ix-border);
-}
 .ifx-com-breadth-sidebar > .ifx-mkt-sidebar-widget__body {
   flex: 1;
   min-width: 0;
