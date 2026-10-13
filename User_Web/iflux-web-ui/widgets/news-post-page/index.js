@@ -29,10 +29,10 @@ var CORE_TIERS = [
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
     '/design_system/04_components/29_follow/follow.js?v=r20261002a',
-    ASSET + 'news-ui.js?v=e79178639a',
+    ASSET + 'news-ui.js?v=a16469b4b9',
     ASSET + 'news-daily-feed.js?v=be2cb197c0',
     ASSET + 'interaction/boot.js?v=b13165436a',
-    ASSET + 'news-post-page.js?v=866165de01'
+    ASSET + 'news-post-page.js?v=701ee3a614'
   ]
 ];
 

@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 21:27:00 +07:00 — Codex — chuẩn bị phát hành metadata SEO, author widget và sửa mobile entity ownership
+
+- **Nhiệm vụ/trạng thái:** đang làm theo yêu cầu Owner: phát hành metadata/canonical/index policy đã kiểm thử trước đó, sửa khung tác giả và lỗi bottom bar mobile, sau đó purge cache và smoke-test.
+- **Phạm vi:** release cô lập dựa trên Production `3b9f005`; backend SEO/news, Admin article editor, User Web author widget/mobile entity hydration, browser regression test. Không đưa thay đổi khác từ worktree staging.
+- **Trước → sau:** RSS giữ noindex và không vào sitemap; official publish mới chốt canonical/ngày/schema/meta description. Author source row vẫn có nhãn cũ và AI row. Root cause chip bị thay khi cuộn là `refreshTickerQuoteDom()` lấy `posts[0]` từ related lazy feed rồi ghi vào mobile bottom bar toàn cục; đã bỏ side effect đó, bottom strip do trang chi tiết hiện tại sở hữu.
+- **Kiểm tra:** browser desktop/mobile PASS, gồm lazy related load không ghi đè mã bài hiện tại; SEO unit 5/5 PASS; PostgreSQL integration 11/11 PASS; JS version và web bundle checks PASS. Timeline template hiển thị ngày diễn ra/hiệu lực và tiêu đề link nguồn nội bộ. Đã đồng bộ asset versions/bundle; đang review diff trước commit.
+- **Commit:** chưa có.
+- **Còn lại/lưu ý:** hoàn tất checks, ghi commit trước khi push branch `production`; chờ CI deploy thành công rồi purge cache Cloudflare và smoke-test. Không ghi secret vào log.
+
 ## 2026-10-13 18:22:00 +07:00 — Codex — release Production fix fallback mã và chip mobile
 
 - **Nhiệm vụ/trạng thái:** đã tạo release commit `639ddd9` dựa trên Production `aaa6c9a`; đang chờ push để CI triển khai theo yêu cầu Owner.

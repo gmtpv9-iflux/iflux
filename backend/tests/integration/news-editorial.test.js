@@ -18,7 +18,7 @@ const bus = require('../../src/core/events/bus');
 
 describe('RSS → editorial article, related pagination and verified widgets (PostgreSQL)', { skip: !process.env.NEWS_TEST_DATABASE_URL }, () => {
   const schema = 'news_editorial_test_' + process.pid;
-  const category = randomUUID(), topic = randomUUID(), story = randomUUID(), pendingStory = randomUUID();
+  const category = randomUUID(), otherCategory = randomUUID(), topic = randomUUID(), story = randomUUID(), pendingStory = randomUUID();
   const actor = { id: 'editor-test', name: 'Biên tập iFlux' };
   let caseId;
   async function post(id, payload, status = 'published') {
@@ -44,6 +44,7 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
     }
     await db.query("INSERT INTO sectors VALUES (1,'BANK','ngan-hang','Ngân hàng'),(2,'RETAIL','ban-le','Bán lẻ'); INSERT INTO ecosystems VALUES (1,'ECO','he-sinh-thai-a','Hệ A'); INSERT INTO stocks(ticker,name,sector_id,ecosystem_id,market_cap,shares_outstanding) VALUES ('AAA','Công ty A',1,1,1000,100),('BBB','Công ty B',1,1,2000,200),('CCC','Công ty C',2,1,3000,300)");
     await db.query("INSERT INTO news_categories VALUES ($1,'Doanh nghiệp','doanh-nghiep',NULL)", [category]);
+    await db.query("INSERT INTO news_categories VALUES ($1,'Khác','khac',NULL)", [otherCategory]);
     await db.query('INSERT INTO topics VALUES ($1,NOW()),($2,NULL)', [topic, pendingStory]);
     await db.query("INSERT INTO stories (id,topic_id,title,slug,stock_tags,status) VALUES ($1,$2,'Chủ đề đã hình thành','topic-a',ARRAY['AAA'],'active'),($3,$3,'Chưa hình thành','pending',ARRAY['AAA'],'active')", [story, topic, pendingStory]);
     await post('seed', { story_id: story, tickers: ['AAA', 'BBB'] }, 'published_rss');
@@ -71,15 +72,54 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
     assert.ok(!candidates.some((p) => p.slug === 'seed' || p.slug === 'private-draft'));
   });
 
-  it('editing and promoting RSS keeps URL and emits the official publication event once', async () => {
+  it('RSS stays noindex; official publication establishes one stable URL and activation date', async () => {
     let published = 0;
     const stop = bus.subscribe(bus.EVENTS.NEWS_POST_PUBLISHED, () => { published++; });
     const edited = await articles.updateArticle('seed', { title: 'Tiêu đề hoàn toàn mới' }, actor);
     assert.equal(edited.slug, 'seed'); assert.equal(edited.status, 'published_rss');
+    const rssTime = edited.published_at;
     const official = await articles.updateArticle('seed', { status: 'published', title: 'Tiêu đề chính thức' }, actor);
-    assert.equal(official.slug, 'seed'); assert.equal(published, 1);
-    await articles.updateArticle('seed', { title: 'Đính chính tiêu đề' }, actor);
-    assert.equal(published, 1); stop();
+    assert.equal(official.slug, 'tieu-de-chinh-thuc');
+    assert.deepEqual(official.former_slugs, ['seed']);
+    assert.notEqual(official.published_at, rssTime);
+    assert.equal(official.official_published_at, official.published_at);
+    assert.ok(Date.parse(official.published_at) > Date.parse(rssTime));
+    assert.equal((await articles.getArticle('seed')).slug, official.slug);
+    assert.equal(published, 1);
+    const stablePublishedAt = official.published_at;
+    await articles.updateArticle(official.slug, { title: 'Đính chính tiêu đề' }, actor);
+    const corrected = await articles.getArticle(official.slug);
+    assert.equal(corrected.slug, official.slug);
+    assert.equal(corrected.published_at, stablePublishedAt);
+    assert.equal(published, 1);
+    const unpublished = await articles.updateArticle(official.slug, { status: 'draft' }, actor);
+    assert.equal(unpublished.official_published_at, stablePublishedAt);
+    const republished = await articles.updateArticle(official.slug, { status: 'published', title: 'Tiêu đề đăng lại' }, actor);
+    assert.equal(republished.slug, official.slug);
+    assert.equal(republished.published_at, stablePublishedAt);
+    assert.equal(published, 2); stop();
+  });
+
+  it('promoted RSS keeps source date separately and synchronizes every description field from excerpt', async () => {
+    const sourceDate = '2026-10-05T15:42:00.000Z';
+    await post('excerpt-sync', {
+      category_id: otherCategory,
+      published_at: sourceDate,
+      source_published_at: sourceDate,
+      excerpt: 'Mô tả RSS cũ',
+      seo: { description: 'Mô tả nguồn cũ', meta_description: 'Mô tả nguồn cũ', og_description: 'Mô tả nguồn cũ' }
+    }, 'published_rss');
+    const official = await articles.updateArticle('excerpt-sync', {
+      status: 'published',
+      title: 'Bài biên tập chính thức',
+      excerpt: 'Mô tả ngắn do iFlux biên tập.',
+      seo: { description: 'Mô tả RSS cũ', meta_description: 'Mô tả RSS cũ', og_description: 'Mô tả RSS cũ' }
+    }, actor);
+    assert.equal(official.source_published_at, sourceDate);
+    assert.notEqual(official.published_at, sourceDate);
+    assert.equal(official.seo.description, official.excerpt);
+    assert.equal(official.seo.meta_description, official.excerpt);
+    assert.equal(official.seo.og_description, official.excerpt);
   });
 
   it('rejects unformed or invented Story IDs; no Topic is required for an article', async () => {

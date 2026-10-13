@@ -42,10 +42,10 @@ var manifest = {
     m('community-store', 'store', ASSET + 'news-store.js?v=41bb32b4bc', 'IfluxNewsStore'),
     m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=f47b340d7b', 'IfluxNewsApiBridge'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=349c1e1a74', 'IfluxMarketQuotes'),
-    m('community-ui', 'js', ASSET + 'news-ui.js?v=e79178639a', 'IfluxNewsUI'),
+    m('community-ui', 'js', ASSET + 'news-ui.js?v=a16469b4b9', 'IfluxNewsUI'),
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=be2cb197c0', 'IfluxDailyFeed'),
     m('community-page', 'js', ASSET + 'news-page.js?v=059f131fa8', 'IfluxNewsPage'),
-    m('community-css', 'css', ASSET + 'news.css?v=7c1ba92a76', null)
+    m('community-css', 'css', ASSET + 'news.css?v=e69b29dbdf', null)
   ],
   lazyChildren: [
     'WGT-COM-001',

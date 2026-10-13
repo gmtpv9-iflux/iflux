@@ -153,7 +153,7 @@ async function ensureMarketLibs(pageKey) {
     var marketPlatformLibs = [
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=28e2b36f1f' }
     ];
     await ensureParallel(marketPlatformLibs);
     /* Danh mục đầy đủ (~0.5MB) chỉ cho trang liệt kê / thành viên nhóm / tìm kiếm / theo dõi.
@@ -164,7 +164,7 @@ async function ensureMarketLibs(pageKey) {
     await ensureParallel([
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=28e2b36f1f' }
     ]);
   }
 }

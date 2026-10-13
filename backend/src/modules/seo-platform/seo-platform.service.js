@@ -415,6 +415,9 @@ async function resolveArticleContract(article, opts) {
       title: article.title,
       excerpt: article.excerpt,
       summary: article.summary,
+      publishedAt: article.published_at || null,
+      modifiedAt: article.updated_at || null,
+      author: article.author && (article.author.display_name || article.author.name) || null,
       slug: slug,
       seo: seo,
       cover: article.cover || {}
@@ -453,7 +456,7 @@ function metadataFromContract(contract) {
     _headHtml: headRenderer.renderHeadFromContract(c, {
       includeJsonLd: true,
       forceImage: true,
-      schemaType: 'Article'
+      schemaType: 'NewsArticle'
     })
   };
 }

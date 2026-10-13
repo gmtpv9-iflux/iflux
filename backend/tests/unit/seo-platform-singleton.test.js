@@ -83,4 +83,33 @@ describe('P4 singleton First HTML', () => {
     assert.equal(meta.title, 'Tin A | Tin tức iFlux');
     assert.ok(meta.canonical.endsWith('/tin-tuc/bai-viet/x'));
   });
+
+  it('server article JSON-LD includes description, image, publication dates, and author', () => {
+    const c = buildSeoContract({
+      foundationEffective: { site_name: 'iFlux' },
+      pageKey: 'news',
+      entityType: 'article',
+      path: '/tin-tuc/bai-viet/tin-moi',
+      httpStatus: 200,
+      entity: {
+        title: 'Tin mới', excerpt: 'Mô tả ngắn dùng làm meta description.',
+        publishedAt: '2026-10-13T15:30:00.000Z', modifiedAt: '2026-10-13T16:00:00.000Z',
+        author: 'Admin', cover: { url: '/media/tin-moi.jpg' },
+        seo: { description: 'Mô tả ngắn dùng làm meta description.' }
+      },
+      overrides: {
+        cleanPath: '/tin-tuc/bai-viet/tin-moi',
+        canonical: 'https://iflux.vn/tin-tuc/bai-viet/tin-moi',
+        ogType: 'article'
+      }
+    });
+    const head = renderHeadFromContract(c, { includeJsonLd: true, forceImage: true, schemaType: 'NewsArticle' });
+    const jsonLd = JSON.parse(head.match(/<script type="application\/ld\+json">(.*?)<\/script>/)[1]);
+    assert.equal(jsonLd['@type'], 'NewsArticle');
+    assert.equal(jsonLd.description, 'Mô tả ngắn dùng làm meta description.');
+    assert.equal(jsonLd.image, 'https://iflux.vn/media/tin-moi.jpg');
+    assert.equal(jsonLd.datePublished, '2026-10-13T15:30:00.000Z');
+    assert.equal(jsonLd.dateModified, '2026-10-13T16:00:00.000Z');
+    assert.deepEqual(jsonLd.author, { '@type': 'Person', name: 'Admin' });
+  });
 });

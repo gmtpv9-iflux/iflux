@@ -437,6 +437,12 @@ function createNewsRouter(deps) {
         description: z.string().optional().nullable(),
         keywords: z.string().optional().nullable(),
         canonical: z.string().optional().nullable(),
+        meta_title: z.string().optional().nullable(),
+        meta_description: z.string().optional().nullable(),
+        og_title: z.string().optional().nullable(),
+        og_description: z.string().optional().nullable(),
+        og_image: z.string().optional().nullable(),
+        og_image_alt: z.string().optional().nullable(),
         robots: z.enum(['index,follow','noindex,follow','noindex,nofollow','noindex']).optional().nullable()
       })
       .optional()

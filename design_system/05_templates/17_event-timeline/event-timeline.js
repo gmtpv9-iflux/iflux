@@ -10,9 +10,9 @@
     return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
   }
   function source(e) {
-    if (!/^https?:\/\//i.test(e.url || '')) return '';
-    return '<li><a href="' + U.esc(e.url) + '" target="_blank" rel="noopener noreferrer">' + U.esc(e.label) + '</a>' +
-      (e.quote ? '<blockquote>' + U.esc(e.quote) + '</blockquote>' : '') + '</li>';
+    var href = String(e.url || '');
+    if (!/^https?:\/\//i.test(href) && !/^\/(?!\/)/.test(href)) return '';
+    return '<li><a href="' + U.esc(href) + '"' + (/^https?:\/\//i.test(href) ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + U.esc(e.title || e.label || 'Xem bài viết') + '</a></li>';
   }
   T.define('TMP-EVENT-TIMELINE', {
     inputs: [
@@ -36,11 +36,11 @@
         return '<li class="ifx-timeline-item">' +
           '<span class="ifx-timeline-marker' + (m.status === 'planned' ? ' ifx-timeline-marker-muted' : ' is-filled') + '" aria-hidden="true"></span>' +
           '<div class="ifx-timeline-header"><strong class="ifx-timeline-title">' + U.esc(m.title) + '</strong>' +
-          '<span class="ifx-timeline-meta">Công bố: ' + date(m.announced_on) + '</span></div>' +
+          '<span class="ifx-timeline-meta">' + (m.effective_on ? 'Diễn ra/hiệu lực: ' + date(m.effective_on) : (m.announced_on ? 'Công bố: ' + date(m.announced_on) : 'Ngày: —')) + '</span></div>' +
           '<div class="ifx-timeline-body"><p class="ifx-event-subject">' + U.esc(m.subject_name || '') + '</p><p class="ifx-event-summary">' + U.esc(m.summary) + '</p>' +
-          '<p><small>' + U.esc(LABELS[m.status] || m.status || '—') + ' · Hiệu lực/diễn ra: ' + date(m.effective_on) + '</small></p>' +
+          '<p><small>' + U.esc(LABELS[m.status] || m.status || '—') + (m.effective_on && m.announced_on ? ' · Công bố: ' + date(m.announced_on) : '') + '</small></p>' +
           (metrics ? '<ul>' + metrics + '</ul>' : '') +
-          ((m.evidence || []).length ? '<details><summary>Nguồn và bằng chứng</summary><ul>' + m.evidence.map(source).join('') + '</ul></details>' : '') +
+          ((m.evidence || []).length ? '<details><summary>Nguồn tham khảo</summary><ul>' + m.evidence.map(source).join('') + '</ul></details>' : '') +
           '</div></li>';
       }).join('') + '</ol>';
     }

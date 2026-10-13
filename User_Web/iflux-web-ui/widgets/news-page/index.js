@@ -7,7 +7,7 @@
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
 import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import featureManifest from '../../features/news.manifest.js?v=ffcd475e21';
+import featureManifest from '../../features/news.manifest.js?v=7b45cc5d72';
 
 export const meta = { id: 'WGT-NEWS-PAGE', title: 'Tin tức' };
 
