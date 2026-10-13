@@ -68,7 +68,7 @@ async function configure(page) {
       await page.evaluate(() => { window.fixture = { id:'fixture', slug:'fixture', title:'Bài viết kiểm thử cấu trúc iFlux', excerpt:'Đây là dữ liệu minh họa để kiểm tra giao diện, không phải tin thị trường.', status:'published', tickers:['AAA'], story_id:'story-fixture', category_id:'cat', stats:{comments:1}, author:{display_name:'Biên tập iFlux'},
         body_html:'<h2><a href="/co-phieu/AAA">Doanh nghiệp công bố kế hoạch</a></h2>' + '<p>Nội dung fixture dùng kiểm tra mục lục và hành vi tải theo nhu cầu.</p>'.repeat(70) + '<h2>Những diễn biến cần theo dõi</h2><p>Không suy ra kết quả khi chưa có bằng chứng.</p>',
         source_name:'CafeF', external_url:'https://cafef.vn/bai-nguon-fixture.chn',
-        event_timeline:[{ title:'Công bố kế hoạch', subject_name:'Doanh nghiệp fixture', summary:'Một mốc đã có nguồn.', status:'planned', announced_on:'2026-10-01', effective_on:'2026-10-03', evidence:[{label:'Bài iFlux về hồ sơ này',url:'/tin-tuc/bai-viet/ho-so-fixture',quote:'Nội dung nội bộ'},{label:'Tiêu đề bài nguồn fixture',url:'https://cafef.vn/bai-nguon-fixture.chn',quote:'Trích đoạn minh họa'}], metrics:[]}],
+        event_timeline:[{ title:'Công bố kế hoạch', subject_name:'Doanh nghiệp fixture', summary:'Một mốc đã có nguồn.', status:'planned', announced_on:'2026-10-01', occurred_on:'2026-10-02', effective_on:'2026-10-03', evidence:[{title:'Bài iFlux về hồ sơ này',label:'Bài iFlux về hồ sơ này',url:'/tin-tuc/bai-viet/ho-so-fixture',quote:'Nội dung nội bộ'},{title:'Tiêu đề bài nguồn fixture',label:'CafeF',url:'https://cafef.vn/bai-nguon-fixture.chn',quote:'Trích đoạn minh họa'}], metrics:[]}],
         comparison_data:{title:'So sánh minh họa',scope:{name:'Nhóm fixture'},as_of:'2026-10-13',unit:'lần',chart:true,rows:[{ticker:'AAA',value:0},{ticker:'BBB',value:-2},{ticker:'CCC',value:null}]} };
         document.addEventListener('iflux-context-ready', async () => {
           const { mountPublishedWidgets } = await import('/User_Web/iflux-web-ui/runtime/mount-published-widgets.js');
@@ -87,7 +87,8 @@ async function configure(page) {
       assert.equal(await page.locator('.ifx-com-article__author-meta').getByText('CafeF',{exact:true}).isVisible(),true);
       assert.equal(await page.locator('.ifx-com-article__body h2 a').count(),0);
       assert.equal(await page.locator('.ifx-com-article__body h2').first().textContent(),'Doanh nghiệp công bố kế hoạch');
-      assert.equal(await page.locator('.ifx-event-timeline .ifx-timeline-meta').first().textContent(),'Diễn ra/hiệu lực: 3/10/2026');
+      assert.equal(await page.locator('.ifx-event-timeline .ifx-timeline-meta').first().textContent(),'Diễn ra: 2/10/2026');
+      assert.equal(await page.locator('.ifx-event-timeline .ifx-timeline-body small').first().textContent(),'Dự kiến · Công bố: 1/10/2026 · Hiệu lực: 3/10/2026');
       assert.equal(await page.locator('.ifx-event-timeline details').getByText('Bài iFlux về hồ sơ này',{exact:true}).count(),1);
       assert.equal(await page.locator('.ifx-event-timeline details a').first().getAttribute('href'),'/tin-tuc/bai-viet/ho-so-fixture');
       assert.equal(await page.locator('.ifx-event-timeline blockquote').count(),0);
@@ -101,13 +102,22 @@ async function configure(page) {
       if (width===390) {
         await page.waitForFunction(()=>document.querySelector('[data-ifx-com-comments-preview-list]').textContent.includes('Bình luận fixture'));
         assert.equal(await page.evaluate(()=>!!(document.querySelector('[data-ifx-com-comments-preview]').compareDocumentPosition(document.querySelector('[data-ifx-related-group]')) & Node.DOCUMENT_POSITION_FOLLOWING)),true);
-        await page.evaluate(() => {
-          const bar = document.createElement('nav');
-          const entities = document.createElement('div');
-          entities.setAttribute('data-ifx-ix-article-entities','');
+        await page.evaluate(async () => {
+          document.querySelector('body').classList.add('ifx-app');
+          window.IfluxWebUI = window.IfluxWebUI || {};
+          await new Promise(resolve => {
+            const script = document.createElement('script'); script.src='/User_Web/iflux-web-ui/mobile-nav.js'; script.onload=resolve; document.body.appendChild(script);
+          });
+          const slot = IfluxWebUI.ensureArticleIxBottomSlot();
+          const entities = document.querySelector('[data-ifx-ix-article-entities]');
           entities.innerHTML = '<a href="/co-phieu/AAA">AAA</a>';
-          bar.appendChild(entities); document.body.appendChild(bar);
+          entities.removeAttribute('hidden');
+          window.__fixtureNavContext = null; // AppShell can transiently lose context during URL-bar resize.
+          window.dispatchEvent(new Event('resize'));
+          if (!entities.isConnected || !entities.textContent.includes('AAA') || !slot.isConnected) throw new Error('Article entity chips were cleared by mobile nav resize');
         });
+        assert.equal(await page.locator('[data-ifx-ix-article-entities]').textContent(),'AAA');
+        assert.equal(await page.locator('#ifx-tabbar').getAttribute('data-ifx-tabbar-mode'),'article');
       }
       for (const group of order) { await page.locator('[data-ifx-related-group="'+group+'"]').scrollIntoViewIfNeeded(); await page.waitForSelector('[data-ifx-related-group="'+group+'"] .ifx-com-post'); }
       if (width===390) {
@@ -139,21 +149,6 @@ async function configure(page) {
       await page.locator('[data-ifx-context-back]').click(); await page.waitForURL('**/__test/article');
       await page.close();
     }
-    const navPage = await browser.newPage({ viewport:{width:390,height:900} });
-    await navPage.goto(origin + '/__test/article'); await configure(navPage);
-    await navPage.evaluate(() => { document.body.classList.add('ifx-app'); window.IfluxWebUI = window.IfluxWebUI || {}; window.__fixtureNavContext = null; });
-    await script(navPage,'mobile-nav.js');
-    await navPage.evaluate(() => {
-      const slot = IfluxWebUI.ensureArticleIxBottomSlot();
-      const entities = document.querySelector('[data-ifx-ix-article-entities]');
-      entities.innerHTML = '<a href="/co-phieu/AAA">AAA</a>';
-      entities.removeAttribute('hidden');
-      window.dispatchEvent(new Event('resize'));
-      if (!entities.isConnected || !entities.textContent.includes('AAA') || !slot.isConnected) throw new Error('Article entity chips were cleared by mobile nav resize: '+JSON.stringify({connected:entities.isConnected,text:entities.textContent,slot:slot.isConnected,mode:document.querySelector('#ifx-tabbar')?.getAttribute('data-ifx-tabbar-mode'),story:!!document.querySelector('[data-ifx-community-story]'),parent:entities.parentNode?.outerHTML?.slice(0,300),ctx:window.__fixtureNavContext}));
-    });
-    assert.equal(await navPage.locator('[data-ifx-ix-article-entities]').textContent(),'AAA');
-    assert.equal(await navPage.locator('#ifx-tabbar').getAttribute('data-ifx-tabbar-mode'),'article');
-    await navPage.close();
     console.log('PASS: template preview/pipeline, desktop/mobile TOC/comments, lazy related groups, date list and Header Back. Evidence: '+evidenceDir);
   } finally { await browser.close(); await new Promise(resolve=>server.close(resolve)); }
 })().catch(err=>{ console.error(err); server.close(); process.exitCode=1; });

@@ -99,7 +99,7 @@ async function createPost(userId, payload) {
     id,
     author: payload.author || { id: userId },
     created_at: new Date().toISOString(),
-    body_html: require('./news-articles.service').sanitizeArticleHtml(payload.body_html || ''),
+    body_html: require('./news-articles.service').sanitizeArticleHtml(payload.body_html || '', { allowedSectionIds:(payload.section_manifest || []).map((s) => s.section_id) }),
     published_at: null,
     status: payload.status === 'draft' ? 'draft' : 'pending',
     stats: payload.stats || { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 },

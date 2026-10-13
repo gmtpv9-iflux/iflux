@@ -39,7 +39,7 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
       CREATE TABLE news_categories(id UUID PRIMARY KEY, name TEXT, slug TEXT, parent_id UUID);
       CREATE TABLE ai_prompts(id UUID PRIMARY KEY DEFAULT gen_random_uuid(), code TEXT UNIQUE, name TEXT, body TEXT, status TEXT, updated_at TIMESTAMPTZ DEFAULT NOW());
       CREATE TABLE news_posts(id TEXT PRIMARY KEY, user_id UUID, content_type TEXT, status TEXT, payload JSONB, created_at TIMESTAMPTZ, updated_at TIMESTAMPTZ);`);
-    for (const name of ['081_news_event_timeline.sql','082_news_ai_jobs.sql','083_news_editorial_prompt.sql']) {
+    for (const name of ['081_news_event_timeline.sql','082_news_ai_jobs.sql','083_news_editorial_prompt.sql','084_news_editorial_v2.sql']) {
       await db.query(fs.readFileSync(path.join(__dirname, '../../migrations', name), 'utf8'));
     }
     await db.query("INSERT INTO sectors VALUES (1,'BANK','ngan-hang','Ngân hàng'),(2,'RETAIL','ban-le','Bán lẻ'); INSERT INTO ecosystems VALUES (1,'ECO','he-sinh-thai-a','Hệ A'); INSERT INTO stocks(ticker,name,sector_id,ecosystem_id,market_cap,shares_outstanding) VALUES ('AAA','Công ty A',1,1,1000,100),('BBB','Công ty B',1,1,2000,200),('CCC','Công ty C',2,1,3000,300)");
@@ -198,8 +198,8 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
   });
 
   it('creates sourced cases/milestones, preserves null/0, retries once and rejects conflicting facts', async () => {
-    const milestone = { title: 'Đăng ký giao dịch', summary: 'Theo thông báo đăng ký', status: 'planned', announced_on: null, effective_on: null,
-      evidence: [{ url: 'https://example.org/disclosure', label: 'Công bố', quote: 'Đăng ký 100; số thực hiện chưa có' }],
+    const milestone = { title: 'Đăng ký giao dịch', summary: 'Theo thông báo đăng ký', status: 'planned', announced_on: null, occurred_on: null, effective_on: null,
+      evidence: [{ url: 'https://cafef.vn/disclosure', title: 'Thông báo đăng ký giao dịch', label: 'Thông báo đăng ký giao dịch', quote: 'Đăng ký 100; số thực hiện chưa có' }],
       metrics: [{ subject: 'Người đăng ký', indicator: 'registered', value: 100, unit: 'cổ phiếu', period: null, basis: 'planned' },
         { subject: 'Người đăng ký', indicator: 'executed', value: null, unit: 'cổ phiếu', period: null, basis: 'actual' }] };
     const data = { request_id: randomUUID(), title: 'Đợt giao dịch A', event_group: 4, subject_name: 'Người đăng ký', tickers: ['AAA'], story_id: story, milestone };
@@ -207,10 +207,10 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
     assert.equal(first.id, retry.id); caseId = first.id;
     const before = await events.timelineForStock('AAA'); assert.equal(before.length, 0);
     await articles.updateArticle('seed', { event_case_ids: [caseId] }, actor);
-    await events.addMilestone(caseId, { ...milestone, title: 'Báo cáo kết quả', status: 'reported_result', announced_on: '2026-10-13',
+    await events.addMilestone(caseId, { ...milestone, title: 'Báo cáo kết quả', status: 'reported_result', announced_on: '2026-10-13', occurred_on: '2026-10-12',
       metrics: [{ ...milestone.metrics[1], value: 0 }] }, actor);
     const timeline = await events.timelineForStock('AAA');
-    assert.equal(timeline.length, 2); assert.equal(timeline[0].metrics[0].value, 0);
+    assert.equal(timeline.length, 2); assert.equal(timeline[0].metrics[0].value, 0); assert.equal(timeline[0].occurred_on, '2026-10-12');
     assert.equal(timeline[1].metrics[1].value, null); assert.equal(timeline[1].announced_on, null);
     await assert.rejects(events.addMilestone(caseId, { ...milestone, summary: 'Nội dung mâu thuẫn' }, actor), /dữ kiện khác/);
     assert.equal((await events.timelineForArticle({ status: 'published_rss', event_case_ids: [caseId] })).length, 0);
@@ -252,8 +252,8 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
   it('AI two-step jobs are idempotent, checkpoint retries and keep RSS unchanged and unpublished', async () => {
     const jobs = require('../../src/modules/news/news-ai-jobs.service');
     const config = { NEWS_AI_ENABLED:true,NEWS_AI_MODEL:'gpt-5.4',NEWS_AI_MAX_ATTEMPTS:3 };
-    assert.ok((await db.query("SELECT body FROM ai_prompts WHERE code='news-editorial-v1' AND status='active'")).rows[0].body.length > 1000);
-    await db.query("UPDATE ai_prompts SET body='Prompt test',status='active' WHERE code='news-editorial-v1'");
+    assert.ok((await db.query("SELECT body FROM ai_prompts WHERE code='news-editorial-v2' AND status='active'")).rows[0].body.length > 1000);
+    await db.query("UPDATE ai_prompts SET body='Prompt test',status='active' WHERE code='news-editorial-v2'");
     await post('ai-source',{title:'Công ty A đăng ký giao dịch',body_html:'<p>Công ty A đăng ký bán 100 cổ phiếu.</p>',source_id:'fixture',source_name:'Nguồn thử',external_url:'https://example.org/ai-source',tickers:['FAKE']},'published_rss');
     assert.equal(await jobs.enqueueSource('ai-source',{NEWS_AI_ENABLED:false}),null);
     const queued = await Promise.all([jobs.enqueueSource('ai-source',config),jobs.enqueueSource('ai-source',config)]);
@@ -271,7 +271,7 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
       composeCalls++;
       assert.equal(input.source.text,undefined); // compose chỉ nhận facts được đối chiếu, không nhận lại toàn nguồn.
       if(failOnce){failOnce=false;throw Object.assign(Error('fixture transport failure'),{code:'AI_HTTP_429',retryable:true});}
-      return {value:{title:'Công ty A đăng ký bán cổ phiếu',excerpt:'Theo thông báo đăng ký',lead:'Công ty A đăng ký bán 100 cổ phiếu.',lead_fact_ids:['f1'],sections:[{h2:'Công ty A công bố số đăng ký',paragraphs:['Số đăng ký là 100 cổ phiếu; chưa có kết quả thực hiện.'],fact_ids:['f1'],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu dữ liệu bổ sung',seo:{title:'Công ty A đăng ký giao dịch',description:'Thông tin đăng ký, chưa phải kết quả thực hiện'},warnings:[]},response_id:'compose-fixture',model:'gpt-5.4',usage:{input_tokens:150,output_tokens:100}};
+      return {value:{title:'Công ty A đăng ký bán cổ phiếu',excerpt:'Theo thông báo đăng ký',lead:'Công ty A đăng ký bán 100 cổ phiếu.',lead_fact_ids:['f1'],sections:[{h2:'Công ty A công bố số đăng ký',paragraphs:['Số đăng ký là 100 cổ phiếu; chưa có kết quả thực hiện.'],fact_ids:['f1'],event_refs:[],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu dữ liệu bổ sung',seo:{title:'Công ty A đăng ký giao dịch',description:'Thông tin đăng ký, chưa phải kết quả thực hiện'},warnings:[]},response_id:'compose-fixture',model:'gpt-5.4',usage:{input_tokens:150,output_tokens:100}};
     }};
     const first=await jobs.processOne(config,provider);assert.equal(first.status,'queued');
     assert.equal((await jobs.getJob(first.id)).extraction.facts[0].metric.value,100);
@@ -281,7 +281,11 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
     const done=await jobs.getJob(first.id);assert.equal(extractCalls,1);assert.equal(composeCalls,2);
     assert.equal(done.attempts,2);assert.equal(done.calls.length,2);
     assert.ok(done.review_reasons.includes('SEMANTIC_REVIEW_REQUIRED'));
-    assert.equal(done.result.article_input.tickers[0],'AAA');assert.match(done.result.article_input.body_html,/<h2>/);
+    assert.equal(done.result.article_input.tickers[0],'AAA');assert.match(done.result.article_input.body_html,/<h2 id="ifx-section-1">/);assert.equal(done.result.article_input.section_manifest[0].section_id,'ifx-section-1');
+    assert.equal(done.prompt_version,'news-editorial-v2');assert.equal(done.schema_version,'news-ai-v2');
+    const promoted = await articles.updateArticle('ai-source',{ body_html:done.result.article_input.body_html,section_manifest:done.result.article_input.section_manifest },actor);
+    assert.equal(promoted.section_manifest[0].section_id,'ifx-section-1');
+    assert.match(promoted.body_html,/<h2 id="ifx-section-1">/);
     assert.equal(done.prompt_body,undefined);
     const source=await articles.getArticle('ai-source');assert.equal(source.status,'published_rss');assert.equal(source.title,'Công ty A đăng ký giao dịch');
     assert.equal((await jobs.processOne(config,provider)).status,'idle');

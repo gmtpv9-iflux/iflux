@@ -3,7 +3,7 @@
   'use strict';
   var T = global.IfxTemplates;
   var U = T.util;
-  var LABELS = { announced: 'Đã công bố', planned: 'Dự kiến', in_progress: 'Đang diễn ra', reported_result: 'Đã báo cáo kết quả', completed: 'Đã hoàn tất', cancelled: 'Đã hủy', corrected: 'Đã đính chính' };
+  var LABELS = { announced: 'Đã công bố', under_review: 'Chờ xem xét', planned: 'Dự kiến', approved: 'Đã thông qua', effective: 'Đã có hiệu lực', in_progress: 'Đang thực hiện', delayed: 'Trì hoãn', reported_result: 'Đã báo cáo kết quả', completed: 'Hoàn tất', cancelled: 'Đã hủy', corrected: 'Đã đính chính' };
   function date(value) {
     if (!value) return '—';
     var d = new Date(value);
@@ -36,9 +36,9 @@
         return '<li class="ifx-timeline-item">' +
           '<span class="ifx-timeline-marker' + (m.status === 'planned' ? ' ifx-timeline-marker-muted' : ' is-filled') + '" aria-hidden="true"></span>' +
           '<div class="ifx-timeline-header"><strong class="ifx-timeline-title">' + U.esc(m.title) + '</strong>' +
-          '<span class="ifx-timeline-meta">' + (m.effective_on ? 'Diễn ra/hiệu lực: ' + date(m.effective_on) : (m.announced_on ? 'Công bố: ' + date(m.announced_on) : 'Ngày: —')) + '</span></div>' +
+          '<span class="ifx-timeline-meta">' + (m.occurred_on ? 'Diễn ra: ' + date(m.occurred_on) : (m.effective_on ? 'Hiệu lực: ' + date(m.effective_on) : (m.announced_on ? 'Công bố: ' + date(m.announced_on) : 'Ngày: —'))) + '</span></div>' +
           '<div class="ifx-timeline-body"><p class="ifx-event-subject">' + U.esc(m.subject_name || '') + '</p><p class="ifx-event-summary">' + U.esc(m.summary) + '</p>' +
-          '<p><small>' + U.esc(LABELS[m.status] || m.status || '—') + (m.effective_on && m.announced_on ? ' · Công bố: ' + date(m.announced_on) : '') + '</small></p>' +
+          '<p><small>' + U.esc(LABELS[m.status] || m.status || '—') + (m.announced_on && (m.occurred_on || m.effective_on) ? ' · Công bố: ' + date(m.announced_on) : '') + (m.occurred_on && m.effective_on && m.occurred_on !== m.effective_on ? ' · Hiệu lực: ' + date(m.effective_on) : '') + '</small></p>' +
           (metrics ? '<ul>' + metrics + '</ul>' : '') +
           ((m.evidence || []).length ? '<details><summary>Nguồn tham khảo</summary><ul>' + m.evidence.map(source).join('') + '</ul></details>' : '') +
           '</div></li>';
