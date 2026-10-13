@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 22:03:00 +07:00 — Codex — Staging/Production deploy và purge hoàn tất
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; Staging và Production đã deploy, cache Cloudflare đã purge.
+- **Phạm vi:** release Prompt v2/timeline, migration 084 và các chỉnh sửa liên quan đã ghi ở commit trước.
+- **Trước → sau:** CI Staging/Production đang chờ → cả hai CI thành công; Production CDN đã purge. Production bài PNJ trả HTTP 200, metadata gồm description/canonical/robots index, JSON-LD. Staging shell mới trả HTTP 200; slug PNJ không có trong DB mẫu Staging và trả 404, không ảnh hưởng kết quả deploy.
+- **Kiểm tra:** Staging CI run `38418211513` success SHA `cc589288`; Production CI run `38418460674` success SHA `52c31a1`; Cloudflare purge HTTP 200 success. Smoke-test metadata Production PASS; shell Staging PASS.
+- **Commit:** code Staging `8a04aa6`, Handoff Staging `cc58928`; code Production `430525f`, Handoff Production `52c31a1`.
+- **Còn lại/lưu ý:** không còn việc deploy/purge. Staging chứa dữ liệu mẫu, không dùng thiếu bài PNJ làm kết luận lỗi code; staging giữ noindex theo policy.
+
 ## 2026-10-13 22:01:00 +07:00 — Codex — release Staging thành công, chuẩn bị Production
 
 - **Nhiệm vụ/trạng thái:** CI Staging đã deploy thành công; commit Production đã tạo, đang ghi nhật ký và chuẩn bị push `production`.
