@@ -2,8 +2,9 @@
 
 /**
  * Entity Resolution — Stock + Ecosystem membership + occurrence binding.
- * Owner 2026-08-09: KHÔNG match ticker token 2–5 chữ (tránh tin→TIN, căn→CAN).
- * Chỉ match name / short_name / english_name trong Master; brand alias = ticker
+ * Không match ticker token 2–5 chữ đứng riêng; fallback chỉ nhận mã được ghi
+ * rõ là mã/cổ phiếu trong title/lead hoặc dạng $CODE/(CODE).
+ * Tên/alias doanh nghiệp vẫn lấy từ Market Master; brand alias = ticker
  * khi ticker xuất hiện như từ trong name|short_name (match case-sensitive trên bản gốc).
  * Sector: OUT OF SCOPE (BR-AD-12).
  */
@@ -164,6 +165,23 @@ function nameContainsTickerWord(label, ticker) {
   return false;
 }
 
+/**
+ * Legacy fallback for explicit ticker references. A bare 2–5 letter token is too
+ * ambiguous to match safely (for example "tin" vs TIN); accept it only when the
+ * source labels it as a stock code in a nearby, explicit financial context.
+ */
+function hasExplicitTickerContext(text, ticker) {
+  const source = String(text || '');
+  const t = String(ticker || '').toUpperCase();
+  if (!t || !TICKER_LIKE_RE.test(t)) return false;
+  const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const patterns = [
+    new RegExp('(?:\\$\\s*' + escaped + '|\\b(?:mã(?:\\s+cổ phiếu|\\s+chứng khoán)?|cổ phiếu|ticker)\\s+' + escaped + ')\\b', 'i'),
+    new RegExp('\\(\\s*' + escaped + '\\s*\\)', 'i')
+  ];
+  return patterns.some(function (re) { return re.test(source); });
+}
+
 async function loadMaster() {
   const now = Date.now();
   if (_cache && now - _cacheAt < CACHE_MS) return _cache;
@@ -320,6 +338,22 @@ async function resolveArticleEntities(article) {
       code: code,
       matched_text: p.matched_text,
       presentation: p.kind === 'ticker_alias' ? 'ticker' : 'name_ticker',
+      id: null
+    });
+  });
+
+  /* Fallback legacy: explicit code references in title/lead. Avoid scanning all
+   * body tokens because market roundups mention many unrelated comparison codes. */
+  const explicitCodeText = [title, excerpt].filter(Boolean).join('\n');
+  Object.keys(master.byTicker).forEach(function (code) {
+    if (tickerSet[code] || !hasExplicitTickerContext(explicitCodeText, code)) return;
+    tickerSet[code] = true;
+    tickers.push(code);
+    pushOcc(occurrences, occSeen, {
+      entity_kind: 'stock',
+      code: code,
+      matched_text: code,
+      presentation: 'ticker',
       id: null
     });
   });

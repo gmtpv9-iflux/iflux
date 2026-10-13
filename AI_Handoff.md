@@ -2,6 +2,25 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 18:22:00 +07:00 — Codex — chuẩn bị Production fix fallback mã và chip mobile
+
+- **Nhiệm vụ/trạng thái:** commit staging `5a999f4` đã tạo; đã áp riêng bốn file source/test lên checkout Production; đang kiểm thử và chuẩn bị commit/push CI theo yêu cầu Owner.
+- **Phạm vi:** `backend/src/modules/news/news-entity-resolve.service.js`, `backend/tests/unit/news-editorial.test.js`, `User_Web/iflux-web-ui/mobile-nav.js`, `User_Web/tests/news-editorial.spec.cjs`, `AI_Handoff.md`. Không nhập các file ngoài phạm vi.
+- **Trước → sau:** resolver bỏ mã cổ phiếu viết rõ trong tiêu đề/lead nếu mã không có trong alias pháp lý; fallback mới chỉ nhận mã từ Market Master có chỉ dấu rõ. Nguyên nhân chip mất đã xác định ở Production: `ensureArticleIxBottomSlot()` xóa `innerHTML` và đặt `hidden` mỗi lần chạy lại dù slot đã tồn tại; resize do URL bar lúc cuộn gọi hàm này. Giờ hàm idempotent, chỉ dựng slot lần đầu; khi article root vẫn mounted thì AppShell mất context cũng không render nav chung đè thanh bài. Giữ các mục A/B đã có trong handoff Production.
+- **Kiểm tra:** backend unit 43/43 PASS; browser editorial desktop/mobile PASS, gồm test resize trên Production release checkout; `sync-js-versions --check`, `build-web-bundle --check`, `diff --check` PASS.
+- **Commit:** staging `5a999f4`; Production release commit chưa có.
+- **Còn lại/lưu ý:** chỉ push `production` qua GitHub để CI deploy; sau đó kiểm tra CI và public smoke. Không đụng các thay đổi/xóa không liên quan ở worktree staging. Local `OPENAI_API_KEY` cần được rotate sau khi bị lộ trong output công cụ; key không nằm trong patch/commit.
+
+## 2026-10-13 17:58:00 +07:00 — Codex — Production đã nhận release; A/B bị chặn bởi API/quyền Admin
+
+- **Nhiệm vụ/trạng thái:** push Production hoàn thành; smoke public PASS; A/B GPT thật bị chặn trước khi tạo bài hoặc publish.
+- **Phạm vi:** release `b9de079` + Handoff `aaa6c9a`; chỉ đọc API public và asset production. Không thay đổi bài viết hay dữ liệu Production.
+- **Trước → sau:** code chưa phát hành → `github/production` cập nhật tới `aaa6c9a`; asset widget bài viết có timeline/so sánh được xác nhận HTTP 200. Các URL `/tin-tuc`, `/admin/login`, template registry đều HTTP 200. API RSS trả 50 bài.
+- **Bài ứng viên:** `post_rss_mv6fxaoz_01sao5`, “Một thành viên HĐQT PNJ xin từ nhiệm trước thềm Đại hội cổ đông bất thường”; published_rss, source CafeF, 1.857 ký tự body, ảnh có sẵn, PNJ đúng trong Market Master; nêu các mốc 27/9, 10/10, đại hội dự kiến 21/10. Topic/Story list public đang rỗng (0); timeline PNJ không có milestone. Bài cổ phiếu PNJ tăng cận trần khác bị gắn nhầm VCI/FPT/SSI/VIB/VIX — cần lưu ý sửa resolver/ingest và kiểm chứng bằng test.
+- **Kiểm tra:** unit 13/13, PostgreSQL integration 10/10, browser desktop/mobile PASS; JS version/bundle PASS. Một lần gọi GPT-5.4 bằng key cục bộ nhận HTTP 429; không ghi response/key. Endpoint job AI Production trả 403 `Admin key required`. GitHub CLI chưa đăng nhập nên không đọc được trạng thái Actions; asset live đã xác nhận.
+- **Commit:** staging `fe1ac80`; Production `b9de079`; Handoff Production `aaa6c9a`.
+- **Kết quả A/B:** chưa có output AI; bài vẫn `published_rss`, không sửa, không đổi slug, không đưa sitemap, không yêu cầu Google index. Cần xử lý quota/rate-limit của OpenAI và cấp quyền Admin qua cơ chế đăng nhập an toàn; sau đó enqueue/review job, đối chiếu đầu ra rồi mới publish và kiểm tra sitemap/Search Console.
+
 ## 2026-10-13 17:46:00 +07:00 — Codex — chuẩn bị release commit sau khi hòa giải Production
 
 - **Nhiệm vụ/trạng thái:** commit `fe1ac80` đã tạo trên staging; đang hoàn thiện commit release dựa trên `github/production` tại `2f04e4a`.

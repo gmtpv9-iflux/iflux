@@ -279,17 +279,12 @@
         entities.className = 'ifx-com-article__entities';
         entities.setAttribute('aria-label', 'Gắn kèm bài viết');
         entities.setAttribute('hidden', 'hidden');
-      } else {
-        /* Ô này dùng chung cho mọi bài (App Shell, không tạo lại mỗi lần chuyển bài) — nếu còn
-           HTML của bài TRƯỚC, phải xoá ngay tại đây (đồng bộ, trước khi dữ liệu bài MỚI tới) kẻo
-           lộ ra đúng 1 nhịp "thực thể bài cũ" cho tới khi fillArticleEntityStrip(bài mới) chạy
-           xong — nhìn như hardcode/mock dữ liệu dù thực chất là dữ liệu CŨ chưa kịp xoá. */
-        entities.innerHTML = '';
-        entities.setAttribute('hidden', 'hidden');
       }
 
       var slot = bar.querySelector('[data-ifx-ix-article-bottom-root]');
       if (!slot) {
+        /* Chỉ dựng DOM khi chưa có slot. Resize/URL-bar scroll gọi lại hàm này;
+         * không được xóa chip của bài hiện tại ở các lần gọi idempotent. */
         bar.innerHTML = '';
         bar.appendChild(entities);
         slot = document.createElement('div');
@@ -331,6 +326,11 @@
       var ctx = shell.detectContext ? shell.detectContext() : null;
       var model = shell.currentNavigationModel ? shell.currentNavigationModel() : null;
       if (ctx && ctx.entityType === 'article') {
+        renderArticleActions();
+      } else if (document.querySelector('[data-ifx-community-story]')) {
+        /* URL-bar scroll can emit resize while AppShell briefly has no context.
+         * The mounted article root is the stable signal; generic renderPrimary/
+         * renderContext clear bar.innerHTML and lose chips. */
         renderArticleActions();
       } else if (model && model.modelId === 'accountProfile') {
         renderAccount();

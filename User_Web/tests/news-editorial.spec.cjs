@@ -37,7 +37,9 @@ async function configure(page) {
     const { buildPageFrame } = await import('/User_Web/iflux-web-ui/runtime/app-shell.js');
     window.IfluxRuntimeSections = { buildPageFrame };
     window.IfluxBreakpoint = { isMobileShell: () => window.innerWidth <= 1024 };
-    window.IfluxAppShell = { getNavMode: () => 'PRIMARY', getBackHref: () => '/tin-tuc' };
+    window.__fixtureNavContext = { entityType:'article' };
+    window.IfluxAppShell = { getNavMode: () => 'PRIMARY', getBackHref: () => '/tin-tuc', detectContext: () => window.__fixtureNavContext,
+      currentNavigationModel: () => null, getPrimaryNav: () => [{key:'news',label:'Tin tức',icon:'ti-news',href:'/tin-tuc'}] };
     window.IfluxRoutes = { to: () => '/tin-tuc' };
     window.IfluxSeoUrl = { PROD_ORIGIN:location.origin, parsePostRef:()=> 'fixture', postHref:p=>'/tin-tuc/bai-viet/'+p.slug, postCanonical:p=> location.origin + '/tin-tuc/bai-viet/' + p.slug, stockHref:t=>'/co-phieu/'+t,
       sectorHref:t=>'/nganh/'+t, ecosystemHref:t=>'/he-sinh-thai/'+t, commentsHrefFromLocation:()=>'/binh-luan/fixture' };
@@ -112,6 +114,21 @@ async function configure(page) {
       await page.locator('[data-ifx-context-back]').click(); await page.waitForURL('**/__test/article');
       await page.close();
     }
+    const navPage = await browser.newPage({ viewport:{width:390,height:900} });
+    await navPage.goto(origin + '/__test/article'); await configure(navPage);
+    await navPage.evaluate(() => { document.body.classList.add('ifx-app'); window.IfluxWebUI = window.IfluxWebUI || {}; window.__fixtureNavContext = null; });
+    await script(navPage,'mobile-nav.js');
+    await navPage.evaluate(() => {
+      const slot = IfluxWebUI.ensureArticleIxBottomSlot();
+      const entities = document.querySelector('[data-ifx-ix-article-entities]');
+      entities.innerHTML = '<a href="/co-phieu/AAA">AAA</a>';
+      entities.removeAttribute('hidden');
+      window.dispatchEvent(new Event('resize'));
+      if (!entities.isConnected || !entities.textContent.includes('AAA') || !slot.isConnected) throw new Error('Article entity chips were cleared by mobile nav resize: '+JSON.stringify({connected:entities.isConnected,text:entities.textContent,slot:slot.isConnected,mode:document.querySelector('#ifx-tabbar')?.getAttribute('data-ifx-tabbar-mode'),story:!!document.querySelector('[data-ifx-community-story]'),parent:entities.parentNode?.outerHTML?.slice(0,300),ctx:window.__fixtureNavContext}));
+    });
+    assert.equal(await navPage.locator('[data-ifx-ix-article-entities]').textContent(),'AAA');
+    assert.equal(await navPage.locator('#ifx-tabbar').getAttribute('data-ifx-tabbar-mode'),'article');
+    await navPage.close();
     console.log('PASS: template preview/pipeline, desktop/mobile TOC/comments, lazy related groups, date list and Header Back. Evidence: '+evidenceDir);
   } finally { await browser.close(); await new Promise(resolve=>server.close(resolve)); }
 })().catch(err=>{ console.error(err); server.close(); process.exitCode=1; });
