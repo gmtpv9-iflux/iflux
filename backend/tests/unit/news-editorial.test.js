@@ -44,3 +44,27 @@ it('entity resolver rejects a shorter company name inside another company while 
     assert.deepEqual(new Set(both), new Set(['AAA','BBB']));
   } finally { master.listStocks = oldStocks; master.listEcosystems = oldEcos; resolver.clearMasterCache(); }
 });
+
+it('entity resolver falls back to explicit ticker labels in title/lead without matching ordinary words', async () => {
+  const master = require('../../src/modules/market/market-master.service');
+  const oldStocks = master.listStocks, oldEcos = master.listEcosystems;
+  master.listStocks = async () => [
+    { ticker:'PNJ',name:'Công ty Cổ phần Vàng bạc đá quý Phú Nhuận',short_name:null },
+    { ticker:'TIN',name:'Công ty Cổ phần TIN',short_name:null },
+    { ticker:'VCI',name:'Công ty Cổ phần Chứng khoán Vietcap',short_name:'Vietcap' }
+  ]; master.listEcosystems = async () => [];
+  const resolver = require('../../src/modules/news/news-entity-resolve.service');
+  resolver.clearMasterCache();
+  try {
+    const pnj = await resolver.resolveArticleEntities({
+      title:'Cổ phiếu PNJ bất ngờ tăng cận trần',
+      body_html:'Nhà đầu tư so sánh diễn biến với VCI.'
+    });
+    assert.deepEqual(pnj.tickers, ['PNJ']);
+    assert.equal(pnj.entity_occurrences[0].presentation, 'ticker');
+    const ordinaryWord = await resolver.resolveArticleEntities({ title:'Tin doanh nghiệp được công bố trong ngày' });
+    assert.deepEqual(ordinaryWord.tickers, []);
+    const unlabelled = await resolver.resolveArticleEntities({ title:'PNJ tăng trong phiên' });
+    assert.deepEqual(unlabelled.tickers, []);
+  } finally { master.listStocks = oldStocks; master.listEcosystems = oldEcos; resolver.clearMasterCache(); }
+});

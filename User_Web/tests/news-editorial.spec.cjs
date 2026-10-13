@@ -37,7 +37,9 @@ async function configure(page) {
     const { buildPageFrame } = await import('/User_Web/iflux-web-ui/runtime/app-shell.js');
     window.IfluxRuntimeSections = { buildPageFrame };
     window.IfluxBreakpoint = { isMobileShell: () => window.innerWidth <= 1024 };
-    window.IfluxAppShell = { getNavMode: () => 'PRIMARY', getBackHref: () => '/tin-tuc' };
+    window.__fixtureNavContext = { entityType:'article' };
+    window.IfluxAppShell = { getNavMode: () => 'PRIMARY', getBackHref: () => '/tin-tuc', detectContext: () => window.__fixtureNavContext,
+      currentNavigationModel: () => null, getPrimaryNav: () => [{key:'news',label:'Tin tức',icon:'ti-news',href:'/tin-tuc'}] };
     window.IfluxRoutes = { to: () => '/tin-tuc' };
     window.IfluxSeoUrl = { PROD_ORIGIN:location.origin, parsePostRef:()=> 'fixture', postHref:p=>'/tin-tuc/bai-viet/'+p.slug, postCanonical:p=> location.origin + '/tin-tuc/bai-viet/' + p.slug, stockHref:t=>'/co-phieu/'+t,
       sectorHref:t=>'/nganh/'+t, ecosystemHref:t=>'/he-sinh-thai/'+t, commentsHrefFromLocation:()=>'/binh-luan/fixture' };
@@ -85,6 +87,22 @@ async function configure(page) {
       if (width===390) {
         await page.waitForFunction(()=>document.querySelector('[data-ifx-com-comments-preview-list]').textContent.includes('Bình luận fixture'));
         assert.equal(await page.evaluate(()=>!!(document.querySelector('[data-ifx-com-comments-preview]').compareDocumentPosition(document.querySelector('[data-ifx-related-group]')) & Node.DOCUMENT_POSITION_FOLLOWING)),true);
+        await page.evaluate(async () => {
+          document.querySelector('body').classList.add('ifx-app');
+          window.IfluxWebUI = window.IfluxWebUI || {};
+          await new Promise(resolve => {
+            const script = document.createElement('script'); script.src='/User_Web/iflux-web-ui/mobile-nav.js'; script.onload=resolve; document.body.appendChild(script);
+          });
+          const slot = IfluxWebUI.ensureArticleIxBottomSlot();
+          const entities = document.querySelector('[data-ifx-ix-article-entities]');
+          entities.innerHTML = '<a href="/co-phieu/AAA">AAA</a>';
+          entities.removeAttribute('hidden');
+          window.__fixtureNavContext = null; // AppShell can transiently lose context during URL-bar resize.
+          window.dispatchEvent(new Event('resize'));
+          if (!entities.isConnected || !entities.textContent.includes('AAA') || !slot.isConnected) throw new Error('Article entity chips were cleared by mobile nav resize');
+        });
+        assert.equal(await page.locator('[data-ifx-ix-article-entities]').textContent(),'AAA');
+        assert.equal(await page.locator('#ifx-tabbar').getAttribute('data-ifx-tabbar-mode'),'article');
       }
       for (const group of order) { await page.locator('[data-ifx-related-group="'+group+'"]').scrollIntoViewIfNeeded(); await page.waitForSelector('[data-ifx-related-group="'+group+'"] .ifx-com-post'); }
       await page.waitForSelector('[data-ifx-template="TMP-EVENT-TIMELINE"]');

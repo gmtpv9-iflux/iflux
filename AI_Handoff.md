@@ -2,6 +2,43 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 18:15:00 +07:00 — Codex — fallback gắn mã và giữ chip mã bài viết trên mobile
+
+- **Nhiệm vụ/trạng thái:** hoàn thành trong source/test; chưa commit hoặc deploy.
+- **Phạm vi:** `backend/src/modules/news/news-entity-resolve.service.js`, `backend/tests/unit/news-editorial.test.js`, `User_Web/iflux-web-ui/mobile-nav.js`, `User_Web/tests/news-editorial.spec.cjs`.
+- **Trước → sau:** resolver RSS cũ chỉ nhận tên/alias từ Market Master, nên mã đứng riêng trong tiêu đề như “Cổ phiếu PNJ…” bị bỏ qua nếu PNJ không nằm trong tên pháp lý/short name. Giờ có fallback cho mã hợp lệ của Market Master khi tiêu đề/mô tả ghi rõ “mã/cổ phiếu CODE”, `$CODE` hoặc `(CODE)`; không quét mã trần trong thân bài. Trên mobile, nếu article vẫn mounted mà AppShell tạm mất context khi phát resize, giữ nguyên interaction bar/chip thay vì render nav tổng quát xóa DOM.
+- **Kiểm tra:** backend unit 43/43 PASS; browser editorial desktop/mobile PASS, bao gồm mô phỏng context rỗng khi resize; `git diff --check` PASS. Test xác nhận “Cổ phiếu PNJ” được gắn, từ thường “Tin” không gắn TIN, và PNJ đứng trần không bị đoán.
+- **Commit:** chưa có.
+- **Còn lại/lưu ý:** fallback chỉ tin mã được định danh rõ trong title/lead hoặc dạng `$CODE`/`(CODE)`; các bài cũ đã lưu không tự đổi membership. Có thể gọi backfill `backfillArticleEntities` sau khi review theo lô nếu cần sửa dữ liệu cũ. Worktree có nhiều file xóa/thay đổi ngoài phạm vi; chỉ sửa/commit các file nêu trên nếu tiếp tục.
+
+## 2026-10-13 17:58:00 +07:00 — Codex — Production đã nhận release; A/B bị chặn bởi API/quyền Admin
+
+- **Nhiệm vụ/trạng thái:** push Production hoàn thành; smoke public PASS; A/B GPT thật bị chặn trước khi tạo bài hoặc publish.
+- **Phạm vi:** release `b9de079` + Handoff `aaa6c9a`; chỉ đọc API public và asset production. Không thay đổi bài viết hay dữ liệu Production.
+- **Trước → sau:** code chưa phát hành → `github/production` cập nhật tới `aaa6c9a`; asset widget bài viết có timeline/so sánh được xác nhận HTTP 200. Các URL `/tin-tuc`, `/admin/login`, template registry đều HTTP 200. API RSS trả 50 bài.
+- **Bài ứng viên:** `post_rss_mv6fxaoz_01sao5`, “Một thành viên HĐQT PNJ xin từ nhiệm trước thềm Đại hội cổ đông bất thường”; published_rss, source CafeF, 1.857 ký tự body, ảnh có sẵn, PNJ đúng trong Market Master; nêu các mốc 27/9, 10/10, đại hội dự kiến 21/10. Topic/Story list public đang rỗng (0); timeline PNJ không có milestone. Bài cổ phiếu PNJ tăng cận trần khác bị gắn nhầm VCI/FPT/SSI/VIB/VIX — cần lưu ý sửa resolver/ingest và kiểm chứng bằng test.
+- **Kiểm tra:** unit 13/13, PostgreSQL integration 10/10, browser desktop/mobile PASS; JS version/bundle PASS. Một lần gọi GPT-5.4 bằng key cục bộ nhận HTTP 429; không ghi response/key. Endpoint job AI Production trả 403 `Admin key required`. GitHub CLI chưa đăng nhập nên không đọc được trạng thái Actions; asset live đã xác nhận.
+- **Commit:** staging `fe1ac80`; Production `b9de079`; Handoff Production `aaa6c9a`.
+- **Kết quả A/B:** chưa có output AI; bài vẫn `published_rss`, không sửa, không đổi slug, không đưa sitemap, không yêu cầu Google index. Cần xử lý quota/rate-limit của OpenAI và cấp quyền Admin qua cơ chế đăng nhập an toàn; sau đó enqueue/review job, đối chiếu đầu ra rồi mới publish và kiểm tra sitemap/Search Console.
+
+## 2026-10-13 17:46:00 +07:00 — Codex — chuẩn bị release commit sau khi hòa giải Production
+
+- **Nhiệm vụ/trạng thái:** commit `fe1ac80` đã tạo trên staging; đang hoàn thiện commit release dựa trên `github/production` tại `2f04e4a`.
+- **Phạm vi:** checkout riêng `/private/tmp/iflux-production-release`. Cherry-pick gặp 57 conflict: 53 chỉ khác asset hash và được giữ theo Production rồi đồng bộ lại; 4 file có nội dung khác, giữ hành vi Production và ghép riêng mount timeline/so sánh trong bài. Không sửa/xóa worktree của người dùng.
+- **Trước → sau:** không thể áp trực tiếp commit staging → có bản release dựa trên Production, giữ phần code Production và tích hợp logic editorial AI, template widgets cần thiết.
+- **Kiểm tra:** unit 13/13 PASS; integration PostgreSQL 10/10 PASS; browser desktop/mobile PASS; sync JS versions và web bundle PASS; cần kiểm tra lại diff cuối trước khi commit.
+- **Commit:** `fe1ac80` trên staging. Release commit chưa tạo.
+- **Còn lại:** hoàn tất review commit release; sau đó push Production để chạy CI/deploy. Chỉ tiếp tục A/B sau khi runtime/key/auth thực tế xác nhận; RSS không index, bài thử chỉ chuyển published khi đủ điều kiện.
+
+## 2026-10-13 17:48:00 +07:00 — Codex — release commit đã tạo, chờ push Production
+
+- **Nhiệm vụ/trạng thái:** hoàn thành hòa giải nhánh; đang chờ push để CI triển khai Production.
+- **Phạm vi:** commit release `b9de079` dựa trên Production `2f04e4a`, áp dụng commit Codex `fe1ac80`; giữ các thay đổi Production và đồng bộ lại asset hashes.
+- **Trước → sau:** staging thay đổi chưa phát hành và có xung đột với Production → release commit riêng tích hợp backend AI/editorial, prompt, migration và widgets, không đưa 64 commit staging vào release.
+- **Kiểm tra:** unit 13/13, PostgreSQL integration 10/10, browser desktop/mobile PASS; JS version và bundle check PASS; `diff --check` PASS.
+- **Commit:** `fe1ac80` (staging), `b9de079` (Production release candidate).
+- **Còn lại:** push nhánh `production`, theo dõi GitHub Actions và kiểm tra runtime/database. Chưa có xác nhận API key/auth production, nên chưa chạy A/B thật, chưa publish bài và chưa gửi Search Console sitemap.
+
 ## 2026-10-13 17:40:00 +07:00 — Codex — xác nhận phạm vi commit
 
 - **Nhiệm vụ/trạng thái:** chuẩn bị commit riêng phần news/editorial AI để phát hành trên nhánh Production; đang làm.
