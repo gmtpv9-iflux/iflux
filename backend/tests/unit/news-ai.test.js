@@ -55,11 +55,17 @@ test('extract rejects fabricated citations/entities/events and preserves missing
   assert.ok(result.reasons.some((r)=>r.startsWith('FACT_EVIDENCE_INVALID')));
 });
 
-test('compose preview uses backend escaped HTML, checked references and source attribution, no AI URLs or images',()=>{
-  const ctx={source:{url:'https://example.org/source',source_name:'Nguồn A'},facts:[{id:'f1'}],entities:[{ticker:'AAA'}],story_id:null,timeline_case_ids:[],comparison:null,allowed_images:[]};
-  const output={title:'Tiêu đề',excerpt:'Mô tả',lead:'<script>alert(1)</script>',lead_fact_ids:['f1'],sections:[{h2:'Chủ thể A',paragraphs:['Nội dung'],fact_ids:['f1'],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu căn cứ',seo:{title:'Tiêu đề SEO',description:'Mô tả SEO'},warnings:[]};
-  const result=composePreview(output,ctx);assert.equal(result.review_reasons.length,0);assert.doesNotMatch(result.article_input.body_html,/<script/);assert.match(result.article_input.body_html,/https:\/\/example.org\/source/);
+test('compose preview links sections to known events and creates backend-owned stable anchors',()=>{
+  const ctx={source:{url:'https://example.org/source',source_name:'Nguồn A'},facts:[{id:'f1'}],entities:[{ticker:'AAA'}],story_id:null,timeline_case_ids:[],event_proposals:[{event_ref:'event-1',internal_section_refs:['article:post-1:ifx-section-2']}],internal_article_sections:[{ref:'article:post-1:ifx-section-2',title:'PNJ công bố diễn biến',heading:'HĐQT cập nhật kế hoạch',href:'/tin-tuc/bai-viet/pnj#ifx-section-2'}],comparison:null,allowed_images:[]};
+  const output={title:'Tiêu đề',excerpt:'Mô tả',lead:'<script>alert(1)</script>',lead_fact_ids:['f1'],sections:[{h2:'Chủ thể A',paragraphs:['Nội dung triển khai khác heading'],fact_ids:['f1'],event_refs:['event-1'],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu căn cứ',seo:{title:'Tiêu đề SEO',description:'Mô tả SEO'},warnings:[]};
+  const result=composePreview(output,ctx);assert.equal(result.review_reasons.length,0);assert.doesNotMatch(result.article_input.body_html,/<script/);assert.match(result.article_input.body_html,/<h2 id="ifx-section-1">Chủ thể A<\/h2>/);assert.equal(result.article_input.section_manifest[0].section_id,'ifx-section-1');assert.deepEqual(result.event_section_links,[{event_ref:'event-1',section_id:'ifx-section-1',heading:'Chủ thể A',anchor:'#ifx-section-1'}]);assert.deepEqual(result.event_source_links,[{event_ref:'event-1',title:'PNJ công bố diễn biến',heading:'HĐQT cập nhật kế hoạch',href:'/tin-tuc/bai-viet/pnj#ifx-section-2'}]);
   output.sections[0].fact_ids=['invented'];output.sections[0].images=[{image_id:'invented',alt:'Ảnh',title:null,caption:null}];
   assert.ok(composePreview(output,ctx).review_reasons.includes('COMPOSE_FACT_REFERENCE_INVALID'));
   assert.ok(composePreview(output,ctx).review_reasons.includes('IMAGE_NOT_ALLOWED'));
+  output.sections[0].fact_ids=['f1'];output.sections[0].images=[];output.sections[0].h2='<a href="/co-phieu/AAA">Chủ thể A</a>';
+  assert.ok(composePreview(output,ctx).review_reasons.includes('COMPOSE_HEADING_LINK_INVALID'));
+  output.sections[0].h2='Chủ thể A';output.sections[0].paragraphs[0]='Chủ thể A';
+  assert.ok(composePreview(output,ctx).review_reasons.includes('COMPOSE_HEADING_REPEATED'));
+  output.sections[0].paragraphs[0]='Nội dung triển khai khác heading';output.sections[0].event_refs=['not-in-extraction'];
+  assert.ok(composePreview(output,ctx).review_reasons.includes('COMPOSE_EVENT_REFERENCE_INVALID: not-in-extraction'));
 });

@@ -410,6 +410,10 @@ function createNewsRouter(deps) {
     excerpt: z.string().optional().nullable(),
     body_html: z.string().optional().nullable(),
     body: z.string().optional().nullable(),
+    section_manifest: z.array(z.object({
+      section_id: z.string().regex(/^ifx-section-\d+$/), h2: z.string().min(1).max(240),
+      fact_ids: z.array(z.string().min(1).max(100)).max(60), event_refs: z.array(z.string().min(1).max(100)).max(60)
+    }).strict()).max(30).optional(),
     content_type: z.string().optional().nullable(),
     category_id: z.string().uuid(),
     category_name: z.string().optional().nullable(),
@@ -437,6 +441,12 @@ function createNewsRouter(deps) {
         description: z.string().optional().nullable(),
         keywords: z.string().optional().nullable(),
         canonical: z.string().optional().nullable(),
+        meta_title: z.string().optional().nullable(),
+        meta_description: z.string().optional().nullable(),
+        og_title: z.string().optional().nullable(),
+        og_description: z.string().optional().nullable(),
+        og_image: z.string().optional().nullable(),
+        og_image_alt: z.string().optional().nullable(),
         robots: z.enum(['index,follow','noindex,follow','noindex,nofollow','noindex']).optional().nullable()
       })
       .optional()

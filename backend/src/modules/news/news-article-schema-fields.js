@@ -49,7 +49,9 @@ const ARTICLE_SCHEMA_FIELDS = [
   { key: 'seo.og_image_alt', label: 'SEO OG Image ALT', group: 'seo', cafef: 'og:image:alt', vietstock: '', baodautu: '', note: 'Optional override — fallback cover.alt → title → empty' },
 
   { key: 'status', label: 'Trạng thái', group: 'lifecycle', cafef: '', vietstock: '', baodautu: '', note: 'Đủ title + category → published_rss; Admin Xuất bản → published' },
-  { key: 'published_at', label: 'Ngày đăng', group: 'lifecycle', cafef: 'pubDate / datePublished / article:published_time', vietstock: 'pubDate / article:published_time', baodautu: 'Thời gian trên trang (DD/MM/YYYY HH:mm)', note: '' },
+  { key: 'published_at', label: 'Ngày xuất bản iFlux', group: 'lifecycle', cafef: '', vietstock: '', baodautu: '', note: 'Đóng dấu lần đầu khi status chuyển sang published; giữ nguyên khi biên tập lại' },
+  { key: 'official_published_at', label: 'Lần đầu xuất bản chính thức', group: 'lifecycle', cafef: '', vietstock: '', baodautu: '', note: 'Mốc hệ thống giữ để URL và ngày xuất bản không đổi khi gỡ/đăng lại' },
+  { key: 'source_published_at', label: 'Ngày đăng nguồn', group: 'lifecycle', cafef: 'pubDate / datePublished / article:published_time', vietstock: 'pubDate / article:published_time', baodautu: 'Thời gian trên trang (DD/MM/YYYY HH:mm)', note: 'Giữ riêng ngày nguồn RSS; không dùng làm ngày publish chính thức' },
   { key: 'scheduled_at', label: 'Ngày lên lịch', group: 'lifecycle', cafef: '', vietstock: '', baodautu: '', note: 'Khi status = scheduled' },
   { key: 'updated_at', label: 'Ngày cập nhật', group: 'lifecycle', cafef: 'dateModified', vietstock: 'article:modified_time', baodautu: '', note: 'Cột bảng news_posts (+ payload mirror nếu có)' },
   { key: 'created_at', label: 'Ngày tạo', group: 'lifecycle', cafef: '', vietstock: '', baodautu: '', note: 'Cột bảng — chỉ iFlux' },

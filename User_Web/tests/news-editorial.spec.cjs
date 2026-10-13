@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '../..');
 const evidenceDir = process.env.NEWS_EVIDENCE_DIR || '/private/tmp/iflux-news-browser-evidence';
 fs.mkdirSync(evidenceDir, { recursive: true });
 const requests = [];
-const card = (id) => ({ id, slug:id, title:'Bài minh họa ' + id, excerpt:'Dữ liệu fixture kiểm tra giao diện.', tickers:[], category_id:'cat', stats:{}, author:{display_name:'iFlux'}, published_at:'2026-10-13T01:00:00Z' });
+const card = (id) => ({ id, slug:id, title:'Bài minh họa ' + id, excerpt:'Dữ liệu fixture kiểm tra giao diện.', tickers:['RELATED'], category_id:'cat', stats:{}, author:{display_name:'iFlux'}, published_at:'2026-10-13T01:00:00Z' });
 const html = (kind) => `<!doctype html><html lang="vi" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/platform/web/generated/web.css"><link rel="stylesheet" href="/User_Web/iflux-web-ui/news.css"></head><body><header class="ifx-app-header"><span>iFlux · Kiểm thử fixture</span></header><main class="ifx-main ${kind === 'article' ? 'ifx-main--community-post' : 'ifx-main--community'}"><div ${kind === 'article' ? 'data-ifx-community-story' : 'data-ifx-community-feed'}></div></main></body></html>`;
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
@@ -45,6 +45,7 @@ async function configure(page) {
       sectorHref:t=>'/nganh/'+t, ecosystemHref:t=>'/he-sinh-thai/'+t, commentsHrefFromLocation:()=>'/binh-luan/fixture' };
     window.IfluxNewsStore = { getPostById:()=>window.fixture, getPostBySlug:()=>window.fixture, bumpView:()=>{}, setFeed:()=>{}, getGroupPerformance:()=>null };
     window.IfluxInteractionStore = { initInteractive:()=>{}, loadThread:async()=>({ comments:[{ user_name:'Người đọc', body:'Bình luận fixture', created_at:new Date().toISOString() }] }) };
+    window.IfluxMarketQuotes = { getQuotes:async()=>({}) };
     window.IfluxInteractionPresentationResolver = { resolve:()=> window.innerWidth<=1024 ? 'bottom-bar' : 'sidebar' };
   });
   await script(page,'block-templates.js'); await script(page,'news-ui.js'); await script(page,'iflux-news-api-bridge.js');
@@ -65,8 +66,9 @@ async function configure(page) {
       await page.goto(origin + '/__test/article'); requests.length = 0;
       await configure(page);
       await page.evaluate(() => { window.fixture = { id:'fixture', slug:'fixture', title:'Bài viết kiểm thử cấu trúc iFlux', excerpt:'Đây là dữ liệu minh họa để kiểm tra giao diện, không phải tin thị trường.', status:'published', tickers:['AAA'], story_id:'story-fixture', category_id:'cat', stats:{comments:1}, author:{display_name:'Biên tập iFlux'},
-        body_html:'<h2>Doanh nghiệp công bố kế hoạch</h2>' + '<p>Nội dung fixture dùng kiểm tra mục lục và hành vi tải theo nhu cầu.</p>'.repeat(70) + '<h2>Những diễn biến cần theo dõi</h2><p>Không suy ra kết quả khi chưa có bằng chứng.</p>',
-        event_timeline:[{ title:'Công bố kế hoạch', subject_name:'Doanh nghiệp fixture', summary:'Một mốc đã có nguồn.', status:'planned', announced_on:null, evidence:[{label:'Nguồn fixture',url:'https://example.org',quote:'Trích đoạn minh họa'}], metrics:[] }],
+        body_html:'<h2><a href="/co-phieu/AAA">Doanh nghiệp công bố kế hoạch</a></h2>' + '<p>Nội dung fixture dùng kiểm tra mục lục và hành vi tải theo nhu cầu.</p>'.repeat(70) + '<h2>Những diễn biến cần theo dõi</h2><p>Không suy ra kết quả khi chưa có bằng chứng.</p>',
+        source_name:'CafeF', external_url:'https://cafef.vn/bai-nguon-fixture.chn',
+        event_timeline:[{ title:'Công bố kế hoạch', subject_name:'Doanh nghiệp fixture', summary:'Một mốc đã có nguồn.', status:'planned', announced_on:'2026-10-01', occurred_on:'2026-10-02', effective_on:'2026-10-03', evidence:[{title:'Bài iFlux về hồ sơ này',label:'Bài iFlux về hồ sơ này',url:'/tin-tuc/bai-viet/ho-so-fixture',quote:'Nội dung nội bộ'},{title:'Tiêu đề bài nguồn fixture',label:'CafeF',url:'https://cafef.vn/bai-nguon-fixture.chn',quote:'Trích đoạn minh họa'}], metrics:[]}],
         comparison_data:{title:'So sánh minh họa',scope:{name:'Nhóm fixture'},as_of:'2026-10-13',unit:'lần',chart:true,rows:[{ticker:'AAA',value:0},{ticker:'BBB',value:-2},{ticker:'CCC',value:null}]} };
         document.addEventListener('iflux-context-ready', async () => {
           const { mountPublishedWidgets } = await import('/User_Web/iflux-web-ui/runtime/mount-published-widgets.js');
@@ -79,7 +81,20 @@ async function configure(page) {
       });
       await script(page,'news-post-page.js'); await page.evaluate(()=>IfluxCommunityPostPage.init());
       await page.waitForSelector('.ifx-com-article__body');
+      assert.equal(await page.locator('.ifx-com-article__author-meta').getByText('CafeF',{exact:true}).count(),1);
+      assert.equal(await page.locator('.ifx-com-article__author-source a').getAttribute('href'),'https://cafef.vn/bai-nguon-fixture.chn');
+      assert.equal(await page.locator('.ifx-com-article__author-meta').getByText(/Nguồn tham khảo|Hỗ trợ biên soạn/).count(),0);
+      assert.equal(await page.locator('.ifx-com-article__author-meta').getByText('CafeF',{exact:true}).isVisible(),true);
+      assert.equal(await page.locator('.ifx-com-article__body h2 a').count(),0);
+      assert.equal(await page.locator('.ifx-com-article__body h2').first().textContent(),'Doanh nghiệp công bố kế hoạch');
+      assert.equal(await page.locator('.ifx-event-timeline .ifx-timeline-meta').first().textContent(),'Diễn ra: 2/10/2026');
+      assert.equal(await page.locator('.ifx-event-timeline .ifx-timeline-body small').first().textContent(),'Dự kiến · Công bố: 1/10/2026 · Hiệu lực: 3/10/2026');
+      assert.equal(await page.locator('.ifx-event-timeline details').getByText('Bài iFlux về hồ sơ này',{exact:true}).count(),1);
+      assert.equal(await page.locator('.ifx-event-timeline details a').first().getAttribute('href'),'/tin-tuc/bai-viet/ho-so-fixture');
+      assert.equal(await page.locator('.ifx-event-timeline blockquote').count(),0);
       assert.equal(requests.length,0,'related must not eagerly load below article');
+      await page.locator('.ifx-com-article__author').scrollIntoViewIfNeeded();
+      await page.screenshot({path:path.join(evidenceDir,'author-' + width + '.png')});
       assert.equal(await page.locator('.news-mobile-toc').isVisible(),width===390);
       assert.equal(await page.locator('.ifx-shell-sidebar').isVisible(),width===1440);
       const order = await page.locator('[data-ifx-related-group]').evaluateAll(nodes=>nodes.map(n=>n.dataset.ifxRelatedGroup));
@@ -105,6 +120,10 @@ async function configure(page) {
         assert.equal(await page.locator('#ifx-tabbar').getAttribute('data-ifx-tabbar-mode'),'article');
       }
       for (const group of order) { await page.locator('[data-ifx-related-group="'+group+'"]').scrollIntoViewIfNeeded(); await page.waitForSelector('[data-ifx-related-group="'+group+'"] .ifx-com-post'); }
+      if (width===390) {
+        await page.waitForTimeout(30);
+        assert.equal(await page.locator('[data-ifx-ix-article-entities]').textContent(),'AAA', 'related card quote hydration must not replace current article entities');
+      }
       await page.waitForSelector('[data-ifx-template="TMP-EVENT-TIMELINE"]');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'article overflow ' + width);
       assert.equal(await page.locator('.ifx-com-related-feed').count(),3);

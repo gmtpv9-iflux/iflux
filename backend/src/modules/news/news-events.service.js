@@ -10,15 +10,17 @@ const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((s) => {
   return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === s;
 }, 'Ngày không hợp lệ').nullable().optional();
 const evidenceSchema = z.object({
-  url: z.string().url().refine((s) => /^https?:\/\//i.test(s), 'Nguồn phải dùng HTTP(S)'),
+  url: z.string().trim().min(1).max(2000).refine((s) => /^\/(?!\/)/.test(s) || /^https?:\/\/(?:[a-z0-9-]+\.)*(?:cafef\.vn|vietstock\.vn|fireant\.vn)(?::\d+)?(?:[/?#]|$)/i.test(s), 'Nguồn phải là link iFlux nội bộ hoặc CafeF/Vietstock/FireAnt'),
   label: z.string().trim().min(1).max(160),
+  title: z.string().trim().min(1).max(240).optional(),
   quote: z.string().trim().min(1).max(4000)
 }).strict();
 const milestoneSchema = z.object({
   title: z.string().trim().min(1).max(240),
   summary: z.string().trim().min(1).max(6000),
-  status: z.enum(['announced', 'planned', 'in_progress', 'reported_result', 'completed', 'cancelled', 'corrected']),
+  status: z.enum(['announced','under_review','planned','approved','effective','in_progress','delayed','reported_result','completed','cancelled','corrected']),
   announced_on: day,
+  occurred_on: day,
   effective_on: day,
   evidence: z.array(evidenceSchema).min(1).max(20),
   metrics: z.array(z.object({
@@ -58,15 +60,17 @@ async function listCases(storyId) {
 }
 
 async function insertMilestone(client, caseId, input, actor) {
-  const key = createHash('sha256').update(JSON.stringify([input.title, input.status, input.announced_on || null, input.effective_on || null])).digest('hex');
+  const keyParts = [input.title, input.status, input.announced_on || null, input.effective_on || null];
+  if (input.occurred_on) keyParts.splice(3, 0, input.occurred_on);
+  const key = createHash('sha256').update(JSON.stringify(keyParts)).digest('hex');
   const res = await client.query(`INSERT INTO news_event_milestones
-    (case_id, idempotency_key, title, summary, status, announced_on, effective_on, evidence, metrics, reviewed_by)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10)
+    (case_id, idempotency_key, title, summary, status, announced_on, occurred_on, effective_on, evidence, metrics, reviewed_by)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10::jsonb,$11)
     ON CONFLICT (case_id, idempotency_key) DO UPDATE SET evidence =
       (SELECT jsonb_agg(DISTINCT e) FROM jsonb_array_elements(news_event_milestones.evidence || EXCLUDED.evidence) e)
     WHERE news_event_milestones.summary = EXCLUDED.summary AND news_event_milestones.metrics = EXCLUDED.metrics
     RETURNING id`, [caseId, key, input.title, input.summary, input.status, input.announced_on || null,
-    input.effective_on || null, JSON.stringify(input.evidence), JSON.stringify(input.metrics), String(actor.id || actor.admin_id || actor.email)]);
+      input.occurred_on || null, input.effective_on || null, JSON.stringify(input.evidence), JSON.stringify(input.metrics), String(actor.id || actor.admin_id || actor.email)]);
   if (!res.rows[0]) throw AppError.badRequest('EVENT_FACT_CONFLICT', 'Mốc đã có dữ kiện khác; cần kiểm tra trước khi cập nhật');
   return res.rows[0];
 }
@@ -114,12 +118,12 @@ async function timelineForStock(ticker) {
 
 async function timelineForArticle(article) {
   if (!article.event_case_ids || !article.event_case_ids.length || article.status !== 'published') return [];
-  return (await query(`SELECT m.id, m.case_id, m.title, m.summary, m.status, m.announced_on::text,
+  return (await query(`SELECT m.id, m.case_id, m.title, m.summary, m.status, m.announced_on::text, m.occurred_on::text,
       m.effective_on::text, m.recorded_at, m.evidence, m.metrics, c.title AS case_title,
       c.subject_name, c.tickers, c.event_group
     FROM news_event_milestones m JOIN news_event_cases c ON c.id = m.case_id
     WHERE c.id = ANY($1::uuid[])
-    ORDER BY m.announced_on DESC NULLS LAST, m.recorded_at DESC, m.id DESC LIMIT 50`, [article.event_case_ids])).rows;
+    ORDER BY COALESCE(m.occurred_on,m.effective_on,m.announced_on) DESC NULLS LAST, m.recorded_at DESC, m.id DESC LIMIT 50`, [article.event_case_ids])).rows;
 }
 
 module.exports = { caseSchema, milestoneSchema, validateArticleLinks, listCases, createCase, addMilestone, timelineForArticle, timelineForStock };
