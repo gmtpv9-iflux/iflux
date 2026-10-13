@@ -11,6 +11,15 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Commit:** `fe1ac80` trên staging. Release commit chưa tạo.
 - **Còn lại:** hoàn tất review commit release; sau đó push Production để chạy CI/deploy. Chỉ tiếp tục A/B sau khi runtime/key/auth thực tế xác nhận; RSS không index, bài thử chỉ chuyển published khi đủ điều kiện.
 
+## 2026-10-13 17:48:00 +07:00 — Codex — release commit đã tạo, chờ push Production
+
+- **Nhiệm vụ/trạng thái:** hoàn thành hòa giải nhánh; đang chờ push để CI triển khai Production.
+- **Phạm vi:** commit release `b9de079` dựa trên Production `2f04e4a`, áp dụng commit Codex `fe1ac80`; giữ các thay đổi Production và đồng bộ lại asset hashes.
+- **Trước → sau:** staging thay đổi chưa phát hành và có xung đột với Production → release commit riêng tích hợp backend AI/editorial, prompt, migration và widgets, không đưa 64 commit staging vào release.
+- **Kiểm tra:** unit 13/13, PostgreSQL integration 10/10, browser desktop/mobile PASS; JS version và bundle check PASS; `diff --check` PASS.
+- **Commit:** `fe1ac80` (staging), `b9de079` (Production release candidate).
+- **Còn lại:** push nhánh `production`, theo dõi GitHub Actions và kiểm tra runtime/database. Chưa có xác nhận API key/auth production, nên chưa chạy A/B thật, chưa publish bài và chưa gửi Search Console sitemap.
+
 ## 2026-10-13 17:40:00 +07:00 — Codex — xác nhận phạm vi commit
 
 - **Nhiệm vụ/trạng thái:** chuẩn bị commit riêng phần news/editorial AI để phát hành trên nhánh Production; đang làm.
