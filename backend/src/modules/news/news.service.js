@@ -99,8 +99,9 @@ async function createPost(userId, payload) {
     id,
     author: payload.author || { id: userId },
     created_at: new Date().toISOString(),
-    published_at: new Date().toISOString(),
-    status: 'published',
+    body_html: require('./news-articles.service').sanitizeArticleHtml(payload.body_html || ''),
+    published_at: null,
+    status: payload.status === 'draft' ? 'draft' : 'pending',
     stats: payload.stats || { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 },
     comments: payload.comments || [],
     liked_by: [],
@@ -109,7 +110,7 @@ async function createPost(userId, payload) {
   await query(
     `INSERT INTO news_posts (id, user_id, content_type, status, payload)
      VALUES ($1, $2, $3, $4, $5::jsonb)`,
-    [id, userId, payload.content_type || 'news', 'published', JSON.stringify(record)]
+    [id, userId, payload.content_type || 'news', record.status, JSON.stringify(record)]
   );
   return record;
 }

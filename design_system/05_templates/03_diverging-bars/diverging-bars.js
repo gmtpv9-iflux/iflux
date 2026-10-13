@@ -51,6 +51,7 @@
   }
 
   T.define('TMP-DIVERGING-BARS', {
+    plot: plot,
     inputs: [
       { label: 'Nhóm (tabs)', demo: 'Nhóm A | Nhóm B | Nhóm C | Nhóm D' },
       { label: 'Dòng chú thích', demo: 'Giá trị ròng · Nhóm A · 10 mốc' },

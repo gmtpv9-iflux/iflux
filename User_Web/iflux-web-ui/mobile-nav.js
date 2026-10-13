@@ -369,62 +369,6 @@
     return false;
   }
 
-  /* ĐỢT 2 — Nút Back header khi CONTEXT mode (mobile). Khác User Hub back (chỉ khi hub mở). */
-  function initMobileContextBack() {
-    function isMobile() { return ifxIsMobileShell(); }
-    function isMessagesPage() {
-      var path = '';
-      try { path = (window.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
-      return /\/(tin-nhan|messages)(\/|$)/.test(path) || /\/User_Web\/messages\//.test(path);
-    }
-
-    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
-      if (header.getAttribute('data-ifx-context-back-init') === '1') return;
-      header.setAttribute('data-ifx-context-back-init', '1');
-
-      var backBtn = document.createElement('button');
-      backBtn.type = 'button';
-      backBtn.className = 'ifx-app-header-navbtn';
-      backBtn.setAttribute('aria-label', 'Quay lại');
-      backBtn.setAttribute('data-ifx-context-back', '');
-      backBtn.innerHTML = '<i class="ti ti-arrow-left"></i>';
-      backBtn.style.display = 'none';
-
-      var hubBack = header.querySelector('[data-ifx-userhub-back]');
-      if (hubBack) hubBack.insertAdjacentElement('afterend', backBtn);
-      else header.insertBefore(backBtn, header.firstChild);
-
-      backBtn.addEventListener('click', function () {
-        var forced = backBtn.getAttribute('data-ifx-back-href');
-        if (forced) {
-          appNavigate(forced);
-          return;
-        }
-        if (window.history.length > 1) {
-          window.history.back();
-          return;
-        }
-        var href = (window.IfluxAppShell && IfluxAppShell.getBackHref)
-          ? IfluxAppShell.getBackHref()
-          : '/';
-        appNavigate(href);
-      });
-
-      function applyMode() {
-        var shell = window.IfluxAppShell;
-        var isCtx = isMobile() && shell && shell.getNavMode && shell.getNavMode() === 'CONTEXT';
-        var isComments = header.getAttribute('data-ifx-header-mode') === 'comments';
-        var hubOpen = header.classList.contains('is-nav-open');
-        backBtn.style.display = ((isCtx || isComments) && !hubOpen && !isMessagesPage()) ? 'flex' : 'none';
-        syncTopnavActiveHeight(header);
-      }
-
-      header._ifxSyncContextBack = applyMode;
-      window.addEventListener('resize', applyMode);
-      applyMode();
-    });
-  }
-
   /* Mobile — trang Tin nhắn (/tin-nhan): nút Back App Shell đồng bộ stack chat. */
   function initMobileMessagesShell() {
     function isMobile() { return ifxIsMobileShell(); }
@@ -505,7 +449,6 @@
   };
 
   initMobileUserHub();
-  initMobileContextBack();
   initMobileMessagesShell();
   initMobileTabbar();
 

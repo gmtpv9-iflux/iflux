@@ -1,6 +1,6 @@
 {
   "_doc": "Danh mục Template → file DS cần nạp (đường dẫn tính từ /design_system/). Nền tảng nạp qua 00_widget/loader.js; chỉ nạp Template trang dùng.",
-  "version": "20261009e",
+  "version": "20261013b",
   "base": {
     "css": [
       "03_primitives/08_title/title.css",
@@ -166,6 +166,25 @@
         "04_components/04_chart/chart-adapter.js",
         "04_components/24_score-rank/score-rank.js",
         "05_templates/16_flow-rank-signal/flow-rank-signal.js"
+      ]
+    },
+    "TMP-EVENT-TIMELINE": {
+      "css": [
+        "04_components/16_timeline/timeline.css",
+        "05_templates/17_event-timeline/event-timeline.css"
+      ],
+      "js": [
+        "05_templates/17_event-timeline/event-timeline.js"
+      ]
+    },
+    "TMP-STOCK-COMPARISON": {
+      "css": [
+        "04_components/14_table/table.css",
+        "05_templates/03_diverging-bars/diverging-bars.css"
+      ],
+      "js": [
+        "05_templates/03_diverging-bars/diverging-bars.js",
+        "05_templates/18_stock-comparison/stock-comparison.js"
       ]
     }
   }

@@ -3,7 +3,7 @@
  * Mọi trang (runtime chung hoặc module trang) dùng hàm này; trang chỉ cần có khung buildPageFrame.
  */
 import { loadScript } from './legacy-bridge.js?v=dec30759da';
-import { mountPublishedWidgets } from './mount-published-widgets.js?v=39b54f95f8';
+import { mountPublishedWidgets } from './mount-published-widgets.js?v=07b38d99d3';
 
 var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=a6f64093c8';
 

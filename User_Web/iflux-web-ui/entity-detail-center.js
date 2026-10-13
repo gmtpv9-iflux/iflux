@@ -140,7 +140,7 @@
     return (
       '<section class="ifx-stock-panel">' +
         '<div class="ifx-stock-news-head"><h1>Lịch sự kiện · ' + esc(ticker) + '</h1></div>' +
-        '<div class="ifx-stock-empty">Chưa có lịch sự kiện cho <strong>' + esc(ticker) + '</strong>.</div>' +
+        '<div data-ec-events><p>Chọn tab để tải lịch sự kiện.</p></div>' +
       '</section>'
     );
   }
@@ -228,6 +228,28 @@
     });
   }
 
+  function hydrateEvents(col, ticker) {
+    var host = col.querySelector('[data-ec-events]');
+    if (!host || host._eventsLoading || host._eventsLoaded) return;
+    host._eventsLoading = true;
+    host.innerHTML = '<p role="status">Đang tải lịch sự kiện…</p>';
+    global.IfluxNewsApiBridge.loadStockEvents(ticker).then(function (rows) {
+      if (!host.isConnected) return;
+      if (!rows.length) { host.innerHTML = '<p>Chưa có mốc sự kiện đã được duyệt cho ' + esc(ticker) + '.</p>'; return; }
+      return global.IfluxRuntimeSections.mountPublishedWidgets([{
+        widgetId: 'WGT-NEWS-EVENT-TIMELINE', host: host, data: rows,
+        artifact: { content: { title: 'Lịch sử sự kiện · ' + ticker, icon: 'calendar-event' }, display: { renderSpec: { templateId: 'TMP-EVENT-TIMELINE' } } }
+      }]).then(function (results) {
+        if (results[0].error) throw results[0].error;
+        host._eventsLoaded = true;
+      });
+    }).catch(function () {
+      if (!host.isConnected) return;
+      host.innerHTML = '<p>Không tải được lịch sự kiện. <button type="button" class="ix-btn ix-btn-outline ix-btn-sm">Thử lại</button></p>';
+      host.querySelector('button').addEventListener('click', function () { hydrateEvents(col, ticker); });
+    }).finally(function () { host._eventsLoading = false; });
+  }
+
   function mount(root, ctx) {
     ctx = ctx || {};
     var col = root.querySelector('.ifx-stock-col--center');
@@ -244,6 +266,7 @@
       var btn = e.target.closest('[data-ec-tab]');
       if (!btn) return;
       var key = btn.getAttribute('data-ec-tab');
+      if (key === 'events') hydrateEvents(col, ctx.ticker);
       tabsWrap.querySelectorAll('[data-ec-tab]').forEach(function (b) {
         var on = b === btn;
         b.classList.toggle('active', on);

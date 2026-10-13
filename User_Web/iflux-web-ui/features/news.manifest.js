@@ -40,12 +40,12 @@ var manifest = {
     /* Task5: Heart = Foundation (click / widget mount). Không boot watchlist-ui trên feed. */
     m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
     m('community-store', 'store', ASSET + 'news-store.js?v=41bb32b4bc', 'IfluxNewsStore'),
-    m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=70487a5208', 'IfluxNewsApiBridge'),
+    m('community-api-bridge', 'js', ASSET + 'iflux-news-api-bridge.js?v=f47b340d7b', 'IfluxNewsApiBridge'),
     m('market-quotes', 'js', ASSET + 'iflux-market-quotes.js?v=349c1e1a74', 'IfluxMarketQuotes'),
     m('community-ui', 'js', ASSET + 'news-ui.js?v=e79178639a', 'IfluxNewsUI'),
-    m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=407fadedc0', 'IfluxDailyFeed'),
-    m('community-page', 'js', ASSET + 'news-page.js?v=fb329301b1', 'IfluxNewsPage'),
-    m('community-css', 'css', ASSET + 'news.css?v=7eef4bbfdc', null)
+    m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=be2cb197c0', 'IfluxDailyFeed'),
+    m('community-page', 'js', ASSET + 'news-page.js?v=059f131fa8', 'IfluxNewsPage'),
+    m('community-css', 'css', ASSET + 'news.css?v=7c1ba92a76', null)
   ],
   lazyChildren: [
     'WGT-COM-001',

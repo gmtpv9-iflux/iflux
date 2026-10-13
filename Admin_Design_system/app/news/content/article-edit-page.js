@@ -3,6 +3,11 @@
   'use strict';
 
   var editingId = null;
+  var eventCaseIds = [];
+  var eventRequestId = null;
+  var eventListGeneration = 0;
+  var selectedComparison = null;
+  var comparisonGeneration = 0;
   var categories = [];
   var selectedChuDe = null;
   var entityMode = 'tickers'; /* tickers | sectors | ecosystems | exchange */
@@ -20,7 +25,7 @@
     var need = id ? 'news.articles.edit' : 'news.articles.create';
     var loaded = !!(window.IfluxAdminRbac && IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded());
     var ok = loaded && canPerm(need);
-    ['btn-save-draft', 'btn-save-content', 'btn-publish', 'btn-media-import'].forEach(function (bid) {
+    ['btn-save-draft', 'btn-save-content', 'btn-publish', 'btn-media-import', 'btn-event-save'].forEach(function (bid) {
       var el = $(bid);
       if (el) el.style.display = ok ? '' : 'none';
     });
@@ -134,7 +139,7 @@
 
   function syncSlugAndCanonicalFromTitle() {
     var title = ($('fld-title') && $('fld-title').value) || '';
-    var slug = slugify(title);
+    var slug = editingId && $('fld-slug') ? $('fld-slug').value : slugify(title);
     if ($('fld-slug')) $('fld-slug').value = slug;
     if ($('fld-seo-canonical')) {
       $('fld-seo-canonical').value = slug
@@ -161,6 +166,8 @@
      Cộng đồng) — không còn tạo nhanh từ đây (content_chu_de đã dọn, xem migration 075). */
   function setChuDe(item) {
     selectedChuDe = item || null;
+    loadEventCases();
+    if ($('fld-comparison-scope-type') && $('fld-comparison-scope-type').value === 'story') loadComparisonScopes();
     var box = $('art-chude-selected');
     if (!box) return;
     if (!selectedChuDe) {
@@ -176,6 +183,81 @@
         setChuDe(null);
       });
     }
+  }
+
+  function collectComparison() {
+    var metric = $('fld-comparison-metric').value;
+    if (!metric) return null;
+    var tickers = parseCsv($('fld-comparison-tickers').value, 30).map(function (t) { return t.toUpperCase(); });
+    var scopeId = $('fld-comparison-scope').value;
+    var purpose = $('fld-comparison-purpose').value.trim();
+    if (tickers.length < 2 || !scopeId || !purpose) throw new Error('Chọn một nhóm liên quan, ít nhất hai mã và mục đích so sánh.');
+    return { metric: metric, scope: { type: $('fld-comparison-scope-type').value, id: scopeId }, tickers: tickers, purpose: purpose };
+  }
+
+  function loadComparisonScopes() {
+    var select = $('fld-comparison-scope');
+    if (!select) return;
+    var gen = ++comparisonGeneration;
+    var type = $('fld-comparison-scope-type').value;
+    var task = type === 'story' ? Promise.resolve({ items: selectedChuDe ? [{ id: selectedChuDe.id, name: selectedChuDe.name }] : [] }) : request('/market/' + (type === 'sector' ? 'sectors' : 'ecosystems'));
+    task.then(function (data) {
+      if (gen !== comparisonGeneration) return;
+      var list = data.items || data.sectors || data.ecosystems || [];
+      select.innerHTML = '<option value="">Chọn nhóm liên quan</option>' + list.map(function (g) { return '<option value="' + esc(String(g.id)) + '">' + esc(g.name_vi || g.name || g.title) + '</option>'; }).join('');
+      if (selectedComparison && selectedComparison.scope.type === type) select.value = selectedComparison.scope.id;
+    }).catch(function () { if (gen === comparisonGeneration) $('comparison-message').textContent = 'Không tải được danh mục phạm vi so sánh.'; });
+  }
+
+  function loadComparisonMetrics() {
+    request('/news/admin/comparison-metrics').then(function (data) {
+      $('fld-comparison-metric').innerHTML = '<option value="">Không so sánh</option>' + (data.metrics || []).map(function (m) {
+        return '<option value="' + esc(m.key) + '"' + (m.available ? '' : ' disabled') + '>' + esc(m.label + (m.available ? '' : ' · chưa có nguồn dữ liệu')) + '</option>';
+      }).join('');
+      if (selectedComparison) $('fld-comparison-metric').value = selectedComparison.metric;
+    }).catch(function () { $('comparison-message').textContent = 'Không tải được danh mục chỉ tiêu so sánh.'; });
+  }
+
+  function loadEventCases() {
+    var select = $('fld-event-cases'), target = $('event-target');
+    if (!select || !target) return;
+    var gen = ++eventListGeneration;
+    var story = selectedChuDe && selectedChuDe.id;
+    request('/news/admin/event-cases' + (story ? '?story_id=' + encodeURIComponent(story) : '')).then(function (data) {
+      if (gen !== eventListGeneration) return;
+      var cases = data.cases || [];
+      select.innerHTML = cases.map(function (c) { return '<option value="' + esc(c.id) + '"' + (eventCaseIds.indexOf(c.id) >= 0 ? ' selected' : '') + '>' + esc(c.title + ' · ' + c.subject_name) + '</option>'; }).join('');
+      target.innerHTML = '<option value="">Tạo hồ sơ mới</option>' + cases.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.title) + '</option>'; }).join('');
+      $('event-case-message').textContent = cases.length ? '' : 'Chưa có hồ sơ. Có thể thêm mốc đã kiểm tra ở dưới.';
+    }).catch(function (err) { if (gen === eventListGeneration) $('event-case-message').textContent = err.message || 'Không tải được hồ sơ'; });
+  }
+
+  function saveEventMilestone() {
+    var btn = $('btn-event-save');
+    var milestone = {
+      title: $('event-title').value.trim(), summary: $('event-summary').value.trim(), status: $('event-status').value,
+      announced_on: $('event-announced').value || null, effective_on: $('event-effective').value || null,
+      evidence: [{ label: $('event-source-label').value.trim(), url: $('event-source-url').value.trim(), quote: $('event-evidence').value.trim() }], metrics: []
+    };
+    if (!milestone.title || !milestone.summary || !milestone.evidence[0].label || !milestone.evidence[0].quote || !/^https?:\/\//i.test(milestone.evidence[0].url)) {
+      toast('Điền tên mốc, diễn biến, tên nguồn, URL HTTP(S) và trích đoạn bằng chứng.', 'warning'); return;
+    }
+    var target = $('event-target').value;
+    var payload = milestone;
+    if (!target) {
+      if (!$('event-case-title').value.trim() || !$('event-subject').value.trim()) { toast('Điền tên sự việc và pháp nhân chủ thể.', 'warning'); return; }
+      eventRequestId = eventRequestId || crypto.randomUUID();
+      payload = { request_id: eventRequestId, title: $('event-case-title').value.trim(), subject_name: $('event-subject').value.trim(), event_group: Number($('event-group').value),
+        tickers: parseCsv($('fld-tickers').value, 20).map(function (t) { return t.toUpperCase(); }), story_id: selectedChuDe ? selectedChuDe.id : null, milestone: milestone };
+    }
+    btn.disabled = true;
+    request('/news/admin/event-cases' + (target ? '/' + encodeURIComponent(target) + '/milestones' : ''), { method: 'POST', body: payload }).then(function (out) {
+      var id = target || out.case.id;
+      if (eventCaseIds.indexOf(id) < 0) eventCaseIds.push(id);
+      eventRequestId = null;
+      toast('Đã lưu mốc. Lưu bài để gắn hồ sơ; chỉ bài chính thức hiển thị timeline.', 'success');
+      loadEventCases();
+    }).catch(function (err) { toast(err.message || 'Không lưu được mốc', 'danger'); }).finally(function () { btn.disabled = false; });
   }
 
   function renderSuggest(list) {
@@ -256,13 +338,15 @@
 
     return {
       title: title,
-      slug: slugify(title),
       excerpt: excerpt,
       body_html: bodyEditor
         ? bodyEditor.getBodyHtml()
         : (($('fld-body') && $('fld-body').value) || '').trim(),
       category_id: categoryId,
       story_id: selectedChuDe ? selectedChuDe.id : null,
+      event_case_ids: eventCaseIds,
+      comparison: collectComparison(),
+      iflux_insight: $('fld-iflux-insight').value.trim() || null,
       tickers: tickers,
       sectors: sectors,
       ecosystems: ecosystems,
@@ -295,11 +379,21 @@
   function fillForm(item) {
     if (!item) return;
     editingId = item.id;
+    selectedComparison = item.comparison || null;
+    $('fld-comparison-metric').value = selectedComparison ? selectedComparison.metric : '';
+    $('fld-comparison-scope-type').value = selectedComparison ? selectedComparison.scope.type : 'sector';
+    $('fld-comparison-tickers').value = selectedComparison ? selectedComparison.tickers.join(', ') : '';
+    $('fld-comparison-purpose').value = selectedComparison ? selectedComparison.purpose : '';
+    if (item.comparison_reason) $('comparison-message').textContent = item.comparison_reason;
+    loadComparisonScopes();
+    $('fld-iflux-insight').value = item.iflux_insight || '';
+    eventCaseIds = item.event_case_ids || [];
+    loadEventCases();
     $('cnt-bc-title').textContent = 'Sửa bài';
     $('cnt-page-title').textContent = 'Sửa bài viết';
     $('fld-title').value = item.title || '';
     syncSlugAndCanonicalFromTitle();
-    /* Nếu slug hiện tại khác slugify(title) (RSS suffix…), vẫn hiện slug đang live tới khi Admin đổi tiêu đề / lưu */
+    /* URL giữ nguyên sau khi đã cấp, kể cả khi đổi tiêu đề. */
     if (item.slug && $('fld-slug')) {
       $('fld-slug').value = item.slug;
       if ($('fld-seo-canonical')) {
@@ -657,6 +751,12 @@
         setEntityMode(btn.getAttribute('data-entity-mode'));
       });
     });
+    loadComparisonMetrics();
+    loadComparisonScopes();
+    if ($('fld-comparison-scope-type')) $('fld-comparison-scope-type').addEventListener('change', loadComparisonScopes);
+    if ($('fld-event-cases')) $('fld-event-cases').addEventListener('change', function () { eventCaseIds = Array.from(this.selectedOptions).map(function (o) { return o.value; }); });
+    if ($('btn-event-save')) $('btn-event-save').addEventListener('click', saveEventMilestone);
+    loadEventCases();
     var draftBtn = $('btn-save-draft');
     if (draftBtn) draftBtn.addEventListener('click', function () { save('draft'); });
     var saveBtn = $('btn-save-content');

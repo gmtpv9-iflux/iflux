@@ -173,10 +173,47 @@
             <div class="ix-card">
               <div class="ix-card-header"><div class="ix-card-title">Câu chuyện <span class="ix-caption">(tuỳ chọn)</span></div></div>
               <div class="ix-card-body">
-                <p class="ix-caption ix-mb-12">Chỉ gắn Câu chuyện đã hình thành (Admin ánh xạ từ Chủ đề ở Cộng đồng) — không tạo mới ở đây.</p>
+                <p class="ix-caption ix-mb-12">Chỉ gắn Câu chuyện đã hình thành (tự động hoặc Admin ánh xạ từ Chủ đề đã hình thành ở Cộng đồng) — không tạo mới ở đây.</p>
                 <div id="art-chude-selected" class="ix-mb-12"></div>
                 <div class="ix-form-group"><label class="ix-label">Tìm câu chuyện</label><input type="text" class="ix-input" id="art-chude-q" placeholder="Gõ để tìm câu chuyện…" /></div>
                 <div id="art-chude-suggest"></div>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">So sánh và nhận định</div></div>
+              <div class="ix-card-body">
+                <div class="ix-form-group"><label class="ix-label" for="fld-comparison-metric">Chỉ tiêu liên quan đến bài</label><select class="ix-select" id="fld-comparison-metric"><option value="">Không so sánh</option></select></div>
+                <div class="ix-form-group"><label class="ix-label" for="fld-comparison-scope-type">Phạm vi so sánh (chọn một)</label><select class="ix-select" id="fld-comparison-scope-type"><option value="sector">Cùng ngành</option><option value="ecosystem">Cùng hệ sinh thái</option><option value="story">Cùng Câu chuyện đã hình thành</option></select></div>
+                <div class="ix-form-group"><label class="ix-label" for="fld-comparison-scope">Nhóm liên quan</label><select class="ix-select" id="fld-comparison-scope"></select></div>
+                <div class="ix-form-group"><label class="ix-label" for="fld-comparison-tickers">Các mã muốn so sánh (2–30 mã)</label><input class="ix-input" id="fld-comparison-tickers" placeholder="AAA, BBB"></div>
+                <div class="ix-form-group"><label class="ix-label" for="fld-comparison-purpose">So sánh này giúp người đọc hiểu điều gì?</label><textarea class="ix-input" id="fld-comparison-purpose" rows="2" maxlength="600"></textarea></div>
+                <p class="ix-caption" id="comparison-message" role="status">Chỉ lấy thông tin doanh nghiệp trong CSDL. Backend kiểm tra quan hệ của các mã, nguồn, đơn vị và thời điểm trước khi dựng biểu đồ.</p>
+                <div class="ix-form-group"><label class="ix-label" for="fld-iflux-insight">Nhận định của iFlux (tuỳ chọn, 400–600 ký tự)</label><textarea class="ix-input" id="fld-iflux-insight" rows="5" maxlength="600"></textarea></div>
+                <p class="ix-caption">Dữ kiện → điểm đáng chú ý → điều cần theo dõi. Để trống nếu chưa đủ căn cứ.</p>
+              </div>
+            </div>
+            <div class="ix-card">
+              <div class="ix-card-header"><div class="ix-card-title">Timeline sự kiện</div></div>
+              <div class="ix-card-body">
+                <p class="ix-caption">Gắn hồ sơ có bằng chứng. Các mốc chỉ hiển thị trong bài chính thức; Chủ đề thảo luận không phải bằng chứng xác nhận.</p>
+                <div class="ix-form-group"><label class="ix-label" for="fld-event-cases">Hồ sơ gắn với bài (có thể chọn nhiều)</label><select class="ix-select" id="fld-event-cases" multiple size="4"></select></div>
+                <p class="ix-caption" id="event-case-message" role="status"></p>
+                <details>
+                  <summary>Thêm mốc đã kiểm tra</summary>
+                  <div class="ix-form-group"><label class="ix-label" for="event-target">Hồ sơ của mốc</label><select class="ix-select" id="event-target"><option value="">Tạo hồ sơ mới</option></select></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-case-title">Tên sự việc (khi tạo hồ sơ mới)</label><input class="ix-input" id="event-case-title" maxlength="240"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-subject">Tên pháp nhân chủ thể (khi tạo mới)</label><input class="ix-input" id="event-subject" maxlength="240"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-group">Nhóm sự kiện</label><select class="ix-select" id="event-group"><option value="1">Kết quả và kế hoạch kinh doanh</option><option value="2">Cổ tức và quyền cổ đông</option><option value="3">Vốn và huy động vốn</option><option value="4">Sở hữu và giao dịch cổ đông</option><option value="5">Quản trị và nhân sự lãnh đạo</option><option value="6">Dự án, đầu tư và hoạt động kinh doanh</option><option value="7">Pháp lý và rủi ro trọng yếu</option><option value="8">Niêm yết và điều kiện giao dịch</option></select></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-title">Tên mốc</label><input class="ix-input" id="event-title" maxlength="240"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-summary">Diễn biến theo nguồn</label><textarea class="ix-input" id="event-summary" rows="3"></textarea></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-status">Trạng thái theo bằng chứng</label><select class="ix-select" id="event-status"><option value="announced">Đã công bố</option><option value="planned">Dự kiến</option><option value="in_progress">Đang diễn ra</option><option value="reported_result">Đã báo cáo kết quả</option><option value="completed">Đã hoàn tất</option><option value="cancelled">Đã hủy</option><option value="corrected">Đã đính chính</option></select></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-announced">Ngày công bố (để trống nếu thiếu)</label><input type="date" class="ix-input" id="event-announced"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-effective">Ngày diễn ra/hiệu lực (để trống nếu thiếu)</label><input type="date" class="ix-input" id="event-effective"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-source-label">Tên nguồn</label><input class="ix-input" id="event-source-label"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-source-url">URL nguồn</label><input type="url" class="ix-input" id="event-source-url" placeholder="https://"></div>
+                  <div class="ix-form-group"><label class="ix-label" for="event-evidence">Trích đoạn làm căn cứ</label><textarea class="ix-input" id="event-evidence" rows="3"></textarea></div>
+                  <button type="button" class="ix-btn ix-btn-outline" id="btn-event-save">Lưu mốc và gắn hồ sơ</button>
+                </details>
               </div>
             </div>
             <div class="ix-card">

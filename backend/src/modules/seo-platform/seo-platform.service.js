@@ -254,6 +254,18 @@ async function loadEntitySeoContext(path) {
 async function resolveContract(input) {
   input = input || {};
   var path = input.path || '/';
+  var articlePath = indexBoundary.stripPublicIdPath(path).split('?')[0].match(/^\/tin-tuc\/bai-viet\/([^/]+)\/?$/i);
+  if (articlePath && !input.entity && !input.entityType) {
+    var ref = decodeURIComponent(articlePath[1]);
+    var articleRes = await db.query(`SELECT id, status, jsonb_build_object(
+      'slug', payload->>'slug', 'title', payload->>'title', 'excerpt', payload->>'excerpt',
+      'cover', payload->'cover', 'seo', payload->'seo') AS payload FROM news_posts
+      WHERE id=$1 OR payload->>'slug'=$1 OR COALESCE(payload->'former_slugs','[]'::jsonb) ? $1
+      ORDER BY CASE WHEN payload->>'slug'=$1 THEN 0 ELSE 1 END LIMIT 1`, [ref]);
+    var articleRow = articleRes.rows[0];
+    return resolveArticleContract(articleRow ? Object.assign({}, articleRow.payload, { id: articleRow.id, status: articleRow.status }) : { slug: ref },
+      Object.assign({}, input, { httpStatus: articleRow && ['published','published_rss'].includes(articleRow.status) ? (input.httpStatus || 200) : 404 }));
+  }
   var entityCtx = null;
   if (!input.entity && !input.entityType && !input.manualOverride) {
     try {
@@ -387,10 +399,8 @@ async function resolveArticleContract(article, opts) {
     foundationEffective = {};
   }
   var seo = article.seo && typeof article.seo === 'object' ? article.seo : {};
-  /* Owner 2026-10: bài 'published_rss' (tự động RSS) không index — nội dung có thể bị sửa lại sau
-     khi đã index gây lỗi/bị Google phạt. Chỉ 'published' (Admin xuất bản tay) mới index. Admin set
-     tay seo.robots vẫn được tôn trọng (ưu tiên override thủ công hơn rule theo status). */
-  var robots = seo.robots || seo.meta_robots || (article.status === 'published_rss' ? 'noindex,nofollow' : '');
+  var robots = article.status === 'published'
+    ? (seo.robots || seo.meta_robots || '') : 'noindex,nofollow';
   var contract = contractBuilder.buildSeoContract({
     foundationEffective: foundationEffective,
     pageKey: 'news',
@@ -472,7 +482,7 @@ async function listPublishedArticleCandidatesPage(opts) {
             status,
             content_type
      FROM news_posts
-     WHERE status IN ('published', 'published_rss')
+     WHERE status = 'published'
        AND COALESCE(payload->>'slug', '') <> ''
      ORDER BY updated_at DESC NULLS LAST, id ASC
      LIMIT $1 OFFSET $2`,
@@ -500,8 +510,8 @@ function articleOverridesFromCandidate(row) {
   }
   var slug = String((row && row.slug) || '').trim();
   var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
-  /* Owner 2026-10: bài 'published_rss' không index (xem resolveArticleContract) — cùng rule. */
-  var robots = seo.robots || seo.meta_robots || (row && row.status === 'published_rss' ? 'noindex,nofollow' : '');
+  var robots = row && row.status === 'published'
+    ? (seo.robots || seo.meta_robots || '') : 'noindex,nofollow';
   var entity = {
     title: row && row.title,
     excerpt: row && row.excerpt,
@@ -542,7 +552,8 @@ function articleContractInputFromCandidate(row, foundationCommunity) {
   }
   var slug = String((row && row.slug) || '').trim();
   var cleanPath = '/tin-tuc/bai-viet/' + encodeURIComponent(slug);
-  var robots = seo.robots || seo.meta_robots || '';
+  var robots = row && row.status === 'published'
+    ? (seo.robots || seo.meta_robots || '') : 'noindex,nofollow';
   return {
     foundationEffective: foundationCommunity || {},
     pageKey: 'news',

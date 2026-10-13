@@ -23,6 +23,12 @@ async function bootstrap() {
   initQueue(config);
   initScheduler(config);
 
+  const newsAi = require('./modules/news/news-ai-jobs.service');
+  newsAi.configureNewsAi(config);
+  if (config.NEWS_AI_ENABLED) {
+    registerJob('news-ai-editorial', '* * * * *', () => newsAi.runNewsAiWorker(config));
+  }
+
   registerJob('heartbeat', '*/5 * * * *', async () => {
     logger.debug('scheduler heartbeat');
   });

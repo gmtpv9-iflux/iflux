@@ -26,6 +26,8 @@
     if (/^(javascript|data|vbscript|blob):/i.test(v)) return false;
     if (/^https?:\/\//i.test(v)) return true;
     if (/^mailto:/i.test(v)) return true;
+    if (/^\/(?:co-phieu|nganh|he-sinh-thai|cau-chuyen|tin-tuc)(?:\/|[?#]|$)/i.test(v)) return true;
+    if (/^#[\w-]+$/.test(v)) return true;
     return false;
   }
 

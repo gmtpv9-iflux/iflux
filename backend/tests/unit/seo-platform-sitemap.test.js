@@ -86,7 +86,7 @@ describe('P5 sitemap Contract eligibility + scale (>5000)', () => {
     assert.equal(collected.stats.articleExcludedByContract, noindexCount);
     assert.equal(collected.stats.articleIncluded, TOTAL - noindexCount);
     assert.ok(collected.stats.articleIncluded > 5000, 'must exceed old LIMIT 5000');
-    assert.equal(collected.stats.staticIncluded, 9);
+    assert.equal(collected.stats.staticIncluded, 10);
     assert.ok(ARTICLE_CANDIDATE_BATCH < TOTAL);
 
     const articleLocs = collected.urls.filter((u) => u.loc.includes('/tin-tuc/bai-viet/'));
@@ -100,7 +100,7 @@ describe('P5 sitemap Contract eligibility + scale (>5000)', () => {
       skipFoundationFetch: true
     });
     assert.equal(xmlOut.mode, 'urlset');
-    assert.equal(xmlOut.stats.totalUrls, 9 + (TOTAL - noindexCount));
+    assert.equal(xmlOut.stats.totalUrls, 10 + (TOTAL - noindexCount));
     assert.ok(xmlOut.stats.totalUrls > 5000);
   });
 

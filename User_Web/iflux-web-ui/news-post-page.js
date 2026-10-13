@@ -3,6 +3,8 @@
   'use strict';
 
   var currentSlug = '';
+  var relatedObservers = [];
+  function disposeRelated() { relatedObservers.forEach(function (io) { io.disconnect(); }); relatedObservers = []; }
 
   function st() { return global.IfluxNewsStore; }
   function ui() { return global.IfluxNewsUI; }
@@ -95,7 +97,7 @@
     window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
-  function renderArticleMain(post, slug, uid, liked, favorited, bodyHtml) {
+  function renderArticleMain(post, slug, uid, liked, favorited, bodyHtml, headings) {
     var seo = post.seo || {};
     var geo = post.geo || {};
     var published = post.published_at || post.created_at;
@@ -134,9 +136,13 @@
           /* Entity mobile = slot trên bottom IX (Shell); desktop = sidebar. CẤM strip trên thân bài. */
         '</header>' +
 
+        (headings.length ? '<div class="news-mobile-toc">' + renderTocHtml(headings) + '</div>' : '') +
         '<div class="ifx-com-article__body" itemprop="articleBody">' + bodyHtml + '</div>' +
 
+        ((post.event_timeline || []).length ? '<div class="news-event-timeline" data-news-event-timeline></div>' : '') +
+        ((post.comparison_data && post.comparison_data.rows || []).length ? '<div class="news-comparison" data-news-comparison></div>' : '') +
         ui().articleAuthorInfoHtml(post, published) +
+        (post.iflux_insight ? '<section class="ifx-com-side-card" aria-label="Nhận định của iFlux"><h2 class="ifx-com-side-card__title">Nhận định của iFlux</h2><p>' + esc(post.iflux_insight) + '</p></section>' : '') +
         commentsPreviewHtml() +
       '</article>'
     );
@@ -293,45 +299,56 @@
     );
   }
 
-  /* WP-8: Related = related_to only (+ exclude current). */
-  function relatedFilterFor(post) {
-    if (!post) return { relatedTo: post };
-    return {
-      relatedTo: post,
-      excludeId: post.id || post.slug
-    };
-  }
+  var RELATED_GROUPS = [
+    { key: 'entity', title: 'Bài viết liên quan', icon: 'chart-line' },
+    { key: 'topic', title: 'Bài viết cùng chủ đề', icon: 'tags' },
+    { key: 'category', title: 'Bài viết cùng danh mục', icon: 'news' }
+  ];
 
-  /* Khối "Bài viết liên quan" — cấu trúc section giống trang chủ Cộng đồng (DailyFeed). */
   function renderRelatedFeed(post) {
-    var catLabel = (post && (post.category_name
-      || (post.category && (post.category.name || post.category.label))
-      || post.category_slug)) || '';
-    return (
-      '<section class="ifx-com-related-feed" aria-label="Bài viết liên quan">' +
-        '<div class="ifx-com-list-head">' +
-          '<h2 class="ifx-com-list-title"><i class="ti ti-news"></i> Bài viết liên quan</h2>' +
-          '<span class="ifx-com-section-hint">' +
-            (catLabel ? ('Cùng danh mục · ' + esc(catLabel)) : 'Cùng danh mục / thực thể được nhắc trong bài') +
-          '</span>' +
-        '</div>' +
-        '<div data-ifx-com-related-feed></div>' +
-      '</section>'
-    );
+    return RELATED_GROUPS.filter(function (g) {
+      return g.key === 'topic' ? !!post.story_id : g.key === 'entity' ? !!((post.tickers || []).length || (post.sectors || []).length || (post.ecosystems || []).length || post.exchange) : !!post.category_id;
+    }).map(function (g) {
+      var href = '/tin-tuc?view=group&related_to=' + encodeURIComponent(post.id) + '&related_group=' + g.key;
+      return '<section class="ifx-com-related-feed" data-ifx-related-group="' + g.key + '" aria-label="' + g.title + '">' +
+        '<div class="ifx-com-list-head"><h2 class="ifx-com-list-title"><i class="ti ti-' + g.icon + '"></i> ' + g.title + '</h2>' +
+        '<a href="' + esc(href) + '">Xem tất cả <span aria-hidden="true">→</span></a></div>' +
+        '<div data-ifx-related-items aria-live="polite"><p class="ifx-com-empty">Đang tải bài viết…</p></div></section>';
+    }).join('');
   }
 
   function mountRelatedFeed(root, post) {
-    var mount = root.querySelector('[data-ifx-com-related-feed]');
-    if (!mount || !global.IfluxDailyFeed) return;
-    /* Giống trang chủ: Tin tức + Chuyên gia nổi bật + Bài viết chuyên gia.
-     * mergeStore: không replace toàn bộ CommunityStore (tránh xóa bài đang xem + không kích loop). */
-    global.IfluxDailyFeed.mount(mount, {
-      filter: relatedFilterFor(post),
-      mergeStore: true,
-      showNews: true,
-      showExperts: true,
-      showExpertPosts: true,
-      expertTitle: 'Bài viết của chuyên gia'
+    root.querySelectorAll('[data-ifx-related-group]').forEach(function (section) {
+      var mount = section.querySelector('[data-ifx-related-items]');
+      var busy = false, done = false;
+      function load() {
+        if (busy || done || !section.isConnected) return;
+        busy = true;
+        global.IfluxNewsApiBridge.loadFeed({
+          related_to: post.id, related_group: section.getAttribute('data-ifx-related-group'),
+          related_preview: '1', type: 'article', limit: 6, replace: false
+        }).then(function (out) {
+          busy = false;
+          if (!section.isConnected) return;
+          if (!out.ok) throw new Error(out.reason || 'Không tải được bài viết');
+          if (!out.cards.length) { section.remove(); return; }
+          mount.innerHTML = '<div class="ifx-com-feed-grid">' + out.cards.map(function (p) { return ui().postCardHtml(p); }).join('') + '</div>';
+          if (ui().clampTagRows) ui().clampTagRows(mount);
+          if (ui().hydrateTickerQuotes) ui().hydrateTickerQuotes(mount, out.cards);
+          done = true;
+        }).catch(function () {
+          busy = false; done = false;
+          if (!section.isConnected) return;
+          mount.innerHTML = '<p class="ifx-com-empty">Không tải được bài viết. <button type="button" class="ix-btn ix-btn-sm" data-related-retry>Thử lại</button></p>';
+          mount.querySelector('[data-related-retry]').addEventListener('click', load);
+        });
+      }
+      if (typeof IntersectionObserver === 'undefined') { load(); return; }
+      var io = new IntersectionObserver(function (entries) {
+        if (entries.some(function (entry) { return entry.isIntersecting; })) { io.disconnect(); load(); }
+      }, { rootMargin: '200px' });
+      io.observe(section);
+      relatedObservers.push(io);
     });
   }
 
@@ -571,6 +588,7 @@
   }
 
   function paintPost(root, post) {
+    disposeRelated();
     var slug = post.slug;
     currentSlug = slug;
 
@@ -600,7 +618,7 @@
     var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Thông tin liên quan' });
     frame.sidebarContent.innerHTML = renderSidebar(post, bodyPrep.headings, presentation);
     frame.mainContent.innerHTML =
-      '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html) + '</div>' +
+      '<div class="ifx-com-story-main">' + renderArticleMain(post, slug, uid, liked, favorited, bodyPrep.html, bodyPrep.headings) + '</div>' +
       renderRelatedFeed(post);
 
     bindEvents(root, post, slug);
@@ -692,6 +710,6 @@
     });
   }
 
-  global.IfluxCommunityPostPage = { init: init };
+  global.IfluxCommunityPostPage = { init: init, dispose: disposeRelated };
   global.IfluxCommunityStoryPage = global.IfluxCommunityPostPage;
 })(window);

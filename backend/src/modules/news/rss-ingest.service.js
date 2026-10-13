@@ -10,6 +10,7 @@ const { query } = require('../../core/database/connection');
 const categories = require('./news-categories.service');
 const { MAPPINGS, PROVIDER_NAMES } = require('./rss-mappings');
 const entityResolve = require('./news-entity-resolve.service');
+const { sanitizeArticleHtml } = require('./news-articles.service');
 
 function slugify(s) {
   return String(s || '')
@@ -293,6 +294,7 @@ function resolveRssStatus(payload) {
 }
 
 async function upsertRssArticle(payload) {
+  payload.body_html = sanitizeArticleHtml(payload.body_html || payload.body || '');
   const desiredStatus = resolveRssStatus(payload);
   const existing = await findByExternalUrl(payload.external_url);
   const now = new Date().toISOString();
@@ -316,6 +318,7 @@ async function upsertRssArticle(payload) {
       `UPDATE news_posts SET status = $2, payload = $3::jsonb, updated_at = NOW() WHERE id = $1`,
       [row.id, desiredStatus, JSON.stringify(merged)]
     );
+    await enqueueAiSafely(row.id);
     return { id: row.id, action: 'updated', status: desiredStatus };
   }
 
@@ -336,7 +339,16 @@ async function upsertRssArticle(payload) {
      VALUES ($1, NULL, $2, $3, 'PENDING', $4::jsonb, NOW(), NOW())`,
     [id, 'article', desiredStatus, JSON.stringify(record)]
   );
+  await enqueueAiSafely(id);
   return { id, action: 'created', status: desiredStatus };
+}
+
+async function enqueueAiSafely(id) {
+  try { await require('./news-ai-jobs.service').enqueueSource(id); }
+  catch (_) {
+    // Nguồn đã được lưu; recovery worker sẽ quét lại. Không log error body/key/nội dung nguồn.
+    require('../../core/logger/logger').getLogger().warn({ postId:id,code:'AI_ENQUEUE_FAILED' },'news AI enqueue failed');
+  }
 }
 
 async function processFeed(mapping, limit) {

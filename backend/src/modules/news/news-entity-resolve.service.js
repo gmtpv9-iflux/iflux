@@ -302,6 +302,14 @@ async function resolveArticleEntities(article) {
   pending.forEach(function (p) {
     const owner = spanOwner[p.spanKey];
     if (!owner || owner.blocked || owner.ticker !== p.ticker) return;
+    const [start, end] = p.spanKey.split(':').map(Number);
+    const insideOtherName = pending.some(function (other) {
+      const otherOwner = spanOwner[other.spanKey];
+      if (!otherOwner || otherOwner.blocked || otherOwner.ticker === p.ticker || otherOwner.ticker !== other.ticker) return false;
+      const [otherStart, otherEnd] = other.spanKey.split(':').map(Number);
+      return otherStart <= start && otherEnd >= end && otherEnd - otherStart > end - start;
+    });
+    if (insideOtherName) return;
     const code = p.ticker;
     if (!tickerSet[code]) {
       tickerSet[code] = true;
