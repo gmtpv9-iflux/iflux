@@ -2247,3 +2247,8 @@ from: User_Web/iflux-web-ui/block-templates.css (ifx-com-*)
   white-space: nowrap;
 }
 .ifx-tabbar[data-ifx-tabbar-mode="article"] .ifx-tabbar-ix .ifx-com-side-count { font-size: var(--ifx-font-size-12); }
+
+/* Mục lục mobile cùng dữ liệu H2 với sidebar desktop. */
+.news-mobile-toc { margin: var(--ifx-space-20) 0; }
+.news-event-timeline, .news-comparison { margin: var(--ifx-space-24) 0; }
+@media (min-width: 1025px) { .news-mobile-toc { display: none; } }

@@ -12,6 +12,8 @@ const { listPosts, createPost } = require('./news.service');
   const interaction = require('./interaction.service');
   const feed = require('./news-feed.service');
   const rssProviders = require('./rss-providers.service');
+const events = require('./news-events.service');
+const comparisons = require('../market/market-comparisons.service');
 const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
 
 const categoryBodySchema = z.object({
@@ -39,6 +41,50 @@ function createNewsRouter(deps) {
     return requireAdminPermission({ config, auth }, Array.prototype.slice.call(arguments));
   };
 
+  router.get('/events', validate(z.object({ query: z.object({ ticker: z.string().trim().toUpperCase().min(1).max(10) }) })), async (req, res, next) => {
+    try {
+      const ticker = req.validated.query.ticker;
+      return success(res, { milestones: await events.timelineForStock(ticker) });
+    } catch (err) { next(err); }
+  });
+
+  router.get('/admin/comparison-metrics', perm('news.articles.view'), (req, res) => success(res, { metrics: comparisons.metricCatalog() }));
+
+  const aiJobs = require('./news-ai-jobs.service');
+  router.get('/admin/ai/jobs', perm('news.articles.view'), async (req,res,next) => {
+    try { return success(res,{ jobs:await aiJobs.listJobs() }); } catch(err) { next(err); }
+  });
+  router.get('/admin/ai/jobs/:id', perm('news.articles.view'), validate(z.object({ params:z.object({ id:z.string().uuid() }) })), async (req,res,next) => {
+    try { return success(res,{ job:await aiJobs.getJob(req.validated.params.id) }); } catch(err) { next(err); }
+  });
+  router.post('/admin/ai/jobs', perm('news.articles.edit'), validate(z.object({ body:z.object({ source_post_id:z.string().min(1).max(160) }).strict() })), async (req,res,next) => {
+    try {
+      const job = await aiJobs.enqueueSource(req.validated.body.source_post_id,config);
+      if (!job) throw AppError.badRequest('AI_DISABLED_OR_SOURCE_INVALID','AI chưa bật hoặc bài không phải nguồn RSS đang chờ');
+      return success(res,{job},202);
+    } catch(err) { next(err); }
+  });
+  router.post('/admin/ai/jobs/:id/retry', perm('news.articles.edit'), validate(z.object({ params:z.object({ id:z.string().uuid() }) })), async (req,res,next) => {
+    try { return success(res,{job:await aiJobs.retryJob(req.validated.params.id)}); } catch(err) { next(err); }
+  });
+
+  router.get('/admin/event-cases', perm('news.articles.view'), validate(z.object({ query: z.object({ story_id: z.string().uuid().optional() }) })), async (req, res, next) => {
+    try {
+      const storyId = req.validated.query.story_id || null;
+      return success(res, { cases: await events.listCases(storyId) });
+    } catch (err) { next(err); }
+  });
+  router.post('/admin/event-cases', perm('news.articles.edit'), validate(z.object({ body: events.caseSchema })), async (req, res, next) => {
+    try { return success(res, { case: await events.createCase(req.validated.body, req.admin) }, 201); }
+    catch (err) { next(err); }
+  });
+  router.post('/admin/event-cases/:id/milestones', perm('news.articles.edit'), validate(z.object({ body: events.milestoneSchema, params: z.object({ id: z.string().uuid() }) })), async (req, res, next) => {
+    try {
+      const id = req.validated.params.id;
+      return success(res, { milestone: await events.addMilestone(id, req.validated.body, req.admin) }, 201);
+    } catch (err) { next(err); }
+  });
+
   /**
    * SoT FeedCard — semantic list (không đổi GET /posts legacy).
    * GET /news/feed → FeedCard[] (Forbidden: body, body_html, …)
@@ -55,7 +101,12 @@ function createNewsRouter(deps) {
         story_id: req.query.story_id || null,
         sector: req.query.sector || null,
         ecosystem: req.query.ecosystem || null,
-        related_to: req.query.related_to || null
+        related_to: req.query.related_to || null,
+        related_group: req.query.related_group || null,
+        related_preview: req.query.related_preview === '1',
+        group_by: req.query.group_by || null,
+        cursor: req.query.cursor || null,
+        exclude_id: req.query.exclude_id || null
       });
       return success(res, {
         cards: data.cards,
@@ -63,7 +114,9 @@ function createNewsRouter(deps) {
         total: data.total,
         limit: data.limit,
         offset: data.offset,
-        has_more: data.has_more === true
+        has_more: data.has_more === true,
+        next_cursor: data.next_cursor || null,
+        section_date: data.section_date || null
       });
     } catch (err) {
       next(err);
@@ -190,11 +243,11 @@ function createNewsRouter(deps) {
       slug: z.string().optional(),
       display_name: z.string().optional(),
       category_id: z.string().uuid().optional(),
-      story_id: z.string().optional().nullable(),
+      story_id: z.string().uuid().optional().nullable(),
       sectors: z.array(z.string()).optional(),
       ecosystems: z.array(z.string()).optional(),
       exchange: z.string().optional().nullable(),
-      status: z.enum(['draft', 'pending', 'published', 'published_rss', 'scheduled']).optional(),
+      status: z.enum(['draft', 'pending']).optional(),
       seo: z.any().optional(),
       display: z.any().optional(),
       cover: z.any().optional()
@@ -220,6 +273,7 @@ function createNewsRouter(deps) {
         return success(res, { post: item, article: item }, 201);
       }
       const post = await createPost(user.id, {
+        status: b.status || 'pending',
         title: b.title,
         excerpt: b.excerpt || '',
         body_html: b.body_html || '',
@@ -359,7 +413,10 @@ function createNewsRouter(deps) {
     content_type: z.string().optional().nullable(),
     category_id: z.string().uuid(),
     category_name: z.string().optional().nullable(),
-    story_id: z.string().optional().nullable(),
+    story_id: z.string().uuid().optional().nullable(),
+    event_case_ids: z.array(z.string().uuid()).max(20).optional(),
+    comparison: comparisons.comparisonSchema.optional().nullable(),
+    iflux_insight: z.string().trim().min(400).max(600).optional().nullable(),
     tickers: z.array(z.string()).max(5).optional().nullable(),
     sectors: z.array(z.string()).max(3).optional().nullable(),
     ecosystems: z.array(z.string()).max(3).optional().nullable(),
@@ -379,7 +436,8 @@ function createNewsRouter(deps) {
         title: z.string().optional().nullable(),
         description: z.string().optional().nullable(),
         keywords: z.string().optional().nullable(),
-        canonical: z.string().optional().nullable()
+        canonical: z.string().optional().nullable(),
+        robots: z.enum(['index,follow','noindex,follow','noindex,nofollow','noindex']).optional().nullable()
       })
       .optional()
       .nullable(),
@@ -399,10 +457,10 @@ function createNewsRouter(deps) {
     created_by_name: z.string().optional().nullable()
   });
 
-  router.get('/articles', async (req, res, next) => {
+  router.get('/articles', validate(z.object({ query: z.object({ status: z.enum(['published','published_rss']).optional() }) })), async (req, res, next) => {
     try {
       const list = await articles.listArticles({
-        status: req.query.status || 'published',
+        status: req.validated.query.status,
         q: req.query.q,
         category_id: req.query.category_id,
         story_id: req.query.story_id,
@@ -504,7 +562,7 @@ function createNewsRouter(deps) {
     try {
       const idOrSlug = req.params.idOrSlug;
       const item = await articles.getArticle(idOrSlug);
-      if (!item) return res.status(404).json({ error: 'Không tìm thấy bài viết' });
+      if (!item || !articles.isLivePublished(item.status)) return res.status(404).json({ error: 'Không tìm thấy bài viết' });
       if (idOrSlug !== item.id && idOrSlug !== item.slug) {
         res.redirect(301, articles.articlePublicPath(item.slug));
         return;
@@ -513,12 +571,11 @@ function createNewsRouter(deps) {
       await articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn', {
         requestUri: requestUri || undefined
       });
-      /* Nội dung bài viết (tiêu đề/thân/ảnh) gần như tĩnh sau khi đăng — payload đã loại
-         liked_by/favorited_by/comments (ARTICLE_DETAIL_PAYLOAD_SQL), không cá nhân hoá theo
-         người xem → cache công khai an toàn, giống cơ chế HTTP cache đang dùng cho JS/CSS
-         (4 tiếng, owner đã xác nhận). Feed/danh sách và thị giá/lượt tương tác KHÔNG đụng —
-         vẫn luôn tải động ở API riêng. */
-      res.set('Cache-Control', 'public, max-age=14400');
+      res.set('Cache-Control', 'public, max-age=0, must-revalidate');
+      item.event_timeline = await events.timelineForArticle(item);
+      item.comparison_data = item.status === 'published' ? (item.comparison_snapshot || null) : null;
+      delete item.comparison_snapshot;
+      if (item.status !== 'published') res.set('X-Robots-Tag', 'noindex, nofollow');
       return success(res, { article: item });
     } catch (err) {
       next(err);

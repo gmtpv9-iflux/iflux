@@ -5,9 +5,9 @@
  * W1/W2: Shell owns templates + market platform — không trong modules[].
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=f23703a85b';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import featureManifest from '../../features/news.manifest.js?v=8b4b56dbb1';
+import featureManifest from '../../features/news.manifest.js?v=41e54c0a18';
 
 export const meta = { id: 'WGT-NEWS-PAGE', title: 'Tin tức' };
 
@@ -23,6 +23,7 @@ function publishKeyForPath() {
 }
 
 function mountFromHostTree(root) {
+  if (new URLSearchParams(location.search).get('view') === 'group') return Promise.resolve([]);
   return mountPageWidgets(root, publishKeyForPath(), { gateKey: 'news' });
 }
 
@@ -67,6 +68,11 @@ export async function mount(el) {
     unmount: function () {
       document.removeEventListener('iflux-plans-updated', onPlans);
       document.removeEventListener('iflux-news-remount-widgets', onRemount);
+      el.querySelectorAll('[data-ifx-feed-key]').forEach(function (pane) { if (window.IfluxDailyFeed) IfluxDailyFeed.dispose(pane); });
+      document.querySelectorAll('.ifx-app-header[data-ifx-header-mode="news-group"]').forEach(function (header) {
+        header.removeAttribute('data-ifx-header-mode');
+        if (header._ifxSyncContextBack) header._ifxSyncContextBack();
+      });
       if (featureRt) {
         featureRt.dispose();
         featureRt = null;

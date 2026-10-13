@@ -691,12 +691,7 @@
       ? '<img class="ifx-avatar ifx-avatar-xl ifx-avatar-ring" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
       : '<span class="ifx-avatar ifx-avatar-xl ifx-avatar-ring ifx-avatar-accent">' + escHtml(initials) + '</span>';
 
-    /* Credential = badge soft cạnh Tên (nhận diện nhanh, không lẫn vào Meta sự kiện bên dưới —
-       2 nhóm thông tin khác bản chất: "author LÀ ai" vs "bài viết có gì"). */
-    var badges =
-      '<span class="ifx-badge ifx-badge-soft ifx-badge-primary"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</span>' +
-      '<span class="ifx-badge ifx-badge-soft ifx-badge-primary"><i class="ti ti-award"></i> 5+ năm kinh nghiệm</span>';
-    /* Chứng nhận — chưa có field dữ liệu, bỏ qua đến khi có (không hiển thị placeholder). */
+    var badges = '';
 
     var metaRows = [];
     if (publishedIso) {

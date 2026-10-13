@@ -1007,6 +1007,64 @@
 
   window.IfluxWebUI.syncMobileHeaderPanels = syncMobileHeaderPanels;
 
+  /* Header Back dùng chung; nhóm bài viết dùng cả desktop và mobile. */
+  function initContextBack() {
+    function isMobile() { return ifxIsMobileShell(); }
+    function isMessagesPage() {
+      var path = '';
+      try { path = (window.location.pathname || '').toLowerCase(); } catch (e) { path = ''; }
+      return /\/(tin-nhan|messages)(\/|$)/.test(path) || /\/User_Web\/messages\//.test(path);
+    }
+
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
+      if (header.getAttribute('data-ifx-context-back-init') === '1') return;
+      header.setAttribute('data-ifx-context-back-init', '1');
+
+      var backBtn = document.createElement('button');
+      backBtn.type = 'button';
+      backBtn.className = 'ifx-app-header-navbtn';
+      backBtn.setAttribute('aria-label', 'Quay lại');
+      backBtn.setAttribute('data-ifx-context-back', '');
+      backBtn.innerHTML = '<i class="ti ti-arrow-left"></i>';
+      backBtn.style.display = 'none';
+
+      var hubBack = header.querySelector('[data-ifx-userhub-back]');
+      if (hubBack) hubBack.insertAdjacentElement('afterend', backBtn);
+      else header.insertBefore(backBtn, header.firstChild);
+
+      backBtn.addEventListener('click', function () {
+        var forced = header.getAttribute('data-ifx-header-mode') === 'comments' ? backBtn.getAttribute('data-ifx-back-href') : null;
+        if (forced) {
+          appNavigate(forced);
+          return;
+        }
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+        var href = header.getAttribute('data-ifx-header-mode') === 'news-group' ? '/tin-tuc' : (window.IfluxAppShell && IfluxAppShell.getBackHref)
+          ? IfluxAppShell.getBackHref()
+          : '/';
+        appNavigate(href);
+      });
+
+      function applyMode() {
+        var shell = window.IfluxAppShell;
+        var isCtx = isMobile() && shell && shell.getNavMode && shell.getNavMode() === 'CONTEXT';
+        var isGroup = header.getAttribute('data-ifx-header-mode') === 'news-group';
+        var isComments = header.getAttribute('data-ifx-header-mode') === 'comments';
+        var hubOpen = header.classList.contains('is-nav-open');
+        backBtn.style.display = ((isCtx || isComments || isGroup) && !hubOpen && !isMessagesPage()) ? 'flex' : 'none';
+        syncTopnavActiveHeight(header);
+      }
+
+      header._ifxSyncContextBack = applyMode;
+      window.addEventListener('resize', applyMode);
+      applyMode();
+    });
+  }
+
+  initContextBack();
   initMobileTopbar();
 
   /* mobile-nav.js (User Hub panel, bottom tabbar, context/messages back) — chỉ 4 hành vi

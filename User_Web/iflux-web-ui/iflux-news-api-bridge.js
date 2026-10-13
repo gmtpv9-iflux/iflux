@@ -75,7 +75,9 @@
         total: body.total != null ? body.total : cards.length,
         limit: limit,
         offset: body.offset != null ? Number(body.offset) : (params && params.offset) || 0,
-        has_more: hasMore
+        has_more: hasMore,
+        next_cursor: body.next_cursor || null,
+        section_date: body.section_date || null
       };
     });
   }
@@ -109,6 +111,11 @@
          đã dọn, migration 075) — khớp đúng tên tham số GET /news/feed. */
       story_id: opts.story_id || opts.chu_de_id || undefined,
       related_to: opts.related_to || undefined,
+      related_group: opts.related_group || undefined,
+      related_preview: opts.related_preview || undefined,
+      group_by: opts.group_by || undefined,
+      cursor: opts.cursor || undefined,
+      exclude_id: opts.exclude_id || undefined,
       sector: opts.sector || undefined,
       ecosystem: opts.ecosystem || undefined
     })
@@ -126,7 +133,9 @@
           total: out.total,
           limit: out.limit,
           offset: out.offset,
-          has_more: out.has_more === true
+          has_more: out.has_more === true,
+          next_cursor: out.next_cursor || null,
+          section_date: out.section_date || null
         };
       })
       .catch(function (err) {
@@ -162,6 +171,9 @@
   }
 
   global.IfluxNewsApiBridge = {
+    loadStockEvents: function (ticker) {
+      return getJson(apiBase() + '/news/events' + qs({ ticker: ticker })).then(function (out) { return (out.data || out).milestones || []; });
+    },
     loadFeed: loadFeed,
     loadPostPage: loadPostPage,
     hydrate: hydrate,

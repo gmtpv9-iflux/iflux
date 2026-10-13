@@ -4,8 +4,29 @@ const { query } = require('../../core/database/connection');
 const { AppError } = require('../../shared/exceptions/app-error');
 const categories = require('./news-categories.service');
 const entityResolve = require('./news-entity-resolve.service');
+const events = require('./news-events.service');
+const comparisons = require('../market/market-comparisons.service');
+const sanitizeHtml = require('sanitize-html');
 
 const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'scheduled'];
+
+function sanitizeArticleHtml(html) {
+  const internalHref = /^\/(?:co-phieu|nganh|he-sinh-thai|cau-chuyen|tin-tuc)(?:\/|[?#]|$)/i;
+  return sanitizeHtml(String(html || ''), {
+    allowedTags: ['h2','h3','p','strong','em','blockquote','ul','ol','li','a','img','figure','figcaption','table','thead','tbody','tr','th','td','hr','br'],
+    allowedAttributes: { a: ['href','title','target','rel'], img: ['src','alt','data-media-asset-id'], th: ['colspan','rowspan'], td: ['colspan','rowspan'] },
+    allowedSchemes: ['http','https','mailto'], allowedSchemesByTag: { img: ['http','https'] }, allowProtocolRelative: false,
+    transformTags: {
+      a: (tagName, attribs) => {
+        if (attribs.href && !/^https?:\/\//i.test(attribs.href) && !/^mailto:/i.test(attribs.href) && !internalHref.test(attribs.href) && !/^#[\w-]+$/.test(attribs.href)) delete attribs.href;
+        if (attribs.target === '_blank') attribs.rel = 'noopener noreferrer';
+        else delete attribs.target;
+        return { tagName, attribs };
+      }
+    },
+    exclusiveFilter: (frame) => frame.tag === 'img' && !(/^https?:\/\//i.test(frame.attribs.src || '') || /^\/media\//i.test(frame.attribs.src || ''))
+  });
+}
 
 /** Bài đang lên User Web (Xuất bản Admin hoặc Xuất bản RSS) */
 function isLivePublished(status) {
@@ -52,7 +73,8 @@ function rowToArticle(row) {
   const p = row.payload || {};
   return Object.assign({}, p, {
     id: p.id || row.id,
-    status: p.status || row.status,
+    status: row.status,
+    body_html: sanitizeArticleHtml(p.body_html || p.body || ''),
     content_type: p.content_type || row.content_type || 'article',
     user_id: row.user_id || p.user_id || null,
     created_at: p.created_at || row.created_at,
@@ -94,7 +116,9 @@ function normalizeArticleInput(input, actor) {
   /* BR-11 Owner lock: identity slug = slugify(title); không lấy canonical RSS/editor. */
   const slug = slugify(title) || 'bai-viet-' + Date.now();
   const excerpt = String(input.excerpt || '').trim();
-  const bodyHtml = String(input.body_html || input.body || '').trim();
+  const bodyHtml = sanitizeArticleHtml(input.body_html || input.body || '').trim();
+  const insight = String(input.iflux_insight || '').trim();
+  if (insight && (insight.length < 400 || insight.length > 600)) throw AppError.badRequest('ARTICLE_INSIGHT_LENGTH', 'Nhận định cần 400–600 ký tự hoặc để trống');
   const seo = input.seo || {};
   const display = input.display || {};
   const cover = input.cover || {};
@@ -125,6 +149,9 @@ function normalizeArticleInput(input, actor) {
     category_id: categoryId,
     category_name: String(input.category_name || '').trim(),
     story_id: storyId,
+    event_case_ids: [...new Set(input.event_case_ids || [])],
+    comparison: input.comparison ? comparisons.comparisonSchema.parse(input.comparison) : null,
+    iflux_insight: insight || null,
     tickers,
     sectors,
     ecosystems,
@@ -148,6 +175,7 @@ function normalizeArticleInput(input, actor) {
       keywords: String(seo.keywords || seo.seo_keywords || '').trim(),
       /* System-only Clean Public URL — không persist RSS/editor canonical */
       canonical: '',
+      robots: seo.robots || seo.meta_robots || null,
       meta_title: String(seo.meta_title || seo.og_title || seo.title || seo.seo_title || '').trim() || title,
       meta_description: String(seo.meta_description || seo.og_description || seo.description || seo.seo_description || '').trim() || excerpt,
       og_title: String(seo.og_title || seo.meta_title || seo.title || seo.seo_title || '').trim() || title,
@@ -310,6 +338,10 @@ function mergeFormerSlugs(currentFormer, oldSlug, newSlug) {
 
 async function createArticle(input, actor) {
   const normalized = normalizeArticleInput(input, actor);
+  await events.validateArticleLinks(normalized);
+  const comparison = await comparisons.buildComparison(normalized);
+  normalized.comparison_snapshot = normalized.status === 'published' ? comparison.data : null;
+  normalized.comparison_reason = comparison.reason;
   normalized.slug = await ensureUniqueSlug(normalized.slug, null);
   const cat = await categories.getCategory(normalized.category_id);
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
@@ -342,7 +374,7 @@ async function createArticle(input, actor) {
 
   try {
     const bus = require('../../core/events/bus');
-    if (isLivePublished(record.status)) {
+    if (record.status === 'published') {
       const author = record.author || {};
       await bus.publish(bus.EVENTS.NEWS_POST_PUBLISHED, {
         postId: record.id,
@@ -377,13 +409,18 @@ async function updateArticle(id, input, actor) {
   });
 
   const normalized = normalizeArticleInput(merged, actor || current.author);
-  normalized.slug = await ensureUniqueSlug(normalized.slug, current.id);
+  await events.validateArticleLinks(normalized);
+  const comparison = current.status === 'published' && normalized.status === 'published' && JSON.stringify(normalized.comparison) === JSON.stringify(current.comparison ? comparisons.comparisonSchema.parse(current.comparison) : null)
+    ? { data: current.comparison_snapshot || null, reason: current.comparison_reason || null } : await comparisons.buildComparison(normalized);
+  normalized.comparison_snapshot = normalized.status === 'published' ? comparison.data : null;
+  normalized.comparison_reason = comparison.reason;
+  normalized.slug = current.slug || await ensureUniqueSlug(normalized.slug, current.id);
   const cat = await categories.getCategory(normalized.category_id);
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
 
   const now = new Date().toISOString();
-  const wasPublished = isLivePublished(current.status);
+  const wasPublished = current.status === 'published';
   const oldSlug = String(current.slug || '').trim();
   const newSlug = String(normalized.slug || '').trim();
   const former =
@@ -413,7 +450,7 @@ async function updateArticle(id, input, actor) {
 
   try {
     const bus = require('../../core/events/bus');
-    if (!wasPublished && isLivePublished(record.status)) {
+    if (!wasPublished && record.status === 'published') {
       const author = record.author || {};
       await bus.publish(bus.EVENTS.NEWS_POST_PUBLISHED, {
         postId: record.id,
@@ -490,13 +527,13 @@ async function suggestStories(q, limit) {
   const term = String(q || '').trim();
   const lim = Math.min(Math.max(Number(limit) || 8, 1), 20);
   const params = [];
-  let sql = `SELECT id, title, stock_tags FROM stories WHERE status = 'active'`;
+  let sql = `SELECT s.id, s.title, s.stock_tags FROM stories s JOIN topics t ON t.id = s.topic_id WHERE s.status = 'active' AND t.confirmed_at IS NOT NULL`;
   if (term) {
     params.push('%' + term.toLowerCase() + '%');
-    sql += ` AND LOWER(title) LIKE $${params.length}`;
+    sql += ` AND LOWER(s.title) LIKE $${params.length}`;
   }
   params.push(lim);
-  sql += ` ORDER BY created_at DESC LIMIT $${params.length}`;
+  sql += ` ORDER BY s.created_at DESC LIMIT $${params.length}`;
   const res = await query(sql, params);
   return res.rows.map(function (r) {
     return { id: r.id, name: r.title, stock_tags: r.stock_tags || [] };
@@ -659,7 +696,7 @@ function resolveArticleMetadata(article, origin, globalPayload) {
     canonical,
     site_name: siteName,
     favicon: String(pub.favicon_url || '').trim(),
-    robots: 'index,follow',
+    robots: item.status === 'published' ? ((item.seo && (item.seo.robots || item.seo.meta_robots)) || 'index,follow') : 'noindex,nofollow',
     twitter_card: image ? 'summary_large_image' : 'summary',
     documentTitle,
     _fieldStates: resolved.fields,
@@ -754,6 +791,7 @@ function articlePublicPath(slug) {
 }
 
 module.exports = {
+  sanitizeArticleHtml,
   slugify,
   listArticles,
   getArticle,

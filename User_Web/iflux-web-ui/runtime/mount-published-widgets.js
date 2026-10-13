@@ -67,6 +67,7 @@ export async function mountPublishedWidgets(tree, opts) {
         description: content.description || '',
         icon: content.icon || '',
         input: inputOf(content),
+        data: entry.data,
         footerHref: footer.footerHref,
         footerLabel: footer.footerLabel
       });

@@ -6,6 +6,7 @@
  */
 const { query } = require('../../core/database/connection');
 const { ensureSeeded } = require('./news.service');
+const { AppError } = require('../../shared/exceptions/app-error');
 
 const FEED_STRIP_KEYS = [
   'body',
@@ -128,8 +129,10 @@ function toFeedCard(raw) {
     status: p.status || 'published',
     tags: Array.isArray(p.tags) ? p.tags : [],
     story_id: p.story_id || null,
+    exchange: p.exchange || null,
     sectors: Array.isArray(p.sectors) ? p.sectors : [],
     ecosystems: Array.isArray(p.ecosystems) ? p.ecosystems : [],
+    sort_at: p.sort_at || p.published_at || p.created_at || null,
     content_origin: p.content_origin || null,
     external_url: p.external_url || null,
     source_label: p.source_label || null,
@@ -155,12 +158,18 @@ function rowToFeedCard(row) {
 async function fetchCommunityRows(filters) {
   const params = [];
   let sql =
-    `SELECT id, content_type, status, created_at, ${FEED_PAYLOAD_SQL} AS payload` +
+    `SELECT id, content_type, status, created_at,
+       ${FEED_PAYLOAD_SQL} || jsonb_build_object('sort_at', COALESCE((payload->>'published_at')::timestamptz, created_at)) AS payload` +
     ` FROM news_posts WHERE status IN ('published', 'published_rss')`;
 
   if (filters.content_type) {
     params.push(filters.content_type);
     sql += ` AND content_type = $${params.length}`;
+  }
+
+  if (filters.tickers && filters.tickers.length) {
+    params.push(filters.tickers);
+    sql += ` AND COALESCE(payload->'tickers', '[]'::jsonb) ?| $${params.length}::text[]`;
   }
 
   if (filters.ticker) {
@@ -212,7 +221,36 @@ async function fetchCommunityRows(filters) {
     sql += ` AND id <> $${params.length} AND COALESCE(payload->>'slug', '') <> $${params.length}`;
   }
 
-  sql += ` ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC`;
+  if (filters.cursor) {
+    let cursor;
+    try { cursor = JSON.parse(Buffer.from(filters.cursor, 'base64url').toString()); }
+    catch (_) { throw AppError.badRequest('FEED_CURSOR_INVALID', 'Mốc tải bài không hợp lệ'); }
+    if (!Array.isArray(cursor) || cursor.length !== 2 || !Number.isFinite(Date.parse(cursor[0])) || typeof cursor[1] !== 'string') {
+      throw AppError.badRequest('FEED_CURSOR_INVALID', 'Mốc tải bài không hợp lệ');
+    }
+    params.push(cursor[0], cursor[1]);
+    sql += ` AND (COALESCE((payload->>'published_at')::timestamptz, created_at), id) < ($${params.length - 1}::timestamptz, $${params.length})`;
+  }
+  function entityCondition(entity, exclude) {
+    const clauses = [];
+    [['tickers', 'tickers'], ['sectors', 'sectors'], ['ecosystems', 'ecosystems']].forEach(([field, column]) => {
+      const keys = (entity[field] || []).map((v) => typeof v === 'object' ? String(v.slug || v.code || v.id) : String(v));
+      if (keys.length) { params.push(keys); clauses.push(`COALESCE(payload->'${column}', '[]'::jsonb) ?| $${params.length}::text[]`); }
+    });
+    if (entity.exchange) { params.push(entity.exchange); clauses.push(`payload->>'exchange' = $${params.length}`); }
+    if (clauses.length) sql += ` AND ${exclude ? 'NOT ' : ''}(${clauses.join(' OR ')})`;
+  }
+  if (filters.entity_match) entityCondition(filters.entity_match, false);
+  if (filters.exclude_entities) entityCondition(filters.exclude_entities, true);
+  if (filters.exclude_story) {
+    params.push(filters.exclude_story);
+    sql += ` AND COALESCE(payload->>'story_id', '') <> $${params.length}`;
+  }
+  if (filters.exclude_tickers && filters.exclude_tickers.length) {
+    params.push(filters.exclude_tickers);
+    sql += ` AND NOT (COALESCE(payload->'tickers', '[]'::jsonb) ?| $${params.length}::text[])`;
+  }
+  sql += ` ORDER BY COALESCE((payload->>'published_at')::timestamptz, created_at) DESC, id DESC`;
 
   /* Cho phép 51 khi listFeed hỏi L+1 (FEED_PAGE_SIZE max trả client vẫn 50) */
   const limit = Math.min(Math.max(Number(filters.limit) || 30, 1), 51);
@@ -233,14 +271,14 @@ async function resolveRelatedSeed(relatedTo) {
   const key = String(relatedTo);
   const byId = await query(
     `SELECT id, content_type, status, created_at, ${FEED_PAYLOAD_SQL} AS payload
-     FROM news_posts WHERE id = $1 LIMIT 1`,
+     FROM news_posts WHERE id = $1 AND status IN ('published', 'published_rss') LIMIT 1`,
     [key]
   );
   let row = byId.rows[0];
   if (!row) {
     const bySlug = await query(
       `SELECT id, content_type, status, created_at, ${FEED_PAYLOAD_SQL} AS payload
-       FROM news_posts WHERE payload->>'slug' = $1 LIMIT 1`,
+       FROM news_posts WHERE payload->>'slug' = $1 AND status IN ('published', 'published_rss') LIMIT 1`,
       [key]
     );
     row = bySlug.rows[0];
@@ -253,7 +291,8 @@ async function resolveRelatedSeed(relatedTo) {
         slug: card.slug,
         category_id: card.category_id,
         story_id: card.story_id,
-        tickers: card.tickers || []
+        tickers: card.tickers || [],
+        sectors: card.sectors || [], ecosystems: card.ecosystems || [], exchange: card.exchange || null
       }
     : null;
 }
@@ -273,67 +312,23 @@ async function listFeed(filters) {
     const seed = await resolveRelatedSeed(filters.related_to);
     if (!seed) return { cards: [], total: 0, limit, offset, has_more: false };
 
-    /* Hợp nhiều nguồn theo thứ tự ưu tiên rồi cắt theo offset — mỗi nguồn lấy đủ tới trang đang hỏi (tối đa 51). */
-    const want = Math.min(offset + limit + 1, 51);
-    let cards = [];
-    if (seed.category_id) {
-      cards = await fetchCommunityRows({
-        limit: want,
-        offset: 0,
-        category_id: seed.category_id,
-        exclude_id: seed.id
-      });
+    const group = filters.related_group === 'stock' ? 'entity' : (filters.related_group || 'entity');
+    if (!['topic', 'entity', 'category'].includes(group)) {
+      throw AppError.badRequest('RELATED_GROUP_INVALID', 'Nhóm bài liên quan không hợp lệ');
     }
-    if (cards.length < want && seed.story_id) {
-      const more = await fetchCommunityRows({
-        limit: want,
-        offset: 0,
-        story_id: seed.story_id,
-        exclude_id: seed.id
-      });
-      const seen = {};
-      cards.forEach(function (c) { seen[c.id] = true; });
-      more.forEach(function (c) {
-        if (!seen[c.id]) {
-          seen[c.id] = true;
-          cards.push(c);
-        }
-      });
+    if ((group === 'topic' && !seed.story_id) || (group === 'entity' && !seed.tickers.length && !seed.sectors.length && !seed.ecosystems.length && !seed.exchange) || (group === 'category' && !seed.category_id)) {
+      return { cards: [], total: 0, limit, offset, has_more: false, next_cursor: null };
     }
-    if (cards.length < want && seed.tickers && seed.tickers.length) {
-      const more = await fetchCommunityRows({
-        limit: want,
-        offset: 0,
-        ticker: seed.tickers[0],
-        exclude_id: seed.id
-      });
-      const seen = {};
-      cards.forEach(function (c) { seen[c.id] = true; });
-      more.forEach(function (c) {
-        if (!seen[c.id]) {
-          seen[c.id] = true;
-          cards.push(c);
-        }
-      });
-    }
-    if (cards.length < want) {
-      const more = await fetchCommunityRows({
-        limit: want,
-        offset: 0,
-        exclude_id: seed.id
-      });
-      const seen = {};
-      cards.forEach(function (c) { seen[c.id] = true; });
-      more.forEach(function (c) {
-        if (!seen[c.id]) {
-          seen[c.id] = true;
-          cards.push(c);
-        }
-      });
-    }
-    const has_more = cards.length > offset + limit;
-    cards = cards.slice(offset, offset + limit);
-    return { cards: cards, total: cards.length, limit: limit, offset: offset, has_more: has_more };
+    const rows = await fetchCommunityRows({
+      limit: limit + 1, offset, cursor: filters.cursor,
+      story_id: group === 'topic' ? seed.story_id : null,
+      entity_match: group === 'entity' ? seed : null,
+      category_id: group === 'category' ? seed.category_id : null,
+      content_type: 'article', exclude_id: seed.id,
+      exclude_story: filters.related_preview && group === 'category' ? seed.story_id : null,
+      exclude_entities: filters.related_preview && group !== 'entity' ? seed : null
+    });
+    return pageResult(rows, filters, limit, offset);
   }
 
   /* L+1 → has_more; cùng filter + ORDER BY deterministic (fetchCommunityRows) */
@@ -345,13 +340,29 @@ async function listFeed(filters) {
     story_id: filters.story_id,
     sector: filters.sector,
     ecosystem: filters.ecosystem,
+    cursor: filters.cursor,
+    exclude_id: filters.exclude_id,
     content_type: filters.content_type || filters.type || null
   });
 
-  const has_more = communityCards.length > limit;
-  const cards = communityCards.slice(0, limit);
+  return pageResult(communityCards, filters, limit, offset);
+}
 
-  return { cards: cards, total: cards.length, limit: limit, offset: offset, has_more: !!has_more };
+function pageResult(rows, filters, limit, offset) {
+  let cards = rows.slice(0, limit);
+  let sectionDate = null;
+  if (filters.group_by === 'day' && cards.length) {
+    const dayOf = (card) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(card.sort_at));
+    sectionDate = dayOf(cards[0]);
+    cards = cards.filter((card) => dayOf(card) === sectionDate);
+  }
+  const hasMore = rows.length > cards.length;
+  const last = cards[cards.length - 1];
+  return {
+    cards, total: cards.length, limit, offset, has_more: hasMore,
+    section_date: sectionDate,
+    next_cursor: hasMore && last ? Buffer.from(JSON.stringify([last.sort_at, last.id])).toString('base64url') : null
+  };
 }
 
 module.exports = {

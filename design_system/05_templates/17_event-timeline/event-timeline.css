@@ -1,0 +1,8 @@
+.ifx-event-timeline .ifx-timeline-header { align-items: baseline; flex-wrap: wrap; }
+.ifx-event-timeline .ifx-timeline-body p { margin: 0 0 var(--ifx-space-8); }
+.ifx-event-timeline .ifx-timeline-body blockquote { margin: var(--ifx-space-8) 0; overflow-wrap: anywhere; }
+.ifx-event-timeline .ifx-timeline-body details { margin-top: var(--ifx-space-8); }
+.ifx-event-timeline .ifx-timeline-body summary { cursor: pointer; color: var(--ifx-action-primary); }
+
+.ifx-event-summary { color: var(--ifx-text-primary); }
+.ifx-event-subject { color: var(--ifx-text-secondary); }

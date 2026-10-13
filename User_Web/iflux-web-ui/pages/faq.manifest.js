@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/faq-page/index.js?v=87e5910154',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/faq-page/index.js?v=64597986e8',
     css: [
       '/User_Web/iflux-web-ui/pricing.css?v=17d1f2e961',
       '/User_Web/iflux-web-ui/faq.css?v=02c83ec836'

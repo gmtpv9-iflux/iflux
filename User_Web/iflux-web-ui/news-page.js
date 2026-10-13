@@ -255,6 +255,10 @@
   }
 
   function listFilterParams() {
+    var params = new URLSearchParams(location.search);
+    if (params.get('view') === 'group' && params.get('related_to') && ['entity', 'topic', 'stock', 'category'].indexOf(params.get('related_group')) >= 0) {
+      return { relatedTo: { id: params.get('related_to') }, relatedGroup: params.get('related_group') };
+    }
     var f = readListFilters();
     if (f.ticker) return { ticker: f.ticker };
     if (f.story) return { taxSource: 'chu-de', taxGroupId: f.story };
@@ -405,9 +409,11 @@
   function renderShell(root) {
     if (!root) return;
     root.innerHTML = '';
-    var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Tin tức' });
+    var group = listFilterParams().relatedGroup;
+    var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Tin tức', noSidebar: !!group });
+    var groupTitles = { entity: 'Bài viết liên quan', topic: 'Bài viết cùng chủ đề', stock: 'Bài viết liên quan', category: 'Bài viết cùng danh mục' };
     frame.mainContent.innerHTML =
-      filterBannerHtml() +
+      (group ? '<div class="ifx-com-list-head"><h1 class="ifx-com-list-title">' + groupTitles[group] + '</h1></div>' : filterBannerHtml()) +
       /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host). */
       '<div data-ifx-com-featured-cats-slot></div>' +
       /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
@@ -419,6 +425,7 @@
   /** Bơm tab vào slot Main — không đụng feed-layout / sidebar host. */
   function injectFeaturedTabs(root) {
     var slot = root && root.querySelector('[data-ifx-com-featured-cats-slot]');
+    if (listFilterParams().relatedGroup) return;
     if (!slot) return;
     slot.innerHTML = featuredCatsTabsHtml(state.featuredCats, state.featuredCategoryId);
     bindFeaturedTabs(root);
@@ -448,6 +455,8 @@
     pane.setAttribute('data-ifx-feed-at', String(Date.now()));
     IfluxDailyFeed.mount(pane, {
       filter: filter,
+      groupByDay: !!filter.relatedGroup,
+      showExperts: !filter.relatedGroup,
       expertTitle: 'Bài viết của chuyên gia'
     });
   }
@@ -456,6 +465,12 @@
     var root = document.querySelector('[data-ifx-community-feed]');
     if (!root) return;
     scheduleHeartClickLazy();
+    var grouped = !!listFilterParams().relatedGroup;
+    document.querySelectorAll('.ifx-app-header').forEach(function (header) {
+      if (grouped) header.setAttribute('data-ifx-header-mode', 'news-group');
+      else if (header.getAttribute('data-ifx-header-mode') === 'news-group') header.removeAttribute('data-ifx-header-mode');
+      if (header._ifxSyncContextBack) header._ifxSyncContextBack();
+    });
 
     var indexKind = readCollectionIndex();
     if (indexKind) {
@@ -465,6 +480,7 @@
 
     /* Shell đồng bộ trước — Layout Engine mount sidebar vào aside trong grid. */
     renderShell(root);
+    if (grouped) { mountDailyFeed(root); return; }
 
     /* Default Filter State = ALL (SOL-CAL-05). URL/path filter → listFilterParams, không ép featured. */
     var urlFilters = readListFilters();

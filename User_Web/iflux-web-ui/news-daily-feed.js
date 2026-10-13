@@ -493,10 +493,63 @@
     });
   }
 
+  function mountDateFeed(container, opts) {
+    var cursor = null, busy = false, ended = false, disposed = false;
+    container.innerHTML = '<div data-ifx-date-sections></div><button type="button" class="ifx-com-load-more ix-btn ix-btn-outline" data-ifx-date-more>Xem thêm</button><p role="status" data-ifx-date-status></p>';
+    var mount = container.querySelector('[data-ifx-date-sections]');
+    var more = container.querySelector('[data-ifx-date-more]');
+    var status = container.querySelector('[data-ifx-date-status]');
+    function load() {
+      if (busy || ended || disposed) return;
+      busy = true; more.disabled = true; status.textContent = 'Đang tải bài viết…';
+      var q = feedQueryFromFilter(opts.filter);
+      q.related_group = opts.filter.relatedGroup;
+      q.group_by = 'day'; q.cursor = cursor; q.limit = 12; q.type = 'article'; q.replace = false;
+      bridge().loadFeed(q).then(function (out) {
+        if (disposed || !container.isConnected) return;
+        busy = false; more.disabled = false;
+        if (!out.ok) { status.textContent = 'Không tải được bài viết. Bấm Xem thêm để thử lại.'; return; }
+        var day = out.section_date;
+        if (out.cards.length && day) {
+          var section = mount.querySelector('[data-ifx-date-section="' + day + '"]');
+          if (!section) {
+            mount.insertAdjacentHTML('beforeend', '<section class="ifx-com-list-section" data-ifx-date-section="' + esc(day) + '"><div class="ifx-com-list-head"><h2 class="ifx-com-list-title">' + esc(new Date(day + 'T00:00:00+07:00').toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })) + '</h2></div><div class="ifx-com-feed-grid"></div></section>');
+            section = mount.lastElementChild;
+          }
+          section.querySelector('.ifx-com-feed-grid').insertAdjacentHTML('beforeend', out.cards.map(function (card) { return ui().postCardHtml(card); }).join(''));
+          if (ui().clampTagRows) ui().clampTagRows(section);
+          if (ui().hydrateTickerQuotes) ui().hydrateTickerQuotes(section, out.cards);
+        }
+        cursor = out.next_cursor;
+        ended = !out.has_more || !cursor;
+        more.hidden = ended;
+        status.textContent = ended ? (mount.children.length ? 'Đã xem hết bài viết' : 'Chưa có bài viết trong nhóm này.') : '';
+      });
+    }
+    more.addEventListener('click', load);
+    var io = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) load();
+    }, { rootMargin: '160px' });
+    if (io) io.observe(more);
+    container._ifxDateDispose = function () { disposed = true; if (io) io.disconnect(); more.removeEventListener('click', load); };
+    load();
+  }
+
+  function dispose(container) {
+    if (!container) return;
+    if (container._ifxFeedIo && container._ifxFeedIo.disconnect) container._ifxFeedIo.disconnect();
+    container._ifxFeedIo = null;
+    if (container._ifxFeed) container._ifxFeed.generation++;
+    if (container._ifxDateDispose) container._ifxDateDispose();
+    container._ifxDateDispose = null;
+  }
+
   function mount(container, opts) {
     if (!container || !ui()) return;
     opts = opts || {};
     opts.filter = opts.filter || {};
+    dispose(container);
+    if (opts.groupByDay) { mountDateFeed(container, opts); return; }
     container._ifxFeed = newSession(opts);
     container.innerHTML =
       '<div class="ifx-com-daily" data-ifx-daily></div>' +
@@ -515,6 +568,7 @@
 
   global.IfluxDailyFeed = {
     mount: mount,
+    dispose: dispose,
     expertsSectionHtml: expertsSection,
     FEED_PAGE_SIZE: FEED_PAGE_SIZE
   };
