@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 22:01:00 +07:00 — Codex — release Staging thành công, chuẩn bị Production
+
+- **Nhiệm vụ/trạng thái:** CI Staging đã deploy thành công; commit Production đã tạo, đang ghi nhật ký và chuẩn bị push `production`.
+- **Phạm vi:** Prompt v2, schema/validation/backend timeline, migration `084_news_editorial_v2.sql`, timeline template và tests. Release Production dựa trên commit `69edd93`; không đưa thay đổi ngoài scope vào.
+- **Trước → sau:** Staging chưa có cập nhật Prompt v2/section-event relationship → Staging deploy thành công; Production release đã có cùng logic tương thích, migration và test.
+- **Kiểm tra:** CI Staging run `38418211513` thành công tại SHA `cc589288`; Production release unit 13/13, PostgreSQL integration 11/11, browser desktop/mobile, JS version/bundle và diff checks đều PASS.
+- **Commit:** Staging code `8a04aa6`, handoff `cc58928`; Production code `430525f`.
+- **Còn lại/lưu ý:** commit mục handoff này, push nhánh `production`, chờ CI thành công; sau đó purge Cloudflare và kiểm tra Staging/Production. Không ghi secret vào log.
+
 ## 2026-10-13 21:59:00 +07:00 — Codex — kiểm thử release Staging/Production trước phát hành
 
 - **Nhiệm vụ/trạng thái:** hoàn tất kiểm tra; chuẩn bị commit và đẩy lần lượt Staging rồi Production theo yêu cầu Owner, sau CI sẽ purge cache và smoke-test.
