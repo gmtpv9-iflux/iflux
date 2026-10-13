@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-13 22:00:00 +07:00 — Codex — commit Staging Prompt v2/timeline
+
+- **Nhiệm vụ/trạng thái:** commit Staging đã tạo; chuẩn bị ghi nhận hash rồi push Staging.
+- **Phạm vi:** release worktree Staging; chỉ các thay đổi Prompt v2, schema/validation, migration 084, timeline, author/mobile fixes liên quan và generated cache-busting asset refs.
+- **Trước → sau:** mã nguồn đã qua unit, PostgreSQL integration, browser desktop/mobile và asset checks → commit `8a04aa6` chứa trọn phần thay đổi được kiểm tra.
+- **Kiểm tra:** unit 13/13, integration 11/11, browser PASS, JS version/bundle PASS, diff check PASS.
+- **Commit:** `8a04aa6` (`feat(news): link editorial sections to event timeline`).
+- **Còn lại/lưu ý:** cập nhật mục này trước commit Handoff, push nhánh `staging`, chờ CI deploy hoàn tất trước khi đẩy Production.
+
 ## 2026-10-13 21:59:00 +07:00 — Codex — kiểm thử release Staging/Production trước phát hành
 
 - **Nhiệm vụ/trạng thái:** hoàn tất kiểm tra; chuẩn bị commit và đẩy lần lượt Staging rồi Production theo yêu cầu Owner, sau CI sẽ purge cache và smoke-test.
