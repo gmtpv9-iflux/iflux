@@ -2,14 +2,14 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
-## 2026-10-13 18:15:00 +07:00 — Codex — fallback gắn mã và giữ chip mã bài viết trên mobile
+## 2026-10-13 18:15:00 +07:00 — Codex — fix fallback gắn mã/mobile đã deploy Production
 
-- **Nhiệm vụ/trạng thái:** hoàn thành trong source/test; chưa commit hoặc deploy.
+- **Nhiệm vụ/trạng thái:** hoàn thành; CI Production thành công.
 - **Phạm vi:** `backend/src/modules/news/news-entity-resolve.service.js`, `backend/tests/unit/news-editorial.test.js`, `User_Web/iflux-web-ui/mobile-nav.js`, `User_Web/tests/news-editorial.spec.cjs`.
-- **Trước → sau:** resolver RSS cũ chỉ nhận tên/alias từ Market Master, nên mã đứng riêng trong tiêu đề như “Cổ phiếu PNJ…” bị bỏ qua nếu PNJ không nằm trong tên pháp lý/short name. Giờ có fallback cho mã hợp lệ của Market Master khi tiêu đề/mô tả ghi rõ “mã/cổ phiếu CODE”, `$CODE` hoặc `(CODE)`; không quét mã trần trong thân bài. Trên mobile, nếu article vẫn mounted mà AppShell tạm mất context khi phát resize, giữ nguyên interaction bar/chip thay vì render nav tổng quát xóa DOM.
-- **Kiểm tra:** backend unit 43/43 PASS; browser editorial desktop/mobile PASS, bao gồm mô phỏng context rỗng khi resize; `git diff --check` PASS. Test xác nhận “Cổ phiếu PNJ” được gắn, từ thường “Tin” không gắn TIN, và PNJ đứng trần không bị đoán.
-- **Commit:** chưa có.
-- **Còn lại/lưu ý:** fallback chỉ tin mã được định danh rõ trong title/lead hoặc dạng `$CODE`/`(CODE)`; các bài cũ đã lưu không tự đổi membership. Có thể gọi backfill `backfillArticleEntities` sau khi review theo lô nếu cần sửa dữ liệu cũ. Worktree có nhiều file xóa/thay đổi ngoài phạm vi; chỉ sửa/commit các file nêu trên nếu tiếp tục.
+- **Trước → sau:** resolver cũ chỉ lấy tên/alias từ Market Master nên tiêu đề “Cổ phiếu PNJ…” bị bỏ mã PNJ. Fallback nay chỉ nhận mã có trong Master khi title/lead định danh rõ (“mã/cổ phiếu CODE”, `$CODE`, `(CODE)`), không quét mã trần toàn thân bài. Nguyên nhân chip mobile mất: bản Production cũ xóa `entities.innerHTML` và đặt `hidden` mỗi lần `ensureArticleIxBottomSlot()` được gọi; resize do URL bar lúc cuộn gọi lại hàm này. Hàm hiện chỉ tạo slot lần đầu, giữ chip ở các lần gọi sau và giữ article bar khi bài còn mounted dù AppShell tạm mất context.
+- **Kiểm tra:** unit release 43/43; browser editorial desktop/mobile PASS, gồm regression resize; `sync-js-versions --check`, `build-web-bundle --check`, `diff --check` PASS. CI workflow [38388413812](https://github.com/gmtpv9-iflux/iflux/actions/runs/38388413812) kết luận success; `/tin-tuc`, `/admin/login`, template registry và JS trả HTTP 200; hash JS Production khớp release.
+- **Commit:** staging `5a999f4`; Production code `639ddd9`; Handoff `3b9f005`. Push `production` đã kích hoạt CI.
+- **Còn lại/lưu ý:** bài RSS cũ không tự re-resolve; backfill `backfillArticleEntities` cần review riêng trước khi chạy. A/B AI vẫn chờ khắc phục HTTP 429 của OpenAI và dùng xác thực Admin hợp lệ; không có bài nào được publish/index bởi lần deploy này. Worktree staging còn thay đổi/xóa ngoài phạm vi và được giữ nguyên.
 
 ## 2026-10-13 17:58:00 +07:00 — Codex — Production đã nhận release; A/B bị chặn bởi API/quyền Admin
 
