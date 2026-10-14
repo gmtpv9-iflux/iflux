@@ -330,11 +330,15 @@
       var model = shell.currentNavigationModel ? shell.currentNavigationModel() : null;
       if (ctx && ctx.entityType === 'article') {
         renderArticleActions();
-      } else if (document.querySelector('[data-ifx-community-story]')) {
+      } else if (
+        bar.getAttribute('data-ifx-tabbar-mode') === 'article' &&
+        document.querySelector('[data-ifx-community-story]') &&
+        bar.querySelector('[data-ifx-ix-article-entities]')
+      ) {
         /* URL-bar scroll can emit resize while AppShell briefly has no context.
-         * The mounted article root is the stable signal; generic renderPrimary/
-         * renderContext clear bar.innerHTML and lose chips. */
-        renderArticleActions();
+         * Keep the article interaction bar mounted until the article root changes;
+         * generic renderPrimary/renderContext clear bar.innerHTML and lose chips. */
+        ensureArticleIxBottomSlot();
       } else if (model && model.modelId === 'accountProfile') {
         renderAccount();
       } else if (shell.getNavMode && shell.getNavMode() === 'CONTEXT' && document.querySelector('[data-ec-tabs]')) {

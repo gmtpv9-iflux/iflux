@@ -342,74 +342,23 @@
 /* "Thông tin người viết" — khung riêng (.ifx-card đã có border/radius/shadow), tự thêm padding
    vì không dùng cấu trúc Header/Body/Footer của Template (card đứng 1 mình giữa luồng bài). */
 .ifx-com-article__author {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  align-items: center;
-  column-gap: var(--ifx-space-24);
-  row-gap: var(--ifx-space-12);
   margin: var(--ifx-space-24) 0;
-  padding: var(--ifx-space-20);
-  overflow: hidden;
+  padding: var(--ifx-space-16) var(--ifx-space-20);
 }
-.ifx-com-article__author-kicker { grid-column: 1 / -1; }
 .ifx-com-article__author-head {
   display: flex;
-  align-items: center;
-  gap: var(--ifx-space-16);
-  padding: 0;
-  margin: 0;
-  border: 0;
+  align-items: flex-start;
+  gap: var(--ifx-space-12);
+  padding-bottom: var(--ifx-space-16);
+  margin-bottom: var(--ifx-space-16);
+  border-bottom: 1px solid var(--ifx-border-subtle);
 }
 .ifx-com-article__author-who { flex: 1 1 auto; min-width: 0; }
 .ifx-com-article__author-name {
   font-size: var(--ifx-font-size-16);
   font-weight: var(--ifx-font-weight-bold);
   color: var(--ifx-text-primary);
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-.ifx-com-article__author-kicker {
-  display: flex;
-  align-items: center;
-  gap: var(--ifx-space-8);
-  margin: 0 0 var(--ifx-space-16);
-  color: var(--ifx-text-secondary);
-  font-size: var(--ifx-font-size-14);
-  font-weight: var(--ifx-font-weight-semibold);
-}
-.ifx-com-article__author-kicker .ti { color: var(--ifx-action-primary); }
-.ifx-com-article__author-meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ifx-space-12);
-  min-width: 0;
-  padding: 0 0 0 var(--ifx-space-20);
-  border-top: 0;
-  border-left: 1px solid var(--ifx-border-subtle);
-}
-.ifx-com-article__author-meta .ifx-icon-list-item {
-  min-width: 0;
-  gap: var(--ifx-space-8);
-  color: var(--ifx-text-secondary);
-  overflow-wrap: anywhere;
-}
-.ifx-com-article__author-meta .ti {
-  flex: 0 0 auto;
-  color: var(--ifx-action-primary);
-}
-.ifx-com-article__author-source a {
-  min-width: 0;
-  color: var(--ifx-action-primary);
-  font-weight: var(--ifx-font-weight-semibold);
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-.ifx-com-article__author-source a:hover { text-decoration: underline; }
-@media (max-width: 768px) {
-  .ifx-com-article__author { display: block; margin: var(--ifx-space-16) 0; padding: var(--ifx-space-16); }
-  .ifx-com-article__author-kicker { margin-bottom: var(--ifx-space-16); }
-  .ifx-com-article__author-head { margin-bottom: var(--ifx-space-16); }
-  .ifx-com-article__author-meta { padding: var(--ifx-space-12) 0 0; border-left: 0; border-top: 1px solid var(--ifx-border-subtle); }
+  margin-bottom: var(--ifx-gap-xs);
 }
 /* "Bình luận gần nhất" — CHỈ mobile (xem mountCommentsPreview ở news-post-page.js): sidebar
  * đầy đủ đã ẩn ở viewport này nên cần preview ngay trong luồng đọc; desktop ẩn hẳn (sidebar

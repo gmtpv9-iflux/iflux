@@ -54,10 +54,6 @@
   function prepareArticleBody(html) {
     var div = document.createElement('div');
     div.innerHTML = html || '';
-    /* H2 là nhãn độc lập cho mục lục/chủ đề; không đặt liên kết thực thể trong heading. */
-    div.querySelectorAll('h2 a').forEach(function (link) {
-      link.replaceWith(document.createTextNode(link.textContent || ''));
-    });
     /* Ảnh RSS/editor thường có width/height cố định → tràn khung; bỏ attr + inline để CSS fit full width */
     div.querySelectorAll('img').forEach(function (img) {
       img.removeAttribute('width');
