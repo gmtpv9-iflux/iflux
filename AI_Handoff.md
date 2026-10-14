@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-14 16:30:00 +07:00 — Codex — phát hành cover_detail và sửa bản đồ môi trường
+
+- **Nhiệm vụ/trạng thái:** Staging đã deploy thành công; đang chuẩn bị release commit riêng dựa trên nhánh `production`. Push Production chưa thực hiện.
+- **Phạm vi:** media profile/process/service/import/routes, public news API mapping, unit test; Deployment SoT, Environment Map và Cursor deployment rule.
+- **Trước → sau:** ảnh bài chi tiết dùng delivery hoặc variant cũ → giới hạn `cover_detail` 1280px theo tỷ lệ và bài mới/cũ dùng variant này. Tài liệu từng nói chỉ Staging được deploy/Production Gate đóng → xác nhận hai môi trường đang dùng là Staging `staging.iflux.vn` (`staging` branch) và Production `iflux.vn` (`production` branch), workflow tương ứng `deploy-staging.yml` và `deploy-production.yml`; đánh dấu các chỉ dẫn ngược lại là lịch sử/lỗi thời.
+- **Kiểm tra:** Staging commit `de82470` / CI run `38543135906` success; `https://staging.iflux.vn/tin-tuc` HTTP 200; bài mẫu `fpt-ai-viet-nam-tang-truong-2026` API HTTP 200. Unit media 3/3, cú pháp backend, JS version, web bundle và diff checks PASS. Production chưa push nên chưa có CI Production; backfill ảnh chưa chạy.
+- **Commit:** Staging `de82470`; Production commit đang chuẩn bị.
+- **Còn lại/lưu ý cho AI tiếp theo:** chỉ sau Staging đạt mới push Production; chờ CI Production và smoke. Tiếp đó chạy backfill ảnh thân bài theo lô nếu được cấp auth admin. Hai workflow CI độc lập, không tự promote. Không deploy code qua SSH trực tiếp.
+
 ## 2026-10-13 22:03:00 +07:00 — Codex — Staging/Production deploy và purge hoàn tất
 
 - **Nhiệm vụ/trạng thái:** hoàn thành; Staging và Production đã deploy, cache Cloudflare đã purge.

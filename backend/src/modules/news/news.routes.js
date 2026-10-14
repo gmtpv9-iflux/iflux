@@ -581,6 +581,7 @@ function createNewsRouter(deps) {
       await articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn', {
         requestUri: requestUri || undefined
       });
+      item.body_html = await require('../media/media.service').useArticleDetailImageVariants(item.body_html || item.body || '');
       res.set('Cache-Control', 'public, max-age=0, must-revalidate');
       item.event_timeline = await events.timelineForArticle(item);
       item.comparison_data = item.status === 'published' ? (item.comparison_snapshot || null) : null;
