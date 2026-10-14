@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-14 16:30:00 +07:00 — Codex — phát hành cover_detail và sửa bản đồ môi trường
+
+- **Nhiệm vụ/trạng thái:** đang chuẩn bị scoped release; commit cục bộ chưa kích hoạt CI. Trình tự dự kiến: push nhánh `staging` → đợi CI/smoke Staging đạt → tạo release commit riêng trên nhánh `production` → push để CI deploy Production.
+- **Phạm vi:** media profile/process/service/import/routes, public news API mapping, unit test; Deployment SoT, Environment Map và Cursor deployment rule.
+- **Trước → sau:** ảnh bài chi tiết dùng delivery hoặc variant cũ → giới hạn `cover_detail` 1280px theo tỷ lệ và bài mới/cũ dùng variant này. Tài liệu từng nói chỉ Staging được deploy/Production Gate đóng → xác nhận hai môi trường đang dùng là Staging `staging.iflux.vn` (`staging` branch) và Production `iflux.vn` (`production` branch), workflow tương ứng `deploy-staging.yml` và `deploy-production.yml`; đánh dấu các chỉ dẫn ngược lại là lịch sử/lỗi thời.
+- **Kiểm tra:** unit media 3/3 PASS; `node --check`, `sync-js-versions --check`, `build-web-bundle --check` và `git diff --check` PASS. Chưa có commit/push nên chưa kích hoạt CI; smoke, purge cache và backfill chưa chạy.
+- **Commit:** chưa có.
+- **Còn lại/lưu ý cho AI tiếp theo:** stage đúng file nêu trên, không lấy thay đổi ngoài phạm vi; sau Staging thành công mới phát hành Production. Cập nhật SHA/CI/smoke trước từng commit. Không deploy code qua SSH trực tiếp.
+
 ## 2026-10-13 22:03:00 +07:00 — Codex — Staging/Production deploy và purge hoàn tất
 
 - **Nhiệm vụ/trạng thái:** hoàn thành; Staging và Production đã deploy, cache Cloudflare đã purge.

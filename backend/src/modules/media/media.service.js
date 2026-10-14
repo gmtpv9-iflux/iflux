@@ -6,6 +6,9 @@ const { AppError } = require('../../shared/exceptions/app-error');
 const { newId, slugify } = require('./media-util');
 const storage = require('./media-storage');
 const processImg = require('./media-process');
+const { COVER_IMAGE_PROFILES } = require('./cover-image-profiles');
+
+const DETAIL_IMAGE_PROFILE = COVER_IMAGE_PROFILES.find(function (profile) { return profile.key === 'cover_detail'; });
 
 function mapAsset(row, variants, source, usageCount) {
   if (!row) return null;
@@ -192,6 +195,27 @@ async function createAssetFromBuffer(config, buf, opts) {
 
   const existing = await findByFingerprint(fingerprint);
   if (existing) {
+    const requestedRoles = opts.isCover
+      ? COVER_VARIANT_ROLES
+      : (Array.isArray(opts.variantRoles) ? opts.variantRoles : []);
+    if (!isShare && rotatedBuffer && requestedRoles.length) {
+      const byRole = new Map((existing.variants || []).map(function (v) { return [v.role, v]; }));
+      const stale = requestedRoles.filter(function (role) {
+        const variant = byRole.get(role);
+        const profile = processImgProfile(role);
+        if (!variant) return true;
+        if (!profile || !existing.width || !existing.height) return false;
+        const expectedWidth = profile.withoutEnlargement
+          ? Math.min(Number(existing.width), profile.width)
+          : profile.width;
+        const expectedHeight = profile.height
+          ? profile.height
+          : Math.round(Number(existing.height) * expectedWidth / Number(existing.width));
+        return Number(variant.width) !== expectedWidth || Number(variant.height) !== expectedHeight;
+      });
+      if (stale.length) await regenerateCoverVariants(config, existing.id, stale);
+      return { asset: await getAsset(existing.id), reused: true };
+    }
     return { asset: existing, reused: true };
   }
 
@@ -259,8 +283,11 @@ async function createAssetFromBuffer(config, buf, opts) {
     ]
   );
 
-  if (opts.isCover && !isShare && rotatedBuffer) {
-    const coverVariants = await processImg.generateCoverVariants(rotatedBuffer);
+  const variantRoles = opts.isCover
+    ? null
+    : (Array.isArray(opts.variantRoles) ? opts.variantRoles : null);
+  if ((opts.isCover || variantRoles) && !isShare && rotatedBuffer) {
+    const coverVariants = await processImg.generateCoverVariants(rotatedBuffer, variantRoles);
     for (let i = 0; i < coverVariants.length; i++) {
       const cv = coverVariants[i];
       const cvKey = pathJoin(dir, baseName + '-' + cv.role + '.' + cv.ext);
@@ -302,6 +329,10 @@ async function createAssetFromBuffer(config, buf, opts) {
   return { asset: asset, reused: false };
 }
 
+function processImgProfile(role) {
+  return COVER_IMAGE_PROFILES.find(function (profile) { return profile.key === role; }) || null;
+}
+
 function pathJoin() {
   return Array.prototype.slice.call(arguments).join('/').replace(/\/+/g, '/');
 }
@@ -312,14 +343,14 @@ function pathJoin() {
  * (cùng đường dẫn file, UPDATE row); role chưa có thì tạo mới (INSERT row).
  * Dùng cho backfill (ảnh cover cũ, nhập trước khi có tính năng 5 bản) và cho phép chạy lại an toàn.
  */
-async function regenerateCoverVariants(config, assetId) {
+async function regenerateCoverVariants(config, assetId, roles) {
   const asset = await getAsset(assetId);
   if (!asset) throw AppError.notFound('Không tìm thấy ảnh');
   const delivery = (asset.variants || []).find(function (v) { return v.role === 'delivery'; });
   if (!delivery) throw AppError.badRequest('MEDIA_VERIFY', 'Ảnh không có bản delivery để tạo bản cover');
 
   const buf = await fs.promises.readFile(storage.absolutePath(config, delivery.storage_key));
-  const coverVariants = await processImg.generateCoverVariants(buf);
+  const coverVariants = await processImg.generateCoverVariants(buf, roles);
   const dir = storage.assetDir(config, assetId, asset.created_at);
   const byRole = {};
   (asset.variants || []).forEach(function (v) { if (v.role !== 'delivery') byRole[v.role] = v; });
@@ -345,6 +376,65 @@ async function regenerateCoverVariants(config, assetId) {
     out[cv.role] = w.publicUrl;
   }
   return out;
+}
+
+/** Tạo/cập nhật cover_detail cho ảnh đã dùng trong thân bài. Idempotent, xử lý theo lô. */
+async function backfillArticleDetailVariants(config, limit) {
+  const n = Math.max(1, Math.min(Number(limit) || 20, 100));
+  const res = await query(
+    `SELECT DISTINCT a.id, a.created_at, a.filename
+     FROM media_assets a
+     JOIN media_usages u ON u.asset_id = a.id
+     LEFT JOIN media_variants v ON v.asset_id = a.id AND v.role = 'cover_detail'
+     WHERE a.status = 'active' AND u.scope = 'ARTICLE' AND u.field_ref = 'body'
+       AND (v.id IS NULL OR a.width IS NULL OR a.height IS NULL
+         OR v.width IS DISTINCT FROM LEAST(a.width, $2)
+         OR v.height IS DISTINCT FROM ROUND(a.height * LEAST(a.width, $2)::numeric / NULLIF(a.width, 0)))
+     ORDER BY a.created_at DESC, a.id
+     LIMIT $1`,
+    [n, DETAIL_IMAGE_PROFILE.width]
+  );
+  let updated = 0;
+  let failed = 0;
+  const items = [];
+  for (const row of res.rows) {
+    try {
+      const variants = await regenerateCoverVariants(config, row.id, ['cover_detail']);
+      if (!variants.cover_detail) throw new Error('Không tạo được cover_detail');
+      updated += 1;
+      items.push({ asset_id: row.id, ok: true, url: variants.cover_detail });
+    } catch (err) {
+      failed += 1;
+      items.push({ asset_id: row.id, ok: false, error: (err && err.message) || String(err) });
+    }
+  }
+  return { processed: res.rows.length, updated, failed, hasMore: res.rows.length === n, items };
+}
+
+/** Thay delivery URL bằng cover_detail trong HTML bài viết nếu variant đã tồn tại. */
+async function useArticleDetailImageVariants(html) {
+  const source = String(html || '');
+  const urls = Array.from(new Set(Array.from(source.matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi), function (m) { return m[1]; })));
+  if (!urls.length) return source;
+  const result = await query(
+    `SELECT d.public_url AS delivery_url, detail.public_url AS detail_url
+     FROM media_variants d
+     JOIN media_variants detail ON detail.asset_id = d.asset_id AND detail.role = 'cover_detail'
+     WHERE d.role = 'delivery' AND d.public_url = ANY($1::text[])`,
+    [urls.map(function (url) {
+      try { return /^https?:\/\//i.test(url) ? new URL(url).pathname : url.split('?')[0]; }
+      catch (e) { return url.split('?')[0]; }
+    })]
+  );
+  const byUrl = new Map();
+  result.rows.forEach(function (row) { byUrl.set(row.delivery_url, row.detail_url); });
+  return source.replace(/(<img\b[^>]*\bsrc\s*=\s*)(["'])([^"']+)(\2[^>]*>)/gi, function (tag, before, quote, url, after) {
+    let pathOnly = url;
+    try { if (/^https?:\/\//i.test(url)) pathOnly = new URL(url).pathname; }
+    catch (e) { pathOnly = url.split('?')[0]; }
+    const detailUrl = byUrl.get(pathOnly);
+    return detailUrl ? before + quote + detailUrl + after : tag;
+  });
 }
 
 var COVER_VARIANT_ROLES = ['cover_thumb', 'cover_card', 'cover_hero', 'cover_detail', 'cover_social'];
@@ -546,6 +636,8 @@ module.exports = {
   findByFingerprint,
   regenerateCoverVariants,
   backfillCoverVariants,
+  backfillArticleDetailVariants,
+  useArticleDetailImageVariants,
   resolveSocialCompatibleImage,
   createJob,
   finishJob,

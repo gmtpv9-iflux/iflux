@@ -141,30 +141,37 @@ async function normalizeBrandMarkBuffer(buf, purpose) {
 }
 
 /**
- * Sinh các bản kích thước cố định cho ẢNH ĐẠI DIỆN (cover) — theo COVER_IMAGE_PROFILES
- * (backend/src/modules/media/cover-image-profiles.js). Chỉ gọi cho ảnh cover, không
- * gọi cho ảnh thân bài / ảnh thường để tránh phình storage ngoài ý muốn.
+ * Sinh các bản kích thước theo COVER_IMAGE_PROFILES
+ * (backend/src/modules/media/cover-image-profiles.js). Ảnh cover sinh đủ role;
+ * ảnh thân bài chỉ yêu cầu cover_detail để tránh tạo các bản card không dùng.
  */
-async function generateCoverVariants(rotatedBuf) {
+async function generateCoverVariants(rotatedBuf, roles) {
   if (!sharp || !rotatedBuf) return [];
+  const roleSet = Array.isArray(roles) && roles.length ? new Set(roles) : null;
   const out = [];
   for (let i = 0; i < COVER_IMAGE_PROFILES.length; i++) {
     const p = COVER_IMAGE_PROFILES[i];
+    if (roleSet && !roleSet.has(p.key)) continue;
     const isJpeg = p.format === 'jpeg';
-    let pipeline = sharp(rotatedBuf).resize(p.width, p.height, {
+    const resizeOptions = {
+      width: p.width,
       fit: p.fit || 'cover',
-      position: 'centre'
-    });
+      position: 'centre',
+      withoutEnlargement: p.withoutEnlargement === true
+    };
+    if (p.height) resizeOptions.height = p.height;
+    let pipeline = sharp(rotatedBuf).resize(resizeOptions);
     pipeline = isJpeg
       ? pipeline.flatten({ background: '#ffffff' }).jpeg({ quality: p.quality || 85 })
       : pipeline.webp({ quality: p.quality || 82 });
     const buffer = await pipeline.toBuffer();
+    const dimensions = await sharp(buffer).metadata();
     out.push({
       role: p.key,
       buffer: buffer,
       mime: isJpeg ? 'image/jpeg' : 'image/webp',
-      width: p.width,
-      height: p.height,
+      width: dimensions.width || null,
+      height: dimensions.height || null,
       ext: isJpeg ? 'jpg' : 'webp'
     });
   }
