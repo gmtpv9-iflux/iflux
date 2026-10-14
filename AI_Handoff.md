@@ -2,6 +2,35 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-14 — Codex — khôi phục Staging về trước điều tra theo yêu cầu Owner
+
+- **Nhiệm vụ/trạng thái:** đang làm; Owner yêu cầu dừng điều tra và khôi phục bản mới nhất trước thử nghiệm.
+- **Phạm vi:** đảo đúng thay đổi frontend của checkpoint `63df5ce`; giữ lịch sử Handoff. SHA trước bước `ebf46f3`, bản nguồn khôi phục `de82470` (release trước điều tra, tương ứng release media Production `f391d04`).
+- **Trước → sau:** bỏ thử nghiệm rollback UI, trả toàn bộ file ứng dụng về chính xác `de82470`; không sửa Production hoặc workspace chính có thay đổi của người dùng.
+- **Kiểm tra:** toàn bộ file ngoài Handoff khớp chính xác `de82470` (git diff rỗng); JS versions, CSS bundle và diff check PASS. Chờ CI Staging.
+- **Commit:** chưa có.
+- **Còn lại:** commit riêng, push Staging, chờ CI/smoke rồi dừng hoàn toàn điều tra theo yêu cầu. Không chạy thêm phép đo hiệu suất.
+
+## 2026-10-14T17:12:43+07:00 — Codex — xác nhận phần tử LCP từ PSI
+
+- **Nhiệm vụ/trạng thái:** đang làm; Owner cung cấp PSI: LCP là `<p class="ifx-widget__subtitle">` với mô tả “Top N Topic/Story theo điểm Interest trong cửa sổ Ngày|Tuần|Tháng.”, element render delay4440ms. Chỉ điều tra hiệu suất.
+- **Phạm vi:** đọc API public `/api/pages/news` Staging, runtime/page-widgets, mount-published-widgets, template loader/widget; không sửa code, không deploy.
+- **Trước → sau:** LCP dạng text chưa xác định nội dung → xác nhận đúng description của widget `WGT-COM-CHUDE-TOP`, title “Chủ đề tích cực hàng đầu”, template `TMP-COMMUNITY-STORY-TOP`, placement sidebar position1. Description từ published API, không phải bài RSS hoặc CSS tự sinh.
+- **Kiểm tra:** trace mobile trước đó: API pages/news bắt đầu5843ms→6006ms; loader6019→6299; registry6339→6523; templates.json6632→7573; widget.js7580→7888; story-top.js7905→8211. Chứng minh chuỗi tải phụ thuộc kéo dài trước khi widget được dựng; các thời gian này thuộc phép đo local, không đồng nhất với4440ms của PSI. Không diễn giải render delay là toàn bộ CPU hoặc TTFB0 là server không có độ trễ.
+- **Commit:** không có; Staging vẫn `ebf46f3`.
+- **Còn lại/lưu ý:** đối chứng nhóm khởi tạo/loader theo cùng dữ liệu; không xóa mô tả/ẩn widget chỉ để đổi phần tử LCP. Chưa xác định commit gây regression80→50. Lệnh tạo/chạy A/B trước đó bị Owner ngắt, kiểm tra không thấy artifact compare; không có kết quả so sánh phiên bản để báo PASS.
+
+## 2026-10-14T17:09:13+07:00 — Codex — đo hiệu suất Tin tức sau checkpoint không cải thiện
+
+- **Nhiệm vụ/trạng thái:** đang làm; Owner báo checkpoint hiệu suất vẫn ~50. Theo chỉ dẫn mới tập trung hiệu suất, không điều tra SEO riêng. Chưa xác định commit gây giảm từ ~80 xuống ~50.
+- **Phạm vi:** chỉ đọc source tại worktree `/private/tmp/iflux-perf-staging` HEAD `ebf46f3a8680eae102a37268b105e8dc7b975d8d`; browser probe riêng trong `/private/tmp`; cập nhật nhật ký. Không sửa code ứng dụng, không commit/push/deploy; Production giữ nguyên.
+- **Trước → sau:** checkpoint `63df5ce` / `ebf46f3` đã CI success run `38545751364`, nhưng Owner xác nhận không cải thiện. Phạm vi rollback trước chủ yếu author/article/mobile chips, không trực tiếp giải quyết critical path danh sách `/tin-tuc`; không xem đây là bản khôi phục đạt yêu cầu.
+- **Kiểm tra:** một lượt truy cập mới Staging mobile viewport390 không throttle: 110 request, 1.633 MB truyền tải, 27 image request ~1.127 MB, 57 script request ~215 KB; không có script trùng URL hoặc community.manifest, một navigation, không pageerror. API feed bắt đầu ~6.46s, phản hồi ~144ms; chuỗi bootstrap/shell/metadata/features trì hoãn bắt đầu feed. Đây là đo trình duyệt, không phải điểm PSI.
+- **Kiểm tra mobile chậm:** latency150ms, download200000 B/s, CPU4x, cache tắt. Hai lượt có LCP ~8.06s/~8.72s; có layout shift lớn ~0.253 ở widget phía trên feed. Layout engine chèn skeleton320px và template thay bằng chiều cao khác; phần tử chịu dịch chuyển gồm `WGT-COM-002` và `.ifx-shell-main`. Không bắt được plans-updated hoặc navigation thứ hai trong các lượt này; không có bằng chứng trang tải lại toàn bộ. Tổng các layout-shift không được ghi nhầm thành CLS chuẩn cửa sổ phiên.
+- **Thử nghiệm cô lập:** chỉ override response `page-layout-engine.js` trong browser đo để bỏ skeleton, không thay server/source: một cú layout shift tăng ~0.752, nên LOẠI phương án bỏ skeleton. Skeleton/parallel mount xuất phát commit `1be446f` ngày09/10, có trước các commit Codex ngày13/10; không được quy kết commit này là nguyên nhân mới chỉ từ phép đo.
+- **Commit:** không tạo mới; HEAD triển khai Staging đang đo `ebf46f3`. Không có bản mới để yêu cầu Owner chạy PSI lại.
+- **Còn lại/lưu ý:** xác minh critical path tải widget/feature và ổn định vị trí widget trước feed; đối chiếu phiên bản cũ cùng dữ liệu trước khi chọn checkpoint tiếp. Ảnh mẫu Staging nhiều ảnh1200px dùng cho card120px do fallback ảnh chưa có variants; chưa xác nhận là regression mới. Chưa chứng minh commit gây suy giảm lịch sử. Bằng chứng `/private/tmp/iflux-perf-probe.json`, `iflux-perf-probe-slow.json`, `iflux-perf-probe-no-skeleton.json`; báo cáo PSI cũ `/private/tmp/iflux-psi-home.json` chỉ là lỗi429, không có Lighthouse result.
+
 ## 2026-10-14 — Codex — checkpoint khôi phục hiệu suất Staging 1
 
 - **Nhiệm vụ/trạng thái:** commit checkpoint đã tạo; chuẩn bị push Staging và chờ CI/smoke để Owner đo PSI. SHA trước bước: `de82470bd69b8c86ce868bba64a3a7d3563018f3`.
