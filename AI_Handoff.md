@@ -4,12 +4,12 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-14 — Codex — checkpoint khôi phục hiệu suất Staging 1
 
-- **Nhiệm vụ/trạng thái:** đã khôi phục frontend và kiểm tra tĩnh; chuẩn bị commit/push Staging để Owner đo PSI. SHA trước bước: `de82470bd69b8c86ce868bba64a3a7d3563018f3`.
+- **Nhiệm vụ/trạng thái:** commit checkpoint đã tạo; chuẩn bị push Staging và chờ CI/smoke để Owner đo PSI. SHA trước bước: `de82470bd69b8c86ce868bba64a3a7d3563018f3`.
 - **Phạm vi:** phần frontend Tin tức trong nhóm `8a04aa6` so với cha `8705717`: `news-ui.js`, `news-post-page.js`, `news.css`, `features/news.manifest.js`, `pages/news*.manifest.js`, `widgets/news-page/index.js`, `widgets/news-post-page/index.js`, `mobile-nav.js`; thêm các query version được `sync-js-versions.mjs` sinh lại. Backend, Production và nội dung các module ngoài Tin tức giữ nguyên.
 - **Trước → sau:** giao diện/logic Tin tức sau nhóm editorial/timeline ngày 13/10 → các file Tin tức nêu trên về trạng thái trước nhóm để đo cùng `/tin-tuc`. Đây là checkpoint thử nghiệm, chưa xác nhận nguyên nhân; phần hash được sinh lại làm 42 file query-version thay đổi nhưng không đổi nội dung runtime ngoài phạm vi.
 - **Kiểm tra:** `sync-js-versions.mjs --check` PASS (233 file); `build-web-bundle.mjs --check` PASS; `git diff --check` PASS. Chưa chạy browser suite vì suite hiện xác nhận giao diện editorial mới, vốn bị cố ý hoàn nguyên ở checkpoint này.
-- **Commit:** chưa có.
-- **Còn lại/lưu ý cho AI tiếp theo:** trước commit kiểm tra lại diff và chỉ stage phần trên. Sau push, đợi CI Staging và smoke; báo Owner SHA/URL rồi dừng để Owner chạy PSI vài lần cùng URL `/tin-tuc`, viewport và cấu hình mạng. Không làm bước tiếp theo trước khi nhận kết quả. Không chạm Production.
+- **Commit:** `63df5ce` (`test(perf): rollback news frontend checkpoint on staging`).
+- **Còn lại/lưu ý cho AI tiếp theo:** sau push, đợi CI Staging và smoke; báo Owner SHA/URL rồi dừng để Owner chạy PSI vài lần cùng URL `/tin-tuc`, viewport và cấu hình mạng. Không làm bước tiếp theo trước khi nhận kết quả. Không chạm Production.
 
 ## 2026-10-14 16:30:00 +07:00 — Codex — phát hành cover_detail và sửa bản đồ môi trường
 
