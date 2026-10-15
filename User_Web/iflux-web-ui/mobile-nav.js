@@ -223,18 +223,23 @@
           badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
-        /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LUÔN mở Cấp 2, kể cả khi đang đứng ở
-         * trang KHÁC (vd Tin tức). 2 nhánh KHÔNG dùng chung 1 listener can thiệp giữa chừng —
-         * onDocumentClick (soft-navigation.js) bắt click ở capture-phase trên document, chạy
-         * TRƯỚC listener gắn trên chính <a> này, và đã tự gọi softNavigate() theo href THẬT
-         * của thẻ trước khi listener ở đây kịp preventDefault — gắn thêm điều hướng thủ công
-         * ở đây sẽ đua với nó (2 lần soft-navigate chồng nhau, URL cuối cùng sai). Thay vào đó:
-         * - Chưa active: set href = trang đó + "?view=main" ngay từ đầu — để onDocumentClick
-         *   tự điều hướng (y hệt mọi link khác, không có gì đặc biệt ở đây) — mount() xong,
-         *   community-page.js tự đọc lại ?view= qua applyViewFromUrl(), vào thẳng Cấp 2.
+        /* Mục Cấp-1 có menu con (vd Cộng đồng, Dòng tiền) — tap LUÔN mở Cấp 2, kể cả khi đang
+         * đứng ở trang KHÁC (vd Tin tức). 2 nhánh KHÔNG dùng chung 1 listener can thiệp giữa
+         * chừng — onDocumentClick (soft-navigation.js) bắt click ở capture-phase trên document,
+         * chạy TRƯỚC listener gắn trên chính <a> này, và đã tự gọi softNavigate() theo href
+         * THẬT của thẻ trước khi listener ở đây kịp preventDefault — gắn thêm điều hướng thủ
+         * công ở đây sẽ đua với nó (2 lần soft-navigate chồng nhau, URL cuối cùng sai). Thay
+         * vào đó:
+         * - Chưa active: set href = trang đó + "?view=<vùng mặc định>" ngay từ đầu — để
+         *   onDocumentClick tự điều hướng (y hệt mọi link khác, không có gì đặc biệt ở đây) —
+         *   mount() xong, trang tự đọc lại ?view= qua applyViewFromUrl(), vào thẳng Cấp 2. Vùng
+         *   mặc định = items[0].key của CHÍNH mục đó (đọc qua getLevel2Config — KHÔNG hardcode
+         *   "main": Cộng đồng đặt items[0] tên "main" nhưng Dòng tiền đặt tên "sidebar", trang
+         *   khác có thể khác nữa — xem cùng bug đã sửa ở openLevel2(), iflux-platform-boot.js).
          * - Đã active: href = "#" (không trỏ URL thật) — onDocumentClick coi "#" là cùng
          *   trang, không tự điều hướng gì — listener ở đây độc quyền xử lý, gọi openLevel2()
-         *   tại chỗ (pushState nhẹ, không dựng lại DOM). */
+         *   tại chỗ (pushState nhẹ, không dựng lại DOM) — openLevel2() tự tính đúng vùng mặc
+         *   định, không cần tính lại ở đây. */
         if (mode === 'primary' && it.hasLevel2) {
           if (it.active) {
             link.href = '#';
@@ -244,7 +249,10 @@
               if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
             });
           } else if (it.href) {
-            link.href = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=main';
+            var shellCfg = window.IfluxAppShell;
+            var cfg = shellCfg && shellCfg.getLevel2Config && shellCfg.getLevel2Config(it.key);
+            var defaultRegion = (cfg && cfg.items && cfg.items[0] && cfg.items[0].key) || 'main';
+            link.href = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=' + defaultRegion;
           }
         }
         if (mode === 'context') {
