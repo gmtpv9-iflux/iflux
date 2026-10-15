@@ -562,7 +562,17 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       }
     },
     { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-news', onboard: 'news' },
-    { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
+    { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow',
+      level2: {
+        backLabel: 'Trở về',
+        items: [
+          { key: 'sidebar',   label: 'Tổng quan',       icon: 'ti-layout-sidebar', kind: 'region' },
+          { key: 'basic',     label: 'Thống kê',         icon: 'ti-chart-bar',     kind: 'region' },
+          { key: 'advanced',  label: 'Chỉ báo kỹ thuật', icon: 'ti-chart-dots-3',  kind: 'region' },
+          { key: 'exclusive', label: 'Dòng tiền',        icon: 'ti-sparkles',      kind: 'region' }
+        ]
+      }
+    },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' },
     { key: 'dashboard', route: 'home',      label: 'Cá nhân', icon: 'ti-user-circle',            appOnly: true, onboard: 'home' }
   ];
@@ -1085,9 +1095,13 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   function openLevel2(itemKey) {
     var cfg = getLevel2Config(itemKey);
     if (!cfg) return false;
+    /* Vùng mặc định khi mở Cấp 2 = items[0] CỦA TỪNG MỤC (không hardcode 'main' — Cộng đồng
+       đặt tên items[0] là 'main' nhưng Dòng tiền đặt là 'sidebar', trang khác có thể khác nữa;
+       đọc đúng cfg.items[0].key để tổng quát cho mọi trang). */
+    var defaultRegion = (cfg.items && cfg.items[0] && cfg.items[0].key) || 'main';
     var already = isLevel2Open();
-    writeViewParam('main', already ? 'replace' : 'push');
-    dispatchLevel2Change(itemKey, 'main', true);
+    writeViewParam(defaultRegion, already ? 'replace' : 'push');
+    dispatchLevel2Change(itemKey, defaultRegion, true);
     return true;
   }
 

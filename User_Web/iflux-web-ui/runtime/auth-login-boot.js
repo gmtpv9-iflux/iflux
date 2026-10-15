@@ -7,7 +7,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var SHELL = [
-  ASSET + 'iflux-platform-boot.js?v=fc8b7e1b85',
+  ASSET + 'iflux-platform-boot.js?v=dac0eb0c01',
   ASSET + 'iflux-api-bundle.js?v=aacd7e48c9',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
   ASSET + 'auth.js?v=f9a8ae35e7',

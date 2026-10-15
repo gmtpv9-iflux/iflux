@@ -968,10 +968,16 @@
     });
   }
 
-  /* Lazy-load theo vùng (mobile, Bottom Nav 2 cấp) — xem docs/plan "Mobile Bottom Navigation
-     2 cấp (Cộng đồng) + Lazy-load theo vùng". Desktop/tablet (lazyMode=false) giữ nguyên hành
-     vi CŨ 100%: cả 3 vùng render+fetch ngay trong init(), không qua cơ chế dưới đây. */
-  var REGION_TTL = { 'sidebar-left': 120000 }; // ms — quay lại sau khi hết TTL mới fetch lại
+  /* Tải theo vùng (mobile, Bottom Nav 2 cấp) — xem docs/plan "Mobile Bottom Navigation 2 cấp
+     (Cộng đồng)". Owner 2026-10-15 (đính chính thuật ngữ): đây KHÔNG phải "lazy load" (tải dần
+     theo cuộn/thời gian trong 1 trang) — là "KHÔNG tải gì cả cho tới khi user bấm vào, bấm 1
+     lần thì dùng mãi": vùng nào chưa bấm → không fetch/không dựng HTML/JS gì hết; bấm lần đầu
+     → dựng 1 lần; bấm lại sau đó → TÁI SỬ DỤNG nguyên markup/JS đã có, KHÔNG dựng lại — chỉ dữ
+     liệu THẬT SỰ động (API có thể trả khác đi theo thời gian) mới cần làm mới, và chỉ làm mới
+     đúng phần dữ liệu đó (không đụng khung HTML/JS bao quanh). Desktop/tablet (lazyMode=false)
+     giữ nguyên hành vi CŨ 100%: cả 3 vùng render+fetch ngay trong init(), không qua cơ chế
+     dưới đây (không có khái niệm "bấm vào mới tải" ở desktop — mọi thứ hiện cùng lúc). */
+  var REGION_TTL = { 'sidebar-left': 120000 }; // ms — mốc làm mới DỮ LIỆU (không phải markup) cho sidebar trái
   var regionState = {
     main: { mounted: false },
     composer: { mounted: false },
@@ -1020,16 +1026,23 @@
   function ensureRegion(key, frame) {
     var st = regionState[key];
     if (!st || key === 'main') return; // main luôn mounted sẵn từ renderMain() trong init()
-    if (key === 'composer') {
-      /* Không theo TTL như sidebar — form luôn trống khi vào (trừ khi user quay lại giữa lúc
-         đang gõ dở, chưa submit: DOM không bị xoá nên bản nháp vẫn còn, đúng ý — chỉ reset hẳn
-         khi ĐĂNG THÀNH CÔNG, xem bindComposerForm onSuccess). */
-      if (!st.mounted) renderComposerRegion(frame);
+    if (st.mounted) {
+      /* Owner 2026-10-15 (đính chính): đây KHÔNG phải "lazy load" kiểu tải lại định kỳ — là
+         "chỉ tải khi user bấm vào LẦN ĐẦU, dùng lại mãi"; markup/JS KHÔNG được dựng lại sau khi
+         đã có. CHỈ dữ liệu THẬT SỰ động (Chủ đề thịnh hành) mới cần làm mới theo TTL — gọi đúng
+         loadTrendingTopics() (tự thay outerHTML 1 card nhỏ, không đụng phần còn lại của sidebar)
+         — KHÔNG gọi lại renderSidebarLeft() (sẽ dựng lại toàn bộ innerHTML, đúng điều Owner vừa
+         yêu cầu tránh). */
+      if (key === 'sidebar-left') {
+        var ttl = REGION_TTL[key];
+        if (ttl && Date.now() - st.mountedAt > ttl) {
+          loadTrendingTopics();
+          st.mountedAt = Date.now();
+        }
+      }
       return;
     }
-    var ttl = REGION_TTL[key];
-    var stale = st.mounted && ttl && (Date.now() - st.mountedAt > ttl);
-    if (st.mounted && !stale) return;
+    if (key === 'composer') { renderComposerRegion(frame); return; }
     if (key === 'sidebar-left') renderSidebarLeft(frame);
     else if (key === 'sidebar-right') renderSidebarRight(frame);
   }
