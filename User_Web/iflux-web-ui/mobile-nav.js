@@ -385,6 +385,23 @@
       mainLink.setAttribute('data-ifx-section-kind', 'region');
       mainLink.setAttribute('data-ifx-section-key', mainCfg.key);
       mainLink.classList.toggle('is-active', regionKey === mainCfg.key);
+      /* BUG đã sửa (Owner báo "bấm vào Tin tức/Dòng tiền — Cấp 2 chưa hiện đúng trang, phải
+         refresh mới thấy"): node tái dùng (mainLink) vẫn mang nguyên icon/text/href/onclick của
+         mục Cấp-1 GỐC (vd "Tin tức") — chỉ đổi data-attribute, KHÔNG đổi nội dung hiển thị lẫn
+         hành vi click, nên user thấy nhãn/icon SAI (của trang, không phải của vùng items[0]) và
+         bấm lại không có tác dụng đúng (href cũ trỏ lại y nguyên URL, không gọi setActiveRegion).
+         Dựng lại đúng icon/label theo mainCfg (ĐÚNG vùng Cấp 2 items[0], vd "Bạn quan tâm"/"Tổng
+         quan") + gắn lại href="#" và onclick gọi setActiveRegion (đồng nhất với mọi mục Cấp 2
+         khác qua buildSectionLink) — không dùng addEventListener để tránh cộng dồn listener cũ
+         từ lúc còn là mục Cấp-1 (nhánh "đang active" có gắn 1 listener openLevel2 qua
+         addEventListener — vẫn còn đó, nhưng vô hại vì openLevel2 khi Cấp 2 đã mở sẽ tự quy về
+         đúng vùng mặc định = mainCfg.key, không xung đột). */
+      mainLink.innerHTML = tabbarItemHtml(mainCfg, mainCfg.label);
+      mainLink.href = '#';
+      mainLink.onclick = function (e) {
+        e.preventDefault();
+        if (shell && shell.setActiveRegion) shell.setActiveRegion(mainCfg.key);
+      };
 
       var lastRect = mainLink.getBoundingClientRect();
       var dx = firstRect.left - lastRect.left;
