@@ -2,6 +2,18 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T03:35:00+07:00 — Claude — hoàn thành — Fix icon Bottom Nav Cấp 2 "giật" giữa 2 giai đoạn animation (lỗi trên mọi trang)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo: bấm vào Cấp 2 từ trang chủ — icon di chuyển từ phải sang giữa rồi GIẬT sang trái, xảy ra ở MỌI trang có Cấp 2.
+- **Nguyên nhân (đã xác nhận bằng đọc code, không phải lỗi mới do mục `02:45:00` gây ra — đã có từ bản FLIP animation gốc)**: Animation 2 giai đoạn tuần tự (`mobile-nav.js`): Giai đoạn 1 (`animateFromPrimary`) xoá hết item Cấp-1 khác, chỉ còn `mainLink` — vì `.ifx-tabbar-item{flex:1}`, item còn lại 1 mình GIÃN HẾT CHIỀU NGANG thanh bar (icon căn giữa bên trong → mắt thấy icon trôi về GIỮA màn hình, khớp "từ phải sang giữa" Owner mô tả). Giai đoạn 2 (`enterBackAndRest`, chạy sau 200ms) chèn Back + các mục còn lại vào ngay — `mainLink` CO HẸP LẠI tức thì về đúng ô hẹp của nó (chia chỗ với Back+rest) — bước co hẹp này KHÔNG có transition nào che (transform giai đoạn 1 đã clear xong từ trước) → mắt thấy icon GIẬT sang trái đúng lúc Back/rest trượt vào. CSS vốn cố ý tránh animate `left`/`width` (ghi rõ trong comment cũ, tránh layout recalculation liên tục) nên khoảng co hẹp này bị bỏ sót, không ai che bằng transform.
+- **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (chỉ hàm `enterBackAndRest()`), `User_Web/iflux-web-ui/iflux-web-ui.js` (bump version `mobile-nav.js?v=` → `r20261016b`, **bắt buộc thủ công**).
+- **Fix**: áp lại kỹ thuật FLIP (đã dùng ở giai đoạn 1) CHO CHÍNH `mainLink` ngay tại bước chèn Back/rest: đo `getBoundingClientRect()` trước/sau khi `insertBefore`/`appendChild`, cancel bằng `transform:translateX()` tức thời (ép reflow), rồi animate về 0 CÙNG LÚC với Back/rest trượt vào (360ms, trùng thời điểm dọn class `is-entering`) — không còn khoảng co hẹp trần trụi không transition nữa.
+- **Kiểm tra:** `node --check` PASS cả 2 file. `sync-js-versions.mjs` write+`--check` PASS (233 file, cascade 35 file qua version mới của `mobile-nav.js`). Đang deploy — sẽ verify bằng Puppeteer (chụp nhiều frame liên tiếp trong lúc animation chạy, so sánh vị trí icon qua từng frame xem còn bước nhảy đột ngột nào không) ngay sau khi push.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Còn lại:** Owner yêu cầu tiếp làm cơ chế "Quan tâm" (Follow) thực thể — hiện `POST /news/follow` (mục `00:40:00`/`02:25:00`) đã có backend nhưng CHƯA có nút bấm nào trên UI gọi tới. Owner vừa đính chính scope: Follow phải (1) thêm vào Watchlist, (2) nhận thông báo, (3) hiện trong "Bạn quan tâm" — nghĩa là `user_entity_follows` (bảng mới riêng cho News) có thể cần TÍCH HỢP với hệ Watchlist hiện có (`user_data.watchlist_json`, `watchlist-store.js`) + hệ thông báo (`user_inbox_notifications`, migration 024) thay vì đứng độc lập — cần khảo sát kỹ trước khi code (chưa bắt đầu).
+
+## 2026-10-16T02:45:00+07:00 — Claude — hoàn thành — Fix GỐC: FLIP animation (mobile-nav.js) không cập nhật icon/text/hành vi click sau khi "biến hình" từ Cấp 1 sang Cấp 2
+
 ## 2026-10-16T03:15:00+07:00 — Claude — hoàn thành — Trang Cá nhân mobile: gộp Riêng tư/Mật khẩu vào "Hồ sơ" (backlog cũ)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Backlog từ đầu phiên ("Trang Cá nhân... Mobile: Dashboard/Affiliate/Liên kết thẻ/Hồ sơ") — Owner yêu cầu làm tiếp phần mobile.

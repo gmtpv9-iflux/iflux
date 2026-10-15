@@ -346,6 +346,16 @@
      * các mục còn lại trượt vào từ phải, CÙNG LÚC với nhau (đúng yêu cầu Owner: không phải nối
      * tiếp thêm 1 lượt stagger dài, chỉ lệch nhẹ thứ tự trong chính nhóm "mục còn lại"). */
     function enterBackAndRest(itemKey, regionKey, cfg, restCfg, shell, mainLink) {
+      /* BUG đã sửa (Owner báo "icon giật từ giữa sang trái"): chèn Back + các mục còn lại làm
+         mainLink (đang CHIẾM TRỌN bề ngang thanh bar — là item duy nhất sau khi giai đoạn 1 xoá
+         hết item Cấp-1 khác) CO HẸP LẠI tức thì về đúng ô hẹp của nó (share chỗ với Back + rest)
+         — flex-basis/width đổi NGAY LÚC insertBefore/appendChild, không có transition nào che
+         (transform ở giai đoạn 1 đã clear xong, không áp dụng cho bước co hẹp này) → mắt thấy
+         icon "giật" sang trái đúng lúc Back/rest trượt vào. Áp lại kỹ thuật FLIP (đo vị trí
+         trước/sau khi chèn, cancel bằng transform tức thời rồi animate về 0) CHO CHÍNH mainLink
+         — cùng lúc với Back/rest trượt vào, để không còn khoảng "giật" giữa 2 giai đoạn. */
+      var preInsertRect = mainLink.getBoundingClientRect();
+
       var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
       var backLink = buildSectionLink(backItem, itemKey, regionKey, shell);
       backLink.classList.add('ifx-tabbar-item--enter-left');
@@ -358,15 +368,29 @@
         bar.appendChild(link);
       });
 
+      var postInsertRect = mainLink.getBoundingClientRect();
+      var dx2 = preInsertRect.left - postInsertRect.left;
+      if (dx2) {
+        mainLink.style.transition = 'none';
+        mainLink.style.transform = 'translateX(' + dx2 + 'px)';
+        void mainLink.offsetWidth; /* ép reflow — cùng lý do đã ghi ở animateFromPrimary() */
+        mainLink.classList.add('ifx-tabbar-item--flip');
+      }
+
       requestAnimationFrame(function () {
         bar.querySelectorAll('.ifx-tabbar-item--enter-left, .ifx-tabbar-item--enter-right').forEach(function (l) {
           l.classList.add('is-entering');
         });
+        if (dx2) mainLink.style.transform = '';
       });
       setTimeout(function () {
         bar.querySelectorAll('.ifx-tabbar-item--enter-left, .ifx-tabbar-item--enter-right').forEach(function (l) {
           l.classList.remove('ifx-tabbar-item--enter-left', 'ifx-tabbar-item--enter-right', 'is-entering');
         });
+        if (dx2) {
+          mainLink.classList.remove('ifx-tabbar-item--flip');
+          mainLink.style.transition = '';
+        }
       }, 360);
     }
 
