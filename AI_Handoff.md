@@ -2,6 +2,18 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T03:50:00+07:00 — Claude — hoàn thành — Sửa tiếp fix "giật" mục `03:35:00`: tự kiểm bằng Puppeteer phát hiện fix trước CHƯA thật sự hết giật
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Tự verify fix mục `03:35:00` bằng Puppeteer (track vị trí NGUYÊN 1 node qua `__ifxMarker` — đánh dấu trước khi click, không dò lại bằng `data-*` attribute vì các attribute đó ĐỔI GIÁ TRỊ giữa chừng animation, dễ bắt nhầm sang node Back vừa chèn vào) — phát hiện VẪN còn 1 bước nhảy centerX 128px tại đúng thời điểm `enterBackAndRest()` chèn Back/rest (t≈240ms), rồi đứng yên tuyệt đối suốt phần còn lại (không hề có chuyển động mượt nào sau đó) — tức transition KHÔNG chạy, dù code đã gắn lại class `--flip`.
+- **Nguyên nhân (lỗi trong chính fix mục `03:35:00`)**: thiếu dòng `mainLink.style.transition = ''` SAU khi ép reflow (`void mainLink.offsetWidth`) và TRƯỚC khi gắn lại class `--flip` — `mainLink.style.transition = 'none'` (set trước đó để tắt transition lúc đặt transform tức thời) vẫn còn hiệu lực (inline style thắng CSS class do specificity), chặn hoàn toàn transition của class `--flip` phát huy tác dụng → bước "animate về 0" chạy TỨC THỜI thay vì trượt 360ms — vẫn giật, chỉ đổi hình dạng cú giật (từ to+đứng im → vẫn 1 bước nhảy, chỉ ít điểm nhảy hơn 1 chút). `animateFromPrimary()` (giai đoạn 1, code CŨ, không đụng) có dòng reset này đúng — copy thiếu khi viết `enterBackAndRest()`.
+- **Sửa thêm 2 việc trong cùng lượt này**: (1) thêm dòng reset `transition=''` còn thiếu. (2) đổi công thức `dx2` từ lệch MÉP TRÁI sang lệch TÂM (`left + width/2`) — vì bước này bề ngang đổi RẤT NHIỀU (386px → ~88px, khác hẳn giai đoạn 1 nơi 5 item cỡ gần bằng nhau) nên lệch mép trái không phản ánh đúng icon (căn giữa trong item) đã dịch bao nhiêu pixel thật.
+- **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (chỉ hàm `enterBackAndRest()`), `iflux-web-ui.js` (bump `mobile-nav.js?v=` → `r20261016c`).
+- **Kiểm tra:** `node --check` PASS. `sync-js-versions.mjs` PASS (cascade 35 file). Đang deploy — **lần này BẮT BUỘC phải tự verify lại bằng ĐÚNG script track-theo-marker đã dùng để phát hiện bug này** (không phải chỉ nhìn qua bằng mắt/ảnh chụp tĩnh — animation lỗi loại này ảnh chụp tĩnh không thấy được) trước khi báo Owner là xong.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Bài học cho AI tiếp theo**: khi sửa animation 2 giai đoạn kiểu FLIP, LUÔN copy đủ bộ 3 bước đối xứng `transition='none' → đặt transform → ép reflow → transition='' → thêm class có transition thật` — thiếu bước reset giữa chừng là lỗi RẤT DỄ xảy ra và RẤT KHÓ thấy bằng mắt thường/ảnh chụp tĩnh (chỉ lộ ra khi đo vị trí qua nhiều frame hoặc nhìn kỹ bằng mắt thật trên thiết bị) — nên có thói quen tự verify bằng script track vị trí qua thời gian cho MỌI fix liên quan animation, không chỉ chụp ảnh tĩnh trước/sau.
+
+## 2026-10-16T03:35:00+07:00 — Claude — hoàn thành — Fix icon Bottom Nav Cấp 2 "giật" giữa 2 giai đoạn animation (lỗi trên mọi trang)
+
 ## 2026-10-16T03:35:00+07:00 — Claude — hoàn thành — Fix icon Bottom Nav Cấp 2 "giật" giữa 2 giai đoạn animation (lỗi trên mọi trang)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo: bấm vào Cấp 2 từ trang chủ — icon di chuyển từ phải sang giữa rồi GIẬT sang trái, xảy ra ở MỌI trang có Cấp 2.

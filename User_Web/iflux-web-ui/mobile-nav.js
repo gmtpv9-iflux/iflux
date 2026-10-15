@@ -369,11 +369,19 @@
       });
 
       var postInsertRect = mainLink.getBoundingClientRect();
-      var dx2 = preInsertRect.left - postInsertRect.left;
+      /* Lệch theo TÂM (không phải mép trái) — khác animateFromPrimary(): ở đó item chỉ ĐỔI VỊ
+         TRÍ (bề ngang gần như không đổi giữa 2 lần đo trong cùng 1 hàng 5 item cỡ bằng nhau).
+         Ở ĐÂY bề ngang đổi RẤT NHIỀU (từ chiếm trọn thanh bar — 1 mình — co về đúng 1 trong 5 ô)
+         — icon/label CĂN GIỮA bên trong item (justify-content:center), nên lệch mép trái không
+         phản ánh đúng icon đã dịch bao nhiêu pixel; phải tính theo tâm (left + width/2). */
+      var dx2 = (preInsertRect.left + preInsertRect.width / 2) - (postInsertRect.left + postInsertRect.width / 2);
       if (dx2) {
         mainLink.style.transition = 'none';
         mainLink.style.transform = 'translateX(' + dx2 + 'px)';
         void mainLink.offsetWidth; /* ép reflow — cùng lý do đã ghi ở animateFromPrimary() */
+        mainLink.style.transition = ''; /* BUG đã sửa: quên xoá — inline transition:none đè mất
+          transition của class --flip, khiến bước animate về 0 bên dưới chạy TỨC THỜI (vẫn giật,
+          chỉ khác hình dạng) thay vì trượt mượt 360ms. */
         mainLink.classList.add('ifx-tabbar-item--flip');
       }
 
