@@ -503,7 +503,7 @@ export async function mount(el) {
   frame.mainContent.innerHTML = mainHtml();
 
   /* Cầu nối cho account-feature-boot.js (activateAccountProfilePanel) mount lazy tab Dashboard
-     khi được chọn — tab Dashboard không nằm trong CORE_SCRIPTS/registry nghiệp vụ tài khoản. */
+     khi được chọn — tab Dashboard không nằm trong BASE_SCRIPTS/TAB_SCRIPTS nghiệp vụ tài khoản. */
   window.IfluxHomeDashboardTab = { ensureMounted: mountDashboardTab };
 
   mountSidebarCanvas();
@@ -520,7 +520,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=89c68579b1');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=802a218a2d');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

@@ -33,7 +33,7 @@ var P4 = '?v=stickyRefactor20260811';
 var B2 = '?v=phaseB220260721a';
 
 var MANIFEST_MAP = {
-  home: function () { return import('../pages/home.manifest.js?v=17435bad81'); },
+  home: function () { return import('../pages/home.manifest.js?v=c2288da5e9'); },
   flow: function () { return import('../pages/flow.manifest.js?v=b1bc127246'); },
   news: function () { return import('../pages/news.manifest.js?v=90b66fe4a3'); },
   community: function () { return import('../pages/community.manifest.js?v=8e7ce95f9b'); },
