@@ -2,6 +2,26 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T04:45:00+07:00 — Claude — hoàn thành (DATA, không phải code) — Gỡ "Phát hiện 1" treo từ `2026-10-15T11:00:55` — Logo/Favicon toàn site trỏ nhầm ảnh bài viết
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner hỏi "điều tra lại lỗi đợt AI codex gây ra làm giảm PSI" — soát lại toàn bộ chuỗi điều tra PSI trong nhật ký (bắt đầu từ Codex `2026-10-14`, Claude tiếp tục `2026-10-15`) và phát hiện: "Phát hiện 1" (ghi ở mục `2026-10-15T11:00:55`) — Logo/Favicon toàn site trỏ nhầm 2 ảnh bài viết — **ĐÃ ĐƯỢC PHÁT HIỆN TỪ 2 NGÀY TRƯỚC NHƯNG CHƯA BAO GIỜ ĐƯỢC SỬA**, bị chặn bởi Claude Code auto-mode classifier 2 lần (kể cả khi Owner xác nhận bằng lời trong chat không đủ, cần Owner tự thêm Bash permission rule hoặc tự chạy). Đã verify bằng `curl` thật: lỗi **VẪN CÒN SỐNG** trên Staging ngay lúc kiểm tra lại (không phải lịch sử cũ) — đây gần như chắc chắn là 1 phần nguyên nhân PSI giảm mà Owner hỏi tới, vì ảnh hưởng MỌI trang, mọi lượt tải (không riêng Tin tức).
+- **Dữ liệu sai (đã xác nhận qua SELECT trực tiếp DB Staging)**: bảng `marketing_brand_identity` (code='primary') — `payload.logoUrl` = `/media/news/2026/08/mas_msn0iyam_d117b67b/img-001.webp` (ảnh bài viết, **92.3KB**), `payload.faviconUrl` = `/media/news/2026/08/mas_msmmd7i0_460412e0/img-001.webp` (ảnh bài viết, **31.2KB**) — cả 2 kèm `logoAssetId`/`faviconAssetId` trỏ đúng 2 asset bài viết đó (không phải lỗi gõ nhầm URL — là gán sai hẳn asset). Load trên HEADER mọi trang + favicon toàn site.
+- **Fix**: Owner cho phép SSH + chạy UPDATE trực tiếp (đã thêm Bash permission rule cho đúng lệnh SSH server Staging này — xem hướng dẫn Claude đưa, Owner tự thêm vào settings). Đã chạy:
+  ```sql
+  UPDATE marketing_brand_identity
+  SET payload = payload
+    || '{"logoUrl": "/Admin_Design_system/logo/iFlux-logo-648x317.png", "faviconUrl": "/Admin_Design_system/logo/favico.png"}'::jsonb
+    - 'logoAssetId' - 'faviconAssetId'
+  WHERE code = 'primary';
+  ```
+  Dùng ĐÚNG 2 file logo/favico thật đã có sẵn trong repo (`Admin_Design_system/logo/iFlux-logo-648x317.png` 25.1KB, `favico.png` 41.7KB — đã verify truy cập được, HTTP 200) — chỉ đổi 2 field URL + xoá 2 field assetId cũ (không còn đúng nghĩa vì giờ là file tĩnh, không phải Media Asset quản lý qua Admin) — KHÔNG đụng field nào khác trong `payload` (name/tagline/defaultSeoTitle/defaultOgImageUrl/defaultSocialImageUrl... giữ nguyên, các field OG/Social image này vốn ĐÚNG là ảnh bài viết theo thiết kế, không phải cùng lỗi).
+- **Phạm vi:** chỉ 1 dòng DB (`marketing_brand_identity`, code='primary') trên Postgres Staging — **không có code/commit nào trong Git** (DATA fix, có hiệu lực ngay, không cần deploy).
+- **Kiểm tra:** `curl https://staging.iflux.vn/api/seo/effective?pageKey=community` xác nhận `favicon_url`/`logo_url` đã đúng 2 đường dẫn mới. Puppeteer trên trang chủ thật (`/`) xác nhận `<img data-ifx-seo-logo>` và `<link rel="icon">` trong DOM đã trỏ đúng 2 file mới, cả 2 trả HTTP 200.
+- **Còn lại/lưu ý cho AI tiếp theo:**
+  1. **CHƯA sửa trên Production** (DB Production khác Staging — cần check riêng `marketing_brand_identity` trên Production có dính lỗi tương tự không trước khi coi đây là xong hoàn toàn; Owner chưa yêu cầu kiểm Production trong lượt này).
+  2. **Chưa xác định NGUYÊN NHÂN GỐC** vì sao 2 field này bị gán sai asset ngay từ đầu (có thể do 1 script RSS-ingest/admin-upload nào đó copy nhầm biến, hoặc thao tác Admin UI nhầm lẫn — các entry Codex gần đó đang làm việc với RSS ingest/image variant xử lý cho bài viết, khả năng liên quan nhưng CHƯA CÓ BẰNG CHỨNG TRỰC TIẾP cơ chế gây lỗi, chỉ có bằng chứng DỮ LIỆU sai + thời điểm trùng hợp) — nếu lỗi này TÁI XUẤT HIỆN sau khi Admin/Codex chạy lại luồng upload/ingest nào đó, cần điều tra kỹ luồng ghi vào `marketing_brand_identity` (`site-seo.service.js`/route Admin liên quan) để tìm chỗ gán nhầm.
+  3. Nên đo lại PSI thật (Lighthouse, không phải local) sau khi Owner xác nhận để thấy điểm cải thiện rõ — chưa có số đo trước/sau cho riêng phát hiện này (84KB+31KB thừa trên mọi trang không nhỏ, nhưng tác động PSI THẬT SỰ còn phụ thuộc TTFB/các yếu tố khác đã ghi ở mục `23:55:00` 2026-10-15 — không nên kỳ vọng đây là fix duy nhất giải quyết hết vấn đề PSI, chỉ là 1 phần đã xác nhận ảnh hưởng thật).
+
 ## 2026-10-16T04:20:00+07:00 — Claude — đang làm (Follow Stock/Story xong, Sector/Ecosystem xong UI, Notification CHƯA làm) — "Quan tâm" thực thể đồng bộ Watchlist + server
 
 - **Nhiệm vụ/trạng thái:** đang làm. Owner đính chính scope: Follow phải (1) vào Watchlist, (2) nhận thông báo, (3) hiện trong Tin tức "Bạn quan tâm". Mục này làm xong (1)+(3), **CHƯA làm (2) thông báo** (việc backend riêng, lớn hơn — xem "Còn lại").
@@ -19,8 +39,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-16T03:50:00+07:00 — Claude — hoàn thành — Sửa tiếp fix "giật" mục `03:35:00`: tự kiểm bằng Puppeteer phát hiện fix trước CHƯA thật sự hết giật
 
-## 2026-10-16T03:50:00+07:00 — Claude — hoàn thành — Sửa tiếp fix "giật" mục `03:35:00`: tự kiểm bằng Puppeteer phát hiện fix trước CHƯA thật sự hết giật
-
 - **Nhiệm vụ/trạng thái:** hoàn thành. Tự verify fix mục `03:35:00` bằng Puppeteer (track vị trí NGUYÊN 1 node qua `__ifxMarker` — đánh dấu trước khi click, không dò lại bằng `data-*` attribute vì các attribute đó ĐỔI GIÁ TRỊ giữa chừng animation, dễ bắt nhầm sang node Back vừa chèn vào) — phát hiện VẪN còn 1 bước nhảy centerX 128px tại đúng thời điểm `enterBackAndRest()` chèn Back/rest (t≈240ms), rồi đứng yên tuyệt đối suốt phần còn lại (không hề có chuyển động mượt nào sau đó) — tức transition KHÔNG chạy, dù code đã gắn lại class `--flip`.
 - **Nguyên nhân (lỗi trong chính fix mục `03:35:00`)**: thiếu dòng `mainLink.style.transition = ''` SAU khi ép reflow (`void mainLink.offsetWidth`) và TRƯỚC khi gắn lại class `--flip` — `mainLink.style.transition = 'none'` (set trước đó để tắt transition lúc đặt transform tức thời) vẫn còn hiệu lực (inline style thắng CSS class do specificity), chặn hoàn toàn transition của class `--flip` phát huy tác dụng → bước "animate về 0" chạy TỨC THỜI thay vì trượt 360ms — vẫn giật, chỉ đổi hình dạng cú giật (từ to+đứng im → vẫn 1 bước nhảy, chỉ ít điểm nhảy hơn 1 chút). `animateFromPrimary()` (giai đoạn 1, code CŨ, không đụng) có dòng reset này đúng — copy thiếu khi viết `enterBackAndRest()`.
 - **Sửa thêm 2 việc trong cùng lượt này**: (1) thêm dòng reset `transition=''` còn thiếu. (2) đổi công thức `dx2` từ lệch MÉP TRÁI sang lệch TÂM (`left + width/2`) — vì bước này bề ngang đổi RẤT NHIỀU (386px → ~88px, khác hẳn giai đoạn 1 nơi 5 item cỡ gần bằng nhau) nên lệch mép trái không phản ánh đúng icon (căn giữa trong item) đã dịch bao nhiêu pixel thật.
@@ -31,8 +49,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-16T03:35:00+07:00 — Claude — hoàn thành — Fix icon Bottom Nav Cấp 2 "giật" giữa 2 giai đoạn animation (lỗi trên mọi trang)
 
-## 2026-10-16T03:35:00+07:00 — Claude — hoàn thành — Fix icon Bottom Nav Cấp 2 "giật" giữa 2 giai đoạn animation (lỗi trên mọi trang)
-
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo: bấm vào Cấp 2 từ trang chủ — icon di chuyển từ phải sang giữa rồi GIẬT sang trái, xảy ra ở MỌI trang có Cấp 2.
 - **Nguyên nhân (đã xác nhận bằng đọc code, không phải lỗi mới do mục `02:45:00` gây ra — đã có từ bản FLIP animation gốc)**: Animation 2 giai đoạn tuần tự (`mobile-nav.js`): Giai đoạn 1 (`animateFromPrimary`) xoá hết item Cấp-1 khác, chỉ còn `mainLink` — vì `.ifx-tabbar-item{flex:1}`, item còn lại 1 mình GIÃN HẾT CHIỀU NGANG thanh bar (icon căn giữa bên trong → mắt thấy icon trôi về GIỮA màn hình, khớp "từ phải sang giữa" Owner mô tả). Giai đoạn 2 (`enterBackAndRest`, chạy sau 200ms) chèn Back + các mục còn lại vào ngay — `mainLink` CO HẸP LẠI tức thì về đúng ô hẹp của nó (chia chỗ với Back+rest) — bước co hẹp này KHÔNG có transition nào che (transform giai đoạn 1 đã clear xong từ trước) → mắt thấy icon GIẬT sang trái đúng lúc Back/rest trượt vào. CSS vốn cố ý tránh animate `left`/`width` (ghi rõ trong comment cũ, tránh layout recalculation liên tục) nên khoảng co hẹp này bị bỏ sót, không ai che bằng transform.
 - **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (chỉ hàm `enterBackAndRest()`), `User_Web/iflux-web-ui/iflux-web-ui.js` (bump version `mobile-nav.js?v=` → `r20261016b`, **bắt buộc thủ công**).
@@ -40,8 +56,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** `node --check` PASS cả 2 file. `sync-js-versions.mjs` write+`--check` PASS (233 file, cascade 35 file qua version mới của `mobile-nav.js`). Đang deploy — sẽ verify bằng Puppeteer (chụp nhiều frame liên tiếp trong lúc animation chạy, so sánh vị trí icon qua từng frame xem còn bước nhảy đột ngột nào không) ngay sau khi push.
 - **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
 - **Còn lại:** Owner yêu cầu tiếp làm cơ chế "Quan tâm" (Follow) thực thể — hiện `POST /news/follow` (mục `00:40:00`/`02:25:00`) đã có backend nhưng CHƯA có nút bấm nào trên UI gọi tới. Owner vừa đính chính scope: Follow phải (1) thêm vào Watchlist, (2) nhận thông báo, (3) hiện trong "Bạn quan tâm" — nghĩa là `user_entity_follows` (bảng mới riêng cho News) có thể cần TÍCH HỢP với hệ Watchlist hiện có (`user_data.watchlist_json`, `watchlist-store.js`) + hệ thông báo (`user_inbox_notifications`, migration 024) thay vì đứng độc lập — cần khảo sát kỹ trước khi code (chưa bắt đầu).
-
-## 2026-10-16T02:45:00+07:00 — Claude — hoàn thành — Fix GỐC: FLIP animation (mobile-nav.js) không cập nhật icon/text/hành vi click sau khi "biến hình" từ Cấp 1 sang Cấp 2
 
 ## 2026-10-16T03:15:00+07:00 — Claude — hoàn thành — Trang Cá nhân mobile: gộp Riêng tư/Mật khẩu vào "Hồ sơ" (backlog cũ)
 
@@ -60,8 +74,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-16T02:45:00+07:00 — Claude — hoàn thành — Fix GỐC: FLIP animation (mobile-nav.js) không cập nhật icon/text/hành vi click sau khi "biến hình" từ Cấp 1 sang Cấp 2
 
-## 2026-10-16T02:45:00+07:00 — Claude — hoàn thành — Fix GỐC: FLIP animation (mobile-nav.js) không cập nhật icon/text/hành vi click sau khi "biến hình" từ Cấp 1 sang Cấp 2
-
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo: bấm "Tin tức"/"Dòng tiền" ở Menu cấp 1 → Cấp 2 hiện ra nhưng CHƯA thấy đúng trang "Bạn quan tâm"/"Tổng quan" → phải refresh mới thấy. **Đây KHÔNG phải lỗi riêng của Tin tức hay Dòng tiền** — là lỗi CHUNG trong cơ chế FLIP animation dùng cho MỌI trang có Cấp 2 (`iflux-platform-boot.js` level2 config), chỉ "may mắn" không lộ ra ở Cộng đồng vì `items[0].label` của nó ("Cộng đồng") TRÙNG với nhãn Cấp 1 ("Cộng đồng") — Dòng tiền (`items[0]`="Tổng quan" ≠ "Dòng tiền") và Tin tức (`items[0]`="Bạn quan tâm" ≠ "Tin tức") thì KHÔNG trùng nên lộ bug ngay.
 - **Nguyên nhân THẬT (đã xác nhận bằng đọc code + chính dữ liệu Puppeteer của Claude trước đó cũng đã vô tình ghi lại đúng triệu chứng này mà chưa nhận ra)**: `animateFromPrimary()` (`mobile-nav.js`) tái dùng NGUYÊN node `<a>` của mục Cấp-1 vừa bấm (đúng kỹ thuật FLIP — không xoá/dựng lại, để animate mượt) — nhưng chỉ cập nhật các `data-*` attribute (`data-ifx-section-key`...), **KHÔNG BAO GIỜ cập nhật lại `innerHTML`** (icon + text vẫn là của mục Cấp-1 gốc, vd "Tin tức") **và KHÔNG gắn lại hành vi click đúng** (mục Cấp-1 "chưa active, điều hướng từ nơi khác" vốn KHÔNG có listener riêng — chỉ có `href` để `onDocumentClick` tự điều hướng — nên sau khi "biến hình" thành mục Cấp 2, bấm lại nó không gọi `setActiveRegion()` như mọi mục Cấp 2 khác, chỉ lặp lại y nguyên href cũ = không có tác dụng).
 - **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (chỉ hàm `animateFromPrimary()`, +3 dòng: set lại `innerHTML` qua `tabbarItemHtml(mainCfg, mainCfg.label)` ĐÚNG label/icon của `items[0]`, `href='#'`, `onclick` gọi `shell.setActiveRegion(mainCfg.key)` — đồng nhất với `buildSectionLink()` dùng cho mọi mục Cấp 2 khác). `User_Web/iflux-web-ui/iflux-web-ui.js` (bump version `mobile-nav.js?v=` → `r20261016a` — **BẮT BUỘC thủ công, file này KHÔNG được `sync-js-versions.mjs` theo dõi tự động, đã ghi chú nhiều lần trong phiên trước**).
@@ -69,8 +81,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** `node --check` PASS cả 2 file. `sync-js-versions.mjs` write+`--check` PASS (233 file, cascade 35 file). `build-web-bundle.mjs --check` PASS. Đang deploy — sẽ verify lại bằng Puppeteer ĐÚNG kịch bản đã lộ bug (mobile viewport 390×844: cold load `/dong-tien` → tap "Tin tức" → đọc text hiển thị của mục Cấp 2 vị trí 2 PHẢI là "Bạn quan tâm", không phải "Tin tức"; tương tự `/cong-dong` → tap "Dòng tiền" → phải thấy "Tổng quan") ngay sau khi push.
 - **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
 - **Lưu ý cho AI tiếp theo:** đây là lỗi NẰM TRONG hệ thống chung (không phải code riêng từng trang) — nếu sau này thêm trang mới có Cấp 2 mà `items[0].label` KHÁC nhãn Cấp 1 của trang đó, bug này (trước khi fix) sẽ lại lộ ra y hệt — nay đã sửa tận gốc nên không cần lo lại nữa, nhưng nên nhớ bài học: **không thể suy luận đúng/sai của cơ chế chung chỉ từ 1 trang (Cộng đồng) khi trang đó tình cờ có 2 nhãn trùng nhau** — luôn test trang có `items[0].label` KHÁC nhãn Cấp 1.
-
-## 2026-10-16T02:25:00+07:00 — Claude — hoàn thành — Gỡ blocker DB (GRANT) + fix bug `hidden` không gỡ ở Bottom Nav Cấp 2 Tin tức mobile
 
 ## 2026-10-16T02:25:00+07:00 — Claude — hoàn thành — Gỡ blocker DB (GRANT) + fix bug `hidden` không gỡ ở Bottom Nav Cấp 2 Tin tức mobile
 
@@ -92,8 +102,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-16T02:10:00+07:00 — Claude — đang làm — Trang Tin tức: mobile Bottom Nav Cấp 2 (region followed/bulletin/hot/sidebar-left)
 
-## 2026-10-16T02:10:00+07:00 — Claude — đang làm — Trang Tin tức: mobile Bottom Nav Cấp 2 (region followed/bulletin/hot/sidebar-left)
-
 - **Nhiệm vụ/trạng thái:** đang làm (code xong, `node --check`/`sync-js-versions`/`build-web-bundle` PASS — CHƯA deploy/test tay trên Staging ở mục này). Nối tiếp 3 mục trước (`00:40:00` backend, `01:30:00` frontend desktop, `01:45:00` blocker DB). Owner xác nhận: "sidebar-left/Thịnh hành" ở Cấp 2 ĐƠN GIẢN LÀ sidebar trái Widget Host có sẵn trên desktop (Owner tự cấu hình trong Admin), KHÔNG phải tính năng "trending" mới — y hệt cách Cộng đồng đã làm với sidebar trái/phải.
 - **Phạm vi:** worktree `/private/tmp/ifx-news-l2` từ `github/staging` (`747ec51`).
   - `User_Web/iflux-web-ui/news-page.js` — thêm `state.lazyMode`/`state.frame`, và cụm hàm mới Y HỆT pattern đã CHỨNG MINH hoạt động ở `community-page.js` (main/sidebar-left): `toggleRegionVisibility(key)` (sidebar-left → `.ifx-shell-sidebar`, còn lại → `.ifx-shell-main`), `activateRegion(root,key)` (gọi thẳng `activateToplevelRegion` — KHÔNG qua `applyToplevelTab` vì hàm đó có guard "đã active thì bỏ qua", sai cho cold-load/popstate), `applyViewFromUrl()` (đọc `?view=`, tự phát `iflux-level2-change` cho cold-load), `onLevel2Change(e)`, `ensureLevel2Bound()` (đăng ký 1 lần, set `data-ifx-region-mode` + `__ifxPageRuntime.onSamePagePopState` + listener), `dispose()` (mới, export qua `global.IfluxNewsPage.dispose`).
@@ -103,8 +111,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Lưu ý quan trọng — chỉ verify được PHẦN ĐIỀU HƯỚNG (navigation/region-switching), KHÔNG verify được nội dung `followed`/`hot`**: 2 region này vẫn còn dính blocker DB ở mục `01:45:00` (`permission denied for table news_interaction_events`) — Puppeteer sẽ thấy đúng region/panel chuyển nhưng nội dung bên trong báo lỗi tải, đây là HÀNH VI ĐÃ BIẾT, không phải bug mới ở mục này. `sidebar-left` ("Thịnh hành") dùng bảng/API cũ (Widget Host) nên PHẢI hoạt động đầy đủ kể cả khi blocker DB chưa gỡ — nếu sidebar-left cũng lỗi thì ĐÓ mới là bug thật của mục này.
 - **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
 - **Còn lại/lưu ý cho AI tiếp theo:** nút Follow thật trên trang Cổ phiếu/Ngành/Hệ sinh thái/Câu chuyện vẫn chưa có UI (xem mục `01:30:00`) — không phụ thuộc mobile Level2, có thể làm song song/độc lập.
-
-## 2026-10-16T01:45:00+07:00 — Claude — BỊ CHẶN — `GET /api/news/hot` lỗi 500 "permission denied for table news_interaction_events" trên Staging sau deploy
 
 ## 2026-10-16T01:45:00+07:00 — Claude — BỊ CHẶN — `GET /api/news/hot` lỗi 500 "permission denied for table news_interaction_events" trên Staging sau deploy
 
@@ -121,8 +127,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
   1. **Việc cần Owner/Ops làm trên Staging**: chạy (với role có quyền, vd `postgres` hoặc DB owner) — xác định đúng tên role app đang dùng (biến `DATABASE_USER`/`DATABASE_URL` trong env thật của tiến trình `server.js` trên server, KHÔNG phải `.env.example` cục bộ) rồi: `GRANT SELECT, INSERT, UPDATE, DELETE ON user_entity_follows, news_interaction_events TO <role_đó>;`. Nếu muốn tránh lặp lại vấn đề này cho các migration sau, cân nhắc thêm `ALTER DEFAULT PRIVILEGES ... GRANT ... ON TABLES TO <role_đó>;` ở cấp schema/role chạy migration.
   2. Sau khi Owner/Ops chạy GRANT xong, verify lại bằng đúng lệnh đã lặp lại nhiều lần ở trên: `curl https://staging.iflux.vn/api/news/hot?range=week` phải trả 200 (không còn "permission denied"), rồi test `/news/followed`/`/news/follow` với 1 tài khoản có token thật.
   3. Tất cả code (migration 085, `entity-follow.service.js`, `news-hot.service.js`, `news-feed.service.js`, `news.routes.js`, `interaction.service.js`, `news-page.js`, `news.css`, `iflux-platform-boot.js`) đã đúng, KHÔNG cần sửa gì thêm cho tới khi vấn đề quyền DB này được giải quyết — mọi việc dở (mobile Bottom Nav Cấp 2 region, nút Follow) vẫn tiếp tục làm được song song vì không phụ thuộc DB thật lúc code/test cục bộ, nhưng sẽ không verify được đầu-cuối (end-to-end) trên Staging cho tới khi GRANT xong.
-
-## 2026-10-16T01:30:00+07:00 — Claude — đang làm — Trang Tin tức: frontend desktop lớp danh mục "Bạn quan tâm | Bản tin | Tin nóng" (nối tiếp mục 00:40:00 — backend đã xong)
 
 ## 2026-10-16T01:30:00+07:00 — Claude — đang làm — Trang Tin tức: frontend desktop lớp danh mục "Bạn quan tâm | Bản tin | Tin nóng" (nối tiếp mục 00:40:00 — backend đã xong)
 
@@ -148,8 +152,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 
 ## 2026-10-16T00:40:00+07:00 — Claude — đang làm — Trang Tin tức: backend Follow thực thể + log tương tác (nền cho "Bạn đang quan tâm"/"Tin nóng"), CHƯA đụng frontend
 
-## 2026-10-16T00:40:00+07:00 — Claude — đang làm — Trang Tin tức: backend Follow thực thể + log tương tác (nền cho "Bạn đang quan tâm"/"Tin nóng"), CHƯA đụng frontend
-
 - **Nhiệm vụ/trạng thái:** đang làm (backend phần 1/N xong, frontend CHƯA bắt đầu). Owner yêu cầu bổ sung lớp tab "Bạn đang quan tâm | Bản tin | Tin nóng" cho Tin tức — xem Plan `/Users/mac/.claude/plans/cached-giggling-axolotl.md`. Owner chủ động bỏ qua Plan Mode ("cứ làm luôn"), nhưng vẫn giữ file Plan làm tài liệu tra cứu.
 - **QUAN TRỌNG — bài học quy trình:** 1 agent khảo sát ban đầu (trước mục này) báo cáo SAI là "Bottom Nav Cấp 2 không tồn tại" vì chạy trong thư mục chính `/Users/mac/Documents/Productions/iFLUX_P1`, lúc đó lệch **38 commit** sau `github/staging`. Đã xác minh lại toàn bộ bằng worktree sạch (`/private/tmp/ifx-news-verify`, đã xoá) — Bottom Nav Cấp 2 CÓ THẬT. Owner cũng đính chính đúng: "Đăng lại" (Repost) News CÓ THẬT và CÓ timestamp (qua `social_posts`, không phải qua News riêng) — khác hẳn giả định sai ban đầu của Claude (xem phần SQL bên dưới). **Bài học:** mọi khảo sát/agent trong phiên này PHẢI chạy trong worktree từ `github/staging`, không bao giờ trong thư mục chính.
 - **Phạm vi đã làm (backend, worktree `/private/tmp/ifx-news-backend` từ `github/staging`):**
@@ -169,8 +171,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
   - Chưa viết frontend: lớp tab mới "Bạn đang quan tâm | Bản tin | Tin nóng" (icon dùng lại `.ix-stat-icon` + `.success`/`.accent`/`.danger`, size override 64×44/font-size-48 theo đúng code Owner đưa, wrapper mới đặt tên `ifx-` prefix — xem Plan), nút Follow trên trang Cổ phiếu/Ngành/Hệ sinh thái/Câu chuyện (hiện CHƯA có UI nào gọi `POST /news/follow` — endpoint đã có, UI chưa).
   - Mobile Bottom Nav Cấp 2 cho Tin tức (thêm `level2` config trong `iflux-platform-boot.js`) — chưa làm.
   - `GET /news/followed` dùng `req.user.id` — cần xác nhận `deps.auth.authenticate` middleware set đúng `req.user.id` (đã thấy pattern này dùng y hệt ở `/posts/:idOrSlug/comments` nên tin tưởng đúng, chưa tự test).
-
-## 2026-10-15T23:55:00+07:00 — Claude — hoàn thành (fix vỡ trang) / báo cáo (PSI mobile) — Trang Cộng đồng desktop vỡ layout + điều tra PSI mobile tụt điểm
 
 ## 2026-10-15T23:55:00+07:00 — Claude — hoàn thành (fix vỡ trang) / báo cáo (PSI mobile) — Trang Cộng đồng desktop vỡ layout + điều tra PSI mobile tụt điểm
 
@@ -477,6 +477,7 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** chưa chạy.
 - **Commit:** chưa có.
 - **Còn lại/lưu ý cho AI tiếp theo:** nếu Codex xử lý tiếp, không cần động tới phần tác giả bài viết (news-ui.js/news-post-page.js/news.css) — khác nhiệm vụ, tránh đụng `author widget` Codex đang redesign. Không ghi App Password vào bất kỳ file được track git.
+
 ## 2026-10-14 — Codex — khôi phục Staging về trước điều tra theo yêu cầu Owner
 
 - **Nhiệm vụ/trạng thái:** đang làm; Owner yêu cầu dừng điều tra và khôi phục bản mới nhất trước thử nghiệm.
@@ -532,6 +533,7 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** unit test profile/resize options PASS cho ảnh 2000×1200 (detail thành 1500×900) và ảnh 800×600 (detail giữ 800×600); `node --check` các file JS PASS; `git diff --check` PASS. `sharp` không có trong node_modules cục bộ nên test dùng stub để xác nhận options/geometry, chưa chạy xử lý ảnh native.
 - **Commit:** chưa có.
 - **Còn lại/lưu ý:** chưa deploy. Frontend hiện chọn `cover_hero` cho card nổi bật; chưa tìm thấy consumer đang dùng `cover_detail`. Backfill hiện chỉ chọn ảnh thiếu role, nên ảnh đã có đủ variants sẽ không tự được tạo lại theo profile mới; cần xử lý riêng nếu muốn cập nhật ảnh cũ. Giữ nguyên mọi thay đổi ngoài phạm vi trong worktree.
+
 ## 2026-10-14 — Codex — checkpoint khôi phục hiệu suất Staging 1
 
 - **Nhiệm vụ/trạng thái:** commit checkpoint đã tạo; chuẩn bị push Staging và chờ CI/smoke để Owner đo PSI. SHA trước bước: `de82470bd69b8c86ce868bba64a3a7d3563018f3`.
@@ -683,12 +685,6 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** `git diff --cached --check` PASS; 122/122 paths khớp, không thừa/thiếu. Kiểm thử ghi ở mục 17:34.
 - **Commit:** chưa có; sắp tạo commit `feat(news): prepare RSS editorial AI preview pipeline`.
 - **Còn lại:** sau commit, áp dụng riêng commit này lên production base và xác minh CI/deploy trước khi chạy A/B. Production API key/runtime config chưa được xác nhận; không chép key local.
-
-
-
-
-
-
 
 ## 2026-10-13 17:34:00 +07:00 — Codex — chuẩn bị commit riêng cho nhánh release
 
