@@ -95,6 +95,19 @@ var PROFILE_CARD_HTML = `
             <i class="ti ti-edit" style="font-size:13px"></i> Chỉnh sửa hồ sơ
           </button>
         </div>
+        <!-- Owner 2026-10-16: mobile gộp Riêng tư/Mật khẩu vào "Hồ sơ" (registry đánh dấu
+             desktopOnly — xem iflux-platform-boot.js) — 2 nút lối tắt này CHỈ hiện mobile
+             (ifx-profile-mobile-links, ẩn ≥1024px — profile.css), desktop đã có 2 tab riêng
+             nên không cần. Tái dùng ĐÚNG cơ chế data-ifx-goto-tab có sẵn (bindProfileGotoTab —
+             account-feature-boot.js — gọi switchAccountProfileTab, không viết handler mới). -->
+        <div class="ifx-profile-mobile-links" data-ifx-own-only>
+          <button type="button" class="ix-btn ix-btn-outline" data-ifx-goto-tab="tab-privacy">
+            <i class="ti ti-shield-lock" style="font-size:13px"></i> Riêng tư
+          </button>
+          <button type="button" class="ix-btn ix-btn-outline" data-ifx-goto-tab="tab-security">
+            <i class="ti ti-lock" style="font-size:13px"></i> Mật khẩu
+          </button>
+        </div>
       </div>
 
       <div data-ifx-side-edit hidden data-ifx-own-only>

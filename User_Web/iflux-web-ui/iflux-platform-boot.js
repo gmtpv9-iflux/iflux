@@ -648,8 +648,12 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     { key: 'dashboard',  tabId: 'tab-dashboard', label: 'Dashboard',   icon: 'ti-layout-dashboard', ownOnly: true, homeOnly: true },
     { key: 'affiliate', tabId: 'tab-affiliate', label: 'Affiliate',    icon: 'ti-affiliate',    ownOnly: true },
     { key: 'payment',   tabId: 'tab-payment',   label: 'Liên kết thẻ', icon: 'ti-credit-card',  ownOnly: true },
-    { key: 'privacy',   tabId: 'tab-privacy',   label: 'Riêng tư',     icon: 'ti-shield-lock',  ownOnly: true },
-    { key: 'security',  tabId: 'tab-security',  label: 'Mật khẩu',     icon: 'ti-lock',         ownOnly: true },
+    /* Owner 2026-10-16 — mobile: Riêng tư/Mật khẩu gộp vào "Hồ sơ" (sidebar đầy đủ hiện ra khi
+       chọn tab-profile — xem syncAccountMobileLayout/profile.css data-ifx-account-view="profile"
+       — đã có sẵn 2 nút lối tắt "Riêng tư"/"Mật khẩu" ngay trong card đó, xem PROFILE_CARD_HTML
+       widgets/home-page/index.js). Desktop giữ nguyên 2 tab riêng như cũ. */
+    { key: 'privacy',   tabId: 'tab-privacy',   label: 'Riêng tư',     icon: 'ti-shield-lock',  ownOnly: true, desktopOnly: true },
+    { key: 'security',  tabId: 'tab-security',  label: 'Mật khẩu',     icon: 'ti-lock',         ownOnly: true, desktopOnly: true },
     { key: 'profile',   tabId: 'tab-profile',   label: 'Hồ sơ',        icon: 'ti-user',         ownOnly: true, mobileOnly: true }
   ];
 
@@ -1027,11 +1031,17 @@ Refs: Task5 PhaseA — không audit / không tối ưu
           return true;
         })
         .map(function (d) {
+          /* "Hồ sơ" (mobile) là lối vào DUY NHẤT cho Riêng tư/Mật khẩu (2 mục đó desktopOnly —
+             không có nút riêng trên Bottom Nav mobile nữa, chỉ có lối tắt BÊN TRONG card Hồ sơ).
+             Giữ "Hồ sơ" sáng (active) khi đang ở tab-privacy/tab-security qua lối tắt đó, không
+             để Bottom Nav mất hết trạng thái active. */
+          var isActive = d.tabId === activeTab ||
+            (mobile && d.key === 'profile' && (activeTab === 'tab-privacy' || activeTab === 'tab-security'));
           return freezeNavItem({
             key: d.key,
             label: d.label,
             href: '#',
-            active: d.tabId === activeTab,
+            active: isActive,
             icon: d.icon,
             tabId: d.tabId
           });
