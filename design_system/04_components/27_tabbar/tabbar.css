@@ -155,44 +155,56 @@
 .ifx-tabbar-item-article.is-active .ifx-tabbar-fab i { font-size: var(--ifx-font-size-xl); }
 .ifx-tabbar-item-article .ifx-tabbar-count { position: static; margin-left: var(--ifx-space-2); }
 
-/* Chế độ section: Bottom Nav 2 cấp (root → section, vd Cộng đồng). Back cố định vị trí 1,
-   các item còn lại "nở" lệch pha trái→phải bằng opacity+transform (KHÔNG left/width — tránh
-   layout recalculation liên tục, đúng khuyến nghị hiệu suất). Dùng chung layout flex của
-   .ifx-tabbar-item (không đổi max-height) — tối đa 5 item (Back+main+action+2 region) bằng
-   đúng số item mode primary, không cần CSS wrap/scroll riêng. JS (mobile-nav.js renderSection)
-   chỉ set --ifx-tabbar-enter-delay theo thứ tự + toggle class bắt animation, không tự tính
-   transform/opacity. */
-.ifx-tabbar[data-ifx-tabbar-mode="section"] .ifx-tabbar-item {
+/* Chế độ section: Bottom Nav 2 cấp (root → section, vd Cộng đồng) — animation 2 giai đoạn
+   TUẦN TỰ (Owner 2026-10-15):
+   (1) icon "Cộng đồng" TRƯỢT từ vị trí 1 (Cấp 1) sang vị trí 2 (Cấp 2) — mobile-nav.js dùng lại
+       nguyên node DOM (không xoá/dựng lại) + kỹ thuật FLIP (đo lệch vị trí cũ/mới, animate
+       transform) — class .ifx-tabbar-item--flip chỉ bật `transition: transform` đúng lúc JS cần,
+       KHÔNG áp dụng sẵn cho mọi item (nếu không item khác lúc đổi active cũng bị dính transition
+       ngoài ý muốn).
+   (2) SAU KHI (1) xong — Back trượt vào từ trái, các mục còn lại trượt vào từ phải, CÙNG LÚC
+       (class .ifx-tabbar-item--enter-left / --enter-right, bật qua .is-entering). Dùng
+       opacity+transform (KHÔNG left/width — tránh layout recalculation liên tục). */
+.ifx-tabbar-item--flip {
+  transition: transform var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+.ifx-tabbar-item--enter-left,
+.ifx-tabbar-item--enter-right {
   opacity: 0;
-  transform: translateX(-8px);
   transition: opacity var(--ifx-duration-slow) var(--ifx-ease-out),
               transform var(--ifx-duration-slow) var(--ifx-ease-out);
   transition-delay: var(--ifx-tabbar-enter-delay, 0ms);
 }
-.ifx-tabbar[data-ifx-tabbar-mode="section"]:not(.ifx-tabbar--section-enter) .ifx-tabbar-item {
-  /* Sau khi animation chạy xong (class --section-enter bị gỡ), item giữ trạng thái hiện —
-     đổi vùng con sau đó (setActiveRegion) không chạy lại animation nhập cảnh. */
+.ifx-tabbar-item--enter-left { transform: translateX(-16px); }
+.ifx-tabbar-item--enter-right { transform: translateX(16px); }
+.ifx-tabbar-item--enter-left.is-entering,
+.ifx-tabbar-item--enter-right.is-entering {
   opacity: 1;
   transform: translateX(0);
 }
-.ifx-tabbar[data-ifx-tabbar-mode="section"] .ifx-tabbar-item[data-ifx-section-kind="back"] {
-  transition-delay: 0ms; /* Back luôn vào đầu tiên, không chờ stagger của các item con */
-}
 
-/* Nút Back Cấp 2 — chỉ icon (không chữ), hẹp vừa đủ chứa icon, nền sáng hơn 1 nhịp DS
-   (--ifx-bg-hover, cùng cách .ifx-tabbar-item-article đã dùng ở trên) để tách biệt trực quan
-   khỏi các mục còn lại trong menu con. Chỉ đổi padding ngang — padding dọc giữ nguyên như
-   .ifx-tabbar-item để chiều cao thanh/vùng chạm không đổi. */
+/* Bar section: Back cần chạm mép trái THẬT của khung bao ngoài (không chỉ mép trong của item
+   đầu) — bỏ padding trái của bar riêng ở mode này (các item sau Back vẫn cách nhau bằng gap
+   như cũ, không ảnh hưởng). */
+.ifx-tabbar[data-ifx-tabbar-mode="section"] { padding-left: 0; }
+
+/* Nút Back Cấp 2 — chỉ icon (không chữ), hẹp vừa đủ chứa icon, sát mép trái VÀ sát trên/dưới
+   của khung bao ngoài (align-self: stretch — bỏ qua align-items:center của bar, bỏ hết padding
+   dọc/bo góc) để trông tách khối hẳn khỏi phần còn lại của menu, nền sáng hơn 1 nhịp DS
+   (--ifx-bg-hover, cùng cách .ifx-tabbar-item-article đã dùng ở trên). */
 .ifx-tabbar-item-back {
   flex: 0 0 auto;
-  padding-left: 2px;
-  padding-right: 2px;
-  border-radius: var(--ifx-radius-sm);
+  align-self: stretch;
+  justify-content: center;
+  padding: 0 2px;
+  border-radius: 0;
   background: var(--ifx-bg-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ifx-tabbar[data-ifx-tabbar-mode="section"] .ifx-tabbar-item {
+  .ifx-tabbar-item--flip,
+  .ifx-tabbar-item--enter-left,
+  .ifx-tabbar-item--enter-right {
     transition: none;
     transform: none;
     opacity: 1;

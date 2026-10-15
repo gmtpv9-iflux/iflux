@@ -217,6 +217,7 @@
         link.href = (mode === 'primary' && it.href) ? it.href : '#';
         link.className = 'ifx-tabbar-item' + (it.active ? ' is-active' : '');
         if (mode === 'primary' && it.exclusive) link.className += ' ifx-tabbar-item-exclusive';
+        if (mode === 'primary') link.setAttribute('data-ifx-primary-key', it.key);
         var badge = '';
         if (mode === 'context' && it.key === 'comments' && commentN && commentN !== '0') {
           badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
@@ -296,13 +297,115 @@
       return '<span class="ifx-tabbar-icon"><span class="ifx-tabbar-fab"><i class="ti ' + it.icon + '"></i></span></span>';
     }
 
+    function buildSectionLink(it, itemKey, regionKey, shell) {
+      var link = document.createElement('a');
+      link.href = '#';
+      var isActive = it.kind === 'region' && it.key === regionKey;
+      link.className = 'ifx-tabbar-item' + (isActive ? ' is-active' : '') +
+        (it.kind === 'back' ? ' ifx-tabbar-item-back' : '');
+      link.setAttribute('data-ifx-section-kind', it.kind);
+      link.setAttribute('data-ifx-section-key', it.key);
+      link.innerHTML = it.kind === 'back' ? tabbarBackIconHtml(it) : tabbarItemHtml(it, it.label);
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (it.kind === 'back') { shell.closeLevel2(); return; }
+        if (it.kind === 'action') {
+          try {
+            document.dispatchEvent(new CustomEvent('iflux-level2-action', { detail: { itemKey: itemKey, action: it.action } }));
+          } catch (err) { /* ignore */ }
+          return;
+        }
+        shell.setActiveRegion(it.key);
+      });
+      return link;
+    }
+
+    /** Dựng thẳng, không hiệu ứng — dùng khi không có item Cấp-1 sẵn trong DOM để "biến hình"
+     * (vào thẳng URL ?view=, hoặc chuyển từ mode khác ngoài primary như context/account —
+     * hiếm, không cần hiệu ứng phức tạp) hoặc khi prefers-reduced-motion. */
+    function hardRenderSection(itemKey, regionKey, cfg) {
+      bar.innerHTML = '';
+      bar.setAttribute('aria-label', 'Menu con');
+      bar.setAttribute('data-ifx-tabbar-mode', 'section');
+      bar.setAttribute('data-ifx-section-item', itemKey);
+      var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
+      var list = [backItem].concat(cfg.items || []);
+      var shell = window.IfluxAppShell;
+      list.forEach(function (it) { bar.appendChild(buildSectionLink(it, itemKey, regionKey, shell)); });
+    }
+
+    /** Giai đoạn 2: SAU KHI icon "Cộng đồng" đã ổn định ở vị trí mới — Back trượt vào từ trái,
+     * các mục còn lại trượt vào từ phải, CÙNG LÚC với nhau (đúng yêu cầu Owner: không phải nối
+     * tiếp thêm 1 lượt stagger dài, chỉ lệch nhẹ thứ tự trong chính nhóm "mục còn lại"). */
+    function enterBackAndRest(itemKey, regionKey, cfg, restCfg, shell, mainLink) {
+      var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
+      var backLink = buildSectionLink(backItem, itemKey, regionKey, shell);
+      backLink.classList.add('ifx-tabbar-item--enter-left');
+      bar.insertBefore(backLink, mainLink);
+
+      restCfg.forEach(function (it, idx) {
+        var link = buildSectionLink(it, itemKey, regionKey, shell);
+        link.classList.add('ifx-tabbar-item--enter-right');
+        link.style.setProperty('--ifx-tabbar-enter-delay', (idx * 40) + 'ms');
+        bar.appendChild(link);
+      });
+
+      requestAnimationFrame(function () {
+        bar.querySelectorAll('.ifx-tabbar-item--enter-left, .ifx-tabbar-item--enter-right').forEach(function (l) {
+          l.classList.add('is-entering');
+        });
+      });
+      setTimeout(function () {
+        bar.querySelectorAll('.ifx-tabbar-item--enter-left, .ifx-tabbar-item--enter-right').forEach(function (l) {
+          l.classList.remove('ifx-tabbar-item--enter-left', 'ifx-tabbar-item--enter-right', 'is-entering');
+        });
+      }, 360);
+    }
+
+    /** Giai đoạn 1 (FLIP — First/Last/Invert/Play): "Cộng đồng" KHÔNG bị xoá/dựng lại — dùng
+     * lại ĐÚNG node `<a>` đang có sẵn trong DOM (mainLink, item Cấp-1 đang active), chỉ xoá các
+     * item Cấp-1 khác rồi để trình duyệt tự dồn "Cộng đồng" về vị trí 1 (slot duy nhất còn lại),
+     * đo lệch vị trí cũ/mới rồi animate transform — mắt thấy icon TRƯỢT sang vị trí mới, không
+     * phải biến mất rồi hiện lại. Xong giai đoạn 1 mới gọi enterBackAndRest() cho giai đoạn 2. */
+    function animateFromPrimary(mainLink, itemKey, regionKey, cfg, mainCfg, restCfg, shell) {
+      var firstRect = mainLink.getBoundingClientRect();
+
+      Array.prototype.slice.call(bar.querySelectorAll('.ifx-tabbar-item')).forEach(function (l) {
+        if (l !== mainLink) l.remove();
+      });
+      mainLink.removeAttribute('data-ifx-primary-key');
+      mainLink.setAttribute('data-ifx-section-kind', 'region');
+      mainLink.setAttribute('data-ifx-section-key', mainCfg.key);
+      mainLink.classList.toggle('is-active', regionKey === mainCfg.key);
+
+      var lastRect = mainLink.getBoundingClientRect();
+      var dx = firstRect.left - lastRect.left;
+      if (!dx) {
+        enterBackAndRest(itemKey, regionKey, cfg, restCfg, shell, mainLink);
+        return;
+      }
+      mainLink.style.transition = 'none';
+      mainLink.style.transform = 'translateX(' + dx + 'px)';
+      void mainLink.offsetWidth; /* ép reflow — không thì trình duyệt gộp 2 lần set transform, mất animate */
+      mainLink.style.transition = '';
+      mainLink.classList.add('ifx-tabbar-item--flip');
+      requestAnimationFrame(function () {
+        mainLink.style.transform = '';
+      });
+      setTimeout(function () {
+        mainLink.classList.remove('ifx-tabbar-item--flip');
+        mainLink.style.transition = '';
+        enterBackAndRest(itemKey, regionKey, cfg, restCfg, shell, mainLink);
+      }, 200);
+    }
+
     /** Bottom Nav Cấp 2 (root → section) — Back cố định vị trí 1 (chỉ icon), item[0] của cấu
      * hình (luôn "nội dung chính" của mục Cấp 1) vị trí 2, các item còn lại theo thứ tự khai
-     * báo. Animation 3 giai đoạn qua CSS (tabbar.css, mode 'section') — JS chỉ set thứ tự
-     * stagger (--ifx-tabbar-enter-delay) và toggle class bắt đầu transition 1 LẦN DUY NHẤT lúc
-     * thật sự MỞ Cấp 2 (itemKey đổi) — gọi lại hàm này khi đã ở sẵn đúng Cấp 2 (vd resize do
-     * URL bar mobile co/giãn lúc cuộn trang — không phải sự kiện mở/rời) chỉ cập nhật
-     * class .is-active, không dựng lại DOM/animation. */
+     * báo. 2 giai đoạn tuần tự theo đúng yêu cầu Owner: (1) icon "Cộng đồng" trượt từ vị trí 1
+     * (Cấp 1) sang vị trí 2 (Cấp 2) — dùng lại nguyên node DOM, KHÔNG dựng lại/load lại; (2) sau
+     * khi ổn định, Back trượt vào từ trái + các mục còn lại trượt vào từ phải, cùng lúc. Gọi lại
+     * hàm này khi đã ở sẵn đúng Cấp 2 (vd resize do URL bar mobile co/giãn lúc cuộn trang —
+     * không phải sự kiện mở/rời) chỉ cập nhật class .is-active, không dựng lại DOM/animation. */
     function renderSection(itemKey, regionKey) {
       var shell = window.IfluxAppShell;
       var cfg = shell && shell.getLevel2Config && shell.getLevel2Config(itemKey);
@@ -319,39 +422,21 @@
         return;
       }
 
-      bar.innerHTML = '';
+      var mainCfg = (cfg.items && cfg.items[0]) || null;
+      var restCfg = (cfg.items || []).slice(1);
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var currentMode = bar.getAttribute('data-ifx-tabbar-mode');
+      var mainLink = (!currentMode && mainCfg) ? bar.querySelector('[data-ifx-primary-key="' + itemKey + '"]') : null;
+
       bar.setAttribute('aria-label', 'Menu con');
       bar.setAttribute('data-ifx-tabbar-mode', 'section');
       bar.setAttribute('data-ifx-section-item', itemKey);
-      var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
-      var list = [backItem].concat(cfg.items || []);
-      list.forEach(function (it, idx) {
-        var link = document.createElement('a');
-        link.href = '#';
-        var isActive = it.kind === 'region' && it.key === regionKey;
-        link.className = 'ifx-tabbar-item' + (isActive ? ' is-active' : '') +
-          (it.kind === 'back' ? ' ifx-tabbar-item-back' : '');
-        link.setAttribute('data-ifx-section-kind', it.kind);
-        link.setAttribute('data-ifx-section-key', it.key);
-        link.style.setProperty('--ifx-tabbar-enter-delay', (idx * 40) + 'ms');
-        link.innerHTML = it.kind === 'back' ? tabbarBackIconHtml(it) : tabbarItemHtml(it, it.label);
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (it.kind === 'back') { shell.closeLevel2(); return; }
-          if (it.kind === 'action') {
-            try {
-              document.dispatchEvent(new CustomEvent('iflux-level2-action', { detail: { itemKey: itemKey, action: it.action } }));
-            } catch (err) { /* ignore */ }
-            return;
-          }
-          shell.setActiveRegion(it.key);
-        });
-        bar.appendChild(link);
-      });
-      requestAnimationFrame(function () {
-        bar.classList.add('ifx-tabbar--section-enter');
-        setTimeout(function () { bar.classList.remove('ifx-tabbar--section-enter'); }, 350);
-      });
+
+      if (mainLink && mainCfg && !reduceMotion) {
+        animateFromPrimary(mainLink, itemKey, regionKey, cfg, mainCfg, restCfg, shell);
+      } else {
+        hardRenderSection(itemKey, regionKey, cfg);
+      }
     }
 
     /** Chi tiết bài viết — entity row (trên) + Host ActionBar (dưới). Không proxy-click. */
