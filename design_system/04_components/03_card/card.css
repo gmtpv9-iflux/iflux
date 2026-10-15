@@ -35,13 +35,14 @@
   font-size: var(--ifx-font-size-18);
   color: var(--ifx-action-primary);
 }
-/* Body tối hơn 1 chút so với Header (cùng tông --ifx-bg-subtle mọi theme) — tiêu đề nổi rõ,
-   không chỉ dựa vào đường viền. Card không có Header riêng (def.head === false) → Body là
-   phần tử đầu, cần tự bo góc trên; không có Footer → Body là phần tử cuối, tự bo góc dưới
-   (Card cha không overflow:hidden, phải tự khớp góc bo tương ứng vị trí). */
+/* Owner 2026-10-15: bỏ nền riêng — trước đây tối hơn Header/Footer 1 chút (--ifx-bg-subtle)
+   khiến Body nổi thành "hộp" riêng trong khi Header/Footer trong suốt (hiện màu Card cha,
+   --ifx-bg-surface), vi phạm đồng bộ 3 vùng của cùng 1 Card. Giờ cả 3 vùng cùng hiện màu Card
+   cha, đồng nhất tuyệt đối. Card không có Header riêng (def.head === false) → Body là phần tử
+   đầu, cần tự bo góc trên; không có Footer → Body là phần tử cuối, tự bo góc dưới (Card cha
+   không overflow:hidden, phải tự khớp góc bo tương ứng vị trí). */
 .ifx-card-body {
   padding: var(--ifx-inset-card-body);
-  background: var(--ifx-bg-subtle);
 }
 .ifx-card-body:first-child {
   border-top-left-radius: var(--ifx-radius-card);
@@ -67,17 +68,22 @@
   font-weight: var(--ifx-font-weight-semibold);
 }
 
-/* Owner 2026-10-15: khung Card (nền/viền/đổ bóng + đệm 2 bên Header/Body/Footer) chỉ giữ ở
+/* Owner 2026-10-15 (đính chính): khung Card (đệm 2 bên Header/Body/Footer) chỉ giữ ở
    desktop/tablet — trên mobile khung này ăn vào bề rộng hiển thị, làm nội dung Widget (bảng số,
    text dài, nhãn không ngắt dòng được) bị thu hẹp hoặc vỡ giao diện. Chỉ áp dụng cho Card do
    IfxTemplates.mount() dựng (data-ifx-template — xem design_system/05_templates/00_widget/
    widget.js) — KHÔNG đụng .ifx-card dùng ở nơi khác (Admin, danh sách, modal…). Một điểm sửa duy
    nhất ở đây áp dụng cho MỌI Template hiện có và Template mới thêm sau này (không cần sửa từng
-   Template). Đệm trên/dưới (không thu hẹp bề rộng) vẫn giữ để nội dung không dính sát nhau. */
+   Template). Đệm trên/dưới (không thu hẹp bề rộng) vẫn giữ để nội dung không dính sát nhau —
+   CHỈ bỏ đệm ngang. Khung viền: không bo góc, không viền trái/phải — chỉ còn viền trên (mỏng,
+   như cũ) + viền dưới 2px (đậm hơn, phân tách rõ 2 Widget liền kề khi xếp dọc trên mobile). */
 @media (max-width: 768px) {
   .ifx-card[data-ifx-template] {
     background: transparent;
     border: none;
+    border-top: 1px solid var(--ifx-border-default);
+    border-bottom: 2px solid var(--ifx-border-default);
+    border-radius: 0;
     box-shadow: none;
   }
   .ifx-card[data-ifx-template] .ifx-card-header,
@@ -88,6 +94,9 @@
   .ifx-card[data-ifx-template] .ifx-card-body {
     padding-left: 0;
     padding-right: 0;
-    background: transparent;
+  }
+  .ifx-card[data-ifx-template] .ifx-card-body:first-child,
+  .ifx-card[data-ifx-template] .ifx-card-body:last-child {
+    border-radius: 0;
   }
 }

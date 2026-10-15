@@ -8,7 +8,7 @@
   color-scheme: dark;
 
   /* Surface */
-  --color-bg-canvas: var(--ifx-color-slate-850);
+  --color-bg-canvas: #0b0b2b; /* Owner 2026-10-15 — giữ khớp design_system/01_tokens dark bg-canvas */
   --color-bg-surface: var(--ifx-color-slate-800);
   --color-bg-elevated: var(--ifx-color-slate-700);
   --color-bg-subtle: var(--ifx-color-slate-900);
