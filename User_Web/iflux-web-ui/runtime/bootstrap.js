@@ -338,13 +338,24 @@ export async function start(opts) {
     IfluxEntityDefinition.applyEarlyDocumentTitle();
   }
 
-  /* Manifest trang tải song song với App Shell (resolveManifest dùng lại module đã tải). */
+  /* Manifest trang tải song song với App Shell. Trước đây chỉ phần import module tĩnh
+   * (loadStaticManifest, rẻ — bundle local) chạy song song; 2 lần fetch mạng THẬT SỰ tốn thời
+   * gian trong resolveManifest() (GET /api/pages/:key, GET /api/seo/effective) vẫn bị await
+   * TUẦN TỰ sau khi bootShell() xong hoàn toàn — dù resolveManifest không phụ thuộc gì bootShell
+   * thiết lập (chỉ cần pageKey đã có sẵn + apiBase() không đọc state của shell). Đo bằng Puppeteer
+   * (throttle mobile, CPU 4x) trên /tin-tuc: GET /api/pages/news không bắt đầu cho tới ~5.7s vì
+   * đợi hết toàn bộ chuỗi tier bootShell (nhiều file nhỏ, nhiều tier) — đúng nguyên nhân LCP/CLS
+   * chậm Owner báo (PSI mobile 80→50). Khởi 2 promise CÙNG LÚC, chỉ gộp kết quả ở await cuối —
+   * không đổi hành vi, chỉ đổi THỜI ĐIỂM network request bắt đầu (sớm hơn, không còn đợi shell). */
   loadStaticManifest(pageKey).then(warmPage).catch(function () { /* resolveManifest báo lỗi sau */ });
 
-  var shell = await bootShell(pageKey, { soft: soft });
+  var shellPromise = bootShell(pageKey, { soft: soft });
+  var manifestPromise = resolveManifest(pageKey);
+
+  var shell = await shellPromise;
   if (shell === null) return null;
 
-  var manifest = await resolveManifest(pageKey);
+  var manifest = await manifestPromise;
   if (!manifest) {
     if (window.console && console.warn) console.warn('[Runtime] Chưa có manifest/PagePublished cho:', pageKey);
     return null;
