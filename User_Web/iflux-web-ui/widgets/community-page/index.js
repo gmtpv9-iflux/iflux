@@ -24,7 +24,7 @@ export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
    community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
   [ASSET + 'community-store.js?v=17b421d80c'],
-  [ASSET + 'community-page.js?v=cfbdf639a7']
+  [ASSET + 'community-page.js?v=e07ef39933']
 ];
 
 export async function mount(el) {
@@ -36,14 +36,16 @@ export async function mount(el) {
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
 
   var mobile = !!(window.IfluxBreakpoint && window.IfluxBreakpoint.isMobileShell && window.IfluxBreakpoint.isMobileShell());
-  if (window.IfluxCommunityPage && IfluxCommunityPage.init) {
-    IfluxCommunityPage.init(frame, { lazyRegions: mobile });
-  }
 
   /* Mobile (Bottom Nav 2 cấp, xem docs/plan "Mobile Bottom Navigation 2 cấp"): Widget Host
      sidebar trái (4 widget thật — không đi qua community-page.js, cần import mountPageWidgets
      ở ĐÂY) chỉ mount khi region 'sidebar-left' được chọn LẦN ĐẦU — không mount/fetch trước khi
-     user bấm "Thịnh hành". Desktop/tablet giữ nguyên hành vi CŨ: mount ngay. */
+     user bấm "Thịnh hành". ĐĂNG KÝ LISTENER TRƯỚC KHI gọi init() bên dưới — cold-load thẳng vào
+     URL có ?view=sidebar-left khiến init() tự phát 'iflux-level2-change' ĐỒNG BỘ ngay trong
+     lúc chạy (qua applyViewFromUrl() — community-page.js); nếu đăng ký SAU init() như bản cũ,
+     listener chưa tồn tại lúc event bắn ra → bỏ lỡ, Widget Host không bao giờ mount dù sidebar
+     đã hiển thị (chỉ đúng khi vào Cấp 2 bằng cách TAP, không đúng khi mở thẳng URL/refresh).
+     Desktop/tablet giữ nguyên hành vi CŨ: mount ngay, không qua cơ chế này. */
   if (!mobile) {
     mountPageWidgets(el, 'community', { sectionFilter: ['sidebar'], gateKey: 'community' });
   } else {
@@ -56,6 +58,10 @@ export async function mount(el) {
     };
     document.addEventListener('iflux-level2-change', onLevel2Change);
     el.__ifxOnLevel2Change = onLevel2Change; // tháo trong unmount
+  }
+
+  if (window.IfluxCommunityPage && IfluxCommunityPage.init) {
+    IfluxCommunityPage.init(frame, { lazyRegions: mobile });
   }
 
   return {

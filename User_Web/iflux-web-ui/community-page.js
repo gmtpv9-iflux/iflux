@@ -988,13 +988,22 @@
 
   /* Đọc lại ?view= hiện tại (qua IfluxAppShell) và áp dụng — dùng cho cold load thẳng vào URL
      có ?view= lẫn khi popstate "nhẹ" (xem onPopState trong soft-navigation.js). Trả về true nếu
-     đã xử lý (báo cho onPopState KHÔNG cần dựng lại toàn trang). */
+     đã xử lý (báo cho onPopState KHÔNG cần dựng lại toàn trang). Tự phát 'iflux-level2-change'
+     — bình thường setActiveRegion()/openLevel2() (AppShell) đã phát event này, nhưng đường cold
+     load KHÔNG đi qua 2 hàm đó (đọc thẳng URL) nên phải tự phát ở đây — nếu không, listener
+     khác module (vd widgets/community-page/index.js — mount Widget Host sidebar) không bao giờ
+     biết để chạy, dù nội dung ở ĐÂY vẫn hiển thị đúng (chỉ thiếu phần module khác phụ trách). */
   function applyViewFromUrl() {
     var shell = global.IfluxAppShell;
     if (!currentFrame || !shell || !shell.isLevel2Open || !shell.isLevel2Open()) return false;
     var region = shell.activeSectionKey() || 'main';
     ensureRegion(region, currentFrame);
     toggleRegionVisibility(region);
+    try {
+      document.dispatchEvent(new CustomEvent('iflux-level2-change', {
+        detail: { itemKey: shell.currentLevel2Item ? shell.currentLevel2Item() : null, regionKey: region, open: true }
+      }));
+    } catch (e) { /* ignore */ }
     return true;
   }
 
