@@ -51,7 +51,7 @@ var manifest = {
     m('community-daily-feed', 'js', ASSET + 'news-daily-feed.js?v=be2cb197c0', 'IfluxDailyFeed'),
     m('entity-detail-center', 'js', ASSET + 'entity-detail-center.js?v=e666f1ae95', 'IfluxEntityDetailCenter'),
     m('stock-page', 'js', ASSET + 'stock-page.js?v=665b84d07e', 'IfluxStockPage'),
-    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
+    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2', 'IfluxPageLayoutEngine'),
     m('stock-css', 'css', ASSET + 'stock.css?v=c07620f5e0', null)
   ],
   lazyChildren: [],

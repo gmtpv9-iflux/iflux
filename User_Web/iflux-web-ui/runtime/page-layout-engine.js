@@ -87,6 +87,36 @@ Refs: Task5 PhaseA — không audit / không tối ưu
       || root.querySelector('[data-section="' + sectionKey + '"]');
   }
 
+  /* Skeleton mặc định (320px, xem .ifx-rt-widget-skeleton trong app-shell.css) chỉ là ước lượng
+     chung cho MỌI Widget — với Template dạng danh sách nhiều dòng (vd TMP-COMMUNITY-STORY-TOP:
+     10 dòng → cao thật 795px đo bằng Puppeteer trên /tin-tuc Staging), khung 320px lệch quá xa
+     chiều cao thật, gây nhảy layout (CLS) lớn khi Template thật dựng xong thay khung tạm — đúng
+     phần tử PSI báo render delay4440ms, LCP nằm trong widget sidebar này. CHỈ áp dụng công thức
+     ước lượng theo số dòng cho các Template đã verify là dạng danh sách (tránh đoán sai cho
+     Template dạng chart/biểu đồ — dataDefinition của chart không đại diện số dòng hiển thị).
+     Hệ số hiệu chỉnh từ 2 phép đo thật: TMP-COMMUNITY-STORY-TOP 10 dòng=795px,
+     TMP-COMMUNITY-LIST 5 dòng=477px → overhead~140px + ~65px/dòng khớp cả hai. */
+  var ROW_LIST_TEMPLATES = {
+    'TMP-COMMUNITY-STORY-TOP': true,
+    'TMP-COMMUNITY-LIST': true
+  };
+  var SKELETON_MIN = 320;
+  var SKELETON_MAX = 900;
+  var SKELETON_OVERHEAD = 140;
+  var SKELETON_PER_ROW = 65;
+
+  function estimateSkeletonHeight(art) {
+    var templateId = art && art.display && art.display.renderSpec && art.display.renderSpec.templateId;
+    if (!templateId || !ROW_LIST_TEMPLATES[templateId]) return null;
+    var defs = art && art.content && Array.isArray(art.content.dataDefinition) ? art.content.dataDefinition : null;
+    var demo = defs && defs[0] && defs[0].demo;
+    if (!demo) return null;
+    var rows = String(demo).split('|').length;
+    if (!rows) return null;
+    var px = SKELETON_OVERHEAD + rows * SKELETON_PER_ROW;
+    return Math.max(SKELETON_MIN, Math.min(SKELETON_MAX, px));
+  }
+
 
   /**
    * Dựng Host Tree từ PagePublished.
@@ -164,7 +194,10 @@ Refs: Task5 PhaseA — không audit / không tối ưu
            (IfxTemplates.mount thay host.innerHTML, tự xoá khung này) — không có khung này, host
            rỗng bị CSS .ifx-rt-widget:empty/.ifx-shell-host:empty ẩn hẳn (0px) rồi "nở" đột ngột
            khi nội dung về, làm Sidebar sticky (đang dính) bị tính lại và giật theo. */
-        host.innerHTML = '<div class="ifx-rt-widget-skeleton" aria-hidden="true"></div>';
+        var skeletonHeight = estimateSkeletonHeight(art);
+        host.innerHTML = skeletonHeight
+          ? '<div class="ifx-rt-widget-skeleton" aria-hidden="true" style="min-height:' + skeletonHeight + 'px"></div>'
+          : '<div class="ifx-rt-widget-skeleton" aria-hidden="true"></div>';
         sectionEl.appendChild(host);
 
         tree.push({

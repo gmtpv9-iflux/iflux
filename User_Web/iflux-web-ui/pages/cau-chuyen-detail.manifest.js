@@ -24,7 +24,7 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'cau-chuyen' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=e1ab067632',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=a256f3680a',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',

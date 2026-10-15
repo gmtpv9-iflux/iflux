@@ -5,7 +5,7 @@
 import { loadScript } from './legacy-bridge.js?v=dec30759da';
 import { mountPublishedWidgets } from './mount-published-widgets.js?v=730cdbd2ef';
 
-var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=a6f64093c8';
+var ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=c3d1bce3f2';
 
 /**
  * @param {Element} root — phần tử chứa khung trang

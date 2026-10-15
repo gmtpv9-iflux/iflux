@@ -21,7 +21,7 @@
  * vãng lai riêng (trước đây mountGuest()).
  */
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=438cb566bc';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -507,7 +507,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=229b478a15');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=89c68579b1');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

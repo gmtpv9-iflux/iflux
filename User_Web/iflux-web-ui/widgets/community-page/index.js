@@ -14,7 +14,7 @@
  * 2026-10 chốt vị trí ở Sidebar trái — không qua Widget Placement). */
 import { loadScriptTiers } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=438cb566bc';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 
