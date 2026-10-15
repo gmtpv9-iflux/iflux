@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T10:10:49+07:00 — Claude — hoàn thành (local) — mã OTP đậm thật trong thông báo đẩy (Unicode bold digit)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp `8e09a25` cùng ngày. Chỉ sửa `verification-otp.template.js`.
+- **Phạm vi:** `backend/src/core/email/templates/verification-otp.template.js`.
+- **Trước → sau:** Owner phản hồi: thông báo đẩy vẫn không đậm, muốn tách dòng rõ hơn, đổi nhãn "MÃ XÁC MINH CỦA BẠN" → "MÃ XÁC MINH:". Xác nhận plain text (nguồn preview thông báo đẩy Gmail app/iOS Mail) không hỗ trợ markup in đậm (`**`/`<b>` chỉ hiện ký tự thô) — dùng Unicode Mathematical Bold digit (U+1D7CE–1D7D7, ký tự THẬT khác chữ số thường, không phải style) cho RIÊNG phần chữ số của mã OTP — in đậm thành công ở mọi nơi hiển thị text thuần. Không áp dụng cho nhãn "MÃ XÁC MINH" vì bảng Unicode này không có chữ cái tiếng Việt có dấu — ghép sẽ rủi ro vỡ font; nhãn giữ chữ thường, chỉ mã số đậm. Dòng đầu text đổi thành `MÃ XÁC MINH: {mã đậm unicode}`, tự xuống dòng riêng (`\n\n`) trước cả lời chào. Nhãn trong khối HTML cũng đổi "MÃ XÁC MINH CỦA BẠN" → "MÃ XÁC MINH".
+- **Kiểm tra:** `node --check` PASS. Gửi email thật qua đúng luồng (config loader/logger/smtp provider thật) — dòng đầu plain-text xác nhận hiện đúng `MÃ XÁC MINH: 𝟕𝟱𝟭𝟮𝟵𝟬` (chữ số Unicode đậm thật). Chưa có xác nhận từ Owner là banner thông báo điện thoại hiển thị đúng ý muốn (phụ thuộc font hệ điều hành — cần Owner tự kiểm tra trên điện thoại thật).
+- **Commit:** sẽ tạo ngay sau mục này, gộp cùng cập nhật nhật ký.
+- **Còn lại/lưu ý:** nếu Owner báo vẫn chưa ưng (vd muốn đậm cả nhãn, hoặc font hiển thị lạ trên 1 số máy), cân nhắc bỏ hẳn Unicode-bold-trick (rủi ro tương thích) quay về plain text thường + dựa hoàn toàn vào dòng đầu để "nổi bật" thay vì cố đậm. Tiếp theo theo đúng yêu cầu Owner: audit cơ chế deploy Staging (chỉ đọc, không tự sửa secrets/server) — xem mục ngay sau khi có.
+
 ## 2026-10-15T10:07:07+07:00 — Claude — hoàn thành (local) — tinh chỉnh nội dung mail OTP theo feedback Owner
 
 - **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp commit `07215dd` cùng ngày (OTP Gmail SMTP + auto-fill). Chỉ sửa thêm `verification-otp.template.js`, không đụng file nào khác.
