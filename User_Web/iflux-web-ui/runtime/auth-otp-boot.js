@@ -12,7 +12,7 @@ var ALL = [
   ADMIN + 'iflux-customers-store.js',
   ADMIN + 'iflux-credentials-store.js?v=r20260928n',
   ASSET + 'loyalty-affiliate-store.js?v=b225fb0132',
-  ASSET + 'iflux-otp-input.js?v=eb09ba649a',
+  ASSET + 'iflux-otp-input.js?v=3f45afcf80',
   ASSET + 'iflux-mail-deeplink.js?v=458ad345d5',
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
   ASSET + 'iflux-web-ui.js?v=3f61a0f60d',

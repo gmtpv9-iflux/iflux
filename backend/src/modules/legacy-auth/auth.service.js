@@ -9,6 +9,7 @@ const verifierRegistry = require('./identity/verifier-registry');
 const { toLegacySocialProfile } = require('./identity/verified-identity');
 
 const OTP_TTL_MS = 15 * 60 * 1000;
+const OTP_TTL_MINUTES = OTP_TTL_MS / 60000;
 const MAX_ATTEMPTS = 5;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 
@@ -195,7 +196,8 @@ async function startRegistration(config, payload) {
     await sendVerificationOtp(config, {
       to: normEmail,
       code: otp,
-      displayName: display_name
+      displayName: display_name,
+      expiryMinutes: OTP_TTL_MINUTES
     });
   }
 
@@ -262,7 +264,8 @@ async function resendVerificationOtp(config, email) {
   await sendVerificationOtp(config, {
     to: normEmail,
     code: otp,
-    displayName: payload.display_name
+    displayName: payload.display_name,
+    expiryMinutes: OTP_TTL_MINUTES
   });
 
   return {
