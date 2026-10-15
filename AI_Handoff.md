@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T10:25:22+07:00 — Claude — hoàn thành (local) — mã OTP đậm Unicode trong CẢ khối HTML (không chỉ text/plain)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp `84e7f92` cùng ngày. Chỉ sửa `verification-otp.template.js`.
+- **Phạm vi:** `backend/src/core/email/templates/verification-otp.template.js`.
+- **Trước → sau:** Owner xác nhận vẫn chưa thấy mã đậm trên thông báo đẩy dù bản trước đã đậm ở `text` (plain-text MIME part). Nguyên nhân khả dĩ nhất: nhiều app mail (đặc biệt Gmail) tạo đoạn preview cho banner thông báo bằng cách BÓC phần `html` ra text thô (loại bỏ toàn bộ thẻ/CSS), không nhất thiết ưu tiên phần `text` riêng — khối mã lớn trong HTML trước đó chỉ đậm bằng `font-weight:700` (CSS), bóc ra mất hết, về lại số thường. Fix: khối mã trong HTML đổi từ `${code}` (số thường + CSS bold) sang `${codeBold}` (cùng chuỗi Unicode Sans-Bold đã dùng ở `text`) — giờ dù notification lấy nguồn từ `text` hay từ HTML-bóc-thẻ, mã vẫn hiện đậm thật (ký tự Unicode khác hẳn, không phụ thuộc style).
+- **Kiểm tra:** `node --check` PASS. Gửi email thật xác nhận cả `text` và `html` đều chứa đúng chuỗi Unicode bold của mã (`𝟳𝟱𝟭𝟮𝟵𝟬`). Owner xác nhận NGAY sau đó: đậm đã lên đúng trên thông báo đẩy thật — fix này đúng nguyên nhân.
+- **Việc thêm cùng lượt:** Owner phản hồi tiếp: chữ mã (Unicode Sans-Bold) hiện NHỎ hơn chữ thường xung quanh trong banner thông báo, yêu cầu tăng font-size 2 nhịp. Đã tăng khối mã trong HTML từ `36px` → `44px` (phần duy nhất Claude điều khiển được kích thước chữ qua CSS). Đã nói rõ với Owner: kích thước chữ trong CHÍNH banner thông báo đẩy (không phải email mở ra) do hệ điều hành/app mail tự vẽ đồng loạt cho toàn bộ dòng text thuần — không có cơ chế CSS/Unicode nào chỉnh RIÊNG kích thước 1 đoạn trong đó; việc mã trông "nhỏ hơn" trên thông báo nhiều khả năng do font hệ thống thay glyph fallback khác (nhỏ/mảnh hơn) cho đúng dải Unicode Mathematical Sans-Bold đang dùng — nằm ngoài khả năng kiểm soát từ phía server.
+- **Commit:** sẽ tạo ngay sau mục này, push `staging`.
+- **Còn lại/lưu ý:** nếu Owner vẫn thấy mã nhỏ trên thông báo đẩy sau bản này (không phải trong email mở ra), đây là giới hạn nền tảng thật — hướng duy nhất còn lại là thử Unicode Fullwidth Forms (U+FF00–FFEF, chữ/số "to bề ngang" hơn ASCII thường, khác hẳn Sans-Bold đang dùng) để xem có tạo cảm giác "to hơn" tốt hơn không — chưa làm, cần Owner xác nhận có muốn thử hướng này tiếp không trước khi đổi.
+
 ## 2026-10-15T10:21:27+07:00 — Claude — hoàn thành (local) — rút gọn mail OTP + merge staging với nhánh Codex + push
 
 - **Nhiệm vụ/trạng thái:** hoàn thành 2 việc: (1) merge 3 commit OTP (`07215dd`/`8e09a25`/`bb82429`) với các commit mới của Codex trên `github/staging` (đã push lúc Claude bắt đầu audit — `0c0df30` và chuỗi performance/SEO phía trên), (2) rút gọn thêm nội dung mail theo feedback Owner. Đã push cả hai lên `github` `staging`.

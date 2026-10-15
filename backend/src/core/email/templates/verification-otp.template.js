@@ -33,12 +33,16 @@ function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
     `Đội ngũ ${boldSans('iFlux')}\n\n` +
     `Email tự động được gửi từ hệ thống iFlux. Vui lòng không trả lời email này.`;
 
+  /* Mã trong khối HTML CŨNG dùng codeBold (Unicode), không chỉ dựa font-weight CSS: nhiều app
+     mail (Gmail…) tạo preview thông báo đẩy bằng cách BÓC HTML ra text thô (mất hết CSS/thẻ),
+     không ưu tiên phần text/plain riêng — nếu chỉ đậm bằng CSS ở đây, bóc ra sẽ về số thường,
+     mất đậm. Dùng ký tự Unicode thật thì bóc kiểu gì mã vẫn đậm. */
   const html =
     `<div style="font-family:'Public Sans',Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#1f2430">` +
       `<p style="font-size:14px;line-height:1.6;margin:0 0 12px">Xin chào <strong>${nameUpper}</strong>,</p>` +
       `<p style="font-size:14px;line-height:1.6;margin:0 0 24px">Cảm ơn bạn đã đăng ký tài khoản. Vui lòng sử dụng mã dưới đây để hoàn tất đăng ký.</p>` +
       `<p style="font-size:12px;font-weight:700;letter-spacing:1px;color:#666;margin:0 0 8px">MÃ XÁC MINH</p>` +
-      `<p style="font-size:36px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${code}</p>` +
+      `<p style="font-size:44px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${codeBold}</p>` +
       `<p style="font-size:13px;color:#1b3587;line-height:1.6;margin:0 0 24px">Mã có hiệu lực trong <strong>${minutes} phút</strong>. Không chia sẻ mã này với bất kỳ ai.</p>` +
       `<p style="font-size:14px;line-height:1.6;margin:0 0 32px">Trân trọng,<br/><strong>Đội ngũ iFlux</strong></p>` +
       `<hr style="border:none;border-top:1px solid #eee;margin:0 0 16px"/>` +
