@@ -18,10 +18,14 @@
     /* '' = ALL (SOL-CAL-05) */
     featuredCategoryId: '',
     toplevelTab: '',
-    hotRange: HOT_RANGE_DEFAULT
+    hotRange: HOT_RANGE_DEFAULT,
+    /* Bottom Nav Cấp 2 mobile (xem renderShell/ensureLevel2Bound) */
+    lazyMode: false,
+    frame: null
   };
   var followedCache = { html: null, at: 0 };
   var hotCache = {};
+  var level2Bound = false;
 
   function st() { return global.IfluxNewsStore; }
   function ui() { return global.IfluxNewsUI; }
@@ -459,18 +463,34 @@
     var bulletinInner =
       '<div data-ifx-com-featured-cats-slot></div>' +
       '<div data-ifx-com-daily-feed></div>';
-    var toplevel = !!showToplevel && !group;
-    if (toplevel && !state.toplevelTab) state.toplevelTab = TOPLEVEL_DEFAULT;
+    var wantRegions = !!showToplevel && !group;
+    /* Mobile (Bottom Nav Cấp 2) — nút tab trong trang KHÔNG render (Bottom Nav thay thế hẳn,
+       cùng nguyên tắc đã áp dụng cho Dòng tiền: "mobile không tải/hiện thanh tab desktop"), còn
+       3 vùng nội dung (bulletin/followed/hot) vẫn phải tồn tại trong DOM — Cấp 2 điều khiển qua
+       applyViewFromUrl()/onLevel2Change() bên dưới, không qua click nút. */
+    state.lazyMode = !!(global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell && global.IfluxBreakpoint.isMobileShell());
+    if (wantRegions && !state.toplevelTab) state.toplevelTab = TOPLEVEL_DEFAULT;
     frame.mainContent.innerHTML =
       (group ? '<div class="ifx-com-list-head"><h1 class="ifx-com-list-title">' + groupTitles[group] + '</h1></div>' : filterBannerHtml()) +
-      (toplevel ? toplevelTabsHtml(state.toplevelTab) : '') +
-      (toplevel
+      (wantRegions && !state.lazyMode ? toplevelTabsHtml(state.toplevelTab) : '') +
+      (wantRegions
         ? '<div data-ifx-news-bulletin-region' + (state.toplevelTab !== 'bulletin' ? ' hidden' : '') + '>' + bulletinInner + '</div>' +
           '<div data-ifx-news-followed-region' + (state.toplevelTab !== 'followed' ? ' hidden' : '') + '></div>' +
           '<div data-ifx-news-hot-region' + (state.toplevelTab !== 'hot' ? ' hidden' : '') + '></div>'
         : bulletinInner);
     applyBlockGate(root);
-    if (toplevel) bindToplevelTabs(root);
+    state.frame = frame;
+    if (wantRegions) {
+      if (state.lazyMode) {
+        /* Bottom Nav Cấp 2 — y hệt pattern community-page.js (main/sidebar-left): 1 vùng DOM
+           hiển thị tại 1 lúc, state sống trong URL (?view=), tự khớp cold-load/popstate. */
+        frame.layout.setAttribute('data-ifx-region-mode', 'single');
+        ensureLevel2Bound();
+        if (!applyViewFromUrl()) activateRegion(root, state.toplevelTab);
+      } else {
+        bindToplevelTabs(root);
+      }
+    }
     state.shellReady = true;
   }
 
@@ -644,6 +664,79 @@
     activateToplevelRegion(root, state.toplevelTab);
   }
 
+  /* ───────────────── Bottom Nav Cấp 2 mobile (sidebar-left="Thịnh hành" = Widget Host Admin tự
+     cấu hình, mount riêng ở widgets/news-page/index.js — xem đó) — Y HỆT pattern đã có ở
+     community-page.js (main/sidebar-left): 1 vùng DOM hiển thị tại 1 lúc qua
+     [data-ifx-region-mode="single"]/[data-ifx-region-visible] (app-shell.css, generic sẵn),
+     state sống trong URL (?view=), applyViewFromUrl() tự khớp cold-load/popstate. */
+  function toggleRegionVisibility(key) {
+    if (!state.frame || !state.lazyMode) return;
+    var layout = state.frame.layout;
+    layout.querySelectorAll('[data-ifx-region-visible]').forEach(function (n) {
+      n.removeAttribute('data-ifx-region-visible');
+    });
+    var target = layout.querySelector(key === 'sidebar-left' ? '.ifx-shell-sidebar' : '.ifx-shell-main');
+    if (target) target.setAttribute('data-ifx-region-visible', '');
+  }
+
+  /* LUÔN activate thật (không qua applyToplevelTab() — hàm đó có guard "đã active thì bỏ qua",
+     chỉ đúng cho click chuột; cold-load/popstate cần activate dù state.toplevelTab tình cờ đã
+     trùng giá trị mặc định set sẵn ở renderShell()). */
+  function activateRegion(root, key) {
+    toggleRegionVisibility(key);
+    if (key === 'sidebar-left') return;
+    state.toplevelTab = key;
+    activateToplevelRegion(root, key);
+    root.querySelectorAll('[data-ifx-news-toplevel] [data-ifx-news-toplevel-key]').forEach(function (btn) {
+      var on = btn.getAttribute('data-ifx-news-toplevel-key') === key;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  /* Đọc lại ?view= hiện tại và áp dụng — dùng cho cold load thẳng vào URL có ?view= lẫn khi
+     popstate "nhẹ". Tự phát 'iflux-level2-change' — đường cold load KHÔNG đi qua
+     setActiveRegion()/openLevel2() (AppShell) nên phải tự phát ở đây để widgets/news-page/
+     index.js (mount Widget Host sidebar) biết mà chạy. */
+  function applyViewFromUrl() {
+    var shell = global.IfluxAppShell;
+    var root = document.querySelector('[data-ifx-community-feed]');
+    if (!root || !state.frame || !shell || !shell.isLevel2Open || !shell.isLevel2Open()) return false;
+    var region = shell.activeSectionKey() || TOPLEVEL_DEFAULT;
+    activateRegion(root, region);
+    try {
+      document.dispatchEvent(new CustomEvent('iflux-level2-change', {
+        detail: { itemKey: shell.currentLevel2Item ? shell.currentLevel2Item() : null, regionKey: region, open: true }
+      }));
+    } catch (e) { /* ignore */ }
+    return true;
+  }
+
+  function onLevel2Change(e) {
+    var root = document.querySelector('[data-ifx-community-feed]');
+    if (!root || !state.frame) return;
+    var d = (e && e.detail) || {};
+    if (!d.open) { activateRegion(root, state.toplevelTab || TOPLEVEL_DEFAULT); return; }
+    activateRegion(root, d.regionKey);
+  }
+
+  function ensureLevel2Bound() {
+    if (level2Bound) return;
+    level2Bound = true;
+    global.__ifxPageRuntime = global.__ifxPageRuntime || {};
+    global.__ifxPageRuntime.onSamePagePopState = applyViewFromUrl;
+    document.addEventListener('iflux-level2-change', onLevel2Change);
+  }
+
+  function dispose() {
+    if (level2Bound) {
+      document.removeEventListener('iflux-level2-change', onLevel2Change);
+      level2Bound = false;
+    }
+    state.frame = null;
+    state.lazyMode = false;
+  }
+
   /* Mỗi tab một khung feed riêng, giữ lại khi đổi tab: quay lại tab đã xem → hiện ngay, không tải lại.
    * Khung cũ hơn FEED_TTL_MS được dựng lại để tin mới vẫn xuất hiện. */
   var FEED_TTL_MS = 5 * 60 * 1000;
@@ -815,6 +908,7 @@
   }
 
   global.IfluxNewsPage = {
-    init: init
+    init: init,
+    dispose: dispose
   };
 })(window);
