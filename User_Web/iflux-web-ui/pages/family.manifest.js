@@ -23,7 +23,7 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'family' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=8f7e9c95c5',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/group-page/index.js?v=e1ab067632',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',

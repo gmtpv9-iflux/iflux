@@ -3,8 +3,8 @@
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=07b38d99d3';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=730cdbd2ef';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=438cb566bc';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';

@@ -3,7 +3,7 @@
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=438cb566bc';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 import featureManifest from '../../features/flow.manifest.js?v=6ee6190887';
 

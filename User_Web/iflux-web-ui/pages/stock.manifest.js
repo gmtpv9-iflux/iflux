@@ -22,7 +22,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/stock-page/index.js?v=b8621b7d3c',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/stock-page/index.js?v=f73632c58a',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
