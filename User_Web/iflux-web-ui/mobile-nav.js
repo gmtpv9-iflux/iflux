@@ -192,6 +192,7 @@
       opts = opts || {};
       mode = mode || 'primary';
       bar.innerHTML = '';
+      bar.removeAttribute('data-ifx-section-item'); // rời Cấp 2 — lần sau vào lại phải chạy animation
       if (mode === 'primary') {
         bar.setAttribute('aria-label', 'Điều hướng chính');
         bar.removeAttribute('data-ifx-tabbar-mode');
@@ -221,15 +222,23 @@
           badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
-        /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LÚC ĐANG ACTIVE mở Cấp 2 (bottom bar
-         * chuyển mode 'section') thay vì no-op. Chưa active → để <a href> mặc định xử lý
-         * (soft-navigation điều hướng như cũ, hành vi không đổi). */
+        /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LUÔN mở Cấp 2, kể cả khi đang đứng ở
+         * trang KHÁC (vd Tin tức): đang active → mở Cấp 2 ngay tại chỗ; chưa active → điều
+         * hướng sang trang đó VỚI ?view=main sẵn trong URL (soft-nav bình thường, không tự
+         * dựng DOM tay) — sau khi trang mount xong, community-page.js tự đọc lại ?view= qua
+         * applyViewFromUrl() (đã dùng cho trường hợp mở thẳng URL) nên vào thẳng Cấp 2 mà
+         * không cần bấm lần 2. */
         if (mode === 'primary' && it.hasLevel2) {
           link.addEventListener('click', function (e) {
-            if (!it.active) return;
             e.preventDefault();
             var shell = window.IfluxAppShell;
-            if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
+            if (it.active) {
+              if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
+              return;
+            }
+            var target = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=main';
+            if (window.IfluxSoftNav && window.IfluxSoftNav.navigate) window.IfluxSoftNav.navigate(target);
+            else window.location.href = target;
           });
         }
         if (mode === 'context') {
@@ -276,27 +285,51 @@
       renderTabbar(shell.resolveNavigationItems('accountProfile', ctx), 'account');
     }
 
-    /** Bottom Nav Cấp 2 (root → section) — Back cố định vị trí 1, item[0] của cấu hình
-     * (luôn "nội dung chính" của mục Cấp 1) vị trí 2, các item còn lại theo thứ tự khai báo.
-     * Animation 3 giai đoạn qua CSS (tabbar.css, mode 'section') — JS chỉ set thứ tự stagger
-     * (--ifx-tabbar-enter-delay) và toggle class bắt đầu transition, không tự tính transform. */
+    /** Icon-only — dùng riêng cho nút Back Cấp 2 (Owner 2026-10: bỏ chữ, chỉ icon, nền tách
+     * biệt — xem .ifx-tabbar-item-back trong tabbar.css). */
+    function tabbarBackIconHtml(it) {
+      return '<span class="ifx-tabbar-icon"><span class="ifx-tabbar-fab"><i class="ti ' + it.icon + '"></i></span></span>';
+    }
+
+    /** Bottom Nav Cấp 2 (root → section) — Back cố định vị trí 1 (chỉ icon), item[0] của cấu
+     * hình (luôn "nội dung chính" của mục Cấp 1) vị trí 2, các item còn lại theo thứ tự khai
+     * báo. Animation 3 giai đoạn qua CSS (tabbar.css, mode 'section') — JS chỉ set thứ tự
+     * stagger (--ifx-tabbar-enter-delay) và toggle class bắt đầu transition 1 LẦN DUY NHẤT lúc
+     * thật sự MỞ Cấp 2 (itemKey đổi) — gọi lại hàm này khi đã ở sẵn đúng Cấp 2 (vd resize do
+     * URL bar mobile co/giãn lúc cuộn trang — không phải sự kiện mở/rời) chỉ cập nhật
+     * class .is-active, không dựng lại DOM/animation. */
     function renderSection(itemKey, regionKey) {
       var shell = window.IfluxAppShell;
       var cfg = shell && shell.getLevel2Config && shell.getLevel2Config(itemKey);
       if (!cfg) return;
+
+      var alreadyInSection = bar.getAttribute('data-ifx-tabbar-mode') === 'section' &&
+        bar.getAttribute('data-ifx-section-item') === itemKey;
+      if (alreadyInSection) {
+        bar.querySelectorAll('.ifx-tabbar-item').forEach(function (link) {
+          var isActive = link.getAttribute('data-ifx-section-kind') === 'region' &&
+            link.getAttribute('data-ifx-section-key') === regionKey;
+          link.classList.toggle('is-active', isActive);
+        });
+        return;
+      }
+
       bar.innerHTML = '';
       bar.setAttribute('aria-label', 'Menu con');
       bar.setAttribute('data-ifx-tabbar-mode', 'section');
+      bar.setAttribute('data-ifx-section-item', itemKey);
       var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
       var list = [backItem].concat(cfg.items || []);
       list.forEach(function (it, idx) {
         var link = document.createElement('a');
         link.href = '#';
         var isActive = it.kind === 'region' && it.key === regionKey;
-        link.className = 'ifx-tabbar-item' + (isActive ? ' is-active' : '');
+        link.className = 'ifx-tabbar-item' + (isActive ? ' is-active' : '') +
+          (it.kind === 'back' ? ' ifx-tabbar-item-back' : '');
         link.setAttribute('data-ifx-section-kind', it.kind);
+        link.setAttribute('data-ifx-section-key', it.key);
         link.style.setProperty('--ifx-tabbar-enter-delay', (idx * 40) + 'ms');
-        link.innerHTML = tabbarItemHtml(it, it.label);
+        link.innerHTML = it.kind === 'back' ? tabbarBackIconHtml(it) : tabbarItemHtml(it, it.label);
         link.addEventListener('click', function (e) {
           e.preventDefault();
           if (it.kind === 'back') { shell.closeLevel2(); return; }

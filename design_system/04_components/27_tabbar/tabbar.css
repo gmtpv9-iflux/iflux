@@ -179,6 +179,18 @@
   transition-delay: 0ms; /* Back luôn vào đầu tiên, không chờ stagger của các item con */
 }
 
+/* Nút Back Cấp 2 — chỉ icon (không chữ), hẹp vừa đủ chứa icon, nền sáng hơn 1 nhịp DS
+   (--ifx-bg-hover, cùng cách .ifx-tabbar-item-article đã dùng ở trên) để tách biệt trực quan
+   khỏi các mục còn lại trong menu con. Chỉ đổi padding ngang — padding dọc giữ nguyên như
+   .ifx-tabbar-item để chiều cao thanh/vùng chạm không đổi. */
+.ifx-tabbar-item-back {
+  flex: 0 0 auto;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: var(--ifx-radius-sm);
+  background: var(--ifx-bg-hover);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ifx-tabbar[data-ifx-tabbar-mode="section"] .ifx-tabbar-item {
     transition: none;
