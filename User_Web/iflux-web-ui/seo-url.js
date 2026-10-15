@@ -363,6 +363,7 @@
       url: canonical || undefined,
       image: meta.image || undefined,
       datePublished: post.published_at || post.created_at,
+      dateModified: post.updated_at || post.published_at || post.created_at,
       inLanguage: 'vi-VN',
       author: post.author ? { '@type': 'Person', name: post.author.display_name } : undefined,
       about: (post.tickers || []).map(function (t) {

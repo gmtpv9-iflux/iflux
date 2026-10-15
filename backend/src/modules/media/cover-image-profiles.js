@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Danh sách các "trường hợp hiển thị" cần regenerate cho ẢNH ĐẠI DIỆN (cover) bài viết.
+ * Danh sách các "trường hợp hiển thị" cần regenerate cho ảnh bài viết.
  * Nguồn dữ liệu duy nhất (single source of truth) — dùng bởi:
  *  - media-process.js (sinh file khi ingest RSS / import ảnh cover)
  *  - media.routes.js GET /cover-profiles (Admin > Quản lý Tin tức > Regenerate đọc từ đây)
@@ -28,8 +28,8 @@ const COVER_IMAGE_PROFILES = [
     key: 'cover_card',
     label: 'Card vừa (4/12)',
     description: 'Card vừa trong lưới 3 cột của danh sách tin tức',
-    width: 800,
-    height: 450,
+    width: 720,
+    height: 405,
     format: 'webp',
     quality: 82,
     fit: 'cover'
@@ -38,8 +38,8 @@ const COVER_IMAGE_PROFILES = [
     key: 'cover_hero',
     label: 'Card lớn (6/12, nổi bật)',
     description: 'Card lớn/nổi bật (featured) đầu danh sách tin tức',
-    width: 1280,
-    height: 800,
+    width: 880,
+    height: 550,
     format: 'webp',
     quality: 82,
     fit: 'cover'
@@ -47,12 +47,12 @@ const COVER_IMAGE_PROFILES = [
   {
     key: 'cover_detail',
     label: 'Trang chi tiết',
-    description: 'Ảnh đại diện đầu trang chi tiết bài viết (full width main content)',
-    width: 1600,
-    height: 900,
+    description: 'Ảnh trong bài chi tiết; giữ nguyên tỷ lệ, chiều rộng tối đa 1280px',
+    width: 1280,
     format: 'webp',
     quality: 85,
-    fit: 'cover'
+    fit: 'inside',
+    withoutEnlargement: true
   },
   {
     key: 'cover_social',

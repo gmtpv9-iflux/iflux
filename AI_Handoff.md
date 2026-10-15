@@ -44,6 +44,14 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** chưa chạy.
 - **Commit:** chưa có.
 - **Còn lại/lưu ý cho AI tiếp theo:** nếu Codex xử lý tiếp, không cần động tới phần tác giả bài viết (news-ui.js/news-post-page.js/news.css) — khác nhiệm vụ, tránh đụng `author widget` Codex đang redesign. Không ghi App Password vào bất kỳ file được track git.
+## 2026-10-14 — Codex — khôi phục Staging về trước điều tra theo yêu cầu Owner
+
+- **Nhiệm vụ/trạng thái:** đang làm; Owner yêu cầu dừng điều tra và khôi phục bản mới nhất trước thử nghiệm.
+- **Phạm vi:** đảo đúng thay đổi frontend của checkpoint `63df5ce`; giữ lịch sử Handoff. SHA trước bước `ebf46f3`, bản nguồn khôi phục `de82470` (release trước điều tra, tương ứng release media Production `f391d04`).
+- **Trước → sau:** bỏ thử nghiệm rollback UI, trả toàn bộ file ứng dụng về chính xác `de82470`; không sửa Production hoặc workspace chính có thay đổi của người dùng.
+- **Kiểm tra:** toàn bộ file ngoài Handoff khớp chính xác `de82470` (git diff rỗng); JS versions, CSS bundle và diff check PASS. Chờ CI Staging.
+- **Commit:** chưa có.
+- **Còn lại:** commit riêng, push Staging, chờ CI/smoke rồi dừng hoàn toàn điều tra theo yêu cầu. Không chạy thêm phép đo hiệu suất.
 
 ## 2026-10-14T17:12:43+07:00 — Codex — xác nhận phần tử LCP từ PSI
 
@@ -91,6 +99,23 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** unit test profile/resize options PASS cho ảnh 2000×1200 (detail thành 1500×900) và ảnh 800×600 (detail giữ 800×600); `node --check` các file JS PASS; `git diff --check` PASS. `sharp` không có trong node_modules cục bộ nên test dùng stub để xác nhận options/geometry, chưa chạy xử lý ảnh native.
 - **Commit:** chưa có.
 - **Còn lại/lưu ý:** chưa deploy. Frontend hiện chọn `cover_hero` cho card nổi bật; chưa tìm thấy consumer đang dùng `cover_detail`. Backfill hiện chỉ chọn ảnh thiếu role, nên ảnh đã có đủ variants sẽ không tự được tạo lại theo profile mới; cần xử lý riêng nếu muốn cập nhật ảnh cũ. Giữ nguyên mọi thay đổi ngoài phạm vi trong worktree.
+## 2026-10-14 — Codex — checkpoint khôi phục hiệu suất Staging 1
+
+- **Nhiệm vụ/trạng thái:** commit checkpoint đã tạo; chuẩn bị push Staging và chờ CI/smoke để Owner đo PSI. SHA trước bước: `de82470bd69b8c86ce868bba64a3a7d3563018f3`.
+- **Phạm vi:** phần frontend Tin tức trong nhóm `8a04aa6` so với cha `8705717`: `news-ui.js`, `news-post-page.js`, `news.css`, `features/news.manifest.js`, `pages/news*.manifest.js`, `widgets/news-page/index.js`, `widgets/news-post-page/index.js`, `mobile-nav.js`; thêm các query version được `sync-js-versions.mjs` sinh lại. Backend, Production và nội dung các module ngoài Tin tức giữ nguyên.
+- **Trước → sau:** giao diện/logic Tin tức sau nhóm editorial/timeline ngày 13/10 → các file Tin tức nêu trên về trạng thái trước nhóm để đo cùng `/tin-tuc`. Đây là checkpoint thử nghiệm, chưa xác nhận nguyên nhân; phần hash được sinh lại làm 42 file query-version thay đổi nhưng không đổi nội dung runtime ngoài phạm vi.
+- **Kiểm tra:** `sync-js-versions.mjs --check` PASS (233 file); `build-web-bundle.mjs --check` PASS; `git diff --check` PASS. Chưa chạy browser suite vì suite hiện xác nhận giao diện editorial mới, vốn bị cố ý hoàn nguyên ở checkpoint này.
+- **Commit:** `63df5ce` (`test(perf): rollback news frontend checkpoint on staging`).
+- **Còn lại/lưu ý cho AI tiếp theo:** sau push, đợi CI Staging và smoke; báo Owner SHA/URL rồi dừng để Owner chạy PSI vài lần cùng URL `/tin-tuc`, viewport và cấu hình mạng. Không làm bước tiếp theo trước khi nhận kết quả. Không chạm Production.
+
+## 2026-10-14 16:30:00 +07:00 — Codex — phát hành cover_detail và sửa bản đồ môi trường
+
+- **Nhiệm vụ/trạng thái:** đang chuẩn bị scoped release; commit cục bộ chưa kích hoạt CI. Trình tự dự kiến: push nhánh `staging` → đợi CI/smoke Staging đạt → tạo release commit riêng trên nhánh `production` → push để CI deploy Production.
+- **Phạm vi:** media profile/process/service/import/routes, public news API mapping, unit test; Deployment SoT, Environment Map và Cursor deployment rule.
+- **Trước → sau:** ảnh bài chi tiết dùng delivery hoặc variant cũ → giới hạn `cover_detail` 1280px theo tỷ lệ và bài mới/cũ dùng variant này. Tài liệu từng nói chỉ Staging được deploy/Production Gate đóng → xác nhận hai môi trường đang dùng là Staging `staging.iflux.vn` (`staging` branch) và Production `iflux.vn` (`production` branch), workflow tương ứng `deploy-staging.yml` và `deploy-production.yml`; đánh dấu các chỉ dẫn ngược lại là lịch sử/lỗi thời.
+- **Kiểm tra:** unit media 3/3 PASS; `node --check`, `sync-js-versions --check`, `build-web-bundle --check` và `git diff --check` PASS. Chưa có commit/push nên chưa kích hoạt CI; smoke, purge cache và backfill chưa chạy.
+- **Commit:** chưa có.
+- **Còn lại/lưu ý cho AI tiếp theo:** stage đúng file nêu trên, không lấy thay đổi ngoài phạm vi; sau Staging thành công mới phát hành Production. Cập nhật SHA/CI/smoke trước từng commit. Không deploy code qua SSH trực tiếp.
 
 ## 2026-10-13 22:03:00 +07:00 — Codex — Staging/Production deploy và purge hoàn tất
 
@@ -100,6 +125,29 @@ Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiệ
 - **Kiểm tra:** Staging code `8a04aa6`, Handoff `cc58928`/`4478024`; Production code `430525f`, Handoff `52c31a1`/`07158bb`. CI Staging `38418211513` và Production `38418460674`, cùng workflow Handoff cuối, đều success; unit 13/13, integration 11/11, browser desktop/mobile, asset checks PASS.
 - **Commit:** code Staging `8a04aa6`; code Production `430525f`. Handoff được đồng bộ lên hai nhánh.
 - **Còn lại/lưu ý:** không còn việc deploy/purge. Staging tiếp tục noindex; thiếu dữ liệu PNJ ở DB mẫu không phải lỗi triển khai.
+- **Phạm vi:** release Prompt v2/timeline, migration 084 và các chỉnh sửa liên quan đã ghi ở commit trước.
+- **Trước → sau:** CI Staging/Production đang chờ → cả hai CI thành công; Production CDN đã purge. Production bài PNJ trả HTTP 200, metadata gồm description/canonical/robots index, JSON-LD. Staging shell mới trả HTTP 200; slug PNJ không có trong DB mẫu Staging và trả 404, không ảnh hưởng kết quả deploy.
+- **Kiểm tra:** Staging CI run `38418211513` success SHA `cc589288`; Production CI run `38418460674` success SHA `52c31a1`; Cloudflare purge HTTP 200 success. Smoke-test metadata Production PASS; shell Staging PASS.
+- **Commit:** code Staging `8a04aa6`, Handoff Staging `cc58928`; code Production `430525f`, Handoff Production `52c31a1`.
+- **Còn lại/lưu ý:** không còn việc deploy/purge. Staging chứa dữ liệu mẫu, không dùng thiếu bài PNJ làm kết luận lỗi code; staging giữ noindex theo policy.
+
+## 2026-10-13 22:00:00 +07:00 — Codex — commit Staging Prompt v2/timeline
+
+- **Nhiệm vụ/trạng thái:** commit Staging đã tạo; chuẩn bị ghi nhận hash rồi push Staging.
+- **Phạm vi:** release worktree Staging; chỉ các thay đổi Prompt v2, schema/validation, migration 084, timeline, author/mobile fixes liên quan và generated cache-busting asset refs.
+- **Trước → sau:** mã nguồn đã qua unit, PostgreSQL integration, browser desktop/mobile và asset checks → commit `8a04aa6` chứa trọn phần thay đổi được kiểm tra.
+- **Kiểm tra:** unit 13/13, integration 11/11, browser PASS, JS version/bundle PASS, diff check PASS.
+- **Commit:** `8a04aa6` (`feat(news): link editorial sections to event timeline`).
+- **Còn lại/lưu ý:** cập nhật mục này trước commit Handoff, push nhánh `staging`, chờ CI deploy hoàn tất trước khi đẩy Production.
+
+## 2026-10-13 21:59:00 +07:00 — Codex — kiểm thử release Staging/Production trước phát hành
+
+- **Nhiệm vụ/trạng thái:** hoàn tất kiểm tra; chuẩn bị commit và đẩy lần lượt Staging rồi Production theo yêu cầu Owner, sau CI sẽ purge cache và smoke-test.
+- **Phạm vi:** Prompt v2, schema/validation/backend timeline, template timeline, migration `084_news_editorial_v2.sql`, author panel/mobile entity fix và generated asset versions liên quan. Staging release dựa trên `8705717`; Production release dựa trên `69edd93`. Các file ngoài scope chỉ nằm trong working tree chính; không đưa vào release.
+- **Trước → sau:** H2/event chưa có quan hệ ổn định và ngày sự kiện riêng → section manifest/anchor backend cấp, mốc có occurred_on và section refs; Prompt v2 quy định liên kết H2–mốc, phân loại ngày/trạng thái, cách viết nhận định iFlux và kiểm tra JSON. Timeline render tiêu đề nguồn dạng liên kết và phân biệt ngày. Author/mobile fixes đã gồm trong các release.
+- **Kiểm tra:** trên cả hai release unit 13/13 PASS, browser desktop/mobile PASS, JS versions và bundle PASS; PostgreSQL integration 11/11 PASS (migration 084 và các mốc/ngày/section). `git diff --check` PASS.
+- **Commit:** chưa có; cập nhật hash sau commit trong mục bàn giao kế tiếp.
+- **Còn lại/lưu ý:** chỉ stage file của task và version references do build tạo; commit, push `staging`, đợi CI thành công rồi push `production`; purge Cloudflare sau CI Production thành công. Không dùng SSH hay ghi secret vào log.
 
 ## 2026-10-13 21:35:00 +07:00 — Codex — mở rộng Prompt v2 và liên kết section với timeline
 

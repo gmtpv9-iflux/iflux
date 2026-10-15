@@ -298,6 +298,7 @@ async function upsertRssArticle(payload) {
   const desiredStatus = resolveRssStatus(payload);
   const existing = await findByExternalUrl(payload.external_url);
   const now = new Date().toISOString();
+  const sourcePublishedAt = payload.source_published_at || payload.published_at || null;
   if (existing) {
     /* Không ghi đè bài đã xuất bản / lên lịch — chỉ cập nhật pending/draft */
     const cur = await query('SELECT id, status, payload FROM news_posts WHERE id = $1', [existing.id]);
@@ -310,6 +311,7 @@ async function upsertRssArticle(payload) {
       id: row.id,
       updated_at: now,
       status: desiredStatus,
+      source_published_at: sourcePublishedAt || (row.payload && row.payload.source_published_at) || null,
       published_at: desiredStatus === 'published_rss'
         ? (payload.published_at || (row.payload && row.payload.published_at) || now)
         : null
@@ -328,6 +330,7 @@ async function upsertRssArticle(payload) {
     created_at: now,
     updated_at: now,
     status: desiredStatus,
+    source_published_at: sourcePublishedAt,
     published_at: desiredStatus === 'published_rss' ? (payload.published_at || now) : null,
     stats: { likes: 0, comments: 0, shares: 0, views: 0, favorites: 0 },
     comments: [],

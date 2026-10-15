@@ -65,6 +65,16 @@ function createMediaRouter(deps) {
     }
   });
 
+  /* Tạo cover_detail cho ảnh thân bài đã có trong Thư viện; gọi lặp khi hasMore=true. */
+  router.post('/article-detail/backfill', perm('news.articles.edit'), async function (req, res, next) {
+    try {
+      const result = await mediaService.backfillArticleDetailVariants(config, req.body && req.body.limit);
+      return success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/assets', perm('news.articles.view'), async function (req, res, next) {
     try {
       const list = await mediaService.listAssets({

@@ -7,16 +7,22 @@ const entityResolve = require('./news-entity-resolve.service');
 const events = require('./news-events.service');
 const comparisons = require('../market/market-comparisons.service');
 const sanitizeHtml = require('sanitize-html');
+const { sectionManifest } = require('../ai/news-ai.contract');
 
 const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'scheduled'];
 
-function sanitizeArticleHtml(html) {
+function sanitizeArticleHtml(html, options) {
   const internalHref = /^\/(?:co-phieu|nganh|he-sinh-thai|cau-chuyen|tin-tuc)(?:\/|[?#]|$)/i;
+  const allowedSectionIds = new Set(options && Array.isArray(options.allowedSectionIds) ? options.allowedSectionIds : []);
   return sanitizeHtml(String(html || ''), {
     allowedTags: ['h2','h3','p','strong','em','blockquote','ul','ol','li','a','img','figure','figcaption','table','thead','tbody','tr','th','td','hr','br'],
-    allowedAttributes: { a: ['href','title','target','rel'], img: ['src','alt','data-media-asset-id'], th: ['colspan','rowspan'], td: ['colspan','rowspan'] },
+    allowedAttributes: { h2: ['id'], a: ['href','title','target','rel'], img: ['src','alt','data-media-asset-id'], th: ['colspan','rowspan'], td: ['colspan','rowspan'] },
     allowedSchemes: ['http','https','mailto'], allowedSchemesByTag: { img: ['http','https'] }, allowProtocolRelative: false,
     transformTags: {
+      h2: (tagName, attribs) => {
+        if (!allowedSectionIds.has(attribs.id || '')) delete attribs.id;
+        return { tagName, attribs };
+      },
       a: (tagName, attribs) => {
         if (attribs.href && !/^https?:\/\//i.test(attribs.href) && !/^mailto:/i.test(attribs.href) && !internalHref.test(attribs.href) && !/^#[\w-]+$/.test(attribs.href)) delete attribs.href;
         if (attribs.target === '_blank') attribs.rel = 'noopener noreferrer';
@@ -74,7 +80,7 @@ function rowToArticle(row) {
   return Object.assign({}, p, {
     id: p.id || row.id,
     status: row.status,
-    body_html: sanitizeArticleHtml(p.body_html || p.body || ''),
+    body_html: sanitizeArticleHtml(p.body_html || p.body || '', { allowedSectionIds:(p.section_manifest || []).map((s) => s.section_id) }),
     content_type: p.content_type || row.content_type || 'article',
     user_id: row.user_id || p.user_id || null,
     created_at: p.created_at || row.created_at,
@@ -116,7 +122,15 @@ function normalizeArticleInput(input, actor) {
   /* BR-11 Owner lock: identity slug = slugify(title); không lấy canonical RSS/editor. */
   const slug = slugify(title) || 'bai-viet-' + Date.now();
   const excerpt = String(input.excerpt || '').trim();
-  const bodyHtml = sanitizeArticleHtml(input.body_html || input.body || '').trim();
+  const section_manifest = sectionManifest.z.array().max(30).parse(input.section_manifest || []);
+  const bodyHtml = sanitizeArticleHtml(input.body_html || input.body || '', { allowedSectionIds:section_manifest.map((s) => s.section_id) }).trim();
+  if (section_manifest.length) {
+    const headings = [...bodyHtml.matchAll(/<h2\b[^>]*id="(ifx-section-\d+)"[^>]*>([\s\S]*?)<\/h2>/gi)];
+    const text = (html) => sanitizeHtml(String(html || ''), { allowedTags:[],allowedAttributes:{} }).replace(/\s+/g,' ').trim();
+    if (headings.length !== section_manifest.length || headings.some((h,index) => h[1] !== section_manifest[index].section_id || text(h[2]) !== section_manifest[index].h2.replace(/\s+/g,' ').trim())) {
+      throw AppError.badRequest('ARTICLE_SECTION_MANIFEST_INVALID','Anchor mục lục không khớp section do backend tạo');
+    }
+  }
   const insight = String(input.iflux_insight || '').trim();
   if (insight && (insight.length < 400 || insight.length > 600)) throw AppError.badRequest('ARTICLE_INSIGHT_LENGTH', 'Nhận định cần 400–600 ký tự hoặc để trống');
   const seo = input.seo || {};
@@ -145,6 +159,7 @@ function normalizeArticleInput(input, actor) {
     slug,
     excerpt,
     body_html: bodyHtml,
+    section_manifest,
     content_type: input.content_type || 'article',
     category_id: categoryId,
     category_name: String(input.category_name || '').trim(),
@@ -171,15 +186,16 @@ function normalizeArticleInput(input, actor) {
     },
     seo: {
       title: String(seo.title || seo.seo_title || '').trim() || title,
-      description: String(seo.description || seo.seo_description || '').trim() || excerpt,
+      /* Mô tả ngắn là SoT cho Google description và các preview; tránh giữ mô tả RSS cũ sau biên tập. */
+      description: excerpt,
       keywords: String(seo.keywords || seo.seo_keywords || '').trim(),
       /* System-only Clean Public URL — không persist RSS/editor canonical */
       canonical: '',
       robots: seo.robots || seo.meta_robots || null,
       meta_title: String(seo.meta_title || seo.og_title || seo.title || seo.seo_title || '').trim() || title,
-      meta_description: String(seo.meta_description || seo.og_description || seo.description || seo.seo_description || '').trim() || excerpt,
+      meta_description: excerpt,
       og_title: String(seo.og_title || seo.meta_title || seo.title || seo.seo_title || '').trim() || title,
-      og_description: String(seo.og_description || seo.meta_description || seo.description || seo.seo_description || '').trim() || excerpt,
+      og_description: excerpt,
       og_image: String(seo.og_image || cover.url || input.cover_url || '').trim(),
       og_image_alt: String(seo.og_image_alt || seo.ogImageAlt || '').trim()
     },
@@ -191,6 +207,8 @@ function normalizeArticleInput(input, actor) {
       share: display.share !== false
     },
     scheduled_at: status === 'scheduled' ? (input.scheduled_at || input.publish_at || null) : null,
+    source_published_at: input.source_published_at || (input.source && input.source.published_at) || null,
+    official_published_at: input.official_published_at || null,
     published_at: isLivePublished(status) ? (input.published_at || new Date().toISOString()) : null,
     author
   };
@@ -349,6 +367,8 @@ async function createArticle(input, actor) {
 
   const id = input.id || 'post_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
   const now = new Date().toISOString();
+  normalized.official_published_at = normalized.status === 'published' ? now : null;
+  normalized.published_at = normalized.status === 'published' ? now : normalized.published_at;
   const record = Object.assign({}, normalized, {
     id,
     former_slugs: [],
@@ -414,13 +434,18 @@ async function updateArticle(id, input, actor) {
     ? { data: current.comparison_snapshot || null, reason: current.comparison_reason || null } : await comparisons.buildComparison(normalized);
   normalized.comparison_snapshot = normalized.status === 'published' ? comparison.data : null;
   normalized.comparison_reason = comparison.reason;
-  normalized.slug = current.slug || await ensureUniqueSlug(normalized.slug, current.id);
+  const wasPublished = current.status === 'published';
+  const hasOfficialPublication = !!current.official_published_at || wasPublished;
+  const enteringOfficialPublication = !hasOfficialPublication && normalized.status === 'published';
+  /* Tạo URL chuẩn một lần từ tiêu đề biên tập khi xuất bản; RSS cũ được giữ làm alias 301. */
+  normalized.slug = enteringOfficialPublication
+    ? await ensureUniqueSlug(normalized.slug, current.id)
+    : current.slug || await ensureUniqueSlug(normalized.slug, current.id);
   const cat = await categories.getCategory(normalized.category_id);
   if (!cat) throw AppError.badRequest('ARTICLE_CATEGORY_NOT_FOUND', 'Không tìm thấy danh mục');
   normalized.category_name = cat.name;
 
   const now = new Date().toISOString();
-  const wasPublished = current.status === 'published';
   const oldSlug = String(current.slug || '').trim();
   const newSlug = String(normalized.slug || '').trim();
   const former =
@@ -433,8 +458,13 @@ async function updateArticle(id, input, actor) {
     id: current.id,
     former_slugs: former,
     updated_at: now,
-    published_at: isLivePublished(normalized.status)
-      ? (current.published_at || now)
+    official_published_at: normalized.status === 'published'
+      ? current.official_published_at || (wasPublished ? current.published_at || now : now)
+      : current.official_published_at || (wasPublished ? current.published_at || now : null),
+    published_at: normalized.status === 'published'
+      ? current.official_published_at || (wasPublished ? current.published_at || now : now)
+      : isLivePublished(normalized.status)
+        ? (current.published_at || now)
       : current.published_at || null
   });
 
