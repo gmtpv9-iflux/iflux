@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T10:43:20+07:00 — Claude — hoàn thành (local) — Owner yêu cầu revert 2 thử nghiệm: bỏ footer logo/liên hệ, bỏ Fullwidth
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; revert đúng 2 việc, nối tiếp `a73317f` cùng ngày.
+- **Phạm vi:** `backend/src/core/email/otp.service.js`, `backend/src/core/email/templates/verification-otp.template.js`.
+- **Trước → sau:**
+  1. **Bỏ footer logo/liên hệ/tagline:** Owner thử xong báo "không thấy logo đâu" (khả năng local DB Owner test cũng chưa có logo set, hoặc Staging chưa deploy tới lúc Owner xem) → quyết định trả về trạng thái TRƯỚC khi có yêu cầu thêm logo/mobile/email/tagline, không điều tra tiếp nguyên nhân logo không hiện. `otp.service.js` revert nguyên văn về đúng commit `06af224` (bỏ hẳn `resolveFooterLogoUrl`/`absolutizeAsset`/`PUBLIC_ORIGIN`, bỏ tham số `logoUrl` khỏi `sendVerificationOtp`) — dùng `git show 06af224:... > file` để đảm bảo khớp byte-for-byte, không gõ tay lại. Template bỏ `escHtml()`, bỏ tham số `logoUrl`, bỏ khối `<img>` + dòng Mobile/Email + dòng tagline (cả `text` và `html`) — kết thúc lại ở "Trân trọng, Đội ngũ iFlux" như trước.
+  2. **Bỏ Fullwidth:** Owner xác nhận tăng width Unicode KHÔNG tạo khác biệt thấy được trên banner — quyết định bỏ, chấp nhận giới hạn kích thước banner (OS/app mail tự vẽ, server không điều khiển được). YÊU CẦU RÕ: phải giữ ĐẬM (`fullwidth()` thay `boldSans()` làm mất hẳn hiệu ứng đậm, chỉ còn rộng) — revert `codeBold` từ `fullwidth(code)` về lại `boldSans(code)` (Sans-Bold, bản đã xác nhận đậm đúng ở mục `10:25:22`), xoá hẳn hàm `fullwidth()` (dead code).
+- **Kiểm tra:** `node --check` cả 2 file PASS. `otp.service.js` diff rỗng so với `git show 06af224` (xác nhận revert chính xác). Gửi email thật xác nhận đúng: mã Sans-Bold đậm (`𝟳𝟱𝟭𝟮𝟵𝟬`), không còn logo/Mobile/Email/tagline, kết thúc ở "Đội ngũ 𝗶𝗙𝗹𝘂𝘅".
+- **Commit:** sẽ tạo ngay sau mục này, push `staging`.
+- **Còn lại/lưu ý:** mục tiêu "kích thước mã trên banner thông báo đẩy to hơn" đã thử 2 hướng (CSS font-size, Unicode Fullwidth) đều không hiệu quả/không kiểm chứng được — coi đây là giới hạn nền tảng đã xác nhận qua thực nghiệm, không nên thử thêm hướng khác (vd thêm khoảng trắng giữa số — cũng cùng bản chất "mẹo hiển thị", rủi ro tương tự) trừ khi Owner yêu cầu lại rõ ràng. Footer logo/liên hệ nếu Owner muốn làm lại sau này: code mẫu đã có ở commit `a73317f` (trước khi revert), có thể cherry-pick lại thay vì viết từ đầu — nhưng cần điều tra TRƯỚC vì sao logo không hiện (nghi do DB Staging/Production thật sự chưa có `logoUrl` set trong `marketing_brand_identity`, không phải lỗi code).
+
 ## 2026-10-15T10:40:49+07:00 — Claude — hoàn thành (local) — footer mail OTP: logo + liên hệ + tagline; giảm lại font-size mã về cũ
 
 - **Nhiệm vụ/trạng thái:** hoàn thành 2 việc theo Owner: (1) giảm `font-size` khối mã HTML từ `44px` về lại `36px` (Owner xác nhận chỉnh font-size chỉ ảnh hưởng khi MỞ mail, không ảnh hưởng banner thông báo — đã làm quá tay); (2) thêm khối footer dưới chữ ký "Đội ngũ iFlux" trong email: logo hệ thống, dòng liên hệ, tagline.
