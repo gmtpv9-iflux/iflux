@@ -223,23 +223,28 @@
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
         /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LUÔN mở Cấp 2, kể cả khi đang đứng ở
-         * trang KHÁC (vd Tin tức): đang active → mở Cấp 2 ngay tại chỗ; chưa active → điều
-         * hướng sang trang đó VỚI ?view=main sẵn trong URL (soft-nav bình thường, không tự
-         * dựng DOM tay) — sau khi trang mount xong, community-page.js tự đọc lại ?view= qua
-         * applyViewFromUrl() (đã dùng cho trường hợp mở thẳng URL) nên vào thẳng Cấp 2 mà
-         * không cần bấm lần 2. */
+         * trang KHÁC (vd Tin tức). 2 nhánh KHÔNG dùng chung 1 listener can thiệp giữa chừng —
+         * onDocumentClick (soft-navigation.js) bắt click ở capture-phase trên document, chạy
+         * TRƯỚC listener gắn trên chính <a> này, và đã tự gọi softNavigate() theo href THẬT
+         * của thẻ trước khi listener ở đây kịp preventDefault — gắn thêm điều hướng thủ công
+         * ở đây sẽ đua với nó (2 lần soft-navigate chồng nhau, URL cuối cùng sai). Thay vào đó:
+         * - Chưa active: set href = trang đó + "?view=main" ngay từ đầu — để onDocumentClick
+         *   tự điều hướng (y hệt mọi link khác, không có gì đặc biệt ở đây) — mount() xong,
+         *   community-page.js tự đọc lại ?view= qua applyViewFromUrl(), vào thẳng Cấp 2.
+         * - Đã active: href = "#" (không trỏ URL thật) — onDocumentClick coi "#" là cùng
+         *   trang, không tự điều hướng gì — listener ở đây độc quyền xử lý, gọi openLevel2()
+         *   tại chỗ (pushState nhẹ, không dựng lại DOM). */
         if (mode === 'primary' && it.hasLevel2) {
-          link.addEventListener('click', function (e) {
-            e.preventDefault();
-            var shell = window.IfluxAppShell;
-            if (it.active) {
+          if (it.active) {
+            link.href = '#';
+            link.addEventListener('click', function (e) {
+              e.preventDefault();
+              var shell = window.IfluxAppShell;
               if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
-              return;
-            }
-            var target = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=main';
-            if (window.IfluxSoftNav && window.IfluxSoftNav.navigate) window.IfluxSoftNav.navigate(target);
-            else window.location.href = target;
-          });
+            });
+          } else if (it.href) {
+            link.href = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=main';
+          }
         }
         if (mode === 'context') {
           link.setAttribute('data-ifx-context-tab', it.key);

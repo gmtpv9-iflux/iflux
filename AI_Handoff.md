@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T18:35:00+07:00 — Claude — hoàn thành — sửa lại đúng Fix 1 (commit `2504a7c` bị race condition)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Tự kiểm bằng Puppeteer trên Staging sau khi deploy `2504a7c` phát hiện Fix 1 (bấm icon Cộng đồng từ trang khác) KHÔNG hoạt động — URL cuối cùng là `/` (không có `?view=main`), vẫn phải bấm 2 lần.
+- **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (chỉ phần click-listener đã sửa ở `2504a7c`, không đụng gì khác). Worktree `/private/tmp/iflux-bottomnav-fix2` từ `github/staging` (`2504a7c`).
+- **Nguyên nhân thật (đọc lại code `soft-navigation.js` xác nhận):** `onDocumentClick()` (capture-phase trên `document`, cài từ `installSoftNavigation()`) chạy TRƯỚC listener gắn trực tiếp trên `<a>` (bubble/target phase) — bản sửa `2504a7c` gọi `e.preventDefault()` + tự `IfluxSoftNav.navigate(href+'?view=main')` bên trong listener đó, nhưng lúc listener này chạy thì `onDocumentClick` ĐÃ tự đọc `href` GỐC (không có `?view=main`, vì tôi không đổi thuộc tính `href` trên thẻ) và ĐÃ gọi `softNavigate(hrefGốc)` của riêng nó rồi — 2 lần `softNavigate` đua nhau, URL cuối cùng thắng là của `onDocumentClick` (không có query).
+- **Trước → sau:** bỏ hẳn cách gọi `IfluxSoftNav.navigate()` thủ công. Thay bằng set đúng thuộc tính `href` của thẻ TRƯỚC khi gắn (hoặc không gắn) listener: (a) item CHƯA active → `link.href = target + '?view=main'`, KHÔNG gắn thêm listener nào — để `onDocumentClick` tự xử lý toàn bộ điều hướng như mọi link bình thường (không có gì đặc biệt, không còn đua). (b) item ĐÃ active → `link.href = '#'` (đọc lại code: `onDocumentClick` có early-return RIÊNG cho href bắt đầu bằng `#`, trả về ngay không `preventDefault`, không làm gì — xác nhận bằng `grep`/đọc trực tiếp dòng `if (!href || href.charAt(0) === '#' ...) return;`) — vậy chỉ còn listener của tôi độc quyền xử lý, gọi `openLevel2()` tại chỗ, không có ai khác can thiệp.
+- **Kiểm tra:** `node --check` PASS. `sync-js-versions.mjs --check` PASS. `build-web-bundle.mjs --check` PASS. Đang verify lại bằng đúng kịch bản Puppeteer đã phát hiện lỗi (Tin tức → bấm Cộng đồng 1 lần) ngay sau mục này.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Còn lại/lưu ý:** Fix 2 (animation không lặp khi resize) và Fix 3 (nút Back icon-only) ở `2504a7c` đã verify đúng bằng Puppeteer trước khi phát hiện lỗi Fix 1 — không đụng lại 2 phần đó trong mục này.
+
 ## 2026-10-15T18:05:00+07:00 — Claude — hoàn thành — 3 fix Bottom Nav 2 cấp sau phản hồi Owner trên Staging thật
 
 - **Nhiệm vụ/trạng thái:** hoàn thành, nối tiếp mục `17:10:00` cùng ngày (commit `f41bc51`). Owner test trực tiếp trên Staging, báo 3 vấn đề.
