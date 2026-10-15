@@ -28,7 +28,7 @@ var CORE_TIERS = [
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
     ASSET + 'alert-store.js?v=d341795091',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a'
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a'
   ],
   [
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',

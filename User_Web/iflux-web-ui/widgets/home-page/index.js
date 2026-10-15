@@ -34,7 +34,7 @@ var SIDEBAR_DEPS = [
   { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=9654ca4be2' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
-  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
+  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261016a' },
   { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=7c1f5a3c0d' },
   { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=02655cb8cf' }
 ];
@@ -456,7 +456,7 @@ function mainHtml() {
 async function mountDashboardTab(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js?v=c00e891045');
+  var mod = await import('../home-dashboard/index.js?v=e7b15fb509');
   await mod.mount(panelEl);
 }
 

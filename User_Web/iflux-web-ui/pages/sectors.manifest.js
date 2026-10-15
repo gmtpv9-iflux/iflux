@@ -23,7 +23,7 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'sectors' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=71eb1fa7be',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=5dec5d014a',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd',

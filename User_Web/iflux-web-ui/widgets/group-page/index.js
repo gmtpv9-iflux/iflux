@@ -37,7 +37,7 @@ var CORE_TIERS = [
     ASSET + 'stock-store.js?v=4dc55126ff',
     ASSET + 'news-store.js?v=41bb32b4bc',
     ASSET + 'iflux-news-api-bridge.js?v=f47b340d7b',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a'
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a'
   ],
   [
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
@@ -48,7 +48,7 @@ var CORE_TIERS = [
   ],
   [
     ASSET + 'entity-detail-center.js?v=e666f1ae95',
-    ASSET + 'group-page.js?v=cc6937d6de',
+    ASSET + 'group-page.js?v=79746b3cf1',
     ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2'
   ]
 ];
