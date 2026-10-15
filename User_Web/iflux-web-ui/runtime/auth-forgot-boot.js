@@ -11,7 +11,7 @@ var ALL = [
   ASSET + 'auth-forms.js?v=5858563dfd',
   ADMIN + 'iflux-credentials-store.js?v=r20260928n',
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
-  ASSET + 'iflux-web-ui.js?v=3d87c3706e',
+  ASSET + 'iflux-web-ui.js?v=0d08af7ae0',
   ASSET + 'auth-forgot-init.js?v=915bfb26e2'
 ];
 
