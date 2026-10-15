@@ -24,7 +24,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
 
 import { bootPage } from './page-runtime.js?v=8bfca8ccaa';
 import { applyDefinitionToDocument } from './page-definition.js?v=432eed525b';
-import { bootShell } from './shell-boot.js?v=db2ca31cb3';
+import { bootShell } from './shell-boot.js?v=0d4b31946a';
 import { pageKeyFromPath } from './page-keys.js?v=43da030e2b';
 import { installSoftNavigation } from './soft-navigation.js?v=7395ff0c09';
 import { loadStyles } from './legacy-bridge.js?v=dec30759da';
@@ -36,7 +36,7 @@ var MANIFEST_MAP = {
   home: function () { return import('../pages/home.manifest.js?v=727ed3e7bc'); },
   flow: function () { return import('../pages/flow.manifest.js?v=d1fe1acc76'); },
   news: function () { return import('../pages/news.manifest.js?v=a86f7a6e59'); },
-  community: function () { return import('../pages/community.manifest.js?v=d40a500e90'); },
+  community: function () { return import('../pages/community.manifest.js?v=9b4e0737b6'); },
   pricing: function () { return import('../pages/pricing.manifest.js?v=4cd6ca6119'); },
   stocks: function () { return import('../pages/stocks.manifest.js?v=694b29db2c'); },
   sectors: function () { return import('../pages/sectors.manifest.js?v=6d43bf4392'); },

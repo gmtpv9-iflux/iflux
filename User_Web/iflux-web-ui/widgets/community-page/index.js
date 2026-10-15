@@ -24,7 +24,7 @@ export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
    community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
   [ASSET + 'community-store.js?v=17b421d80c'],
-  [ASSET + 'community-page.js?v=e07ef39933']
+  [ASSET + 'community-page.js?v=3386096d5c']
 ];
 
 export async function mount(el) {
@@ -32,6 +32,16 @@ export async function mount(el) {
   var frame = buildPageFrame(el, { rightSidebar: true, sidebarLabel: 'Sidebar Cộng đồng' });
   var rightAside = el.querySelector('.ifx-shell-sidebar-right');
   frame.rightSidebarContent = rightAside ? rightAside.querySelector('.ifx-shell-sidebar-content') : null;
+  /* Vùng "Đăng bài" (Bottom Nav Cấp 2, mobile) — Owner 2026-10-15: không còn modal, là 1 "trang"
+     riêng trong hệ vùng (ensureRegion/toggleRegionVisibility — community-page.js), nên cần 1
+     container DOM riêng, sibling của sidebar/main/sidebar-right trong .ifx-shell-layout, giống
+     hệt cách rightSidebarContent được thêm thủ công ở trên. Trống/vô hại trên desktop (không
+     bao giờ được set data-ifx-region-visible ở đó vì lazyMode=false không dùng hệ vùng này). */
+  var composerHost = document.createElement('div');
+  composerHost.className = 'ifx-shell-composer';
+  composerHost.setAttribute('data-ifx-composer-host', '');
+  frame.layout.appendChild(composerHost);
+  frame.composerContent = composerHost;
   await loadScriptTiers(CORE_TIERS);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
 

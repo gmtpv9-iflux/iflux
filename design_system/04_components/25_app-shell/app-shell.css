@@ -40,11 +40,11 @@
    .ifx-shell-layout của mình mới bị ảnh hưởng (vd Cộng đồng, Bottom Nav 2 cấp, mobile —
    community-page.js). Luôn bọc trong < 1024px (cùng mốc flex-direction:row ở trên) — kể cả
    JS quên gỡ attribute lúc resize, CSS tự vô hiệu ở desktop/tablet, không che mất 3/12+7/12+2/12
-   đang hiển thị cùng lúc ở đó. */
+   đang hiển thị cùng lúc ở đó. Quy tắc TỔNG QUÁT trên MỌI con trực tiếp (không liệt kê từng
+   class riêng — vd thêm vùng "Đăng bài" sau này không cần sửa lại CSS này) — con nào không có
+   [data-ifx-region-visible] thì ẩn, có thì hiện. */
 @media (max-width: 1023.98px) {
-  .ifx-shell-layout[data-ifx-region-mode="single"] > .ifx-shell-sidebar,
-  .ifx-shell-layout[data-ifx-region-mode="single"] > .ifx-shell-main,
-  .ifx-shell-layout[data-ifx-region-mode="single"] > .ifx-shell-sidebar-right {
+  .ifx-shell-layout[data-ifx-region-mode="single"] > * {
     display: none;
   }
   .ifx-shell-layout[data-ifx-region-mode="single"] > [data-ifx-region-visible] {

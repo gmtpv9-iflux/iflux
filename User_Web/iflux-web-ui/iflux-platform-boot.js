@@ -555,7 +555,7 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         backLabel: 'Trở về',
         items: [
           { key: 'main',          label: 'Cộng đồng', icon: 'ti-world',     kind: 'region' },
-          { key: 'composer',      label: 'Đăng bài',   icon: 'ti-edit',      kind: 'action', action: 'openComposer' },
+          { key: 'composer',      label: 'Đăng bài',   icon: 'ti-edit',      kind: 'region' },
           { key: 'sidebar-left',  label: 'Thịnh hành', icon: 'ti-flame',     kind: 'region' },
           { key: 'sidebar-right', label: 'Mạng lưới',  icon: 'ti-affiliate', kind: 'region' }
         ]
