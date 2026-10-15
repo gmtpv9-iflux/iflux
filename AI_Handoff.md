@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T10:07:07+07:00 — Claude — hoàn thành (local) — tinh chỉnh nội dung mail OTP theo feedback Owner
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp commit `07215dd` cùng ngày (OTP Gmail SMTP + auto-fill). Chỉ sửa thêm `verification-otp.template.js`, không đụng file nào khác.
+- **Phạm vi:** `backend/src/core/email/templates/verification-otp.template.js`.
+- **Trước → sau:** bỏ dòng brand "iFlux" và heading "Xác minh tài khoản iFlux" trong HTML (Owner: tên người gửi + subject đã có, không cần lặp). Lời chào đổi từ tên gốc sang `.toUpperCase()` toàn bộ tên hiển thị (không chỉ họ — field `displayName` vốn đã là tên đầy đủ, lần test trước Claude tự gõ "Phạm" ngắn trong script test nên gây hiểu nhầm). Bản text (plain-text, nguồn cho preview thông báo đẩy của Gmail app/iOS Mail) thêm dòng đầu "Mã xác minh của bạn: {code}" đứng trước cả lời chào, để mã lộ diện ngay trong banner thông báo — đã nói rõ với Owner: plain text không có khái niệm in đậm thật (giới hạn nền tảng mail client, không phải thiếu sót code), đây là cách duy nhất "làm nổi" ở tầng notification; khối mã trong HTML (mở mail mới thấy) vẫn giữ nguyên kiểu chữ lớn tô đậm.
+- **Kiểm tra:** `node --check` PASS. Gửi lại email thật qua đúng luồng (config loader + logger + smtp provider thật) với `displayName: "Phạm Thành Vinh"` — xác nhận dòng đầu plain-text đúng là "Mã xác minh của bạn: {code}", lời chào hiển thị tên đầy đủ viết hoa. Chưa yêu cầu Owner xác nhận lại qua inbox thật ở vòng sửa này.
+- **Commit:** `git add` xong, sẽ tạo commit riêng ngay sau mục này (không gộp vào `07215dd` đã có).
+- **Còn lại/lưu ý:** vẫn còn nguyên vấn đề đã ghi ở mục `09:58:43` — chưa có SMTP thật trên Staging/Production, đang chờ Owner quyết cách set `.env` server thật. Chưa push `staging`.
+
 ## 2026-10-15T09:58:43+07:00 — Claude — hoàn thành (local) — OTP email qua Gmail SMTP + auto-fill + chuẩn hoá nội dung mail
 
 - **Nhiệm vụ/trạng thái:** hoàn thành code + kiểm thử local (gửi email thật qua SMTP thành công, Owner đã nhận được); **chưa áp dụng cấu hình SMTP lên Staging/Production** — xem mục "còn lại" bên dưới. Nối tiếp mục `09:48:00` cùng ngày.
