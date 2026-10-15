@@ -26,31 +26,43 @@ var HEAD_HTML =
   '</div>' +
   '<p class="ifx-page-intro">Top 10 sức mạnh dòng tiền và thống kê mua/bán ròng theo cổ phiếu, ngành, hệ sinh thái, chủ đề.</p>';
 
-var MAIN_COL_HTML =
-  '<div class="ifx-flow-main-col">' +
-    '<div class="ifx-flow-score-wrap">' +
-      '<div class="ix-profile-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
+/* Owner 2026-10-15: thanh tab (3 nút "Thống kê/Chỉ báo kỹ thuật/Dòng tiền") CHỈ render trên
+   desktop — mobile dùng hoàn toàn Bottom Nav Cấp 2 để chuyển vùng, không tải/hiện thanh tab
+   này (trước đó thanh tab vẫn render trên mobile, gây hiểu lầm "active" trùng với Cấp 2).
+   3 khối panel (`.ifx-flow-tab-panel`) vẫn LUÔN cần — là host Widget Placement thật cho
+   basic/advanced/exclusive, việc ẩn/hiện panel tách riêng khỏi việc có thanh nút hay không
+   (xem activatePanel/activateFlowTab bên dưới). */
+function mainColHtml(showTabsBar) {
+  var tabsBar = showTabsBar
+    ? '<div class="ix-profile-tabs ifx-flow-score-tabs" data-ifx-flow-score-tabs role="tablist">' +
         '<button type="button" class="ix-profile-tab active" role="tab" aria-selected="true" data-ifx-flow-tab="basic"><i class="ti ti-chart-bar"></i> Thống kê</button>' +
         '<button type="button" class="ix-profile-tab" role="tab" aria-selected="false" data-ifx-flow-tab="advanced"><i class="ti ti-chart-dots-3"></i> Chỉ báo kỹ thuật</button>' +
         '<button type="button" class="ix-profile-tab ifx-app-header-link-exclusive" role="tab" aria-selected="false" data-ifx-flow-tab="exclusive"><i class="ti ti-sparkles"></i><span class="ifx-app-header-link-stack"><span class="ifx-app-header-chip">Realtime</span><span class="ifx-app-header-link-label">Dòng tiền</span></span></button>' +
+      '</div>'
+    : '';
+  return (
+    '<div class="ifx-flow-main-col">' +
+      '<div class="ifx-flow-score-wrap">' +
+        tabsBar +
+        '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
+          '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
+        '</div>' +
+        '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden>' +
+          '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
+        '</div>' +
+        '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden>' +
+          '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
+        '</div>' +
       '</div>' +
-      '<div class="ifx-flow-tab-panel active" data-ifx-flow-panel="basic" role="tabpanel">' +
-        '<div class="ifx-flow-score-grid" data-ifx-section="basic" data-section="basic" data-layout="grid-12"></div>' +
-      '</div>' +
-      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="advanced" role="tabpanel" hidden>' +
-        '<div class="ifx-flow-score-grid" data-ifx-section="advanced" data-section="advanced" data-layout="grid-12"></div>' +
-      '</div>' +
-      '<div class="ifx-flow-tab-panel" data-ifx-flow-panel="exclusive" role="tabpanel" hidden>' +
-        '<div class="ifx-flow-score-grid" data-ifx-section="exclusive" data-section="exclusive" data-layout="grid-12"></div>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
+    '</div>'
+  );
+}
 
 /* Khung trang chung (buildPageFrame); tab Thống kê (host basic/advanced/exclusive) = nội dung đặc thù Main. */
-function buildFlowLayout(el) {
+function buildFlowLayout(el, showTabsBar) {
   el.innerHTML = HEAD_HTML;
   var frame = buildPageFrame(el, { sidebarLabel: 'Widget dòng tiền' });
-  frame.mainContent.innerHTML = MAIN_COL_HTML;
+  frame.mainContent.innerHTML = mainColHtml(showTabsBar);
   return frame;
 }
 
@@ -120,11 +132,28 @@ function onLevel2Change(e) {
   toggleRegionVisibility(d.regionKey);
 }
 
-var activateFlowTab = function () {}; // gán thật trong bindFlowTabs() — khai trước để toggleRegionVisibility gọi được
+/* Chỉ chuyển PANEL (basic/advanced/exclusive) — KHÔNG đụng nút bấm desktop. Tách riêng khỏi
+   bindFlowTabs() vì trên mobile không có thanh nút (tabsRoot không tồn tại) nhưng Bottom Nav
+   Cấp 2 (toggleRegionVisibility→activateFlowTab) VẪN PHẢI chuyển được panel đúng. */
+function activatePanel(root, tabKey) {
+  root.querySelectorAll('[data-ifx-flow-panel]').forEach(function (panel) {
+    var on = panel.getAttribute('data-ifx-flow-panel') === tabKey;
+    panel.classList.toggle('active', on);
+    panel.hidden = !on;
+  });
+}
+
+/* Gán NGAY LÚC KHAI BÁO (không đợi bindFlowTabs chạy) — trên mobile bindFlowTabs() return sớm
+   (không có tabsRoot) nên KHÔNG BAO GIỜ gán lại biến này nếu để mặc định no-op như bản cũ;
+   toggleRegionVisibility() gọi activateFlowTab khi tap Bottom Nav Cấp 2 sẽ không có tác dụng,
+   panel không bao giờ chuyển trên mobile. */
+var activateFlowTab = function (tabKey) {
+  if (currentEl) activatePanel(currentEl, tabKey);
+};
 
 function bindFlowTabs(root) {
   var tabsRoot = root.querySelector('[data-ifx-flow-score-tabs]');
-  if (!tabsRoot || tabsRoot.getAttribute('data-ifx-tabs-bound')) return;
+  if (!tabsRoot || tabsRoot.getAttribute('data-ifx-tabs-bound')) return; // mobile: không có thanh tab, bỏ qua phần nút — panel vẫn chuyển được nhờ activateFlowTab ở trên
   tabsRoot.setAttribute('data-ifx-tabs-bound', '1');
 
   function activate(tabKey) {
@@ -133,14 +162,9 @@ function bindFlowTabs(root) {
       btn.classList.toggle('active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-    root.querySelectorAll('[data-ifx-flow-panel]').forEach(function (panel) {
-      var on = panel.getAttribute('data-ifx-flow-panel') === tabKey;
-      panel.classList.toggle('active', on);
-      panel.hidden = !on;
-    });
+    activatePanel(root, tabKey);
     if (lazyMode) ensureRegion(tabKey);
   }
-  activateFlowTab = activate;
 
   tabsRoot.addEventListener('click', function (ev) {
     var btn = ev.target && ev.target.closest ? ev.target.closest('[data-ifx-flow-tab]') : null;
@@ -157,7 +181,10 @@ function applyFlow(root) {
 }
 
 export async function mount(el) {
-  var frame = buildFlowLayout(el);
+  /* Owner 2026-10-15: phải biết mobile/desktop TRƯỚC khi dựng HTML — thanh tab chỉ build trên
+     desktop (showTabsBar = !lazyMode), không phải ẩn bằng CSS sau đó (mobile không tải luôn). */
+  lazyMode = !!(window.IfluxBreakpoint && window.IfluxBreakpoint.isMobileShell && window.IfluxBreakpoint.isMobileShell());
+  var frame = buildFlowLayout(el, !lazyMode);
   currentEl = el;
   currentFrame = frame;
   featureRt = createFeatureRuntime(featureManifest);
@@ -175,7 +202,6 @@ export async function mount(el) {
 
   applyFlow(el);
 
-  lazyMode = !!(window.IfluxBreakpoint && window.IfluxBreakpoint.isMobileShell && window.IfluxBreakpoint.isMobileShell());
   if (!lazyMode) {
     /* Desktop/tablet — hành vi CŨ: tải cả 4 vùng ngay, không chờ tap. */
     await mountFromHostTree(el);

@@ -30,9 +30,13 @@
   align-items: center;
   padding: var(--ifx-space-8) var(--ifx-space-2) var(--ifx-space-12);
   font-size: var(--ifx-font-size-xs);
-  font-weight: var(--ifx-font-weight-semibold);
+  font-weight: var(--ifx-font-weight-regular);
   color: var(--ifx-text-secondary);
   text-decoration: none;
+  text-align: center; /* Owner 2026-10-15: nhãn 2 dòng (vd "Chỉ báo kỹ thuật") trước đó lệch
+    trái — align-items:center chỉ căn khối <span> theo chiều ngang, không chỉnh text-align bên
+    trong khi nó wrap xuống dòng 2. Áp dụng chung mọi mode (primary/context/account/article/
+    section) vì tất cả cùng dùng class này. */
 }
 .ifx-tabbar-item.is-active { color: var(--ifx-action-primary); }
 .ifx-tabbar-icon {
