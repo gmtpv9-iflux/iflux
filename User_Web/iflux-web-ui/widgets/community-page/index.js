@@ -24,7 +24,7 @@ export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
    community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
   [ASSET + 'community-store.js?v=17b421d80c'],
-  [ASSET + 'community-page.js?v=3386096d5c']
+  [ASSET + 'community-page.js?v=645d4c2b27']
 ];
 
 export async function mount(el) {

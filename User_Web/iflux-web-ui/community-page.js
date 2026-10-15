@@ -728,8 +728,16 @@
   function renderComposerRegion(frame) {
     if (!frame || !frame.composerContent) return;
     if (!requireAuth()) {
-      var shellAuth = global.IfluxAppShell;
-      if (shellAuth && shellAuth.setActiveRegion) shellAuth.setActiveRegion('main');
+      /* requireAuth() đã tự gọi auth().promptLogin() (hiện UI đăng nhập riêng) — KHÔNG được tự
+         điều hướng setActiveRegion('main') ở đây: hàm này chạy ĐỒNG BỘ bên trong
+         ensureRegion()→onLevel2Change() (xử lý event 'iflux-level2-change'); gọi setActiveRegion
+         lại dispatch THÊM 1 event cùng tên NGAY TRONG lúc đang xử lý event gốc → đệ quy lồng
+         nhau, để lại state sai (vùng "composer" vẫn bị đánh dấu visible dù rỗng, URL lại trỏ
+         'main'). Hiện placeholder tại chỗ, không đổi region/URL — không đánh dấu mounted để lần
+         tap sau (sau khi đăng nhập) thử render lại form thật. */
+      frame.composerContent.innerHTML =
+        '<h1 class="ix-page-title">Đăng bài</h1>' +
+        '<p class="ifx-page-intro">Đăng nhập để chia sẻ góc nhìn của bạn với cộng đồng.</p>';
       return;
     }
     composerHashtags = [];
