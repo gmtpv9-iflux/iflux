@@ -218,6 +218,16 @@ function onPopState() {
     location.reload();
     return;
   }
+  /* Trang đang mount có thể tự xử lý popstate "nhẹ" (vd đổi ?view= cho Bottom Nav 2 cấp —
+     xem community-page.js) mà KHÔNG cần dựng lại toàn bộ trang qua bootPage(). window.__ifxPageRuntime
+     tự reset mỗi lần teardownOutlet() chạy (dưới) nên field onSamePagePopState tự "biến mất"
+     khi rời trang — không rò rỉ sang trang khác, không ảnh hưởng trang nào chưa khai báo field này. */
+  var rt = window.__ifxPageRuntime;
+  if (rt && rt.pageKey === key && typeof rt.onSamePagePopState === 'function') {
+    var handled;
+    try { handled = rt.onSamePagePopState(); } catch (e) { handled = false; }
+    if (handled) return;
+  }
   softNavigate(location.pathname + location.search + location.hash, {
     replace: true,
     forceKey: key

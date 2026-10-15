@@ -543,8 +543,24 @@ Refs: Task5 PhaseA — không audit / không tối ưu
   /* Primary nav: mục top-level. label = tên đầy đủ (KHÔNG shortLabel — rút gọn
    * "Nhà" ở bottom bar là PRESENTATION, do renderer tự xử lý). route = key Page Registry.
    * appOnly: chỉ hiện khi đã đăng nhập. exclusive: kiểu link Độc quyền. */
+  /* level2 (optional) — Bottom Nav mobile 2 cấp: chỉ mục có field này mới mở menu con khi tap
+   * lúc đang active (xem IfluxAppShell.openLevel2 / mobile-nav.js renderSection). items[0] luôn
+   * ở vị trí ngay sau nút Back (Owner chốt: "Cộng đồng — nội dung main đã có — vị trí 2").
+   * kind:'region' → tap đổi URL ?view=, kích hoạt lazy-mount vùng tương ứng (trang tự biết
+   * "sidebar-left" chứa nội dung gì — Registry không cần biết). kind:'action' → tap chỉ phát
+   * event 'iflux-level2-action', không đổi view/tab active. */
   var primary = [
-    { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-world', onboard: 'community' },
+    { key: 'community', route: 'community', label: 'Cộng đồng', icon: 'ti-world', onboard: 'community',
+      level2: {
+        backLabel: 'Trở về',
+        items: [
+          { key: 'main',          label: 'Cộng đồng', icon: 'ti-world',     kind: 'region' },
+          { key: 'composer',      label: 'Đăng bài',   icon: 'ti-edit',      kind: 'action', action: 'openComposer' },
+          { key: 'sidebar-left',  label: 'Thịnh hành', icon: 'ti-flame',     kind: 'region' },
+          { key: 'sidebar-right', label: 'Mạng lưới',  icon: 'ti-affiliate', kind: 'region' }
+        ]
+      }
+    },
     { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-news', onboard: 'news' },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow' },
     { key: 'pricing',   route: 'pricing',   label: 'Gói cước',    icon: 'ti-crown', onboard: 'pricing' },
@@ -833,7 +849,8 @@ Refs: Task5 PhaseA — không audit / không tối ưu
           exclusive: !!it.exclusive,
           chip: it.chip || '',
           onboard: it.onboard || '',
-          appOnly: !!it.appOnly
+          appOnly: !!it.appOnly,
+          hasLevel2: !!it.level2
         };
       });
   }
@@ -1019,6 +1036,82 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     return c ? c.listHref : hrefFor('home');
   }
 
+  /* ── Bottom Nav mobile 2 cấp (root → section) — generic, không biết nhãn/nội dung thật của
+   * từng "region" (vd "sidebar-left" nghĩa là gì do trang tự quyết, xem community-page.js).
+   * State sống trong URL (?view=) — không giữ biến module riêng — để mở thẳng URL / refresh /
+   * Back-Forward đều tự khớp đúng, không cần đồng bộ state tay. */
+  function getLevel2Config(key) {
+    var reg = global.IfluxNavRegistry;
+    var item = reg && reg.primary && reg.primary.filter(function (p) { return p.key === key; })[0];
+    return (item && item.level2) || null;
+  }
+
+  function activeSectionKey() {
+    try { return new URLSearchParams(global.location.search || '').get('view') || ''; }
+    catch (e) { return ''; }
+  }
+
+  /* Cấp 2 đang mở khi: trang hiện tại là 1 mục primary CÓ level2, VÀ có ?view=. */
+  function isLevel2Open() {
+    return !!(getLevel2Config(activePage()) && activeSectionKey());
+  }
+
+  function currentLevel2Item() {
+    return getLevel2Config(activePage()) ? activePage() : null;
+  }
+
+  function writeViewParam(viewKey, mode) {
+    try {
+      var params = new URLSearchParams(global.location.search || '');
+      if (!viewKey) params.delete('view'); else params.set('view', viewKey);
+      var qs = params.toString();
+      var url = global.location.pathname + (qs ? '?' + qs : '') + (global.location.hash || '');
+      var state = viewKey ? { ifxLevel2: true, pageKey: activePage() } : null;
+      if (mode === 'push' && global.history.pushState) global.history.pushState(state, '', url);
+      else if (global.history.replaceState) global.history.replaceState(state, '', url);
+    } catch (e) { /* ignore */ }
+  }
+
+  function dispatchLevel2Change(itemKey, regionKey, open) {
+    try {
+      document.dispatchEvent(new CustomEvent('iflux-level2-change', {
+        detail: { itemKey: itemKey, regionKey: regionKey, open: open }
+      }));
+    } catch (e) { /* ignore */ }
+  }
+
+  /* Mở Cấp 2 — push 1 lần (để nút Back hệ điều hành/trình duyệt đóng được) trừ khi đã mở
+   * sẵn (vd gọi lại khi re-sync) thì chỉ replace, tránh chồng history entry. */
+  function openLevel2(itemKey) {
+    var cfg = getLevel2Config(itemKey);
+    if (!cfg) return false;
+    var already = isLevel2Open();
+    writeViewParam('main', already ? 'replace' : 'push');
+    dispatchLevel2Change(itemKey, 'main', true);
+    return true;
+  }
+
+  /* Đóng Cấp 2 — dùng history.back() khi mình là người push entry đó (Forward vẫn hoạt động);
+   * nếu user vào thẳng URL có ?view= (không có entry mình push) thì chỉ replace bỏ view. */
+  function closeLevel2() {
+    if (!isLevel2Open()) return;
+    var itemKey = currentLevel2Item();
+    if (global.history.state && global.history.state.ifxLevel2 === true) {
+      global.history.back();
+    } else {
+      writeViewParam('', 'replace');
+      dispatchLevel2Change(itemKey, '', false);
+    }
+  }
+
+  /* Đổi vùng trong Cấp 2 — luôn replace (không tạo history entry mới mỗi lần đổi tab con,
+   * giống precedent syncAccountProfileTabUrl ở trên). */
+  function setActiveRegion(regionKey) {
+    if (!isLevel2Open()) return;
+    writeViewParam(regionKey, 'replace');
+    dispatchLevel2Change(currentLevel2Item(), regionKey, true);
+  }
+
   global.IfluxAppShell = {
     get navigationMode() { return getNavMode(); },
     isLoggedIn: isLoggedIn,
@@ -1040,7 +1133,14 @@ Refs: Task5 PhaseA — không audit / không tối ưu
     resolveNavigationContext: resolveNavigationContext,
     currentNavigationModel: currentNavigationModel,
     resolveNavigationItems: resolveNavigationItems,
-    syncAccountProfileTabUrl: syncAccountProfileTabUrl
+    syncAccountProfileTabUrl: syncAccountProfileTabUrl,
+    getLevel2Config: getLevel2Config,
+    activeSectionKey: activeSectionKey,
+    isLevel2Open: isLevel2Open,
+    currentLevel2Item: currentLevel2Item,
+    openLevel2: openLevel2,
+    closeLevel2: closeLevel2,
+    setActiveRegion: setActiveRegion
   };
 })(window);
 

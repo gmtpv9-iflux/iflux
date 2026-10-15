@@ -910,31 +910,150 @@
     });
   }
 
-  function render(frame) {
+  /* Lazy-load theo vùng (mobile, Bottom Nav 2 cấp) — xem docs/plan "Mobile Bottom Navigation
+     2 cấp (Cộng đồng) + Lazy-load theo vùng". Desktop/tablet (lazyMode=false) giữ nguyên hành
+     vi CŨ 100%: cả 3 vùng render+fetch ngay trong init(), không qua cơ chế dưới đây. */
+  var REGION_TTL = { 'sidebar-left': 120000 }; // ms — quay lại sau khi hết TTL mới fetch lại
+  var regionState = {
+    main: { mounted: false },
+    'sidebar-left': { mounted: false, mountedAt: 0 },
+    'sidebar-right': { mounted: false, mountedAt: 0 }
+  };
+  var lazyMode = false;
+  var currentFrame = null;
+
+  function renderMain(frame) {
     mainEl = frame.mainContent;
     mainEl.innerHTML =
       hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
       '<div data-ifx-com2-feedlist>' + feedHtml() + '</div>';
-    if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
-    if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
     bindActions(mainEl);
     bindFilters(mainEl);
     bindFeedActions();
     bindHotTopics();
-    if (frame.sidebarContent) bindActions(frame.sidebarContent);
-    if (frame.rightSidebarContent) bindActions(frame.rightSidebarContent);
+    regionState.main.mounted = true;
   }
 
-  function init(frame) {
-    if (!frame || !frame.mainContent) return;
-    render(frame);
-    loadFeed('latest', false);
+  function renderSidebarLeft(frame) {
+    if (!frame.sidebarContent) return;
+    frame.sidebarContent.innerHTML = leftSidebarHtml();
+    bindActions(frame.sidebarContent);
     loadTrendingTopics();
+    /* Widget Host sidebar trái (4 widget thật) KHÔNG mount ở đây — community-page.js là script
+       thường (loadScriptTiers), không import được page-widgets.js (ES module).
+       widgets/community-page/index.js (có import sẵn) tự lắng nghe CÙNG event
+       'iflux-level2-change' để mount Widget Host đúng lúc region này active lần đầu. */
+    regionState['sidebar-left'].mounted = true;
+    regionState['sidebar-left'].mountedAt = Date.now();
+  }
+
+  function renderSidebarRight(frame) {
+    if (!frame.rightSidebarContent) return;
+    frame.rightSidebarContent.innerHTML = rightSidebarHtml();
+    bindActions(frame.rightSidebarContent);
+    regionState['sidebar-right'].mounted = true;
+    regionState['sidebar-right'].mountedAt = Date.now();
+  }
+
+  /* Vùng đã mount và còn trong TTL → tái sử dụng, không fetch/mount lại. Hết TTL (hoặc chưa
+     từng mount) → render lại (idempotent — innerHTML thay mới, không tích luỹ listener vì
+     bindActions luôn gắn trên node vừa innerHTML xong). */
+  function ensureRegion(key, frame) {
+    var st = regionState[key];
+    if (!st || key === 'main') return; // main luôn mounted sẵn từ renderMain() trong init()
+    var ttl = REGION_TTL[key];
+    var stale = st.mounted && ttl && (Date.now() - st.mountedAt > ttl);
+    if (st.mounted && !stale) return;
+    if (key === 'sidebar-left') renderSidebarLeft(frame);
+    else if (key === 'sidebar-right') renderSidebarRight(frame);
+  }
+
+  /* Chỉ 1 trong 3 vùng DOM hiển thị tại 1 thời điểm trên mobile (app-shell.css,
+     [data-ifx-region-mode="single"]) — gắn/gỡ data-ifx-region-visible, không đụng
+     data-ifx-region-mode (set 1 lần xuyên suốt phiên mobile ở init(), xem đó). */
+  function toggleRegionVisibility(key) {
+    if (!currentFrame || !lazyMode) return;
+    var layout = currentFrame.layout;
+    layout.querySelectorAll('[data-ifx-region-visible]').forEach(function (n) {
+      n.removeAttribute('data-ifx-region-visible');
+    });
+    var map = {
+      main: '.ifx-shell-main',
+      'sidebar-left': '.ifx-shell-sidebar:not(.ifx-shell-sidebar-right)',
+      'sidebar-right': '.ifx-shell-sidebar-right'
+    };
+    var target = layout.querySelector(map[key] || map.main);
+    if (target) target.setAttribute('data-ifx-region-visible', '');
+  }
+
+  /* Đọc lại ?view= hiện tại (qua IfluxAppShell) và áp dụng — dùng cho cold load thẳng vào URL
+     có ?view= lẫn khi popstate "nhẹ" (xem onPopState trong soft-navigation.js). Trả về true nếu
+     đã xử lý (báo cho onPopState KHÔNG cần dựng lại toàn trang). */
+  function applyViewFromUrl() {
+    var shell = global.IfluxAppShell;
+    if (!currentFrame || !shell || !shell.isLevel2Open || !shell.isLevel2Open()) return false;
+    var region = shell.activeSectionKey() || 'main';
+    ensureRegion(region, currentFrame);
+    toggleRegionVisibility(region);
+    return true;
+  }
+
+  function onLevel2Change(e) {
+    if (!currentFrame) return;
+    var d = (e && e.detail) || {};
+    if (!d.open) { toggleRegionVisibility('main'); return; }
+    ensureRegion(d.regionKey, currentFrame);
+    toggleRegionVisibility(d.regionKey);
+  }
+
+  function onLevel2Action(e) {
+    var d = (e && e.detail) || {};
+    if (d.action === 'openComposer') openWritePostModal();
+  }
+
+  function render(frame) {
+    /* Giữ API cũ cho mọi nơi còn gọi render() trực tiếp (không có) — nay chỉ còn alias nội bộ
+       cho render-cả-3-vùng, dùng ở nhánh desktop/tablet của init(). */
+    renderMain(frame);
+    renderSidebarLeft(frame);
+    renderSidebarRight(frame);
+  }
+
+  /** @param {{lazyRegions?: boolean}=} opts — true trên mobile (Bottom Nav 2 cấp): chỉ main
+   *  được render/fetch ngay, sidebar trái/phải chỉ mount khi vùng đó được chọn lần đầu. */
+  function init(frame, opts) {
+    if (!frame || !frame.mainContent) return;
+    currentFrame = frame;
+    lazyMode = !!(opts && opts.lazyRegions);
+    renderMain(frame);
+    loadFeed('latest', false);
     loadHotTopics();
+    if (!lazyMode) {
+      /* Desktop/tablet — hành vi CŨ: tải cả sidebar ngay, không chờ tap. */
+      renderSidebarLeft(frame);
+      renderSidebarRight(frame);
+      return;
+    }
+    frame.layout.setAttribute('data-ifx-region-mode', 'single');
+    toggleRegionVisibility('main');
+    global.__ifxPageRuntime = global.__ifxPageRuntime || {};
+    global.__ifxPageRuntime.onSamePagePopState = applyViewFromUrl;
+    document.addEventListener('iflux-level2-change', onLevel2Change);
+    document.addEventListener('iflux-level2-action', onLevel2Action);
+    applyViewFromUrl(); // cold load thẳng vào URL có ?view=...
   }
 
   function dispose() {
     mainEl = null;
+    currentFrame = null;
+    lazyMode = false;
+    regionState = {
+      main: { mounted: false },
+      'sidebar-left': { mounted: false, mountedAt: 0 },
+      'sidebar-right': { mounted: false, mountedAt: 0 }
+    };
+    document.removeEventListener('iflux-level2-change', onLevel2Change);
+    document.removeEventListener('iflux-level2-action', onLevel2Action);
     closeModal();
   }
 

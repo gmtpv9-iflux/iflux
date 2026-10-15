@@ -24,7 +24,7 @@ export const meta = { id: 'WGT-COMMUNITY-PAGE', title: 'Cộng đồng' };
    community-page.js — community-page.js gọi global.IfluxCommunityStore ngay lúc init(). */
 var CORE_TIERS = [
   [ASSET + 'community-store.js?v=17b421d80c'],
-  [ASSET + 'community-page.js?v=943902098f']
+  [ASSET + 'community-page.js?v=cfbdf639a7']
 ];
 
 export async function mount(el) {
@@ -34,13 +34,34 @@ export async function mount(el) {
   frame.rightSidebarContent = rightAside ? rightAside.querySelector('.ifx-shell-sidebar-content') : null;
   await loadScriptTiers(CORE_TIERS);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
+
+  var mobile = !!(window.IfluxBreakpoint && window.IfluxBreakpoint.isMobileShell && window.IfluxBreakpoint.isMobileShell());
   if (window.IfluxCommunityPage && IfluxCommunityPage.init) {
-    IfluxCommunityPage.init(frame);
+    IfluxCommunityPage.init(frame, { lazyRegions: mobile });
   }
-  mountPageWidgets(el, 'community', { sectionFilter: ['sidebar'], gateKey: 'community' });
+
+  /* Mobile (Bottom Nav 2 cấp, xem docs/plan "Mobile Bottom Navigation 2 cấp"): Widget Host
+     sidebar trái (4 widget thật — không đi qua community-page.js, cần import mountPageWidgets
+     ở ĐÂY) chỉ mount khi region 'sidebar-left' được chọn LẦN ĐẦU — không mount/fetch trước khi
+     user bấm "Thịnh hành". Desktop/tablet giữ nguyên hành vi CŨ: mount ngay. */
+  if (!mobile) {
+    mountPageWidgets(el, 'community', { sectionFilter: ['sidebar'], gateKey: 'community' });
+  } else {
+    var sidebarWidgetsMounted = false;
+    var onLevel2Change = function (e) {
+      var d = (e && e.detail) || {};
+      if (sidebarWidgetsMounted || d.regionKey !== 'sidebar-left') return;
+      sidebarWidgetsMounted = true;
+      mountPageWidgets(el, 'community', { sectionFilter: ['sidebar'], gateKey: 'community' });
+    };
+    document.addEventListener('iflux-level2-change', onLevel2Change);
+    el.__ifxOnLevel2Change = onLevel2Change; // tháo trong unmount
+  }
+
   return {
     unmount: function () {
       if (window.IfluxCommunityPage && IfluxCommunityPage.dispose) IfluxCommunityPage.dispose();
+      if (el && el.__ifxOnLevel2Change) document.removeEventListener('iflux-level2-change', el.__ifxOnLevel2Change);
       if (el) el.innerHTML = '';
     }
   };

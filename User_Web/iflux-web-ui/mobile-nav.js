@@ -221,6 +221,17 @@
           badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
+        /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LÚC ĐANG ACTIVE mở Cấp 2 (bottom bar
+         * chuyển mode 'section') thay vì no-op. Chưa active → để <a href> mặc định xử lý
+         * (soft-navigation điều hướng như cũ, hành vi không đổi). */
+        if (mode === 'primary' && it.hasLevel2) {
+          link.addEventListener('click', function (e) {
+            if (!it.active) return;
+            e.preventDefault();
+            var shell = window.IfluxAppShell;
+            if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
+          });
+        }
         if (mode === 'context') {
           link.setAttribute('data-ifx-context-tab', it.key);
           link.addEventListener('click', function (e) {
@@ -263,6 +274,46 @@
       if (!shell || !shell.resolveNavigationItems) return;
       var ctx = shell.resolveNavigationContext();
       renderTabbar(shell.resolveNavigationItems('accountProfile', ctx), 'account');
+    }
+
+    /** Bottom Nav Cấp 2 (root → section) — Back cố định vị trí 1, item[0] của cấu hình
+     * (luôn "nội dung chính" của mục Cấp 1) vị trí 2, các item còn lại theo thứ tự khai báo.
+     * Animation 3 giai đoạn qua CSS (tabbar.css, mode 'section') — JS chỉ set thứ tự stagger
+     * (--ifx-tabbar-enter-delay) và toggle class bắt đầu transition, không tự tính transform. */
+    function renderSection(itemKey, regionKey) {
+      var shell = window.IfluxAppShell;
+      var cfg = shell && shell.getLevel2Config && shell.getLevel2Config(itemKey);
+      if (!cfg) return;
+      bar.innerHTML = '';
+      bar.setAttribute('aria-label', 'Menu con');
+      bar.setAttribute('data-ifx-tabbar-mode', 'section');
+      var backItem = { key: '__back', label: cfg.backLabel || 'Trở về', icon: 'ti-arrow-left', kind: 'back' };
+      var list = [backItem].concat(cfg.items || []);
+      list.forEach(function (it, idx) {
+        var link = document.createElement('a');
+        link.href = '#';
+        var isActive = it.kind === 'region' && it.key === regionKey;
+        link.className = 'ifx-tabbar-item' + (isActive ? ' is-active' : '');
+        link.setAttribute('data-ifx-section-kind', it.kind);
+        link.style.setProperty('--ifx-tabbar-enter-delay', (idx * 40) + 'ms');
+        link.innerHTML = tabbarItemHtml(it, it.label);
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (it.kind === 'back') { shell.closeLevel2(); return; }
+          if (it.kind === 'action') {
+            try {
+              document.dispatchEvent(new CustomEvent('iflux-level2-action', { detail: { itemKey: itemKey, action: it.action } }));
+            } catch (err) { /* ignore */ }
+            return;
+          }
+          shell.setActiveRegion(it.key);
+        });
+        bar.appendChild(link);
+      });
+      requestAnimationFrame(function () {
+        bar.classList.add('ifx-tabbar--section-enter');
+        setTimeout(function () { bar.classList.remove('ifx-tabbar--section-enter'); }, 350);
+      });
     }
 
     /** Chi tiết bài viết — entity row (trên) + Host ActionBar (dưới). Không proxy-click. */
@@ -328,7 +379,9 @@
       bar.style.display = '';
       var ctx = shell.detectContext ? shell.detectContext() : null;
       var model = shell.currentNavigationModel ? shell.currentNavigationModel() : null;
-      if (ctx && ctx.entityType === 'article') {
+      if (shell.isLevel2Open && shell.isLevel2Open()) {
+        renderSection(shell.currentLevel2Item(), shell.activeSectionKey() || 'main');
+      } else if (ctx && ctx.entityType === 'article') {
         renderArticleActions();
       } else if (document.querySelector('[data-ifx-community-story]')) {
         /* URL-bar scroll can emit resize while AppShell briefly has no context.
@@ -363,6 +416,7 @@
     syncMobileTabbar();
     window.addEventListener('resize', syncMobileTabbar);
     document.addEventListener('iflux-context-ready', syncMobileTabbar);
+    document.addEventListener('iflux-level2-change', syncMobileTabbar);
   }
 
   function openCommentsPage() {
