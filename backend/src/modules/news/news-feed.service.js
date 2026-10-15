@@ -238,6 +238,13 @@ async function fetchCommunityRows(filters) {
       if (keys.length) { params.push(keys); clauses.push(`COALESCE(payload->'${column}', '[]'::jsonb) ?| $${params.length}::text[]`); }
     });
     if (entity.exchange) { params.push(entity.exchange); clauses.push(`payload->>'exchange' = $${params.length}`); }
+    /* story_ids trong CÙNG nhóm OR (không phải AND riêng) — "Bạn đang quan tâm" (listFollowedFeed)
+       cần match bài khớp BẤT KỲ thực thể nào đang Follow (ticker/sector/ecosystem/story), không
+       phải khớp đồng thời tất cả. */
+    if (entity.story_ids && entity.story_ids.length) {
+      params.push(entity.story_ids.map(String));
+      clauses.push(`payload->>'story_id' = ANY($${params.length}::text[])`);
+    }
     if (clauses.length) sql += ` AND ${exclude ? 'NOT ' : ''}(${clauses.join(' OR ')})`;
   }
   if (filters.entity_match) entityCondition(filters.entity_match, false);
@@ -348,6 +355,57 @@ async function listFeed(filters) {
   return pageResult(communityCards, filters, limit, offset);
 }
 
+/**
+ * "Bạn đang quan tâm" — feed OR theo TẤT CẢ thực thể user đang Follow (Stock/Sector/Ecosystem/
+ * Story, xem entity-follow.service.js). Tái dùng entityCondition() (đã có sẵn cho group_by=entity
+ * ở related_to) + story_ids (mới, xem fetchCommunityRows). followed rỗng cả 4 loại → trả rỗng
+ * luôn (không query, tránh quét toàn bộ news_posts).
+ */
+async function listFollowedFeed(followed, filters) {
+  filters = filters || {};
+  followed = followed || {};
+  const limit = Math.min(Math.max(Number(filters.limit) || 30, 1), 50);
+  const offset = Math.max(Number(filters.offset) || 0, 0);
+
+  const hasEntity = (followed.stocks && followed.stocks.length) ||
+    (followed.sectors && followed.sectors.length) ||
+    (followed.ecosystems && followed.ecosystems.length);
+  const hasStory = followed.stories && followed.stories.length;
+  if (!hasEntity && !hasStory) {
+    return { cards: [], total: 0, limit, offset, has_more: false, next_cursor: null };
+  }
+
+  const rows = await fetchCommunityRows({
+    limit: limit + 1,
+    offset,
+    cursor: filters.cursor,
+    entity_match: {
+      tickers: followed.stocks || [],
+      sectors: followed.sectors || [],
+      ecosystems: followed.ecosystems || [],
+      story_ids: followed.stories || []
+    },
+    content_type: filters.content_type || filters.type || null
+  });
+  return pageResult(rows, filters, limit, offset);
+}
+
+/**
+ * Lấy FeedCard theo danh sách id cụ thể (không giữ thứ tự SQL — caller tự re-sort theo nhu cầu,
+ * vd news-hot.service.js re-sort theo điểm). Dùng cho "Tin nóng" (ids đã được xếp hạng sẵn ở nơi
+ * khác, chỉ cần lấy dữ liệu hiển thị FeedCard ở đây).
+ */
+async function getFeedCardsByIds(ids) {
+  if (!ids || !ids.length) return [];
+  const res = await query(
+    `SELECT id, content_type, status, created_at,
+       ${FEED_PAYLOAD_SQL} || jsonb_build_object('sort_at', COALESCE((payload->>'published_at')::timestamptz, created_at)) AS payload
+     FROM news_posts WHERE id = ANY($1::varchar[]) AND status IN ('published', 'published_rss')`,
+    [ids.map(String)]
+  );
+  return res.rows.map(rowToFeedCard).filter(Boolean);
+}
+
 function pageResult(rows, filters, limit, offset) {
   let cards = rows.slice(0, limit);
   let sectionDate = null;
@@ -367,6 +425,8 @@ function pageResult(rows, filters, limit, offset) {
 
 module.exports = {
   listFeed,
+  listFollowedFeed,
+  getFeedCardsByIds,
   toFeedCard,
   FEED_STRIP_KEYS
 };

@@ -84,6 +84,21 @@ async function persistStats(articleId, stats, likedBy, favoritedBy) {
   return res.rows[0];
 }
 
+/* Log thô append-only cho "Tin nóng" (migration 085) — chỉ 'like'/'favorite'/'share_bump' (unlike/
+   unfavorite KHÔNG log, raw log không xoá/rút lại sự kiện đã xảy ra). Best-effort, không chặn
+   mutate() nếu lỗi (giống pattern bus.publish ở dưới). */
+const EVENT_TYPE_BY_ACTION = { like: 'like', favorite: 'favorite', share_bump: 'share' };
+async function logInteractionEvent(articleId, uid, action) {
+  const eventType = EVENT_TYPE_BY_ACTION[action];
+  if (!eventType) return;
+  try {
+    await query(
+      `INSERT INTO news_interaction_events (news_post_id, user_id, event_type) VALUES ($1, $2, $3)`,
+      [articleId, uid || null, eventType]
+    );
+  } catch (e) { /* ignore — không chặn mutate() chính */ }
+}
+
 /**
  * RC-API-03 mutate: like | unlike | favorite | unfavorite | share_bump
  */
@@ -128,6 +143,7 @@ async function mutate(idOrSlug, user, action) {
   }
 
   await persistStats(String(article.id), stats, likedBy, favoritedBy);
+  await logInteractionEvent(String(article.id), uid, act);
   if (act === 'share_bump') {
     try {
       const bus = require('../../core/events/bus');
