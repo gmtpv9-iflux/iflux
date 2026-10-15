@@ -66,3 +66,28 @@
   text-decoration: none;
   font-weight: var(--ifx-font-weight-semibold);
 }
+
+/* Owner 2026-10-15: khung Card (nền/viền/đổ bóng + đệm 2 bên Header/Body/Footer) chỉ giữ ở
+   desktop/tablet — trên mobile khung này ăn vào bề rộng hiển thị, làm nội dung Widget (bảng số,
+   text dài, nhãn không ngắt dòng được) bị thu hẹp hoặc vỡ giao diện. Chỉ áp dụng cho Card do
+   IfxTemplates.mount() dựng (data-ifx-template — xem design_system/05_templates/00_widget/
+   widget.js) — KHÔNG đụng .ifx-card dùng ở nơi khác (Admin, danh sách, modal…). Một điểm sửa duy
+   nhất ở đây áp dụng cho MỌI Template hiện có và Template mới thêm sau này (không cần sửa từng
+   Template). Đệm trên/dưới (không thu hẹp bề rộng) vẫn giữ để nội dung không dính sát nhau. */
+@media (max-width: 768px) {
+  .ifx-card[data-ifx-template] {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .ifx-card[data-ifx-template] .ifx-card-header,
+  .ifx-card[data-ifx-template] .ifx-card-footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .ifx-card[data-ifx-template] .ifx-card-body {
+    padding-left: 0;
+    padding-right: 0;
+    background: transparent;
+  }
+}
