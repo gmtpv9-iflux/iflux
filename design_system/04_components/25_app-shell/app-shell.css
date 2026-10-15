@@ -64,5 +64,6 @@
 }
 .ifx-shell-host:empty,
 .ifx-shell-sidebar-content:empty,
-.ifx-shell-main-content:empty { display: none; }
+.ifx-shell-main-content:empty,
+.ifx-shell-composer:empty { display: none; }
 .ifx-shell-sidebar:not(:has(> :not(:empty))) { display: none; }
