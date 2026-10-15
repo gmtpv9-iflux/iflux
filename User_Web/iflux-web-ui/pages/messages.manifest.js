@@ -19,7 +19,7 @@ export default {
     span: 12,
     enabled: true,
     locked: true,
-    lazyModule: '/User_Web/iflux-web-ui/widgets/messages-page/index.js?v=00aace6024',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/messages-page/index.js?v=6ba7d08b2d',
     css: [
       '/User_Web/iflux-web-ui/profile.css?v=2c89cee009',
       '/User_Web/iflux-web-ui/hub.css?v=dfca1bcfb4'
