@@ -529,6 +529,29 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     return s && s.user ? s.user : null;
   }
 
+  function getInitials() {
+    var u = getUser();
+    var name = (u && u.display_name) || 'U';
+    return String(name).split(' ').map(function (p) { return p[0]; }).join('').slice(0, 2).toUpperCase();
+  }
+
+  /* Header avatar mặc định ẩn trong HTML tĩnh (tránh hiện sai khi chưa rõ auth-state).
+   * Tô ngay khi auth.js tải xong — sớm hơn hẳn chuỗi PlansRuntimeReader — chỉ hiện
+   * khi CHẮC CHẮN đã đăng nhập; khách vẫn ẩn, IfluxGuestShell thay bằng nút Đăng nhập sau. */
+  function paintHeaderAvatar() {
+    try {
+      if (!isLoggedIn()) return;
+      var box = document.querySelector('.ifx-app-header-user');
+      if (!box) return;
+      var initials = getInitials();
+      Array.prototype.forEach.call(box.querySelectorAll('[data-ifx-user-initials]'), function (el) {
+        el.textContent = initials;
+      });
+      box.hidden = false;
+    } catch (e) { /* ignore */ }
+  }
+  paintHeaderAvatar();
+
   function getToken() {
     var s = read();
     return s && s.access_token ? s.access_token : null;
@@ -890,6 +913,7 @@ Note: Coverage unused cao nhưng dep guest/login — không P1 PASS
     useApi: useApi,
     isLoggedIn: isLoggedIn,
     getUser: getUser,
+    getInitials: getInitials,
     getToken: getToken,
     getPlanDaysLeft: function () { return getPlanDaysLeft(); },
     getMenuTierLabel: function () { return getMenuTierLabel(); },

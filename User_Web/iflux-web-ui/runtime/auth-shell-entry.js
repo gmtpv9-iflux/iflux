@@ -9,7 +9,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var SHELL = [
   ASSET + 'iflux-platform-boot.js?v=9623ca3514',
   ASSET + 'iflux-api-bundle.js?v=aacd7e48c9',
-  ASSET + 'auth.js?v=f9a8ae35e7'
+  ASSET + 'auth.js?v=99042ce179'
 ];
 
 async function main() {

@@ -679,7 +679,7 @@
    * Avatar/Tên: tác giả Admin/Sub-admin thật nếu có; RSS (không có author) → fallback "Đội ngũ
    * iFlux" tạm thời (CHƯA có Cài đặt "Tác giả mặc định" ở Admin — khi có, đổi fallback này sang
    * đọc đúng cấu hình đó, không sửa lại khung HTML).
-   * Chuyên môn/Năm kinh nghiệm/Hỗ trợ biên soạn: hardcode tạm theo yêu cầu Owner.
+   * Chuyên môn/Năm kinh nghiệm không được tự dựng nếu hồ sơ tác giả chưa cung cấp.
    */
   function articleAuthorInfoHtml(post, publishedIso) {
     post = post || {};
@@ -695,13 +695,17 @@
 
     var metaRows = [];
     if (publishedIso) {
-      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-calendar"></i> ' + escHtml(fmtDate(publishedIso)) + '</div>');
+      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-calendar" aria-hidden="true"></i><time datetime="' + escHtml(publishedIso) + '">' + escHtml(fmtDate(publishedIso)) + '</time></div>');
     }
-    var sourceName = post.source_name || (post.source && post.source.name) || '';
+    var sourceName = post.source_name || post.source_label || (post.source && post.source.name) || '';
+    var sourceUrl = post.external_url || post.source_url || (post.source && post.source.url) || '';
     if (sourceName) {
-      metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-link"></i> Nguồn tham khảo: ' + escHtml(sourceName) + '</div>');
+      var safeSourceUrl = /^(https?):\/\//i.test(sourceUrl) ? sourceUrl : '';
+      var sourceText = safeSourceUrl
+        ? '<a href="' + escHtml(safeSourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escHtml(sourceName) + '</a>'
+        : '<span>' + escHtml(sourceName) + '</span>';
+      metaRows.push('<div class="ifx-icon-list-item ifx-com-article__author-source"><i class="ti ti-link" aria-hidden="true"></i>' + sourceText + '</div>');
     }
-    metaRows.push('<div class="ifx-icon-list-item"><i class="ti ti-robot"></i> Hỗ trợ biên soạn: AI</div>');
 
     return (
       '<section class="ifx-card ifx-card-accent ifx-com-article__author">' +

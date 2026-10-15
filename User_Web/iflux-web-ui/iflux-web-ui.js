@@ -110,10 +110,7 @@
     document.querySelectorAll('[data-ifx-user-name]').forEach(function (el) {
       el.textContent = user.display_name;
     });
-    document.querySelectorAll('[data-ifx-user-initials]').forEach(function (el) {
-      var parts = (user.display_name || 'U').split(' ');
-      el.textContent = parts.map(function (p) { return p[0]; }).join('').slice(0, 2).toUpperCase();
-    });
+    /* Avatar/initials: auth.js đã tô ngay khi tải xong (paintHeaderAvatar) — không lặp lại ở đây. */
     refreshTierChips();
   }
 
