@@ -14,7 +14,7 @@ var ALL = [
   ASSET + 'loyalty-affiliate-store.js?v=b225fb0132',
   ASSET + 'auth-social.js?v=a9cdec32bc',
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
-  ASSET + 'iflux-web-ui.js?v=0d08af7ae0',
+  ASSET + 'iflux-web-ui.js?v=828e2ac54c',
   ASSET + 'auth-register-init.js?v=821ca893e9'
 ];
 

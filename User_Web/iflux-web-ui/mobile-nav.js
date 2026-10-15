@@ -223,15 +223,30 @@
           badge = '<span class="ifx-tabbar-count' + (it.active ? ' is-active' : '') + '">' + commentN + '</span>';
         }
         link.innerHTML = tabbarItemHtml(it, label) + badge;
-        /* Owner 2026-10-15 (đổi ý): mục Cấp-1 có menu con (vd Cộng đồng) KHÔNG còn tự mở Cấp 2
-         * khi tap icon Bottom Nav nữa — tap icon luôn là ĐIỀU HƯỚNG TRANG bình thường (y hệt
-         * mọi mục khác, để `<a href>` mặc định + onDocumentClick xử lý), giữ Bottom Nav ở
-         * nguyên mode primary để user còn chuyển tiếp sang Tin tức/Dòng tiền/... không bị nhảy
-         * thẳng vào Cấp 2 rồi phải Back ra mới chuyển trang khác được (trải nghiệm xấu). Cấp 2
-         * giờ chỉ mở qua nút riêng trong AppShell tiêu đề trang (mobile-only, xem tính năng
-         * "Vào cộng đồng") gọi thẳng `IfluxAppShell.openLevel2()` — không qua đường tap icon
-         * này nữa. `it.hasLevel2`/`shell.openLevel2` vẫn giữ nguyên ở AppShell, chỉ bỏ phần
-         * TỰ ĐỘNG kích hoạt từ đây. */
+        /* Mục Cấp-1 có menu con (vd Cộng đồng) — tap LUÔN mở Cấp 2, kể cả khi đang đứng ở
+         * trang KHÁC (vd Tin tức). 2 nhánh KHÔNG dùng chung 1 listener can thiệp giữa chừng —
+         * onDocumentClick (soft-navigation.js) bắt click ở capture-phase trên document, chạy
+         * TRƯỚC listener gắn trên chính <a> này, và đã tự gọi softNavigate() theo href THẬT
+         * của thẻ trước khi listener ở đây kịp preventDefault — gắn thêm điều hướng thủ công
+         * ở đây sẽ đua với nó (2 lần soft-navigate chồng nhau, URL cuối cùng sai). Thay vào đó:
+         * - Chưa active: set href = trang đó + "?view=main" ngay từ đầu — để onDocumentClick
+         *   tự điều hướng (y hệt mọi link khác, không có gì đặc biệt ở đây) — mount() xong,
+         *   community-page.js tự đọc lại ?view= qua applyViewFromUrl(), vào thẳng Cấp 2.
+         * - Đã active: href = "#" (không trỏ URL thật) — onDocumentClick coi "#" là cùng
+         *   trang, không tự điều hướng gì — listener ở đây độc quyền xử lý, gọi openLevel2()
+         *   tại chỗ (pushState nhẹ, không dựng lại DOM). */
+        if (mode === 'primary' && it.hasLevel2) {
+          if (it.active) {
+            link.href = '#';
+            link.addEventListener('click', function (e) {
+              e.preventDefault();
+              var shell = window.IfluxAppShell;
+              if (shell && shell.openLevel2) { shell.openLevel2(it.key); syncMobileTabbar(); }
+            });
+          } else if (it.href) {
+            link.href = it.href + (it.href.indexOf('?') >= 0 ? '&' : '?') + 'view=main';
+          }
+        }
         if (mode === 'context') {
           link.setAttribute('data-ifx-context-tab', it.key);
           link.addEventListener('click', function (e) {

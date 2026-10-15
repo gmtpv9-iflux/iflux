@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T21:05:00+07:00 — Claude — hoàn thành — Owner đổi ý LẦN 2: khôi phục lại auto-mở Cấp 2 khi tap icon, huỷ ý tưởng AppShell tiêu đề trang
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Sau khi đã bắt đầu khảo sát (2 Explore agent) cho tính năng AppShell tiêu đề trang + nút "Vào cộng đồng" mobile-only (mục `20:30:00` cùng ngày), Owner đổi ý LẦN 2: huỷ hẳn ý tưởng AppShell đó, quay lại ĐÚNG hành vi trước `e38be99` — tap icon Bottom Nav mở Cấp 2 ngay (áp dụng mọi trang có `level2`, hiện chỉ Cộng đồng có). Không cần Plan Mode đầy đủ cho việc này — chỉ là khôi phục đúng code đã viết/test kỹ ở các commit trước đó trong ngày (`97e237a` trở về trước), revert đúng 1 commit `e38be99`.
+- **Phạm vi:** `User_Web/iflux-web-ui/mobile-nav.js` (khôi phục nguyên văn từ `git show aa5c8b7:...` — xác nhận diff rỗng, khớp 100% bản trước `e38be99`), `iflux-web-ui.js` (bump version `mobile-nav.js?v=` lần 4 trong ngày: `r20261015c`→`d`). Worktree `/private/tmp/iflux-restore-autoopen` từ `github/staging` (`e38be99`).
+- **Trước → sau:** khôi phục lại khối xử lý click cho item primary có `it.hasLevel2` (active→`href="#"`+`openLevel2()` tại chỗ; chưa active→`href` kèm `?view=main` để `onDocumentClick` tự điều hướng). Không đụng gì khác — `IfluxAppShell.openLevel2/closeLevel2/setActiveRegion`, `renderSection()`/FLIP animation/nút Back sát mép, lazy-load theo vùng, fix cold-load — tất cả giữ nguyên từ các commit trước, không bị ảnh hưởng.
+- **Kiểm tra:** `node --check` PASS cả 2 file. `sync-js-versions.mjs` write+`--check` PASS (35 file cascade). `build-web-bundle.mjs --check` PASS. Đang deploy + verify lại đúng kịch bản đã test trước đó (`809d354`: tap "Cộng đồng" từ Tin tức → mở Cấp 2 ngay 1 lần bấm) ngay sau mục này.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Còn lại/lưu ý cho AI tiếp theo:** ý tưởng AppShell tiêu đề trang + nút hành động mobile-only (mục `20:30:00`) **ĐÃ HUỶ HOÀN TOÀN**, không cần tiếp tục/tham khảo lại trừ khi Owner yêu cầu lần nữa — 10 trang khảo sát (Dòng tiền/Gói cước/Thành viên/Tin nhắn/Tìm kiếm/Watchlist/Entity list/nhóm/Tin tức/Cổ phiếu) vẫn giữ nguyên cách tự vẽ tiêu đề/mô tả như hiện tại, không đổi gì. Backlog trang Tin tức (tab "Bạn quan tâm"/"Tất cả danh mục"/nút "Vào tin tức"...) Owner đã gửi trước đó vẫn đang chờ, làm sau khi xác nhận xong việc này.
+
 ## 2026-10-15T20:30:00+07:00 — Claude — hoàn thành — Owner đổi ý: bỏ auto-mở Cấp 2 khi tap icon Bottom Nav
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner đổi hướng: tap icon "Cộng đồng" ở Bottom Nav KHÔNG còn tự mở Cấp 2 nữa (trải nghiệm xấu khi muốn chuyển tiếp sang Tin tức/Dòng tiền mà bị nhảy thẳng vào Cộng đồng chi tiết). Cấp 2 sẽ chỉ mở qua 1 nút RIÊNG đặt trong AppShell tiêu đề trang mới (đang lên plan, xem mục tiếp theo sau mục này) — nút đó gọi thẳng `IfluxAppShell.openLevel2()`, không qua đường tap icon Bottom Nav.
