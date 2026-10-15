@@ -1,6 +1,11 @@
 'use strict';
 
-function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function buildVerificationOtpEmail({ code, displayName, expiryMinutes, logoUrl }) {
   const nameUpper = String(displayName || 'bạn').toUpperCase();
   const minutes = expiryMinutes || 15;
   const subject = '[IFLUX] MÃ XÁC MINH TÀI KHOẢN CỦA BẠN';
@@ -45,6 +50,8 @@ function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
     `Mã có hiệu lực trong ${minutes} phút. Không chia sẻ mã này với bất kỳ ai.\n\n` +
     `Trân trọng,\n` +
     `Đội ngũ ${boldSans('iFlux')}\n\n` +
+    `Mobile: +84 949 003 999 | Email: gm.tpv9@gmail.com\n` +
+    `THẤU HIỂU THỊ TRƯỜNG - NẮM BẮT DÒNG TIỀN\n\n` +
     `Email tự động được gửi từ hệ thống iFlux. Vui lòng không trả lời email này.`;
 
   /* Mã trong khối HTML CŨNG dùng codeBold (Unicode), không chỉ dựa font-weight CSS: nhiều app
@@ -56,9 +63,14 @@ function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
       `<p style="font-size:14px;line-height:1.6;margin:0 0 12px">Xin chào <strong>${nameUpper}</strong>,</p>` +
       `<p style="font-size:14px;line-height:1.6;margin:0 0 24px">Cảm ơn bạn đã đăng ký tài khoản. Vui lòng sử dụng mã dưới đây để hoàn tất đăng ký.</p>` +
       `<p style="font-size:12px;font-weight:700;letter-spacing:1px;color:#666;margin:0 0 8px">MÃ XÁC MINH</p>` +
-      `<p style="font-size:44px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${codeBold}</p>` +
+      `<p style="font-size:36px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${codeBold}</p>` +
       `<p style="font-size:13px;color:#1b3587;line-height:1.6;margin:0 0 24px">Mã có hiệu lực trong <strong>${minutes} phút</strong>. Không chia sẻ mã này với bất kỳ ai.</p>` +
-      `<p style="font-size:14px;line-height:1.6;margin:0 0 32px">Trân trọng,<br/><strong>Đội ngũ iFlux</strong></p>` +
+      `<p style="font-size:14px;line-height:1.6;margin:0 0 12px">Trân trọng,<br/><strong>Đội ngũ iFlux</strong></p>` +
+      (logoUrl
+        ? `<p style="margin:0 0 12px"><img src="${escHtml(logoUrl)}" alt="iFlux" width="120" style="width:120px;height:auto;display:block" /></p>`
+        : '') +
+      `<p style="font-size:13px;line-height:1.6;margin:0 0 8px"><strong>Mobile:</strong> +84 949 003 999 &nbsp;|&nbsp; <strong>Email:</strong> gm.tpv9@gmail.com</p>` +
+      `<p style="font-size:13px;font-weight:700;line-height:1.6;margin:0 0 24px">THẤU HIỂU THỊ TRƯỜNG - NẮM BẮT DÒNG TIỀN</p>` +
       `<hr style="border:none;border-top:1px solid #eee;margin:0 0 16px"/>` +
       `<p style="color:#999;font-size:12px;line-height:1.6;margin:0">Email tự động được gửi từ hệ thống iFlux. Vui lòng không trả lời email này.</p>` +
     `</div>`;
