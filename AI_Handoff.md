@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T18:50:00+07:00 — Claude — hoàn thành — bump version thủ công `mobile-nav.js` (commit `3f870c2` bị cache cũ, chưa thật sự deploy)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Verify lại Fix 1 sau `3f870c2` bằng đúng Puppeteer script đã phát hiện lỗi lần trước — VẪN FAIL, href nút "Cộng đồng" trên trang thật vẫn là `"/"` (không có `?view=main`) dù code trong worktree/commit đã đúng.
+- **Phạm vi:** `User_Web/iflux-web-ui/iflux-web-ui.js` — chỉ đổi 1 dòng. Worktree `/private/tmp/iflux-bottomnav-fix3` từ `github/staging` (`3f870c2`).
+- **Nguyên nhân thật:** `mobile-nav.js` được nạp qua `s.src = iwuAssetBase() + 'mobile-nav.js?v=r20261009b'` trong `iflux-web-ui.js` (dòng ~1079) — version string VIẾT TAY, KHÔNG nằm trong phạm vi `sync-js-versions.mjs` (script đó không scan được chuỗi nối trong JS, chỉ scan `src="...?v="` tĩnh trong HTML/import). Cả 2 commit sửa `mobile-nav.js` trước đó (`2504a7c`, `3f870c2`) đều đổi ĐÚNG nội dung file nhưng KHÔNG đổi version string này — nên Cloudflare/trình duyệt tiếp tục phục vụ bản `mobile-nav.js` CŨ TỪ TRƯỚC CẢ 3 commit hôm nay (đúng URL `?v=r20261009b` không đổi = cache HIT) — code mới chưa từng chạy thật trên Staging dù đã deploy đúng.
+- **Trước → sau:** `?v=r20261009b` → `?v=r20261015a`. `sync-js-versions.mjs` cascade theo sau (35 file — mọi trang nạp `iflux-web-ui.js` đều cập nhật hash tham chiếu tới chính nó).
+- **Kiểm tra:** `node --check` PASS. `sync-js-versions.mjs` write+`--check` PASS. `build-web-bundle.mjs --check` PASS. Đang verify lại đúng kịch bản Puppeteer sau khi deploy xong.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Còn lại/lưu ý cho AI tiếp theo:** nếu sửa `mobile-nav.js` lần sau mà không thấy hiệu lực trên Staging dù đã deploy, LUÔN kiểm tra trước: file có được nạp qua version string viết tay không (`grep "mobile-nav.js?v=" User_Web/iflux-web-ui/iflux-web-ui.js`) — nhớ bump tay, `sync-js-versions.mjs --check` PASS không đồng nghĩa mọi tham chiếu đã được theo dõi.
+
 ## 2026-10-15T18:35:00+07:00 — Claude — hoàn thành — sửa lại đúng Fix 1 (commit `2504a7c` bị race condition)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Tự kiểm bằng Puppeteer trên Staging sau khi deploy `2504a7c` phát hiện Fix 1 (bấm icon Cộng đồng từ trang khác) KHÔNG hoạt động — URL cuối cùng là `/` (không có `?view=main`), vẫn phải bấm 2 lần.
