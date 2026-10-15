@@ -4,12 +4,24 @@
 
   var FILTER_ALL = 'ALL';
 
+  /* Lớp danh mục cấp cao "Bạn quan tâm | Bản tin | Tin nóng" (Owner 2026-10) — "Bản tin" = cụm
+     Tab nổi bật + DailyFeed CŨ y nguyên (không đổi nội dung/cách load/cấu trúc), chỉ lồng vào 1
+     wrapper có thể ẩn/hiện. Chỉ hiện lớp này ở trang Tin tức "thường" (không group/không có URL
+     filter ticker|story|family|sector|author|category — những view đó giữ nguyên hành vi cũ, xem
+     showToplevel ở boot()). */
+  var TOPLEVEL_DEFAULT = 'bulletin';
+  var HOT_RANGE_DEFAULT = 'week';
+
   var state = {
     shellReady: false,
     featuredCats: [],
     /* '' = ALL (SOL-CAL-05) */
-    featuredCategoryId: ''
+    featuredCategoryId: '',
+    toplevelTab: '',
+    hotRange: HOT_RANGE_DEFAULT
   };
+  var followedCache = { html: null, at: 0 };
+  var hotCache = {};
 
   function st() { return global.IfluxNewsStore; }
   function ui() { return global.IfluxNewsUI; }
@@ -112,6 +124,35 @@
           return (body && body.data) || body || {};
         });
       });
+  }
+
+  /* Dùng cho /news/followed, /news/follow, /news/unfollow (auth bắt buộc) — cùng mẫu
+     authHeaders()/token() đã có ở interaction/repost-modal.js. */
+  function fetchJsonAuth(path, opts) {
+    opts = opts || {};
+    var headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    try {
+      if (global.IfluxAuth && IfluxAuth.getToken) {
+        var t = IfluxAuth.getToken();
+        if (t) headers.Authorization = 'Bearer ' + t;
+      }
+    } catch (e) { /* ignore */ }
+    return fetch(apiBase() + path, {
+      method: opts.method || 'GET',
+      headers: headers,
+      credentials: 'same-origin',
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).then(function (res) {
+      return res.json().then(function (body) {
+        if (!res.ok) throw new Error((body.error && body.error.message) || body.error || ('HTTP ' + res.status));
+        return (body && body.data) || body || {};
+      });
+    });
+  }
+
+  function isLoggedIn() {
+    try { return !!(global.IfluxAuth && IfluxAuth.getToken && IfluxAuth.getToken()); }
+    catch (e) { return false; }
   }
 
   function esc(s) {
@@ -406,19 +447,30 @@
    */
   /* Khung trang chung (buildPageFrame): host Sidebar/Main + nội dung đặc thù (bộ lọc, tab nổi bật, feed).
    * Host rỗng / Sidebar không có gì tự ẩn bằng CSS — không cần đồng bộ lại sau khi mount. */
-  function renderShell(root) {
+  function renderShell(root, showToplevel) {
     if (!root) return;
     root.innerHTML = '';
     var group = listFilterParams().relatedGroup;
     var frame = global.IfluxRuntimeSections.buildPageFrame(root, { sidebarLabel: 'Tin tức', noSidebar: !!group });
     var groupTitles = { entity: 'Bài viết liên quan', topic: 'Bài viết cùng chủ đề', stock: 'Bài viết liên quan', category: 'Bài viết cùng danh mục' };
+    /* Slot tab nổi bật + feed — "Bản tin" (nếu có lớp Toplevel) là CỤM NÀY Y NGUYÊN, chỉ bọc thêm
+       1 wrapper có thể ẩn/hiện (showToplevel). Không có lớp Toplevel (group/URL filter đang hoạt
+       động) → render y hệt bản gốc, không wrapper, không đổi hành vi. */
+    var bulletinInner =
+      '<div data-ifx-com-featured-cats-slot></div>' +
+      '<div data-ifx-com-daily-feed></div>';
+    var toplevel = !!showToplevel && !group;
+    if (toplevel && !state.toplevelTab) state.toplevelTab = TOPLEVEL_DEFAULT;
     frame.mainContent.innerHTML =
       (group ? '<div class="ifx-com-list-head"><h1 class="ifx-com-list-title">' + groupTitles[group] + '</h1></div>' : filterBannerHtml()) +
-      /* Slot tab nổi bật — chỉ bơm nội dung, không renderShell lại (tránh phá host). */
-      '<div data-ifx-com-featured-cats-slot></div>' +
-      /* Tin tức = nội dung đặc thù trang — không gắn data-ifx-ent-block / không thuộc ma trận Widget. */
-      '<div data-ifx-com-daily-feed></div>';
+      (toplevel ? toplevelTabsHtml(state.toplevelTab) : '') +
+      (toplevel
+        ? '<div data-ifx-news-bulletin-region' + (state.toplevelTab !== 'bulletin' ? ' hidden' : '') + '>' + bulletinInner + '</div>' +
+          '<div data-ifx-news-followed-region' + (state.toplevelTab !== 'followed' ? ' hidden' : '') + '></div>' +
+          '<div data-ifx-news-hot-region' + (state.toplevelTab !== 'hot' ? ' hidden' : '') + '></div>'
+        : bulletinInner);
     applyBlockGate(root);
+    if (toplevel) bindToplevelTabs(root);
     state.shellReady = true;
   }
 
@@ -429,6 +481,167 @@
     if (!slot) return;
     slot.innerHTML = featuredCatsTabsHtml(state.featuredCats, state.featuredCategoryId);
     bindFeaturedTabs(root);
+  }
+
+  /* ───────────────── Lớp danh mục cấp cao: Bạn quan tâm | Bản tin | Tin nóng ─────────────────
+     Icon .ix-stat-icon (tầng nền chung Admin_Design_system/iflux-admin-ui — tái dùng ĐÚNG màu
+     Owner chỉ định: success/accent/danger đã map sẵn), size-override 64×44/font-size-48 riêng
+     cho Tin tức qua class ifx-news-toplevel-icon (quy ước ifx- cho phần mới, xem news.css). */
+  var TOPLEVEL_TABS = [
+    { key: 'followed', label: 'Bạn quan tâm', icon: 'ti-star',  cls: 'success' },
+    { key: 'bulletin', label: 'Bản tin',       icon: 'ti-news', cls: 'accent' },
+    { key: 'hot',       label: 'Tin nóng',      icon: 'ti-flame', cls: 'danger' }
+  ];
+
+  function toplevelTabsHtml(active) {
+    var html = '<div class="ifx-news-toplevel-tabs" role="tablist" aria-label="Danh mục Tin tức" data-ifx-news-toplevel>';
+    TOPLEVEL_TABS.forEach(function (t) {
+      var on = t.key === active;
+      html +=
+        '<button type="button" class="ifx-news-toplevel-tab' + (on ? ' active' : '') + '" role="tab"' +
+          ' aria-selected="' + (on ? 'true' : 'false') + '" data-ifx-news-toplevel-key="' + t.key + '">' +
+          '<span class="ix-stat-icon ifx-news-toplevel-icon ' + t.cls + '"><i class="ti ' + t.icon + '"></i></span>' +
+          '<span class="ifx-news-toplevel-label">' + esc(t.label) + '</span>' +
+        '</button>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function followedEmptyStateHtml() {
+    return (
+      '<div class="ifx-news-empty-state">' +
+        '<i class="ti ti-star" aria-hidden="true"></i>' +
+        '<p>Bạn chưa theo dõi Cổ phiếu, Ngành, Hệ sinh thái hay Câu chuyện nào. Theo dõi để xem tin tức liên quan ở đây.</p>' +
+        '<div class="ifx-news-empty-state__actions">' +
+          '<a class="ix-btn ix-btn-outline" href="' + esc(idHref('/dong-tien')) + '">Khám phá Dòng tiền</a>' +
+          '<a class="ix-btn ix-btn-outline" href="' + esc(idHref('/cong-dong')) + '">Khám phá Cộng đồng</a>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function followedLoginPromptHtml() {
+    return (
+      '<div class="ifx-news-empty-state">' +
+        '<i class="ti ti-login" aria-hidden="true"></i>' +
+        '<p>Đăng nhập để xem tin tức theo các thực thể bạn đang quan tâm.</p>' +
+        '<div class="ifx-news-empty-state__actions">' +
+          '<a class="ix-btn ix-btn-primary" href="' + esc(idHref('/dang-nhap')) + '">Đăng nhập</a>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderFollowedRegion(root) {
+    var el = root && root.querySelector('[data-ifx-news-followed-region]');
+    if (!el) return;
+    if (!isLoggedIn()) { el.innerHTML = followedLoginPromptHtml(); return; }
+    if (followedCache.html && Date.now() - followedCache.at < FEED_TTL_MS) {
+      el.innerHTML = followedCache.html;
+      return;
+    }
+    el.innerHTML = '<div class="ifx-news-region-loading"><i class="ti ti-loader-2"></i> Đang tải…</div>';
+    fetchJsonAuth('/news/followed?limit=30').then(function (data) {
+      var cards = data.cards || [];
+      var html = cards.length
+        ? '<div class="ifx-com-feed-grid">' + cards.map(function (c) { return global.IfluxNewsUI.postCardHtml(c); }).join('') + '</div>'
+        : followedEmptyStateHtml();
+      followedCache = { html: html, at: Date.now() };
+      if (state.toplevelTab === 'followed') el.innerHTML = html;
+    }).catch(function () {
+      el.innerHTML = '<div class="ifx-news-region-error"><p>Không tải được. Vui lòng thử lại.</p></div>';
+    });
+  }
+
+  function hotSubTabsHtml(activeRange) {
+    var ranges = [['day', 'Hôm nay'], ['week', 'Tuần này'], ['month', 'Tháng này']];
+    var html = '<div class="ix-profile-tabs ifx-news-hot-subtabs" role="tablist" data-ifx-news-hot-subtabs>';
+    ranges.forEach(function (r) {
+      var on = r[0] === activeRange;
+      html += '<button type="button" class="ix-profile-tab' + (on ? ' active' : '') + '" role="tab"' +
+        ' aria-selected="' + (on ? 'true' : 'false') + '" data-ifx-news-hot-range="' + r[0] + '">' + r[1] + '</button>';
+    });
+    html += '</div><div class="ifx-news-hot-list" data-ifx-news-hot-list></div>';
+    return html;
+  }
+
+  function loadHotList(regionEl, range) {
+    var listEl = regionEl.querySelector('[data-ifx-news-hot-list]');
+    if (!listEl) return;
+    var cached = hotCache[range];
+    if (cached && Date.now() - cached.at < FEED_TTL_MS) { listEl.innerHTML = cached.html; return; }
+    listEl.innerHTML = '<div class="ifx-news-region-loading"><i class="ti ti-loader-2"></i> Đang tải…</div>';
+    fetchJson('/news/hot?range=' + range + '&limit=20').then(function (data) {
+      var cards = data.cards || [];
+      var html = cards.length
+        ? '<div class="ifx-com-feed-grid">' + cards.map(function (c) { return global.IfluxNewsUI.postCardHtml(c); }).join('') + '</div>'
+        : '<div class="ifx-news-empty-state"><p>Chưa có bài viết nổi bật trong khung giờ này.</p></div>';
+      hotCache[range] = { html: html, at: Date.now() };
+      if (state.hotRange === range && state.toplevelTab === 'hot') listEl.innerHTML = html;
+    }).catch(function () {
+      listEl.innerHTML = '<div class="ifx-news-region-error"><p>Không tải được. Vui lòng thử lại.</p></div>';
+    });
+  }
+
+  function renderHotRegion(root) {
+    var el = root && root.querySelector('[data-ifx-news-hot-region]');
+    if (!el) return;
+    if (!el._ifxHotBound) {
+      el._ifxHotBound = true;
+      el.innerHTML = hotSubTabsHtml(state.hotRange);
+      el.querySelector('[data-ifx-news-hot-subtabs]').addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest('[data-ifx-news-hot-range]') : null;
+        if (!btn) return;
+        var range = btn.getAttribute('data-ifx-news-hot-range');
+        if (range === state.hotRange) return;
+        state.hotRange = range;
+        el.querySelectorAll('[data-ifx-news-hot-range]').forEach(function (b) {
+          var on = b.getAttribute('data-ifx-news-hot-range') === range;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        loadHotList(el, range);
+      });
+    }
+    loadHotList(el, state.hotRange);
+  }
+
+  function activateToplevelRegion(root, tab) {
+    if (tab === 'followed') renderFollowedRegion(root);
+    else if (tab === 'hot') renderHotRegion(root);
+    else mountDailyFeed(root); /* bulletin — cụm cũ, tự TTL theo pane, hành vi KHÔNG đổi */
+  }
+
+  function applyToplevelTab(root, tab) {
+    if (!root || tab === state.toplevelTab) return;
+    state.toplevelTab = tab;
+    root.querySelectorAll('[data-ifx-news-toplevel] [data-ifx-news-toplevel-key]').forEach(function (btn) {
+      var on = btn.getAttribute('data-ifx-news-toplevel-key') === tab;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    var bulletinEl = root.querySelector('[data-ifx-news-bulletin-region]');
+    var followedEl = root.querySelector('[data-ifx-news-followed-region]');
+    var hotEl = root.querySelector('[data-ifx-news-hot-region]');
+    if (bulletinEl) bulletinEl.hidden = tab !== 'bulletin';
+    if (followedEl) followedEl.hidden = tab !== 'followed';
+    if (hotEl) hotEl.hidden = tab !== 'hot';
+    activateToplevelRegion(root, tab);
+  }
+
+  function bindToplevelTabs(root) {
+    var rail = root && root.querySelector('[data-ifx-news-toplevel]');
+    if (!rail) return;
+    if (!rail._ifxToplevelBound) {
+      rail._ifxToplevelBound = true;
+      rail.addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest('[data-ifx-news-toplevel-key]') : null;
+        if (!btn) return;
+        applyToplevelTab(root, btn.getAttribute('data-ifx-news-toplevel-key'));
+      });
+    }
+    activateToplevelRegion(root, state.toplevelTab);
   }
 
   /* Mỗi tab một khung feed riêng, giữ lại khi đổi tab: quay lại tab đã xem → hiện ngay, không tải lại.
@@ -478,8 +691,18 @@
       return;
     }
 
+    /* Lớp Toplevel (Bạn quan tâm/Bản tin/Tin nóng) chỉ hiện ở trang Tin tức "thường" — group hay
+       bất kỳ URL/path filter nào (ticker/story/family/sector/author/category) đều giữ nguyên
+       hành vi cũ (renderShell tự render bản KHÔNG wrapper khi showToplevel=false). Tính trước
+       renderShell() nên gọi readListFilters()/readPathCollection() ở đây (rẻ, thuần đọc URL) —
+       không tái cấu trúc phần dưới vốn gọi lại 2 hàm này cho các nhánh khác, tránh rủi ro. */
+    var showToplevel = !grouped && !(function () {
+      var uf = readListFilters();
+      return !!(uf.ticker || uf.story || uf.family || uf.sector || uf.author || uf.category || readPathCollection());
+    })();
+
     /* Shell đồng bộ trước — Layout Engine mount sidebar vào aside trong grid. */
-    renderShell(root);
+    renderShell(root, showToplevel);
     if (grouped) { mountDailyFeed(root); return; }
 
     /* Default Filter State = ALL (SOL-CAL-05). URL/path filter → listFilterParams, không ép featured. */

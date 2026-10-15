@@ -561,7 +561,17 @@ Refs: Task5 PhaseA — không audit / không tối ưu
         ]
       }
     },
-    { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-news', onboard: 'news' },
+    { key: 'news', route: 'news', label: 'Tin tức',   icon: 'ti-news', onboard: 'news',
+      level2: {
+        backLabel: 'Trở về',
+        items: [
+          { key: 'followed',     label: 'Bạn quan tâm', icon: 'ti-star',  kind: 'region' },
+          { key: 'bulletin',     label: 'Bản tin',       icon: 'ti-news', kind: 'region' },
+          { key: 'hot',          label: 'Tin nóng',      icon: 'ti-flame',kind: 'region' },
+          { key: 'sidebar-left', label: 'Thịnh hành',    icon: 'ti-flame',kind: 'region' }
+        ]
+      }
+    },
     { key: 'flow',      route: 'flow',      label: 'Dòng tiền',   icon: 'ti-arrows-exchange', exclusive: true, chip: 'Độc quyền', onboard: 'flow',
       level2: {
         backLabel: 'Trở về',
