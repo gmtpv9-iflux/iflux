@@ -35,7 +35,7 @@ var B2 = '?v=phaseB220260721a';
 var MANIFEST_MAP = {
   home: function () { return import('../pages/home.manifest.js?v=727ed3e7bc'); },
   flow: function () { return import('../pages/flow.manifest.js?v=b1bc127246'); },
-  news: function () { return import('../pages/news.manifest.js?v=0170ba9765'); },
+  news: function () { return import('../pages/news.manifest.js?v=b2433d96fb'); },
   community: function () { return import('../pages/community.manifest.js?v=8e7ce95f9b'); },
   pricing: function () { return import('../pages/pricing.manifest.js?v=4cd6ca6119'); },
   stocks: function () { return import('../pages/stocks.manifest.js?v=4910dd014b'); },

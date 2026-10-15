@@ -2,6 +2,26 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T02:25:00+07:00 — Claude — hoàn thành — Gỡ blocker DB (GRANT) + fix bug `hidden` không gỡ ở Bottom Nav Cấp 2 Tin tức mobile
+
+- **Nhiệm vụ/trạng thái:** hoàn thành cả 2 việc. (1) Blocker DB mục `01:45:00`: Owner cho phép Claude tự SSH + chạy GRANT trên Staging — ĐÃ XONG. (2) Bug mới phát hiện qua Puppeteer ngay sau khi gỡ blocker — ĐÃ FIX.
+- **(1) Gỡ blocker DB — đã làm trực tiếp trên Staging qua SSH (Owner đã cho phép):**
+  - Nguyên nhân THẬT (đã xác nhận, không còn suy luận): `SELECT tablename, tableowner FROM pg_tables` cho thấy `news_posts` (bảng cũ, hoạt động bình thường) owner = `iflux_staging` (role app dùng), nhưng 2 bảng MỚI (`user_entity_follows`, `news_interaction_events`) owner = `postgres` — nghĩa là bước migrate trên pipeline deploy chạy bằng role `postgres` (admin) thay vì `iflux_staging`, nên bảng mới KHÔNG tự động có quyền cho role app như các bảng cũ (được tạo trước đây bằng đúng role `iflux_staging`).
+  - Đã lấy đúng tên role app (`iflux_staging`) qua `ps aux | grep postgres` (thấy ngay tiến trình kết nối live, không cần đọc file `.env`/biến môi trường — không có quyền đọc `/proc/<pid>/environ`, bị auto-mode chặn đúng theo thiết kế, đã tôn trọng không tìm cách vòng qua).
+  - Đã chạy (role `postgres`, qua `sudo -u postgres psql -d iflux_staging`): `GRANT SELECT, INSERT, UPDATE, DELETE ON user_entity_follows, news_interaction_events TO iflux_staging;` + `GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO iflux_staging;` (cần cho `news_interaction_events.id BIGSERIAL`).
+  - **Đã verify bằng curl thật**: `GET /api/news/hot?range=week` trả 200 với `hot_score`/`hot_breakdown` tính ĐÚNG công thức (vd bài có comments=1,reposts=1 → score=1×5+1×3=8 ✓; bài comments=2,reposts=0 → score=10 ✓). `range=month` cũng đúng. `range=day` trả rỗng hợp lý (dữ liệu test cũ, không có hoạt động "hôm nay").
+  - **Lưu ý cho lần migrate sau** (chưa sửa, chỉ ghi nhận): nếu pipeline deploy tiếp tục chạy migration bằng role `postgres` thay vì `iflux_staging`, MỌI bảng mới sau này sẽ lặp lại đúng lỗi này — nên cân nhắc sửa pipeline deploy (ngoài phạm vi code trong repo này, là cấu hình CI/CD) hoặc nhớ luôn GRANT thủ công sau mỗi migration tạo bảng mới cho tới khi gốc rễ được sửa.
+- **(2) Bug `hidden` không gỡ khi chuyển vùng qua Bottom Nav Cấp 2 (phát hiện qua Puppeteer NGAY sau khi gỡ blocker, trước khi báo Owner xong việc):**
+  - **Hiện tượng**: tap "Bạn quan tâm"/"Tin nóng" ở Cấp 2 mobile → URL đổi đúng (`?view=followed`/`?view=hot`), nội dung BÊN TRONG render đúng (đã thấy prompt đăng nhập / 4 card Tin nóng đúng dữ liệu) — nhưng container cha (`[data-ifx-news-followed-region]`/`[data-ifx-news-hot-region]`) vẫn còn thuộc tính `hidden` → KHÔNG HIỂN THỊ GÌ trên màn hình dù DOM có đủ nội dung.
+  - **Nguyên nhân**: logic gỡ `hidden` cho 3 vùng con (bulletin/followed/hot) chỉ nằm trong `applyToplevelTab()` (đường desktop, click nút). Khi viết `activateRegion()` (đường mobile, Bottom Nav Cấp 2) ở mục `02:10:00`, tôi CỐ Ý gọi thẳng `activateToplevelRegion()` thay vì `applyToplevelTab()` (để tránh guard "đã active thì bỏ qua" — guard đó đúng cho click nhưng sai cho cold-load/popstate) — nhưng việc này VÔ TÌNH bỏ luôn phần gỡ `hidden` (nằm chung trong `applyToplevelTab`, không tách riêng). "Bản tin" không lộ bug vì đó là tab mặc định — `hidden` của nó vốn đã là `false` ngay từ lúc `renderShell()` dựng HTML, không cần gỡ.
+  - **Fix**: tách phần gỡ/gán `hidden` + đồng bộ class `.active` trên nút ra hàm riêng `showSubRegion(root, tab)`, gọi từ CẢ `applyToplevelTab()` (desktop) LẪN `activateRegion()` (mobile) — không còn 2 bản logic lệch nhau.
+  - **Phạm vi:** `User_Web/iflux-web-ui/news-page.js` (chỉ 2 hàm `applyToplevelTab`/`activateRegion`, thêm `showSubRegion`). Worktree `/private/tmp/ifx-news-fix` từ `github/staging` (`93998e7`).
+- **Kiểm tra:** `node --check` PASS. `sync-js-versions.mjs` write+`--check` PASS (233 file, cascade 29 file). Đang deploy — sẽ chạy lại ĐÚNG kịch bản Puppeteer đã lộ bug (tap Bạn quan tâm/Tin nóng/Thịnh hành/Bản tin tuần tự trên mobile viewport 390×844, kiểm `hidden` + nội dung thật) ngay sau khi push.
+- **Commit:** sẽ tạo ngay sau mục này, push `HEAD:staging`.
+- **Còn lại:** nút Follow thật trên trang Cổ phiếu/Ngành/Hệ sinh thái/Câu chuyện vẫn chưa có UI (không phụ thuộc mục này).
+
+## 2026-10-16T02:10:00+07:00 — Claude — đang làm — Trang Tin tức: mobile Bottom Nav Cấp 2 (region followed/bulletin/hot/sidebar-left)
+
 ## 2026-10-16T02:10:00+07:00 — Claude — đang làm — Trang Tin tức: mobile Bottom Nav Cấp 2 (region followed/bulletin/hot/sidebar-left)
 
 - **Nhiệm vụ/trạng thái:** đang làm (code xong, `node --check`/`sync-js-versions`/`build-web-bundle` PASS — CHƯA deploy/test tay trên Staging ở mục này). Nối tiếp 3 mục trước (`00:40:00` backend, `01:30:00` frontend desktop, `01:45:00` blocker DB). Owner xác nhận: "sidebar-left/Thịnh hành" ở Cấp 2 ĐƠN GIẢN LÀ sidebar trái Widget Host có sẵn trên desktop (Owner tự cấu hình trong Admin), KHÔNG phải tính năng "trending" mới — y hệt cách Cộng đồng đã làm với sidebar trái/phải.

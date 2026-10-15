@@ -633,20 +633,26 @@
     else mountDailyFeed(root); /* bulletin — cụm cũ, tự TTL theo pane, hành vi KHÔNG đổi */
   }
 
-  function applyToplevelTab(root, tab) {
-    if (!root || tab === state.toplevelTab) return;
-    state.toplevelTab = tab;
-    root.querySelectorAll('[data-ifx-news-toplevel] [data-ifx-news-toplevel-key]').forEach(function (btn) {
-      var on = btn.getAttribute('data-ifx-news-toplevel-key') === tab;
-      btn.classList.toggle('active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
+  /* Ẩn/hiện 3 vùng con bulletin/followed/hot (thuộc tính `hidden`) — dùng chung cho CẢ click
+     desktop (applyToplevelTab) LẪN Bottom Nav Cấp 2 mobile (activateRegion). */
+  function showSubRegion(root, tab) {
     var bulletinEl = root.querySelector('[data-ifx-news-bulletin-region]');
     var followedEl = root.querySelector('[data-ifx-news-followed-region]');
     var hotEl = root.querySelector('[data-ifx-news-hot-region]');
     if (bulletinEl) bulletinEl.hidden = tab !== 'bulletin';
     if (followedEl) followedEl.hidden = tab !== 'followed';
     if (hotEl) hotEl.hidden = tab !== 'hot';
+    root.querySelectorAll('[data-ifx-news-toplevel] [data-ifx-news-toplevel-key]').forEach(function (btn) {
+      var on = btn.getAttribute('data-ifx-news-toplevel-key') === tab;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  function applyToplevelTab(root, tab) {
+    if (!root || tab === state.toplevelTab) return;
+    state.toplevelTab = tab;
+    showSubRegion(root, tab);
     activateToplevelRegion(root, tab);
   }
 
@@ -686,12 +692,8 @@
     toggleRegionVisibility(key);
     if (key === 'sidebar-left') return;
     state.toplevelTab = key;
+    showSubRegion(root, key);
     activateToplevelRegion(root, key);
-    root.querySelectorAll('[data-ifx-news-toplevel] [data-ifx-news-toplevel-key]').forEach(function (btn) {
-      var on = btn.getAttribute('data-ifx-news-toplevel-key') === key;
-      btn.classList.toggle('active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
   }
 
   /* Đọc lại ?view= hiện tại và áp dụng — dùng cho cold load thẳng vào URL có ?view= lẫn khi

@@ -27,7 +27,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/news-page/index.js?v=9c8c9a8c56',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/news-page/index.js?v=d310a569e9',
       /* Chỉ CSS của feed tin (news.css tự đủ cho card tin). widget-shell / block-templates không có
          quy tắc nào dùng trên trang này — không nạp. Heart CSS = Foundation trong gói global. */
       css: ['/User_Web/iflux-web-ui/news.css?v=8fe5446aab']
