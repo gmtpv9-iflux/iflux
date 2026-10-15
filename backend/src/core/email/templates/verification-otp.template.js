@@ -19,7 +19,21 @@ function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
       return String.fromCodePoint(0x1D5EE + (code - 97));
     });
   }
-  var codeBold = boldSans(code);
+
+  /* Owner: đậm Sans-Bold đã lên đúng trên thông báo đẩy nhưng kích thước vẫn nhỏ — banner
+     thông báo do OS/app mail tự vẽ đồng loạt cho cả dòng text thuần, không có CSS nào chỉnh
+     riêng cỡ chữ 1 đoạn trong đó. Thử Unicode Fullwidth Forms (U+FF00–FFEF, dịch nguyên khối
+     ASCII in được +0xFEE0) — KHÁC hẳn Sans-Bold: đây không phải "đậm" mà là ký tự thiết kế
+     RỘNG GẤP ĐÔI (cỡ ô CJK) nên thường trông "to" hơn rõ rệt ở mọi font, kể cả font notification
+     không có glyph riêng cho dải này (vẫn rơi về fallback nhưng fallback đó vẫn giữ chiều rộng
+     full — layout engine tôn trọng độ rộng ký tự, không chỉ tôn trọng "kiểu chữ"). Áp dụng cho
+     RIÊNG mã OTP (thứ Owner phàn nàn nhỏ) — chữ ký "Đội ngũ iFlux" giữ Sans-Bold như cũ. */
+  function fullwidth(s) {
+    return String(s).replace(/[\x21-\x7e]/g, function (c) {
+      return String.fromCodePoint(c.charCodeAt(0) + 0xFEE0);
+    });
+  }
+  var codeBold = fullwidth(code);
 
   /* Owner: giữ lời chào (Claude từng bỏ nhầm khi rút gọn — đã phục hồi), chỉ rút gọn phần sau.
      Mã tách dòng riêng, đậm thật bằng Unicode. */

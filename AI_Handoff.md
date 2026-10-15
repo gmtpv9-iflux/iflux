@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-15T10:31:26+07:00 — Claude — hoàn thành (local) — đổi mã OTP sang Unicode Fullwidth (thử hướng tăng độ rộng thay vì đậm) cho thông báo đẩy
+
+- **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp `aa6f6d4` cùng ngày. Chỉ sửa `verification-otp.template.js`.
+- **Phạm vi:** `backend/src/core/email/templates/verification-otp.template.js`.
+- **Trước → sau:** Owner xác nhận tăng `font-size` CSS chỉ có tác dụng khi MỞ email ra xem, không ảnh hưởng gì tới banner thông báo đẩy thật (đúng như Claude đã nói — banner do OS/app mail tự vẽ, không có input CSS). Owner yêu cầu thử hướng Unicode Fullwidth Forms (U+FF00–FFEF) thay vì Sans-Bold cho mã OTP — đây là dải ký tự được THIẾT KẾ rộng gấp đôi (cỡ ô CJK), khác bản chất với "đậm": layout engine của hầu hết font (kể cả khi fallback do thiếu glyph riêng dải này) vẫn tôn trọng ĐỘ RỘNG ký tự, nên thường tạo cảm giác "to" rõ hơn trong text thuần so với chỉ đổi kiểu chữ. Đổi `codeBold` (dùng cho mã OTP ở cả `text` và `html`) từ `boldSans(code)` sang `fullwidth(code)` — ví dụ `751290` → `７５１２９０`. Giữ nguyên `boldSans('iFlux')` cho chữ ký "Đội ngũ iFlux" (không đổi, Owner không phàn nàn phần này).
+- **Kiểm tra:** `node --check` PASS. Gửi email thật xác nhận cả `text`/`html` đều chứa đúng chuỗi fullwidth (`７５１２９０`). **Chưa có xác nhận từ Owner trên điện thoại thật** — đây là thử nghiệm theo đúng yêu cầu "ông thử cách đấy xem", cần Owner tự kiểm tra banner thông báo đẩy mới biết có đạt hiệu quả thị giác mong muốn hay không (Claude không có cách giả lập banner OS thật từ server).
+- **Commit:** sẽ tạo ngay sau mục này, push `staging`.
+- **Còn lại/lưu ý:** nếu fullwidth vẫn chưa đạt, các hướng còn lại đều có đánh đổi: (a) kết hợp fullwidth + tách mỗi số thành 1 dòng riêng (chữ to hơn do ít ký tự/dòng hơn, nhưng dài dòng hơn nhiều, ngược yêu cầu "gọn" đã chốt trước đó); (b) chấp nhận giới hạn nền tảng, không can thiệp thêm. Đây là lần thử thứ 2 cho vấn đề "kích thước chữ trên banner" — nếu Owner feedback thêm, nên hỏi rõ Owner đang test trên app mail/OS nào (khác nhau đáng kể giữa Gmail Android/iOS Mail/Outlook) trước khi thử tiếp, tránh đoán mò lặp lại.
+
 ## 2026-10-15T10:25:22+07:00 — Claude — hoàn thành (local) — mã OTP đậm Unicode trong CẢ khối HTML (không chỉ text/plain)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành; nối tiếp `84e7f92` cùng ngày. Chỉ sửa `verification-otp.template.js`.
