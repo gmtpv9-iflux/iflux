@@ -238,6 +238,8 @@ async function getStats(days = 30) {
     total_tokens: inputTokens + outputTokens,
     estimated_cost_usd: Math.round(costOf(inputTokens, outputTokens) * 10000) / 10000,
     cost_pricing_configured: !!(cfg.price_per_1k_input_usd || cfg.price_per_1k_output_usd),
+    ai_enabled: !!cfg.enabled,
+    daily_budget_usd: cfg.daily_budget_usd || 0,
     daily_window_days: days,
     daily
   };

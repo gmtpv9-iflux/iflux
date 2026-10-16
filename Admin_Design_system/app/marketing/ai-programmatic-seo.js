@@ -45,24 +45,64 @@
     });
   }
 
-  function statCard(label, value) {
-    return '<div class="aips-stat-card"><div class="aips-stat-card__label">' + esc(label) + '</div><div class="aips-stat-card__value">' + esc(value) + '</div></div>';
+  function todayKey() {
+    try { return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }); }
+    catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+
+  var chartInstance = null;
+  function renderChart(daily) {
+    var el = document.getElementById('aips-chart');
+    if (!el || typeof window.ApexCharts === 'undefined') return;
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    var labels = daily.map(function (d) { return d.date; });
+    var tokens = daily.map(function (d) { return d.input_tokens + d.output_tokens; });
+    var cost = daily.map(function (d) { return d.estimated_cost_usd; });
+    var published = daily.map(function (d) { return d.published; });
+    chartInstance = new ApexCharts(el, {
+      chart: { height: 300, background: 'transparent', toolbar: { show: false }, fontFamily: "'Be Vietnam Pro', sans-serif" },
+      theme: { mode: document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark' },
+      series: [
+        { name: 'Token/ngày', type: 'column', data: tokens },
+        { name: 'Chi phí ước tính (USD)', type: 'line', data: cost },
+        { name: 'Bài xuất bản', type: 'line', data: published }
+      ],
+      xaxis: { categories: labels, labels: { rotate: -45 } },
+      yaxis: [
+        { title: { text: 'Token' }, seriesName: 'Token/ngày' },
+        { title: { text: 'USD' }, seriesName: 'Chi phí ước tính (USD)', opposite: true },
+        { show: false, seriesName: 'Bài xuất bản' }
+      ],
+      stroke: { width: [0, 3, 3], curve: 'smooth' },
+      dataLabels: { enabled: false },
+      tooltip: { theme: 'dark', shared: true }
+    });
+    chartInstance.render();
   }
 
   function loadStats() {
     return request('/admin/news-ai/stats').then(function (s) {
-      var el = document.getElementById('aips-stats');
-      if (!el) return;
       var byStatus = s.by_status || {};
-      el.innerHTML =
-        statCard('Tổng job AI', s.total_jobs) +
-        statCard('Bài đã tự xuất bản', s.articles_published) +
-        statCard('Chờ duyệt', byStatus.needs_review || 0) +
-        statCard('Lỗi', byStatus.failed || 0) +
-        statCard('Tổng token', s.total_tokens) +
-        statCard('Token input', s.total_input_tokens) +
-        statCard('Token output', s.total_output_tokens) +
-        statCard('Chi phí ước tính (USD)', s.cost_pricing_configured ? ('$' + s.estimated_cost_usd.toFixed(4)) : 'Chưa nhập giá');
+      var daily = s.daily || [];
+      var today = daily.filter(function (d) { return d.date === todayKey(); })[0] || { estimated_cost_usd: 0 };
+
+      var statusIcon = document.getElementById('aips-kpi-status-icon');
+      var statusVal = document.getElementById('aips-kpi-status');
+      if (statusVal) statusVal.textContent = s.ai_enabled ? 'Đang hoạt động' : 'Tạm dừng';
+      if (statusIcon) statusIcon.className = 'ix-stat-icon ' + (s.ai_enabled ? 'success' : 'danger');
+
+      var publishedEl = document.getElementById('aips-kpi-published');
+      if (publishedEl) publishedEl.textContent = s.articles_published;
+
+      var budgetEl = document.getElementById('aips-kpi-budget');
+      if (budgetEl) {
+        var todayCost = s.cost_pricing_configured ? ('$' + today.estimated_cost_usd.toFixed(4)) : '—';
+        var budgetTxt = s.daily_budget_usd > 0 ? ('$' + s.daily_budget_usd.toFixed(2)) : 'Không giới hạn';
+        budgetEl.textContent = todayCost + ' / ' + budgetTxt;
+      }
+
+      var reviewEl = document.getElementById('aips-kpi-review');
+      if (reviewEl) reviewEl.textContent = byStatus.needs_review || 0;
 
       var tb = document.getElementById('aips-model-tbody');
       if (tb) {
@@ -75,13 +115,14 @@
 
       var dtb = document.getElementById('aips-daily-tbody');
       if (dtb) {
-        var daily = (s.daily || []).slice().reverse();
-        var drows = daily.map(function (d) {
+        var drows = daily.slice().reverse().map(function (d) {
           return '<tr><td>' + esc(d.date) + '</td><td>' + esc(d.jobs) + '</td><td>' + esc(d.published) + '</td><td>' + esc(d.input_tokens) + '</td><td>' + esc(d.output_tokens) + '</td><td>' +
             (s.cost_pricing_configured ? ('$' + d.estimated_cost_usd.toFixed(4)) : '—') + '</td></tr>';
         });
         dtb.innerHTML = drows.join('') || '<tr><td colspan="6" class="ix-caption">Chưa có dữ liệu trong ' + (s.daily_window_days || 30) + ' ngày gần nhất</td></tr>';
       }
+
+      renderChart(daily);
     }).catch(function (e) { toast(e.message || 'Lỗi tải thống kê', 'danger'); });
   }
 
