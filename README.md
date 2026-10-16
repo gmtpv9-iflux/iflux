@@ -17,7 +17,7 @@ Branch `staging` giữ mã nguồn Staging **và toàn bộ tài liệu** (`docs
 
 `/var/www/iflux/production` + `/var/iflux/backend` + `/var/iflux/storage` + DB `iflux` = **Legacy backup footprint** (process `:3001` đã retire) — không phải Production đang chạy.
 
-Chi tiết: [`docs/SoT — Deployment.md`](docs/SoT%20—%20Deployment.md) và [`docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md`](docs/SoT%20—%20Environment%20Map%20(Live%20Production,%20Staging%201,%20Staging%202).md).
+Chi tiết: [`docs/SoT — Deployment.md`](docs/SoT%20—%20Deployment.md) và [`docs/SoT — Environment Map.md`](docs/SoT%20—%20Environment%20Map.md).
 
 ## Deploy nghĩa là gì
 

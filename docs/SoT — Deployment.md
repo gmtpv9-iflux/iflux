@@ -103,7 +103,7 @@ Chỉ đạo Owner ngày 16/08/2026, cao hơn mọi mô tả as-is trong file n�
 
 **SoT bổ sung, đọc cùng file này:**
 - `Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md` — chi tiết đầy đủ ranh giới, path, sudoers, CI/CD.
-- `docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md` — bản đồ 3 môi trường cho người mới.
+- `docs/SoT — Environment Map.md` — bản đồ môi trường hiện hành (rewrite 2026-10-16: chỉ 2 môi trường Production/Staging qua GitHub CI/CD, bỏ hẳn tên gọi "Staging 1/2"/"Live Production"/GitLab lỗi thời).
 
 **Production chỉ được ghi lại qua:** Production deployment flow riêng + Production Gate riêng (chưa mở tại thời điểm v1.3).
 

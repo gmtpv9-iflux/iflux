@@ -6,7 +6,7 @@ alwaysApply: true
 # SSH / Deployment Boundary (Owner Directive 2026-10-14)
 
 SoT đầy đủ: [`Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md`](../../Product%20Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14%20-%20SSH%20%E2%86%94%20Deployment%20Boundary%20Policy%20(Owner%20Directive).md).
-Environment map: [`docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md`](../../docs/SoT%20%E2%80%94%20Environment%20Map%20(Live%20Production%2C%20Staging%201%2C%20Staging%202).md).
+Environment map: [`docs/SoT — Environment Map.md`](../../docs/SoT%20%E2%80%94%20Environment%20Map.md).
 
 **Cập nhật 2026-10-14:** hai môi trường hoạt động là Staging (`staging.iflux.vn`) và Production (`iflux.vn`), đều phát hành qua GitHub CI/CD. Các dòng trong tài liệu cũ nói Production không có CI/CD, Production Gate chưa mở, hoặc chỉ Staging được deploy đã lỗi thời và bị Owner directive này thay thế. Không deploy code trực tiếp qua SSH/rsync.
 

@@ -2,6 +2,15 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T11:10:00+07:00 — Claude — hoàn thành — rewrite `SoT — Environment Map`, bỏ hẳn tên gọi "Staging 1/2"/"Live Production"/GitLab lỗi thời
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner yêu cầu trực tiếp: hiện tại chỉ có Production/Staging qua GitHub CI/CD, không còn Staging 1/Staging 2/Live Production hay GitLab (lịch sử cũ) — update lại SoT Environment Map để tránh nhầm lẫn về sau, **xoá hẳn** thay vì chỉ đánh dấu lỗi thời.
+- **Phạm vi:** đổi tên `docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md` → `docs/SoT — Environment Map.md`, viết lại toàn bộ nội dung (bỏ ASCII diagram 3-môi-trường, bảng so sánh 3 cột, quy tắc SSH-era cũ — giữ lại mô hình 2-môi-trường hiện hành + quy tắc SSH an toàn Production 2026-10-09 vẫn còn hiệu lực). Cập nhật 3 nơi tham chiếu tên file cũ: `README.md`, `docs/SoT — Deployment.md`, `.cursor/rules/ssh-deployment-boundary.mdc`.
+- **Trước → sau:** doc cũ v1.3 có nhiều lớp "AMENDMENT" chồng lên sơ đồ/bảng gốc từ thời GitLab + SSH rsync tay + 3 môi trường chung 1 server (Staging 1/2, Live Production) — chỉ đánh dấu "outdated" chứ không xoá, dễ đọc nhầm. Viết lại v2.0: mô hình đúng hiện tại (GitHub → CI/CD → Staging/Production, 2 môi trường, không hơn), bảng kỹ thuật (host/branch/workflow/port/DB) giữ nguyên số liệu đã xác nhận đúng ở bản 2026-10-14, quy tắc SSH an toàn Production (đọc log/cache purge/restart service) giữ nguyên vì vẫn là chỉ dẫn hiện hành.
+- **Kiểm tra:** đọc lại 5 nơi tham chiếu tên file cũ (README, SoT Deployment, ssh-deployment-boundary.mdc, AI_Handoff.md, chính doc) — đã sửa 3/5 (2 chỗ còn lại là nhật ký lịch sử trong AI_Handoff.md và trong chính các mục "Liên quan" của `SoT — Deployment.md` phần bảng Reconciliation cũ, không sửa vì đó là bản ghi lịch sử không nên viết lại).
+- **Commit:** sẽ tạo riêng (docs-only).
+- **Còn lại/lưu ý cho AI tiếp theo:** `docs/SoT — Deployment.md` VẪN còn rất nhiều đoạn dùng "Staging 1"/"Staging 2"/GitLab theo lối lịch sử cũ (không phải phạm vi yêu cầu lần này, Owner chỉ yêu cầu Environment Map) — đã ghi chú trong Environment Map mới rằng khi đọc Deployment.md, bảng kỹ thuật ở Environment Map là chuẩn, bỏ qua tên gọi cũ ở đó. Nếu Owner muốn dọn luôn Deployment.md, cần hỏi/làm riêng vì đó là tài liệu vận hành chi tiết, rủi ro cao hơn khi đơn giản hoá sai.
+
 ## 2026-10-16T10:31:00+07:00 — Claude — hoàn thành (local) — commit hộ Codex: redesign khung tác giả bài viết (item 1/4, Owner yêu cầu trực tiếp)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành (local, chưa deploy). Code do Codex viết (log `2026-10-13 21:03:00 — Codex — hoàn thành redesign khung tác giả và prompt đề xuất v2`, đã test nhưng chủ động chưa commit). Owner trực tiếp yêu cầu Claude commit hộ đúng phần 1 trong 4 phần Codex đang để dở ("khung tác giả"), nói rõ "đừng sợ đụng chạm".

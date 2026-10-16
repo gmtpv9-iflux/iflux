@@ -707,7 +707,7 @@
     var sourceName = post.source_name || post.source_label || (post.source && post.source.name) || '';
     var sourceUrl = post.external_url || post.source_url || (post.source && post.source.url) || '';
     if (sourceName) {
-      var safeSourceUrl = /^(https?):\/\//i.test(sourceUrl) ? sourceUrl : '';
+      var safeSourceUrl = /^(?:https?:\/\/|\/(?!\/))/i.test(sourceUrl) ? sourceUrl : '';
       var sourceText = safeSourceUrl
         ? '<a href="' + escHtml(safeSourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escHtml(sourceName) + '</a>'
         : '<span>' + escHtml(sourceName) + '</span>';
