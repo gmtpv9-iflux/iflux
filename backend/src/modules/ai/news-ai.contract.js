@@ -39,7 +39,7 @@ const compose = obj({
   tickers: arr(str(10),20), story_id: nullable(str(100)), timeline_case_ids: arr(str(100),20),
   comparison_metric: nullable(str(80)),
   iflux_insight: nullable(str(600)), insight_fact_ids: refs(), insight_omission_reason: nullable(str(600)),
-  seo: obj({ title: str(240), description: str(1000) }),
+  seo: obj({ title: str(240), description: str(1000), keywords: str(300) }),
   warnings: arr(str(1000),30)
 });
 

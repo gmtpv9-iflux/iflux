@@ -174,10 +174,15 @@ async function processOne(config = runtimeConfig, provider) {
     await fence('UPDATE news_ai_jobs SET context=$3::jsonb,updated_at=NOW()',[JSON.stringify(ctx)]);
     const extraction = job.extraction || await run('extract',ctx);
     await fence('UPDATE news_ai_jobs SET extraction=$3::jsonb,calls=$4::jsonb,updated_at=NOW()',[JSON.stringify(extraction),JSON.stringify(calls)]);
+    /* Owner 2026-10-16: trích xuất không đạt = KHÔNG có bản nháp nào để duyệt (chưa tới bước
+     * compose) -> 'failed' (Lỗi), không phải 'needs_review' (Chờ duyệt ngụ ý có nội dung xem/sửa
+     * được). last_error ngắn (chỉ mã lý do) cho dễ đọc ở Lịch sử; review_reasons vẫn lưu đủ để
+     * debug khi cần, không hiển thị dài ở cột Lý do nữa (frontend đổi sang đọc last_error). */
     const checked = context.checkExtraction(extraction,ctx);
     if (checked.reasons.length) {
-      await fence("UPDATE news_ai_jobs SET status='needs_review',review_reasons=$3::jsonb,lease_until=NULL,updated_at=NOW()",[JSON.stringify(checked.reasons)]);
-      return { id:job.id,status:'needs_review' };
+      const shortReason = checked.reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,200);
+      await fence("UPDATE news_ai_jobs SET status='failed',last_error=$3,review_reasons=$4::jsonb,lease_until=NULL,updated_at=NOW()",[shortReason,JSON.stringify(checked.reasons)]);
+      return { id:job.id,status:'failed' };
     }
     const composeContext = await context.buildComposeContext(checked,ctx);
     const output = await run('compose',composeContext);
@@ -203,18 +208,26 @@ async function processOne(config = runtimeConfig, provider) {
           [JSON.stringify(preview),JSON.stringify(calls)]);
         return { id:job.id,status:'published',post_id:published.id };
       } catch (publishErr) {
-        // Publish thật lỗi (vd slug/category/so sánh) -> rơi về review, không để job treo im lặng.
-        const failReasons = [...preview.review_reasons,'AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown')];
-        await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons=$4::jsonb,calls=$5::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
-          [JSON.stringify(preview),JSON.stringify(failReasons),JSON.stringify(calls)]);
-        return { id:job.id,status:'needs_review' };
+        // Publish thật lỗi (vd slug/category/so sánh) -> Lỗi thật, không phải chờ duyệt.
+        const errCode = 'AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown');
+        await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons='[]'::jsonb,calls=$5::jsonb,lease_until=NULL,updated_at=NOW()",
+          [JSON.stringify(preview),errCode,JSON.stringify(calls)]);
+        return { id:job.id,status:'failed' };
       }
     }
 
-    // Không auto-publish (cấu hình tắt, hoặc có review_reasons thật) -> luôn cần người duyệt.
-    const reasons = [...preview.review_reasons,'SEMANTIC_REVIEW_REQUIRED','MEDIA_RIGHTS_REVIEW_REQUIRED'];
-    await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons=$4::jsonb,calls=$5::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
-      [JSON.stringify(preview),JSON.stringify(reasons),JSON.stringify(calls)]);
+    /* Owner 2026-10-16: review_reasons có nội dung thật (fact/entity/event/ảnh không hợp lệ...)
+     * = Lỗi thật ("nếu lỗi thì duyệt làm gì") -> 'failed', KHÔNG còn 'needs_review'. Chỉ khi
+     * review_reasons RỖNG (bản nháp sạch) và auto_publish đang tắt mới là 'needs_review' thật —
+     * nghĩa là CHỈ còn chờ 1 cái gật đầu của người, luôn có đủ nội dung để xem/sửa. */
+    if (preview.review_reasons.length) {
+      const shortReason = preview.review_reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,200);
+      await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons=$5::jsonb,calls=$6::jsonb,lease_until=NULL,updated_at=NOW()",
+        [JSON.stringify(preview),shortReason,JSON.stringify(preview.review_reasons),JSON.stringify(calls)]);
+      return { id:job.id,status:'failed' };
+    }
+    await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons='[]'::jsonb,calls=$4::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
+      [JSON.stringify(preview),JSON.stringify(calls)]);
     return { id:job.id,status:'needs_review' };
   } catch (err) {
     if (err.code==='AI_LEASE_LOST') return { id:job.id,status:'lease_lost' };

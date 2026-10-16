@@ -390,8 +390,8 @@
     $('fld-iflux-insight').value = item.iflux_insight || '';
     eventCaseIds = item.event_case_ids || [];
     loadEventCases();
-    $('cnt-bc-title').textContent = 'Sửa bài';
-    $('cnt-page-title').textContent = 'Sửa bài viết';
+    if ($('cnt-bc-title')) $('cnt-bc-title').textContent = 'Sửa bài';
+    if ($('cnt-page-title')) $('cnt-page-title').textContent = 'Sửa bài viết';
     $('fld-title').value = item.title || '';
     $('fld-status').value = item.status || 'draft';
     syncSlugAndCanonicalFromTitle();
