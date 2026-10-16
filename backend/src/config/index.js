@@ -39,7 +39,6 @@ const envSchema = z.object({
   NEWS_AI_MAX_OUTPUT_TOKENS: z.coerce.number().int().min(1000).max(20000).default(10000),
   NEWS_AI_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(5).default(3),
   NEWS_AI_BATCH_SIZE: z.coerce.number().int().min(1).max(10).default(2),
-  NEWS_AI_MAX_JOBS_PER_DAY: z.coerce.number().int().min(1).max(1000).default(10),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_SECURE: z

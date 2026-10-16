@@ -299,9 +299,5 @@ describe('RSS → editorial article, related pagination and verified widgets (Po
     const failed=await jobs.getJob(queuedError.id);assert.equal(failed.status,'failed');assert.equal(failed.last_error,'AI_VALIDATION_OR_CONTEXT_ERROR');
     assert.equal((await jobs.retryJob(failed.id)).status,'queued');
     await jobs.processOne(config,{run:async()=>{throw Error('fixture permanent failure');}});
-    await post('ai-quota',{title:'Công ty A',body_html:'<p>Công ty A công bố.</p>',source_id:'fixture',external_url:'https://example.org/ai-quota'},'published_rss');
-    const limited=await jobs.enqueueSource('ai-quota',config);
-    assert.equal((await jobs.processOne({...config,NEWS_AI_MAX_JOBS_PER_DAY:2},provider)).status,'idle');
-    assert.equal((await jobs.getJob(limited.id)).status,'queued');
   });
 });
