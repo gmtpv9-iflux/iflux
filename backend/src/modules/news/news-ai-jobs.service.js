@@ -37,6 +37,27 @@ async function getTodayTokenUsage() {
   return inTok + outTok;
 }
 
+/* Ưu tiên chọn nguồn (Owner 2026-10-16): "muốn nó bắt đầu chọn bài gần nhất với thời điểm
+ * hiện hành, có thể ưu tiên bài tốt/thú vị/có sức hút với nhà đầu tư, broker bằng cách kiểm
+ * tra nhanh tiêu đề". Không gọi thêm AI chỉ để xếp hạng (tốn token vô ích) — dùng heuristic
+ * từ khóa rẻ, chỉ xếp hạng TRONG phạm vi các bài mới nhất, không để bài cũ "hay" vượt bài mới. */
+const INTEREST_KEYWORDS = [
+  'cổ phiếu','chứng khoán','vn-index','vnindex','niêm yết','ipo','m&a','sáp nhập',
+  'lợi nhuận','doanh thu','kết quả kinh doanh','cổ tức','tăng vốn','phát hành',
+  'khối ngoại','room ngoại','thanh khoản','vốn hóa','định giá','trái phiếu',
+  'quỹ đầu tư','lãi suất','tỷ giá','lạm phát','ngân hàng nhà nước','kỷ lục',
+  'tăng mạnh','giảm sâu','bứt phá','biến động','cảnh báo','soát xét','kiểm toán',
+  'hủy niêm yết','đấu giá','chia thưởng','eps','p/e','fed'
+];
+function scoreTitleInterest(title) {
+  if (!title) return 0;
+  const lower = title.toLowerCase();
+  let score = 0;
+  INTEREST_KEYWORDS.forEach((kw) => { if (lower.includes(kw)) score += 1; });
+  if (/\b[A-Z]{3}\b/.test(title)) score += 1; // khả năng có mã ticker 3 chữ hoa (VNM, HPG...)
+  return score;
+}
+
 async function enqueueSource(postId, config = runtimeConfig) {
   if (!config.NEWS_AI_ENABLED) return null;
   const aiCfg = await aiConfig.getConfig();
@@ -186,15 +207,23 @@ async function runNewsAiWorker(config = runtimeConfig) {
   if (!config.NEWS_AI_ENABLED || !config.OPENAI_API_KEY) return { status:'disabled' };
   if (!(await aiConfig.getConfig()).enabled) return { status:'disabled' };
   // Recovery cho nguồn đã lưu nhưng enqueue lỗi hoặc server restart. Hash phiên nguồn chống trùng.
-  const sources = (await query(`SELECT p.id FROM news_posts p WHERE p.content_type='article'
+  const batchSize = config.NEWS_AI_BATCH_SIZE || 2;
+  // Pool rộng hơn batch thật (tối đa 50, hoặc 10x batch) — lấy MỚI NHẤT trước, rồi mới xếp hạng
+  // "thú vị" bên trong pool đó, để bài thú vị không bao giờ vượt qua bài mới hơn ở ngoài pool.
+  const poolSize = Math.min(50, batchSize * 10);
+  const candidates = (await query(`SELECT p.id,p.payload->>'title' AS title FROM news_posts p WHERE p.content_type='article'
     AND p.status IN ('published_rss','pending') AND (p.payload ? 'source_id' OR p.payload->'source' ? 'id')
     AND NOT EXISTS(SELECT 1 FROM news_ai_jobs j WHERE j.source_post_id=p.id)
-    ORDER BY p.created_at,p.id LIMIT $1`,[config.NEWS_AI_BATCH_SIZE || 2])).rows;
+    ORDER BY p.created_at DESC,p.id DESC LIMIT $1`,[poolSize])).rows;
+  const sources = candidates
+    .map((row, idx) => ({ id: row.id, recency_rank: idx, interest_score: scoreTitleInterest(row.title) }))
+    .sort((a, b) => (b.interest_score - a.interest_score) || (a.recency_rank - b.recency_rank))
+    .slice(0, batchSize);
   for (const source of sources) {
     try { await enqueueSource(source.id,config); } catch (_) { /* Giữ nguyên nguồn; API Admin cho biết cấu hình/context lỗi. */ }
   }
   const results = [];
-  for (let i=0;i<(config.NEWS_AI_BATCH_SIZE || 2);i++) results.push(await processOne(config));
+  for (let i=0;i<batchSize;i++) results.push(await processOne(config));
   return { status:'processed',results };
 }
 
