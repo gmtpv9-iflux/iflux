@@ -180,6 +180,40 @@
     }).catch(function (e) { toast(e.message || 'Lỗi lưu instruction', 'danger'); });
   }
 
+  var STATUS_CHIP = {
+    published: 'ix-chip-success', needs_review: 'ix-chip-warning', failed: 'ix-chip-danger',
+    queued: 'ix-chip-info', running: 'ix-chip-info'
+  };
+  var STATUS_LABEL = {
+    published: 'Đã xuất bản', needs_review: 'Chờ duyệt', failed: 'Lỗi', queued: 'Đang chờ', running: 'Đang xử lý'
+  };
+
+  function retryJob(id) {
+    request('/news/admin/ai/jobs/' + encodeURIComponent(id) + '/retry', { method: 'POST' }).then(function () {
+      toast('Đã đưa job vào hàng chờ xử lý lại', 'success');
+      loadHistory();
+    }).catch(function (e) { toast(e.message || 'Lỗi thử lại', 'danger'); });
+  }
+
+  function loadHistory() {
+    var tb = document.getElementById('aips-history-tbody');
+    if (!tb) return Promise.resolve();
+    return request('/news/admin/ai/jobs').then(function (d) {
+      var jobs = d.jobs || [];
+      tb.innerHTML = jobs.map(function (j) {
+        var chip = STATUS_CHIP[j.status] || 'ix-chip';
+        var label = STATUS_LABEL[j.status] || j.status;
+        var reason = j.last_error || (j.review_reasons || []).join(', ') || '—';
+        var retryBtn = j.status === 'failed' ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-aips-retry="' + esc(j.id) + '">Thử lại</button>' : '';
+        return '<tr><td>' + esc(new Date(j.created_at).toLocaleString('vi-VN')) + '</td><td>' + esc(j.post_title || j.source_post_id) + '</td><td>' + esc(j.model || '—') + '</td>' +
+          '<td><span class="ix-chip ' + chip + '">' + esc(label) + '</span></td><td>' + esc(reason) + '</td><td>' + retryBtn + '</td></tr>';
+      }).join('') || '<tr><td colspan="6" class="ix-caption">Chưa có job nào</td></tr>';
+      tb.querySelectorAll('[data-aips-retry]').forEach(function (btn) {
+        btn.addEventListener('click', function () { retryJob(btn.getAttribute('data-aips-retry')); });
+      });
+    }).catch(function (e) { toast(e.message || 'Lỗi tải lịch sử', 'danger'); });
+  }
+
   function boot() {
     document.querySelectorAll('[data-aips-tab]').forEach(function (btn) {
       btn.addEventListener('click', function () { setTab(btn.getAttribute('data-aips-tab')); });
@@ -190,10 +224,13 @@
     if (saveInstructionBtn) saveInstructionBtn.addEventListener('click', saveInstruction);
     var ta = document.getElementById('aips-prompt-body');
     if (ta) ta.addEventListener('input', updateCount);
+    var historyRefreshBtn = document.getElementById('aips-history-refresh');
+    if (historyRefreshBtn) historyRefreshBtn.addEventListener('click', loadHistory);
 
     loadStats();
     loadModels().then(loadConfig);
     loadInstruction();
+    loadHistory();
   }
 
   /* Admin dùng soft-nav (eval lại page script mỗi lần chuyển trang qua menu, không tạo

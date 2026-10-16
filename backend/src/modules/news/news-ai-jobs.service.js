@@ -62,8 +62,10 @@ async function getJob(id) {
   return row;
 }
 async function listJobs() {
-  return (await query(`SELECT id,source_post_id,status,attempts,last_error,review_reasons,created_at,updated_at
-    FROM news_ai_jobs ORDER BY created_at DESC,id DESC LIMIT 100`)).rows;
+  return (await query(`SELECT j.id,j.source_post_id,j.model,j.status,j.attempts,j.last_error,j.review_reasons,j.created_at,j.updated_at,
+    p.payload->>'title' AS post_title, p.payload->>'slug' AS post_slug
+    FROM news_ai_jobs j LEFT JOIN news_posts p ON p.id = j.source_post_id
+    ORDER BY j.created_at DESC,j.id DESC LIMIT 100`)).rows;
 }
 async function retryJob(id) {
   // Chỉ retry lỗi kỹ thuật. Review cần phiên nguồn/prompt mới hoặc xử lý biên tập.
