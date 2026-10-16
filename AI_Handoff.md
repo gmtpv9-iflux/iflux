@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T16:00:00+07:00 — Claude — hoàn thành (DATA, không phải code) — GRANT role `iflux_staging` trên bảng `news_ai_jobs` (lặp lại đúng blocker DB đã gặp ở migration 085)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo lỗi đúng nguyên văn: "permission denied for table news_ai_jobs". Owner cho phép SSH chạy GRANT ngay khi hỏi.
+- **Phạm vi:** DB Staging thật qua SSH (`sudo -u postgres psql -d iflux_staging`), không sửa code/migration file nào.
+- **Nguyên nhân THẬT:** lặp lại ĐÚNG pattern đã ghi nhận ở mục `02:25:00` cùng ngày (migration 085/`user_entity_follows`+`news_interaction_events`) — migration tạo bảng `news_ai_jobs` (file 082) chạy dưới role khác (có thể `postgres`/owner) với role THẬT app dùng để query (`iflux_staging`), nên bảng tồn tại nhưng role app không có quyền SELECT/INSERT/UPDATE/DELETE. Không migration nào trong repo từng có `GRANT` — xác nhận lại đây là vấn đề hạ tầng/CI (ngoài phạm vi code), không phải lỗi sót trong file SQL.
+- **Trước → sau:** chạy `GRANT SELECT, INSERT, UPDATE, DELETE ON news_ai_jobs TO iflux_staging;` qua SSH. Verify bằng query `information_schema.table_privileges` cho CẢ 3 bảng feature này dùng (`ai_prompts`, `system_admin_kv`, `news_ai_jobs`) — xác nhận `ai_prompts`/`system_admin_kv` ĐÃ có đủ quyền từ trước (migration cũ hơn 033/035, không bị ảnh hưởng), CHỈ `news_ai_jobs` (migration 082, cùng lứa 081-085 bị vấn đề hạ tầng) thiếu — đã GRANT xong, verify lại đủ cả 4 quyền.
+- **Kiểm tra:** gọi `GET /api/news/admin/news-ai/stats` qua curl với key giả → trả "Admin key required" (lỗi auth bình thường, KHÔNG còn "permission denied") — xác nhận tầng DB đã thông, chưa test được tầng trên (cần admin token thật, không có từ phiên này).
+- **Commit:** không có — đây là thay đổi DATA/quyền DB, không phải code.
+- **Còn lại/lưu ý cho AI tiếp theo:** vấn đề gốc (pipeline migrate chạy role khác role app) VẪN CHƯA được sửa ở tầng hạ tầng/CI — mọi bảng MỚI tạo ra sau migration 080 (hoặc mốc nào gây ra lệch role này) đều có khả năng lặp lại lỗi này, cần GRANT tay từng lần cho tới khi Owner/Ops sửa gốc rễ pipeline deploy.
+
 ## 2026-10-16T15:40:00+07:00 — Claude — hoàn thành — fix "Route GET /api/admin/news-ai/config not found" — frontend gọi thiếu tiền tố `/news`
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo lỗi đúng nguyên văn khi dùng trang: "Route GET /api/admin/news-ai/config not found".
