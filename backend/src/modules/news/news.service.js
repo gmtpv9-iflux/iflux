@@ -72,7 +72,7 @@ async function listPosts(filters = {}) {
   let sql;
   /* Mặc định / published: gồm cả Xuất bản (RSS) — cùng hiện trên User Web */
   if (status === 'published' || status === 'public') {
-    sql = `SELECT * FROM news_posts WHERE status IN ('published', 'published_rss', 'publish_AI')`;
+    sql = `SELECT * FROM news_posts WHERE status IN ('published', 'published_rss')`;
   } else {
     sql = 'SELECT * FROM news_posts WHERE status = $1';
     params.push(status);

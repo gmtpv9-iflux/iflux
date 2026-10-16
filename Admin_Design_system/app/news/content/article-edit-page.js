@@ -3,7 +3,6 @@
   'use strict';
 
   var editingId = null;
-  var reviewingJobId = null; /* Owner 2026-10-16: khác null = đang duyệt bản AI soạn (?job=) */
   var eventCaseIds = [];
   var eventRequestId = null;
   var eventListGeneration = 0;
@@ -22,7 +21,7 @@
   }
 
   function gateArticleMutateUi() {
-    var id = qs('id') || qs('job');
+    var id = qs('id');
     var need = id ? 'news.articles.edit' : 'news.articles.create';
     var loaded = !!(window.IfluxAdminRbac && IfluxAdminRbac.isLoaded && IfluxAdminRbac.isLoaded());
     var ok = loaded && canPerm(need);
@@ -479,13 +478,6 @@
     }
 
     function doSave() {
-      if (reviewingJobId) {
-        return request('/news/admin/ai/jobs/' + encodeURIComponent(reviewingJobId) + '/approve', { method: 'POST', body: payload })
-          .then(function () {
-            toast('Đã duyệt & xuất bản bài AI.', 'success');
-            window.location.href = '/Admin_Design_system/app/marketing/ai-programmatic-seo.html';
-          });
-      }
       var req = editingId
         ? request('/news/admin/articles/' + encodeURIComponent(editingId), { method: 'PUT', body: payload })
         : request('/news/admin/articles', { method: 'POST', body: payload });
@@ -795,62 +787,6 @@
     }
   }
 
-  /* Duyệt bản AI (Owner 2026-10-16): ?job=<id> — nạp job needs_review, phủ đè trường do AI soạn
-     (title/excerpt/body_html/iflux_insight/tickers/comparison/seo) lên trên bài gốc (giữ category/
-     cover/slug hiện có) để Admin xem/sửa như sửa bài thường, rồi "Duyệt & Xuất bản" gọi endpoint
-     approve riêng (luôn ghi status='publish_AI', không đi qua PUT/POST thường). */
-  function loadJobForReview(jobId) {
-    return request('/news/admin/ai/jobs/' + encodeURIComponent(jobId)).then(function (data) {
-      var job = data.job || data;
-      if (job.status !== 'needs_review') {
-        toast('Job này không ở trạng thái cần duyệt (hiện: ' + job.status + ').', 'warning');
-      }
-      var preview = job.result || {};
-      var input = preview.article_input || {};
-      function finish(base) {
-        var merged = Object.assign({}, base, {
-          id: base.id || job.source_post_id,
-          title: input.title || base.title,
-          excerpt: input.excerpt || base.excerpt,
-          body_html: input.body_html || base.body_html,
-          iflux_insight: input.iflux_insight || base.iflux_insight,
-          tickers: (input.tickers && input.tickers.length) ? input.tickers : base.tickers,
-          story_id: input.story_id || base.story_id,
-          event_case_ids: (input.event_case_ids && input.event_case_ids.length) ? input.event_case_ids : base.event_case_ids,
-          comparison: preview.comparison_spec || base.comparison || null,
-          seo: Object.assign({}, base.seo || {}, input.seo || {})
-        });
-        reviewingJobId = job.id;
-        fillForm(merged);
-        applyReviewModeUi(job);
-        return refreshMediaStatus();
-      }
-      return request('/news/admin/articles/' + encodeURIComponent(job.source_post_id))
-        .then(function (baseData) { return finish(baseData.article || baseData); })
-        .catch(function () { return finish({}); });
-    });
-  }
-
-  function applyReviewModeUi(job) {
-    ['btn-save-draft', 'btn-save-content'].forEach(function (bid) {
-      var el = $(bid);
-      if (el) el.hidden = true;
-    });
-    var pubBtn = $('btn-publish');
-    if (pubBtn) pubBtn.innerHTML = '<i class="ti ti-check"></i> Duyệt &amp; Xuất bản';
-    if ($('cnt-bc-title')) $('cnt-bc-title').textContent = 'Duyệt bài AI';
-    if ($('cnt-page-title')) $('cnt-page-title').textContent = 'Duyệt bài AI soạn';
-    var content = document.querySelector('.ix-content');
-    if (content && !$('aips-review-banner')) {
-      var banner = document.createElement('div');
-      banner.id = 'aips-review-banner';
-      banner.className = 'ix-alert ix-alert-info ix-mb-24';
-      banner.innerHTML = '<div class="ix-alert-title">Bản nháp do AI soạn — đang chờ duyệt</div>' +
-        '<div class="ix-alert-text">Có thể sửa trực tiếp mọi trường trước khi bấm "Duyệt &amp; Xuất bản" — không tự động index Google (khác bài Admin xuất bản tay). Job #' + esc(job.id) + '.</div>';
-      content.insertBefore(banner, content.children[2] || content.firstChild);
-    }
-  }
-
   function boot() {
     bind();
     setEntityMode('tickers');
@@ -858,8 +794,6 @@
     function start() {
       gateArticleMutateUi();
       loadCategories().then(function () {
-        var jobId = qs('job');
-        if (jobId) return loadJobForReview(jobId);
         var id = qs('id');
         if (!id) {
           suggestChuDe('');

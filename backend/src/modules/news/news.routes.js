@@ -87,12 +87,17 @@ function createNewsRouter(deps) {
   router.patch('/admin/news-ai/config', perm('news.articles.edit'),
     validate(z.object({ body: z.object({
       enabled: z.boolean().optional(),
-      auto_publish: z.boolean().optional(),
       model: z.string().max(80).nullable().optional(),
       daily_token_budget: z.number().int().min(0).optional()
     }).strict() })),
     async (req,res,next) => {
-      try { return success(res, await aiProgConfig.setConfig(req.validated.body)); } catch(err) { next(err); }
+      try {
+        // Owner 2026-10-16: Admin tự bật tay = coi như đã xử lý/thử lại -> xoá lý do tự tắt cũ.
+        const body = req.validated.body.enabled === true
+          ? Object.assign({}, req.validated.body, { auto_disabled_reason: null })
+          : req.validated.body;
+        return success(res, await aiProgConfig.setConfig(body));
+      } catch(err) { next(err); }
     });
   router.get('/admin/news-ai/models', perm('news.articles.view'), async (req,res,next) => {
     try { return success(res, { models: await listModels(config) }); } catch(err) { next(err); }
@@ -872,32 +877,6 @@ function createNewsRouter(deps) {
         };
         const item = await articles.updateArticle(req.params.id, req.validated.body, actor);
         return success(res, { article: item });
-      } catch (err) {
-        next(err);
-      }
-    }
-  );
-
-  /* Duyệt tay job AI needs_review: Admin xem/sửa bản nháp AI soạn (giống trang edit bài thường)
-     rồi Duyệt & Xuất bản → status='publish_AI' (khác 'published' chỉ ở KHÔNG vào sitemap/Google
-     Index — xem comment STATUSES trong news-articles.service.js). Owner 2026-10-16. */
-  router.post(
-    '/admin/ai/jobs/:id/approve',
-    perm('news.articles.edit'),
-    validate(z.object({
-      params: z.object({ id: z.string().uuid() }),
-      body: articleBodySchema.partial().extend({ category_id: z.string().uuid().optional() })
-    })),
-    async (req, res, next) => {
-      try {
-        const actor = {
-          id: (req.admin && req.admin.id) || 'admin',
-          name: (req.body && req.body.created_by_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin',
-          tier: 'admin',
-          tier_label: 'Admin'
-        };
-        const result = await aiJobs.approveJob(req.validated.params.id, req.validated.body, actor);
-        return success(res, result);
       } catch (err) {
         next(err);
       }

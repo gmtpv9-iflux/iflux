@@ -88,28 +88,6 @@ async function listJobs() {
     FROM news_ai_jobs j LEFT JOIN news_posts p ON p.id = j.source_post_id
     ORDER BY j.created_at DESC,j.id DESC LIMIT 100`)).rows;
 }
-/* Duyệt tay (Owner 2026-10-16): Admin xem lại/sửa bản nháp AI (job.result.article_input) trên
- * trang giống edit bài thường rồi Duyệt & Xuất bản — body gửi lên là NỘI DUNG ĐẦY ĐỦ Admin đã
- * xác nhận (có thể đã sửa), không merge lại với article_input ở đây để tránh dữ liệu cũ đè lên
- * sửa đổi mới. status luôn ép 'publish_AI' (khác 'published' chỉ ở KHÔNG vào sitemap/Google
- * Index) bất kể body gửi gì. */
-async function approveJob(id, articleFields, actor) {
-  const job = await getJob(id);
-  if (job.status !== 'needs_review') {
-    throw AppError.badRequest('AI_JOB_NOT_REVIEWABLE', 'Chỉ duyệt được job đang ở trạng thái cần xem lại');
-  }
-  const published = await articles.updateArticle(
-    job.source_post_id,
-    Object.assign({}, articleFields, { status: 'publish_AI' }),
-    actor
-  );
-  await query(
-    `UPDATE news_ai_jobs SET status='published',review_reasons='[]'::jsonb,last_error=NULL,updated_at=NOW() WHERE id=$1`,
-    [id]
-  );
-  return { id: job.id, status: 'published', post_id: published.id };
-}
-
 async function retryJob(id) {
   // Chỉ retry lỗi kỹ thuật. Review cần phiên nguồn/prompt mới hoặc xử lý biên tập.
   const res = await query(`UPDATE news_ai_jobs SET status='queued',attempts=0,last_error=NULL,next_attempt_at=NOW(),updated_at=NOW()
@@ -169,20 +147,31 @@ async function processOne(config = runtimeConfig, provider) {
       duration_ms:Date.now()-start,cost_usd:null,cost_note:'Chưa cấu hình bảng giá; không ước lượng chi phí thành 0' });
     return result.value;
   }
+  /* Owner 2026-10-16: CHỈ 1 đường duy nhất — viết xong thành công, hoặc thất bại thì dừng hẳn.
+   * Không có "chờ duyệt", không tự retry lặp lại. Bất kỳ thất bại nào (nội dung thật AI tự phát
+   * hiện, hoặc lỗi kỹ thuật) đều: đánh job 'failed' kèm lý do THẬT (không che), và NGẮT MẠCH —
+   * tự tắt `enabled` để cron dừng hoàn toàn, không chọn bài tiếp theo, tới khi Admin xem lý do và
+   * bật lại tay (xem route PATCH /admin/news-ai/config tự xoá auto_disabled_reason khi bật). */
+  const stop = async (shortCode, fullReason, resultObj) => {
+    await aiConfig.setConfig({ enabled:false, auto_disabled_reason: String(fullReason).slice(0,500) });
+    const sql = resultObj
+      ? "UPDATE news_ai_jobs SET status='failed',last_error=$3,result=$4::jsonb,review_reasons=$5::jsonb,calls=$6::jsonb,lease_until=NULL,updated_at=NOW()"
+      : "UPDATE news_ai_jobs SET status='failed',last_error=$3,calls=$4::jsonb,lease_until=NULL,updated_at=NOW()";
+    const values = resultObj
+      ? [shortCode,JSON.stringify(resultObj.result),JSON.stringify(resultObj.reasons),JSON.stringify(calls)]
+      : [shortCode,JSON.stringify(calls)];
+    await fence(sql,values);
+    return { id:job.id,status:'failed' };
+  };
   try {
     const ctx = job.context || await context.buildExtractContext(job.source_snapshot);
     await fence('UPDATE news_ai_jobs SET context=$3::jsonb,updated_at=NOW()',[JSON.stringify(ctx)]);
     const extraction = job.extraction || await run('extract',ctx);
     await fence('UPDATE news_ai_jobs SET extraction=$3::jsonb,calls=$4::jsonb,updated_at=NOW()',[JSON.stringify(extraction),JSON.stringify(calls)]);
-    /* Owner 2026-10-16: trích xuất không đạt = KHÔNG có bản nháp nào để duyệt (chưa tới bước
-     * compose) -> 'failed' (Lỗi), không phải 'needs_review' (Chờ duyệt ngụ ý có nội dung xem/sửa
-     * được). last_error ngắn (chỉ mã lý do) cho dễ đọc ở Lịch sử; review_reasons vẫn lưu đủ để
-     * debug khi cần, không hiển thị dài ở cột Lý do nữa (frontend đổi sang đọc last_error). */
     const checked = context.checkExtraction(extraction,ctx);
     if (checked.reasons.length) {
       const shortReason = checked.reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,80);
-      await fence("UPDATE news_ai_jobs SET status='failed',last_error=$3,review_reasons=$4::jsonb,lease_until=NULL,updated_at=NOW()",[shortReason,JSON.stringify(checked.reasons)]);
-      return { id:job.id,status:'failed' };
+      return await stop(shortReason, checked.reasons.join(' | '), { result:null, reasons:checked.reasons });
     }
     const composeContext = await context.buildComposeContext(checked,ctx);
     const output = await run('compose',composeContext);
@@ -194,49 +183,29 @@ async function processOne(config = runtimeConfig, provider) {
     preview.event_proposals = checked.data.events;
     preview.compose_context = composeContext;
 
-    // Auto-publish (Owner 2026-10-16): chỉ khi Admin bật cấu hình VÀ output sạch mọi kiểm tra
-    // thật (preview.review_reasons rỗng) — nếu có lỗi nội dung thật (fact/entity/event/ảnh
-    // không hợp lệ...) vẫn luôn rơi về needs_review dù đã bật auto-publish.
-    if (aiCfg.auto_publish && preview.review_reasons.length === 0) {
-      try {
-        const published = await articles.updateArticle(
-          job.source_post_id,
-          Object.assign({}, preview.article_input, { status: 'published' }),
-          AI_ACTOR
-        );
-        await fence("UPDATE news_ai_jobs SET status='published',result=$3::jsonb,review_reasons='[]'::jsonb,calls=$4::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
-          [JSON.stringify(preview),JSON.stringify(calls)]);
-        return { id:job.id,status:'published',post_id:published.id };
-      } catch (publishErr) {
-        // Publish thật lỗi (vd slug/category/so sánh) -> Lỗi thật, không phải chờ duyệt.
-        const errCode = ('AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown')).slice(0,80);
-        await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons='[]'::jsonb,calls=$5::jsonb,lease_until=NULL,updated_at=NOW()",
-          [JSON.stringify(preview),errCode,JSON.stringify(calls)]);
-        return { id:job.id,status:'failed' };
-      }
-    }
-
-    /* Owner 2026-10-16: review_reasons có nội dung thật (fact/entity/event/ảnh không hợp lệ...)
-     * = Lỗi thật ("nếu lỗi thì duyệt làm gì") -> 'failed', KHÔNG còn 'needs_review'. Chỉ khi
-     * review_reasons RỖNG (bản nháp sạch) và auto_publish đang tắt mới là 'needs_review' thật —
-     * nghĩa là CHỈ còn chờ 1 cái gật đầu của người, luôn có đủ nội dung để xem/sửa. */
     if (preview.review_reasons.length) {
       const shortReason = preview.review_reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,80);
-      await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons=$5::jsonb,calls=$6::jsonb,lease_until=NULL,updated_at=NOW()",
-        [JSON.stringify(preview),shortReason,JSON.stringify(preview.review_reasons),JSON.stringify(calls)]);
-      return { id:job.id,status:'failed' };
+      return await stop(shortReason, preview.review_reasons.join(' | '), { result:preview, reasons:preview.review_reasons });
     }
-    await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons='[]'::jsonb,calls=$4::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
-      [JSON.stringify(preview),JSON.stringify(calls)]);
-    return { id:job.id,status:'needs_review' };
+
+    try {
+      const published = await articles.updateArticle(
+        job.source_post_id,
+        Object.assign({}, preview.article_input, { status: 'published' }),
+        AI_ACTOR
+      );
+      await fence("UPDATE news_ai_jobs SET status='published',result=$3::jsonb,review_reasons='[]'::jsonb,calls=$4::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
+        [JSON.stringify(preview),JSON.stringify(calls)]);
+      return { id:job.id,status:'published',post_id:published.id };
+    } catch (publishErr) {
+      const detail = (publishErr && (publishErr.message || publishErr.code)) || 'unknown';
+      return await stop(('PUBLISH_FAILED:' + detail).slice(0,80), 'PUBLISH_FAILED: ' + detail, { result:preview, reasons:[] });
+    }
   } catch (err) {
     if (err.code==='AI_LEASE_LOST') return { id:job.id,status:'lease_lost' };
-    try { require('../../core/logger/logger').getLogger().error({ jobId:job.id,errMessage:err && err.message,errCode:err && err.code,errStack:err && err.stack },'news-ai processOne diag2'); } catch(_) {}
     const safeCode = /^AI_[A-Z0-9_]+$/.test(err.code || '') ? err.code : 'AI_VALIDATION_OR_CONTEXT_ERROR';
-    const retry = err.retryable===true && job.attempts<maxAttempts;
-    await fence(`UPDATE news_ai_jobs SET status=$3,last_error=$4,calls=$5::jsonb,lease_until=NULL,
-      next_attempt_at=NOW()+($6 * INTERVAL '1 second'),updated_at=NOW()`,[retry?'queued':'failed',safeCode,JSON.stringify(calls),Math.min(900,30*2**(job.attempts-1))]);
-    return { id:job.id,status:retry?'queued':'failed',error:safeCode };
+    const detail = (err && err.message) || safeCode;
+    return await stop(safeCode, detail, null);
   }
 }
 
@@ -258,8 +227,10 @@ async function pickNextSource(config) {
 
 /* Owner 2026-10-16: KHÔNG có hàng chờ. Mỗi lượt: chọn 1 bài tại đúng thời điểm đó → viết ngay
  * (enqueue + process trong cùng bước, không tách rời) → xong mới chọn bài tiếp theo (tại thời
- * điểm vừa viết xong). Lịch sử chỉ có 3 kết quả: viết thành công / viết hỏng / chờ duyệt (nếu
- * tắt tự đăng) — không có trạng thái "đang chờ" nào tồn tại giữa các lượt. */
+ * điểm vừa viết xong). Lịch sử chỉ có 2 kết quả: viết thành công (published) hoặc thất bại
+ * (failed) — không có trạng thái "đang chờ" hay "chờ duyệt" nào tồn tại giữa các lượt. Bất kỳ
+ * thất bại nào (nội dung hay kỹ thuật) đều dừng NGAY, không chọn bài tiếp theo — processOne()
+ * đã tự tắt `enabled`, dòng break dưới đây dừng luôn vòng lặp trong CÙNG lượt cho chắc chắn. */
 async function runNewsAiWorker(config = runtimeConfig) {
   if (!config.NEWS_AI_ENABLED || !config.OPENAI_API_KEY) return { status:'disabled' };
   const aiCfg = await aiConfig.getConfig();
@@ -274,7 +245,9 @@ async function runNewsAiWorker(config = runtimeConfig) {
     const sourceId = await pickNextSource(config);
     if (!sourceId) { results.push({ status:'no_source' }); break; }
     try { await enqueueSource(sourceId,config); } catch (_) { continue; /* nguồn lỗi context/prompt — bỏ, không chặn lượt sau */ }
-    results.push(await processOne(config));
+    const outcome = await processOne(config);
+    results.push(outcome);
+    if (outcome.status !== 'published') break;
   }
   return { status:'processed',results };
 }
@@ -323,4 +296,4 @@ async function getStats(days = 30) {
   };
 }
 
-module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,approveJob,processOne,runNewsAiWorker,getStats };
+module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,processOne,runNewsAiWorker,getStats };

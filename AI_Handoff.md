@@ -2,6 +2,28 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T22:00:00+07:00 — Claude — hoàn thành (code) — đơn giản hoá triệt để: bỏ hẳn luồng duyệt tay, chỉ còn 1 công tắc, ngắt mạch ngay khi gặp bất kỳ thất bại nào
+
+- **Nhiệm vụ/trạng thái:** hoàn thành phần code, CHƯA deploy. Owner (đúng, không phải AI tự tắt) tự tắt công tắc vì thấy AI cứ chọn bài mới viết tiếp dù đang lỗi liên tục, tốn token vô ích. Owner chốt lại toàn bộ thiết kế, đảo ngược phần lớn việc đã làm trước đó trong ngày:
+  - Bỏ hẳn luồng "Admin duyệt tay" — không còn `needs_review`, không còn trang Duyệt, không còn trạng thái `publish_AI`.
+  - Chỉ còn ĐÚNG 1 công tắc: Bật = AI tự viết + tự xuất bản hoàn toàn (status thẳng `published`, được Google Index như bài Admin viết tay). Tắt = không làm gì cả.
+  - Không còn retry/backoff tự động ("viết bằng được"). Mỗi bài chỉ đi ĐÚNG 1 lượt hết trình tự: thành công thì xong, thất bại (nội dung AI tự phát hiện HOẶC lỗi kỹ thuật) thì dừng NGAY — không chọn bài tiếp theo.
+  - Khi thất bại: tự chuyển công tắc "Bật AI hoạt động" về Tắt, lưu NGUYÊN VĂN lý do lỗi thật (không che) vào `auto_disabled_reason`, hiện ngay bằng banner đỏ trên trang Admin — không cần đọc log server. Bật công tắc lại tay = coi là đã xử lý, tự xoá lý do cũ.
+- **Phạm vi:**
+  - `backend/src/modules/news/news-ai-jobs.service.js`: xoá `approveJob()`; viết lại `processOne()` — hàm `stop()` dùng chung cho MỌI nhánh thất bại (extract fail / review_reasons thật / publish lỗi / exception kỹ thuật) — luôn: tắt `enabled` + lưu `auto_disabled_reason` đầy đủ (không cắt 80 ký tự, field này không giới hạn) + đánh job `failed` + lưu `last_error` ngắn (cắt 80, khớp cột VARCHAR(80) thật). Auto-publish không còn điều kiện `aiCfg.auto_publish` — hễ review_reasons rỗng là xuất bản thẳng. Bỏ hẳn nhánh `retry`/backoff trong catch. `runNewsAiWorker()` dừng vòng lặp ngay khi `outcome.status !== 'published'`.
+  - `backend/src/modules/news/news-ai-config.service.js`: `DEFAULTS` bỏ `auto_publish`, thêm `auto_disabled_reason: null`.
+  - `backend/src/modules/news/news.routes.js`: xoá route `POST /admin/ai/jobs/:id/approve`; PATCH `/admin/news-ai/config` bỏ field `auto_publish`, tự xoá `auto_disabled_reason` khi Admin gửi `enabled:true`.
+  - `backend/src/modules/news/news-articles.service.js`: revert hoàn toàn `publish_AI`/`isOfficialPublish` (đưa về nguyên bản — chỉ `=== 'published'` như trước khi thêm status mới) — khớp đúng ý Owner "không còn publish_AI".
+  - `news-feed.service.js`/`news.service.js`/`news-hot.service.js`/`news-comments.service.js`: bỏ `publish_AI` khỏi mọi IN-list hiển thị công khai (revert).
+  - `Admin_Design_system/app/news/content/article-edit-page.js`+`edit.html`: xoá hoàn toàn chế độ `?job=` (review mode) — `loadJobForReview`, `applyReviewModeUi`, `reviewingJobId`, nhánh approve trong `doSave()`.
+  - `Admin_Design_system/app/news/content/article-list-page.js`: bỏ chip/label `publish_AI`, revert `viewHref`.
+  - `Admin_Design_system/app/marketing/ai-programmatic-seo.html`+`.js`: bỏ hẳn công tắc "Tự động xuất bản" (giờ chỉ 1 công tắc "Bật AI hoạt động"), thêm banner đỏ `#aips-auto-disabled-banner` hiện `auto_disabled_reason` thật, bỏ nút "Xem & Duyệt" (không còn `needs_review`), đổi KPI "Chờ duyệt" → "Lỗi" (đếm `status='failed'`).
+- **Rủi ro CHƯA xử lý được — cần Owner/AI sau biết:** `backend/tests/integration/news-editorial.test.js` còn 1 đoạn test (dòng ~280, `['idle','needs_review']`) gắn chặt với cơ chế retry/backoff VÀ `needs_review` đã bị xoá hoàn toàn hôm nay — **CHƯA sửa được** vì không có Postgres local để chạy/xác minh test (giới hạn môi trường suốt phiên này), và logic retry/concurrency cũ (test dedupe qua lease khi 2 process cùng claim) không còn áp dụng với mô hình "1 lượt, thất bại là dừng" mới. Test này sẽ FAIL nếu CI thật (có Postgres) chạy `npm test` — cần người có môi trường Postgres thật sửa lại đoạn test này, không phải lỗi logic ở code thật (code thật đã đổi CHỦ Ý theo đúng yêu cầu Owner).
+- **Kiểm tra:** `node --check` PASS toàn bộ 11 file JS. `build-web-bundle`/`sync-js-versions --check` PASS. Grep toàn repo xác nhận hết `publish_AI`/`approveJob`/`aips-auto-publish` (trừ đoạn test nói trên). CHƯA test qua browser thật, CHƯA test lại trên Production với dữ liệu thật — Owner sẽ tự xác nhận sau deploy (y hệt các lượt trước).
+- **Commit:** sẽ tạo riêng, deploy Staging + Production theo chỉ đạo Owner (Owner lưu ý: Staging không có bài RSS thật nên không test được ở đó, nhưng vẫn đẩy lên cả 2 môi trường để đồng bộ code — test thật chỉ làm được trên Production).
+- **Còn lại/lưu ý cho AI tiếp theo:** (1) sửa test tích hợp đoạn retry/needs_review khi có môi trường Postgres thật; (2) "Bật AI hoạt động" hiện đang TẮT trên Production (Owner tự tắt) — Owner sẽ tự bật lại sau khi xác nhận deploy xong; (3) do bỏ hẳn retry, MỌI lỗi (kể cả lỗi mạng/API tạm thời thoáng qua) đều dừng hẳn AI — nếu Owner thấy AI dừng quá nhạy vì lỗi mạng vãng lai, có thể cần bàn lại việc có nên phân biệt lỗi tạm thời (network timeout) khỏi lỗi thật (nội dung/logic) trong tương lai — hiện tại code KHÔNG phân biệt, đúng yêu cầu rõ ràng hôm nay "thất bại thì thất bại luôn, dừng lại".
+
+
 ## 2026-10-16T21:40:00+07:00 — Claude — hoàn thành — tìm đúng nguyên nhân 100% job lỗi: tự ghi `last_error` dài hơn cột `VARCHAR(80)` thật (bug tôi tự gây ra lượt trước)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Tiếp nối mục 21:30 (đang bị chặn thiếu log thật) — đã bật tạm AI 1 lượt, bắt được log chẩn đoán thật (xem đúng luồng `pm2 logs --out`, KHÔNG phải `--err` — pino ghi JSON ra stdout bất kể level), tắt lại ngay, gỡ log chẩn đoán sau khi xác định xong.

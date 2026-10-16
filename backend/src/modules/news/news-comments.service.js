@@ -36,7 +36,7 @@ async function resolvePost(idOrSlug) {
     throw AppError.notFound('Không tìm thấy bài viết');
   }
   const status = post.status || '';
-  if (status !== 'published' && status !== 'published_rss' && status !== 'publish_AI') {
+  if (status !== 'published' && status !== 'published_rss') {
     throw AppError.badRequest('COMMENT_POST_NOT_LIVE', 'Bài viết chưa được xuất bản');
   }
   return {
