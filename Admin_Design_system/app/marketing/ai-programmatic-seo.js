@@ -99,7 +99,7 @@
       }
 
       var reviewEl = document.getElementById('aips-kpi-review');
-      if (reviewEl) reviewEl.textContent = byStatus.needs_review || 0;
+      if (reviewEl) reviewEl.textContent = byStatus.failed || 0;
 
       var tb = document.getElementById('aips-model-tbody');
       if (tb) {
@@ -139,16 +139,23 @@
   function loadConfig() {
     return request('/news/admin/news-ai/config').then(function (cfg) {
       document.getElementById('aips-enabled').checked = !!cfg.enabled;
-      document.getElementById('aips-auto-publish').checked = !!cfg.auto_publish;
       if (cfg.model) document.getElementById('aips-model').value = cfg.model;
       document.getElementById('aips-daily-budget').value = cfg.daily_token_budget || 0;
+      var banner = document.getElementById('aips-auto-disabled-banner');
+      if (banner) {
+        if (cfg.auto_disabled_reason) {
+          banner.hidden = false;
+          banner.textContent = 'AI đã TỰ ĐỘNG TẮT do gặp lỗi kỹ thuật thật, không viết tiếp: ' + cfg.auto_disabled_reason;
+        } else {
+          banner.hidden = true;
+        }
+      }
     }).catch(function (e) { toast(e.message || 'Lỗi tải cấu hình', 'danger'); });
   }
 
   function saveConfig() {
     var body = {
       enabled: document.getElementById('aips-enabled').checked,
-      auto_publish: document.getElementById('aips-auto-publish').checked,
       model: document.getElementById('aips-model').value.trim() || null,
       daily_token_budget: Math.round(Number(document.getElementById('aips-daily-budget').value)) || 0
     };
@@ -181,11 +188,11 @@
   }
 
   var STATUS_CHIP = {
-    published: 'ix-chip-success', needs_review: 'ix-chip-warning', failed: 'ix-chip-danger',
+    published: 'ix-chip-success', failed: 'ix-chip-danger',
     queued: 'ix-chip-info', running: 'ix-chip-info'
   };
   var STATUS_LABEL = {
-    published: 'Đã xuất bản', needs_review: 'Chờ duyệt', failed: 'Lỗi', queued: 'Đang chờ', running: 'Đang xử lý'
+    published: 'Đã xuất bản', failed: 'Lỗi', queued: 'Đang chờ', running: 'Đang xử lý'
   };
 
   function retryJob(id) {
@@ -206,9 +213,7 @@
         var reason = j.last_error || (j.review_reasons || []).join(', ') || '—';
         var actionBtn = j.status === 'failed'
           ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-aips-retry="' + esc(j.id) + '">Thử lại</button>'
-          : j.status === 'needs_review'
-            ? '<a class="ix-btn ix-btn-primary ix-btn-sm" href="/Admin_Design_system/app/news/content/edit.html?job=' + esc(j.id) + '">Xem &amp; Duyệt</a>'
-            : '';
+          : '';
         return '<tr><td>' + esc(new Date(j.created_at).toLocaleString('vi-VN')) + '</td><td>' + esc(j.post_title || j.source_post_id) + '</td><td>' + esc(j.model || '—') + '</td>' +
           '<td><span class="ix-chip ' + chip + '">' + esc(label) + '</span></td><td>' + esc(reason) + '</td><td>' + actionBtn + '</td></tr>';
       }).join('') || '<tr><td colspan="6" class="ix-caption">Chưa có job nào</td></tr>';

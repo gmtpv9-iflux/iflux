@@ -26,7 +26,7 @@
 <div class="ix-content">
 <h1 class="ix-page-title">AI Programmatic SEO</h1>
 <div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
-<p class="aips-hint">AI chuyển bài RSS thành bài báo iFlux (tiêu đề, mục lục H2, "Nhận định của iFlux"...). Dữ kiện/số liệu/ngày tháng do AI trích xuất từ bài nguồn — không thể sửa qua trang này. Chỉ sửa được: chỉ dẫn biên tập (instruction), có tự động xuất bản hay không, và model đang dùng.</p>
+<p class="aips-hint">AI chuyển bài RSS thành bài báo iFlux (tiêu đề, mục lục H2, "Nhận định của iFlux"...) và tự xuất bản ngay khi đạt — không qua duyệt tay. Bài nào thất bại (nội dung hoặc kỹ thuật) sẽ dừng AI ngay, không viết tiếp bài khác, cho tới khi Admin xem lý do và bật lại. Chỉ sửa được: chỉ dẫn biên tập (instruction) và model đang dùng.</p>
 
 <div class="ix-grid ix-grid-4 ix-mb-24">
   <div class="ix-stat-card">
@@ -42,8 +42,8 @@
     <div><div class="ix-stat-label">Token hôm nay / Ngân sách</div><div class="ix-stat-value" id="aips-kpi-budget">—</div></div>
   </div>
   <div class="ix-stat-card">
-    <div class="ix-stat-icon warning"><i class="ti ti-eye-check"></i></div>
-    <div><div class="ix-stat-label">Chờ duyệt</div><div class="ix-stat-value" id="aips-kpi-review">—</div></div>
+    <div class="ix-stat-icon danger"><i class="ti ti-alert-triangle"></i></div>
+    <div><div class="ix-stat-label">Lỗi</div><div class="ix-stat-value" id="aips-kpi-review">—</div></div>
   </div>
 </div>
 
@@ -91,17 +91,11 @@
         <div class="aips-toggle-row">
           <div>
             <div class="aips-toggle-row__title">Bật AI hoạt động</div>
-            <div class="aips-toggle-row__meta">Tắt = AI ngưng hoàn toàn (không nhận bài RSS mới, không xử lý job đang chờ) cho tới khi bật lại. Cần hạ tầng đã bật `NEWS_AI_ENABLED` trên server — công tắc này chỉ quyết định hoạt động hay tạm dừng khi hạ tầng đã sẵn sàng.</div>
+            <div class="aips-toggle-row__meta">Bật = AI tự chọn bài RSS mới nhất, viết và xuất bản ngay khi đạt — không qua duyệt tay. Nếu có bất kỳ bài nào thất bại (nội dung hoặc kỹ thuật), AI dừng hoàn toàn và TỰ CHUYỂN công tắc này về Tắt — xem lý do ngay dưới đây.</div>
           </div>
           <label class="ix-switch"><input type="checkbox" id="aips-enabled" data-ix-perm="news.articles.edit" /><span class="ix-switch-slider"></span></label>
         </div>
-        <div class="aips-toggle-row">
-          <div>
-            <div class="aips-toggle-row__title">Tự động xuất bản</div>
-            <div class="aips-toggle-row__meta">Bật = bài AI soạn xong tự lên "Published" ngay khi qua hết kiểm tra nội dung (fact/entity/event/ảnh hợp lệ) — không chờ duyệt tay. Tắt = luôn vào hàng chờ duyệt như trước.</div>
-          </div>
-          <label class="ix-switch"><input type="checkbox" id="aips-auto-publish" data-ix-perm="news.articles.edit" /><span class="ix-switch-slider"></span></label>
-        </div>
+        <div class="ix-alert ix-alert-danger ix-mb-0" id="aips-auto-disabled-banner" hidden style="margin-top:12px"></div>
         <div class="ix-form-group" style="margin-top:12px">
           <label class="ix-label">Model AI</label>
           <select class="ix-input" id="aips-model" data-ix-perm="news.articles.edit"><option value="">Để trống = mặc định hệ thống (gpt-5.4)</option></select>
@@ -155,5 +149,5 @@
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/design_system/02_foundation/theme.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
-<script src="/Admin_Design_system/app/marketing/ai-programmatic-seo.js?v=r20261016f"></script>
+<script src="/Admin_Design_system/app/marketing/ai-programmatic-seo.js?v=r20261016g"></script>
 </body></html>

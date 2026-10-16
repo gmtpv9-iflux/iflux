@@ -3,7 +3,7 @@
 const { query } = require('../../core/database/connection');
 
 const SCOPE = 'news_ai_config';
-const DEFAULTS = { enabled: false, auto_publish: false, model: null, daily_token_budget: 0 };
+const DEFAULTS = { enabled: false, model: null, daily_token_budget: 0, auto_disabled_reason: null };
 
 async function getConfig() {
   const row = (await query(`SELECT payload FROM system_admin_kv WHERE scope=$1 AND code='primary'`, [SCOPE])).rows[0];

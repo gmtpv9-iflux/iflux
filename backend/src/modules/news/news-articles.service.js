@@ -9,13 +9,7 @@ const comparisons = require('../market/market-comparisons.service');
 const sanitizeHtml = require('sanitize-html');
 const { sectionManifest } = require('../ai/news-ai.contract');
 
-/* publish_AI (Owner 2026-10-16): Admin duyệt tay bài AI soạn khi auto_publish đang tắt — khác
- * 'published' (Admin viết/duyệt tay từ đầu) và 'published_rss' (RSS thô, AI chưa xử lý). Cả 3
- * đều hiển thị công khai; CHỈ 'published' và 'publish_AI' mới coi là publish chính thức (khoá
- * slug 1 lần, snapshot comparison, bắn NEWS_POST_PUBLISHED); CHỈ 'published' (không gồm
- * publish_AI) mới vào sitemap/được Google index — xem sitemap/providers/posts.js +
- * seo-platform.service.js (3 chỗ so khớp đúng chữ 'published', chủ ý không đổi). */
-const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'publish_AI', 'scheduled'];
+const STATUSES = ['draft', 'pending', 'published', 'published_rss', 'scheduled'];
 
 function sanitizeArticleHtml(html, options) {
   const internalHref = /^\/(?:co-phieu|nganh|he-sinh-thai|cau-chuyen|tin-tuc)(?:\/|[?#]|$)/i;
@@ -40,15 +34,9 @@ function sanitizeArticleHtml(html, options) {
   });
 }
 
-/** Bài đang lên User Web (Xuất bản Admin, Xuất bản RSS, hoặc Admin duyệt tay bài AI) */
+/** Bài đang lên User Web (Xuất bản Admin hoặc Xuất bản RSS) */
 function isLivePublished(status) {
-  return status === 'published' || status === 'published_rss' || status === 'publish_AI';
-}
-
-/** Publish chính thức (khoá slug 1 lần, snapshot comparison, bắn NEWS_POST_PUBLISHED) —
- * KHÔNG dùng cho tín hiệu Google Index (xem comment STATUSES ở trên). */
-function isOfficialPublish(status) {
-  return status === 'published' || status === 'publish_AI';
+  return status === 'published' || status === 'published_rss';
 }
 
 function slugify(s) {
@@ -234,7 +222,7 @@ async function listArticles(filters) {
     params.push(filters.status);
     whereSql += ` AND status = $${params.length}`;
   } else if (!filters.include_all) {
-    whereSql += ` AND status IN ('published', 'published_rss', 'publish_AI')`;
+    whereSql += ` AND status IN ('published', 'published_rss')`;
   }
   if (filters.q) {
     params.push('%' + String(filters.q).trim().toLowerCase() + '%');
@@ -370,7 +358,7 @@ async function createArticle(input, actor) {
   const normalized = normalizeArticleInput(input, actor);
   await events.validateArticleLinks(normalized);
   const comparison = await comparisons.buildComparison(normalized);
-  normalized.comparison_snapshot = isOfficialPublish(normalized.status) ? comparison.data : null;
+  normalized.comparison_snapshot = normalized.status === 'published' ? comparison.data : null;
   normalized.comparison_reason = comparison.reason;
   normalized.slug = await ensureUniqueSlug(normalized.slug, null);
   const cat = await categories.getCategory(normalized.category_id);
@@ -379,8 +367,8 @@ async function createArticle(input, actor) {
 
   const id = input.id || 'post_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
   const now = new Date().toISOString();
-  normalized.official_published_at = isOfficialPublish(normalized.status) ? now : null;
-  normalized.published_at = isOfficialPublish(normalized.status) ? now : normalized.published_at;
+  normalized.official_published_at = normalized.status === 'published' ? now : null;
+  normalized.published_at = normalized.status === 'published' ? now : normalized.published_at;
   const record = Object.assign({}, normalized, {
     id,
     former_slugs: [],
@@ -406,7 +394,7 @@ async function createArticle(input, actor) {
 
   try {
     const bus = require('../../core/events/bus');
-    if (isOfficialPublish(record.status)) {
+    if (record.status === 'published') {
       const author = record.author || {};
       await bus.publish(bus.EVENTS.NEWS_POST_PUBLISHED, {
         postId: record.id,
@@ -442,13 +430,13 @@ async function updateArticle(id, input, actor) {
 
   const normalized = normalizeArticleInput(merged, actor || current.author);
   await events.validateArticleLinks(normalized);
-  const comparison = isOfficialPublish(current.status) && isOfficialPublish(normalized.status) && JSON.stringify(normalized.comparison) === JSON.stringify(current.comparison ? comparisons.comparisonSchema.parse(current.comparison) : null)
+  const comparison = current.status === 'published' && normalized.status === 'published' && JSON.stringify(normalized.comparison) === JSON.stringify(current.comparison ? comparisons.comparisonSchema.parse(current.comparison) : null)
     ? { data: current.comparison_snapshot || null, reason: current.comparison_reason || null } : await comparisons.buildComparison(normalized);
-  normalized.comparison_snapshot = isOfficialPublish(normalized.status) ? comparison.data : null;
+  normalized.comparison_snapshot = normalized.status === 'published' ? comparison.data : null;
   normalized.comparison_reason = comparison.reason;
-  const wasPublished = isOfficialPublish(current.status);
+  const wasPublished = current.status === 'published';
   const hasOfficialPublication = !!current.official_published_at || wasPublished;
-  const enteringOfficialPublication = !hasOfficialPublication && isOfficialPublish(normalized.status);
+  const enteringOfficialPublication = !hasOfficialPublication && normalized.status === 'published';
   /* Tạo URL chuẩn một lần từ tiêu đề biên tập khi xuất bản; RSS cũ được giữ làm alias 301. */
   normalized.slug = enteringOfficialPublication
     ? await ensureUniqueSlug(normalized.slug, current.id)
@@ -470,10 +458,10 @@ async function updateArticle(id, input, actor) {
     id: current.id,
     former_slugs: former,
     updated_at: now,
-    official_published_at: isOfficialPublish(normalized.status)
+    official_published_at: normalized.status === 'published'
       ? current.official_published_at || (wasPublished ? current.published_at || now : now)
       : current.official_published_at || (wasPublished ? current.published_at || now : null),
-    published_at: isOfficialPublish(normalized.status)
+    published_at: normalized.status === 'published'
       ? current.official_published_at || (wasPublished ? current.published_at || now : now)
       : isLivePublished(normalized.status)
         ? (current.published_at || now)
@@ -492,7 +480,7 @@ async function updateArticle(id, input, actor) {
 
   try {
     const bus = require('../../core/events/bus');
-    if (!wasPublished && isOfficialPublish(record.status)) {
+    if (!wasPublished && record.status === 'published') {
       const author = record.author || {};
       await bus.publish(bus.EVENTS.NEWS_POST_PUBLISHED, {
         postId: record.id,
@@ -854,7 +842,6 @@ module.exports = {
   listAuthorsAdmin,
   STATUSES,
   isLivePublished,
-  isOfficialPublish,
   ensureUniqueSlug,
   articlePublicPath
 };
