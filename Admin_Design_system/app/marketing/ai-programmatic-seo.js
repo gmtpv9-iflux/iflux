@@ -133,7 +133,7 @@
     }).catch(function (e) { toast(e.message || 'Lỗi lưu instruction', 'danger'); });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function boot() {
     document.querySelectorAll('[data-aips-tab]').forEach(function (btn) {
       btn.addEventListener('click', function () { setTab(btn.getAttribute('data-aips-tab')); });
     });
@@ -147,5 +147,12 @@
     loadStats();
     loadConfig();
     loadInstruction();
-  });
+  }
+
+  /* Admin dùng soft-nav (eval lại page script mỗi lần chuyển trang qua menu, không tạo
+     <script> tag mới) — DOMContentLoaded chỉ fire 1 lần duy nhất trong đời document (lúc
+     tải trang đầu), nên vào trang này qua menu (không F5) thì listener không bao giờ chạy
+     nếu chỉ dùng addEventListener thuần (đã từng gặp, xem commit 971da51 — 5 trang app/news). */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

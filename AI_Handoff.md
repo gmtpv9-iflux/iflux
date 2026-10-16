@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T14:40:00+07:00 — Claude — hoàn thành — fix trang AI Programmatic SEO không bấm được gì (thiếu guard readyState, lặp lại đúng lỗi commit `971da51`)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo vào trang AI Programmatic SEO trên Admin Staging: "bấm vào tất cả đều không ăn, kể cả tab" — Owner tự nhớ ra đã gặp lỗi tương tự 1 lần, liên quan JS/form/popup.
+- **Phạm vi:** `Admin_Design_system/app/marketing/ai-programmatic-seo.js` (chỉ phần boot cuối file).
+- **Nguyên nhân THẬT (tìm bằng `git log --grep`, khớp đúng 1 commit lịch sử `971da51` 2026-10-02 — "Sửa gốc lỗi bảng Admin kẹt Đang tải mãi — 5 trang app/news thiếu guard readyState"):** Admin dùng soft-nav — `iflux-admin-app-shell.js` chuyển trang qua menu bằng cách EVAL LẠI nội dung script của trang, KHÔNG tạo `<script>` tag mới. `DOMContentLoaded` chỉ fire ĐÚNG 1 LẦN trong cả đời `document` (lúc trang đầu tiên tải lần đầu) — trang tôi vừa viết dùng thẳng `document.addEventListener('DOMContentLoaded', function(){...})` không có guard, nên nếu Owner vào trang này BẰNG CÁCH BẤM MENU (không F5) sau khi đã ở 1 trang Admin khác trước đó, toàn bộ code gắn event (tab, công tắc, nút Lưu) KHÔNG BAO GIỜ CHẠY — y hệt "bấm không ăn".
+- **Trước → sau:** gói toàn bộ phần gắn event + load dữ liệu vào `function boot(){...}`; thay `document.addEventListener('DOMContentLoaded', fn)` bằng `if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();` — đúng nguyên văn pattern đã dùng để fix 5 trang `app/news` trước đó (`971da51`).
+- **Kiểm tra:** `node --check` PASS. **Chưa tự verify lại bằng browser thật trên Staging** (không có môi trường) — đây là bug Owner tự phát hiện bằng tay, cần Owner tự bấm lại qua đúng kịch bản lỗi (vào 1 trang Admin khác trước, RỒI bấm menu sang AI Programmatic SEO — không F5 trực tiếp vào URL, vì F5 sẽ không lộ bug) để xác nhận đã hết.
+- **Commit:** sẽ tạo riêng.
+- **Còn lại/lưu ý cho AI tiếp theo:** đây là lỗi RECURRING — mọi trang Admin mới viết sau này PHẢI dùng đúng pattern `readyState` guard này ngay từ đầu, không dùng `document.addEventListener('DOMContentLoaded', ...)` trần.
+
 ## 2026-10-16T14:10:00+07:00 — Claude — hoàn thành — bổ sung AI Programmatic SEO: công tắc Bật/Tắt AI, ngân sách/ngày Admin tự đặt, thống kê theo ngày (nối tiếp commit `ff97074`)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành, nối tiếp ngay task AI Programmatic SEO vừa push (`ff97074`). Owner yêu cầu thêm 3 việc: (1) công tắc Bật/Tắt để Admin tự quyết AI hoạt động hay tạm dừng hoàn toàn; (2) thống kê bài/token theo TỪNG NGÀY trong ~1 tháng để đối chiếu, không chỉ tổng cộng dồn; (3) ngân sách tối đa/ngày do Admin tự đặt (KHÔNG hardcode số cố định nào, bỏ hẳn ý tưởng "10.000đ/ngày" từng nhắc ở vòng thảo luận trước).
