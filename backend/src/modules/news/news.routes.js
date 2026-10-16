@@ -75,13 +75,17 @@ function createNewsRouter(deps) {
   const aiProgConfig = require('./news-ai-config.service');
   const PROMPT_CODE = 'news-editorial-v2';
   router.get('/admin/news-ai/stats', perm('news.articles.view'), async (req,res,next) => {
-    try { return success(res, await aiJobs.getStats()); } catch(err) { next(err); }
+    try {
+      const days = Math.min(90, Math.max(1, Number(req.query.days) || 30));
+      return success(res, await aiJobs.getStats(days));
+    } catch(err) { next(err); }
   });
   router.get('/admin/news-ai/config', perm('news.articles.view'), async (req,res,next) => {
     try { return success(res, await aiProgConfig.getConfig()); } catch(err) { next(err); }
   });
   router.patch('/admin/news-ai/config', perm('news.articles.edit'),
     validate(z.object({ body: z.object({
+      enabled: z.boolean().optional(),
       auto_publish: z.boolean().optional(),
       model: z.string().max(80).nullable().optional(),
       price_per_1k_input_usd: z.number().min(0).optional(),

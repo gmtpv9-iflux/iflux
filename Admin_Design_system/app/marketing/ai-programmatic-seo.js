@@ -72,24 +72,38 @@
         });
         tb.innerHTML = rows.join('') || '<tr><td colspan="4" class="ix-caption">Chưa có job nào chạy</td></tr>';
       }
+
+      var dtb = document.getElementById('aips-daily-tbody');
+      if (dtb) {
+        var daily = (s.daily || []).slice().reverse();
+        var drows = daily.map(function (d) {
+          return '<tr><td>' + esc(d.date) + '</td><td>' + esc(d.jobs) + '</td><td>' + esc(d.published) + '</td><td>' + esc(d.input_tokens) + '</td><td>' + esc(d.output_tokens) + '</td><td>' +
+            (s.cost_pricing_configured ? ('$' + d.estimated_cost_usd.toFixed(4)) : '—') + '</td></tr>';
+        });
+        dtb.innerHTML = drows.join('') || '<tr><td colspan="6" class="ix-caption">Chưa có dữ liệu trong ' + (s.daily_window_days || 30) + ' ngày gần nhất</td></tr>';
+      }
     }).catch(function (e) { toast(e.message || 'Lỗi tải thống kê', 'danger'); });
   }
 
   function loadConfig() {
     return request('/admin/news-ai/config').then(function (cfg) {
+      document.getElementById('aips-enabled').checked = !!cfg.enabled;
       document.getElementById('aips-auto-publish').checked = !!cfg.auto_publish;
       document.getElementById('aips-model').value = cfg.model || '';
       document.getElementById('aips-price-in').value = cfg.price_per_1k_input_usd || 0;
       document.getElementById('aips-price-out').value = cfg.price_per_1k_output_usd || 0;
+      document.getElementById('aips-daily-budget').value = cfg.daily_budget_usd || 0;
     }).catch(function (e) { toast(e.message || 'Lỗi tải cấu hình', 'danger'); });
   }
 
   function saveConfig() {
     var body = {
+      enabled: document.getElementById('aips-enabled').checked,
       auto_publish: document.getElementById('aips-auto-publish').checked,
       model: document.getElementById('aips-model').value.trim() || null,
       price_per_1k_input_usd: Number(document.getElementById('aips-price-in').value) || 0,
-      price_per_1k_output_usd: Number(document.getElementById('aips-price-out').value) || 0
+      price_per_1k_output_usd: Number(document.getElementById('aips-price-out').value) || 0,
+      daily_budget_usd: Number(document.getElementById('aips-daily-budget').value) || 0
     };
     request('/admin/news-ai/config', { method: 'PATCH', body: body }).then(function () {
       toast('Đã lưu cấu hình', 'success');

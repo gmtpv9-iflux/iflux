@@ -43,6 +43,13 @@
     <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Cấu hình vận hành</div></div>
     <div class="aips-toggle-row">
       <div>
+        <div class="aips-toggle-row__title">Bật AI hoạt động</div>
+        <div class="aips-toggle-row__meta">Tắt = AI ngưng hoàn toàn (không nhận bài RSS mới, không xử lý job đang chờ) cho tới khi bật lại. Cần hạ tầng đã bật `NEWS_AI_ENABLED` trên server — công tắc này chỉ quyết định hoạt động hay tạm dừng khi hạ tầng đã sẵn sàng.</div>
+      </div>
+      <label class="ix-switch"><input type="checkbox" id="aips-enabled" data-ix-perm="news.articles.edit" /><span class="ix-switch-slider"></span></label>
+    </div>
+    <div class="aips-toggle-row">
+      <div>
         <div class="aips-toggle-row__title">Tự động xuất bản</div>
         <div class="aips-toggle-row__meta">Bật = bài AI soạn xong tự lên "Published" ngay khi qua hết kiểm tra nội dung (fact/entity/event/ảnh hợp lệ) — không chờ duyệt tay. Tắt = luôn vào hàng chờ duyệt như trước.</div>
       </div>
@@ -60,17 +67,35 @@
     <div class="ix-form-group">
       <label class="ix-label">Giá USD / 1.000 token output</label>
       <input class="ix-input" type="number" step="0.0001" min="0" id="aips-price-out" data-ix-perm="news.articles.edit" />
-      <div class="ix-caption">Nhập đúng giá ông đang bị tính tiền thật (xem dashboard OpenAI) — để trống/0 thì mục "Chi phí ước tính" bên trên không tính được, chỉ hiện số token thô.</div>
+      <div class="ix-caption">Nhập đúng giá ông đang bị tính tiền thật (xem dashboard OpenAI) — để trống/0 thì "Chi phí ước tính" và ngân sách/ngày dưới đây không tính được, chỉ hiện số token thô.</div>
+    </div>
+    <div class="ix-form-group">
+      <label class="ix-label">Ngân sách tối đa mỗi ngày (USD)</label>
+      <input class="ix-input" type="number" step="0.01" min="0" id="aips-daily-budget" data-ix-perm="news.articles.edit" />
+      <div class="ix-caption">0 = không giới hạn. Khi chi phí ước tính trong ngày (theo giờ Việt Nam) đạt mức này, AI tự tạm ngưng xử lý job mới tới hết ngày — cần đã nhập giá/1.000 token ở trên, nếu để 0 ở đó thì ngân sách sẽ không bao giờ chặn.</div>
     </div>
     <button type="button" class="ix-btn ix-btn-primary" id="aips-config-save" data-ix-perm="news.articles.edit" style="margin-top:8px"><i class="ti ti-device-floppy"></i> Lưu cấu hình</button>
   </div>
 
-  <div class="ix-card" style="max-width:720px;padding:20px">
+  <div class="ix-card" style="max-width:720px;padding:20px;margin-bottom:20px">
     <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Theo model</div></div>
     <div class="ix-table-responsive">
       <table class="ix-table">
         <thead><tr><th>Model</th><th>Số job</th><th>Token input</th><th>Token output</th></tr></thead>
         <tbody id="aips-model-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ix-card" style="padding:20px">
+    <div class="ix-card-header" style="padding:0 0 12px;display:flex;align-items:center;justify-content:space-between">
+      <div class="ix-card-title">Theo ngày (30 ngày gần nhất)</div>
+      <div class="ix-caption">Đối chiếu hiệu suất/chi phí theo thời gian</div>
+    </div>
+    <div class="ix-table-responsive">
+      <table class="ix-table">
+        <thead><tr><th>Ngày</th><th>Job</th><th>Đã xuất bản</th><th>Token input</th><th>Token output</th><th>Chi phí ước tính</th></tr></thead>
+        <tbody id="aips-daily-tbody"></tbody>
       </table>
     </div>
   </div>

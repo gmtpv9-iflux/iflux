@@ -12,18 +12,40 @@ const articles = require('./news-articles.service');
 const AI_ACTOR = { id: 'ai-iflux', name: 'AI iFlux', tier_label: 'AI' };
 
 const PROMPT_VERSION = 'news-editorial-v2';
+const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' });
 const hash = (v) => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex');
 let runtimeConfig = { NEWS_AI_ENABLED:false };
 function configureNewsAi(config) { runtimeConfig = config; }
 
+/* Ngân sách/ngày (Owner 2026-10-16): Admin tự đặt daily_budget_usd, KHÔNG hardcode số cố định
+ * nào trong code. 0 = chưa đặt/không giới hạn — cùng quy ước với 2 ô giá/1000 token. */
+async function getTodaySpendUsd(cfg) {
+  // Cửa sổ SQL rộng rãi (48h) chỉ để giảm số dòng tải về — mốc "hôm nay" THẬT xác định
+  // chính xác bằng dayKeyFmt (giờ VN) ở JS dưới, không dựa vào biên UTC dễ sai lệch ±1 ngày.
+  const sinceUtc = new Date(Date.now() - 48 * 3600000).toISOString();
+  const rows = (await query(`SELECT calls,created_at FROM news_ai_jobs WHERE created_at >= $1`, [sinceUtc])).rows;
+  const todayKey = dayKeyFmt.format(new Date());
+  let inTok = 0, outTok = 0;
+  rows.forEach((row) => {
+    if (!row.created_at || dayKeyFmt.format(new Date(row.created_at)) !== todayKey) return;
+    (row.calls || []).forEach((call) => {
+      const u = call.usage || {};
+      inTok += Number(u.input_tokens || u.prompt_tokens || 0) || 0;
+      outTok += Number(u.output_tokens || u.completion_tokens || 0) || 0;
+    });
+  });
+  return (inTok / 1000) * (cfg.price_per_1k_input_usd || 0) + (outTok / 1000) * (cfg.price_per_1k_output_usd || 0);
+}
+
 async function enqueueSource(postId, config = runtimeConfig) {
   if (!config.NEWS_AI_ENABLED) return null;
+  const aiCfg = await aiConfig.getConfig();
+  if (!aiCfg.enabled) return null;
   const row = (await query("SELECT id,status,payload FROM news_posts WHERE id=$1 AND content_type='article'",[postId])).rows[0];
   if (!row || !['published_rss','pending'].includes(row.status) || !(row.payload.source_id || row.payload.source?.id)) return null;
   const source = context.sourceSnapshot({ ...row.payload,id:row.id });
   const prompt = (await query("SELECT body FROM ai_prompts WHERE code=$1 AND status='active'",[PROMPT_VERSION])).rows[0];
   if (!prompt || !prompt.body.trim()) throw AppError.badRequest('AI_PROMPT_NOT_ACTIVE','Prompt news-editorial-v2 chưa được đăng ký/kích hoạt');
-  const aiCfg = await aiConfig.getConfig();
   const model = aiCfg.model || config.NEWS_AI_MODEL || 'gpt-5.4';
   const result = await query(`INSERT INTO news_ai_jobs(source_post_id,input_hash,prompt_hash,prompt_version,prompt_body,schema_version,model,source_snapshot)
     VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
@@ -74,6 +96,11 @@ async function claimJob(config, token) {
 
 async function processOne(config = runtimeConfig, provider) {
   if (!config.NEWS_AI_ENABLED || (!provider && !config.OPENAI_API_KEY)) return { status:'disabled' };
+  const aiCfg = await aiConfig.getConfig();
+  if (!aiCfg.enabled) return { status:'disabled' };
+  if (aiCfg.daily_budget_usd > 0 && (await getTodaySpendUsd(aiCfg)) >= aiCfg.daily_budget_usd) {
+    return { status:'budget_exceeded' };
+  }
   const maxAttempts = config.NEWS_AI_MAX_ATTEMPTS || 3;
   const token = randomUUID();
   // Lease dài hơn timeout tối đa hai lần gọi; mọi ghi sau gọi API đều có fencing token.
@@ -119,7 +146,6 @@ async function processOne(config = runtimeConfig, provider) {
     // Auto-publish (Owner 2026-10-16): chỉ khi Admin bật cấu hình VÀ output sạch mọi kiểm tra
     // thật (preview.review_reasons rỗng) — nếu có lỗi nội dung thật (fact/entity/event/ảnh
     // không hợp lệ...) vẫn luôn rơi về needs_review dù đã bật auto-publish.
-    const aiCfg = await aiConfig.getConfig();
     if (aiCfg.auto_publish && preview.review_reasons.length === 0) {
       try {
         const published = await articles.updateArticle(
@@ -156,6 +182,7 @@ async function processOne(config = runtimeConfig, provider) {
 
 async function runNewsAiWorker(config = runtimeConfig) {
   if (!config.NEWS_AI_ENABLED || !config.OPENAI_API_KEY) return { status:'disabled' };
+  if (!(await aiConfig.getConfig()).enabled) return { status:'disabled' };
   // Recovery cho nguồn đã lưu nhưng enqueue lỗi hoặc server restart. Hash phiên nguồn chống trùng.
   const sources = (await query(`SELECT p.id FROM news_posts p WHERE p.content_type='article'
     AND p.status IN ('published_rss','pending') AND (p.payload ? 'source_id' OR p.payload->'source' ? 'id')
@@ -169,27 +196,37 @@ async function runNewsAiWorker(config = runtimeConfig) {
   return { status:'processed',results };
 }
 
-async function getStats() {
+async function getStats(days = 30) {
   const rows = (await query(`SELECT status,model,calls,created_at FROM news_ai_jobs`)).rows;
   const byStatus = {};
   const byModel = {};
+  const byDay = {};
   let inputTokens = 0, outputTokens = 0, callCount = 0;
+  const windowStart = Date.now() - Math.max(1, days) * 86400000;
   rows.forEach((row) => {
     byStatus[row.status] = (byStatus[row.status] || 0) + 1;
     const modelKey = row.model || 'unknown';
     const m = byModel[modelKey] || (byModel[modelKey] = { jobs: 0, input_tokens: 0, output_tokens: 0 });
     m.jobs += 1;
+    const createdAt = row.created_at ? new Date(row.created_at) : null;
+    const inWindow = createdAt && createdAt.getTime() >= windowStart;
+    const dayKey = createdAt ? dayKeyFmt.format(createdAt) : null;
+    const d = (inWindow && dayKey) ? (byDay[dayKey] || (byDay[dayKey] = { date: dayKey, jobs: 0, published: 0, input_tokens: 0, output_tokens: 0 })) : null;
+    if (d) { d.jobs += 1; if (row.status === 'published') d.published += 1; }
     (row.calls || []).forEach((call) => {
       const u = call.usage || {};
       const inTok = Number(u.input_tokens || u.prompt_tokens || 0) || 0;
       const outTok = Number(u.output_tokens || u.completion_tokens || 0) || 0;
       inputTokens += inTok; outputTokens += outTok; callCount += 1;
       m.input_tokens += inTok; m.output_tokens += outTok;
+      if (d) { d.input_tokens += inTok; d.output_tokens += outTok; }
     });
   });
   const cfg = await aiConfig.getConfig();
-  const costUsd = (inputTokens / 1000) * (cfg.price_per_1k_input_usd || 0) +
-    (outputTokens / 1000) * (cfg.price_per_1k_output_usd || 0);
+  const costOf = (inTok, outTok) => (inTok / 1000) * (cfg.price_per_1k_input_usd || 0) + (outTok / 1000) * (cfg.price_per_1k_output_usd || 0);
+  const daily = Object.values(byDay)
+    .sort((a, b) => a.date < b.date ? -1 : 1)
+    .map((d) => Object.assign({}, d, { estimated_cost_usd: Math.round(costOf(d.input_tokens, d.output_tokens) * 10000) / 10000 }));
   return {
     total_jobs: rows.length,
     by_status: byStatus,
@@ -199,8 +236,10 @@ async function getStats() {
     total_input_tokens: inputTokens,
     total_output_tokens: outputTokens,
     total_tokens: inputTokens + outputTokens,
-    estimated_cost_usd: Math.round(costUsd * 10000) / 10000,
-    cost_pricing_configured: !!(cfg.price_per_1k_input_usd || cfg.price_per_1k_output_usd)
+    estimated_cost_usd: Math.round(costOf(inputTokens, outputTokens) * 10000) / 10000,
+    cost_pricing_configured: !!(cfg.price_per_1k_input_usd || cfg.price_per_1k_output_usd),
+    daily_window_days: days,
+    daily
   };
 }
 
