@@ -3,7 +3,7 @@
  * Page Feature: header/chart/tabs → Layout Engine mount placements vào Host sidebar + trading.
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -37,19 +37,19 @@ var CORE_TIERS = [
     ASSET + 'stock-store.js?v=4dc55126ff',
     ASSET + 'news-store.js?v=41bb32b4bc',
     ASSET + 'iflux-news-api-bridge.js?v=f47b340d7b',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a'
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a'
   ],
   [
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
-    ASSET + 'news-ui.js?v=a16469b4b9',
+    ASSET + 'news-ui.js?v=a57f24c0e1',
     ASSET + 'comments-cta.js?v=5537ba40da',
     ASSET + 'news-daily-feed.js?v=be2cb197c0',
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74'
   ],
   [
     ASSET + 'entity-detail-center.js?v=e666f1ae95',
-    ASSET + 'group-page.js?v=cc6937d6de',
-    ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8'
+    ASSET + 'group-page.js?v=79746b3cf1',
+    ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2'
   ]
 ];
 

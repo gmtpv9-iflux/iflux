@@ -213,9 +213,9 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=9623ca3514' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=0c7a143a6f' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js?v=aacd7e48c9' },
-    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=f9a8ae35e7' },
+    { global: 'IfluxAuth', src: ASSET + 'auth.js?v=99042ce179' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
     { global: 'IfxToast', src: '/design_system/04_components/17_toast/toast.js?v=r20260928q' },
     /* Dropdown DS — menu người dùng / thông báo / tin nhắn trong header (App Shell) */
@@ -256,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=83aca9f1a7' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=8bddf9c2db' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

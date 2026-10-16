@@ -3,9 +3,10 @@
  * Phase C W3: Feature Manifest + Runtime State Machine.
  */
 import { createFeatureRuntime } from '../../runtime/feature-runtime.js?v=8e1baf6d7a';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=730cdbd2ef';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import featureManifest from '../../features/stock.manifest.js?v=cba196c929';
+import featureManifest from '../../features/stock.manifest.js?v=73f2fa96db';
 
 var PUBLISH_KEY = 'stock-detail';
 var featureRt = null;
@@ -25,7 +26,7 @@ export async function mount(el) {
     }
   });
   /* Bridge khung trang chung cho script trang (IIFE) — render() dựng qua buildPageFrame. */
-  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame };
+  window.IfluxRuntimeSections = { buildPageFrame: buildPageFrame, mountPublishedWidgets: mountPublishedWidgets };
   if (window.IfluxStockPage) IfluxStockPage.init();
   function onRemount() {
     mountFromHostTree(el);

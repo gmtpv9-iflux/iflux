@@ -21,9 +21,9 @@ import { buildPageFrame } from './app-shell.js?v=7b8f128322';
 import { applyDefinitionToDocument } from './page-definition.js?v=432eed525b';
 import { loadWidget } from './widget-loader.js?v=44321f3f09';
 import { loadScript, loadStyles } from './legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from './page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from './page-widgets.js?v=3313b52579';
 
-var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=a6f64093c8';
+var LAYOUT_ENGINE_SRC = '/User_Web/iflux-web-ui/runtime/page-layout-engine.js?v=c3d1bce3f2';
 
 async function ensureLayoutEngine() {
   if (window.IfluxPageLayoutEngine && IfluxPageLayoutEngine.buildHostTree) return;

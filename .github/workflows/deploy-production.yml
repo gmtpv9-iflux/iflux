@@ -3,7 +3,9 @@ name: Deploy to Production
 # GitHub `production` → iflux.vn (runtime production, API :3003).
 # Cùng cây nguồn và cùng mô hình với Staging (deploy-staging.yml): checkout → kiểm tra → atomic release
 # → stage nginx + switch từ Git → switch → migrate (062+) → health. Mỗi release là thư mục mới,
-# live = symlink → Production chỉ chứa đúng những gì có trong Git (không chép đè bản cũ).
+# live = symlink → mỗi release chỉ chứa code chạy thật (không chép đè bản cũ). Production KHÔNG
+# copy patterns/ (pattern library — preview/reference, Staging mới cần) — tài liệu/pattern/lịch sử
+# chỉ sống ở Staging & Git, Production chỉ giữ source đang chạy (Owner 2026-10-16).
 # CẤM: Staging 1 (/var/www/iflux/staging, /var/iflux/backend-staging). Stack "true production" cũ trước
 # cutover 18/08/2026 đã retire hoàn toàn 03/10/2026 — không còn tồn tại, không cần tránh nữa.
 # Runner self-hosted label "staging", user iflux-deploy.
@@ -44,7 +46,7 @@ jobs:
           set -euo pipefail
           RELEASE_DIR="/var/www/iflux/releases-production/${{ steps.rel.outputs.id }}"
           mkdir -p "$RELEASE_DIR"
-          for d in User_Web Admin_Design_system design_system platform modules patterns adapters ui_tooling vendor; do
+          for d in User_Web Admin_Design_system design_system platform modules adapters ui_tooling vendor; do
             if [ -d "$GITHUB_WORKSPACE/$d" ]; then
               cp -a "$GITHUB_WORKSPACE/$d" "$RELEASE_DIR/$d"
             fi

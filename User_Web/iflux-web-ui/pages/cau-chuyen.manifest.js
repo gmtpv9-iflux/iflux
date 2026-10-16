@@ -24,11 +24,11 @@ export default {
     enabled: true,
     locked: true,
     config: { kind: 'cau-chuyen' },
-    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=1bf2a36d85',
+    lazyModule: '/User_Web/iflux-web-ui/widgets/entity-list-page/index.js?v=5dec5d014a',
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd',
-      '/User_Web/iflux-web-ui/news.css?v=e69b29dbdf',
+      '/User_Web/iflux-web-ui/news.css?v=8fe5446aab',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
       '/User_Web/iflux-web-ui/alerts.css?v=9a03ebc64a',
       '/User_Web/iflux-web-ui/market.css?v=78eddf5ade'

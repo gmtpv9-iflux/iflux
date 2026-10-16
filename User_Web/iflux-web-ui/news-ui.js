@@ -338,7 +338,19 @@
   function thumbHtml(post, role) {
     var img = resolvePostDisplayImage(post, role);
     if (img.src) {
-      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" loading="lazy" decoding="async" onerror="this.remove()" />';
+      /* Owner 2026-10-16 — PSI: ảnh "cover_hero" (featuredPostHtml — bài đầu tiên/nổi bật, LUÔN
+         nằm trong khung nhìn ban đầu, hầu như luôn là phần tử LCP thật của trang Tin tức/Cộng
+         đồng) đang bị gắn loading="lazy" như MỌI ảnh card khác — khiến trình duyệt trì hoãn
+         request ảnh này (đo Lighthouse thật: "Load Delay" chiếm 66%/4.7s của LCP 7.1s, vì lazy
+         khiến ảnh không được fetch ngay dù đã nằm sẵn trong viewport) — đúng lỗi kinh điển "lazy
+         hoá nhầm ảnh LCP". Chỉ ảnh cover_hero tải eager + fetchpriority=high; mọi ảnh card khác
+         (role khác/không có role, thật sự ở dưới màn hình đầu) GIỮ NGUYÊN lazy — đúng mục đích
+         ban đầu của thuộc tính này. */
+      var isHero = role === 'cover_hero';
+      var loadingAttrs = isHero
+        ? 'loading="eager" fetchpriority="high"'
+        : 'loading="lazy"';
+      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" ' + loadingAttrs + ' decoding="async" onerror="this.remove()" />';
     }
     var story = (post.story_tags && post.story_tags[0]) ? post.story_tags[0].name : '';
     var icon = 'ti-article';
@@ -683,13 +695,10 @@
     var avatarUrl = (author && (author.avatar || author.avatar_url)) || '';
     var initials = name.trim().charAt(0).toUpperCase() || 'I';
     var avatarHtml = avatarUrl
-      ? '<img class="ifx-avatar ifx-avatar-lg" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
-      : '<span class="ifx-avatar ifx-avatar-lg ifx-avatar-accent">' + escHtml(initials) + '</span>';
+      ? '<img class="ifx-avatar ifx-avatar-xl ifx-avatar-ring" src="' + escHtml(avatarUrl) + '" alt="' + escHtml(name) + '" />'
+      : '<span class="ifx-avatar ifx-avatar-xl ifx-avatar-ring ifx-avatar-accent">' + escHtml(initials) + '</span>';
 
-    var credRows =
-      '<div class="ifx-icon-list-item"><i class="ti ti-briefcase"></i> Chuyên gia tài chính</div>' +
-      '<div class="ifx-icon-list-item"><i class="ti ti-award"></i> 5+ năm kinh nghiệm</div>';
-    /* Chứng nhận — chưa có field dữ liệu, bỏ qua đến khi có (không hiển thị placeholder). */
+    var badges = '';
 
     var metaRows = [];
     if (publishedIso) {
@@ -698,7 +707,7 @@
     var sourceName = post.source_name || post.source_label || (post.source && post.source.name) || '';
     var sourceUrl = post.external_url || post.source_url || (post.source && post.source.url) || '';
     if (sourceName) {
-      var safeSourceUrl = /^(https?):\/\//i.test(sourceUrl) ? sourceUrl : '';
+      var safeSourceUrl = /^(?:https?:\/\/|\/(?!\/))/i.test(sourceUrl) ? sourceUrl : '';
       var sourceText = safeSourceUrl
         ? '<a href="' + escHtml(safeSourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escHtml(sourceName) + '</a>'
         : '<span>' + escHtml(sourceName) + '</span>';
@@ -706,12 +715,13 @@
     }
 
     return (
-      '<section class="ifx-card ifx-com-article__author">' +
+      '<section class="ifx-card ifx-card-accent ifx-com-article__author">' +
+        '<p class="ifx-com-article__author-kicker"><i class="ti ti-user-check"></i> Thông tin người viết</p>' +
         '<div class="ifx-com-article__author-head">' +
           avatarHtml +
           '<div class="ifx-com-article__author-who">' +
             '<div class="ifx-com-article__author-name">' + escHtml(name) + '</div>' +
-            '<div class="ifx-icon-list">' + credRows + '</div>' +
+            '<div class="ifx-com-article__author-badges">' + badges + '</div>' +
           '</div>' +
         '</div>' +
         '<div class="ifx-icon-list ifx-com-article__author-meta">' + metaRows.join('') + '</div>' +

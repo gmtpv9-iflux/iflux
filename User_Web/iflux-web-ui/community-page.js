@@ -603,61 +603,61 @@
 
   /* Composer đủ 4 khả năng (Owner chốt 2026-10): Status (≤1000 từ) / Tin tức đính kèm (qua "Đăng
      lại" trên trang Tin tức — composer này tự viết thì không đính tin) / Thực thể iFlux / Hashtag
-     (≤5, gợi ý lazy-load). */
-  function openWritePostModal() {
-    if (!requireAuth()) return;
-    composerHashtags = [];
-    composerEntityRefs = [];
-    buildModal();
-    modalEl.innerHTML =
-      '<div class="ix-modal-box">' +
-        '<button type="button" class="ix-modal-close" data-ifx-modal-close><i class="ti ti-x"></i></button>' +
-        '<div class="ix-modal-title">Viết bài</div>' +
-        '<div class="ix-modal-sub">Chia sẻ góc nhìn thị trường, phân tích cổ phiếu hoặc nhận định của bạn.</div>' +
-        '<form data-ifx-com2-post-form>' +
-          '<div class="ix-form-group">' +
-            '<textarea class="ix-input" name="content" rows="4" maxlength="6000" placeholder="Bạn đang nghĩ gì về thị trường? (tối đa ~1000 từ)" required></textarea>' +
+     (≤5, gợi ý lazy-load). HTML form tách riêng khỏi khung hiển thị (modal hay trang) — dùng
+     chung cho cả 2 lối vào: bấm ô "bạn đang nghĩ gì" trong Main (mọi viewport, vẫn modal như cũ)
+     và tap "Đăng bài" ở Bottom Nav Cấp 2 trên mobile (Owner 2026-10-15: không còn modal — phải
+     là 1 "trang" riêng, hiệu ứng đồng nhất với Thịnh hành/Mạng lưới — xem renderComposerRegion). */
+  function composerFormHtml() {
+    return (
+      '<form data-ifx-com2-post-form>' +
+        '<div class="ix-form-group">' +
+          '<textarea class="ix-input" name="content" rows="4" maxlength="6000" placeholder="Bạn đang nghĩ gì về thị trường? (tối đa ~1000 từ)" required></textarea>' +
+        '</div>' +
+        '<div class="ix-form-group">' +
+          '<label class="ix-label">Quan điểm của bạn (không bắt buộc)</label>' +
+          '<div class="ifx-tabs ifx-tabs-segmented" data-ifx-com2-post-sentiment>' +
+            '<button type="button" class="ifx-tab" data-value="positive">Tích cực</button>' +
+            '<button type="button" class="ifx-tab" data-value="negative">Tiêu cực</button>' +
+            '<button type="button" class="ifx-tab" data-value="neutral">Trung lập</button>' +
           '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Quan điểm của bạn (không bắt buộc)</label>' +
-            '<div class="ifx-tabs ifx-tabs-segmented" data-ifx-com2-post-sentiment>' +
-              '<button type="button" class="ifx-tab" data-value="positive">Tích cực</button>' +
-              '<button type="button" class="ifx-tab" data-value="negative">Tiêu cực</button>' +
-              '<button type="button" class="ifx-tab" data-value="neutral">Trung lập</button>' +
-            '</div>' +
-            '<input type="hidden" name="sentiment" value="" />' +
+          '<input type="hidden" name="sentiment" value="" />' +
+        '</div>' +
+        '<div class="ix-form-group">' +
+          '<label class="ix-label">Gắn mã cổ phiếu (không bắt buộc)</label>' +
+          '<input type="text" class="ix-input" name="stock_tags" placeholder="VD: HPG, VIX (cách nhau bằng dấu phẩy)" />' +
+        '</div>' +
+        '<div class="ix-form-group">' +
+          '<label class="ix-label">Gắn thẻ thực thể iFlux (không bắt buộc)</label>' +
+          '<div style="display:flex;gap:8px">' +
+            '<select class="ix-input" data-ifx-com2-entity-type style="flex:0 0 140px">' +
+              '<option value="stock">Cổ phiếu</option>' +
+              '<option value="sector">Ngành</option>' +
+              '<option value="family">Hệ sinh thái</option>' +
+              '<option value="story">Câu chuyện</option>' +
+              '<option value="market_index">Sàn/Chỉ số</option>' +
+            '</select>' +
+            '<input type="text" class="ix-input" data-ifx-com2-entity-input placeholder="VD: HPG" />' +
+            '<button type="button" class="ix-btn ix-btn-outline" data-ifx-com2-entity-add>Thêm</button>' +
           '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Gắn mã cổ phiếu (không bắt buộc)</label>' +
-            '<input type="text" class="ix-input" name="stock_tags" placeholder="VD: HPG, VIX (cách nhau bằng dấu phẩy)" />' +
-          '</div>' +
-          '<div class="ix-form-group">' +
-            '<label class="ix-label">Gắn thẻ thực thể iFlux (không bắt buộc)</label>' +
-            '<div style="display:flex;gap:8px">' +
-              '<select class="ix-input" data-ifx-com2-entity-type style="flex:0 0 140px">' +
-                '<option value="stock">Cổ phiếu</option>' +
-                '<option value="sector">Ngành</option>' +
-                '<option value="family">Hệ sinh thái</option>' +
-                '<option value="story">Câu chuyện</option>' +
-                '<option value="market_index">Sàn/Chỉ số</option>' +
-              '</select>' +
-              '<input type="text" class="ix-input" data-ifx-com2-entity-input placeholder="VD: HPG" />' +
-              '<button type="button" class="ix-btn ix-btn-outline" data-ifx-com2-entity-add>Thêm</button>' +
-            '</div>' +
-            '<div data-ifx-com2-entity-chips style="margin-top:8px"></div>' +
-          '</div>' +
-          '<div class="ix-form-group" style="position:relative">' +
-            '<label class="ix-label">Hashtag (tối đa 5 — là cơ sở xác định Chủ đề thịnh hành)</label>' +
-            '<input type="text" class="ix-input" data-ifx-com2-hashtag-input placeholder="Gõ rồi Enter, hoặc chọn gợi ý…" />' +
-            '<div class="ifx-com2-hashtag-suggest" data-ifx-com2-hashtag-suggest hidden></div>' +
-            '<div data-ifx-com2-hashtag-chips style="margin-top:8px"></div>' +
-          '</div>' +
-          '<div data-ifx-com2-form-error class="ix-alert ix-alert-danger" style="margin-bottom:var(--ifx-space-12);display:none"></div>' +
-          '<button type="submit" class="ix-btn ix-btn-primary"><i class="ti ti-send"></i> Đăng bài</button>' +
-        '</form>' +
-      '</div>';
-    modalEl.style.display = 'flex';
-    var form = modalEl.querySelector('[data-ifx-com2-post-form]');
+          '<div data-ifx-com2-entity-chips style="margin-top:8px"></div>' +
+        '</div>' +
+        '<div class="ix-form-group" style="position:relative">' +
+          '<label class="ix-label">Hashtag (tối đa 5 — là cơ sở xác định Chủ đề thịnh hành)</label>' +
+          '<input type="text" class="ix-input" data-ifx-com2-hashtag-input placeholder="Gõ rồi Enter, hoặc chọn gợi ý…" />' +
+          '<div class="ifx-com2-hashtag-suggest" data-ifx-com2-hashtag-suggest hidden></div>' +
+          '<div data-ifx-com2-hashtag-chips style="margin-top:8px"></div>' +
+        '</div>' +
+        '<div data-ifx-com2-form-error class="ix-alert ix-alert-danger" style="margin-bottom:var(--ifx-space-12);display:none"></div>' +
+        '<button type="submit" class="ix-btn ix-btn-primary"><i class="ti ti-send"></i> Đăng bài</button>' +
+      '</form>'
+    );
+  }
+
+  /** Gắn toàn bộ hành vi (hashtag/entity/sentiment/submit) lên 1 `<form>` đã có sẵn trong DOM —
+   * dùng được cho cả modal lẫn trang, không quan tâm khung chứa bên ngoài là gì.
+   * @param {HTMLFormElement} form
+   * @param {{errorScope: Element, onSuccess: Function}} opts */
+  function bindComposerForm(form, opts) {
     bindHashtagInput(form);
     bindEntityPicker(form);
     /* Sentiment tác giả (II.1) — mặc định KHÔNG chọn, bấm lại nút đang active để bỏ chọn
@@ -688,16 +688,74 @@
         entity_refs: composerEntityRefs,
         sentiment: String(fd.get('sentiment') || '').trim() || null
       }).then(function (data) {
-        closeModal();
         toast('Đăng bài thành công', 'success');
         state.posts.unshift(data.post);
         renderFeedOnly();
+        if (opts && opts.onSuccess) opts.onSuccess();
       }).catch(function (err) {
         submitBtn.disabled = false;
-        var errEl = modalEl.querySelector('[data-ifx-com2-form-error]');
+        var errEl = (opts && opts.errorScope || form).querySelector('[data-ifx-com2-form-error]');
         if (errEl) { errEl.textContent = err.message || 'Có lỗi xảy ra'; errEl.style.display = ''; }
       });
     });
+  }
+
+  /* Lối vào DESKTOP + bấm ô "bạn đang nghĩ gì" trong Main (mọi viewport) — vẫn modal như cũ,
+     KHÔNG đổi hành vi. Lối vào Bottom Nav Cấp 2 (mobile) dùng renderComposerRegion() riêng. */
+  function openWritePostModal() {
+    if (!requireAuth()) return;
+    composerHashtags = [];
+    composerEntityRefs = [];
+    buildModal();
+    modalEl.innerHTML =
+      '<div class="ix-modal-box">' +
+        '<button type="button" class="ix-modal-close" data-ifx-modal-close><i class="ti ti-x"></i></button>' +
+        '<div class="ix-modal-title">Viết bài</div>' +
+        '<div class="ix-modal-sub">Chia sẻ góc nhìn thị trường, phân tích cổ phiếu hoặc nhận định của bạn.</div>' +
+        composerFormHtml() +
+      '</div>';
+    modalEl.style.display = 'flex';
+    var form = modalEl.querySelector('[data-ifx-com2-post-form]');
+    bindComposerForm(form, { errorScope: modalEl, onSuccess: closeModal });
+  }
+
+  /* Lối vào Bottom Nav Cấp 2 (mobile, tap "Đăng bài") — Owner 2026-10-15: KHÔNG phải modal nữa,
+     là 1 "trang" riêng trong hệ thống vùng (ensureRegion/toggleRegionVisibility), hiệu ứng
+     chuyển vùng đồng nhất với Thịnh hành/Mạng lưới (cùng cơ chế, không phải code riêng).
+     Render lại MỚI mỗi lần `ensureRegion('composer', ...)` gọi tới (không cache theo TTL như
+     sidebar — form luôn trống khi vào, không giữ bản nháp cũ của lần đăng trước). Đăng thành
+     công → quay lại vùng "main" để thấy ngay bài vừa đăng trong Feed. */
+  function renderComposerRegion(frame) {
+    if (!frame || !frame.composerContent) return;
+    if (!requireAuth()) {
+      /* requireAuth() đã tự gọi auth().promptLogin() (hiện UI đăng nhập riêng) — KHÔNG được tự
+         điều hướng setActiveRegion('main') ở đây: hàm này chạy ĐỒNG BỘ bên trong
+         ensureRegion()→onLevel2Change() (xử lý event 'iflux-level2-change'); gọi setActiveRegion
+         lại dispatch THÊM 1 event cùng tên NGAY TRONG lúc đang xử lý event gốc → đệ quy lồng
+         nhau, để lại state sai (vùng "composer" vẫn bị đánh dấu visible dù rỗng, URL lại trỏ
+         'main'). Hiện placeholder tại chỗ, không đổi region/URL — không đánh dấu mounted để lần
+         tap sau (sau khi đăng nhập) thử render lại form thật. */
+      frame.composerContent.innerHTML =
+        '<h1 class="ix-page-title">Đăng bài</h1>' +
+        '<p class="ifx-page-intro">Đăng nhập để chia sẻ góc nhìn của bạn với cộng đồng.</p>';
+      return;
+    }
+    composerHashtags = [];
+    composerEntityRefs = [];
+    frame.composerContent.innerHTML =
+      '<h1 class="ix-page-title">Đăng bài</h1>' +
+      '<p class="ifx-page-intro">Chia sẻ góc nhìn thị trường, phân tích cổ phiếu hoặc nhận định của bạn.</p>' +
+      composerFormHtml();
+    var form = frame.composerContent.querySelector('[data-ifx-com2-post-form]');
+    bindComposerForm(form, {
+      errorScope: frame.composerContent,
+      onSuccess: function () {
+        regionState.composer.mounted = false; // lần sau vào lại Đăng bài → form trống mới
+        var shell = global.IfluxAppShell;
+        if (shell && shell.setActiveRegion) shell.setActiveRegion('main');
+      }
+    });
+    regionState.composer.mounted = true;
   }
 
   /* ───────────────────────── Data loading ───────────────────────── */
@@ -910,31 +968,175 @@
     });
   }
 
-  function render(frame) {
+  /* Tải theo vùng (mobile, Bottom Nav 2 cấp) — xem docs/plan "Mobile Bottom Navigation 2 cấp
+     (Cộng đồng)". Owner 2026-10-15 (đính chính thuật ngữ): đây KHÔNG phải "lazy load" (tải dần
+     theo cuộn/thời gian trong 1 trang) — là "KHÔNG tải gì cả cho tới khi user bấm vào, bấm 1
+     lần thì dùng mãi": vùng nào chưa bấm → không fetch/không dựng HTML/JS gì hết; bấm lần đầu
+     → dựng 1 lần; bấm lại sau đó → TÁI SỬ DỤNG nguyên markup/JS đã có, KHÔNG dựng lại — chỉ dữ
+     liệu THẬT SỰ động (API có thể trả khác đi theo thời gian) mới cần làm mới, và chỉ làm mới
+     đúng phần dữ liệu đó (không đụng khung HTML/JS bao quanh). Desktop/tablet (lazyMode=false)
+     giữ nguyên hành vi CŨ 100%: cả 3 vùng render+fetch ngay trong init(), không qua cơ chế
+     dưới đây (không có khái niệm "bấm vào mới tải" ở desktop — mọi thứ hiện cùng lúc). */
+  var REGION_TTL = { 'sidebar-left': 120000 }; // ms — mốc làm mới DỮ LIỆU (không phải markup) cho sidebar trái
+  var regionState = {
+    main: { mounted: false },
+    composer: { mounted: false },
+    'sidebar-left': { mounted: false, mountedAt: 0 },
+    'sidebar-right': { mounted: false, mountedAt: 0 }
+  };
+  var lazyMode = false;
+  var currentFrame = null;
+
+  function renderMain(frame) {
     mainEl = frame.mainContent;
     mainEl.innerHTML =
       hotTopicsCarouselHtml() + composerHtml() + filterTabsHtml(state.filter) +
       '<div data-ifx-com2-feedlist>' + feedHtml() + '</div>';
-    if (frame.sidebarContent) frame.sidebarContent.innerHTML = leftSidebarHtml();
-    if (frame.rightSidebarContent) frame.rightSidebarContent.innerHTML = rightSidebarHtml();
     bindActions(mainEl);
     bindFilters(mainEl);
     bindFeedActions();
     bindHotTopics();
-    if (frame.sidebarContent) bindActions(frame.sidebarContent);
-    if (frame.rightSidebarContent) bindActions(frame.rightSidebarContent);
+    regionState.main.mounted = true;
   }
 
-  function init(frame) {
-    if (!frame || !frame.mainContent) return;
-    render(frame);
-    loadFeed('latest', false);
+  function renderSidebarLeft(frame) {
+    if (!frame.sidebarContent) return;
+    frame.sidebarContent.innerHTML = leftSidebarHtml();
+    bindActions(frame.sidebarContent);
     loadTrendingTopics();
+    /* Widget Host sidebar trái (4 widget thật) KHÔNG mount ở đây — community-page.js là script
+       thường (loadScriptTiers), không import được page-widgets.js (ES module).
+       widgets/community-page/index.js (có import sẵn) tự lắng nghe CÙNG event
+       'iflux-level2-change' để mount Widget Host đúng lúc region này active lần đầu. */
+    regionState['sidebar-left'].mounted = true;
+    regionState['sidebar-left'].mountedAt = Date.now();
+  }
+
+  function renderSidebarRight(frame) {
+    if (!frame.rightSidebarContent) return;
+    frame.rightSidebarContent.innerHTML = rightSidebarHtml();
+    bindActions(frame.rightSidebarContent);
+    regionState['sidebar-right'].mounted = true;
+    regionState['sidebar-right'].mountedAt = Date.now();
+  }
+
+  /* Vùng đã mount và còn trong TTL → tái sử dụng, không fetch/mount lại. Hết TTL (hoặc chưa
+     từng mount) → render lại (idempotent — innerHTML thay mới, không tích luỹ listener vì
+     bindActions luôn gắn trên node vừa innerHTML xong). */
+  function ensureRegion(key, frame) {
+    var st = regionState[key];
+    if (!st || key === 'main') return; // main luôn mounted sẵn từ renderMain() trong init()
+    if (st.mounted) {
+      /* Owner 2026-10-15 (đính chính): đây KHÔNG phải "lazy load" kiểu tải lại định kỳ — là
+         "chỉ tải khi user bấm vào LẦN ĐẦU, dùng lại mãi"; markup/JS KHÔNG được dựng lại sau khi
+         đã có. CHỈ dữ liệu THẬT SỰ động (Chủ đề thịnh hành) mới cần làm mới theo TTL — gọi đúng
+         loadTrendingTopics() (tự thay outerHTML 1 card nhỏ, không đụng phần còn lại của sidebar)
+         — KHÔNG gọi lại renderSidebarLeft() (sẽ dựng lại toàn bộ innerHTML, đúng điều Owner vừa
+         yêu cầu tránh). */
+      if (key === 'sidebar-left') {
+        var ttl = REGION_TTL[key];
+        if (ttl && Date.now() - st.mountedAt > ttl) {
+          loadTrendingTopics();
+          st.mountedAt = Date.now();
+        }
+      }
+      return;
+    }
+    if (key === 'composer') { renderComposerRegion(frame); return; }
+    if (key === 'sidebar-left') renderSidebarLeft(frame);
+    else if (key === 'sidebar-right') renderSidebarRight(frame);
+  }
+
+  /* Chỉ 1 trong 3 vùng DOM hiển thị tại 1 thời điểm trên mobile (app-shell.css,
+     [data-ifx-region-mode="single"]) — gắn/gỡ data-ifx-region-visible, không đụng
+     data-ifx-region-mode (set 1 lần xuyên suốt phiên mobile ở init(), xem đó). */
+  function toggleRegionVisibility(key) {
+    if (!currentFrame || !lazyMode) return;
+    var layout = currentFrame.layout;
+    layout.querySelectorAll('[data-ifx-region-visible]').forEach(function (n) {
+      n.removeAttribute('data-ifx-region-visible');
+    });
+    var map = {
+      main: '.ifx-shell-main',
+      composer: '[data-ifx-composer-host]',
+      'sidebar-left': '.ifx-shell-sidebar:not(.ifx-shell-sidebar-right)',
+      'sidebar-right': '.ifx-shell-sidebar-right'
+    };
+    var target = layout.querySelector(map[key] || map.main);
+    if (target) target.setAttribute('data-ifx-region-visible', '');
+  }
+
+  /* Đọc lại ?view= hiện tại (qua IfluxAppShell) và áp dụng — dùng cho cold load thẳng vào URL
+     có ?view= lẫn khi popstate "nhẹ" (xem onPopState trong soft-navigation.js). Trả về true nếu
+     đã xử lý (báo cho onPopState KHÔNG cần dựng lại toàn trang). Tự phát 'iflux-level2-change'
+     — bình thường setActiveRegion()/openLevel2() (AppShell) đã phát event này, nhưng đường cold
+     load KHÔNG đi qua 2 hàm đó (đọc thẳng URL) nên phải tự phát ở đây — nếu không, listener
+     khác module (vd widgets/community-page/index.js — mount Widget Host sidebar) không bao giờ
+     biết để chạy, dù nội dung ở ĐÂY vẫn hiển thị đúng (chỉ thiếu phần module khác phụ trách). */
+  function applyViewFromUrl() {
+    var shell = global.IfluxAppShell;
+    if (!currentFrame || !shell || !shell.isLevel2Open || !shell.isLevel2Open()) return false;
+    var region = shell.activeSectionKey() || 'main';
+    ensureRegion(region, currentFrame);
+    toggleRegionVisibility(region);
+    try {
+      document.dispatchEvent(new CustomEvent('iflux-level2-change', {
+        detail: { itemKey: shell.currentLevel2Item ? shell.currentLevel2Item() : null, regionKey: region, open: true }
+      }));
+    } catch (e) { /* ignore */ }
+    return true;
+  }
+
+  function onLevel2Change(e) {
+    if (!currentFrame) return;
+    var d = (e && e.detail) || {};
+    if (!d.open) { toggleRegionVisibility('main'); return; }
+    ensureRegion(d.regionKey, currentFrame);
+    toggleRegionVisibility(d.regionKey);
+  }
+
+  function render(frame) {
+    /* Giữ API cũ cho mọi nơi còn gọi render() trực tiếp (không có) — nay chỉ còn alias nội bộ
+       cho render-cả-3-vùng, dùng ở nhánh desktop/tablet của init(). */
+    renderMain(frame);
+    renderSidebarLeft(frame);
+    renderSidebarRight(frame);
+  }
+
+  /** @param {{lazyRegions?: boolean}=} opts — true trên mobile (Bottom Nav 2 cấp): chỉ main
+   *  được render/fetch ngay, sidebar trái/phải chỉ mount khi vùng đó được chọn lần đầu. */
+  function init(frame, opts) {
+    if (!frame || !frame.mainContent) return;
+    currentFrame = frame;
+    lazyMode = !!(opts && opts.lazyRegions);
+    renderMain(frame);
+    loadFeed('latest', false);
     loadHotTopics();
+    if (!lazyMode) {
+      /* Desktop/tablet — hành vi CŨ: tải cả sidebar ngay, không chờ tap. */
+      renderSidebarLeft(frame);
+      renderSidebarRight(frame);
+      return;
+    }
+    frame.layout.setAttribute('data-ifx-region-mode', 'single');
+    toggleRegionVisibility('main');
+    global.__ifxPageRuntime = global.__ifxPageRuntime || {};
+    global.__ifxPageRuntime.onSamePagePopState = applyViewFromUrl;
+    document.addEventListener('iflux-level2-change', onLevel2Change);
+    applyViewFromUrl(); // cold load thẳng vào URL có ?view=...
   }
 
   function dispose() {
     mainEl = null;
+    currentFrame = null;
+    lazyMode = false;
+    regionState = {
+      main: { mounted: false },
+      composer: { mounted: false },
+      'sidebar-left': { mounted: false, mountedAt: 0 },
+      'sidebar-right': { mounted: false, mountedAt: 0 }
+    };
+    document.removeEventListener('iflux-level2-change', onLevel2Change);
     closeModal();
   }
 

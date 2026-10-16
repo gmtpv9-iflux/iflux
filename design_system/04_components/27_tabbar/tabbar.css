@@ -1,7 +1,7 @@
 /**
  * Component — Tab Bar (bottom menu, một phần App Shell; là menu → không có host widget)
  *
- *   nav.ifx-tabbar  [data-ifx-tabbar-mode = (chính) | context | account | article]
+ *   nav.ifx-tabbar  [data-ifx-tabbar-mode = (chính) | context | account | article | section]
  *   └─ a.ifx-tabbar-item (.is-active · biến thể .ifx-tabbar-item-exclusive / .ifx-tabbar-item-article)
  *      └─ .ifx-tabbar-icon > .ifx-tabbar-fab > i   (+ .ifx-tabbar-chip · .ifx-tabbar-count)
  *
@@ -30,9 +30,13 @@
   align-items: center;
   padding: var(--ifx-space-8) var(--ifx-space-2) var(--ifx-space-12);
   font-size: var(--ifx-font-size-xs);
-  font-weight: var(--ifx-font-weight-semibold);
+  font-weight: var(--ifx-font-weight-regular);
   color: var(--ifx-text-secondary);
   text-decoration: none;
+  text-align: center; /* Owner 2026-10-15: nhãn 2 dòng (vd "Chỉ báo kỹ thuật") trước đó lệch
+    trái — align-items:center chỉ căn khối <span> theo chiều ngang, không chỉnh text-align bên
+    trong khi nó wrap xuống dòng 2. Áp dụng chung mọi mode (primary/context/account/article/
+    section) vì tất cả cùng dùng class này. */
 }
 .ifx-tabbar-item.is-active { color: var(--ifx-action-primary); }
 .ifx-tabbar-icon {
@@ -154,6 +158,62 @@
 .ifx-tabbar-item-article .ifx-tabbar-fab i,
 .ifx-tabbar-item-article.is-active .ifx-tabbar-fab i { font-size: var(--ifx-font-size-xl); }
 .ifx-tabbar-item-article .ifx-tabbar-count { position: static; margin-left: var(--ifx-space-2); }
+
+/* Chế độ section: Bottom Nav 2 cấp (root → section, vd Cộng đồng) — animation 2 giai đoạn
+   TUẦN TỰ (Owner 2026-10-15):
+   (1) icon "Cộng đồng" TRƯỢT từ vị trí 1 (Cấp 1) sang vị trí 2 (Cấp 2) — mobile-nav.js dùng lại
+       nguyên node DOM (không xoá/dựng lại) + kỹ thuật FLIP (đo lệch vị trí cũ/mới, animate
+       transform) — class .ifx-tabbar-item--flip chỉ bật `transition: transform` đúng lúc JS cần,
+       KHÔNG áp dụng sẵn cho mọi item (nếu không item khác lúc đổi active cũng bị dính transition
+       ngoài ý muốn).
+   (2) SAU KHI (1) xong — Back trượt vào từ trái, các mục còn lại trượt vào từ phải, CÙNG LÚC
+       (class .ifx-tabbar-item--enter-left / --enter-right, bật qua .is-entering). Dùng
+       opacity+transform (KHÔNG left/width — tránh layout recalculation liên tục). */
+.ifx-tabbar-item--flip {
+  transition: transform var(--ifx-duration-slow) var(--ifx-ease-out);
+}
+.ifx-tabbar-item--enter-left,
+.ifx-tabbar-item--enter-right {
+  opacity: 0;
+  transition: opacity var(--ifx-duration-slow) var(--ifx-ease-out),
+              transform var(--ifx-duration-slow) var(--ifx-ease-out);
+  transition-delay: var(--ifx-tabbar-enter-delay, 0ms);
+}
+.ifx-tabbar-item--enter-left { transform: translateX(-16px); }
+.ifx-tabbar-item--enter-right { transform: translateX(16px); }
+.ifx-tabbar-item--enter-left.is-entering,
+.ifx-tabbar-item--enter-right.is-entering {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Bar section: Back cần chạm mép trái THẬT của khung bao ngoài (không chỉ mép trong của item
+   đầu) — bỏ padding trái của bar riêng ở mode này (các item sau Back vẫn cách nhau bằng gap
+   như cũ, không ảnh hưởng). */
+.ifx-tabbar[data-ifx-tabbar-mode="section"] { padding-left: 0; }
+
+/* Nút Back Cấp 2 — chỉ icon (không chữ), hẹp vừa đủ chứa icon, sát mép trái VÀ sát trên/dưới
+   của khung bao ngoài (align-self: stretch — bỏ qua align-items:center của bar, bỏ hết padding
+   dọc/bo góc) để trông tách khối hẳn khỏi phần còn lại của menu, nền sáng hơn 1 nhịp DS
+   (--ifx-bg-hover, cùng cách .ifx-tabbar-item-article đã dùng ở trên). */
+.ifx-tabbar-item-back {
+  flex: 0 0 auto;
+  align-self: stretch;
+  justify-content: center;
+  padding: 0 2px;
+  border-radius: 0;
+  background: var(--ifx-bg-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ifx-tabbar-item--flip,
+  .ifx-tabbar-item--enter-left,
+  .ifx-tabbar-item--enter-right {
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+}
 
 @media (min-width: 1024px) { /* bp:lg */
   .ifx-tabbar { display: none; }

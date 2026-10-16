@@ -29,7 +29,7 @@ var BASE = [
      riêng; nạp sẵn ở đây vì hầu như dashboard nào cũng có. */
   dep('IfluxWatchlistStore', 'watchlist-store.js?v=r20260928n'),
   dep('IfluxWatchlistTaxonomy', 'watchlist-taxonomy.js?v=r20260928q'),
-  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
+  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261016a' },
   dep('IfluxWatchlistUI', 'watchlist-ui.js?v=r20260928q'),
   dep('IfluxWatchlistBlock', 'watchlist-block.js?v=r20260928q')
 ];

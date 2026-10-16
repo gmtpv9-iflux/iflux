@@ -3,8 +3,8 @@
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=07b38d99d3';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPublishedWidgets } from '../../runtime/mount-published-widgets.js?v=730cdbd2ef';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
@@ -20,7 +20,7 @@ export const meta = { id: 'WGT-NEWS-POST-PAGE', title: 'Bài viết cộng đồ
  * song toàn bộ giống đúng cách trang danh sách tin tức đang làm (nhanh hơn). */
 var CORE_TIERS = [
   [
-    ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8',
+    ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2',
     ASSET + 'stock-mentions.js?v=63b1553d75',
     ASSET + 'news-store.js?v=41bb32b4bc',
     ASSET + 'iflux-news-api-bridge.js?v=f47b340d7b',
@@ -28,17 +28,17 @@ var CORE_TIERS = [
     ASSET + 'profile-links.js?v=31f14c2ed9',
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a',
-    ASSET + 'news-ui.js?v=a16469b4b9',
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a',
+    ASSET + 'news-ui.js?v=a57f24c0e1',
     ASSET + 'news-daily-feed.js?v=be2cb197c0',
     ASSET + 'interaction/boot.js?v=b13165436a',
-    ASSET + 'news-post-page.js?v=701ee3a614'
+    ASSET + 'news-post-page.js?v=d03dc68f82'
   ]
 ];
 
 var LAYOUT_HTML = `<div data-ifx-community-story></div>`;
 
-function mountFromHostTree(root) {
+async function mountFromHostTree(root) {
   var host = root.querySelector('[data-news-event-timeline]');
   var ref = window.IfluxSeoUrl && IfluxSeoUrl.parsePostRef();
   var store = window.IfluxNewsStore;

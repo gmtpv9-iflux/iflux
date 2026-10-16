@@ -21,7 +21,7 @@
  * vãng lai riêng (trước đây mountGuest()).
  */
 import { buildPageFrame, applyHubLayout } from '../../runtime/app-shell.js?v=7b8f128322';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 import { ensureSequence } from '../../runtime/legacy-bridge.js?v=dec30759da';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -34,7 +34,7 @@ var SIDEBAR_DEPS = [
   { global: 'IfluxDashboardEngine', src: ASSET + 'dashboard-engine.js?v=9654ca4be2' },
   { global: 'IfluxWatchlistStore', src: ASSET + 'watchlist-store.js?v=f604e76323' },
   { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' },
-  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261002a' },
+  { global: 'IfluxHeartAction', src: '/design_system/04_components/29_follow/follow.js?v=r20261016a' },
   { global: 'IfluxWatchlistUI', src: ASSET + 'watchlist-ui.js?v=7c1f5a3c0d' },
   { global: 'IfluxWatchlistBlock', src: ASSET + 'watchlist-block.js?v=02655cb8cf' }
 ];
@@ -93,6 +93,19 @@ var PROFILE_CARD_HTML = `
         <div style="display:flex;gap:10px;margin-top:16px" data-ifx-own-only>
           <button type="button" class="ix-btn ix-btn-primary" style="flex:1" data-ifx-side-edit-open>
             <i class="ti ti-edit" style="font-size:13px"></i> Chỉnh sửa hồ sơ
+          </button>
+        </div>
+        <!-- Owner 2026-10-16: mobile gộp Riêng tư/Mật khẩu vào "Hồ sơ" (registry đánh dấu
+             desktopOnly — xem iflux-platform-boot.js) — 2 nút lối tắt này CHỈ hiện mobile
+             (ifx-profile-mobile-links, ẩn ≥1024px — profile.css), desktop đã có 2 tab riêng
+             nên không cần. Tái dùng ĐÚNG cơ chế data-ifx-goto-tab có sẵn (bindProfileGotoTab —
+             account-feature-boot.js — gọi switchAccountProfileTab, không viết handler mới). -->
+        <div class="ifx-profile-mobile-links" data-ifx-own-only>
+          <button type="button" class="ix-btn ix-btn-outline" data-ifx-goto-tab="tab-privacy">
+            <i class="ti ti-shield-lock" style="font-size:13px"></i> Riêng tư
+          </button>
+          <button type="button" class="ix-btn ix-btn-outline" data-ifx-goto-tab="tab-security">
+            <i class="ti ti-lock" style="font-size:13px"></i> Mật khẩu
           </button>
         </div>
       </div>
@@ -443,7 +456,7 @@ function mainHtml() {
 async function mountDashboardTab(panelEl) {
   if (!panelEl || panelEl._ifxMounted) return;
   panelEl._ifxMounted = true;
-  var mod = await import('../home-dashboard/index.js?v=c00e891045');
+  var mod = await import('../home-dashboard/index.js?v=e7b15fb509');
   await mod.mount(panelEl);
 }
 
@@ -490,7 +503,7 @@ export async function mount(el) {
   frame.mainContent.innerHTML = mainHtml();
 
   /* Cầu nối cho account-feature-boot.js (activateAccountProfilePanel) mount lazy tab Dashboard
-     khi được chọn — tab Dashboard không nằm trong CORE_SCRIPTS/registry nghiệp vụ tài khoản. */
+     khi được chọn — tab Dashboard không nằm trong BASE_SCRIPTS/TAB_SCRIPTS nghiệp vụ tài khoản. */
   window.IfluxHomeDashboardTab = { ensureMounted: mountDashboardTab };
 
   mountSidebarCanvas();
@@ -507,7 +520,7 @@ export async function mount(el) {
      không viết lại. Module chỉ tự boot() khi KHÔNG ở context composite (xem account-feature-
      boot.js) — ở đây tự gọi boot() mỗi lần mount() để bind đúng DOM mới dựng (soft-nav rebuild
      lại markup mỗi lần ghé trang, boot() gọi lại an toàn vì loadScriptsSequential cache theo src). */
-  var accountBoot = await import('../../runtime/account-feature-boot.js?v=a663c7a933');
+  var accountBoot = await import('../../runtime/account-feature-boot.js?v=ef24fbbce6');
   if (accountBoot && accountBoot.boot) await accountBoot.boot();
 
   return {

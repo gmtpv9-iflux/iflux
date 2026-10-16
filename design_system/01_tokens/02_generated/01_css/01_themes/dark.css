@@ -6,7 +6,7 @@
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --ifx-bg-canvas: var(--ifx-color-slate-850);
+  --ifx-bg-canvas: #0b0b2b;
   --ifx-bg-surface: var(--ifx-color-slate-800);
   --ifx-bg-elevated: var(--ifx-color-slate-700);
   --ifx-bg-subtle: var(--ifx-color-slate-900);

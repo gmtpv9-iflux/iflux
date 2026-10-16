@@ -42,8 +42,17 @@ export async function mountPublishedWidgets(tree, opts) {
   opts = opts || {};
   var prefix = opts.logPrefix || '[mountPublished]';
   if (!tree || !tree.length) return [];
-  if (!window.IfxTemplateLoader) await loadScript(LOADER_SRC);
-  if (!window.IfluxWidgetRegistry) await loadScript(REGISTRY_SRC).catch(function () {});
+  /* loader.js và widget-registry.js độc lập nhau (registry chỉ là catalog object, loader không
+     đọc gì từ registry khi nạp) nhưng trước đây bị await TUẦN TỰ — đo Puppeteer (throttle mobile)
+     trên /tin-tuc: loader 6019→6299ms rồi registry mới bắt đầu 6339→6523ms, cộng dồn vào chuỗi
+     trước khi templates.json được fetch. Nạp song song, chỉ khác thời điểm bắt đầu request,
+     không đổi hành vi (registry vẫn best-effort qua .catch, loader vẫn throw nếu lỗi). */
+  var loaderNeeded = !window.IfxTemplateLoader;
+  var registryNeeded = !window.IfluxWidgetRegistry;
+  await Promise.all([
+    loaderNeeded ? loadScript(LOADER_SRC) : Promise.resolve(),
+    registryNeeded ? loadScript(REGISTRY_SRC).catch(function () {}) : Promise.resolve()
+  ]);
 
   /* Tải SONG SONG (không await tuần tự từng widget) — mỗi widget host collapse về 0px rồi
      "nở" tức thì khi dựng xong (không có skeleton), tải tuần tự kéo dài thời gian trang còn

@@ -15,7 +15,7 @@ var CORE_TIERS = [
     ASSET + 'watchlist-store.js?v=f604e76323',
     ASSET + 'alert-store.js?v=d341795091',
     ASSET + 'alert-ui.js?v=559259d072',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a',
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a',
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
     ASSET + 'watchlist-block.js?v=02655cb8cf'
   ],

@@ -40,7 +40,7 @@ function initMailer(config) {
   getLogger().info({ provider: name }, 'Email OTP provider ready');
 }
 
-async function sendVerificationOtp(config, { to, code, displayName }) {
+async function sendVerificationOtp(config, { to, code, displayName, expiryMinutes }) {
   const provider = getProvider(config);
   if (!provider) {
     const err = new Error('Email service not configured');
@@ -48,7 +48,7 @@ async function sendVerificationOtp(config, { to, code, displayName }) {
     throw err;
   }
 
-  const { subject, text, html } = buildVerificationOtpEmail({ code, displayName });
+  const { subject, text, html } = buildVerificationOtpEmail({ code, displayName, expiryMinutes });
   await provider.sendEmail(config, { to, subject, text, html });
 }
 

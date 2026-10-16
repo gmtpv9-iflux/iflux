@@ -217,6 +217,9 @@
 .ifx-app-header.is-messages-open .ifx-app-header-msg-panel { max-height: min(60vh, 420px); }
 /* < lg: menu người dùng mở bằng drawer, không bằng dropdown */
 .ifx-app-header-user { position: relative; }
+/* Mặc định ẩn trong HTML tĩnh (chờ auth.js xác nhận đã đăng nhập mới hiện) —
+ * .ifx-dropdown có display:inline-block nên cần override đúng độ đặc hiệu, [hidden] đơn thuần không đủ. */
+.ifx-app-header-user[hidden] { display: none; }
 .ifx-app-header-actions .ifx-app-header-user .ifx-dropdown-menu { display: none; }
 .ifx-app-header-avatar-badged { position: relative; }
 .ifx-app-header-avatar-badge {
