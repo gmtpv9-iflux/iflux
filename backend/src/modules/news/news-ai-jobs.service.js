@@ -88,6 +88,28 @@ async function listJobs() {
     FROM news_ai_jobs j LEFT JOIN news_posts p ON p.id = j.source_post_id
     ORDER BY j.created_at DESC,j.id DESC LIMIT 100`)).rows;
 }
+/* Duyệt tay (Owner 2026-10-16): Admin xem lại/sửa bản nháp AI (job.result.article_input) trên
+ * trang giống edit bài thường rồi Duyệt & Xuất bản — body gửi lên là NỘI DUNG ĐẦY ĐỦ Admin đã
+ * xác nhận (có thể đã sửa), không merge lại với article_input ở đây để tránh dữ liệu cũ đè lên
+ * sửa đổi mới. status luôn ép 'publish_AI' (khác 'published' chỉ ở KHÔNG vào sitemap/Google
+ * Index) bất kể body gửi gì. */
+async function approveJob(id, articleFields, actor) {
+  const job = await getJob(id);
+  if (job.status !== 'needs_review') {
+    throw AppError.badRequest('AI_JOB_NOT_REVIEWABLE', 'Chỉ duyệt được job đang ở trạng thái cần xem lại');
+  }
+  const published = await articles.updateArticle(
+    job.source_post_id,
+    Object.assign({}, articleFields, { status: 'publish_AI' }),
+    actor
+  );
+  await query(
+    `UPDATE news_ai_jobs SET status='published',review_reasons='[]'::jsonb,last_error=NULL,updated_at=NOW() WHERE id=$1`,
+    [id]
+  );
+  return { id: job.id, status: 'published', post_id: published.id };
+}
+
 async function retryJob(id) {
   // Chỉ retry lỗi kỹ thuật. Review cần phiên nguồn/prompt mới hoặc xử lý biên tập.
   const res = await query(`UPDATE news_ai_jobs SET status='queued',attempts=0,last_error=NULL,next_attempt_at=NOW(),updated_at=NOW()
@@ -271,4 +293,4 @@ async function getStats(days = 30) {
   };
 }
 
-module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,processOne,runNewsAiWorker,getStats };
+module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,approveJob,processOne,runNewsAiWorker,getStats };

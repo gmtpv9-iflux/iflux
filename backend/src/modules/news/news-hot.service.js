@@ -65,7 +65,7 @@ async function getHotPostIds(range, limit) {
          COALESCE(e.likes, 0) AS likes,
          COALESCE(c.n, 0) * $2 + COALESCE(r.n, 0) * $3 + COALESCE(e.shares, 0) * $4 + COALESCE(e.likes, 0) * $5 AS score
        FROM candidates cand
-       JOIN news_posts p ON p.id = cand.news_post_id AND p.status IN ('published', 'published_rss')
+       JOIN news_posts p ON p.id = cand.news_post_id AND p.status IN ('published', 'published_rss', 'publish_AI')
        LEFT JOIN window_comments c ON c.news_post_id = p.id
        LEFT JOIN window_reposts r ON r.news_post_id = p.id
        LEFT JOIN window_events e ON e.news_post_id = p.id

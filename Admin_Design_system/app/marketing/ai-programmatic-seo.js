@@ -204,9 +204,13 @@
         var chip = STATUS_CHIP[j.status] || 'ix-chip';
         var label = STATUS_LABEL[j.status] || j.status;
         var reason = j.last_error || (j.review_reasons || []).join(', ') || '—';
-        var retryBtn = j.status === 'failed' ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-aips-retry="' + esc(j.id) + '">Thử lại</button>' : '';
+        var actionBtn = j.status === 'failed'
+          ? '<button type="button" class="ix-btn ix-btn-outline ix-btn-sm" data-aips-retry="' + esc(j.id) + '">Thử lại</button>'
+          : j.status === 'needs_review'
+            ? '<a class="ix-btn ix-btn-primary ix-btn-sm" href="/Admin_Design_system/app/news/content/edit.html?job=' + esc(j.id) + '">Xem &amp; Duyệt</a>'
+            : '';
         return '<tr><td>' + esc(new Date(j.created_at).toLocaleString('vi-VN')) + '</td><td>' + esc(j.post_title || j.source_post_id) + '</td><td>' + esc(j.model || '—') + '</td>' +
-          '<td><span class="ix-chip ' + chip + '">' + esc(label) + '</span></td><td>' + esc(reason) + '</td><td>' + retryBtn + '</td></tr>';
+          '<td><span class="ix-chip ' + chip + '">' + esc(label) + '</span></td><td>' + esc(reason) + '</td><td>' + actionBtn + '</td></tr>';
       }).join('') || '<tr><td colspan="6" class="ix-caption">Chưa có job nào</td></tr>';
       tb.querySelectorAll('[data-aips-retry]').forEach(function (btn) {
         btn.addEventListener('click', function () { retryJob(btn.getAttribute('data-aips-retry')); });

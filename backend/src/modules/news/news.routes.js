@@ -878,6 +878,32 @@ function createNewsRouter(deps) {
     }
   );
 
+  /* Duyệt tay job AI needs_review: Admin xem/sửa bản nháp AI soạn (giống trang edit bài thường)
+     rồi Duyệt & Xuất bản → status='publish_AI' (khác 'published' chỉ ở KHÔNG vào sitemap/Google
+     Index — xem comment STATUSES trong news-articles.service.js). Owner 2026-10-16. */
+  router.post(
+    '/admin/ai/jobs/:id/approve',
+    perm('news.articles.edit'),
+    validate(z.object({
+      params: z.object({ id: z.string().uuid() }),
+      body: articleBodySchema.partial().extend({ category_id: z.string().uuid().optional() })
+    })),
+    async (req, res, next) => {
+      try {
+        const actor = {
+          id: (req.admin && req.admin.id) || 'admin',
+          name: (req.body && req.body.created_by_name) || (req.admin && (req.admin.name || req.admin.email)) || 'Admin',
+          tier: 'admin',
+          tier_label: 'Admin'
+        };
+        const result = await aiJobs.approveJob(req.validated.params.id, req.validated.body, actor);
+        return success(res, result);
+      } catch (err) {
+        next(err);
+      }
+    }
+  );
+
   router.delete('/admin/articles/:id', perm('news.articles.delete'), async (req, res, next) => {
     try {
       const result = await articles.deleteArticle(req.params.id);

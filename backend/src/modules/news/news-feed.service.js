@@ -160,7 +160,7 @@ async function fetchCommunityRows(filters) {
   let sql =
     `SELECT id, content_type, status, created_at,
        ${FEED_PAYLOAD_SQL} || jsonb_build_object('sort_at', COALESCE((payload->>'published_at')::timestamptz, created_at)) AS payload` +
-    ` FROM news_posts WHERE status IN ('published', 'published_rss')`;
+    ` FROM news_posts WHERE status IN ('published', 'published_rss', 'publish_AI')`;
 
   if (filters.content_type) {
     params.push(filters.content_type);
@@ -278,14 +278,14 @@ async function resolveRelatedSeed(relatedTo) {
   const key = String(relatedTo);
   const byId = await query(
     `SELECT id, content_type, status, created_at, ${FEED_PAYLOAD_SQL} AS payload
-     FROM news_posts WHERE id = $1 AND status IN ('published', 'published_rss') LIMIT 1`,
+     FROM news_posts WHERE id = $1 AND status IN ('published', 'published_rss', 'publish_AI') LIMIT 1`,
     [key]
   );
   let row = byId.rows[0];
   if (!row) {
     const bySlug = await query(
       `SELECT id, content_type, status, created_at, ${FEED_PAYLOAD_SQL} AS payload
-       FROM news_posts WHERE payload->>'slug' = $1 AND status IN ('published', 'published_rss') LIMIT 1`,
+       FROM news_posts WHERE payload->>'slug' = $1 AND status IN ('published', 'published_rss', 'publish_AI') LIMIT 1`,
       [key]
     );
     row = bySlug.rows[0];
@@ -400,7 +400,7 @@ async function getFeedCardsByIds(ids) {
   const res = await query(
     `SELECT id, content_type, status, created_at,
        ${FEED_PAYLOAD_SQL} || jsonb_build_object('sort_at', COALESCE((payload->>'published_at')::timestamptz, created_at)) AS payload
-     FROM news_posts WHERE id = ANY($1::varchar[]) AND status IN ('published', 'published_rss')`,
+     FROM news_posts WHERE id = ANY($1::varchar[]) AND status IN ('published', 'published_rss', 'publish_AI')`,
     [ids.map(String)]
   );
   return res.rows.map(rowToFeedCard).filter(Boolean);
