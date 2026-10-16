@@ -54,6 +54,7 @@
     pending: { label: 'Chờ duyệt', chip: 'ix-chip ix-chip-warning' },
     published: { label: 'Xuất bản', chip: 'ix-chip ix-chip-success' },
     published_rss: { label: 'Xuất bản (RSS)', chip: 'ix-chip ix-chip-info' },
+    publish_AI: { label: 'Xuất bản (AI, đã duyệt)', chip: 'ix-chip ix-chip-accent' },
     scheduled: { label: 'Đã lên lịch', chip: 'ix-chip ix-chip-info' }
   };
 
@@ -107,7 +108,7 @@
 
   /** Trang xem: đã xuất bản (Admin/RSS) → User Web; còn lại → URL nguồn nếu có */
   function viewHref(a) {
-    var live = a.status === 'published' || a.status === 'published_rss';
+    var live = a.status === 'published' || a.status === 'published_rss' || a.status === 'publish_AI';
     if (!live && a.external_url) {
       return String(a.external_url);
     }
