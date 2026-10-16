@@ -81,7 +81,7 @@
   }
 
   function loadStats() {
-    return request('/admin/news-ai/stats').then(function (s) {
+    return request('/news/admin/news-ai/stats').then(function (s) {
       var byStatus = s.by_status || {};
       var daily = s.daily || [];
       var today = daily.filter(function (d) { return d.date === todayKey(); })[0] || { estimated_cost_usd: 0 };
@@ -127,7 +127,7 @@
   }
 
   function loadConfig() {
-    return request('/admin/news-ai/config').then(function (cfg) {
+    return request('/news/admin/news-ai/config').then(function (cfg) {
       document.getElementById('aips-enabled').checked = !!cfg.enabled;
       document.getElementById('aips-auto-publish').checked = !!cfg.auto_publish;
       document.getElementById('aips-model').value = cfg.model || '';
@@ -146,7 +146,7 @@
       price_per_1k_output_usd: Number(document.getElementById('aips-price-out').value) || 0,
       daily_budget_usd: Number(document.getElementById('aips-daily-budget').value) || 0
     };
-    request('/admin/news-ai/config', { method: 'PATCH', body: body }).then(function () {
+    request('/news/admin/news-ai/config', { method: 'PATCH', body: body }).then(function () {
       toast('Đã lưu cấu hình', 'success');
       loadStats();
     }).catch(function (e) { toast(e.message || 'Lỗi lưu cấu hình', 'danger'); });
@@ -159,7 +159,7 @@
   }
 
   function loadInstruction() {
-    return request('/admin/news-ai/instruction').then(function (p) {
+    return request('/news/admin/news-ai/instruction').then(function (p) {
       document.getElementById('aips-prompt-body').value = p.body || '';
       document.getElementById('aips-prompt-updated').textContent = p.updated_at ? ('Cập nhật lần cuối: ' + new Date(p.updated_at).toLocaleString('vi-VN')) : '';
       updateCount();
@@ -168,7 +168,7 @@
 
   function saveInstruction() {
     var body = document.getElementById('aips-prompt-body').value;
-    request('/admin/news-ai/instruction', { method: 'PATCH', body: { body: body } }).then(function (p) {
+    request('/news/admin/news-ai/instruction', { method: 'PATCH', body: { body: body } }).then(function (p) {
       toast('Đã lưu instruction', 'success');
       document.getElementById('aips-prompt-updated').textContent = p.updated_at ? ('Cập nhật lần cuối: ' + new Date(p.updated_at).toLocaleString('vi-VN')) : '';
     }).catch(function (e) { toast(e.message || 'Lỗi lưu instruction', 'danger'); });

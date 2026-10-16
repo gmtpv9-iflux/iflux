@@ -2,6 +2,16 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T15:40:00+07:00 — Claude — hoàn thành — fix "Route GET /api/admin/news-ai/config not found" — frontend gọi thiếu tiền tố `/news`
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner báo lỗi đúng nguyên văn khi dùng trang: "Route GET /api/admin/news-ai/config not found".
+- **Phạm vi:** `Admin_Design_system/app/marketing/ai-programmatic-seo.js` (5 chỗ gọi `request(...)`), bump version HTML.
+- **Nguyên nhân THẬT:** `news.routes.js` được mount tại `${LEGACY_API_PREFIX}/news` (`backend/src/app.js:158`, xác nhận lại lần này bằng cách grep các trang Admin ĐANG CHẠY đúng khác cùng gọi vào router này — `news-categories-page.js`/`rss-providers-page.js`/`news-author-list-page.js` đều gọi `request('/news/admin/...')`, có tiền tố `/news`). JS tôi viết lúc trước gọi thẳng `request('/admin/news-ai/...')` — thiếu `/news` — ra đúng URL `/api/admin/news-ai/...` (không khớp route nào, 404 "not found"). Trùng hợp: lúc tôi tự curl test tay trước đó TÔI DÙNG ĐÚNG path `/api/news/admin/news-ai/config` (nên test "thành công" — ra lỗi auth đúng như kỳ vọng) nhưng KHÔNG đối chiếu lại với path thật trong file JS — lỗi lọt qua vì tự kiểm bằng tay dùng path khác với code thật.
+- **Trước → sau:** `request('/admin/news-ai/stats'|'/config'|'/instruction')` → `request('/news/admin/news-ai/...')` (cả 5 lời gọi: stats, config GET/PATCH, instruction GET/PATCH).
+- **Kiểm tra:** `node --check` PASS. Đối chiếu bằng cách grep các trang Admin khác ĐANG hoạt động đúng, không suy đoán theo trí nhớ.
+- **Commit:** sẽ tạo riêng.
+- **Còn lại/lưu ý cho AI tiếp theo (bài học):** khi tự test tay 1 API mới bằng curl, PHẢI copy chính xác path từ code thật (grep lại file) để test, không tự gõ path theo trí nhớ/suy đoán — nếu không, test "pass" không đảm bảo code thật đúng, như trường hợp này.
+
 ## 2026-10-16T15:20:00+07:00 — Claude — hoàn thành — tái cấu trúc tab Thống kê AI Programmatic SEO: dashboard KPI đầu trang + main/sidebar + biểu đồ combo
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner yêu cầu học theo pattern Admin sẵn có: (1) khối thống kê dạng dashboard đưa lên ĐẦU TRANG (trước đây nằm trong tab Thống kê); (2) tab Thống kê chia 2 cột — main rộng ưu tiên biểu đồ trực quan, sidebar hẹp phải ưu tiên thiết lập/cấu hình; (3) biểu đồ combo trục X=ngày, cột=token, 2 đường line=chi phí+số bài xuất bản. Đã khảo sát kỹ pattern có sẵn trước khi code (fork research), Owner duyệt đề xuất cụ thể trước khi làm.
