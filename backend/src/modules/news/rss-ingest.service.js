@@ -320,7 +320,6 @@ async function upsertRssArticle(payload) {
       `UPDATE news_posts SET status = $2, payload = $3::jsonb, updated_at = NOW() WHERE id = $1`,
       [row.id, desiredStatus, JSON.stringify(merged)]
     );
-    await enqueueAiSafely(row.id);
     return { id: row.id, action: 'updated', status: desiredStatus };
   }
 
@@ -342,17 +341,13 @@ async function upsertRssArticle(payload) {
      VALUES ($1, NULL, $2, $3, 'PENDING', $4::jsonb, NOW(), NOW())`,
     [id, 'article', desiredStatus, JSON.stringify(record)]
   );
-  await enqueueAiSafely(id);
   return { id, action: 'created', status: desiredStatus };
 }
 
-async function enqueueAiSafely(id) {
-  try { await require('./news-ai-jobs.service').enqueueSource(id); }
-  catch (_) {
-    // Nguồn đã được lưu; recovery worker sẽ quét lại. Không log error body/key/nội dung nguồn.
-    require('../../core/logger/logger').getLogger().warn({ postId:id,code:'AI_ENQUEUE_FAILED' },'news AI enqueue failed');
-  }
-}
+/* Owner 2026-10-16: KHÔNG tự enqueue AI ngay lúc ingest RSS nữa — đây chính là nguồn "hàng chờ"
+ * Owner cấm. Việc chọn nguồn để AI viết là TRÁCH NHIỆM DUY NHẤT của runNewsAiWorker()
+ * (news-ai-jobs.service.js), tự chọn 1 bài mới nhất tại đúng thời điểm nó cần viết — không ai
+ * khác được tạo trước job AI nào cả. RSS ingest chỉ còn việc ghi/cập nhật `news_posts`. */
 
 async function processFeed(mapping, limit) {
   const providerName = PROVIDER_NAMES[mapping.providerId] || mapping.providerId;
