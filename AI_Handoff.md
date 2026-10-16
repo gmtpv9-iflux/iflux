@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T12:00:00+07:00 — Claude — hoàn thành — Production chỉ giữ code chạy thật: bỏ `patterns/` khỏi release Production, xoá file SoT trùng, sửa mô tả rule SSH
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner chốt nguyên tắc: "Production không cần lưu tài liệu — tài liệu lưu ở Staging. Production hoàn toàn là code source đang hoạt động. Thậm chí Production không cần lưu cả Pattern, Legacy." Owner chọn phạm vi: CHỈ sửa script deploy (không đổi lịch sử Git nhánh `production`, không đụng gì khác).
+- **Phạm vi:** `.github/workflows/deploy-production.yml` (bỏ `patterns` khỏi danh sách copy release + sửa comment đầu file); `.cursor/rules/ssh-deployment-boundary.mdc` (sửa `description` frontmatter cho khớp nội dung thật — cũ vẫn ghi "Live Production la Protected, cam SSH" mâu thuẫn với rule bên trong đã cho phép SSH an toàn từ 2026-10-09); xoá file trùng `/SoT — Deployment.md` (gốc repo, bản stub cũ 19/08 chỉ trỏ sang `docs/SoT — Deployment.md`, còn ghi sai tên workflow `deploy-production-new.yml` không còn tồn tại).
+- **Trước → sau:**
+  - `patterns/` (thư mục gốc, tự nhận là "Canonical Template Library — Preview/Reference" theo `patterns/README.md`) đang bị copy vào mọi release Production (`deploy-production.yml` dòng copy danh sách dir) dù xác nhận KHÔNG có code nào trong `User_Web`/`backend` tham chiếu tới nó — thuần lãng phí dung lượng release, không phục vụ user thật. Bỏ khỏi danh sách copy của Production; **Staging giữ nguyên** (`deploy-staging.yml` vẫn copy `patterns/` — đúng ý Owner, tài liệu/reference sống ở Staging).
+  - Comment đầu `deploy-production.yml` cũ ghi "Production chỉ chứa đúng những gì có trong Git" — không còn đúng (giờ Production CHỦ ĐỘNG bớt hơn Git) → sửa lại cho khớp nguyên tắc mới.
+- **Kiểm tra:** đọc lại script sau sửa, xác nhận chỉ bớt đúng 1 dòng (`patterns`) khỏi `for d in ...`, không đổi bước nào khác (migrate/health check/rollback nguyên vẹn). Chưa chạy thử CI thật (chỉ áp dụng khi push `production` lần tới).
+- **Commit:** sẽ tạo riêng.
+- **Còn lại/lưu ý cho AI tiếp theo:** Owner có nhắc thêm "Legacy" nhưng chưa xác định cụ thể là thư mục/khái niệm nào trong repo — chưa xử lý, cần hỏi lại khi có dịp. Owner cũng gợi ý phương án lớn hơn ("làm sạch cả nhánh Git production, không merge docs/Product Backlogs/patterns vào production nữa") nhưng CHƯA chọn — chỉ chọn sửa script lần này; nếu sau này Owner muốn làm tiếp hướng đó, cần rà kỹ hơn (ảnh hưởng tới pattern merge `staging` → `production` hiện tại đang dùng).
+
 ## 2026-10-16T11:10:00+07:00 — Claude — hoàn thành — rewrite `SoT — Environment Map`, bỏ hẳn tên gọi "Staging 1/2"/"Live Production"/GitLab lỗi thời
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner yêu cầu trực tiếp: hiện tại chỉ có Production/Staging qua GitHub CI/CD, không còn Staging 1/Staging 2/Live Production hay GitLab (lịch sử cũ) — update lại SoT Environment Map để tránh nhầm lẫn về sau, **xoá hẳn** thay vì chỉ đánh dấu lỗi thời.

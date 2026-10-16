@@ -1,5 +1,5 @@
 ---
-description: SSH / Deployment Boundary — Live Production la Protected, cam SSH deploy truc tiep
+description: SSH / Deployment Boundary — Production (iflux.vn) chi deploy qua CI/CD, SSH chi cho tac vu chan doan an toan
 alwaysApply: true
 ---
 
