@@ -118,21 +118,22 @@ async function retryJob(id) {
   return res.rows[0];
 }
 
+/* Owner 2026-10-16: bỏ giới hạn "số job/ngày" riêng — dư thừa, chồng chéo với daily_token_budget
+ * (Admin tự đặt, chặn ở processOne() trước khi tới đây) và từng gây job "queued" mồ côi (enqueue
+ * xong nhưng cap job/ngày chặn claim, job đứng lại mãi — đúng lỗi Owner báo "không có hàng chờ"). */
 async function claimJob(config, token) {
   const client = await getPool().connect();
   try {
     await client.query('BEGIN');
-    // Serialize quota reservation across worker processes; no network call in this transaction.
+    // Serialize claim across worker processes; no network call in this transaction.
     await client.query('SELECT pg_advisory_xact_lock(402731)');
     const job = (await client.query(`WITH picked AS (
       SELECT id FROM news_ai_jobs WHERE attempts < $1 AND
         ((status='queued' AND next_attempt_at<=NOW()) OR (status='running' AND lease_until<NOW()))
-        AND (started_at >= date_trunc('day',NOW() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' OR
-          (SELECT COUNT(*) FROM news_ai_jobs WHERE started_at >= date_trunc('day',NOW() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC') < $3)
       ORDER BY created_at,id FOR UPDATE SKIP LOCKED LIMIT 1
     ) UPDATE news_ai_jobs j SET status='running',attempts=attempts+1,lease_token=$2,
       started_at=NOW(),lease_until=NOW()+INTERVAL '15 minutes',updated_at=NOW()
-      FROM picked WHERE j.id=picked.id RETURNING j.*`,[config.NEWS_AI_MAX_ATTEMPTS || 3,token,config.NEWS_AI_MAX_JOBS_PER_DAY || 10])).rows[0];
+      FROM picked WHERE j.id=picked.id RETURNING j.*`,[config.NEWS_AI_MAX_ATTEMPTS || 3,token])).rows[0];
     await client.query('COMMIT');
     return job;
   } catch (err) { await client.query('ROLLBACK'); throw err; }
@@ -225,27 +226,42 @@ async function processOne(config = runtimeConfig, provider) {
   }
 }
 
-async function runNewsAiWorker(config = runtimeConfig) {
-  if (!config.NEWS_AI_ENABLED || !config.OPENAI_API_KEY) return { status:'disabled' };
-  if (!(await aiConfig.getConfig()).enabled) return { status:'disabled' };
-  // Recovery cho nguồn đã lưu nhưng enqueue lỗi hoặc server restart. Hash phiên nguồn chống trùng.
+/* Chọn 1 nguồn MỚI NHẤT chưa xử lý (ưu tiên phụ bằng interest trong pool gần nhất) — gọi lại
+ * MỖI LẦN cần 1 bài, không phải chọn trước cả lô. */
+async function pickNextSource(config) {
   const batchSize = config.NEWS_AI_BATCH_SIZE || 2;
-  // Pool rộng hơn batch thật (tối đa 50, hoặc 10x batch) — lấy MỚI NHẤT trước, rồi mới xếp hạng
-  // "thú vị" bên trong pool đó, để bài thú vị không bao giờ vượt qua bài mới hơn ở ngoài pool.
   const poolSize = Math.min(50, batchSize * 10);
   const candidates = (await query(`SELECT p.id,p.payload->>'title' AS title FROM news_posts p WHERE p.content_type='article'
     AND p.status IN ('published_rss','pending') AND (p.payload ? 'source_id' OR p.payload->'source' ? 'id')
     AND NOT EXISTS(SELECT 1 FROM news_ai_jobs j WHERE j.source_post_id=p.id)
     ORDER BY p.created_at DESC,p.id DESC LIMIT $1`,[poolSize])).rows;
-  const sources = candidates
+  if (!candidates.length) return null;
+  const ranked = candidates
     .map((row, idx) => ({ id: row.id, recency_rank: idx, interest_score: scoreTitleInterest(row.title) }))
-    .sort((a, b) => (b.interest_score - a.interest_score) || (a.recency_rank - b.recency_rank))
-    .slice(0, batchSize);
-  for (const source of sources) {
-    try { await enqueueSource(source.id,config); } catch (_) { /* Giữ nguyên nguồn; API Admin cho biết cấu hình/context lỗi. */ }
-  }
+    .sort((a, b) => (b.interest_score - a.interest_score) || (a.recency_rank - b.recency_rank));
+  return ranked[0].id;
+}
+
+/* Owner 2026-10-16: KHÔNG có hàng chờ. Mỗi lượt: chọn 1 bài tại đúng thời điểm đó → viết ngay
+ * (enqueue + process trong cùng bước, không tách rời) → xong mới chọn bài tiếp theo (tại thời
+ * điểm vừa viết xong). Lịch sử chỉ có 3 kết quả: viết thành công / viết hỏng / chờ duyệt (nếu
+ * tắt tự đăng) — không có trạng thái "đang chờ" nào tồn tại giữa các lượt. */
+async function runNewsAiWorker(config = runtimeConfig) {
+  if (!config.NEWS_AI_ENABLED || !config.OPENAI_API_KEY) return { status:'disabled' };
+  const aiCfg = await aiConfig.getConfig();
+  if (!aiCfg.enabled) return { status:'disabled' };
+  const batchSize = config.NEWS_AI_BATCH_SIZE || 2;
   const results = [];
-  for (let i=0;i<batchSize;i++) results.push(await processOne(config));
+  for (let i=0;i<batchSize;i++) {
+    if (aiCfg.daily_token_budget > 0 && (await getTodayTokenUsage()) >= aiCfg.daily_token_budget) {
+      results.push({ status:'budget_exceeded' });
+      break;
+    }
+    const sourceId = await pickNextSource(config);
+    if (!sourceId) { results.push({ status:'no_source' }); break; }
+    try { await enqueueSource(sourceId,config); } catch (_) { continue; /* nguồn lỗi context/prompt — bỏ, không chặn lượt sau */ }
+    results.push(await processOne(config));
+  }
   return { status:'processed',results };
 }
 

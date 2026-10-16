@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T20:00:00+07:00 — Claude — hoàn thành — bỏ hẳn khái niệm "hàng chờ" trong worker AI; xoá 199 job `queued` mồ côi trên Production
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner phản ứng gắt (đúng): Tab Lịch sử có bài "Đang chờ" (`queued`) — Owner khẳng định KHÔNG có khái niệm hàng chờ, rule là chọn 1 bài tại đúng thời điểm → viết xong → mới chọn bài tiếp theo tại thời điểm vừa viết xong; Lịch sử chỉ có 3 kết quả: viết thành công / viết hỏng / chờ duyệt (khi tắt tự đăng) — không có "đang chờ xử lý".
+- **Nguyên nhân THẬT:** `runNewsAiWorker()` (sửa lượt trước cùng ngày) chọn SẴN 1 lô (`batchSize`, mặc định 2) nguồn rồi mới xử lý — nếu `claimJob()` chạm cap cứng `NEWS_AI_MAX_JOBS_PER_DAY` (mặc định 10, biến môi trường ẩn, KHÔNG có trên Admin UI) thì các job đã `enqueueSource()` xong nhưng chưa kịp xử lý bị bỏ lại mãi ở `queued` — đúng là lỗi thiết kế (enqueue tách rời process), không phải hành vi mong muốn.
+- **Phạm vi:** `backend/src/modules/news/news-ai-jobs.service.js` (`claimJob()` bỏ hẳn điều kiện cap job/ngày — dư thừa, đã có `daily_token_budget` Admin tự đặt chặn TRƯỚC khi tới claim; `runNewsAiWorker()` viết lại: mỗi lượt trong `batchSize` chọn ĐÚNG 1 nguồn mới nhất (`pickNextSource()`, hàm mới, query lại DB mỗi lần — không chọn trước cả lô) → enqueue → process NGAY trong cùng bước, dừng vòng lặp nếu hết nguồn hoặc chạm `daily_token_budget`), `backend/src/config/index.js` + `backend/.env.example` (xoá `NEWS_AI_MAX_JOBS_PER_DAY` khỏi schema/mẫu — không còn ai dùng), `backend/tests/integration/news-editorial.test.js` (xoá đoạn test hành vi cap job/ngày đã bỏ).
+- **Dữ liệu (không phải code):** xoá qua SSH **199 dòng** `news_ai_jobs.status='queued'` trên Production (`iflux_production_next`) — xác nhận Owner trước khi xoá. Đây là rác từ cơ chế cũ (enqueue xong không kịp xử lý), CHƯA từng gọi OpenAI — không phải lịch sử thật. **10 job `needs_review`** (đã gọi OpenAI thật, có nội dung AI soạn) được GIỮ NGUYÊN, không đụng.
+- **Kiểm tra:** `node --check` PASS cả 3 file JS. Test tích hợp `news-editorial.test.js` tự SKIP ở máy này (cần Postgres thật, không có môi trường test local) — đã soát logic tay, không tự tin 100% chạy qua CI thật cho tới khi Owner/CI xác nhận. `build-web-bundle`/`sync-js-versions --check` PASS.
+- **Commit:** sẽ tạo riêng, deploy cả Staging và Production theo chỉ đạo Owner ("làm xong tự đăng lên Staging và Production").
+- **Còn lại/lưu ý cho AI tiếp theo:** nếu CI thật (có Postgres) báo fail ở `news-editorial.test.js`, kiểm tra lại đúng đoạn vừa xoá (dòng test cap job/ngày) trước — khả năng cao chỉ là phần đã chủ ý bỏ chưa khớp hoàn toàn 100%; KHÔNG thêm lại cap job/ngày nếu fail — sửa test, không revert code (Owner đã chốt rõ "đừng thêm thắt").
+
+
 ## 2026-10-16T19:15:00+07:00 — Claude — hoàn thành (code, chưa deploy) — status mới `publish_AI` + trang Duyệt bài AI (tái dùng trang edit bài thường) + xác nhận cơ chế Google Index đã đúng từ trước
 
 - **Nhiệm vụ/trạng thái:** hoàn thành phần code, CHƯA deploy. Owner phát hiện Tab Lịch sử không có nút duyệt và không xem được nội dung AI soạn — đúng, chưa từng xây. Owner chốt mô hình 3 status: `published_rss` (RSS thô) / `publish_AI` (Admin duyệt tay bài AI, mới) / `published` (Admin viết tay HOẶC AI auto-publish) — chỉ `published` mới vào Google Index — yêu cầu kiểm tra code hiện tại đã đúng chưa trước khi làm.
