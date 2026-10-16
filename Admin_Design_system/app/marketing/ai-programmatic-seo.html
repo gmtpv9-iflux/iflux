@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <script>try{var t=localStorage.getItem('iflux-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Programmatic SEO · iFlux Admin</title>
+  <link rel="preload" href="/Admin_Design_system/iflux-admin-ui/fonts/BeVietnamPro-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/Admin_Design_system/iflux-admin-ui/fonts.css" />
+  <link rel="stylesheet" href="/platform/admin/admin.css?v=r20261002a" />
+  <style>
+    .aips-hint { font-size:13px; color:var(--ix-text-muted); margin:0 0 16px; line-height:1.6; }
+    #aips-chart { min-height:300px; }
+    .aips-toggle-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--ix-border); }
+    .aips-toggle-row:last-child { border-bottom:0; }
+    .aips-toggle-row__title { font-size:14px; font-weight:600; color:var(--ix-text-primary); }
+    .aips-toggle-row__meta { font-size:11px; color:var(--ix-text-muted); margin-top:4px; }
+    #aips-prompt-body { width:100%; min-height:420px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.6; }
+    .aips-count { font-size:12px; color:var(--ix-text-muted); margin-top:6px; }
+  </style>
+</head>
+<body>
+<div class="ix-root"><div class="ix-layout">
+<aside class="ix-sidebar" data-ix-admin-shell="sidebar"><div class="ix-brand"><img class="ix-brand-logo" alt="iFlux" hidden /><span class="ix-brand-name">iFlux Admin</span></div><nav class="ix-menu" data-ix-admin-nav></nav></aside>
+<main class="ix-main">
+<header class="ix-navbar" data-ix-admin-shell="header"><button class="ifx-nav-btn" data-ix-toggle="sidebar" aria-label="Menu"><i class="ti ti-menu-2"></i></button><div class="ix-search"><i class="ti ti-search"></i><input type="text" placeholder="Tìm kiếm..." /></div><div class="ifx-nav-actions"><div class="ix-avatar"></div></div></header>
+<div class="ix-content">
+<h1 class="ix-page-title">AI Programmatic SEO</h1>
+<div class="ix-breadcrumb ix-mb-24" id="adm-page-bc"></div>
+<p class="aips-hint">AI chuyển bài RSS thành bài báo iFlux (tiêu đề, mục lục H2, "Nhận định của iFlux"...). Dữ kiện/số liệu/ngày tháng do AI trích xuất từ bài nguồn — không thể sửa qua trang này. Chỉ sửa được: chỉ dẫn biên tập (instruction), có tự động xuất bản hay không, và model đang dùng.</p>
+
+<div class="ix-grid ix-grid-4 ix-mb-24">
+  <div class="ix-stat-card">
+    <div class="ix-stat-icon success" id="aips-kpi-status-icon"><i class="ti ti-robot"></i></div>
+    <div><div class="ix-stat-label">Trạng thái AI</div><div class="ix-stat-value" id="aips-kpi-status">—</div></div>
+  </div>
+  <div class="ix-stat-card">
+    <div class="ix-stat-icon info"><i class="ti ti-article"></i></div>
+    <div><div class="ix-stat-label">Bài đã tự xuất bản</div><div class="ix-stat-value" id="aips-kpi-published">—</div></div>
+  </div>
+  <div class="ix-stat-card">
+    <div class="ix-stat-icon accent"><i class="ti ti-coin"></i></div>
+    <div><div class="ix-stat-label">Token hôm nay / Ngân sách</div><div class="ix-stat-value" id="aips-kpi-budget">—</div></div>
+  </div>
+  <div class="ix-stat-card">
+    <div class="ix-stat-icon warning"><i class="ti ti-eye-check"></i></div>
+    <div><div class="ix-stat-label">Chờ duyệt</div><div class="ix-stat-value" id="aips-kpi-review">—</div></div>
+  </div>
+</div>
+
+<div class="ix-profile-tabs" style="margin-bottom:20px">
+  <button type="button" class="ix-profile-tab active" data-aips-tab="stats"><i class="ti ti-chart-bar"></i> Thống kê</button>
+  <button type="button" class="ix-profile-tab" data-aips-tab="instruction"><i class="ti ti-file-text"></i> Instruction</button>
+  <button type="button" class="ix-profile-tab" data-aips-tab="history"><i class="ti ti-history"></i> Lịch sử</button>
+</div>
+
+<div class="ix-tab-content active" data-aips-panel="stats">
+  <div class="ix-layout-main">
+    <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:20px">
+      <div class="ix-card" style="padding:20px">
+        <div class="ix-card-header" style="padding:0 0 12px;display:flex;align-items:center;justify-content:space-between">
+          <div class="ix-card-title">Token &amp; bài xuất bản theo ngày (30 ngày gần nhất)</div>
+          <div class="ix-caption">Cột = token/ngày · đường = số bài xuất bản</div>
+        </div>
+        <div id="aips-chart"></div>
+      </div>
+
+      <div class="ix-card" style="padding:20px">
+        <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Theo model</div></div>
+        <div class="ix-table-responsive">
+          <table class="ix-table">
+            <thead><tr><th>Model</th><th>Số job</th><th>Token input</th><th>Token output</th></tr></thead>
+            <tbody id="aips-model-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="ix-card" style="padding:20px">
+        <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Chi tiết theo ngày</div></div>
+        <div class="ix-table-responsive">
+          <table class="ix-table">
+            <thead><tr><th>Ngày</th><th>Job</th><th>Đã xuất bản</th><th>Token input</th><th>Token output</th></tr></thead>
+            <tbody id="aips-daily-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="ix-layout-side-col" style="display:flex;flex-direction:column;gap:20px">
+      <div class="ix-card" style="padding:20px">
+        <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Cấu hình vận hành</div></div>
+        <div class="aips-toggle-row">
+          <div>
+            <div class="aips-toggle-row__title">Bật AI hoạt động</div>
+            <div class="aips-toggle-row__meta">Tắt = AI ngưng hoàn toàn (không nhận bài RSS mới, không xử lý job đang chờ) cho tới khi bật lại. Cần hạ tầng đã bật `NEWS_AI_ENABLED` trên server — công tắc này chỉ quyết định hoạt động hay tạm dừng khi hạ tầng đã sẵn sàng.</div>
+          </div>
+          <label class="ix-switch"><input type="checkbox" id="aips-enabled" data-ix-perm="news.articles.edit" /><span class="ix-switch-slider"></span></label>
+        </div>
+        <div class="aips-toggle-row">
+          <div>
+            <div class="aips-toggle-row__title">Tự động xuất bản</div>
+            <div class="aips-toggle-row__meta">Bật = bài AI soạn xong tự lên "Published" ngay khi qua hết kiểm tra nội dung (fact/entity/event/ảnh hợp lệ) — không chờ duyệt tay. Tắt = luôn vào hàng chờ duyệt như trước.</div>
+          </div>
+          <label class="ix-switch"><input type="checkbox" id="aips-auto-publish" data-ix-perm="news.articles.edit" /><span class="ix-switch-slider"></span></label>
+        </div>
+        <div class="ix-form-group" style="margin-top:12px">
+          <label class="ix-label">Model AI</label>
+          <select class="ix-input" id="aips-model" data-ix-perm="news.articles.edit"><option value="">Để trống = mặc định hệ thống (gpt-5.4)</option></select>
+          <div class="ix-caption">Danh sách lấy trực tiếp từ OpenAI (model thật đang khả dụng cho API key đang cấu hình) — không tự gõ tay nên không lo sai tên.</div>
+        </div>
+        <div class="ix-form-group">
+          <label class="ix-label">Ngân sách token tối đa mỗi ngày</label>
+          <input class="ix-input" type="number" step="1000" min="0" id="aips-daily-budget" data-ix-perm="news.articles.edit" />
+          <div class="ix-caption">0 = không giới hạn. Tổng token (input+output) trong ngày (giờ VN) đạt mức này thì AI tự tạm ngưng tới hết ngày.</div>
+        </div>
+        <button type="button" class="ix-btn ix-btn-primary" id="aips-config-save" data-ix-perm="news.articles.edit" style="margin-top:8px;width:100%"><i class="ti ti-device-floppy"></i> Lưu cấu hình</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ix-tab-content" data-aips-panel="instruction">
+  <div class="ix-card" style="padding:20px">
+    <div class="ix-card-header" style="padding:0 0 12px">
+      <div class="ix-card-title">Chỉ dẫn biên tập AI (news-editorial-v2)</div>
+    </div>
+    <div class="ix-caption" id="aips-prompt-updated" style="margin-bottom:10px"></div>
+    <textarea class="ix-input" id="aips-prompt-body" spellcheck="false" data-ix-perm="news.articles.edit"></textarea>
+    <div class="aips-count" id="aips-prompt-count"></div>
+    <button type="button" class="ix-btn ix-btn-primary" id="aips-prompt-save" data-ix-perm="news.articles.edit" style="margin-top:12px"><i class="ti ti-device-floppy"></i> Lưu instruction</button>
+  </div>
+</div>
+
+<div class="ix-tab-content" data-aips-panel="history">
+  <div class="ix-card" style="padding:20px">
+    <div class="ix-card-header" style="padding:0 0 12px;display:flex;align-items:center;justify-content:space-between">
+      <div class="ix-card-title">Lịch sử xử lý (100 job gần nhất)</div>
+      <button type="button" class="ix-btn ix-btn-outline ix-btn-sm" id="aips-history-refresh"><i class="ti ti-refresh"></i> Tải lại</button>
+    </div>
+    <div class="ix-table-responsive">
+      <table class="ix-table">
+        <thead><tr><th>Thời gian</th><th>Bài viết</th><th>Model</th><th>Trạng thái</th><th>Lý do / Lỗi</th><th></th></tr></thead>
+        <tbody id="aips-history-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div></main></div></div>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-routes.js?v=r20260929a"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-nav-registry.js?v=r20260929a"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell.js?v=waveD20260727"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-sidebar.js?v=groupTitle20260925"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-app-shell-header.js?v=20260716plat1"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/iflux-admin-ui.js?v=r20260928p"></script>
+<script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
+<script src="/design_system/02_foundation/theme.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
+<script src="/Admin_Design_system/app/marketing/ai-programmatic-seo.js?v=r20261016e"></script>
+</body></html>

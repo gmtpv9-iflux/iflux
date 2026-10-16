@@ -42,4 +42,4 @@ Không production deploy, chưa gọi AI thật, không khôi phục file ngư�
 Unit42/42 và PostgreSQL10/10 PASS trên DB tạm; browser fixture desktop/mobile PASS; asset version/bundle PASS. Chưa migrate DB dự án/staging, chưa kiểm chứng dữ liệu thật. Secret dùng chung backend/.env; chưa gọi API thật. Xem bảng readiness trong AI-News-Integration.md.
 
 ## 10. Phase Verdict
-Slice article/UI và pipeline AI preview đã kiểm chứng local. **Chưa nghiệm thu toàn pipeline auto-publish.** [Tài liệu tích hợp và gap](./AI-News-Integration.md), [Prompt](./AI-News-Programmatic-Prompt.md). Chưa commit/push/deploy.
+Slice article/UI và pipeline AI preview đã kiểm chứng local. **Auto-publish đã triển khai 2026-10-16** (Owner bật/tắt + chọn model tại Admin → Thiết lập SEO → AI Programmatic SEO; chỉ publish khi output qua hết kiểm tra nội dung, có review_reasons thật thì luôn rơi về needs_review dù đã bật). [Tài liệu tích hợp và gap](./AI-News-Integration.md). Prompt không còn ở file riêng — sửa trực tiếp trong DB qua Admin.

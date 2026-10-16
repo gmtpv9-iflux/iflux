@@ -52,6 +52,7 @@
     "marketing-brand-identity": { key: "marketing-seo-system", slug: "/admin/tiep-thi/brand-identity", file: "marketing/thiet-lap-seo-he-thong.html", legacy: true },
     "marketing-seo-system": { key: "marketing-seo-system", slug: "/admin/tiep-thi/thiet-lap-seo-he-thong", file: "marketing/thiet-lap-seo-he-thong.html", legacySlugs: ["/admin/tiep-thi/seo-system"] },
     "marketing-seo-pages": { key: "marketing-seo-pages", slug: "/admin/tiep-thi/thiet-lap-seo-tung-trang", file: "marketing/thiet-lap-seo-tung-trang.html", legacySlugs: ["/admin/tiep-thi/seo-pages"] },
+    "marketing-seo-ai-programmatic": { key: "marketing-seo-ai-programmatic", slug: "/admin/tiep-thi/ai-programmatic-seo", file: "marketing/ai-programmatic-seo.html" },
     "marketing-onboarding": { key: "marketing-onboarding", slug: "/admin/tiep-thi/onboarding", file: "marketing/onboarding.html" },
     "system-page-settings": { key: "system-page-settings", slug: "/admin/he-thong/page-settings", file: "system/page-settings.html" },
     "system-templates": { key: "system-templates", slug: "/admin/he-thong/templates", file: "system/templates.html" },
