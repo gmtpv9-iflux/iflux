@@ -180,7 +180,7 @@ async function processOne(config = runtimeConfig, provider) {
      * debug khi cần, không hiển thị dài ở cột Lý do nữa (frontend đổi sang đọc last_error). */
     const checked = context.checkExtraction(extraction,ctx);
     if (checked.reasons.length) {
-      const shortReason = checked.reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,200);
+      const shortReason = checked.reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,80);
       await fence("UPDATE news_ai_jobs SET status='failed',last_error=$3,review_reasons=$4::jsonb,lease_until=NULL,updated_at=NOW()",[shortReason,JSON.stringify(checked.reasons)]);
       return { id:job.id,status:'failed' };
     }
@@ -209,7 +209,7 @@ async function processOne(config = runtimeConfig, provider) {
         return { id:job.id,status:'published',post_id:published.id };
       } catch (publishErr) {
         // Publish thật lỗi (vd slug/category/so sánh) -> Lỗi thật, không phải chờ duyệt.
-        const errCode = 'AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown');
+        const errCode = ('AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown')).slice(0,80);
         await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons='[]'::jsonb,calls=$5::jsonb,lease_until=NULL,updated_at=NOW()",
           [JSON.stringify(preview),errCode,JSON.stringify(calls)]);
         return { id:job.id,status:'failed' };
@@ -221,7 +221,7 @@ async function processOne(config = runtimeConfig, provider) {
      * review_reasons RỖNG (bản nháp sạch) và auto_publish đang tắt mới là 'needs_review' thật —
      * nghĩa là CHỈ còn chờ 1 cái gật đầu của người, luôn có đủ nội dung để xem/sửa. */
     if (preview.review_reasons.length) {
-      const shortReason = preview.review_reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,200);
+      const shortReason = preview.review_reasons.map((r) => String(r).split(':')[0]).join(', ').slice(0,80);
       await fence("UPDATE news_ai_jobs SET status='failed',result=$3::jsonb,last_error=$4,review_reasons=$5::jsonb,calls=$6::jsonb,lease_until=NULL,updated_at=NOW()",
         [JSON.stringify(preview),shortReason,JSON.stringify(preview.review_reasons),JSON.stringify(calls)]);
       return { id:job.id,status:'failed' };
@@ -231,9 +231,6 @@ async function processOne(config = runtimeConfig, provider) {
     return { id:job.id,status:'needs_review' };
   } catch (err) {
     if (err.code==='AI_LEASE_LOST') return { id:job.id,status:'lease_lost' };
-    /* Owner 2026-10-16: log TẠM để chẩn đoán AI_VALIDATION_OR_CONTEXT_ERROR hàng loạt — chỉ vào
-     * log server (PM2, không qua API/DB/user-facing) — gỡ sau khi tìm xong nguyên nhân thật. */
-    try { require('../../core/logger/logger').getLogger().error({ jobId:job.id,errMessage:err && err.message,errCode:err && err.code,errStack:err && err.stack },'news-ai processOne diag'); } catch(_) {}
     const safeCode = /^AI_[A-Z0-9_]+$/.test(err.code || '') ? err.code : 'AI_VALIDATION_OR_CONTEXT_ERROR';
     const retry = err.retryable===true && job.attempts<maxAttempts;
     await fence(`UPDATE news_ai_jobs SET status=$3,last_error=$4,calls=$5::jsonb,lease_until=NULL,
