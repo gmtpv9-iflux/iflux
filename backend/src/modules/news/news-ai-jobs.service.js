@@ -203,7 +203,7 @@ async function processOne(config = runtimeConfig, provider) {
     }
   } catch (err) {
     if (err.code==='AI_LEASE_LOST') return { id:job.id,status:'lease_lost' };
-    const safeCode = /^AI_[A-Z0-9_]+$/.test(err.code || '') ? err.code : 'AI_VALIDATION_OR_CONTEXT_ERROR';
+    const safeCode = (/^AI_[A-Z0-9_]+$/.test(err.code || '') ? err.code : 'AI_VALIDATION_OR_CONTEXT_ERROR').slice(0,80);
     const detail = (err && err.message) || safeCode;
     return await stop(safeCode, detail, null);
   }
@@ -244,7 +244,16 @@ async function runNewsAiWorker(config = runtimeConfig) {
     }
     const sourceId = await pickNextSource(config);
     if (!sourceId) { results.push({ status:'no_source' }); break; }
-    try { await enqueueSource(sourceId,config); } catch (_) { continue; /* nguồn lỗi context/prompt — bỏ, không chặn lượt sau */ }
+    try {
+      await enqueueSource(sourceId,config);
+    } catch (enqueueErr) {
+      // Owner 2026-10-16: lỗi ngay bước chọn nguồn (vd prompt chưa active) CŨNG phải dừng hẳn,
+      // không lặp lại mỗi phút trong im lặng — cùng nguyên tắc "thất bại thì dừng" như processOne().
+      const detail = (enqueueErr && (enqueueErr.message || enqueueErr.code)) || 'unknown';
+      await aiConfig.setConfig({ enabled:false, auto_disabled_reason: String('ENQUEUE_FAILED: ' + detail).slice(0,500) });
+      results.push({ status:'failed', error:'ENQUEUE_FAILED' });
+      break;
+    }
     const outcome = await processOne(config);
     results.push(outcome);
     if (outcome.status !== 'published') break;

@@ -2,6 +2,19 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T22:20:00+07:00 — Claude — hoàn thành — rà soát e2e theo yêu cầu Owner, vá 3 lỗ hổng thật tìm được (không chỉ khẳng định bằng lời)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Owner hỏi "đã chạy được chưa, đi 1 vòng e2e xem còn gì không" — đọc lại TOÀN BỘ `news-ai-jobs.service.js` + trang Admin từ đầu (không dựa vào suy luận cũ), tìm ra 3 vấn đề thật:
+  1. `safeCode` (nhánh exception kỹ thuật) không có `.slice(0,80)` cứng — nếu `err.code` nào đó dài hơn 80 ký tự (dù hiện tại mọi mã `AI_*` trong repo đều ngắn) sẽ lặp lại ĐÚNG bug `VARCHAR(80)` đã sửa trước đó. Đã vá phòng ngừa.
+  2. `enqueueSource()` lỗi (vd prompt chưa active) trước đó chỉ `continue` sang nguồn khác, KHÔNG dừng mạch, KHÔNG báo lý do — vi phạm đúng nguyên tắc Owner vừa chốt ("bất kỳ lỗi nào cũng dừng"). Giờ cũng tắt `enabled` + lưu `auto_disabled_reason` + dừng vòng lặp, giống hệt nhánh lỗi trong `processOne()`.
+  3. `saveConfig()` (frontend) chỉ gọi `loadStats()` sau khi lưu, không gọi `loadConfig()` — nếu Admin bật lại công tắc sau khi xem lỗi, banner đỏ KHÔNG tự ẩn ngay (phải F5 mới thấy mất) dù server đã xoá `auto_disabled_reason`. Đã thêm `loadConfig()` vào sau khi lưu thành công.
+- **Đã kiểm chứng kỹ (không chỉ đọc qua):** đếm tay số `$n` placeholder trong SQL của `stop()` khớp đúng số giá trị truyền vào ở cả 2 nhánh (có/không `resultObj`) — không lặp lại lỗi đếm tham số.
+- **Phạm vi:** `backend/src/modules/news/news-ai-jobs.service.js` (2 chỗ sửa trên), `Admin_Design_system/app/marketing/ai-programmatic-seo.js`+`.html` (1 chỗ sửa + bump version `r20261016h`).
+- **Kiểm tra:** `node --check` PASS, `build-web-bundle`/`sync-js-versions --check` PASS.
+- **Commit:** sẽ tạo riêng, deploy Staging + Production.
+- **Còn lại/lưu ý cho AI tiếp theo:** vẫn còn nguyên rủi ro đã ghi ở mục 22:00 cùng ngày — test tích hợp cũ (`news-editorial.test.js`, đoạn `needs_review`/retry) chưa sửa được vì không có Postgres local. Owner nên tự bật "Bật AI hoạt động" trên Production và quan sát Tab Lịch sử + banner để xác nhận lần này chạy đúng — đây là lần rà soát kỹ nhất trong ngày nhưng KHÔNG thể thay thế việc Owner tự xác nhận bằng mắt trên môi trường thật.
+
+
 ## 2026-10-16T22:00:00+07:00 — Claude — hoàn thành (code) — đơn giản hoá triệt để: bỏ hẳn luồng duyệt tay, chỉ còn 1 công tắc, ngắt mạch ngay khi gặp bất kỳ thất bại nào
 
 - **Nhiệm vụ/trạng thái:** hoàn thành phần code, CHƯA deploy. Owner (đúng, không phải AI tự tắt) tự tắt công tắc vì thấy AI cứ chọn bài mới viết tiếp dù đang lỗi liên tục, tốn token vô ích. Owner chốt lại toàn bộ thiết kế, đảo ngược phần lớn việc đã làm trước đó trong ngày:
