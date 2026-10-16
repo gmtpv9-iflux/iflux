@@ -162,6 +162,7 @@
     request('/news/admin/news-ai/config', { method: 'PATCH', body: body }).then(function () {
       toast('Đã lưu cấu hình', 'success');
       loadStats();
+      loadConfig();
     }).catch(function (e) { toast(e.message || 'Lỗi lưu cấu hình', 'danger'); });
   }
 
