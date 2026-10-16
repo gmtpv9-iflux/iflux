@@ -84,6 +84,13 @@ function renderHeadFromContract(contract, opts) {
       url: identity.seoIdentityUrl,
       description: doc.description || undefined
     };
+    if (c.structuredData && c.structuredData.article) {
+      Object.keys(c.structuredData.article).forEach(function (key) {
+        if (c.structuredData.article[key] !== undefined && c.structuredData.article[key] !== null && c.structuredData.article[key] !== '') {
+          ld[key] = c.structuredData.article[key];
+        }
+      });
+    }
     lines.push(
       '  <script type="application/ld+json">' +
         JSON.stringify(ld).replace(/</g, '\\u003c') +

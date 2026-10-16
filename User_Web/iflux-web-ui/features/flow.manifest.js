@@ -38,7 +38,7 @@ var manifest = {
     m('user-data-sync', 'js', ASSET + 'iflux-user-data-sync.js?v=c4488ad741', 'IfluxUserDataSync'),
     m('stock-mentions', 'js', ASSET + 'stock-mentions.js?v=63b1553d75', 'IfluxStockMentions'),
     m('widget-registry', 'js', ASSET + 'widget-registry.js?v=90088910d4', 'IfluxWidgetRegistry'),
-    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8', 'IfluxPageLayoutEngine'),
+    m('page-layout-engine', 'js', ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2', 'IfluxPageLayoutEngine'),
     m('flow-css', 'css', ASSET + 'flow.css?v=767dd32197', null)
   ],
   lazyChildren: [],

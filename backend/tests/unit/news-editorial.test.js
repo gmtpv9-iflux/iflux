@@ -6,9 +6,10 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { sanitizeArticleHtml } = require('../../src/modules/news/news-articles.service');
 
-it('sanitizes article HTML without losing image import IDs, alt, headings, safe links and tables', () => {
-  const html = sanitizeArticleHtml('<h2>Nội dung</h2><p><a href="/co-phieu/AAA">AAA</a><a href="java&#x73;cript:alert(1)">x</a></p><figure><img src="/media/news/a.webp" alt="Ảnh" data-media-asset-id="asset-a" onerror="alert(1)"><figcaption>Nguồn ảnh</figcaption></figure><table><tbody><tr><td>0</td></tr></tbody></table><script>alert(1)</script><iframe src="https://example.org"></iframe>');
-  assert.match(html, /<h2>Nội dung<\/h2>/); assert.match(html, /href="\/co-phieu\/AAA"/);
+it('sanitizes article HTML while preserving only backend-issued H2 anchors and image IDs', () => {
+  const html = sanitizeArticleHtml('<h2 id="ifx-section-1">Nội dung</h2><h2 id="user-controlled">Không giữ ID</h2><p><a href="/co-phieu/AAA">AAA</a><a href="java&#x73;cript:alert(1)">x</a></p><figure><img src="/media/news/a.webp" alt="Ảnh" data-media-asset-id="asset-a" onerror="alert(1)"><figcaption>Nguồn ảnh</figcaption></figure><table><tbody><tr><td>0</td></tr></tbody></table><script>alert(1)</script><iframe src="https://example.org"></iframe>', { allowedSectionIds:['ifx-section-1'] });
+  assert.match(html, /<h2 id="ifx-section-1">Nội dung<\/h2>/); assert.match(html, /href="\/co-phieu\/AAA"/);
+  assert.match(html, /<h2 id="ifx-section-1">Nội dung<\/h2>/); assert.match(html, /<h2>Không giữ ID<\/h2>/); assert.doesNotMatch(html, /user-controlled/);
   assert.match(html, /data-media-asset-id="asset-a"/); assert.match(html, /alt="Ảnh"/);
   assert.match(html, /<td>0<\/td>/); assert.match(html, /<figcaption>Nguồn ảnh/);
   assert.doesNotMatch(html, /onerror|javascript|<script|<iframe/);

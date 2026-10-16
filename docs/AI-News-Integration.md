@@ -4,7 +4,7 @@
 
 Mục tiêu cuối: RSS → extract → đối chiếu dữ kiện/context → compose → kiểm tra → liên kết hồ sơ/so sánh → publish chính thức → sitemap/Google discovery. Bản hiện tại **đã có adapter OpenAI và pipeline hai bước chạy ra bản xem trước**, chưa đạt toàn bộ điều kiện tự publish.
 
-Prompt nguyên yêu cầu: [AI-News-Programmatic-Prompt.md](./AI-News-Programmatic-Prompt.md), version `news-editorial-v1`. Backend dùng Responses API, model mặc định `gpt-5.4`, Structured Outputs theo [OpenAI Docs](https://developers.openai.com/api/docs/guides/structured-outputs). Không bật tools/web search. Không coi JSON hợp lệ là dữ kiện đã xác minh.
+Prompt nguyên yêu cầu: [AI-News-Programmatic-Prompt.md](./AI-News-Programmatic-Prompt.md), runtime version `news-editorial-v2` (migration `084_news_editorial_v2.sql`). Backend dùng Responses API, model mặc định `gpt-5.4`, Structured Outputs theo [OpenAI Docs](https://developers.openai.com/api/docs/guides/structured-outputs). Không bật tools/web search. Không coi JSON hợp lệ là dữ kiện đã xác minh.
 
 ## 2. Decision
 

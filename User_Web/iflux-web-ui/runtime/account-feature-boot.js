@@ -3,14 +3,20 @@
  * Wave C — CORE boot (~22 script) · PUBLIC lazy khi ?user= xem hồ sơ người khác.
  */
 import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from './page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from './page-widgets.js?v=3313b52579';
 
 var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 var VER = 'pageFrame20260928';
 
-/** Own account — tab Affiliate · Thanh toán · Quyền riêng tư · Mật khẩu · sidebar */
-var CORE_SCRIPTS = [
+/* Owner 2026-10-16 — "Trang cá nhân" (/tai-khoan + /home, dùng chung file này) đang tải TUẦN TỰ
+   cả 22 script (Affiliate+Thanh toán+Riêng tư+Mật khẩu) NGAY LÚC VÀO TRANG, bất kể user chọn tab
+   nào — chuỗi tuần tự lớn nhất site. Tách CORE_SCRIPTS cũ thành BASE (luôn cần — sidebar Hồ sơ)
+   + 4 nhóm theo tab (chỉ cần khi tab đó THẬT SỰ được xem). Mobile: chỉ tải BASE + nhóm của tab
+   đang active lúc vào trang, 3 nhóm còn lại tải/khởi tạo LẦN ĐẦU user bấm tới (ensureTabScripts).
+   Desktop: giữ nguyên hành vi CŨ — tải hết ngay (không đổi, cùng nguyên tắc đã áp dụng xuyên suốt
+   cho Dòng tiền/Cộng đồng/Tin tức — chỉ mobile lazy). */
+var BASE_SCRIPTS = [
   ASSET + 'profile-local-scope.js?v=b96a094057' + VER,
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
   ASSET + 'profile-users-store.js?v=4fb82084de',
@@ -19,21 +25,39 @@ var CORE_SCRIPTS = [
   ASSET + 'profile-avatar.js?v=8eb9a8b60d',
   ASSET + 'profile-view.js?v=b38bbd490a' + VER,
   ASSET + 'iflux-plans-catalog.js?v=58ef6c230e',
-  ASSET + 'profile-bind.js?v=4bc9f42545' + VER,
-  ASSET + 'loyalty-affiliate-store.js?v=b225fb0132' + VER,
-  ASSET + 'affiliate-payout-store.js?v=c3c0f9375b',
-  ASSET + 'affiliate-payout-ui.js?v=995d3eec51',
-  ASSET + 'profile-affiliate.js?v=fb3477ca1e' + VER,
-  ASSET + 'subscription-orders-store.js?v=c6beeaca9e',
-  ASSET + 'profile-payment-store.js?v=3e1d3b162b',
-  ASSET + 'profile-payment-page.js?v=01104c12a0',
-  ASSET + 'profile-privacy-store.js?v=d206957542',
-  ASSET + 'notification-preference-store.js?v=16ff7f1479',
-  ASSET + 'profile-privacy-page.js?v=f77d2a4f93',
-  ASSET + 'client-local-notification-types.js?v=32f1add69c',
-  ASSET + 'inapp-notifications.js?v=73382215b8',
-  ASSET + 'profile-security-page.js?v=0b0607149c'
+  ASSET + 'profile-bind.js?v=4bc9f42545' + VER
 ];
+var TAB_SCRIPTS = {
+  'tab-affiliate': [
+    ASSET + 'loyalty-affiliate-store.js?v=b225fb0132' + VER,
+    ASSET + 'affiliate-payout-store.js?v=c3c0f9375b',
+    ASSET + 'affiliate-payout-ui.js?v=995d3eec51',
+    ASSET + 'profile-affiliate.js?v=fb3477ca1e' + VER
+  ],
+  'tab-payment': [
+    ASSET + 'subscription-orders-store.js?v=c6beeaca9e',
+    ASSET + 'profile-payment-store.js?v=3e1d3b162b',
+    ASSET + 'profile-payment-page.js?v=01104c12a0'
+  ],
+  'tab-privacy': [
+    ASSET + 'profile-privacy-store.js?v=d206957542',
+    ASSET + 'notification-preference-store.js?v=16ff7f1479',
+    ASSET + 'profile-privacy-page.js?v=f77d2a4f93',
+    ASSET + 'client-local-notification-types.js?v=32f1add69c',
+    ASSET + 'inapp-notifications.js?v=73382215b8'
+  ],
+  'tab-security': [
+    ASSET + 'profile-security-page.js?v=0b0607149c'
+  ]
+};
+var TAB_MODULE_GLOBAL = {
+  'tab-affiliate': 'IfluxProfileAffiliate',
+  'tab-payment': 'IfluxProfilePaymentPage',
+  'tab-privacy': 'IfluxProfilePrivacyPage',
+  'tab-security': 'IfluxProfileSecurityPage'
+};
+var tabScriptsLoaded = {}; // tabId -> true sau khi loadScriptsSequential(nhóm đó) xong
+var tabModuleInited = {}; // tabId -> true sau khi gọi .init() module đó
 
 /** Public profile (?user=) — follow · block · chat gate · timeline */
 var PUBLIC_PROFILE_SCRIPTS = [
@@ -45,7 +69,7 @@ var PUBLIC_PROFILE_SCRIPTS = [
   ASSET + 'stock-mentions.js?v=63b1553d75',
   ASSET + 'stock-store.js?v=4dc55126ff',
   ASSET + 'news-store.js?v=41bb32b4bc',
-  ASSET + 'news-ui.js?v=f25bc1eec1',
+  ASSET + 'news-ui.js?v=930afb4be8',
   ASSET + 'profile-page.js?v=5a969de78b'
 ];
 
@@ -185,6 +209,24 @@ function ensureProfileSidebar(tabId) {
   IfluxProfileSidebar.init();
 }
 
+/* Tải + khởi tạo ĐÚNG module của 1 tab, CHỈ 1 LẦN (dùng lại mãi sau đó — đúng nguyên tắc đã chốt
+   cho mọi vùng Cấp 2 khác: fetch 1 lần lúc bấm, không fetch lại). `loadScriptsSequential` tự
+   cache theo src (xem comment ở export boot() bên dưới) nên gọi lại nhóm đã tải trước đó là
+   no-op an toàn — vẫn chặn bằng cờ `tabScriptsLoaded` để khỏi gọi lại hàm không cần thiết. */
+function ensureTabScripts(tabId) {
+  var group = TAB_SCRIPTS[tabId];
+  if (!group || tabScriptsLoaded[tabId]) return Promise.resolve();
+  tabScriptsLoaded[tabId] = true;
+  return loadScriptsSequential(group);
+}
+function initTabModule(tabId) {
+  if (tabModuleInited[tabId]) return;
+  var globalName = TAB_MODULE_GLOBAL[tabId];
+  if (!globalName || !window[globalName] || !window[globalName].init) return;
+  tabModuleInited[tabId] = true;
+  window[globalName].init();
+}
+
 /** Mobile bottom + desktop tabs — switch panel + URL SoT (resolver active). */
 function switchAccountProfileTab(tabId) {
   if (window.IfluxAppShell && IfluxAppShell.syncAccountProfileTabUrl) {
@@ -194,6 +236,11 @@ function switchAccountProfileTab(tabId) {
   syncAccountMobileLayout(tabId);
   ensureProfileSidebar(tabId);
   if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
+  /* Mobile: tab Affiliate/Thanh toán/Riêng tư/Mật khẩu chỉ tải script + init LẦN ĐẦU được chọn
+     (desktop giữ nguyên tải hết ngay từ boot() — xem đó). */
+  if (isAccountMobileNav() && TAB_SCRIPTS[tabId]) {
+    ensureTabScripts(tabId).then(function () { initTabModule(tabId); });
+  }
 }
 
 /** Desktop consumer — mobile không hydrate tab row (bottom nav là consumer). */
@@ -344,10 +391,16 @@ function bootAccountPage() {
   renderAccountProfileTabs();
   if (window.IfluxWebUI && IfluxWebUI.syncMobileTabbar) IfluxWebUI.syncMobileTabbar();
   ensureProfileSidebar(getActiveAccountTabIdFromResolver());
-  if (window.IfluxProfileAffiliate) IfluxProfileAffiliate.init();
-  if (window.IfluxProfilePaymentPage) IfluxProfilePaymentPage.init();
-  if (window.IfluxProfilePrivacyPage) IfluxProfilePrivacyPage.init();
-  if (window.IfluxProfileSecurityPage) IfluxProfileSecurityPage.init();
+  if (isAccountMobileNav()) {
+    /* Mobile: script 4 tab đã tải đúng nhóm (boot() — chỉ tab active lúc vào trang) — chỉ cần
+       init ĐÚNG tab đang active, 3 tab còn lại init lúc switchAccountProfileTab() lần đầu bấm. */
+    initTabModule(getActiveAccountTabIdFromResolver());
+  } else {
+    if (window.IfluxProfileAffiliate) IfluxProfileAffiliate.init();
+    if (window.IfluxProfilePaymentPage) IfluxProfilePaymentPage.init();
+    if (window.IfluxProfilePrivacyPage) IfluxProfilePrivacyPage.init();
+    if (window.IfluxProfileSecurityPage) IfluxProfileSecurityPage.init();
+  }
   if (window.IfluxUserNotificationsUI) IfluxUserNotificationsUI.refresh();
 }
 
@@ -356,7 +409,23 @@ function bootAccountPage() {
  * lại không tải/":chạy đôi" classic script. */
 export async function boot() {
   await waitShellReady(['account', 'home']);
-  var scripts = CORE_SCRIPTS.slice();
+  var scripts = BASE_SCRIPTS.slice();
+  if (isAccountMobileNav() && !isPublicProfileBoot()) {
+    /* Mobile, xem Hồ sơ CHÍNH MÌNH: chỉ tải nhóm script của tab đang active lúc vào trang — 3
+       nhóm còn lại tải lazy lúc user bấm tới (ensureTabScripts, switchAccountProfileTab()). */
+    var initialTab = getActiveAccountTabIdFromResolver();
+    if (TAB_SCRIPTS[initialTab]) {
+      scripts = scripts.concat(TAB_SCRIPTS[initialTab]);
+      tabScriptsLoaded[initialTab] = true;
+    }
+  } else {
+    /* Desktop (hoặc xem Hồ sơ người khác): giữ nguyên hành vi CŨ — tải hết 4 nhóm ngay. */
+    scripts = scripts.concat(
+      TAB_SCRIPTS['tab-affiliate'], TAB_SCRIPTS['tab-payment'],
+      TAB_SCRIPTS['tab-privacy'], TAB_SCRIPTS['tab-security']
+    );
+    ['tab-affiliate', 'tab-payment', 'tab-privacy', 'tab-security'].forEach(function (t) { tabScriptsLoaded[t] = true; });
+  }
   if (isPublicProfileBoot()) {
     scripts = scripts.concat(PUBLIC_PROFILE_SCRIPTS);
   }

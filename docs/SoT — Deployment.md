@@ -3,9 +3,9 @@
 | | |
 |--|--|
 | **Document ID** | SoT-DEPLOY-001 |
-| **Version** | 1.6 |
-| **Status** | 🔒 **LOCKED as current-state Source of Truth** (as-is + Owner ops lock) — §§4-6, P-01, F-06 **đã bị AMENDMENT v1.3 override**, xem ngay dưới |
-| **Date** | 2026-08-02 (v1.2) · 2026-08-14 (v1.3 amendment) |
+| **Version** | 1.7 |
+| **Status** | 🔒 Current Source of Truth; Owner directive 2026-10-14 supersedes earlier statements that Production has no CI/CD deployment path |
+| **Date** | 2026-08-02 (v1.2) · 2026-08-14 (v1.3 amendment) · 2026-10-14 (v1.7 Owner correction) |
 | **Nature** | Mô tả **quy trình deploy thực tế đang dùng** — **không** thiết kế quy trình mới |
 | **Audience** | Owner · Agent Cursor · Operator |
 | **v1.1** | Deploy Units · Rollback decision tree · Forbidden · Deployment Principles (Owner) |
@@ -14,8 +14,20 @@
 | **v1.4** | **AMENDMENT — GitHub là kênh duy nhất.** GitLab bị cắt. (Lịch sử: từng ghi hai Staging.) |
 | **v1.5** | **AMENDMENT — chỉ Staging 1.** Bỏ Staging 2 khỏi đường triển khai. Xem AMENDMENT v1.5. |
 | **v1.6** | **AMENDMENT — Git identity.** `staging` = Staging · `production` = Production Runtime. Xem AMENDMENT v1.6. |
+| **v1.7** | **OWNER CORRECTION — two environments.** Staging `staging.iflux.vn` deploys from GitHub `staging`; Production `iflux.vn` deploys from GitHub `production`, each through its repository CI workflow. Earlier v1.3/v1.5 claims that Production has no deploy channel or a closed gate are historical and superseded. |
 
 ---
+
+## OWNER DIRECTIVE 2026-10-14 — Current deployment map
+
+```text
+GitHub staging    → .github/workflows/deploy-staging.yml    → staging.iflux.vn
+GitHub production → .github/workflows/deploy-production.yml → iflux.vn
+```
+
+There are two active environments: **Staging** and **Production**. “Staging 1” is only an old internal label for `staging.iflux.vn`, not a separate environment. “Staging 2” / `production.iflux.vn` is not an active target. Runtime code changes ship through scoped commits pushed to the matching GitHub branch and its CI/CD workflow. Do not use direct SSH/rsync for code deployment.
+
+Statements below that say “only Staging is deployable,” “Production Gate is not open,” or name `deploy-production-new.yml` are **OUTDATED** and retained as decision history, not current policy. The active Production workflow in this repository is `deploy-production.yml`.
 
 ## AMENDMENT v1.6 (2026-08-19) — 🔒 Owner Directive (Task 05 Gate 03)
 
@@ -35,7 +47,7 @@ Không còn branch `staging-2`. SHA `bb9512a` (tên `production` cũ) giữ trê
 
 ---
 
-## AMENDMENT v1.5 (2026-08-17) — 🔒 Owner Directive
+## [HISTORICAL — SUPERSEDED 2026-10-14] AMENDMENT v1.5 (2026-08-17)
 
 Chỉ đạo Owner ngày 17/08/2026: **bỏ Staging 2 khỏi đường triển khai.** Không thiết kế lại CI Staging 1. Một kênh duy nhất:
 
@@ -53,7 +65,7 @@ Worktree bắt buộc khi làm Staging 1: `/Users/mac/Documents/Productions/iFLU
 
 ---
 
-## AMENDMENT v1.4 (2026-08-16) — 🔒 Owner Directive
+## [HISTORICAL — SUPERSEDED 2026-10-14] AMENDMENT v1.4 (2026-08-16)
 
 Chỉ đạo Owner ngày 16/08/2026, cao hơn mọi mô tả as-is trong file này:
 
@@ -76,7 +88,7 @@ Chỉ đạo Owner ngày 16/08/2026, cao hơn mọi mô tả as-is trong file n�
 
 ---
 
-## AMENDMENT v1.3 (2026-08-14) — 🔒 Owner Directive, override §§3-6/P-01/F-06
+## [HISTORICAL — SUPERSEDED 2026-10-14] AMENDMENT v1.3 (2026-08-14)
 
 > Toàn bộ nội dung §§2-14 phía dưới mô tả **as-is** quy trình rsync/SSH thẳng vào Production **đã từng dùng trước 2026-08-14**. Giữ lại làm evidence lịch sử/tài liệu audit, **KHÔNG còn là quy trình được phép áp dụng cho `iflux.vn`**.
 

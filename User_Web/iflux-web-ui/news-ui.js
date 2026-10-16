@@ -147,14 +147,9 @@
     if (host && posts && posts[0]) {
       host.innerHTML = sidebarTickerRowsInnerHtml(posts[0]);
     }
-    var mobile = document.querySelector('[data-ifx-ix-article-entities]');
-    if (mobile && posts && posts[0] && typeof postEntityChipsHtml === 'function') {
-      var chips = postEntityChipsHtml(posts[0]);
-      if (chips) {
-        mobile.innerHTML = '<div class="ifx-com-pills ifx-com-pills--scroll">' + chips + '</div>';
-        mobile.removeAttribute('hidden');
-      }
-    }
+    /* Bottom bar thuộc quyền sở hữu của trang chi tiết bài hiện tại.
+     * Không cập nhật từ hydrateTickerQuotes: hàm này cũng chạy cho các card
+     * related/lazy feed và posts[0] khi đó không phải bài đang mở. */
   }
 
   /** Fetch runtime quotes rồi refresh chip/sidebar/mobile strip. */
@@ -343,7 +338,19 @@
   function thumbHtml(post, role) {
     var img = resolvePostDisplayImage(post, role);
     if (img.src) {
-      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" loading="lazy" decoding="async" onerror="this.remove()" />';
+      /* Owner 2026-10-16 — PSI: ảnh "cover_hero" (featuredPostHtml — bài đầu tiên/nổi bật, LUÔN
+         nằm trong khung nhìn ban đầu, hầu như luôn là phần tử LCP thật của trang Tin tức/Cộng
+         đồng) đang bị gắn loading="lazy" như MỌI ảnh card khác — khiến trình duyệt trì hoãn
+         request ảnh này (đo Lighthouse thật: "Load Delay" chiếm 66%/4.7s của LCP 7.1s, vì lazy
+         khiến ảnh không được fetch ngay dù đã nằm sẵn trong viewport) — đúng lỗi kinh điển "lazy
+         hoá nhầm ảnh LCP". Chỉ ảnh cover_hero tải eager + fetchpriority=high; mọi ảnh card khác
+         (role khác/không có role, thật sự ở dưới màn hình đầu) GIỮ NGUYÊN lazy — đúng mục đích
+         ban đầu của thuộc tính này. */
+      var isHero = role === 'cover_hero';
+      var loadingAttrs = isHero
+        ? 'loading="eager" fetchpriority="high"'
+        : 'loading="lazy"';
+      return '<img class="ifx-com-post__thumb-img" src="' + img.src + '" alt="' + (img.alt || '') + '" ' + loadingAttrs + ' decoding="async" onerror="this.remove()" />';
     }
     var story = (post.story_tags && post.story_tags[0]) ? post.story_tags[0].name : '';
     var icon = 'ti-article';

@@ -3,12 +3,12 @@ description: SSH / Deployment Boundary — Live Production la Protected, cam SSH
 alwaysApply: true
 ---
 
-# SSH / Deployment Boundary (Owner Directive 2026-08-14) — 🔒 LOCKED
+# SSH / Deployment Boundary (Owner Directive 2026-10-14)
 
 SoT đầy đủ: [`Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md`](../../Product%20Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14%20-%20SSH%20%E2%86%94%20Deployment%20Boundary%20Policy%20(Owner%20Directive).md).
 Environment map: [`docs/SoT — Environment Map (Live Production, Staging 1, Staging 2).md`](../../docs/SoT%20%E2%80%94%20Environment%20Map%20(Live%20Production%2C%20Staging%201%2C%20Staging%202).md).
 
-**Rule này SUPERSEDE mọi hướng dẫn cũ nói "sửa trực tiếp trên Production" / "SSH deploy vào Production mặc định"** (bao gồm `docs/SoT — Deployment.md` v1.2 §3.3/§4-6/P-01/F-06 — nay đã amend v1.3, xem file đó mục "AMENDMENT v1.3").
+**Cập nhật 2026-10-14:** hai môi trường hoạt động là Staging (`staging.iflux.vn`) và Production (`iflux.vn`), đều phát hành qua GitHub CI/CD. Các dòng trong tài liệu cũ nói Production không có CI/CD, Production Gate chưa mở, hoặc chỉ Staging được deploy đã lỗi thời và bị Owner directive này thay thế. Không deploy code trực tiếp qua SSH/rsync.
 
 ⚠️ **Điều này SUPERSEDE cả memory/rule lưu trong Cursor Settings** nếu memory đó nói "mặc định làm trên Production", "sửa trực tiếp trên Production", hay "SSH deploy: đọc `infra/staging/staging.env`". Những memory đó đã lỗi thời. Gặp mâu thuẫn → theo rule này, và báo Owner xoá memory.
 
@@ -27,7 +27,7 @@ GitHub production  → iflux.vn          → :3003
 | Branch | Môi trường | Workflow |
 |---|---|---|
 | `staging` | Canonical Staging · `staging.iflux.vn` | `deploy-staging.yml` |
-| `production` | Canonical Production · `iflux.vn` | `deploy-production-new.yml` |
+| `production` | Canonical Production · `iflux.vn` | `deploy-production.yml` |
 
 - Worktree Staging: `/Users/mac/Documents/Productions/iFLUX_P1` · `staging`.
 - Worktree Production Git: `Staging_2/` · `production` (tên thư mục lịch sử — không phải Staging 2).
@@ -44,4 +44,4 @@ GitHub production  → iflux.vn          → :3003
 
 ## Khi nào ghi Production Runtime
 
-Chỉ qua CI `deploy-production-new.yml` (push `production`). Không SSH tay như trước 2026-08-14.
+Chỉ qua CI `deploy-production.yml` (push `production`). Không SSH tay như trước 2026-08-14.

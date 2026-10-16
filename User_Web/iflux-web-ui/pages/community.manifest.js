@@ -45,7 +45,7 @@ export default {
       span: 12,
       enabled: true,
       locked: true,
-      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=f739ebcf22',
+      lazyModule: '/User_Web/iflux-web-ui/widgets/community-page/index.js?v=19e8b73556',
       css: [
         '/design_system/03_primitives/03_badge/badge.css?v=20260928d',
         '/design_system/03_primitives/08_title/title.css?v=r20261009d',

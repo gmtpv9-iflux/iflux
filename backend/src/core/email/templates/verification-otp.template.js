@@ -1,45 +1,53 @@
 'use strict';
 
 function buildVerificationOtpEmail({ code, displayName, expiryMinutes }) {
-  const name = displayName || 'bạn';
+  const nameUpper = String(displayName || 'bạn').toUpperCase();
   const minutes = expiryMinutes || 15;
   const subject = '[IFLUX] MÃ XÁC MINH TÀI KHOẢN CỦA BẠN';
 
-  const nameUpper = name.toUpperCase();
+  /* Unicode Mathematical Sans-Bold (digit U+1D7EC…F5, chữ cái U+1D5D4…1D607) — plain text không
+     có khái niệm in đậm thật, nhưng đây là ký tự Unicode THẬT KHÁC với ký tự thường (không phải
+     markup/style) nên mọi nơi hiển thị text thuần — kể cả banner thông báo đẩy Gmail/iOS Mail —
+     đều vẽ đậm được, vì bản thân con chữ đã "đậm" ở tầng ký tự. CHỈ áp dụng cho số và chữ cái La
+     Tinh không dấu (mã OTP, chữ "iFlux"): bảng Unicode này không có chữ cái có dấu tiếng Việt —
+     "Đội ngũ" phải giữ chữ thường (ghép dấu tổ hợp lên ký tự toán học rủi ro vỡ font nhiều máy).
+     Owner thử Unicode Fullwidth (rộng gấp đôi) để tăng kích thước nhìn trên banner nhưng không
+     thấy khác biệt — quay lại Sans-Bold, chấp nhận giới hạn kích thước chữ banner thông báo đẩy
+     do OS/app mail tự vẽ, không có cách nào server điều khiển riêng cỡ chữ 1 đoạn trong đó. */
+  function boldSans(s) {
+    return String(s).replace(/[A-Za-z0-9]/g, function (c) {
+      var code = c.charCodeAt(0);
+      if (c >= '0' && c <= '9') return String.fromCodePoint(0x1D7EC + (code - 48));
+      if (c >= 'A' && c <= 'Z') return String.fromCodePoint(0x1D5D4 + (code - 65));
+      return String.fromCodePoint(0x1D5EE + (code - 97));
+    });
+  }
+  var codeBold = boldSans(code);
 
-  /* Unicode Mathematical Bold digits (U+1D7CE…1D7D7) — plain text không có khái niệm in đậm
-     thật, nhưng đây là ký tự Unicode THẬT KHÁC với chữ số thường (không phải markup/style) nên
-     mọi nơi hiển thị text thuần — kể cả banner thông báo đẩy Gmail/iOS Mail — đều vẽ đậm được,
-     vì bản thân con chữ đã "đậm" ở tầng ký tự. Chỉ áp dụng cho CHỮ SỐ: bảng Unicode này không có
-     chữ cái có dấu tiếng Việt (Ã, Á…) — nếu cố "đậm hoá" cả nhãn "MÃ XÁC MINH" sẽ phải bỏ dấu
-     hoặc ghép ký tự tổ hợp, rủi ro vỡ font trên nhiều điện thoại — nên nhãn giữ chữ thường, chỉ
-     mã số (thứ cần nổi bật nhất) được đậm thật. */
-  var BOLD_DIGITS = ['𝟎', '𝟏', '𝟐', '𝟑', '𝟒', '𝟓', '𝟔', '𝟕', '𝟖', '𝟗'];
-  var codeBold = String(code).replace(/[0-9]/g, function (d) { return BOLD_DIGITS[Number(d)]; });
-
-  /* Dòng đầu = "MÃ XÁC MINH: ..." (trước cả lời chào, tự xuống dòng riêng) — notification
-     preview của mail client (Gmail app, iOS Mail...) lấy từ vài chữ đầu bản text này, nên mã
-     cần lộ diện ngay dòng đầu, tách dòng rõ. Bản HTML (mở mail ra mới thấy) có khối mã lớn tô
-     đậm riêng, không lặp dòng này. */
+  /* Owner: giữ lời chào (Claude từng bỏ nhầm khi rút gọn — đã phục hồi), chỉ rút gọn phần sau.
+     Mã tách dòng riêng, đậm thật bằng Unicode. */
   const text =
-    `MÃ XÁC MINH: ${codeBold}\n\n` +
     `Xin chào ${nameUpper},\n\n` +
-    `Cảm ơn bạn đã đăng ký tài khoản iFlux. Vui lòng sử dụng mã xác minh bên dưới để hoàn tất quá trình đăng ký.\n\n` +
-    `Mã có hiệu lực trong ${minutes} phút.\n\n` +
-    `Nếu bạn không thực hiện yêu cầu đăng ký này, vui lòng bỏ qua email. Không chia sẻ mã xác minh này với bất kỳ ai.\n\n` +
+    `Cảm ơn bạn đã đăng ký tài khoản. Vui lòng sử dụng mã dưới đây để hoàn tất đăng ký.\n\n` +
+    `MÃ XÁC MINH\n` +
+    `${codeBold}\n\n` +
+    `Mã có hiệu lực trong ${minutes} phút. Không chia sẻ mã này với bất kỳ ai.\n\n` +
     `Trân trọng,\n` +
-    `Đội ngũ iFlux\n\n` +
+    `Đội ngũ ${boldSans('iFlux')}\n\n` +
     `Email tự động được gửi từ hệ thống iFlux. Vui lòng không trả lời email này.`;
 
+  /* Mã trong khối HTML CŨNG dùng codeBold (Unicode), không chỉ dựa font-weight CSS: nhiều app
+     mail (Gmail…) tạo preview thông báo đẩy bằng cách BÓC HTML ra text thô (mất hết CSS/thẻ),
+     không ưu tiên phần text/plain riêng — nếu chỉ đậm bằng CSS ở đây, bóc ra sẽ về số thường,
+     mất đậm. Dùng ký tự Unicode thật thì bóc kiểu gì mã vẫn đậm. */
   const html =
     `<div style="font-family:'Public Sans',Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#1f2430">` +
       `<p style="font-size:14px;line-height:1.6;margin:0 0 12px">Xin chào <strong>${nameUpper}</strong>,</p>` +
-      `<p style="font-size:14px;line-height:1.6;margin:0 0 24px">Cảm ơn bạn đã đăng ký tài khoản iFlux. Vui lòng sử dụng mã xác minh bên dưới để hoàn tất quá trình đăng ký.</p>` +
+      `<p style="font-size:14px;line-height:1.6;margin:0 0 24px">Cảm ơn bạn đã đăng ký tài khoản. Vui lòng sử dụng mã dưới đây để hoàn tất đăng ký.</p>` +
       `<p style="font-size:12px;font-weight:700;letter-spacing:1px;color:#666;margin:0 0 8px">MÃ XÁC MINH</p>` +
-      `<p style="font-size:36px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${code}</p>` +
-      `<p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 24px">Mã có hiệu lực trong <strong>${minutes} phút</strong>.</p>` +
-      `<p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 24px">Nếu bạn không thực hiện yêu cầu đăng ký này, vui lòng bỏ qua email. Không chia sẻ mã xác minh này với bất kỳ ai.</p>` +
-      `<p style="font-size:14px;line-height:1.6;margin:0 0 32px">Trân trọng,<br/>Đội ngũ iFlux</p>` +
+      `<p style="font-size:36px;font-weight:700;letter-spacing:8px;color:#1f2430;background:#f5f6fa;border-radius:8px;padding:16px 0;text-align:center;margin:0 0 16px">${codeBold}</p>` +
+      `<p style="font-size:13px;color:#1b3587;line-height:1.6;margin:0 0 24px">Mã có hiệu lực trong <strong>${minutes} phút</strong>. Không chia sẻ mã này với bất kỳ ai.</p>` +
+      `<p style="font-size:14px;line-height:1.6;margin:0 0 32px">Trân trọng,<br/><strong>Đội ngũ iFlux</strong></p>` +
       `<hr style="border:none;border-top:1px solid #eee;margin:0 0 16px"/>` +
       `<p style="color:#999;font-size:12px;line-height:1.6;margin:0">Email tự động được gửi từ hệ thống iFlux. Vui lòng không trả lời email này.</p>` +
     `</div>`;

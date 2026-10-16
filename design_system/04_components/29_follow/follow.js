@@ -14,6 +14,31 @@
     return global.IfluxWatchlistStore;
   }
 
+  /* Owner 2026-10-16 — "Theo dõi" phải (1) vào Watchlist [GIỮ NGUYÊN, store() ở trên], (2) đồng
+     bộ server (user_entity_follows, migration 085) để Tin tức "Bạn quan tâm" lọc được + nền cho
+     thông báo sau này. Best-effort (không chặn UI nếu lỗi mạng — Watchlist local vẫn là SoT hiển
+     thị ngay, server chỉ "theo sau") — cùng mẫu authHeaders()/token() đã dùng ở
+     interaction/repost-modal.js, news-page.js. */
+  function apiBase() {
+    if (global.IfluxApi && IfluxApi.apiBase) return IfluxApi.apiBase();
+    return '/api';
+  }
+  function authToken() {
+    try { return (global.IfluxAuth && IfluxAuth.getToken && IfluxAuth.getToken()) || null; }
+    catch (e) { return null; }
+  }
+  function syncServerFollow(entityType, entityId, active) {
+    var token = authToken();
+    if (!token || !entityId) return;
+    var headers = { 'Content-Type': 'application/json', Accept: 'application/json', Authorization: 'Bearer ' + token };
+    fetch(apiBase() + '/news/' + (active ? 'follow' : 'unfollow'), {
+      method: 'POST',
+      headers: headers,
+      credentials: 'same-origin',
+      body: JSON.stringify({ entity_type: entityType, entity_id: entityId })
+    }).catch(function () { /* best-effort — Watchlist local vẫn đúng, không chặn UI */ });
+  }
+
   /* Tabler ti-bookmark — cùng path stroke/fill; class giữ ifx-heart__icon để CSS consumer không gãy. */
   function iconSvg(active) {
     if (active) {
@@ -172,6 +197,7 @@
     var scope = root || document;
     scope.querySelectorAll('[data-ifx-heart][data-ifx-heart-kind="ticker"]').forEach(updateTickerButton);
     scope.querySelectorAll('[data-ifx-heart][data-ifx-heart-kind="story"]').forEach(updateStoryButton);
+    scope.querySelectorAll('[data-ifx-heart][data-ifx-heart-kind="group"]').forEach(updateGroupButton);
   }
 
   function onStoryClick(btn) {
@@ -180,6 +206,7 @@
     var storyId = btn.getAttribute('data-ifx-heart-id');
     try {
       var followed = st.toggleGroupFollow('chu-de', storyId);
+      syncServerFollow('story', storyId, followed);
       if (global.ixToast) {
         ixToast(
           followed ? 'Đã thêm tab chủ đề vào danh sách theo dõi' : 'Đã gỡ tab chủ đề khỏi danh sách theo dõi',
@@ -192,6 +219,65 @@
     }
     refresh();
     dispatchChange();
+  }
+
+  /* Ngành / Hệ sinh thái (Owner 2026-10-16, mới — trước đây chỉ ticker/story có nút Theo dõi).
+     "family" là tên nguồn client cũ cho Hệ sinh thái (watchlist-store.js/seo-url.js
+     parseEcosystemId) — giữ nguyên để không đụng dữ liệu Watchlist local đã lưu, chỉ map sang
+     entity_type đúng chuẩn ('ecosystem') khi đồng bộ server. */
+  function groupWatchlistSource(entityType) {
+    return entityType === 'ecosystem' ? 'family' : entityType;
+  }
+  function isGroupActive(entityType, id) {
+    var st = store();
+    if (!st || !st.isGroupFollowed) return false;
+    return st.isGroupFollowed(groupWatchlistSource(entityType), id);
+  }
+  function onGroupClick(btn) {
+    var st = store();
+    if (!st) return;
+    var entityType = btn.getAttribute('data-ifx-heart-group-type');
+    var id = btn.getAttribute('data-ifx-heart-id');
+    try {
+      var followed = st.toggleGroupFollow(groupWatchlistSource(entityType), id);
+      syncServerFollow(entityType, id, followed);
+      if (global.ixToast) {
+        var labelMap = { sector: 'Ngành', ecosystem: 'Hệ sinh thái' };
+        var label = labelMap[entityType] || 'Thực thể';
+        ixToast(
+          followed ? 'Đã theo dõi ' + label : 'Đã bỏ theo dõi ' + label,
+          followed ? 'success' : 'info'
+        );
+      }
+    } catch (err) {
+      if (global.ixToast) ixToast(err.message, 'warning');
+      return;
+    }
+    refresh();
+    dispatchChange();
+  }
+  function updateGroupButton(btn) {
+    var entityType = btn.getAttribute('data-ifx-heart-group-type');
+    var id = btn.getAttribute('data-ifx-heart-id');
+    var active = isGroupActive(entityType, id);
+    btn.classList.toggle('is-active', active);
+    btn.innerHTML = iconSvg(active);
+    btn.title = active ? 'Bỏ theo dõi' : 'Theo dõi';
+  }
+  function groupFollowButtonHtml(entityType, id, opts) {
+    opts = opts || {};
+    id = String(id || '');
+    if (!id || (entityType !== 'sector' && entityType !== 'ecosystem')) return '';
+    var active = isGroupActive(entityType, id);
+    return (
+      '<button type="button" class="ifx-follow ifx-heart ifx-heart--group' +
+        (opts.className ? ' ' + opts.className : '') +
+        (active ? ' is-active' : '') +
+        '" data-ifx-follow="1" data-ifx-heart="1" data-ifx-heart-kind="group" data-ifx-heart-group-type="' + entityType + '" ' +
+        'data-ifx-heart-id="' + id + '" title="' + (active ? 'Bỏ theo dõi' : 'Theo dõi') + '" aria-label="Theo dõi">' +
+        iconSvg(active) +
+      '</button>'
+    );
   }
 
   function onTickerClick(btn) {
@@ -207,6 +293,7 @@
     try {
       if (inFolder) {
         st.removeFromFolder(ticker, folderId);
+        if (folderId === st.DEFAULT_FOLDER_ID) syncServerFollow('stock', ticker, false);
         if (global.ixToast) {
           ixToast(
             folderId === st.DEFAULT_FOLDER_ID
@@ -217,6 +304,7 @@
         }
       } else {
         st.addToFolder(ticker, folderId);
+        if (folderId === st.DEFAULT_FOLDER_ID) syncServerFollow('stock', ticker, true);
         if (global.ixToast) {
           ixToast(
             folderId === st.DEFAULT_FOLDER_ID
@@ -241,6 +329,7 @@
     e.stopPropagation();
     var kind = btn.getAttribute('data-ifx-heart-kind');
     if (kind === 'story') onStoryClick(btn);
+    else if (kind === 'group') onGroupClick(btn);
     else onTickerClick(btn);
   }
 
@@ -258,6 +347,7 @@
     buttonHtml: buttonHtml,
     heartButtonHtml: heartButtonHtml,
     storyHeartButtonHtml: storyHeartButtonHtml,
+    groupFollowButtonHtml: groupFollowButtonHtml,
     followButtonHtml: heartButtonHtml,
     storyFollowButtonHtml: storyHeartButtonHtml,
     bind: bind,

@@ -7,7 +7,7 @@ import { loadScriptsSequential } from './legacy-bridge.js?v=dec30759da';
 var ASSET = '/User_Web/iflux-web-ui/';
 
 var SHELL = [
-  ASSET + 'iflux-platform-boot.js?v=9623ca3514',
+  ASSET + 'iflux-platform-boot.js?v=0c7a143a6f',
   ASSET + 'iflux-api-bundle.js?v=aacd7e48c9',
   ASSET + 'auth.js?v=99042ce179'
 ];

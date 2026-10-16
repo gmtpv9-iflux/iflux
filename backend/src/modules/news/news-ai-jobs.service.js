@@ -7,7 +7,7 @@ const { SCHEMA_VERSION } = require('../ai/news-ai.contract');
 const { createOpenAiProvider } = require('../ai/openai-responses.provider');
 const context = require('./news-ai-context.service');
 
-const PROMPT_VERSION = 'news-editorial-v1';
+const PROMPT_VERSION = 'news-editorial-v2';
 const hash = (v) => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex');
 let runtimeConfig = { NEWS_AI_ENABLED:false };
 function configureNewsAi(config) { runtimeConfig = config; }
@@ -18,7 +18,7 @@ async function enqueueSource(postId, config = runtimeConfig) {
   if (!row || !['published_rss','pending'].includes(row.status) || !(row.payload.source_id || row.payload.source?.id)) return null;
   const source = context.sourceSnapshot({ ...row.payload,id:row.id });
   const prompt = (await query("SELECT body FROM ai_prompts WHERE code=$1 AND status='active'",[PROMPT_VERSION])).rows[0];
-  if (!prompt || !prompt.body.trim()) throw AppError.badRequest('AI_PROMPT_NOT_ACTIVE','Cần đăng ký và bật prompt news-editorial-v1');
+  if (!prompt || !prompt.body.trim()) throw AppError.badRequest('AI_PROMPT_NOT_ACTIVE','Prompt news-editorial-v2 chưa được đăng ký/kích hoạt');
   const result = await query(`INSERT INTO news_ai_jobs(source_post_id,input_hash,prompt_hash,prompt_version,prompt_body,schema_version,model,source_snapshot)
     VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
     ON CONFLICT(source_post_id,input_hash,prompt_hash,schema_version,model) DO UPDATE SET source_post_id=EXCLUDED.source_post_id

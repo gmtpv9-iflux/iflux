@@ -21,14 +21,17 @@ function extractAlt(tag) {
   return m ? m[1] : '';
 }
 
-function replaceImgSrcs(html, urlMap) {
+function replaceImgSrcs(html, urlMap, preferredRole) {
   return String(html || '').replace(/<img\b[^>]*>/gi, function (tag) {
     const sm = /\bsrc\s*=\s*["']([^"']+)["']/i.exec(tag);
     if (!sm) return tag;
     const old = sm[1].trim();
     const mapped = urlMap[old];
     if (!mapped) return tag;
-    let next = tag.replace(sm[0], 'src="' + mapped.media_url + '"');
+    const targetUrl = preferredRole && mapped.variants && mapped.variants[preferredRole]
+      ? mapped.variants[preferredRole]
+      : mapped.media_url;
+    let next = tag.replace(sm[0], 'src="' + targetUrl + '"');
     if (mapped.asset_id && !/\bdata-media-asset-id\s*=/i.test(next)) {
       next = next.replace(/^<img\b/i, '<img data-media-asset-id="' + mapped.asset_id + '"');
     }
@@ -129,6 +132,7 @@ async function importArticle(config, articleId, actor) {
         channel: 'import',
         provider: null,
         isCover: isCover,
+        variantRoles: item.locations.indexOf('body') !== -1 ? ['cover_detail'] : undefined,
         createdBy: actor && (actor.admin_id || actor.email)
       });
       if (created.reused) reused += 1;
@@ -137,7 +141,7 @@ async function importArticle(config, articleId, actor) {
         media_url: created.asset.public_url,
         asset_id: created.asset.id,
         alt: created.asset.alt_text || item.alt || '',
-        variants: isCover ? buildCoverVariantsMap(created.asset.variants) : {}
+        variants: buildCoverVariantsMap(created.asset.variants)
       };
       row.status = created.reused ? 'reused' : 'succeeded';
       row.asset_id = created.asset.id;
@@ -152,7 +156,7 @@ async function importArticle(config, articleId, actor) {
   }
 
   let bodyHtml = article.body_html || article.body || '';
-  bodyHtml = replaceImgSrcs(bodyHtml, urlMap);
+  bodyHtml = replaceImgSrcs(bodyHtml, urlMap, 'cover_detail');
 
   const cover = Object.assign({}, article.cover || {});
   const coverOrig = String((article.cover && article.cover.url) || '').trim();

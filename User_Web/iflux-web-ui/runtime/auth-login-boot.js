@@ -7,7 +7,7 @@ var ASSET = '/User_Web/iflux-web-ui/';
 var ADMIN = '/Admin_Design_system/iflux-admin-ui/';
 
 var SHELL = [
-  ASSET + 'iflux-platform-boot.js?v=9623ca3514',
+  ASSET + 'iflux-platform-boot.js?v=0c7a143a6f',
   ASSET + 'iflux-api-bundle.js?v=aacd7e48c9',
   '/design_system/04_components/17_toast/toast.js?v=r20260928q',
   ASSET + 'auth.js?v=99042ce179',
@@ -20,7 +20,7 @@ var FEATURE = [
   ASSET + 'loyalty-affiliate-store.js?v=b225fb0132',
   ASSET + 'auth-social.js?v=a9cdec32bc',
   ASSET + 'iflux-user-data-sync.js?v=c4488ad741',
-  ASSET + 'iflux-web-ui.js?v=b27da5e15f',
+  ASSET + 'iflux-web-ui.js?v=8bddf9c2db',
   ASSET + 'auth-login-init.js?v=74a939b45e'
 ];
 

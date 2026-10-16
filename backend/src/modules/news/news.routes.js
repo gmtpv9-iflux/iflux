@@ -12,6 +12,8 @@ const { listPosts, createPost } = require('./news.service');
   const interaction = require('./interaction.service');
   const feed = require('./news-feed.service');
   const rssProviders = require('./rss-providers.service');
+  const entityFollow = require('./entity-follow.service');
+  const hot = require('./news-hot.service');
 const events = require('./news-events.service');
 const comparisons = require('../market/market-comparisons.service');
 const { requireAdminPermission } = require('../admin-rbac/admin-perm-guard');
@@ -83,6 +85,94 @@ function createNewsRouter(deps) {
       const id = req.validated.params.id;
       return success(res, { milestone: await events.addMilestone(id, req.validated.body, req.admin) }, 201);
     } catch (err) { next(err); }
+  });
+
+  /**
+   * "Bạn đang quan tâm" — Tab Tin tức (migration 085). Auth bắt buộc (follow gắn theo user).
+   * GET /news/followed → FeedCard[] OR theo mọi thực thể user đang Follow.
+   */
+  router.get('/followed', deps.auth.authenticate, async (req, res, next) => {
+    try {
+      const followed = await entityFollow.listFollowed(req.user.id);
+      const data = await feed.listFollowedFeed(followed, {
+        limit: req.query.limit ? Number(req.query.limit) : 30,
+        offset: req.query.offset ? Number(req.query.offset) : 0,
+        cursor: req.query.cursor || null
+      });
+      return success(res, {
+        cards: data.cards,
+        total: data.total,
+        limit: data.limit,
+        offset: data.offset,
+        has_more: data.has_more === true,
+        next_cursor: data.next_cursor || null,
+        has_follows: !!(followed.stocks.length || followed.sectors.length || followed.ecosystems.length || followed.stories.length)
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  const followBodySchema = z.object({
+    body: z.object({
+      entity_type: z.enum(entityFollow.ENTITY_TYPES),
+      entity_id: z.string().min(1).max(160)
+    })
+  });
+
+  router.post('/follow', deps.auth.authenticate, validate(followBodySchema), async (req, res, next) => {
+    try {
+      const data = await entityFollow.follow(req.user.id, req.validated.body.entity_type, req.validated.body.entity_id);
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/unfollow', deps.auth.authenticate, validate(followBodySchema), async (req, res, next) => {
+    try {
+      const data = await entityFollow.unfollow(req.user.id, req.validated.body.entity_type, req.validated.body.entity_id);
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/follows', deps.auth.authenticate, async (req, res, next) => {
+    try {
+      const data = await entityFollow.listFollowed(req.user.id);
+      return success(res, data);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  /**
+   * "Tin nóng" (migration 085) — xếp hạng theo điểm Bình luận=5/Đăng lại=3/Chia sẻ=2/Thích=1
+   * trong khung giờ range (day/week/month, rolling window). Public (không cần đăng nhập).
+   * GET /news/hot?range=day|week|month&limit=
+   */
+  router.get('/hot', async (req, res, next) => {
+    try {
+      const range = ['day', 'week', 'month'].indexOf(req.query.range) >= 0 ? req.query.range : 'week';
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
+      const ranked = await hot.getHotPostIds(range, limit);
+      const cardsById = {};
+      (await feed.getFeedCardsByIds(ranked.map((r) => r.news_post_id))).forEach((c) => { cardsById[c.id] = c; });
+      const cards = ranked
+        .map((r) => {
+          const card = cardsById[r.news_post_id];
+          if (!card) return null;
+          return Object.assign({}, card, {
+            hot_score: Number(r.score),
+            hot_breakdown: { comments: r.comments, reposts: r.reposts, shares: r.shares, likes: r.likes }
+          });
+        })
+        .filter(Boolean);
+      return success(res, { cards, total: cards.length, range });
+    } catch (err) {
+      next(err);
+    }
   });
 
   /**
@@ -410,6 +500,10 @@ function createNewsRouter(deps) {
     excerpt: z.string().optional().nullable(),
     body_html: z.string().optional().nullable(),
     body: z.string().optional().nullable(),
+    section_manifest: z.array(z.object({
+      section_id: z.string().regex(/^ifx-section-\d+$/), h2: z.string().min(1).max(240),
+      fact_ids: z.array(z.string().min(1).max(100)).max(60), event_refs: z.array(z.string().min(1).max(100)).max(60)
+    }).strict()).max(30).optional(),
     content_type: z.string().optional().nullable(),
     category_id: z.string().uuid(),
     category_name: z.string().optional().nullable(),
@@ -437,6 +531,12 @@ function createNewsRouter(deps) {
         description: z.string().optional().nullable(),
         keywords: z.string().optional().nullable(),
         canonical: z.string().optional().nullable(),
+        meta_title: z.string().optional().nullable(),
+        meta_description: z.string().optional().nullable(),
+        og_title: z.string().optional().nullable(),
+        og_description: z.string().optional().nullable(),
+        og_image: z.string().optional().nullable(),
+        og_image_alt: z.string().optional().nullable(),
         robots: z.enum(['index,follow','noindex,follow','noindex,nofollow','noindex']).optional().nullable()
       })
       .optional()
@@ -571,6 +671,7 @@ function createNewsRouter(deps) {
       await articles.attachArticleMetadata(item, articles.PUBLIC_ORIGIN || 'https://iflux.vn', {
         requestUri: requestUri || undefined
       });
+      item.body_html = await require('../media/media.service').useArticleDetailImageVariants(item.body_html || item.body || '');
       res.set('Cache-Control', 'public, max-age=0, must-revalidate');
       item.event_timeline = await events.timelineForArticle(item);
       item.comparison_data = item.status === 'published' ? (item.comparison_snapshot || null) : null;

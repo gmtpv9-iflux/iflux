@@ -45,9 +45,9 @@
     { key: 'sidebar', label: 'Sidebar trái', icon: 'ti-layout-sidebar' },
     { key: 'main', label: 'Main — Widget grid', icon: 'ti-layout-distribute-horizontal' },
     { key: 'sidebar-right', label: 'Sidebar phải', icon: 'ti-layout-sidebar-right' },
-    { key: 'basic', label: 'Tab Thống kê cơ bản', icon: 'ti-chart-bar' },
-    { key: 'advanced', label: 'Tab Thống kê nâng cao', icon: 'ti-chart-dots' },
-    { key: 'exclusive', label: 'Tab Độc quyền', icon: 'ti-crown' },
+    { key: 'basic', label: 'Tab Thống kê', icon: 'ti-chart-bar' },
+    { key: 'advanced', label: 'Tab Chỉ báo kỹ thuật', icon: 'ti-chart-dots' },
+    { key: 'exclusive', label: 'Tab Dòng tiền', icon: 'ti-crown' },
     { key: 'info', label: 'Tab Thông tin', icon: 'ti-info-circle' },
     { key: 'trading', label: 'Tab Thống kê', icon: 'ti-chart-bar' }
   ];
@@ -150,9 +150,9 @@
       sections: cloneSections([
         { key: 'sidebar', visible: true, label: 'Sidebar dòng tiền' },
         { key: 'main', visible: true, layout: 'grid-12' },
-        { key: 'basic', visible: true, label: 'Tab Thống kê cơ bản', layout: 'grid-12' },
-        { key: 'advanced', visible: true, label: 'Tab Thống kê nâng cao', layout: 'grid-12' },
-        { key: 'exclusive', visible: true, label: 'Tab Độc quyền', layout: 'grid-12' }
+        { key: 'basic', visible: true, label: 'Tab Thống kê', layout: 'grid-12' },
+        { key: 'advanced', visible: true, label: 'Tab Chỉ báo kỹ thuật', layout: 'grid-12' },
+        { key: 'exclusive', visible: true, label: 'Tab Dòng tiền', layout: 'grid-12' }
       ])
     },
     {

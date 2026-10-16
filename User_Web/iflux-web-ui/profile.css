@@ -368,6 +368,22 @@ html[data-ifx-account-tab="tab-security"] #tab-security {
   }
 }
 
+/* Lối tắt Riêng tư/Mật khẩu trong card Hồ sơ (Owner 2026-10-16) — CHỈ mobile (desktop đã có 2
+   tab riêng qua [data-ifx-account-profile-tabs], ẩn nút này để tránh trùng lối vào). */
+.ifx-profile-mobile-links {
+  display: none;
+}
+@media (max-width: 1024px) {
+  .ifx-profile-mobile-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ifx-profile-mobile-links .ix-btn {
+    flex: 1;
+  }
+}
+
 /* Account — tab Affiliate responsive (mobile / tablet) */
 /* SYNC:account-profile-mobile → bp-lg Foundation layout.css --ifx-bp-lg = 1024px */
 @media (max-width: 1024px) {

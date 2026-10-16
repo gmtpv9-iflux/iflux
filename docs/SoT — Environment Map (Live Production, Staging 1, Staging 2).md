@@ -1,16 +1,30 @@
-# SoT — Environment Map (Live Production, Staging 1, Staging 2)
+# SoT — Environment Map (Staging and Production)
 
 | | |
 |--|--|
 | **Document ID** | SoT-ENVMAP-001 |
-| **Version** | 1.2 |
-| **Status** | 🔒 LOCKED — đọc file này TRƯỚC KHI SSH/deploy bất cứ thứ gì |
-| **Ngày** | 2026-08-14 · amend 2026-08-17 (chỉ Staging 1) · amend 2026-08-19 (Git identity) |
+| **Version** | 1.3 |
+| **Status** | 🔒 Current environment map — Owner correction 2026-10-14 |
+| **Ngày** | 2026-08-14 · amend 2026-08-17 · amend 2026-08-19 · amend 2026-10-14 |
 | **Nguồn** | Owner directive — xem đầy đủ tại `Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/14 - SSH ↔ Deployment Boundary Policy (Owner Directive).md` |
 
-> **AMENDMENT 2026-08-19:** Canonical Staging = GitHub `staging` → `:3002`. Canonical Production = GitHub `production` → `:3003` / newprod. `iflux.vn` deploy qua CI. Path leftover `/var/www/iflux/production` = backup, không phải runtime. Không còn branch `staging-2`.
+> **OWNER CORRECTION 2026-10-14 — current:** There are two active environments: Staging `staging.iflux.vn` (GitHub `staging`, `.github/workflows/deploy-staging.yml`) and Production `iflux.vn` (GitHub `production`, `.github/workflows/deploy-production.yml`). Both deploy through GitHub CI/CD. “Staging 1” is an old internal label for Staging, not a separate environment. Statements below that deny the Production CI/CD path or say its gate is closed are outdated and superseded.
 
-> Bản đồ §1–§3 dưới đây còn mô tả trạng thái 17/08 (chỉ Staging 1 / leftover = Live). **Ưu tiên khối amendment này.**
+> **AMENDMENT 2026-08-19:** Canonical Staging = GitHub `staging` → `:3002`. Canonical Production = GitHub `production` → `:3003` / newprod. The branch/host mapping remains valid.
+
+> Sections §1–§3 below are historical where they conflict with the 2026-10-14 Owner correction above.
+
+## Current environment table — 2026-10-14
+
+| | Staging | Production |
+|---|---|---|
+| Host | `staging.iflux.vn` | `iflux.vn` |
+| GitHub branch | `staging` | `production` |
+| CI/CD workflow | `.github/workflows/deploy-staging.yml` | `.github/workflows/deploy-production.yml` |
+| API runtime | `:3002` | `:3003` |
+| Database | `iflux_staging` | `iflux_production_next` |
+
+The remaining old diagrams, tables and rules in this document are kept as history. Treat every statement that says Production cannot be deployed, that only Staging is active, or that `production.iflux.vn` is the active Production target as **OUTDATED**.
 
 ---
 

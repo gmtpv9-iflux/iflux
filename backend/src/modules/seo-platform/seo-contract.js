@@ -239,6 +239,19 @@ function buildSeoContract(input) {
       name: title
     }
   };
+  if (entityType === 'article') {
+    var articleEntity = input.entity || {};
+    var articleAuthor = articleEntity.author;
+    draft.structuredData.article = {
+      headline: title,
+      image: image || undefined,
+      datePublished: articleEntity.publishedAt || undefined,
+      dateModified: articleEntity.modifiedAt || articleEntity.publishedAt || undefined,
+      author: articleAuthor
+        ? { '@type': 'Person', name: String(articleAuthor) }
+        : undefined
+    };
+  }
 
   var bc = breadcrumbMod.resolveBreadcrumb({
     pageKey: pageKey,

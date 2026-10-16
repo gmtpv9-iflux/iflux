@@ -1331,6 +1331,62 @@ a.ifx-com-comment__author:hover .ifx-com-comment__name { text-decoration: underl
 /* Owner 2026-10 (điều chỉnh lại) — Tab Danh mục là Tab LỚN (.ix-profile-tabs/.ix-profile-tab,
    có icon), không phải Block/Widget nhỏ — xem news-page.js featuredCatsTabsHtml(). */
 
+/* Lớp danh mục cấp cao "Bạn quan tâm | Bản tin | Tin nóng" (Owner 2026-10) — icon .ix-stat-icon
+   (tầng nền chung, màu success/accent/danger ĐÃ map sẵn, không sửa) + size-override riêng Tin
+   tức (ifx- prefix, quy ước mới — xem news-page.js toplevelTabsHtml()). Text dưới icon 4px. */
+.ifx-news-toplevel-tabs {
+  display: flex;
+  gap: var(--ifx-space-16);
+  margin-bottom: var(--ifx-space-20);
+}
+.ifx-news-toplevel-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--ix-text-secondary);
+  font-family: inherit;
+}
+.ifx-news-toplevel-icon {
+  width: 64px;
+  height: 44px;
+  font-size: var(--ifx-font-size-48);
+}
+.ifx-news-toplevel-label {
+  font-size: var(--ifx-font-size-14);
+  font-weight: var(--ifx-font-weight-regular);
+}
+.ifx-news-toplevel-tab.active .ifx-news-toplevel-label {
+  color: var(--ix-text-primary);
+  font-weight: var(--ifx-font-weight-semibold);
+}
+
+.ifx-news-hot-subtabs { margin-bottom: var(--ifx-space-16); }
+
+.ifx-news-empty-state,
+.ifx-news-region-loading,
+.ifx-news-region-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--ifx-space-8);
+  padding: var(--ifx-space-24);
+  color: var(--ix-text-secondary);
+}
+.ifx-news-empty-state i { font-size: 32px; color: var(--ix-text-muted); }
+.ifx-news-empty-state__actions {
+  display: flex;
+  gap: var(--ifx-space-12);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--ifx-space-8);
+}
+
 .ifx-com-pills {
   display: flex;
   flex-wrap: wrap;

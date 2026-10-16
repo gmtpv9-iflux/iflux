@@ -139,7 +139,8 @@
 
   function syncSlugAndCanonicalFromTitle() {
     var title = ($('fld-title') && $('fld-title').value) || '';
-    var slug = editingId && $('fld-slug') ? $('fld-slug').value : slugify(title);
+    var isAlreadyPublished = editingId && $('fld-status') && $('fld-status').value === 'published';
+    var slug = isAlreadyPublished && $('fld-slug') ? $('fld-slug').value : slugify(title);
     if ($('fld-slug')) $('fld-slug').value = slug;
     if ($('fld-seo-canonical')) {
       $('fld-seo-canonical').value = slug
@@ -333,7 +334,6 @@
 
     var status = statusOverride || $('fld-status').value || 'draft';
     var seoTitle = ($('fld-seo-title').value || '').trim();
-    var seoDesc = ($('fld-seo-desc').value || '').trim();
     var excerpt = ($('fld-excerpt').value || '').trim();
 
     return {
@@ -359,7 +359,7 @@
       },
       seo: {
         title: seoTitle || title,
-        description: seoDesc || excerpt,
+        description: excerpt,
         keywords: ($('fld-seo-keywords').value || '').trim(),
         og_image_alt: ($('fld-seo-og-alt') && $('fld-seo-og-alt').value || '').trim(),
         canonical: ''
@@ -392,6 +392,7 @@
     $('cnt-bc-title').textContent = 'Sửa bài';
     $('cnt-page-title').textContent = 'Sửa bài viết';
     $('fld-title').value = item.title || '';
+    $('fld-status').value = item.status || 'draft';
     syncSlugAndCanonicalFromTitle();
     /* URL giữ nguyên sau khi đã cấp, kể cả khi đổi tiêu đề. */
     if (item.slug && $('fld-slug')) {
@@ -422,7 +423,7 @@
     $('fld-cover-credit').value = cover.credit || '';
     var seo = item.seo || {};
     $('fld-seo-title').value = seo.title || '';
-    $('fld-seo-desc').value = seo.description || '';
+    $('fld-seo-desc').value = item.excerpt || '';
     $('fld-seo-keywords').value = seo.keywords || '';
     if ($('fld-seo-og-alt')) {
       $('fld-seo-og-alt').value = seo.og_image_alt || seo.ogImageAlt || '';
@@ -435,8 +436,7 @@
       $('fld-seo-canonical').value =
         PUBLIC_ORIGIN + '/tin-tuc/bai-viet/' + encodeURIComponent(item.slug);
     }
-    $('fld-status').value = item.status || 'draft';
-    var pubAt = item.scheduled_at || item.published_at || '';
+    var pubAt = item.scheduled_at || '';
     if ($('fld-publish-at') && pubAt) {
       try {
         var dPub = new Date(pubAt);
@@ -737,6 +737,10 @@
         }, 280);
       });
     }
+    var excerptEl = $('fld-excerpt');
+    if (excerptEl) excerptEl.addEventListener('input', function () {
+      if ($('fld-seo-desc')) $('fld-seo-desc').value = excerptEl.value;
+    });
     var qEl = $('art-chude-q');
     if (qEl) {
       qEl.addEventListener('input', function () {

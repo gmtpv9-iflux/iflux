@@ -6,6 +6,30 @@
   var currentId = '';
   var currentDetail = null;
 
+  /* Nút "Theo dõi" (Owner 2026-10-16) — Heart = Foundation, Store = Watchlist data, cùng mẫu lazy
+     đã dùng ở news-page.js (ensureHeartLazy) — không tải sẵn, chỉ tải khi trang nhóm thật sự
+     render. */
+  var heartLoadPromise = null;
+  var HEART_JS = '/design_system/04_components/29_follow/follow.js?v=r20261016a';
+  var STORE_JS = '/User_Web/iflux-web-ui/watchlist-store.js?v=f604e76323';
+  function ensureHeartLazy() {
+    if (global.IfluxHeartAction && global.IfluxWatchlistStore) return Promise.resolve();
+    if (heartLoadPromise) return heartLoadPromise;
+    function loadScript(src) {
+      return new Promise(function (resolve) {
+        if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = function () { resolve(); };
+        s.onerror = function () { resolve(); };
+        document.head.appendChild(s);
+      });
+    }
+    heartLoadPromise = loadScript(STORE_JS).then(function () { return loadScript(HEART_JS); });
+    return heartLoadPromise;
+  }
+
   function isMobileShell() {
     return global.IfluxBreakpoint && global.IfluxBreakpoint.isMobileShell
       ? global.IfluxBreakpoint.isMobileShell()
@@ -97,6 +121,42 @@
     );
   }
 
+  /* Owner 2026-10-16 — "Theo dõi" Ngành/Hệ sinh thái (Cổ phiếu đã có ở trang Cổ phiếu riêng,
+     Câu chuyện dùng storyHeartButtonHtml có sẵn) → vào Watchlist + đồng bộ server
+     (user_entity_follows) cho Tin tức "Bạn quan tâm". kind 'sector' → entity_type 'sector';
+     'family'/'ecosystem' → 'ecosystem' (xem IfluxFollowAction.groupFollowButtonHtml). Câu
+     chuyện dùng kind 'story' riêng (storyHeartButtonHtml), không qua đây. */
+  function followEntityType(kind) {
+    var k = String(kind || '').toLowerCase();
+    if (k === 'sector') return 'sector';
+    if (k === 'family' || k === 'ecosystem') return 'ecosystem';
+    return null;
+  }
+
+  function followButtonHtml(detail) {
+    var fa = global.IfluxFollowAction || global.IfluxHeartAction;
+    if (!fa) return ''; /* chưa lazy-load xong — ensureHeartLazy() nạp xong sẽ gọi refreshFollowSlot() */
+    var entityType = followEntityType(detail.kind);
+    if (fa.groupFollowButtonHtml && entityType) {
+      return fa.groupFollowButtonHtml(entityType, detail.id, { className: 'ifx-stock-head__follow' });
+    }
+    if (fa.storyFollowButtonHtml && !entityType) {
+      return fa.storyFollowButtonHtml(detail.id);
+    }
+    return '';
+  }
+
+  /* Gọi lại sau khi watchlist-store.js/follow.js lazy-load xong (lúc renderHeader() chạy lần
+     đầu, 2 lib đó CHƯA kịp tải — followButtonHtml() trả rỗng) — chỉ cập nhật ĐÚNG slot nút, không
+     render lại cả trang. */
+  function refreshFollowSlot(root, detail) {
+    var slot = root && root.querySelector('[data-ifx-group-follow-slot]');
+    if (!slot) return;
+    slot.innerHTML = followButtonHtml(detail);
+    var fa = global.IfluxFollowAction || global.IfluxHeartAction;
+    if (fa && fa.bind) fa.bind(root);
+  }
+
   function renderHeader(detail) {
     return (
       '<div class="ifx-stock-head">' +
@@ -104,6 +164,7 @@
           '<div class="ifx-stock-head__symbol">' +
             '<strong>' + esc(detail.name) + '</strong>' +
             '<span class="ifx-stock-head__ex"><i class="ti ' + kindIcon(detail.kind) + '" style="font-size:12px"></i> ' + esc(detail.type_label) + '</span>' +
+            '<span data-ifx-group-follow-slot>' + followButtonHtml(detail) + '</span>' +
           '</div>' +
           '<div class="ifx-stock-head__co">' + detail.member_count + ' mã · hiệu suất nhóm</div>' +
           statsRowHtml(detail.stats) +
@@ -212,6 +273,9 @@
   function bindEvents(root, detail, newsState) {
     var epTarget = entityPostsTarget(detail);
     if (epTarget) mountEntityPostsPanel(root, epTarget);
+    if (followEntityType(detail.kind) || detail.kind === 'story' || detail.kind === 'chu-de' || detail.kind === 'cau-chuyen') {
+      ensureHeartLazy().then(function () { refreshFollowSlot(root, detail); });
+    }
     if (global.IfluxEntityDetailCenter) {
       IfluxEntityDetailCenter.mount(root, {
         kind: detail.kind,

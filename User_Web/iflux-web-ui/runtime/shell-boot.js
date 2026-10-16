@@ -153,7 +153,7 @@ async function ensureMarketLibs(pageKey) {
     var marketPlatformLibs = [
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=28e2b36f1f' }
     ];
     await ensureParallel(marketPlatformLibs);
     /* Danh mục đầy đủ (~0.5MB) chỉ cho trang liệt kê / thành viên nhóm / tìm kiếm / theo dõi.
@@ -164,7 +164,7 @@ async function ensureMarketLibs(pageKey) {
     await ensureParallel([
       { global: 'IfluxMarketMaster', src: ASSET + 'iflux-market-master.js?v=6789cc0df6' + MARKET_PLATFORM_VER },
       { global: 'IfluxWatchlistTaxonomy', src: ASSET + 'watchlist-taxonomy.js?v=ce814925e7' + MARKET_PLATFORM_VER },
-      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=6e1eaa3b46' }
+      { global: 'IfluxSeoUrl', src: ASSET + 'seo-url.js?v=28e2b36f1f' }
     ]);
   }
 }
@@ -213,7 +213,7 @@ export async function bootShell(pageKey, opts) {
    * Cấm chờ MARKET_CORE / entitlements / web-ui trước khi có menu.
    */
   await ensureParallel([
-    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=9623ca3514' },
+    { global: 'IfluxRoutes', src: ASSET + 'iflux-platform-boot.js?v=0c7a143a6f' },
     { global: 'IfluxApiClient', src: ASSET + 'iflux-api-bundle.js?v=aacd7e48c9' },
     { global: 'IfluxAuth', src: ASSET + 'auth.js?v=99042ce179' },
     /* Thông báo nổi — DS Toast (JS nhỏ; CSS tự nạp ở lần hiện đầu tiên) */
@@ -256,7 +256,7 @@ export async function bootShell(pageKey, opts) {
 
   await ensureParallel([
     { global: 'IfluxBreakpoint', src: '/design_system/02_foundation/breakpoint.js?v=r20261002a' },
-    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=b27da5e15f' }
+    { global: 'IfluxWebUI', src: ASSET + 'iflux-web-ui.js?v=8bddf9c2db' }
   ]);
   if (window.IfluxWebUI && IfluxWebUI.syncTopnav) IfluxWebUI.syncTopnav();
   /* Tabbar mobile dùng cùng getPrimaryNav — sync sau WebUI, không đổi HTML menu desktop. */

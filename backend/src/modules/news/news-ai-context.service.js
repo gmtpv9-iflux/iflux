@@ -15,7 +15,19 @@ function sourceSnapshot(article) {
   if (!/^https?:\/\//i.test(url || '')) throw AppError.badRequest('AI_SOURCE_URL', 'Bài nguồn cần URL HTTP(S) để truy vết');
   return { id: 'rss:' + article.id, post_id: article.id, title: article.title, text, url,
     source_name: article.source_name || (article.source && article.source.name) || null,
-    published_at: article.published_at || null, category_id: article.category_id || null };
+    source_published_at: article.source_published_at || article.published_at || null, category_id: article.category_id || null };
+}
+
+function articleSections(bodyHtml) {
+  const sections = [];
+  const matches = String(bodyHtml || '').matchAll(/<h2\b([^>]*)>([\s\S]*?)<\/h2>/gi);
+  for (const match of matches) {
+    const attrs = match[1] || '';
+    const id = (attrs.match(/\bid=["'](ifx-section-\d+)["']/i) || [])[1] || null;
+    const heading = plain(match[2]);
+    if (heading) sections.push({ section_id:id,heading });
+  }
+  return sections;
 }
 
 async function buildExtractContext(source) {
@@ -35,6 +47,23 @@ async function buildExtractContext(source) {
     ORDER BY s.created_at DESC, s.id DESC LIMIT 60`, [tickers,source.text])).rows;
   const cases = tickers.length ? (await query(`SELECT id,title,event_group,subject_name,tickers,story_id FROM news_event_cases
     WHERE tickers && $1::text[] ORDER BY created_at DESC,id DESC LIMIT 60`,[tickers])).rows : [];
+  const storyIds = stories.map((s) => String(s.id));
+  const internalRows = (storyIds.length || tickers.length) ? (await query(`SELECT id,payload FROM news_posts
+    WHERE status='published' AND content_type='article'
+      AND (payload->>'story_id'=ANY($1::text[]) OR COALESCE(payload->'tickers','[]'::jsonb) ?| $2::text[])
+    ORDER BY COALESCE((payload->>'published_at')::timestamptz,created_at) DESC,id DESC LIMIT 40`,[storyIds,tickers])).rows : [];
+  const internalArticleSections = internalRows.flatMap((row) => {
+    const payload = row.payload || {};
+    const slug = String(payload.slug || '').trim();
+    if (!slug) return [];
+    const base = { article_id:String(row.id),title:String(payload.title || ''),url:'/tin-tuc/bai-viet/' + encodeURIComponent(slug) };
+    const sections = articleSections(payload.body_html || payload.body);
+    return sections.length ? sections.map((section,index) => ({
+      ref:'article:' + row.id + ':' + (section.section_id || ('section-' + (index + 1))),
+      ...base,section_id:section.section_id,heading:section.heading,
+      href:base.url + (section.section_id ? '#' + section.section_id : '')
+    })) : [{ ref:'article:' + row.id,title:base.title,url:base.url,href:base.url,section_id:null,heading:null,...base }];
+  });
   const scopes = [];
   for (const type of ['sector','ecosystem']) {
     const table = type === 'sector' ? 'sectors' : 'ecosystems';
@@ -45,7 +74,7 @@ async function buildExtractContext(source) {
     for (const row of rows) scopes.push({ ...row,type,members: stocks.filter((s) => String(s[field])===row.id).map((s) => s.ticker) });
   }
   stories.forEach((s) => scopes.push({ type:'story',id:s.id,name:s.title,members:s.stock_tags || [] }));
-  return { source, entity_candidates: candidates, story_candidates: stories,
+  return { source, entity_candidates: candidates, story_candidates: stories,internal_article_sections:internalArticleSections,
     community_context_policy: 'Chỉ metadata Story từ Topic đã hình thành; không dùng thảo luận làm dữ kiện.',
     case_candidates: cases, comparison_scopes: scopes, supported_metrics: comparisons.metricCatalog().filter((m) => m.available),
     allowed_images: [], image_policy: 'Chưa có projection quyền ảnh đã kiểm chứng. Không chọn ảnh mới; giữ luồng media hiện có khi biên tập.' };
@@ -77,12 +106,17 @@ function checkExtraction(raw, ctx) {
   for (const s of data.story_candidates) if (!storyIds.has(s.story_id)) reasons.push('STORY_NOT_IN_CONTEXT');
   if (data.story_candidates.length > 1) reasons.push('STORY_AMBIGUOUS: bài hiện hỗ trợ một Story');
   const subjects = new Set(accepted.filter((e) => e.role==='subject').map((e) => e.ticker));
+  const eventRefs = new Set();
+  const internalSectionRefs = new Set((ctx.internal_article_sections || []).map((s) => s.ref));
   for (const e of data.events) {
+    if (eventRefs.has(e.event_ref)) reasons.push('EVENT_REF_DUPLICATE: ' + e.event_ref);
+    eventRefs.add(e.event_ref);
+    if (e.internal_section_refs.some((ref) => !internalSectionRefs.has(ref))) reasons.push('EVENT_INTERNAL_SECTION_INVALID: ' + e.event_ref);
     if (!subjects.has(e.subject_ticker) || !e.evidence.length || !e.evidence.every(evidenceOk)) reasons.push('EVENT_SUBJECT_OR_EVIDENCE_INVALID');
     if (e.case_id && !ctx.case_candidates.some((c) => c.id===e.case_id && c.tickers.includes(e.subject_ticker))) reasons.push('EVENT_CASE_INVALID');
     // Các trường chỉ dành cho đề xuất không thuộc schema mốc được ghi.
-    const milestone = { title:e.title,summary:e.summary,status:e.status,announced_on:e.announced_on,effective_on:e.effective_on,
-      evidence:e.evidence.map((v) => ({ url:ctx.source.url,label:ctx.source.source_name || 'Nguồn',quote:v.quote })),metrics:e.metrics };
+    const milestone = { title:e.title,summary:e.summary,status:e.status,announced_on:e.announced_on,occurred_on:e.occurred_on,effective_on:e.effective_on,
+      evidence:e.evidence.map((v) => ({ url:ctx.source.url,title:ctx.source.title || ctx.source.source_name || 'Bài nguồn',label:ctx.source.title || ctx.source.source_name || 'Bài nguồn',quote:v.quote })),metrics:e.metrics };
     if (!events.milestoneSchema.safeParse(milestone).success) reasons.push('EVENT_FIELDS_INVALID');
   }
   if (data.context_requests.length) reasons.push('CONTEXT_LOOKUP_REQUIRES_REVIEW');
@@ -102,8 +136,10 @@ async function buildComposeContext(checked, ctx) {
   const caseIds = [...new Set(checked.data.events.map((e) => e.case_id).filter(Boolean))];
   await events.validateArticleLinks({ story_id,event_case_ids:caseIds });
   const history = await events.timelineForArticle({ status:'published',event_case_ids:caseIds });
-  return { source: { id:ctx.source.id,url:ctx.source.url,source_name:ctx.source.source_name,published_at:ctx.source.published_at },
-    facts:checked.facts, entities:checked.entities, story_id, event_proposals:checked.data.events,
+  const allowedInternalRefs = new Set((ctx.internal_article_sections || []).map((s) => s.ref));
+  const eventProposals = checked.data.events.map((event) => ({ ...event,internal_section_refs:event.internal_section_refs.filter((ref) => allowedInternalRefs.has(ref)) }));
+  return { source: { id:ctx.source.id,url:ctx.source.url,source_name:ctx.source.source_name,source_published_at:ctx.source.source_published_at },
+    facts:checked.facts, entities:checked.entities, story_id, event_proposals:eventProposals,internal_article_sections:ctx.internal_article_sections || [],
     timeline:history, timeline_case_ids:caseIds, comparison:comparison.data, comparison_omission_reason:comparison.reason,
     allowed_images:ctx.allowed_images,
     editorial_policy:'Dữ kiện chỉ đối chiếu bằng chứng nguồn, chưa được iFlux trực tiếp xác minh. Không thêm claim ngoài facts; output phải được biên tập kiểm tra.' };
@@ -122,12 +158,28 @@ function composePreview(raw, ctx) {
   if (value.iflux_insight && (value.iflux_insight.length < 400 || !checkRefs(value.insight_fact_ids))) reasons.push('INSIGHT_REVIEW');
   if (!value.iflux_insight && !value.insight_omission_reason) reasons.push('INSIGHT_OMISSION_REASON_REQUIRED');
   if (value.sections.some((s) => s.images.some((im) => !ctx.allowed_images.some((a) => a.id===im.image_id)))) reasons.push('IMAGE_NOT_ALLOWED');
+  const eventRefs = new Set((ctx.event_proposals || []).map((e) => e.event_ref));
+  const usedEventRefs = new Set();
+  const sectionManifest = value.sections.map((section,index) => {
+    const heading = section.h2.replace(/\s+/g,' ').trim();
+    const normalizedHeading = heading.toLocaleLowerCase('vi').replace(/[.!?\s]+$/g,'');
+    const firstParagraph = String(section.paragraphs[0] || '').replace(/\s+/g,' ').trim().toLocaleLowerCase('vi').replace(/[.!?\s]+$/g,'');
+    if (/<\/?a\b|(?:https?:\/\/|www\.)/i.test(heading)) reasons.push('COMPOSE_HEADING_LINK_INVALID');
+    if (firstParagraph === normalizedHeading) reasons.push('COMPOSE_HEADING_REPEATED');
+    section.event_refs.forEach((ref) => {
+      if (!eventRefs.has(ref)) reasons.push('COMPOSE_EVENT_REFERENCE_INVALID: ' + ref);
+      usedEventRefs.add(ref);
+    });
+    return { section_id:'ifx-section-' + (index + 1), h2:heading, fact_ids:section.fact_ids, event_refs:section.event_refs };
+  });
+  (ctx.event_proposals || []).forEach((event) => { if (!usedEventRefs.has(event.event_ref)) reasons.push('EVENT_WITHOUT_SECTION: ' + event.event_ref); });
   // Đây là bản xem trước: renderer backend escape toàn bộ prose, không nhận HTML từ AI.
-  const body_html = '<p>' + escape(value.lead) + '</p>' + value.sections.map((s) => '<h2>' + escape(s.h2) + '</h2>' + s.paragraphs.map((p) => '<p>' + escape(p) + '</p>').join('')).join('') +
-    '<p>Nguồn: <a href="' + escape(ctx.source.url) + '" rel="nofollow noopener">' + escape(ctx.source.source_name || 'Bài nguồn') + '</a></p>';
-  return { article_input:{ title:value.title,excerpt:value.excerpt,body_html,tickers:value.tickers,story_id:value.story_id,
+  const body_html = '<p>' + escape(value.lead) + '</p>' + value.sections.map((s,index) => '<h2 id="ifx-section-' + (index + 1) + '">' + escape(s.h2) + '</h2>' + s.paragraphs.map((p) => '<p>' + escape(p) + '</p>').join('')).join('');
+  return { article_input:{ title:value.title,excerpt:value.excerpt,body_html,section_manifest:sectionManifest,tickers:value.tickers,story_id:value.story_id,
     event_case_ids:value.timeline_case_ids,iflux_insight:value.iflux_insight,seo:value.seo },
-    structured:value,comparison_data:ctx.comparison,review_reasons:[...new Set(reasons)] };
+    structured:value,section_manifest:sectionManifest,event_section_links:sectionManifest.flatMap((s) => s.event_refs.map((event_ref) => ({event_ref,section_id:s.section_id,heading:s.h2,anchor:'#'+s.section_id}))),
+    event_source_links:(ctx.event_proposals || []).flatMap((event) => event.internal_section_refs.map((ref) => { const target=(ctx.internal_article_sections || []).find((s)=>s.ref===ref); return target ? {event_ref:event.event_ref,title:target.title,heading:target.heading,href:target.href} : null; }).filter(Boolean)),
+    comparison_data:ctx.comparison,review_reasons:[...new Set(reasons)] };
 }
 
 module.exports = { sourceSnapshot, buildExtractContext, checkExtraction, buildComposeContext, composePreview };

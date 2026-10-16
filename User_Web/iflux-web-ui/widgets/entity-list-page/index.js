@@ -2,7 +2,7 @@
  * WGT-ELP-PAGE — Composite danh sách Entity (cổ phiếu / ngành / họ / câu chuyện)
  */
 import { loadScriptTiers, loadScript } from '../../runtime/legacy-bridge.js?v=dec30759da';
-import { mountPageWidgets } from '../../runtime/page-widgets.js?v=fc1a4bde05';
+import { mountPageWidgets } from '../../runtime/page-widgets.js?v=3313b52579';
 import { buildPageFrame } from '../../runtime/app-shell.js?v=7b8f128322';
 
 var ASSET = '/User_Web/iflux-web-ui/';
@@ -28,7 +28,7 @@ var CORE_TIERS = [
     ASSET + 'iflux-market-quotes.js?v=349c1e1a74',
     ASSET + 'watchlist-store.js?v=f604e76323',
     ASSET + 'alert-store.js?v=d341795091',
-    '/design_system/04_components/29_follow/follow.js?v=r20261002a'
+    '/design_system/04_components/29_follow/follow.js?v=r20261016a'
   ],
   [
     ASSET + 'watchlist-ui.js?v=7c1f5a3c0d',
@@ -39,7 +39,7 @@ var CORE_TIERS = [
   [
     ASSET + 'alert-page.js?v=108f7707b5',
     ASSET + 'entity-list-page.js?v=75bc8e27c5' + ELP_VER,
-    ASSET + 'runtime/page-layout-engine.js?v=a6f64093c8'
+    ASSET + 'runtime/page-layout-engine.js?v=c3d1bce3f2'
   ]
 ];
 

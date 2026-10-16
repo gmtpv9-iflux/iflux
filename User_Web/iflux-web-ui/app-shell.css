@@ -334,3 +334,20 @@ body.ifx-nav-drawer-open {
 
 /* Trang bình luận riêng — ẩn bottom menu; khung soạn bình luận chiếm vị trí menu */
 body:has([data-ifx-comments-page]) .ifx-tabbar { display: none; }
+
+/* Owner 2026-10-15: Tiêu đề trang (<h1 class="ix-page-title">) + Mô tả trang
+   (<p class="ifx-page-intro">) KHÔNG hiển thị trên mobile — áp dụng TOÀN HỆ THỐNG (mọi trang
+   User Web, không riêng 1 trang nào), Bottom Nav Cấp 2 đã tự nói rõ "đang ở đâu" nên không cần
+   lặp lại tiêu đề. Scope qua .ifx-user-web (class chỉ User Web gắn lên <html>, xem
+   runtime/bootstrap.js — Admin không có) để KHÔNG đụng .ix-page-title/.ifx-page-intro bên
+   Admin dù trùng tên class (CSS khác file, nhưng thêm .ifx-user-web cho chắc, phòng khi sau
+   này 2 bên dùng chung 1 bundle). .ifx-flow-title-row/.ifx-flow-exclusive là wrapper + badge
+   "Độc quyền iFlux" riêng của Dòng tiền chứa H1 — ẩn luôn cả cụm, không chỉ riêng H1. */
+@media (max-width: 1023.98px) {
+  .ifx-user-web .ix-page-title,
+  .ifx-user-web .ifx-page-intro,
+  .ifx-user-web .ifx-flow-title-row,
+  .ifx-user-web .ifx-flow-exclusive {
+    display: none;
+  }
+}
