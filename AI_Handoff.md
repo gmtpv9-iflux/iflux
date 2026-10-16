@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T21:40:00+07:00 — Claude — hoàn thành — tìm đúng nguyên nhân 100% job lỗi: tự ghi `last_error` dài hơn cột `VARCHAR(80)` thật (bug tôi tự gây ra lượt trước)
+
+- **Nhiệm vụ/trạng thái:** hoàn thành. Tiếp nối mục 21:30 (đang bị chặn thiếu log thật) — đã bật tạm AI 1 lượt, bắt được log chẩn đoán thật (xem đúng luồng `pm2 logs --out`, KHÔNG phải `--err` — pino ghi JSON ra stdout bất kể level), tắt lại ngay, gỡ log chẩn đoán sau khi xác định xong.
+- **Nguyên nhân THẬT (tự gây ra ở lượt fix "tách Lỗi/Chờ duyệt" trước đó cùng ngày):** `news_ai_jobs.last_error` là cột `VARCHAR(80)` thật (migration 082). Code tôi viết lúc tách status dùng `.slice(0,200)` cho `shortReason` (tóm tắt lý do lỗi) — **vượt quá giới hạn cột thật hơn gấp đôi**. Khi `checkExtraction()` trả về nhiều lý do (vd nhiều `ENTITY_REVIEW` cho bài có nhiều doanh nghiệp được nhắc), `shortReason` nối chuỗi dài hơn 80 ký tự → Postgres từ chối ghi (`error: value too long for type character varying(80)`) → ném exception KHÔNG có `.code` dạng `AI_*` → rơi vào nhánh fallback `AI_VALIDATION_OR_CONTEXT_ERROR` — đúng 100% triệu chứng Owner thấy (mọi bài đều lỗi như nhau, không phân biệt nội dung).
+- **Phạm vi fix:** `backend/src/modules/news/news-ai-jobs.service.js` — đổi cả 2 chỗ `.slice(0,200)` → `.slice(0,80)` (khớp đúng cột thật); thêm `.slice(0,80)` cho `errCode` của nhánh `AUTO_PUBLISH_FAILED` (cùng rủi ro, `publishErr.message` có thể dài tuỳ lỗi thật) — chủ động vá trước khi Owner gặp lại đúng bug này ở nhánh khác; gỡ log chẩn đoán tạm sau khi dùng xong.
+- **Bài học tự ghi lại:** khi thêm field string ghi vào DB, PHẢI kiểm tra giới hạn cột thật (`\d news_ai_jobs` hoặc đọc migration) trước khi chọn số `.slice()`, không tự đoán "200 chắc là đủ ngắn rồi". Lỗi này lọt qua vì không test được bằng `node --check` (chỉ là cú pháp) và không có DB local để chạy thử — chỉ lộ ra khi Owner tự bật thật trên Production.
+- **Kiểm tra:** `node --check` PASS. `build-web-bundle`/`sync-js-versions --check` PASS. **CHƯA tự verify lại bằng cách bật AI thật lần nữa** (đợi Owner xác nhận trước khi tốn thêm token test) — rất tự tin về fix vì đã thấy đúng dòng/đúng lỗi Postgres khớp 100% với code, không phải suy đoán.
+- **Commit:** sẽ tạo riêng, deploy Staging + Production.
+- **Còn lại/lưu ý cho AI tiếp theo:** "Bật AI hoạt động" đang TẮT (tôi tắt qua SSH sau lượt test chẩn đoán) — CHƯA bật lại. Owner nên tự bật lại sau khi xác nhận fix này đã lên Production, rồi theo dõi Tab Lịch sử — lần này phải thấy `needs_review`/`published` thật, không còn `AI_VALIDATION_OR_CONTEXT_ERROR` hàng loạt.
+
+
 ## 2026-10-16T21:30:00+07:00 — Claude — đang làm (BỊ CHẶN, cần log thật) — Owner tự bật lại AI, 100% job mới lỗi `AI_VALIDATION_OR_CONTEXT_ERROR` — đã tắt lại, thêm log chẩn đoán tạm
 
 - **Nhiệm vụ/trạng thái:** ĐANG LÀM, bị chặn vì thiếu bằng chứng (code cố ý không log message/stack thật ra bất kỳ đâu — chính sách "không rò message"). Owner tự bật "Bật AI hoạt động" sau lượt fix trước để test — 4/4 job mới (MSCI Indonesia, 1 bank stock, PNJ/FPT, 1 job còn `running`) đều lỗi NGAY (created_at≈started_at, chết rất nhanh), cùng mã lỗi chung `AI_VALIDATION_OR_CONTEXT_ERROR`. Đây là mã FALLBACK khi `err.code` không khớp `/^AI_[A-Z0-9_]+$/` — tức là 1 exception THẬT (có thể lỗi parse/schema, không phải lỗi nội dung thường gặp).
