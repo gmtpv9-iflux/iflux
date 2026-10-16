@@ -5,6 +5,7 @@ const { z } = require('zod');
 const { validate } = require('../../middleware/validate');
 const { success } = require('../../shared/response/api-response');
 const { AppError } = require('../../shared/exceptions/app-error');
+const { query } = require('../../core/database/connection');
 const { listPosts, createPost } = require('./news.service');
   const comments = require('./news-comments.service');
   const categories = require('./news-categories.service');
@@ -69,6 +70,42 @@ function createNewsRouter(deps) {
   router.post('/admin/ai/jobs/:id/retry', perm('news.articles.edit'), validate(z.object({ params:z.object({ id:z.string().uuid() }) })), async (req,res,next) => {
     try { return success(res,{job:await aiJobs.retryJob(req.validated.params.id)}); } catch(err) { next(err); }
   });
+
+  // AI Programmatic SEO — Tab Thống kê + Tab Instruction (Owner 2026-10-16, Admin → Thiết lập SEO).
+  const aiProgConfig = require('./news-ai-config.service');
+  const PROMPT_CODE = 'news-editorial-v2';
+  router.get('/admin/news-ai/stats', perm('news.articles.view'), async (req,res,next) => {
+    try { return success(res, await aiJobs.getStats()); } catch(err) { next(err); }
+  });
+  router.get('/admin/news-ai/config', perm('news.articles.view'), async (req,res,next) => {
+    try { return success(res, await aiProgConfig.getConfig()); } catch(err) { next(err); }
+  });
+  router.patch('/admin/news-ai/config', perm('news.articles.edit'),
+    validate(z.object({ body: z.object({
+      auto_publish: z.boolean().optional(),
+      model: z.string().max(80).nullable().optional(),
+      price_per_1k_input_usd: z.number().min(0).optional(),
+      price_per_1k_output_usd: z.number().min(0).optional()
+    }).strict() })),
+    async (req,res,next) => {
+      try { return success(res, await aiProgConfig.setConfig(req.validated.body)); } catch(err) { next(err); }
+    });
+  router.get('/admin/news-ai/instruction', perm('news.articles.view'), async (req,res,next) => {
+    try {
+      const row = (await query(`SELECT code,name,body,status,updated_at FROM ai_prompts WHERE code=$1`,[PROMPT_CODE])).rows[0];
+      if (!row) throw AppError.notFound('Chưa có prompt news-editorial-v2');
+      return success(res, row);
+    } catch(err) { next(err); }
+  });
+  router.patch('/admin/news-ai/instruction', perm('news.articles.edit'),
+    validate(z.object({ body: z.object({ body: z.string().min(1).max(20000) }).strict() })),
+    async (req,res,next) => {
+      try {
+        const res2 = await query(`UPDATE ai_prompts SET body=$2,status='active',updated_at=NOW() WHERE code=$1 RETURNING code,name,body,status,updated_at`,[PROMPT_CODE,req.validated.body.body]);
+        if (!res2.rows[0]) throw AppError.notFound('Chưa có prompt news-editorial-v2');
+        return success(res, res2.rows[0]);
+      } catch(err) { next(err); }
+    });
 
   router.get('/admin/event-cases', perm('news.articles.view'), validate(z.object({ query: z.object({ story_id: z.string().uuid().optional() }) })), async (req, res, next) => {
     try {

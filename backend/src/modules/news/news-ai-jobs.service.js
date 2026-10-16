@@ -6,6 +6,10 @@ const { AppError } = require('../../shared/exceptions/app-error');
 const { SCHEMA_VERSION } = require('../ai/news-ai.contract');
 const { createOpenAiProvider } = require('../ai/openai-responses.provider');
 const context = require('./news-ai-context.service');
+const aiConfig = require('./news-ai-config.service');
+const articles = require('./news-articles.service');
+
+const AI_ACTOR = { id: 'ai-iflux', name: 'AI iFlux', tier_label: 'AI' };
 
 const PROMPT_VERSION = 'news-editorial-v2';
 const hash = (v) => createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex');
@@ -19,10 +23,12 @@ async function enqueueSource(postId, config = runtimeConfig) {
   const source = context.sourceSnapshot({ ...row.payload,id:row.id });
   const prompt = (await query("SELECT body FROM ai_prompts WHERE code=$1 AND status='active'",[PROMPT_VERSION])).rows[0];
   if (!prompt || !prompt.body.trim()) throw AppError.badRequest('AI_PROMPT_NOT_ACTIVE','Prompt news-editorial-v2 chưa được đăng ký/kích hoạt');
+  const aiCfg = await aiConfig.getConfig();
+  const model = aiCfg.model || config.NEWS_AI_MODEL || 'gpt-5.4';
   const result = await query(`INSERT INTO news_ai_jobs(source_post_id,input_hash,prompt_hash,prompt_version,prompt_body,schema_version,model,source_snapshot)
     VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb)
     ON CONFLICT(source_post_id,input_hash,prompt_hash,schema_version,model) DO UPDATE SET source_post_id=EXCLUDED.source_post_id
-    RETURNING id,status`,[postId,hash(source),hash(prompt.body),PROMPT_VERSION,prompt.body,SCHEMA_VERSION,config.NEWS_AI_MODEL || 'gpt-5.4',JSON.stringify(source)]);
+    RETURNING id,status`,[postId,hash(source),hash(prompt.body),PROMPT_VERSION,prompt.body,SCHEMA_VERSION,model,JSON.stringify(source)]);
   return result.rows[0];
 }
 
@@ -103,12 +109,38 @@ async function processOne(config = runtimeConfig, provider) {
     const composeContext = await context.buildComposeContext(checked,ctx);
     const output = await run('compose',composeContext);
     const preview = context.composePreview(output,composeContext);
-    // Luôn review cho đến khi semantic gate + event matching + publish transaction được nghiệm thu.
-    const reasons = [...preview.review_reasons,'SEMANTIC_REVIEW_REQUIRED','MEDIA_RIGHTS_REVIEW_REQUIRED'];
     preview.article_input.category_id = job.source_snapshot.category_id;
+    preview.article_input.source_name = job.source_snapshot.source_name;
+    preview.article_input.external_url = job.source_snapshot.url;
     preview.comparison_spec = composeContext.comparison ? checked.data.comparison : null;
     preview.event_proposals = checked.data.events;
     preview.compose_context = composeContext;
+
+    // Auto-publish (Owner 2026-10-16): chỉ khi Admin bật cấu hình VÀ output sạch mọi kiểm tra
+    // thật (preview.review_reasons rỗng) — nếu có lỗi nội dung thật (fact/entity/event/ảnh
+    // không hợp lệ...) vẫn luôn rơi về needs_review dù đã bật auto-publish.
+    const aiCfg = await aiConfig.getConfig();
+    if (aiCfg.auto_publish && preview.review_reasons.length === 0) {
+      try {
+        const published = await articles.updateArticle(
+          job.source_post_id,
+          Object.assign({}, preview.article_input, { status: 'published' }),
+          AI_ACTOR
+        );
+        await fence("UPDATE news_ai_jobs SET status='published',result=$3::jsonb,review_reasons='[]'::jsonb,calls=$4::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
+          [JSON.stringify(preview),JSON.stringify(calls)]);
+        return { id:job.id,status:'published',post_id:published.id };
+      } catch (publishErr) {
+        // Publish thật lỗi (vd slug/category/so sánh) -> rơi về review, không để job treo im lặng.
+        const failReasons = [...preview.review_reasons,'AUTO_PUBLISH_FAILED:' + (publishErr && (publishErr.code || publishErr.message) || 'unknown')];
+        await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons=$4::jsonb,calls=$5::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
+          [JSON.stringify(preview),JSON.stringify(failReasons),JSON.stringify(calls)]);
+        return { id:job.id,status:'needs_review' };
+      }
+    }
+
+    // Không auto-publish (cấu hình tắt, hoặc có review_reasons thật) -> luôn cần người duyệt.
+    const reasons = [...preview.review_reasons,'SEMANTIC_REVIEW_REQUIRED','MEDIA_RIGHTS_REVIEW_REQUIRED'];
     await fence("UPDATE news_ai_jobs SET status='needs_review',result=$3::jsonb,review_reasons=$4::jsonb,calls=$5::jsonb,lease_until=NULL,last_error=NULL,updated_at=NOW()",
       [JSON.stringify(preview),JSON.stringify(reasons),JSON.stringify(calls)]);
     return { id:job.id,status:'needs_review' };
@@ -137,4 +169,39 @@ async function runNewsAiWorker(config = runtimeConfig) {
   return { status:'processed',results };
 }
 
-module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,processOne,runNewsAiWorker };
+async function getStats() {
+  const rows = (await query(`SELECT status,model,calls,created_at FROM news_ai_jobs`)).rows;
+  const byStatus = {};
+  const byModel = {};
+  let inputTokens = 0, outputTokens = 0, callCount = 0;
+  rows.forEach((row) => {
+    byStatus[row.status] = (byStatus[row.status] || 0) + 1;
+    const modelKey = row.model || 'unknown';
+    const m = byModel[modelKey] || (byModel[modelKey] = { jobs: 0, input_tokens: 0, output_tokens: 0 });
+    m.jobs += 1;
+    (row.calls || []).forEach((call) => {
+      const u = call.usage || {};
+      const inTok = Number(u.input_tokens || u.prompt_tokens || 0) || 0;
+      const outTok = Number(u.output_tokens || u.completion_tokens || 0) || 0;
+      inputTokens += inTok; outputTokens += outTok; callCount += 1;
+      m.input_tokens += inTok; m.output_tokens += outTok;
+    });
+  });
+  const cfg = await aiConfig.getConfig();
+  const costUsd = (inputTokens / 1000) * (cfg.price_per_1k_input_usd || 0) +
+    (outputTokens / 1000) * (cfg.price_per_1k_output_usd || 0);
+  return {
+    total_jobs: rows.length,
+    by_status: byStatus,
+    by_model: byModel,
+    articles_published: byStatus.published || 0,
+    total_calls: callCount,
+    total_input_tokens: inputTokens,
+    total_output_tokens: outputTokens,
+    total_tokens: inputTokens + outputTokens,
+    estimated_cost_usd: Math.round(costUsd * 10000) / 10000,
+    cost_pricing_configured: !!(cfg.price_per_1k_input_usd || cfg.price_per_1k_output_usd)
+  };
+}
+
+module.exports = { configureNewsAi,enqueueSource,getJob,listJobs,retryJob,processOne,runNewsAiWorker,getStats };

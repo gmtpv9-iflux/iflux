@@ -245,7 +245,8 @@
       urlSegment: "seo",
       children: [
         { type: 'item', key: "marketing-seo-system", routeKey: "marketing-seo-system", label: "Thiết lập SEO hệ thống", icon: "ti-settings", urlSegment: "system" },
-        { type: 'item', key: "marketing-seo-pages", routeKey: "marketing-seo-pages", label: "Thiết lập SEO từng trang", icon: "ti-file-text", urlSegment: "pages" }
+        { type: 'item', key: "marketing-seo-pages", routeKey: "marketing-seo-pages", label: "Thiết lập SEO từng trang", icon: "ti-file-text", urlSegment: "pages" },
+        { type: 'item', key: "marketing-seo-ai-programmatic", routeKey: "marketing-seo-ai-programmatic", label: "AI Programmatic SEO", icon: "ti-robot", urlSegment: "ai-programmatic" }
       ]
     },
     { type: 'group', label: "Trung tâm AI", urlSegment: "ai" },
