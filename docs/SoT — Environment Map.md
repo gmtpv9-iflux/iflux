@@ -39,6 +39,6 @@ Chỉ có **2 môi trường**, không hơn không kém. Không có "Staging 1",
 
 ## Liên quan
 
-- `docs/SoT — Deployment.md` — quy trình deploy chi tiết. **Lưu ý:** doc này hiện vẫn còn nhiều đoạn nhắc "Staging 1"/"Staging 2"/GitLab theo lối lịch sử cũ (chưa được dọn lại theo rewrite này) — khi đọc, ưu tiên bảng kỹ thuật ở trên làm chuẩn, bỏ qua mọi tên gọi "Staging 1/2"/"Live Production" xuất hiện ở đó.
+- `docs/SoT — Deployment.md` — quy trình deploy chi tiết (rewrite v3.0 ngày 2026-10-16, đồng bộ hoàn toàn với bảng trên — không còn "Staging 1/2"/GitLab/rsync).
 - `.cursor/rules/ssh-deployment-boundary.mdc` — rule tự động nhắc Agent mỗi session về ranh giới SSH/deploy.
 - `Product Backlogs/120826_pending_Git_Deployment_Process_Reconstruction/` — lịch sử quyết định đầy đủ (giữ để tham khảo, không phải SoT hiện hành).
