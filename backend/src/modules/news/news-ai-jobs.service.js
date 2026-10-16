@@ -231,6 +231,9 @@ async function processOne(config = runtimeConfig, provider) {
     return { id:job.id,status:'needs_review' };
   } catch (err) {
     if (err.code==='AI_LEASE_LOST') return { id:job.id,status:'lease_lost' };
+    /* Owner 2026-10-16: log TẠM để chẩn đoán AI_VALIDATION_OR_CONTEXT_ERROR hàng loạt — chỉ vào
+     * log server (PM2, không qua API/DB/user-facing) — gỡ sau khi tìm xong nguyên nhân thật. */
+    try { require('../../core/logger/logger').getLogger().error({ jobId:job.id,errMessage:err && err.message,errCode:err && err.code,errStack:err && err.stack },'news-ai processOne diag'); } catch(_) {}
     const safeCode = /^AI_[A-Z0-9_]+$/.test(err.code || '') ? err.code : 'AI_VALIDATION_OR_CONTEXT_ERROR';
     const retry = err.retryable===true && job.attempts<maxAttempts;
     await fence(`UPDATE news_ai_jobs SET status=$3,last_error=$4,calls=$5::jsonb,lease_until=NULL,

@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-16T21:30:00+07:00 — Claude — đang làm (BỊ CHẶN, cần log thật) — Owner tự bật lại AI, 100% job mới lỗi `AI_VALIDATION_OR_CONTEXT_ERROR` — đã tắt lại, thêm log chẩn đoán tạm
+
+- **Nhiệm vụ/trạng thái:** ĐANG LÀM, bị chặn vì thiếu bằng chứng (code cố ý không log message/stack thật ra bất kỳ đâu — chính sách "không rò message"). Owner tự bật "Bật AI hoạt động" sau lượt fix trước để test — 4/4 job mới (MSCI Indonesia, 1 bank stock, PNJ/FPT, 1 job còn `running`) đều lỗi NGAY (created_at≈started_at, chết rất nhanh), cùng mã lỗi chung `AI_VALIDATION_OR_CONTEXT_ERROR`. Đây là mã FALLBACK khi `err.code` không khớp `/^AI_[A-Z0-9_]+$/` — tức là 1 exception THẬT (có thể lỗi parse/schema, không phải lỗi nội dung thường gặp).
+- **Đã làm ngay:** (1) tắt `enabled=false` qua UPDATE trực tiếp `system_admin_kv` (không qua Admin UI, SSH) để dừng tốn token khi 100% đang lỗi; (2) thêm log chẩn đoán TẠM trong `catch` của `processOne()` (`news-ai-jobs.service.js`) — ghi `err.message`/`err.code`/`err.stack` ra log server (PM2, không qua API/DB/user-facing) — PHẢI GỠ sau khi tìm xong nguyên nhân, không để log thật mãi (có thể chứa thông tin nội bộ).
+- **Nghi vấn hàng đầu (chưa xác nhận):** migration 089 (seo.keywords) thêm field BẮT BUỘC vào compose schema gửi OpenAI (`obj()` helper không hỗ trợ optional — mọi field trong object đều `required`). Nếu response API không tuân thủ schema mới (model/structured-output không propagate đúng, hoặc code validate response bằng zod `.strict()` ở đâu đó fail vì field mới) → ném lỗi KHÔNG có `.code` dạng `AI_*` → rơi đúng vào nhánh fallback này. Cần log thật để xác nhận đúng giả thuyết này hay không — KHÔNG tự sửa mù khi chưa có bằng chứng.
+- **Kế hoạch tiếp theo (chưa làm):** build + deploy diff này lên Production → bật tạm `enabled=true` (giữ `auto_publish=true` sẵn có, KHÔNG đổi) đúng đủ để 1 job chạy và lỗi → đọc `pm2 logs iflux-api-production --err` lấy `errStack` thật → sửa đúng gốc rễ → gỡ log chẩn đoán → deploy lại → test sạch (phải thấy `needs_review`/`published` thật, không còn lỗi hàng loạt) mới báo Owner coi là xong.
+- **Kiểm tra:** `node --check` PASS, `build-web-bundle`/`sync-js-versions --check` PASS. Chưa deploy, chưa có log thật.
+- **Commit:** sẽ tạo riêng (diagnostic only), SẼ CẦN 1 commit nữa sau đó để gỡ log tạm + fix thật.
+- **Còn lại/lưu ý cho AI tiếp theo (nếu tôi không hoàn tất trong phiên này):** nhớ gỡ log chẩn đoán (`errStack`) khỏi `processOne()` sau khi xong — không để lại vĩnh viễn. "Bật AI hoạt động" đang TẮT (tôi tự tắt qua SSH, không qua Admin UI — Owner nên biết trạng thái thật trên Admin UI vẫn đúng vì cùng 1 bản ghi DB).
+
+
 ## 2026-10-16T21:00:00+07:00 — Claude — hoàn thành — đồng bộ cấu trúc AI↔Admin (thêm seo.keywords), tách rõ "Lỗi" khỏi "Chờ duyệt", fix crash trang Duyệt
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner: (1) bài "Chờ duyệt" bấm Xem&Duyệt báo lỗi toast "Cannot set properties of null", không có dữ liệu; (2) chỉ nên có 2 kết cục: Lỗi (viết hỏng) hoặc Chờ duyệt (viết xong, có đủ nội dung để xem/sửa như trang edit) — không trộn lẫn như hiện tại; (3) trước khi làm thêm gì, phải so khớp cấu trúc trường giữa bài Admin viết tay và bài AI soạn, bổ sung 2 chiều cho khớp.
