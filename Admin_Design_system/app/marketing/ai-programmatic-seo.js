@@ -57,23 +57,20 @@
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     var labels = daily.map(function (d) { return d.date; });
     var tokens = daily.map(function (d) { return d.input_tokens + d.output_tokens; });
-    var cost = daily.map(function (d) { return d.estimated_cost_usd; });
     var published = daily.map(function (d) { return d.published; });
     chartInstance = new ApexCharts(el, {
       chart: { height: 300, background: 'transparent', toolbar: { show: false }, fontFamily: "'Be Vietnam Pro', sans-serif" },
       theme: { mode: document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark' },
       series: [
         { name: 'Token/ngày', type: 'column', data: tokens },
-        { name: 'Chi phí ước tính (USD)', type: 'line', data: cost },
         { name: 'Bài xuất bản', type: 'line', data: published }
       ],
       xaxis: { categories: labels, labels: { rotate: -45 } },
       yaxis: [
         { title: { text: 'Token' }, seriesName: 'Token/ngày' },
-        { title: { text: 'USD' }, seriesName: 'Chi phí ước tính (USD)', opposite: true },
-        { show: false, seriesName: 'Bài xuất bản' }
+        { title: { text: 'Bài xuất bản' }, seriesName: 'Bài xuất bản', opposite: true }
       ],
-      stroke: { width: [0, 3, 3], curve: 'smooth' },
+      stroke: { width: [0, 3], curve: 'smooth' },
       dataLabels: { enabled: false },
       tooltip: { theme: 'dark', shared: true }
     });
@@ -84,7 +81,7 @@
     return request('/news/admin/news-ai/stats').then(function (s) {
       var byStatus = s.by_status || {};
       var daily = s.daily || [];
-      var today = daily.filter(function (d) { return d.date === todayKey(); })[0] || { estimated_cost_usd: 0 };
+      var today = daily.filter(function (d) { return d.date === todayKey(); })[0] || { input_tokens: 0, output_tokens: 0 };
 
       var statusIcon = document.getElementById('aips-kpi-status-icon');
       var statusVal = document.getElementById('aips-kpi-status');
@@ -96,9 +93,9 @@
 
       var budgetEl = document.getElementById('aips-kpi-budget');
       if (budgetEl) {
-        var todayCost = s.cost_pricing_configured ? ('$' + today.estimated_cost_usd.toFixed(4)) : '—';
-        var budgetTxt = s.daily_budget_usd > 0 ? ('$' + s.daily_budget_usd.toFixed(2)) : 'Không giới hạn';
-        budgetEl.textContent = todayCost + ' / ' + budgetTxt;
+        var todayTokens = today.input_tokens + today.output_tokens;
+        var budgetTxt = s.daily_token_budget > 0 ? s.daily_token_budget.toLocaleString('vi-VN') : 'Không giới hạn';
+        budgetEl.textContent = todayTokens.toLocaleString('vi-VN') + ' / ' + budgetTxt;
       }
 
       var reviewEl = document.getElementById('aips-kpi-review');
@@ -116,24 +113,35 @@
       var dtb = document.getElementById('aips-daily-tbody');
       if (dtb) {
         var drows = daily.slice().reverse().map(function (d) {
-          return '<tr><td>' + esc(d.date) + '</td><td>' + esc(d.jobs) + '</td><td>' + esc(d.published) + '</td><td>' + esc(d.input_tokens) + '</td><td>' + esc(d.output_tokens) + '</td><td>' +
-            (s.cost_pricing_configured ? ('$' + d.estimated_cost_usd.toFixed(4)) : '—') + '</td></tr>';
+          return '<tr><td>' + esc(d.date) + '</td><td>' + esc(d.jobs) + '</td><td>' + esc(d.published) + '</td><td>' + esc(d.input_tokens) + '</td><td>' + esc(d.output_tokens) + '</td></tr>';
         });
-        dtb.innerHTML = drows.join('') || '<tr><td colspan="6" class="ix-caption">Chưa có dữ liệu trong ' + (s.daily_window_days || 30) + ' ngày gần nhất</td></tr>';
+        dtb.innerHTML = drows.join('') || '<tr><td colspan="5" class="ix-caption">Chưa có dữ liệu trong ' + (s.daily_window_days || 30) + ' ngày gần nhất</td></tr>';
       }
 
       renderChart(daily);
     }).catch(function (e) { toast(e.message || 'Lỗi tải thống kê', 'danger'); });
   }
 
+  function loadModels() {
+    var select = document.getElementById('aips-model');
+    if (!select) return Promise.resolve();
+    return request('/news/admin/news-ai/models').then(function (d) {
+      (d.models || []).forEach(function (id) {
+        var opt = document.createElement('option');
+        opt.value = id; opt.textContent = id;
+        select.appendChild(opt);
+      });
+    }).catch(function (e) {
+      toast('Không tải được danh sách model từ OpenAI (' + (e.message || 'lỗi') + ') — vẫn giữ mặc định hệ thống', 'warning');
+    });
+  }
+
   function loadConfig() {
     return request('/news/admin/news-ai/config').then(function (cfg) {
       document.getElementById('aips-enabled').checked = !!cfg.enabled;
       document.getElementById('aips-auto-publish').checked = !!cfg.auto_publish;
-      document.getElementById('aips-model').value = cfg.model || '';
-      document.getElementById('aips-price-in').value = cfg.price_per_1k_input_usd || 0;
-      document.getElementById('aips-price-out').value = cfg.price_per_1k_output_usd || 0;
-      document.getElementById('aips-daily-budget').value = cfg.daily_budget_usd || 0;
+      if (cfg.model) document.getElementById('aips-model').value = cfg.model;
+      document.getElementById('aips-daily-budget').value = cfg.daily_token_budget || 0;
     }).catch(function (e) { toast(e.message || 'Lỗi tải cấu hình', 'danger'); });
   }
 
@@ -142,9 +150,7 @@
       enabled: document.getElementById('aips-enabled').checked,
       auto_publish: document.getElementById('aips-auto-publish').checked,
       model: document.getElementById('aips-model').value.trim() || null,
-      price_per_1k_input_usd: Number(document.getElementById('aips-price-in').value) || 0,
-      price_per_1k_output_usd: Number(document.getElementById('aips-price-out').value) || 0,
-      daily_budget_usd: Number(document.getElementById('aips-daily-budget').value) || 0
+      daily_token_budget: Math.round(Number(document.getElementById('aips-daily-budget').value)) || 0
     };
     request('/news/admin/news-ai/config', { method: 'PATCH', body: body }).then(function () {
       toast('Đã lưu cấu hình', 'success');
@@ -186,7 +192,7 @@
     if (ta) ta.addEventListener('input', updateCount);
 
     loadStats();
-    loadConfig();
+    loadModels().then(loadConfig);
     loadInstruction();
   }
 

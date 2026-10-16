@@ -17,9 +17,9 @@ const hash = (v) => createHash('sha256').update(typeof v === 'string' ? v : JSON
 let runtimeConfig = { NEWS_AI_ENABLED:false };
 function configureNewsAi(config) { runtimeConfig = config; }
 
-/* Ngân sách/ngày (Owner 2026-10-16): Admin tự đặt daily_budget_usd, KHÔNG hardcode số cố định
- * nào trong code. 0 = chưa đặt/không giới hạn — cùng quy ước với 2 ô giá/1000 token. */
-async function getTodaySpendUsd(cfg) {
+/* Ngân sách/ngày (Owner 2026-10-16): đo bằng TOKEN THÔ, không quy đổi USD/VND — OpenAI không
+ * có API trả giá, không bịa số. Admin tự đặt daily_token_budget, 0 = không giới hạn. */
+async function getTodayTokenUsage() {
   // Cửa sổ SQL rộng rãi (48h) chỉ để giảm số dòng tải về — mốc "hôm nay" THẬT xác định
   // chính xác bằng dayKeyFmt (giờ VN) ở JS dưới, không dựa vào biên UTC dễ sai lệch ±1 ngày.
   const sinceUtc = new Date(Date.now() - 48 * 3600000).toISOString();
@@ -34,7 +34,7 @@ async function getTodaySpendUsd(cfg) {
       outTok += Number(u.output_tokens || u.completion_tokens || 0) || 0;
     });
   });
-  return (inTok / 1000) * (cfg.price_per_1k_input_usd || 0) + (outTok / 1000) * (cfg.price_per_1k_output_usd || 0);
+  return inTok + outTok;
 }
 
 async function enqueueSource(postId, config = runtimeConfig) {
@@ -98,7 +98,7 @@ async function processOne(config = runtimeConfig, provider) {
   if (!config.NEWS_AI_ENABLED || (!provider && !config.OPENAI_API_KEY)) return { status:'disabled' };
   const aiCfg = await aiConfig.getConfig();
   if (!aiCfg.enabled) return { status:'disabled' };
-  if (aiCfg.daily_budget_usd > 0 && (await getTodaySpendUsd(aiCfg)) >= aiCfg.daily_budget_usd) {
+  if (aiCfg.daily_token_budget > 0 && (await getTodayTokenUsage()) >= aiCfg.daily_token_budget) {
     return { status:'budget_exceeded' };
   }
   const maxAttempts = config.NEWS_AI_MAX_ATTEMPTS || 3;
@@ -223,10 +223,7 @@ async function getStats(days = 30) {
     });
   });
   const cfg = await aiConfig.getConfig();
-  const costOf = (inTok, outTok) => (inTok / 1000) * (cfg.price_per_1k_input_usd || 0) + (outTok / 1000) * (cfg.price_per_1k_output_usd || 0);
-  const daily = Object.values(byDay)
-    .sort((a, b) => a.date < b.date ? -1 : 1)
-    .map((d) => Object.assign({}, d, { estimated_cost_usd: Math.round(costOf(d.input_tokens, d.output_tokens) * 10000) / 10000 }));
+  const daily = Object.values(byDay).sort((a, b) => a.date < b.date ? -1 : 1);
   return {
     total_jobs: rows.length,
     by_status: byStatus,
@@ -236,10 +233,8 @@ async function getStats(days = 30) {
     total_input_tokens: inputTokens,
     total_output_tokens: outputTokens,
     total_tokens: inputTokens + outputTokens,
-    estimated_cost_usd: Math.round(costOf(inputTokens, outputTokens) * 10000) / 10000,
-    cost_pricing_configured: !!(cfg.price_per_1k_input_usd || cfg.price_per_1k_output_usd),
     ai_enabled: !!cfg.enabled,
-    daily_budget_usd: cfg.daily_budget_usd || 0,
+    daily_token_budget: cfg.daily_token_budget || 0,
     daily_window_days: days,
     daily
   };

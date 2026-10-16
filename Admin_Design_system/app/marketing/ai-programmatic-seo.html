@@ -39,7 +39,7 @@
   </div>
   <div class="ix-stat-card">
     <div class="ix-stat-icon accent"><i class="ti ti-coin"></i></div>
-    <div><div class="ix-stat-label">Chi phí / Ngân sách hôm nay</div><div class="ix-stat-value" id="aips-kpi-budget">—</div></div>
+    <div><div class="ix-stat-label">Token hôm nay / Ngân sách</div><div class="ix-stat-value" id="aips-kpi-budget">—</div></div>
   </div>
   <div class="ix-stat-card">
     <div class="ix-stat-icon warning"><i class="ti ti-eye-check"></i></div>
@@ -57,8 +57,8 @@
     <div class="ix-layout-main-col" style="display:flex;flex-direction:column;gap:20px">
       <div class="ix-card" style="padding:20px">
         <div class="ix-card-header" style="padding:0 0 12px;display:flex;align-items:center;justify-content:space-between">
-          <div class="ix-card-title">Token &amp; chi phí theo ngày (30 ngày gần nhất)</div>
-          <div class="ix-caption">Cột = token/ngày · 2 đường = chi phí ước tính &amp; số bài xuất bản</div>
+          <div class="ix-card-title">Token &amp; bài xuất bản theo ngày (30 ngày gần nhất)</div>
+          <div class="ix-caption">Cột = token/ngày · đường = số bài xuất bản</div>
         </div>
         <div id="aips-chart"></div>
       </div>
@@ -77,7 +77,7 @@
         <div class="ix-card-header" style="padding:0 0 12px"><div class="ix-card-title">Chi tiết theo ngày</div></div>
         <div class="ix-table-responsive">
           <table class="ix-table">
-            <thead><tr><th>Ngày</th><th>Job</th><th>Đã xuất bản</th><th>Token input</th><th>Token output</th><th>Chi phí ước tính</th></tr></thead>
+            <thead><tr><th>Ngày</th><th>Job</th><th>Đã xuất bản</th><th>Token input</th><th>Token output</th></tr></thead>
             <tbody id="aips-daily-tbody"></tbody>
           </table>
         </div>
@@ -103,22 +103,13 @@
         </div>
         <div class="ix-form-group" style="margin-top:12px">
           <label class="ix-label">Model AI</label>
-          <input class="ix-input" id="aips-model" placeholder="Để trống = mặc định hệ thống (gpt-5.4)" data-ix-perm="news.articles.edit" />
-          <div class="ix-caption">Nhập đúng tên model đang có trong gói OpenAI (vd bản rẻ hơn gpt-5.4) để tiết kiệm chi phí — sai tên sẽ làm job AI lỗi hết.</div>
+          <select class="ix-input" id="aips-model" data-ix-perm="news.articles.edit"><option value="">Để trống = mặc định hệ thống (gpt-5.4)</option></select>
+          <div class="ix-caption">Danh sách lấy trực tiếp từ OpenAI (model thật đang khả dụng cho API key đang cấu hình) — không tự gõ tay nên không lo sai tên.</div>
         </div>
         <div class="ix-form-group">
-          <label class="ix-label">Giá USD / 1.000 token input</label>
-          <input class="ix-input" type="number" step="0.0001" min="0" id="aips-price-in" data-ix-perm="news.articles.edit" />
-        </div>
-        <div class="ix-form-group">
-          <label class="ix-label">Giá USD / 1.000 token output</label>
-          <input class="ix-input" type="number" step="0.0001" min="0" id="aips-price-out" data-ix-perm="news.articles.edit" />
-          <div class="ix-caption">Để trống/0 thì chi phí ước tính và ngân sách/ngày không tính được, chỉ hiện token thô.</div>
-        </div>
-        <div class="ix-form-group">
-          <label class="ix-label">Ngân sách tối đa mỗi ngày (USD)</label>
-          <input class="ix-input" type="number" step="0.01" min="0" id="aips-daily-budget" data-ix-perm="news.articles.edit" />
-          <div class="ix-caption">0 = không giới hạn. Đạt mức này (giờ VN) thì AI tạm ngưng tới hết ngày — cần đã nhập giá/1.000 token ở trên.</div>
+          <label class="ix-label">Ngân sách token tối đa mỗi ngày</label>
+          <input class="ix-input" type="number" step="1000" min="0" id="aips-daily-budget" data-ix-perm="news.articles.edit" />
+          <div class="ix-caption">0 = không giới hạn. Tổng token (input+output) trong ngày (giờ VN) đạt mức này thì AI tự tạm ngưng tới hết ngày.</div>
         </div>
         <button type="button" class="ix-btn ix-btn-primary" id="aips-config-save" data-ix-perm="news.articles.edit" style="margin-top:8px;width:100%"><i class="ti ti-device-floppy"></i> Lưu cấu hình</button>
       </div>
@@ -148,5 +139,5 @@
 <script src="/Admin_Design_system/iflux-admin-ui/admin-auth.js"></script>
 <script src="/design_system/02_foundation/theme.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.0/dist/apexcharts.min.js"></script>
-<script src="/Admin_Design_system/app/marketing/ai-programmatic-seo.js?v=r20261016c"></script>
+<script src="/Admin_Design_system/app/marketing/ai-programmatic-seo.js?v=r20261016d"></script>
 </body></html>

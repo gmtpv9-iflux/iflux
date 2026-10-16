@@ -73,6 +73,7 @@ function createNewsRouter(deps) {
 
   // AI Programmatic SEO — Tab Thống kê + Tab Instruction (Owner 2026-10-16, Admin → Thiết lập SEO).
   const aiProgConfig = require('./news-ai-config.service');
+  const { listModels } = require('../ai/openai-responses.provider');
   const PROMPT_CODE = 'news-editorial-v2';
   router.get('/admin/news-ai/stats', perm('news.articles.view'), async (req,res,next) => {
     try {
@@ -88,12 +89,14 @@ function createNewsRouter(deps) {
       enabled: z.boolean().optional(),
       auto_publish: z.boolean().optional(),
       model: z.string().max(80).nullable().optional(),
-      price_per_1k_input_usd: z.number().min(0).optional(),
-      price_per_1k_output_usd: z.number().min(0).optional()
+      daily_token_budget: z.number().int().min(0).optional()
     }).strict() })),
     async (req,res,next) => {
       try { return success(res, await aiProgConfig.setConfig(req.validated.body)); } catch(err) { next(err); }
     });
+  router.get('/admin/news-ai/models', perm('news.articles.view'), async (req,res,next) => {
+    try { return success(res, { models: await listModels(config) }); } catch(err) { next(err); }
+  });
   router.get('/admin/news-ai/instruction', perm('news.articles.view'), async (req,res,next) => {
     try {
       const row = (await query(`SELECT code,name,body,status,updated_at FROM ai_prompts WHERE code=$1`,[PROMPT_CODE])).rows[0];

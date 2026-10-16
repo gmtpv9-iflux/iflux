@@ -40,4 +40,25 @@ function createOpenAiProvider(config, transport = globalThis.fetch) {
   };
 }
 
-module.exports = { createOpenAiProvider, AiProviderError };
+/* Danh sách model THẬT đang khả dụng cho API key đang cấu hình — dùng cho dropdown Admin
+ * (Owner 2026-10-16: tránh gõ sai tên model làm job lỗi, không bịa danh sách tay). */
+async function listModels(config, transport = globalThis.fetch) {
+  if (!config.OPENAI_API_KEY) throw new AiProviderError('AI_API_KEY_MISSING');
+  let response;
+  try {
+    response = await transport('https://api.openai.com/v1/models', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer ' + config.OPENAI_API_KEY },
+      signal: AbortSignal.timeout(15000)
+    });
+  } catch (_) { throw new AiProviderError('AI_TRANSPORT_ERROR', true); }
+  if (!response.ok) throw new AiProviderError('AI_HTTP_' + response.status, response.status === 429 || response.status >= 500);
+  let body;
+  try { body = await response.json(); } catch (_) { throw new AiProviderError('AI_RESPONSE_INVALID'); }
+  return (body.data || [])
+    .map((m) => m.id)
+    .filter((id) => typeof id === 'string')
+    .sort();
+}
+
+module.exports = { createOpenAiProvider, listModels, AiProviderError };
