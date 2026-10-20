@@ -135,7 +135,7 @@
      headHtml()), không còn 1 kiểu "section head" cục bộ riêng cho trang Cộng đồng nữa. */
   function sectionHeaderHtml(iconName, title, opts) {
     opts = opts || {};
-    var right = opts.noViewAll ? '' : '<a href="#" class="ifx-com2-link" data-ifx-com2-action="view-all">Xem tất cả ' + icon('chevron-right') + '</a>';
+    var right = opts.noViewAll ? '' : '<a href="#" class="ifx-com2-link" data-ifx-com2-action="view-all">Tất cả →</a>';
     return (
       '<header class="ifx-card-header">' +
         '<div class="ifx-widget-title"><h3>' + (iconName ? icon(iconName) + ' ' : '') + esc(title) + '</h3></div>' +
