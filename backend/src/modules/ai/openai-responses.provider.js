@@ -3,7 +3,29 @@
 const { contracts } = require('./news-ai.contract');
 
 class AiProviderError extends Error {
-  constructor(code, retryable = false) { super(code); this.code = code; this.retryable = retryable; }
+  constructor(code, retryable = false, detail) { super(detail || code); this.code = code; this.retryable = retryable; }
+}
+
+/* Owner 2026-10-20: OpenAI trả cùng HTTP 429 cho cả "hết hạn mức tài khoản" (insufficient_quota —
+ * cần nạp thêm, không tự hết) và "giới hạn tốc độ tạm thời" (rate_limit_exceeded — thử lại sau là
+ * được) — phải đọc field error.code/error.type (enum ngắn, cố định, KHÔNG phải nội dung/key) mới
+ * phân biệt được. Chỉ đọc đúng field này, không log/lưu phần message/body còn lại của OpenAI. */
+async function readOpenAiErrorCode(response) {
+  try {
+    const body = await response.json();
+    return (body && body.error && (body.error.code || body.error.type)) || null;
+  } catch (_) { return null; }
+}
+function throwForHttpError(response, openAiErrCode) {
+  if (openAiErrCode === 'insufficient_quota') {
+    throw new AiProviderError('AI_OPENAI_QUOTA_EXCEEDED', false,
+      'Hết hạn mức sử dụng OpenAI (insufficient_quota) — cần nạp thêm hạn mức tại platform.openai.com/settings/organization/billing rồi mới bật AI lại.');
+  }
+  if (openAiErrCode === 'rate_limit_exceeded') {
+    throw new AiProviderError('AI_OPENAI_RATE_LIMIT', false,
+      'OpenAI báo vượt giới hạn tốc độ gọi API tạm thời (rate_limit_exceeded) — không phải hết hạn mức tài khoản. Có thể bật lại ngay.');
+  }
+  throw new AiProviderError('AI_HTTP_' + response.status, response.status >= 500);
 }
 
 function createOpenAiProvider(config, transport = globalThis.fetch) {
@@ -25,8 +47,9 @@ function createOpenAiProvider(config, transport = globalThis.fetch) {
           })
         });
       } catch (_) { throw new AiProviderError('AI_TRANSPORT_ERROR', true); }
-      // Không phản chiếu error body/header có thể chứa nội dung/key vào log/API.
-      if (!response.ok) throw new AiProviderError('AI_HTTP_' + response.status, response.status === 429 || response.status >= 500);
+      // Không phản chiếu error body/header có thể chứa nội dung/key vào log/API — CHỈ đọc
+      // error.code/error.type (enum ngắn cố định) để phân biệt hết hạn mức vs lỗi khác.
+      if (!response.ok) throwForHttpError(response, await readOpenAiErrorCode(response));
       let body;
       try { body = await response.json(); } catch (_) { throw new AiProviderError('AI_RESPONSE_INVALID'); }
       if (body.status !== 'completed') throw new AiProviderError('AI_RESPONSE_INCOMPLETE');
@@ -52,7 +75,7 @@ async function listModels(config, transport = globalThis.fetch) {
       signal: AbortSignal.timeout(15000)
     });
   } catch (_) { throw new AiProviderError('AI_TRANSPORT_ERROR', true); }
-  if (!response.ok) throw new AiProviderError('AI_HTTP_' + response.status, response.status === 429 || response.status >= 500);
+  if (!response.ok) throwForHttpError(response, await readOpenAiErrorCode(response));
   let body;
   try { body = await response.json(); } catch (_) { throw new AiProviderError('AI_RESPONSE_INVALID'); }
   return (body.data || [])

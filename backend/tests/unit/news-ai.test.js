@@ -36,8 +36,15 @@ test('missing key, refusal, truncation, schema errors and provider failures neve
     const p=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>({ok:true,json:async()=>body}));
     await assert.rejects(p.run('extract',{},'x'),{code});
   }
-  const rate=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>({ok:false,status:429,json:async()=>{throw Error('must not read body');}}));
-  await assert.rejects(rate.run('extract',{},'x'),(e)=>e.code==='AI_HTTP_429'&&e.retryable);
+  // Owner 2026-10-20: 429 chung (không nhận ra error.code) -> không retryable (không còn auto-retry).
+  const genericRate=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>({ok:false,status:429,json:async()=>({error:{code:'something_else'}})}));
+  await assert.rejects(genericRate.run('extract',{},'x'),(e)=>e.code==='AI_HTTP_429'&&!e.retryable);
+  // Hết hạn mức tài khoản (insufficient_quota) phải phân biệt được với lỗi khác, hiện rõ lý do thật.
+  const quota=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>({ok:false,status:429,json:async()=>({error:{code:'insufficient_quota',message:'You exceeded your current quota'}})}));
+  await assert.rejects(quota.run('extract',{},'x'),(e)=>e.code==='AI_OPENAI_QUOTA_EXCEEDED'&&!e.retryable&&e.message.includes('Hết hạn mức'));
+  // Rate-limit tạm thời (rate_limit_exceeded) khác hẳn hết hạn mức — không nhầm 2 trường hợp.
+  const rateLimited=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>({ok:false,status:429,json:async()=>({error:{code:'rate_limit_exceeded'}})}));
+  await assert.rejects(rateLimited.run('extract',{},'x'),(e)=>e.code==='AI_OPENAI_RATE_LIMIT');
   const network=createOpenAiProvider({OPENAI_API_KEY:'fixture'},async()=>{throw Error('Bearer private secret');});
   await assert.rejects(network.run('extract',{},'x'),(e)=>e.code==='AI_TRANSPORT_ERROR'&&!e.message.includes('secret'));
 });
@@ -57,7 +64,7 @@ test('extract rejects fabricated citations/entities/events and preserves missing
 
 test('compose preview links sections to known events and creates backend-owned stable anchors',()=>{
   const ctx={source:{url:'https://example.org/source',source_name:'Nguồn A'},facts:[{id:'f1'}],entities:[{ticker:'AAA'}],story_id:null,timeline_case_ids:[],event_proposals:[{event_ref:'event-1',internal_section_refs:['article:post-1:ifx-section-2']}],internal_article_sections:[{ref:'article:post-1:ifx-section-2',title:'PNJ công bố diễn biến',heading:'HĐQT cập nhật kế hoạch',href:'/tin-tuc/bai-viet/pnj#ifx-section-2'}],comparison:null,allowed_images:[]};
-  const output={title:'Tiêu đề',excerpt:'Mô tả',lead:'<script>alert(1)</script>',lead_fact_ids:['f1'],sections:[{h2:'Chủ thể A',paragraphs:['Nội dung triển khai khác heading'],fact_ids:['f1'],event_refs:['event-1'],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu căn cứ',seo:{title:'Tiêu đề SEO',description:'Mô tả SEO'},warnings:[]};
+  const output={title:'Tiêu đề',excerpt:'Mô tả',lead:'<script>alert(1)</script>',lead_fact_ids:['f1'],sections:[{h2:'Chủ thể A',paragraphs:['Nội dung triển khai khác heading'],fact_ids:['f1'],event_refs:['event-1'],images:[]}],tickers:['AAA'],story_id:null,timeline_case_ids:[],comparison_metric:null,iflux_insight:null,insight_fact_ids:[],insight_omission_reason:'Thiếu căn cứ',seo:{title:'Tiêu đề SEO',description:'Mô tả SEO',keywords:'AAA, PNJ, cổ phiếu'},warnings:[]};
   const result=composePreview(output,ctx);assert.equal(result.review_reasons.length,0);assert.doesNotMatch(result.article_input.body_html,/<script/);assert.match(result.article_input.body_html,/<h2 id="ifx-section-1">Chủ thể A<\/h2>/);assert.equal(result.article_input.section_manifest[0].section_id,'ifx-section-1');assert.deepEqual(result.event_section_links,[{event_ref:'event-1',section_id:'ifx-section-1',heading:'Chủ thể A',anchor:'#ifx-section-1'}]);assert.deepEqual(result.event_source_links,[{event_ref:'event-1',title:'PNJ công bố diễn biến',heading:'HĐQT cập nhật kế hoạch',href:'/tin-tuc/bai-viet/pnj#ifx-section-2'}]);
   output.sections[0].fact_ids=['invented'];output.sections[0].images=[{image_id:'invented',alt:'Ảnh',title:null,caption:null}];
   assert.ok(composePreview(output,ctx).review_reasons.includes('COMPOSE_FACT_REFERENCE_INVALID'));
