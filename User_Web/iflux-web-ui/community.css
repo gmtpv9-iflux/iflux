@@ -13,16 +13,15 @@
    "Xem tất cả" đặt trong slot .ifx-inline-sm bên phải — khớp đúng khung Widget thật dùng ở
    mọi nơi khác trên nền tảng (xem design_system/05_templates/00_widget/widget.js headHtml()),
    KHÔNG còn tự định nghĩa 1 kiểu "section head" cục bộ riêng cho trang này nữa. ── */
+/* Owner 2026-10-20: color/font-weight/text-decoration đã bỏ — y hệt base link (reset.css),
+ * khai báo lại ở đây từng là 1 trong các chỗ gây lệch style "Xem tất cả". Chỉ giữ phần layout
+ * (icon + chữ nằm ngang, cỡ chữ nhỏ) THẬT SỰ riêng cho pattern này. */
 .ifx-com2-link {
   display: inline-flex;
   align-items: center;
   gap: var(--ifx-space-4);
   font-size: var(--ifx-font-size-xs);
-  font-weight: var(--ifx-font-weight-semibold);
-  color: var(--ifx-action-primary);
-  text-decoration: none;
 }
-.ifx-com2-link:hover { text-decoration: underline; }
 
 /* ── Card "Cộng đồng iFlux" (header sidebar trái) — tiêu đề qua .ifx-widget-title, icon đặt
    trong slot .ifx-inline-sm giống mọi Widget khác (xem .ifx-card-header trong markup). ── */

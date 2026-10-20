@@ -397,14 +397,12 @@
   flex: 0 0 auto;
   color: var(--ifx-action-primary);
 }
+/* Owner 2026-10-20: color/font-weight/text-decoration/:hover đã bỏ — y hệt base link
+ * (reset.css). Chỉ giữ 2 dòng layout thật sự riêng cho khung tác giả (link dài, tự ngắt). */
 .ifx-com-article__author-source a {
   min-width: 0;
-  color: var(--ifx-action-primary);
-  font-weight: var(--ifx-font-weight-semibold);
-  text-decoration: none;
   overflow-wrap: anywhere;
 }
-.ifx-com-article__author-source a:hover { text-decoration: underline; }
 @media (max-width: 768px) {
   .ifx-com-article__author { display: block; margin: var(--ifx-space-16) 0; padding: var(--ifx-space-16); }
   .ifx-com-article__author-kicker { margin-bottom: var(--ifx-space-16); }

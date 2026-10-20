@@ -9,6 +9,12 @@
 @import url('/design_system/01_tokens/02_generated/01_css/semantic.css?v=appHeader20260928b');
 @import url('/design_system/01_tokens/02_generated/01_css/01_themes/dark.css?v=appHeader20260928b');
 @import url('/design_system/01_tokens/02_generated/01_css/01_themes/light.css?v=appHeader20260928b');
+/* Owner 2026-10-20: reset.css (box model + base <a> DUY NHẤT toàn hệ thống) chưa từng được nạp ở
+ * đâu trên Production — ko wired ở bất kỳ page/manifest nào, phát hiện khi .ifx-com2-link lệch
+ * style vì mỗi nơi tự khai báo lại color/weight link riêng. Đây là nơi ĐÚNG để nạp 1 lần duy
+ * nhất cho toàn User Web (trước icons/layout — cùng tầng Foundation), ngay sau token/theme vì
+ * reset.css cần --ifx-text-link/--ifx-font-weight-semibold đã có giá trị. */
+@import url('/design_system/02_foundation/reset.css?v=r20261020a');
 @import url('/design_system/02_foundation/02_icons/icons.css?v=appHeader20260928b');
 @import url('/design_system/02_foundation/layout.css?v=appHeader20260928b');
 @import url('/design_system/03_primitives/02_avatar/avatar.css?v=appHeader20260928b');

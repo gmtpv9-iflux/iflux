@@ -37,7 +37,16 @@ input, button, textarea, select {
 
 button { background: none; border: none; padding: 0; cursor: pointer; }
 
-a { color: var(--ifx-text-link); text-decoration: none; }
+/* Owner 2026-10-20: định dạng link DUY NHẤT toàn hệ thống — không để từng component/trang tự
+ * khai báo lại color/weight riêng (đã xảy ra ở .ifx-card-footer a, .ifx-com2-link — cùng 1 việc
+ * lặp nhiều nơi, dễ lệch nhau). --ifx-text-link === --ifx-action-primary (cùng giá trị thật ở cả
+ * 2 theme, xem 01_tokens/.../light.css + dark.css) — không đổi màu, chỉ bổ sung font-weight còn
+ * thiếu ở đây, nơi DUY NHẤT nên định nghĩa. */
+a {
+  color: var(--ifx-text-link);
+  text-decoration: none;
+  font-weight: var(--ifx-font-weight-semibold);
+}
 a:hover { text-decoration: underline; }
 
 hr {

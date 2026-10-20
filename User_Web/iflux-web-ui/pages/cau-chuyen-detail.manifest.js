@@ -28,7 +28,7 @@ export default {
     css: [
       '/User_Web/iflux-web-ui/market-components.css?v=c8e2f06ab3',
       '/User_Web/iflux-web-ui/watchlist.css?v=255d879a1e',
-      '/User_Web/iflux-web-ui/news.css?v=8fe5446aab',
+      '/User_Web/iflux-web-ui/news.css?v=1225ab31c1',
       '/User_Web/iflux-web-ui/block-templates.css?v=d1e0b803fd',
       '/User_Web/iflux-web-ui/stock.css?v=c07620f5e0'
     ]

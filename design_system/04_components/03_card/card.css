@@ -62,11 +62,8 @@
   font-size: var(--ifx-text-body-sm-size);
   color: var(--ifx-text-muted);
 }
-.ifx-card-footer a {
-  color: var(--ifx-action-primary);
-  text-decoration: none;
-  font-weight: var(--ifx-font-weight-semibold);
-}
+/* Owner 2026-10-20: rule này từng khai báo lại y hệt base link (reset.css) — xoá, link trong
+ * footer giờ tự nhận đúng style từ base, không cần .ifx-card-footer sở hữu riêng 1 kiểu link. */
 
 /* Owner 2026-10-15 (đính chính): khung Card (đệm 2 bên Header/Body/Footer) chỉ giữ ở
    desktop/tablet — trên mobile khung này ăn vào bề rộng hiển thị, làm nội dung Widget (bảng số,
