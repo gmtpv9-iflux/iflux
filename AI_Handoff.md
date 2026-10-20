@@ -2,6 +2,17 @@
 
 Mục mới nhất ở đầu. Trước khi thêm mục: đọc lại file hiện tại, thêm phía trên các mục cũ và giữ nguyên lịch sử. Không ghi secret, API key hoặc dữ liệu riêng tư vào nhật ký.
 
+## 2026-10-20T00:00:00+07:00 — Claude — hoàn thành (có unit test thật xác nhận) — phân biệt lỗi "hết hạn mức OpenAI" (insufficient_quota) khỏi lỗi khác
+
+- **Nhiệm vụ/trạng thái:** hoàn thành, xác minh bằng `node --test` thật (không phải suy đoán). Owner hỏi: lúc trước AI viết lỗi hàng loạt có thể do đã set giới hạn token tối đa trong tài khoản OpenAI — có cách nào bắt đúng lỗi "hết hạn mức" không?
+- **Nguyên nhân thật trước đây:** `openai-responses.provider.js` khi gặp lỗi HTTP (`!response.ok`) chỉ phân loại theo MÃ HTTP (429, 500...), KHÔNG đọc nội dung lỗi OpenAI trả về — nên "hết hạn mức tài khoản" (`insufficient_quota`) và "giới hạn tốc độ tạm thời" (`rate_limit_exceeded`) đều ra CÙNG mã `AI_HTTP_429`, không phân biệt được, Admin chỉ thấy `auto_disabled_reason` chung "AI_HTTP_429" không rõ nghĩa.
+- **Phạm vi:** `backend/src/modules/ai/openai-responses.provider.js` — thêm `readOpenAiErrorCode()` (đọc ĐÚNG field `error.code`/`error.type` trong body lỗi — enum ngắn cố định, KHÔNG phải nội dung/key, không vi phạm nguyên tắc "không log raw error body" cũ) + `throwForHttpError()` (map `insufficient_quota` → mã mới `AI_OPENAI_QUOTA_EXCEEDED` kèm câu tiếng Việt rõ nghĩa "Hết hạn mức sử dụng OpenAI... cần nạp thêm tại platform.openai.com/settings/organization/billing"; `rate_limit_exceeded` → `AI_OPENAI_RATE_LIMIT`; còn lại giữ `AI_HTTP_<status>`). Áp dụng cho cả `run()` (extract/compose) và `listModels()`. `AiProviderError` thêm param thứ 3 `detail` để message khác code (hiển thị câu rõ nghĩa trong `auto_disabled_reason` thay vì chỉ mã ngắn).
+- **Phát hiện kèm (test thật tự lộ ra, không phải đoán):** `backend/tests/unit/news-ai.test.js` chạy ĐƯỢC THẬT ở máy này (không cần Postgres, khác file integration) — phát hiện 2 lỗi thật: (1) test cũ giả định "không bao giờ đọc body lỗi" (mock ném exception nếu `.json()` bị gọi) — mâu thuẫn trực tiếp với yêu cầu hôm nay, đã viết lại thành 3 test case (quota/rate-limit/429 chung); (2) fixture `composePreview` thiếu `seo.keywords` (bắt buộc từ migration 089 ngày 16/10) — ZodError thật. Đã sửa cả 2, **chạy lại xác nhận PASS 4/4** — đây là lần hiếm trong ngày có thể tự kiểm chứng thật bằng test, không chỉ đọc code.
+- **Kiểm tra:** `node --test tests/unit/news-ai.test.js` → 4/4 PASS (thật). `node --check` PASS. `build-web-bundle`/`sync-js-versions --check` PASS.
+- **Commit:** sẽ tạo riêng, deploy Staging + Production theo quy trình thường lệ.
+- **Còn lại/lưu ý cho AI tiếp theo:** (1) `backend/tests/integration/news-editorial.test.js` vẫn còn đoạn `needs_review`/retry chưa sửa được (cần Postgres thật, chưa có từ đầu phiên) — KHÔNG liên quan tới lượt sửa này; (2) sau khi deploy, nếu Owner bật AI lại và tài khoản OpenAI thật đang hết hạn mức, `auto_disabled_reason` trên Admin sẽ hiện đúng câu "Hết hạn mức sử dụng OpenAI..." thay vì mã lỗi chung — đây chính là cách xác nhận rõ ràng nhất việc hết token có phải nguyên nhân hay không.
+
+
 ## 2026-10-16T22:20:00+07:00 — Claude — hoàn thành — rà soát e2e theo yêu cầu Owner, vá 3 lỗ hổng thật tìm được (không chỉ khẳng định bằng lời)
 
 - **Nhiệm vụ/trạng thái:** hoàn thành. Owner hỏi "đã chạy được chưa, đi 1 vòng e2e xem còn gì không" — đọc lại TOÀN BỘ `news-ai-jobs.service.js` + trang Admin từ đầu (không dựa vào suy luận cũ), tìm ra 3 vấn đề thật:
